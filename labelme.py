@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+import os.path
 import re
 import sys
 
+from functools import partial
 from collections import defaultdict
 
 from PyQt4.QtGui import *
@@ -60,7 +62,7 @@ class WindowMixin(object):
 
 
 class MainWindow(QMainWindow, WindowMixin):
-    def __init__(self):
+    def __init__(self, filename=None):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -91,7 +93,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.statusBar().show()
 
         # Application state.
-        self.filename = ''
+        self.image = QImage()
+        self.filename = filename
         self.recent_files = []
 
         # TODO: Could be completely declarative.
@@ -118,7 +121,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # The file menu has default dynamically generated entries.
         self.updateFileMenu()
         # Since loading the file may take some time, make sure it runs in the background.
-        self.queueEvent(self.loadFile)
+        self.queueEvent(partial(self.loadFile, self.filename))
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
@@ -135,15 +138,16 @@ class MainWindow(QMainWindow, WindowMixin):
                 message = "Failed to read %s" % filename
             else:
                 message = "Loaded %s" % os.path.basename(unicode(filename))
-                self.showImage()
                 self.image = image
                 self.filename = filename
+                self.showImage()
             self.statusBar().showMessage(message)
 
     def showImage(self):
         if self.image.isNull():
             return
         self.imageWidget.setPixmap(QPixmap.fromImage(self.image))
+        self.imageWidget.show()
 
     def closeEvent(self, event):
         # TODO: Make sure changes are saved.
@@ -190,7 +194,7 @@ def main(argv):
     """Standard boilerplate Qt application code."""
     app = QApplication(argv)
     app.setApplicationName(__appname__)
-    win = MainWindow()
+    win = MainWindow(argv[1] if len(argv) == 2 else None)
     win.show()
     return app.exec_()
 
