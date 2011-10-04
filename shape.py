@@ -14,34 +14,39 @@ class Shape(object):
         self.line_color = line_color
         self.fill_color = fill_color
 
-        self.vertices = []
+        self.points = []
         self.fill = False
 
-    def addVertex(self, vertex):
-        self.vertices.append(vertex)
+    def addPoint(self, point):
+        self.points.append(point)
 
-    def popVertex(self):
-        if self.vertices:
-            return self.vertices.pop()
+    def popPoint(self):
+        if self.points:
+            return self.points.pop()
         return None
 
+    def isClosed(self):
+        return len(self.points) > 1 and self[0] == self[-1]
+
     def paint(self, painter):
-        if self.vertices:
+        if self.points:
             pen = QPen(self.line_color)
             painter.setPen(pen)
             path = QPainterPath()
-            p0 = self.vertices[0]
-            path.moveTo(p0.x(), p0.y())
-            for v in self.vertices[1:]:
-                path.lineTo(v.x(), v.y())
+            path.moveTo(self.points[0].x(), self.points[0].y())
+            for p in self.points[1:]:
+                path.lineTo(p.x(), p.y())
             painter.drawPath(path)
 
             if self.fill:
                 painter.fillPath(path, self.fill_color)
 
     def __len__(self):
-        return len(self.vertices)
+        return len(self.points)
 
     def __getitem__(self, key):
-        return self.vertices[key]
+        return self.points[key]
+
+    def __setitem__(self, key, value):
+        self.points[key] = value
 
