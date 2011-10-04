@@ -73,6 +73,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock = QDockWidget(u'Label', parent=self)
         self.dock.setObjectName(u'Label')
         self.dock.setWidget(self.label)
+        #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
         self.imageWidget = QLabel()
         self.imageWidget.setAlignment(Qt.AlignCenter)
@@ -83,11 +84,12 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Actions
         quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
+        open = action(self, '&Open', self.openFile, 'Ctrl+O', u'Open file')
         labl = self.dock.toggleViewAction()
         labl.setShortcut('Ctrl+L')
 
-        add_actions(self.menu('&File'), (labl, None, quit))
-        add_actions(self.toolbar('Tools'), (labl, None, quit,))
+        add_actions(self.menu('&File'), (open, None, labl, None, quit))
+        add_actions(self.toolbar('Tools'), (open, None, labl, None, quit))
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -146,8 +148,19 @@ class MainWindow(QMainWindow, WindowMixin):
     def showImage(self):
         if self.image.isNull():
             return
-        self.imageWidget.setPixmap(QPixmap.fromImage(self.image))
+        self.imageWidget.setPixmap(self.scaled(QPixmap.fromImage(self.image)))
         self.imageWidget.show()
+
+    def resizeEvent(self, event):
+        if self.imageWidget and self.imageWidget.pixmap():
+            self.imageWidget.setPixmap(self.scaled(self.imageWidget.pixmap()))
+        super(MainWindow, self).resizeEvent(event)
+
+    def scaled(self, pixmap):
+        width = self.centralWidget().width()
+        height = self.centralWidget().height()
+        return pixmap.scaled(width, height,
+          Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
     def closeEvent(self, event):
         # TODO: Make sure changes are saved.
@@ -160,6 +173,23 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def updateFileMenu(self):
         """Populate menu with recent files."""
+
+    ## Dialogs.
+    def openFile(self):
+        if not self.check():
+	    return
+        path = os.path.dirname(unicode(self.filename))\
+                if self.filename else '.'
+        formats = ['*.%s' % unicode(fmt).lower()\
+                for fmt in QImageReader.supportedImageFormats()]
+        filename = unicode(QFileDialog.getOpenFileName(self,
+            '%s - Choose Image', path, 'Image files (%s)' % ' '.join(formats)))
+        if filename:
+            self.loadFile(filename)
+
+    def check(self):
+        # TODO: Prompt user to save labels etc.
+        return True
 
 
 class Settings(object):
