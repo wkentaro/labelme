@@ -13,7 +13,7 @@ class Shape(object):
         self.label = label
         self.line_color = line_color
         self.fill_color = fill_color
-
+	self.pointSize=8 # draw square around each point , with length and width =8 pixels
         self.points = []
         self.fill = False
 
@@ -33,13 +33,24 @@ class Shape(object):
             pen = QPen(self.line_color)
             painter.setPen(pen)
             path = QPainterPath()
+            pathRect = QPainterPath()
+
             path.moveTo(self.points[0].x(), self.points[0].y())
+            pathRect.addRect( self.points[0].x()-self.pointSize/2, self.points[0].y()-self.pointSize/2, self.pointSize,self.pointSize)
+
             for p in self.points[1:]:
                 path.lineTo(p.x(), p.y())
+		pathRect.addRect(p.x()-self.pointSize/2. ,p.y()-self.pointSize/2,self.pointSize,self.pointSize)
             painter.drawPath(path)
+            #painter.drawPath(pathRect)
+
 
             if self.fill:
                 painter.fillPath(path, self.fill_color)
+
+	painter.fillPath(pathRect, self.line_color)
+
+
 
     def __len__(self):
         return len(self.points)
