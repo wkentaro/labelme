@@ -11,7 +11,7 @@ from collections import defaultdict
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-from shape import shape
+from canvas import Canvas
 
 __appname__ = 'labelme'
 
@@ -76,7 +76,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock.setWidget(self.label)
         #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
-        self.imageWidget = Label()
+        self.imageWidget = Canvas()
         self.imageWidget.setAlignment(Qt.AlignCenter)
         self.imageWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
@@ -218,43 +218,6 @@ class Settings(object):
             return method(value)
         return value
 
-
-
-class Label(QLabel):
-    done = pyqtSignal()
-    epsilon = 7**2 # TODO: Tune value
-
-    def __init__(self, *args, **kwargs):
-        super(Label, self).__init__(*args, **kwargs)
-        self.points = []
-        self.shapes = [shape('one', QColor(0, 255, 0))]
-
-    def mousePressEvent(self, ev):
-        self.points.append(ev.pos())
-        self.shapes[0].addPoint(ev.pos())
-        if self.isClosed():
-            self.done.emit()
-            print "Points:", self.points
-            self.points = []
-            self.shapes[0].setFill(True)
-        self.repaint()
-
-    def isClosed(self):
-        return len(self.points) > 1 and self.closeEnough(self.points[0], self.points[-1])
-
-    def closeEnough(self, p1, p2):
-        def dist(p):
-            return p.x() * p.x() + p.y() * p.y()
-        print p1, p2
-        print abs(dist(p1) - dist(p2)), self.epsilon
-        return abs(dist(p1) - dist(p2)) < self.epsilon
-
-    def paintEvent(self, event):
-        for shape in self.shapes:
-            qp = QPainter()
-            qp.begin(self)
-            shape.drawShape(qp)
-            qp.end()
 
 
 def main(argv):

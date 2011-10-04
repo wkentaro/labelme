@@ -4,7 +4,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-class shape(object):
+class Shape(object):
 
     def __init__(self ,label,color):
         self.label=label
