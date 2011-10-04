@@ -148,8 +148,19 @@ class MainWindow(QMainWindow, WindowMixin):
     def showImage(self):
         if self.image.isNull():
             return
-        self.imageWidget.setPixmap(QPixmap.fromImage(self.image))
+        self.imageWidget.setPixmap(self.scaled(QPixmap.fromImage(self.image)))
         self.imageWidget.show()
+
+    def resizeEvent(self, event):
+        if self.imageWidget and self.imageWidget.pixmap():
+            self.imageWidget.setPixmap(self.scaled(self.imageWidget.pixmap()))
+        super(MainWindow, self).resizeEvent(event)
+
+    def scaled(self, pixmap):
+        width = self.centralWidget().width()
+        height = self.centralWidget().height()
+        return pixmap.scaled(width, height,
+          Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
     def closeEvent(self, event):
         # TODO: Make sure changes are saved.
