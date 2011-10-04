@@ -75,7 +75,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock.setWidget(self.label)
         #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
-        self.imageWidget = QLabel()
+        self.imageWidget = Label()
         self.imageWidget.setAlignment(Qt.AlignCenter)
         self.imageWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 
@@ -177,7 +177,7 @@ class MainWindow(QMainWindow, WindowMixin):
     ## Dialogs.
     def openFile(self):
         if not self.check():
-	    return
+            return
         path = os.path.dirname(unicode(self.filename))\
                 if self.filename else '.'
         formats = ['*.%s' % unicode(fmt).lower()\
@@ -217,6 +217,28 @@ class Settings(object):
             return method(value)
         return value
 
+
+
+class Label(QLabel):
+    done = pyqtSignal()
+    epsilon = 0.1 # TODO
+
+    def __init__(self, *args, **kwargs):
+        super(Label, self).__init__(*args, **kwargs)
+        self.points = []
+
+    def mousePressEvent(self, ev):
+        self.points.append(ev.pos())
+        if self.isClosed():
+            self.done.emit()
+            print "Points:", self.points
+            self.points = []
+
+    def isClosed(self):
+        return len(self.points) > 1 and self.closeEnough(self.points[0], self.points[1])
+
+    def closeEnough(self, p1, p2):
+        return abs((p1.x()**2 + p1.y()**2) - (p2.x()**2 + p2.y()**2)) < self.epsilon
 
 
 
