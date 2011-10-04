@@ -12,6 +12,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 from canvas import Canvas
+from zoomwidget import ZoomWidget
 
 __appname__ = 'labelme'
 
@@ -74,14 +75,15 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock = QDockWidget(u'Label', parent=self)
         self.dock.setObjectName(u'Label')
         self.dock.setWidget(self.label)
+        self.zoom_widget = ZoomWidget()
         #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
-        self.imageWidget = Canvas()
-        self.imageWidget.setAlignment(Qt.AlignCenter)
-        self.imageWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
+        self.canvas = Canvas()
+        self.canvas.setAlignment(Qt.AlignCenter)
+        self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
 
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
-        self.setCentralWidget(self.imageWidget)
+        self.setCentralWidget(self.canvas)
 
         # Actions
         quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
@@ -90,8 +92,22 @@ class MainWindow(QMainWindow, WindowMixin):
         labl = self.dock.toggleViewAction()
         labl.setShortcut('Ctrl+L')
 
-        add_actions(self.menu('&File'), (open, color, None, labl, None, quit))
-        add_actions(self.toolbar('Tools'), (open, color, None, labl, None, quit))
+        zoom = QWidgetAction(self)
+        zoom.setDefaultWidget(self.zoom_widget)
+        fit_window = action(self, '&Fit Window', self.setFitWindow,
+                'Ctrl+F', u'Fit image to window', checkable=True)
+
+        self.menus = struct(
+                file=self.menu('&File'),
+                edit=self.menu('&Image'),
+                view=self.menu('&View'))
+        add_actions(self.menus.file, (open, quit))
+        add_actions(self.menus.edit, (color, fit_window))
+        add_actions(self.menus.view, (labl,))
+
+        self.tools = self.toolbar('Tools')
+        add_actions(self.tools, (open, color, None, zoom, fit_window, None, quit))
+
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -101,6 +117,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.filename = filename
         self.recent_files = []
         self.color = None
+        self.zoom_level = 100
+        self.fit_window = False
 
         # TODO: Could be completely declarative.
         # Restore application settings.
@@ -129,6 +147,16 @@ class MainWindow(QMainWindow, WindowMixin):
         # Since loading the file may take some time, make sure it runs in the background.
         self.queueEvent(partial(self.loadFile, self.filename))
 
+        # Callbacks:
+        self.zoom_widget.valueChanged.connect(self.showImage)
+
+
+    ## Callback functions:
+    def setFitWindow(self, value=True):
+        self.zoom_widget.setEnabled(not value)
+        self.fit_window = value
+        self.showImage()
+
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
 
@@ -149,22 +177,27 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.showImage()
             self.statusBar().showMessage(message)
 
+    def resizeEvent(self, event):
+        if self.fit_window and self.canvas and not self.image.isNull():
+            self.showImage()
+        super(MainWindow, self).resizeEvent(event)
+
     def showImage(self):
         if self.image.isNull():
             return
-        self.imageWidget.setPixmap(self.scaled(QPixmap.fromImage(self.image)))
-        self.imageWidget.show()
+        size = self.imageSize()
+        self.canvas.setPixmap(QPixmap.fromImage(self.image.scaled(
+                size, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
+        self.canvas.show()
 
-    def resizeEvent(self, event):
-        if self.imageWidget and self.imageWidget.pixmap():
-            self.imageWidget.setPixmap(self.scaled(self.imageWidget.pixmap()))
-        super(MainWindow, self).resizeEvent(event)
-
-    def scaled(self, pixmap):
-        width = self.centralWidget().width()
-        height = self.centralWidget().height()
-        return pixmap.scaled(width, height,
-          Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    def imageSize(self):
+        """Calculate the size of the image based on current settings."""
+        if self.fit_window:
+            width, height = self.canvas.width(), self.canvas.height()
+        else: # Follow zoom:
+            s = self.zoom_widget.value() / 100.0
+            width, height = s * self.image.width(), s * self.image.height()
+        return QSize(width, height)
 
     def closeEvent(self, event):
         # TODO: Make sure changes are saved.
@@ -226,6 +259,10 @@ class Settings(object):
             return method(value)
         return value
 
+
+class struct(object):
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 
 def main(argv):
