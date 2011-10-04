@@ -12,6 +12,7 @@ class Canvas(QLabel):
         super(Canvas, self).__init__(*args, **kwargs)
         self.points = []
         self.shapes = [Shape('one', QColor(0, 255, 0))]
+        self.current_line = Shape('line', QColor(255, 0, 0))
 
     def mousePressEvent(self, ev):
         if ev.button() != 1:
@@ -34,7 +35,11 @@ class Canvas(QLabel):
         return len(self.points) > 1 and self.closeEnough(self.points[0], self.points[-1])
 
     def mouseMoveEvent(self, ev):
-        print "moving", ev.pos()
+        self.current_line.points = [self.points[-1], self.pos()]
+        self.repaint()
+       #print "moving", ev.pos()
+
+
 
     def closeEnough(self, p1, p2):
         def dist(p):
@@ -49,5 +54,6 @@ class Canvas(QLabel):
             qp = QPainter()
             qp.begin(self)
             shape.drawShape(qp)
+            self.current_line.drawShape(qp)
             qp.end()
 
