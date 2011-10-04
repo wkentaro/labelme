@@ -86,11 +86,12 @@ class MainWindow(QMainWindow, WindowMixin):
         # Actions
         quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
         open = action(self, '&Open', self.openFile, 'Ctrl+O', u'Open file')
+        color = action(self, '&Color', self.chooseColor, 'Ctrl+C', u'Choose line color')
         labl = self.dock.toggleViewAction()
         labl.setShortcut('Ctrl+L')
 
-        add_actions(self.menu('&File'), (open, None, labl, None, quit))
-        add_actions(self.toolbar('Tools'), (open, None, labl, None, quit))
+        add_actions(self.menu('&File'), (open, color, None, labl, None, quit))
+        add_actions(self.toolbar('Tools'), (open, color, None, labl, None, quit))
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -99,6 +100,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.image = QImage()
         self.filename = filename
         self.recent_files = []
+        self.color = None
 
         # TODO: Could be completely declarative.
         # Restore application settings.
@@ -120,6 +122,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # or simply:
         #self.restoreGeometry(settings['window/geometry']
         self.restoreState(settings['window/state'])
+        self.color = QColor(settings.get('line/color', QColor(0, 255, 0, 128)))
 
         # The file menu has default dynamically generated entries.
         self.updateFileMenu()
@@ -170,6 +173,7 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/size'] = self.size()
         s['window/position'] = self.pos()
         s['window/state'] = self.saveState()
+        s['line/color'] = self.color
         #s['window/geometry'] = self.saveGeometry()
 
     def updateFileMenu(self):
@@ -191,6 +195,10 @@ class MainWindow(QMainWindow, WindowMixin):
     def check(self):
         # TODO: Prompt user to save labels etc.
         return True
+
+    def chooseColor(self):
+        self.color = QColorDialog.getColor(self.color, self,
+                u'Choose line color', QColorDialog.ShowAlphaChannel)
 
 
 class Settings(object):
