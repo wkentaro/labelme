@@ -152,7 +152,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.queueEvent(partial(self.loadFile, self.filename))
 
         # Callbacks:
-        self.zoom_widget.valueChanged.connect(self.showImage)
+        self.zoom_widget.editingFinished.connect(self.showImage)
 
 
     ## Callback functions:
