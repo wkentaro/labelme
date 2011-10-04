@@ -1,4 +1,6 @@
 
+from math import sqrt
+
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -6,54 +8,71 @@ from shape import Shape
 
 class Canvas(QLabel):
     done = pyqtSignal()
-    epsilon = 7**2 # TODO: Tune value
+    epsilon = 7.0 # TODO: Tune value
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
-        self.points = []
-        self.shapes = [Shape('one', QColor(0, 255, 0))]
-        self.current_line = Shape('line', QColor(255, 0, 0))
+        self.shapes = []
+        self.current = None
+        self.line = Shape(line_color=QColor(0, 0, 255))
 
     def mousePressEvent(self, ev):
-        if ev.button() != 1:
-            return
+        if ev.button() == 1:
+            if self.current:
+                self.current.vertices.append(ev.pos())
+                if self.isClosed():
+                    self.finalise()
+                self.repaint()
+            else:
+                self.current = Shape()
+                self.current.vertices.append(ev.pos())
+                self.setMouseTracking(True)
 
-        if not self.points:
-            self.setMouseTracking(True)
+    def mouseDoubleClickEvent(self, ev):
+        if self.current:
+            self.current.vertices.append(self.current[0])
+            self.finalise()
 
-        self.points.append(ev.pos())
-        self.shapes[0].addPoint(ev.pos())
-        if self.isClosed():
-            self.done.emit()
-            print "Points:", self.points
-            self.points = []
-            self.shapes[0].setFill(True)
-            self.setMouseTracking(False)
+    def finalise(self):
+        assert self.current
+        self.current.fill = True
+        self.shapes.append(self.current)
+        self.current = None
+        # TODO: Mouse tracking is still useful for selecting shapes!
+        self.setMouseTracking(False)
         self.repaint()
+        self.done.emit()
 
     def isClosed(self):
+        assert self.current
+        return len(self.current) > 1\
+           and self.closeEnough()
         return len(self.points) > 1 and self.closeEnough(self.points[0], self.points[-1])
 
     def mouseMoveEvent(self, ev):
-        self.current_line.points = [self.points[-1], self.pos()]
-        self.repaint()
-       #print "moving", ev.pos()
+        """Update line with last point and current coordinates."""
+        if self.current:
+            self.line.vertices = (self.current[-1], ev.pos())
+            self.repaint()
 
-
-
-    def closeEnough(self, p1, p2):
-        def dist(p):
-            return p.x() * p.x() + p.y() * p.y()
-        print p1, p2
-        print abs(dist(p1) - dist(p2)), self.epsilon
-        return abs(dist(p1) - dist(p2)) < self.epsilon
+    def closeEnough(self):
+        assert self.current
+        def distance(p):
+            return sqrt(p.x() * p.x() + p.y() * p.y())
+        p1, p2 = self.current.vertices[0], self.current.vertices[-1]
+        d = distance(p1 - p2)
+        m = (p1-p2).manhattanLength()
+        print "d %.2f, m %d, %.2f" % (d, m, d - m)
+        return distance(p1 - p2) < self.epsilon
 
     def paintEvent(self, event):
         super(Canvas, self).paintEvent(event)
+        qp = QPainter()
+        qp.begin(self)
         for shape in self.shapes:
-            qp = QPainter()
-            qp.begin(self)
-            shape.drawShape(qp)
-            self.current_line.drawShape(qp)
-            qp.end()
+            shape.paint(qp)
+        if self.current:
+            self.current.paint(qp)
+            self.line.paint(qp)
+        qp.end()
 

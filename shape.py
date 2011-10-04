@@ -6,34 +6,42 @@ from PyQt4.QtCore import *
 
 class Shape(object):
 
-    def __init__(self ,label,color):
-        self.label=label
-        self.points=[]
-        self.color=color
-        self.fill=False
+    def __init__(self, label=None,
+            line_color=QColor(0, 255, 0, 128),
+            fill_color=QColor(255, 0, 0, 128)):
 
-    def getLabel(self):
-        return label
+        self.label = label
+        self.line_color = line_color
+        self.fill_color = fill_color
 
-    def setLabel(self,label):
-        self.label=label
+        self.vertices = []
+        self.fill = False
 
-    def setFill(self,fillB):
-        self.fill=fillB
+    def addVertex(self, vertex):
+        self.vertices.append(vertex)
 
-    def addPoint(self,point):
-        self.points.append(point)
+    def popVertex(self):
+        if self.vertices:
+            return self.vertices.pop()
+        return None
 
-    def drawShape(self,painter):
-
-        if len(self.points) >0 :
-            pen=QPen(self.color)
+    def paint(self, painter):
+        if self.vertices:
+            pen = QPen(self.line_color)
             painter.setPen(pen)
-            prePoint=self.points[0]
-            path=QPainterPath()
-            path.moveTo(prePoint.x(),prePoint.y())
-            for point in self.points:
-                path.lineTo(point.x(),point.y())
+            path = QPainterPath()
+            p0 = self.vertices[0]
+            path.moveTo(p0.x(), p0.y())
+            for v in self.vertices[1:]:
+                path.lineTo(v.x(), v.y())
             painter.drawPath(path)
-        if self.fill:
-            painter.fillPath(path,Qt.red)
+
+            if self.fill:
+                painter.fillPath(path, self.fill_color)
+
+    def __len__(self):
+        return len(self.vertices)
+
+    def __getitem__(self, key):
+        return self.vertices[key]
+
