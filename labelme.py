@@ -82,8 +82,12 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.setAlignment(Qt.AlignCenter)
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
 
+        scroll = QScrollArea()
+        scroll.setWidget(self.canvas)
+        scroll.setWidgetResizable(True)
+
+        self.setCentralWidget(scroll)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
-        self.setCentralWidget(self.canvas)
 
         # Actions
         quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
@@ -193,7 +197,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def imageSize(self):
         """Calculate the size of the image based on current settings."""
         if self.fit_window:
-            width, height = self.canvas.width(), self.canvas.height()
+            width, height = self.centralWidget().width()-2, self.centralWidget().height()-2
         else: # Follow zoom:
             s = self.zoom_widget.value() / 100.0
             width, height = s * self.image.width(), s * self.image.height()
