@@ -7,20 +7,22 @@ from PyQt4.QtCore import *
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
 
-    # These are class variables so that changing them changes ALL shapes!
+    ## The following class variables influence the drawing
+    ## of _all_ shape objects.
+    line_color = QColor(0, 255, 0, 128)
+    fill_color = QColor(255, 0, 0, 128)
     point_type = P_SQUARE
     point_size = 8
 
-    def __init__(self, label=None,
-            line_color=QColor(0, 255, 0, 128),
-            fill_color=QColor(255, 0, 0, 128)):
-
+    def __init__(self, label=None, line_color=None):
         self.label = label
-        self.line_color = line_color
-        self.fill_color = fill_color
-
         self.points = []
         self.fill = False
+        if line_color is not None:
+            # Override the class line_color attribute
+            # with an object attribute. Currently this
+            # is used for drawing the pending line a different color.
+            self.line_color = line_color
 
     def addPoint(self, point):
         self.points.append(point)
@@ -50,7 +52,7 @@ class Shape(object):
                 line_path.lineTo(QPointF(p))
                 # Skip last element, otherwise its vertex is not filled.
                 if p != self.points[0]:
-		    self.drawVertex(vrtx_path, p)
+                    self.drawVertex(vrtx_path, p)
             painter.drawPath(line_path)
             painter.fillPath(vrtx_path, self.line_color)
             if self.fill:

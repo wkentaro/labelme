@@ -11,6 +11,7 @@ from collections import defaultdict
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+from shape import Shape
 from canvas import Canvas
 from zoomwidget import ZoomWidget
 
@@ -236,6 +237,9 @@ class MainWindow(QMainWindow, WindowMixin):
     def chooseColor(self):
         self.color = QColorDialog.getColor(self.color, self,
                 u'Choose line color', QColorDialog.ShowAlphaChannel)
+        # Change the color for all shape lines:
+        Shape.line_color = self.color
+        self.canvas.repaint()
 
 
 class Settings(object):
