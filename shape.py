@@ -5,6 +5,11 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 class Shape(object):
+    P_SQUARE, P_ROUND = range(2)
+
+    # These are class variables so that changing them changes ALL shapes!
+    point_type = P_SQUARE
+    point_size = 8
 
     def __init__(self, label=None,
             line_color=QColor(0, 255, 0, 128),
@@ -13,7 +18,7 @@ class Shape(object):
         self.label = label
         self.line_color = line_color
         self.fill_color = fill_color
-	self.pointSize=8 # draw square around each point , with length and width =8 pixels
+
         self.points = []
         self.fill = False
 
@@ -28,29 +33,35 @@ class Shape(object):
     def isClosed(self):
         return len(self.points) > 1 and self[0] == self[-1]
 
+    # TODO:
+    # The paths could be stored and elements added directly to them.
     def paint(self, painter):
         if self.points:
             pen = QPen(self.line_color)
             painter.setPen(pen)
-            path = QPainterPath()
-            pathRect = QPainterPath()
 
-            path.moveTo(self.points[0].x(), self.points[0].y())
-            pathRect.addRect( self.points[0].x()-self.pointSize/2, self.points[0].y()-self.pointSize/2, self.pointSize,self.pointSize)
+            line_path = QPainterPath()
+            vrtx_path = QPainterPath()
+
+            line_path.moveTo(QPointF(self.points[0]))
+            self.drawVertex(vrtx_path, self.points[0])
 
             for p in self.points[1:]:
-                path.lineTo(p.x(), p.y())
-		pathRect.addRect(p.x()-self.pointSize/2. ,p.y()-self.pointSize/2,self.pointSize,self.pointSize)
-            painter.drawPath(path)
-            #painter.drawPath(pathRect)
-
-
+                line_path.lineTo(QPointF(p))
+                # Skip last element, otherwise its vertex is not filled.
+                if p != self.points[0]:
+		    self.drawVertex(vrtx_path, p)
+            painter.drawPath(line_path)
+            painter.fillPath(vrtx_path, self.line_color)
             if self.fill:
-                painter.fillPath(path, self.fill_color)
+                painter.fillPath(line_path, self.fill_color)
 
-	painter.fillPath(pathRect, self.line_color)
-
-
+    def drawVertex(self, path, point):
+        d = self.point_size
+        if self.point_type == self.P_SQUARE:
+            path.addRect(point.x() - d/2, point.y() - d/2, d, d)
+        else:
+            path.addEllipse(QPointF(point), d/2.0, d/2.0)
 
     def __len__(self):
         return len(self.points)

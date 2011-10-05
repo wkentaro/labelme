@@ -43,7 +43,9 @@ class Canvas(QLabel):
 
     def mouseDoubleClickEvent(self, ev):
         if self.current:
-            #self.current.addPoint(self.current[0]) , you don't need this code ,point0 is already there (duplicate the same point)
+            # Add first point in the list so that it is consistent
+            # with shapes created the normal way.
+            self.current.addPoint(self.current[0])
             self.finalise()
 
     def paintEvent(self, event):
