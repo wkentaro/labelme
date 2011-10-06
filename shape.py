@@ -11,6 +11,7 @@ class Shape(object):
     ## of _all_ shape objects.
     line_color = QColor(0, 255, 0, 128)
     fill_color = QColor(255, 0, 0, 128)
+    select_color=QColor(255,255,255,255)
     point_type = P_SQUARE
     point_size = 8
 
@@ -18,6 +19,7 @@ class Shape(object):
         self.label = label
         self.points = []
         self.fill = False
+        self.selected=False
         if line_color is not None:
             # Override the class line_color attribute
             # with an object attribute. Currently this
@@ -39,7 +41,12 @@ class Shape(object):
     # The paths could be stored and elements added directly to them.
     def paint(self, painter):
         if self.points:
-            pen = QPen(self.line_color)
+            if self.selected:
+                pen = QPen(self.select_color)
+            else:
+                pen = QPen(self.line_color)
+
+            
             painter.setPen(pen)
 
             line_path = QPainterPath()
@@ -64,7 +71,14 @@ class Shape(object):
             path.addRect(point.x() - d/2, point.y() - d/2, d, d)
         else:
             path.addEllipse(QPointF(point), d/2.0, d/2.0)
-
+    
+    
+    def containPoint(self,point):
+        path=QPainterPath(QPointF(self.points[0]))
+        for p in self.points[1:]:
+            path.lineTo(QPointF(p))
+        return path.contains(QPointF(point))
+        
     def __len__(self):
         return len(self.points)
 
