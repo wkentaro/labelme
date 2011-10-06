@@ -17,13 +17,10 @@ class Canvas(QLabel):
         self.selectedShape=None # save the selected shape here
         self.line_color = QColor(0, 0, 255)
         self.line = Shape(line_color=self.line_color)
-        self.mouseButtonIsPressed=False #when it is true and shape is selected , move the shape with the mouse move event
-        
-        
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-        if self.current and self.startLabeling: 
+        if self.current and self.startLabeling:
             if len(self.current) > 1 and self.closeEnough(ev.pos(), self.current[0]):
                 self.line[1] = self.current[0]
                 self.line.line_color = self.current.line_color
@@ -31,16 +28,11 @@ class Canvas(QLabel):
                 self.line[1] = ev.pos()
                 self.line.line_color = self.line_color
             self.repaint()
-            return
-            
-        if self.mouseButtonIsPressed:
-            print ev.x()
-            
+
     def mousePressEvent(self, ev):
-        if ev.button() == 1: 
+        if ev.button() == 1:
             if self.startLabeling:
-                
-                if self.current :
+                if self.current:
                     self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
@@ -61,20 +53,20 @@ class Canvas(QLabel):
             self.current.addPoint(self.current[0])
             self.finalise()
 
-    def selectShape(self,point):
+    def selectShape(self, point):
+        """Select the first shape created which contains this point."""
         self.deSelectShape()
         for shape in self.shapes:
-            if shape.containPoint(point):
-                shape.selected=True
-                self.selectedShape=shape
-                self.repaint()
-                return
-        
-                #shape.select()
+            if shape.containsPoint(point):
+                shape.selected = True
+                self.selectedShape = shape
+                return self.repaint()
+
     def deSelectShape(self):
         if self.selectedShape:
-            self.selectedShape.selected=False
+            self.selectedShape.selected = False
             self.repaint()
+
     def paintEvent(self, event):
         super(Canvas, self).paintEvent(event)
         qp = QPainter()
@@ -93,7 +85,7 @@ class Canvas(QLabel):
         self.current.fill = True
         self.shapes.append(self.current)
         self.current = None
-        self.startLabeling=False
+        self.startLabeling = False
         # TODO: Mouse tracking is still useful for selecting shapes!
         self.setMouseTracking(False)
         self.repaint()
