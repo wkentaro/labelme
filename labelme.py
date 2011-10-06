@@ -17,6 +17,8 @@ from zoomwidget import ZoomWidget
 
 __appname__ = 'labelme'
 
+# TODO:
+# - Zoom is too "steppy".
 
 ### Utility functions and classes.
 
@@ -80,12 +82,18 @@ class MainWindow(QMainWindow, WindowMixin):
         #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
         self.canvas = Canvas()
-        self.canvas.setAlignment(Qt.AlignCenter)
+        #self.canvas.setAlignment(Qt.AlignCenter)
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
+        self.canvas.zoomRequest.connect(self.zoomRequest)
 
         scroll = QScrollArea()
         scroll.setWidget(self.canvas)
         scroll.setWidgetResizable(True)
+        self.scrollBars = {
+            Qt.Vertical: scroll.verticalScrollBar(),
+            Qt.Horizontal: scroll.horizontalScrollBar()
+            }
+        self.canvas.scrollRequest.connect(self.scrollRequest)
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
@@ -159,6 +167,18 @@ class MainWindow(QMainWindow, WindowMixin):
 
 
     ## Callback functions:
+    def scrollRequest(self, delta, orientation):
+        units = - delta / (8 * 15)
+        bar = self.scrollBars[orientation]
+        bar.setValue(bar.value() + bar.singleStep() * units)
+
+    def zoomRequest(self, delta):
+        if not self.fit_window:
+            units = delta / (8 * 15)
+            scale = 10
+            self.zoom_widget.setValue(self.zoom_widget.value() + scale * units)
+            self.zoom_widget.editingFinished.emit()
+
     def setFitWindow(self, value=True):
         self.zoom_widget.setEnabled(not value)
         self.fit_window = value
@@ -193,17 +213,20 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.image.isNull():
             return
         size = self.imageSize()
-        self.canvas.setPixmap(QPixmap.fromImage(self.image.scaled(
-                size, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
+        self.canvas.pixmap = QPixmap.fromImage(self.image)
+        self.canvas.adjustSize()
+        self.canvas.repaint()
         self.canvas.show()
 
     def imageSize(self):
         """Calculate the size of the image based on current settings."""
         if self.fit_window:
             width, height = self.centralWidget().width()-2, self.centralWidget().height()-2
+            self.canvas.scale = 1.0
         else: # Follow zoom:
             s = self.zoom_widget.value() / 100.0
             width, height = s * self.image.width(), s * self.image.height()
+            self.canvas.scale = s
         return QSize(width, height)
 
     def closeEvent(self, event):

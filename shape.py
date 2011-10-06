@@ -4,6 +4,9 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+# FIXME:
+# - Don't scale vertices.
+
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
 
@@ -47,11 +50,11 @@ class Shape(object):
             line_path = QPainterPath()
             vrtx_path = QPainterPath()
 
-            line_path.moveTo(QPointF(self.points[0]))
+            line_path.moveTo(self.points[0])
             self.drawVertex(vrtx_path, self.points[0])
 
             for p in self.points[1:]:
-                line_path.lineTo(QPointF(p))
+                line_path.lineTo(p)
                 # Skip last element, otherwise its vertex is not filled.
                 if p != self.points[0]:
                     self.drawVertex(vrtx_path, p)
@@ -65,7 +68,7 @@ class Shape(object):
         if self.point_type == self.P_SQUARE:
             path.addRect(point.x() - d/2, point.y() - d/2, d, d)
         else:
-            path.addEllipse(QPointF(point), d/2.0, d/2.0)
+            path.addEllipse(point, d/2.0, d/2.0)
 
     def containsPoint(self, point):
         path = QPainterPath(QPointF(self.points[0]))
