@@ -7,6 +7,9 @@ from PyQt4.QtCore import *
 from shape import Shape
 
 class Canvas(QWidget):
+    zoomRequest = pyqtSignal(int)
+    scrollRequest = pyqtSignal(int, int)
+
     epsilon = 9.0 # TODO: Tune value
 
     def __init__(self, *args, **kwargs):
@@ -124,6 +127,26 @@ class Canvas(QWidget):
         if self.pixmap:
             return self.scale * self.pixmap.size()
         return super(Canvas, self).minimumSizeHint()
+
+    def wheelEvent(self, ev):
+        if ev.orientation() == Qt.Vertical:
+            mods = ev.modifiers()
+            if Qt.ControlModifier == int(mods):
+                self.zoomRequest.emit(ev.delta())
+            else:
+                self.scrollRequest.emit(ev.delta(),
+                        Qt.Horizontal if (Qt.ShiftModifier == int(mods))\
+                                      else Qt.Vertical)
+        else:
+            self.scrollRequest.emit(ev.delta(), Qt.Horizontal)
+        ev.accept()
+
+    def keyPressEvent(self, ev):
+        if ev.key() == Qt.Key_Escape and self.current:
+            self.current = None
+            self.setMouseTracking(False)
+            self.repaint()
+
 
 def distance(p):
     return sqrt(p.x() * p.x() + p.y() * p.y())

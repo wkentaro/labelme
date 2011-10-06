@@ -17,6 +17,8 @@ from zoomwidget import ZoomWidget
 
 __appname__ = 'labelme'
 
+# TODO:
+# - Zoom is too "steppy".
 
 ### Utility functions and classes.
 
@@ -82,10 +84,16 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
+        self.canvas.zoomRequest.connect(self.zoomRequest)
 
         scroll = QScrollArea()
         scroll.setWidget(self.canvas)
         scroll.setWidgetResizable(True)
+        self.scrollBars = {
+            Qt.Vertical: scroll.verticalScrollBar(),
+            Qt.Horizontal: scroll.horizontalScrollBar()
+            }
+        self.canvas.scrollRequest.connect(self.scrollRequest)
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
@@ -157,6 +165,18 @@ class MainWindow(QMainWindow, WindowMixin):
 
 
     ## Callback functions:
+    def scrollRequest(self, delta, orientation):
+        units = - delta / (8 * 15)
+        bar = self.scrollBars[orientation]
+        bar.setValue(bar.value() + bar.singleStep() * units)
+
+    def zoomRequest(self, delta):
+        if not self.fit_window:
+            units = delta / (8 * 15)
+            scale = 10
+            self.zoom_widget.setValue(self.zoom_widget.value() + scale * units)
+            self.zoom_widget.editingFinished.emit()
+
     def setFitWindow(self, value=True):
         self.zoom_widget.setEnabled(not value)
         self.fit_window = value
