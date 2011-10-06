@@ -80,7 +80,7 @@ class MainWindow(QMainWindow, WindowMixin):
         #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
         self.canvas = Canvas()
-        self.canvas.setAlignment(Qt.AlignCenter)
+        #self.canvas.setAlignment(Qt.AlignCenter)
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
 
         scroll = QScrollArea()
@@ -191,17 +191,20 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.image.isNull():
             return
         size = self.imageSize()
-        self.canvas.setPixmap(QPixmap.fromImage(self.image.scaled(
-                size, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
+        self.canvas.pixmap = QPixmap.fromImage(self.image)
+        self.canvas.adjustSize()
+        self.canvas.repaint()
         self.canvas.show()
 
     def imageSize(self):
         """Calculate the size of the image based on current settings."""
         if self.fit_window:
             width, height = self.centralWidget().width()-2, self.centralWidget().height()-2
+            self.canvas.scale = 1.0
         else: # Follow zoom:
             s = self.zoom_widget.value() / 100.0
             width, height = s * self.image.width(), s * self.image.height()
+            self.canvas.scale = s
         return QSize(width, height)
 
     def closeEvent(self, event):
