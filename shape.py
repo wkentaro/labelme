@@ -50,11 +50,11 @@ class Shape(object):
             line_path = QPainterPath()
             vrtx_path = QPainterPath()
 
-            line_path.moveTo(self.points[0])
+            line_path.moveTo(QPointF(self.points[0]))
             self.drawVertex(vrtx_path, self.points[0])
 
             for p in self.points[1:]:
-                line_path.lineTo(p)
+                line_path.lineTo(QPointF(p))
                 # Skip last element, otherwise its vertex is not filled.
                 if p != self.points[0]:
                     self.drawVertex(vrtx_path, p)
@@ -75,7 +75,13 @@ class Shape(object):
         for p in self.points[1:]:
             path.lineTo(QPointF(p))
         return path.contains(QPointF(point))
-
+    def moveBy(self,dx,dy):
+        index=0
+        for point in self.points:
+           newXPos= point.x()+dx
+           newYPos=point.y()+dy
+           self.points[index]=QPoint(newXPos,newYPos)
+           index +=1
     def __len__(self):
         return len(self.points)
 

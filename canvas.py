@@ -18,8 +18,12 @@ class Canvas(QWidget):
         self.shapes = []
         self.current = None
         self.selectedShape=None # save the selected shape here
+        self.selectedShapeCopy=None
         self.line_color = QColor(0, 0, 255)
         self.line = Shape(line_color=self.line_color)
+        self.mouseButtonIsPressed=False #when it is true and shape is selected , move the shape with the mouse move event
+        self.prevPoint=QPoint()
+        
         self.scale = 1.0
         self.pixmap = None
 
@@ -27,10 +31,29 @@ class Canvas(QWidget):
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-        if self.startLabeling and self.current:
+
+        if (ev.buttons() & 2):  # wont work , as ev.buttons doesn't work well , or I haven't known how to use it :) to use right click
+            print ev.button()
+            if self.selectedShapeCopy:
+                if self.prevPoint:
+                    point=QPoint(self.prevPoint)
+                    dx= ev.x()-point.x()
+                    dy=ev.y()-point.y()
+                    self.selectedShapeCopy.moveBy(dx,dy)
+                    self.repaint()
+                self.prevPoint=ev.pos()
+            elif self.selectedShape:
+                newShape=Shape()
+                for point in self.selectedShape.points:
+                    newShape.addPoint(point)
+                self.selectedShapeCopy=newShape
+                self.repaint()
+            return
+
+        if self.current and self.startLabeling: 
             pos = self.transformPos(ev.posF())
             # Don't allow the user to draw outside of the pixmap area.
-            # FIXME: Project point to pixmap's edge when getting out too fast.
+            # FIXME: Project point to pixmap's edge when getting out too fast
             if self.outOfPixmap(pos):
                 return ev.ignore()
             if len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
@@ -40,8 +63,18 @@ class Canvas(QWidget):
             else:
                 self.line[1] = pos
                 self.line.line_color = self.line_color
-            self.repaint()
-
+            return self.repaint()
+            
+        if self.selectedShape:
+            if self.prevPoint:
+                    point=QPoint(self.prevPoint)
+                   # print point.x()
+                    dx= ev.x()-point.x()
+                    dy=ev.y()-point.y()
+                    self.selectedShape.moveBy(dx,dy)
+                    self.repaint()
+            self.prevPoint=ev.pos()
+            
     def mousePressEvent(self, ev):
         if ev.button() == 1:
             if self.startLabeling:
@@ -59,6 +92,9 @@ class Canvas(QWidget):
                     self.setMouseTracking(True)
             else: # not in adding new label mode
                 self.selectShape(ev.pos())
+                self.prevPoint=ev.pos()
+       
+                
 
     def mouseDoubleClickEvent(self, ev):
         if self.current and self.startLabeling:
@@ -80,7 +116,12 @@ class Canvas(QWidget):
         if self.selectedShape:
             self.selectedShape.selected = False
             self.repaint()
-
+    def deleteSelected(self):
+        if self.selectedShape:
+             self.shapes.remove(self.selectedShape)
+             self.selectedShape=None
+             #print self.selectedShape()
+             self.repaint()
     def paintEvent(self, event):
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
@@ -98,6 +139,9 @@ class Canvas(QWidget):
         if self.current:
             self.current.paint(p)
             self.line.paint(p)
+        if self.selectedShapeCopy:
+            self.selectedShapeCopy.paint(p)
+        
 
         p.end()
 

@@ -102,7 +102,9 @@ class MainWindow(QMainWindow, WindowMixin):
         quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
         open = action(self, '&Open', self.openFile, 'Ctrl+O', u'Open file')
         color = action(self, '&Color', self.chooseColor, 'Ctrl+C', u'Choose line color')
-        newl = action(self, '&New Label', self.newLabel, 'Ctrl+N', u'Add new label')
+        new_Label=action(self,'&New Label',self.newlabel,'Ctrl+N',u'Add new label')
+        delete=action(self,'&delete',self.deleteSelectedShape,'Ctrl+D',u'Delete')
+
         labl = self.dock.toggleViewAction()
         labl.setShortcut('Ctrl+L')
 
@@ -116,12 +118,12 @@ class MainWindow(QMainWindow, WindowMixin):
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
         add_actions(self.menus.file, (open, quit))
-        add_actions(self.menus.edit, (newl, color, fit_window))
+        add_actions(self.menus.edit, (new_Label,color, fit_window))
 
         add_actions(self.menus.view, (labl,))
 
         self.tools = self.toolbar('Tools')
-        add_actions(self.tools, (open, color, None, newl,None, zoom, fit_window, None, quit))
+        add_actions(self.tools, (open, color, None,new_Label,delete,None, zoom, fit_window, None, quit))
 
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -265,11 +267,12 @@ class MainWindow(QMainWindow, WindowMixin):
         # Change the color for all shape lines:
         Shape.line_color = self.color
         self.canvas.repaint()
-
-    def newLabel(self):
+        
+    def newlabel(self):
         self.canvas.deSelectShape()
-        self.canvas.startLabeling = True
-
+        self.canvas.startLabeling=True
+    def deleteSelectedShape(self):
+        self.canvas.deleteSelected()
 class Settings(object):
     """Convenience dict-like wrapper around QSettings."""
     def __init__(self, types=None):
