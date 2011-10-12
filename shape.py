@@ -5,7 +5,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 # FIXME:
-# - Don't scale vertices.
+# - Add support for highlighting vertices.
 
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
@@ -17,6 +17,7 @@ class Shape(object):
     select_color = QColor(255, 255, 255)
     point_type = P_SQUARE
     point_size = 8
+    scale = 1.0
 
     def __init__(self, label=None, line_color=None):
         self.label = label
@@ -45,7 +46,8 @@ class Shape(object):
     def paint(self, painter):
         if self.points:
             pen = QPen(self.select_color if self.selected else self.line_color)
-            pen.setWidth(2)
+            # Try using integer sizes for smoother drawing(?)
+            pen.setWidth(max(1, int(round(2.0 / self.scale))))
             painter.setPen(pen)
 
             line_path = QPainterPath()
@@ -65,7 +67,7 @@ class Shape(object):
                 painter.fillPath(line_path, self.fill_color)
 
     def drawVertex(self, path, point):
-        d = self.point_size
+        d = self.point_size / self.scale
         if self.point_type == self.P_SQUARE:
             path.addRect(point.x() - d/2, point.y() - d/2, d, d)
         else:

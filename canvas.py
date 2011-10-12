@@ -146,6 +146,7 @@ class Canvas(QWidget):
         p.translate(self.offsetToCenter())
 
         p.drawPixmap(0, 0, self.pixmap)
+        Shape.scale = self.scale
         for shape in self.shapes:
             shape.paint(p)
         if self.current:
