@@ -160,11 +160,9 @@ class MainWindow(QMainWindow, WindowMixin):
         """
         action = self.label.popUp(position)
         if action == self.label.OK:
-            print "Setting label to %s" % self.label.text()
             self.canvas.setLastLabel(self.label.text())
             # TODO: Add to list of labels.
         elif action == self.label.UNDO:
-            print "Undo last line"
             self.canvas.undoLastLine()
         elif action == self.label.DELETE:
             self.canvas.deleteLastShape()
@@ -276,7 +274,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def newLabel(self):
         self.canvas.deSelectShape()
-        self.canvas.startLabeling=True
+        self.canvas.setEditing()
 
     def deleteSelectedShape(self):
         self.canvas.deleteSelected()

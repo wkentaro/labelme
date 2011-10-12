@@ -11,11 +11,14 @@ class Canvas(QWidget):
     scrollRequest = pyqtSignal(int, int)
     newShape = pyqtSignal(QPoint)
 
+    SELECT, EDIT = range(2)
+
     epsilon = 9.0 # TODO: Tune value
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
-        self.startLabeling=False # has to click new label buttoon to starting drawing new polygons
+        # Initialise local state.
+        self.mode = self.SELECT
         self.shapes = []
         self.current = None
         self.selectedShape=None # save the selected shape here
@@ -26,14 +29,19 @@ class Canvas(QWidget):
         self.prevPoint=QPoint()
         self.scale = 1.0
         self.pixmap = None
-
+        # Set widget options.
+        self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
+
+    def editing(self):
+        return self.mode == self.EDIT
+
+    def setEditing(self, value=True):
+        self.mode = self.EDIT if value else self.SELECT
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-
-        if (ev.buttons() & 2):  # wont work , as ev.buttons doesn't work well , or I haven't known how to use it :) to use right click
-            print ev.button()
+        if ev.button() == Qt.RightButton:
             if self.selectedShapeCopy:
                 if self.prevPoint:
                     point=QPoint(self.prevPoint)
@@ -51,7 +59,7 @@ class Canvas(QWidget):
             return
 
         # Polygon drawing.
-        if self.current and self.startLabeling:
+        if self.current and self.editing():
             pos = self.transformPos(ev.posF())
             color = self.line_color
             if self.outOfPixmap(pos):
@@ -77,16 +85,15 @@ class Canvas(QWidget):
                     self.selectedShape.moveBy(dx,dy)
                     self.repaint()
             self.prevPoint=ev.pos()
-            
+
     def mousePressEvent(self, ev):
-        if ev.button() == 1:
-            if self.startLabeling:
+        if ev.button() == Qt.LeftButton:
+            if self.editing():
                 if self.current:
                     self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
                         self.finalise(ev)
-                    self.repaint()
                 else:
                     pos = self.transformPos(ev.posF())
                     if self.outOfPixmap(pos):
@@ -94,15 +101,13 @@ class Canvas(QWidget):
                     self.current = Shape()
                     self.line.points = [pos, pos]
                     self.current.addPoint(pos)
-                    self.setMouseTracking(True)
-            else: # not in adding new label mode
+            else:
                 self.selectShape(ev.pos())
                 self.prevPoint=ev.pos()
-       
-                
+            self.repaint()
 
     def mouseDoubleClickEvent(self, ev):
-        if self.current and self.startLabeling:
+        if self.current and self.editing():
             # Add first point in the list so that it is consistent
             # with shapes created the normal way.
             self.current.addPoint(self.current[0])
@@ -121,12 +126,14 @@ class Canvas(QWidget):
         if self.selectedShape:
             self.selectedShape.selected = False
             self.repaint()
+
     def deleteSelected(self):
         if self.selectedShape:
              self.shapes.remove(self.selectedShape)
              self.selectedShape=None
              #print self.selectedShape()
              self.repaint()
+
     def paintEvent(self, event):
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
@@ -146,7 +153,6 @@ class Canvas(QWidget):
             self.line.paint(p)
         if self.selectedShapeCopy:
             self.selectedShapeCopy.paint(p)
-        
 
         p.end()
 
@@ -167,15 +173,12 @@ class Canvas(QWidget):
         w, h = self.pixmap.width(), self.pixmap.height()
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
-
     def finalise(self, ev):
         assert self.current
         self.current.fill = True
         self.shapes.append(self.current)
         self.current = None
-        self.startLabeling = False
-        # TODO: Mouse tracking is still useful for selecting shapes!
-        self.setMouseTracking(False)
+        self.setEditing(False)
         self.repaint()
         self.newShape.emit(self.mapToGlobal(ev.pos()))
 
@@ -207,7 +210,6 @@ class Canvas(QWidget):
                 return QPointF(min(max(0, x2), max(x3, x4)), y3)
         return QPointF(x, y)
 
-
     def intersectingEdges(self, (x1, y1), (x2, y2), points):
         """For each edge formed by `points', yield the intersection
         with the line segment `(x1,y1) - (x2,y2)`, if it exists.
@@ -231,7 +233,6 @@ class Canvas(QWidget):
                 m = QPointF((x3 + x4)/2, (y3 + y4)/2)
                 d = distance(m - QPointF(x2, y2))
                 yield d, i, (x, y)
-
 
     # These two, along with a call to adjustSize are required for the
     # scroll area.
@@ -259,19 +260,24 @@ class Canvas(QWidget):
     def keyPressEvent(self, ev):
         if ev.key() == Qt.Key_Escape and self.current:
             self.current = None
-            self.setMouseTracking(False)
             self.repaint()
 
     def setLastLabel(self, text):
         assert text
-        print "Setting shape label to %r" % text
+        print "shape <- '%s'" % text
         self.shapes[-1].label = text
 
     def undoLastLine(self):
-        print "Undoing last line"
+        assert self.shapes
+        self.current = self.shapes.pop()
+        self.current.fill = False
+        pos = self.current.popPoint()
+        self.line.points = [self.current[-1], pos]
+        self.setEditing()
 
     def deleteLastShape(self):
-        print "Deleting last shape"
+        assert self.shapes
+        self.shapes.pop()
 
 
 def distance(p):

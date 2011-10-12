@@ -37,7 +37,8 @@ class LabelDialog(QDialog):
         return self.edit.text()
 
     def popUp(self, position):
-        self.move(position)
+        # It actually works without moving...
+        #self.move(position)
         self.edit.setText(u"Enter label")
         self.edit.setSelection(0, len(self.text()))
         self.edit.setFocus(Qt.PopupFocusReason)
