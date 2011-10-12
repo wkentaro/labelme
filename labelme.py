@@ -11,9 +11,12 @@ from collections import defaultdict
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+import resources
+
 from shape import Shape
 from canvas import Canvas
 from zoomwidget import ZoomWidget
+
 
 __appname__ = 'labelme'
 
@@ -99,37 +102,38 @@ class MainWindow(QMainWindow, WindowMixin):
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
 
         # Actions
-        quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
-        quit.setIcon(QIcon('Images/quit.png'))
-        open = action(self, '&Open', self.openFile, 'Ctrl+O', u'Open file')
-        open.setIcon(QIcon('Images/open.png'))
-        color = action(self, '&Color', self.chooseColor, 'Ctrl+C', u'Choose line color')
-        color.setIcon(QIcon('Images/Color.png'))
-        new_Label=action(self,'&New Label',self.newlabel,'Ctrl+N',u'Add new label')
-        new_Label.setIcon(QIcon('Images/new.png'))
-        delete=action(self,'&delete',self.deleteSelectedShape,'Ctrl+D',u'Delete')
-        delete.setIcon(QIcon('Images/delete.png'))
+        quit = action(self, '&Quit', self.close,
+                'Ctrl+Q', 'quit', u'Exit application')
+        open = action(self, '&Open', self.openFile,
+                'Ctrl+O', 'open', u'Open file')
+        color = action(self, '&Color', self.chooseColor,
+                'Ctrl+C', 'color', u'Choose line color')
+        label = action(self,'&New Label', self.newLabel,
+                'Ctrl+N', 'new', u'Add new label')
+        delete = action(self,'&delete', self.deleteSelectedShape,
+                'Ctrl+D', 'delete', u'Delete')
 
         labl = self.dock.toggleViewAction()
         labl.setShortcut('Ctrl+L')
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoom_widget)
+
         fit_window = action(self, '&Fit Window', self.setFitWindow,
-                'Ctrl+F', u'Fit image to window', checkable=True)
-        fit_window.setIcon(QIcon('Images/FitSize.png'))
+                'Ctrl+F', 'fit',  u'Fit image to window', checkable=True)
 
         self.menus = struct(
                 file=self.menu('&File'),
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
         add_actions(self.menus.file, (open, quit))
-        add_actions(self.menus.edit, (new_Label,color, fit_window))
+        add_actions(self.menus.edit, (label, color, fit_window))
 
         add_actions(self.menus.view, (labl,))
 
         self.tools = self.toolbar('Tools')
-        add_actions(self.tools, (open, color, None,new_Label,delete,None, zoom, fit_window, None, quit))
+        add_actions(self.tools, (open, color, None, label, delete, None,
+            zoom, fit_window, None, quit))
 
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -273,12 +277,15 @@ class MainWindow(QMainWindow, WindowMixin):
         # Change the color for all shape lines:
         Shape.line_color = self.color
         self.canvas.repaint()
-        
-    def newlabel(self):
+
+    def newLabel(self):
         self.canvas.deSelectShape()
         self.canvas.startLabeling=True
+
     def deleteSelectedShape(self):
         self.canvas.deleteSelected()
+
+
 class Settings(object):
     """Convenience dict-like wrapper around QSettings."""
     def __init__(self, types=None):
