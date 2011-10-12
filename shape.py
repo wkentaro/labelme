@@ -45,6 +45,7 @@ class Shape(object):
     def paint(self, painter):
         if self.points:
             pen = QPen(self.select_color if self.selected else self.line_color)
+            pen.setWidth(2)
             painter.setPen(pen)
 
             line_path = QPainterPath()

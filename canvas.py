@@ -23,8 +23,8 @@ class Canvas(QWidget):
         self.current = None
         self.selectedShape=None # save the selected shape here
         self.selectedShapeCopy=None
-        self.line_color = QColor(0, 0, 255)
-        self.line = Shape(line_color=self.line_color)
+        self.lineColor = QColor(0, 0, 255)
+        self.line = Shape(line_color=self.lineColor)
         self.mouseButtonIsPressed=False #when it is true and shape is selected , move the shape with the mouse move event
         self.prevPoint=QPoint()
         self.scale = 1.0
@@ -61,7 +61,7 @@ class Canvas(QWidget):
         # Polygon drawing.
         if self.current and self.editing():
             pos = self.transformPos(ev.posF())
-            color = self.line_color
+            color = self.lineColor
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
