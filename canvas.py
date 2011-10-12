@@ -23,7 +23,6 @@ class Canvas(QWidget):
         self.line = Shape(line_color=self.line_color)
         self.mouseButtonIsPressed=False #when it is true and shape is selected , move the shape with the mouse move event
         self.prevPoint=QPoint()
-        
         self.scale = 1.0
         self.pixmap = None
 
@@ -50,21 +49,24 @@ class Canvas(QWidget):
                 self.repaint()
             return
 
-        if self.current and self.startLabeling: 
+        # Polygon drawing.
+        if self.current and self.startLabeling:
             pos = self.transformPos(ev.posF())
-            # Don't allow the user to draw outside of the pixmap area.
-            # FIXME: Project point to pixmap's edge when getting out too fast
+            color = self.line_color
             if self.outOfPixmap(pos):
-                return ev.ignore()
-            if len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
+                # Don't allow the user to draw outside the pixmap.
+                # Project the point to the pixmap's edges.
+                pos = self.intersectionPoint(pos)
+            elif len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
                 # Attract line to starting point and colorise to alert the user:
-                self.line[1] = self.current[0]
-                self.line.line_color = self.current.line_color
-            else:
-                self.line[1] = pos
-                self.line.line_color = self.line_color
-            return self.repaint()
-            
+                # TODO: I would also like to highlight the pixel somehow.
+                pos = self.current[0]
+                color = self.current.line_color
+            self.line[1] = pos
+            self.line.line_color = color
+            self.repaint()
+            return
+
         if self.selectedShape:
             if self.prevPoint:
                     point=QPoint(self.prevPoint)
@@ -180,6 +182,53 @@ class Canvas(QWidget):
         #m = (p1-p2).manhattanLength()
         #print "d %.2f, m %d, %.2f" % (d, m, d - m)
         return distance(p1 - p2) < self.epsilon
+
+    def intersectionPoint(self, mousePos):
+        # Cycle through each image edge in clockwise fashion,
+        # and find the one intersecting the current line segment.
+        # http://paulbourke.net/geometry/lineline2d/
+        size = self.pixmap.size()
+        points = [(0,0),
+                  (size.width(), 0),
+                  (size.width(), size.height()),
+                  (0, size.height())]
+        x1, y1 = self.current[-1].x(), self.current[-1].y()
+        x2, y2 = mousePos.x(), mousePos.y()
+        d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
+        x3, y3 = points[i]
+        x4, y4 = points[(i+1)%4]
+        if (x, y) == (x1, y1):
+            # Handle cases where previous point is on one of the edges.
+            if x3 == x4:
+                return QPointF(x3, min(max(0, y2), max(y3, y4)))
+            else: # y3 == y4
+                return QPointF(min(max(0, x2), max(x3, x4)), y3)
+        return QPointF(x, y)
+
+
+    def intersectingEdges(self, (x1, y1), (x2, y2), points):
+        """For each edge formed by `points', yield the intersection
+        with the line segment `(x1,y1) - (x2,y2)`, if it exists.
+        Also return the distance of `(x2,y2)' to the middle of the
+        edge along with its index, so that the one closest can be chosen."""
+        for i in xrange(4):
+            x3, y3 = points[i]
+            x4, y4 = points[(i+1) % 4]
+            denom = (y4-y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
+            nua = (x4-x3) * (y1-y3) - (y4-y3) * (x1-x3)
+            nub = (x2-x1) * (y1-y3) - (y2-y1) * (x1-x3)
+            if denom == 0:
+                # This covers two cases:
+                #   nua == nub == 0: Coincident
+                #   otherwise: Parallel
+                continue
+            ua, ub = nua / denom, nub / denom
+            if 0 <= ua <= 1 and 0 <= ub <= 1:
+                x = x1 + ua * (x2 - x1)
+                y = y1 + ua * (y2 - y1)
+                m = QPointF((x3 + x4)/2, (y3 + y4)/2)
+                d = distance(m - QPointF(x2, y2))
+                yield d, i, (x, y)
 
 
     # These two, along with a call to adjustSize are required for the
