@@ -175,7 +175,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.queueEvent(partial(self.loadFile, self.filename))
 
         # Callbacks:
-        self.zoom_widget.editingFinished.connect(self.showImage)
+        self.zoom_widget.editingFinished.connect(self.paintCanvas)
 
 
     ## Callback functions:
@@ -194,7 +194,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def setFitWindow(self, value=True):
         self.zoom_widget.setEnabled(not value)
         self.fit_window = value
-        self.showImage()
+        self.paintCanvas()
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
@@ -213,33 +213,37 @@ class MainWindow(QMainWindow, WindowMixin):
                 message = "Loaded %s" % os.path.basename(unicode(filename))
                 self.image = image
                 self.filename = filename
-                self.showImage()
+                self.loadPixmap()
             self.statusBar().showMessage(message)
 
     def resizeEvent(self, event):
         if self.fit_window and self.canvas and not self.image.isNull():
-            self.showImage()
+            self.paintCanvas()
         super(MainWindow, self).resizeEvent(event)
 
-    def showImage(self):
-        if self.image.isNull():
-            return
-        size = self.imageSize()
+    def loadPixmap(self):
+        assert not self.image.isNull(), "cannot load null image"
         self.canvas.pixmap = QPixmap.fromImage(self.image)
+
+    def paintCanvas(self):
+        assert not self.image.isNull(), "cannot paint null image"
+        self.canvas.scale = self.fitSize() if self.fit_window\
+                            else 0.01 * self.zoom_widget.value()
         self.canvas.adjustSize()
         self.canvas.repaint()
-        self.canvas.show()
 
-    def imageSize(self):
-        """Calculate the size of the image based on current settings."""
-        if self.fit_window:
-            width, height = self.centralWidget().width()-2, self.centralWidget().height()-2
-            self.canvas.scale = 1.0
-        else: # Follow zoom:
-            s = self.zoom_widget.value() / 100.0
-            width, height = s * self.image.width(), s * self.image.height()
-            self.canvas.scale = s
-        return QSize(width, height)
+    def fitSize(self):
+        """Figure out the size of the pixmap in order to fit the main widget."""
+        e = 2.0 # So that no scrollbars are generated.
+        w1 = self.centralWidget().width() - e
+        h1 = self.centralWidget().height() - e
+        a1 = w1/ h1
+        # Calculate a new scale value based on the pixmap's aspect ratio.
+        w2 = self.canvas.pixmap.width() - 0.0
+        h2 = self.canvas.pixmap.height() - 0.0
+        a2 = w2 / h2
+        return w1 / w2 if a2 >= a1 else h1 / h2
+
 
     def closeEvent(self, event):
         # TODO: Make sure changes are saved.
