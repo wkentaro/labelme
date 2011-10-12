@@ -24,6 +24,7 @@ __appname__ = 'labelme'
 
 # TODO:
 # - Zoom is too "steppy".
+# - Add a new column in list widget with checkbox to show/hide shape.
 
 ### Utility functions and classes.
 
@@ -56,7 +57,15 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Main widgets.
         self.label = LabelDialog(parent=self)
+        self.labels = {}
+        self.highlighted = None
+        self.labelList = QListWidget()
+        self.dock = QDockWidget(u'Labels', self)
+        self.dock.setObjectName(u'Labels')
+        self.dock.setWidget(self.labelList)
         self.zoom_widget = ZoomWidget()
+
+        self.labelList.itemActivated.connect(self.highlightLabel)
 
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
@@ -75,6 +84,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.newShape.connect(self.newShape)
 
         self.setCentralWidget(scroll)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
 
         # Actions
         action = partial(newAction, self)
@@ -89,6 +99,8 @@ class MainWindow(QMainWindow, WindowMixin):
         delete = action('&Delete', self.deleteSelectedShape,
                 'Ctrl+D', 'delete', u'Delete')
 
+        labels = self.dock.toggleViewAction()
+        labels.setShortcut('Ctrl+L')
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoom_widget)
@@ -103,7 +115,7 @@ class MainWindow(QMainWindow, WindowMixin):
         addActions(self.menus.file, (open, quit))
         addActions(self.menus.edit, (label, color, fit_window))
 
-        #addActions(self.menus.view, (labl,))
+        addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
         addActions(self.tools, (open, color, None, label, delete, None,
@@ -152,6 +164,19 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
 
 
+    def addLabel(self, label, shape):
+        item = QListWidgetItem(label)
+        self.labels[item] = shape
+        self.labelList.addItem(item)
+
+    def highlightLabel(self, item):
+        if self.highlighted:
+            self.highlighted.fill_color = Shape.fill_color
+        shape = self.labels[item]
+        shape.fill_color = inverted(Shape.fill_color)
+        self.highlighted = shape
+        self.canvas.repaint()
+
     ## Callback functions:
     def newShape(self, position):
         """Pop-up and give focus to the label editor.
@@ -160,7 +185,9 @@ class MainWindow(QMainWindow, WindowMixin):
         """
         action = self.label.popUp(position)
         if action == self.label.OK:
-            self.canvas.setLastLabel(self.label.text())
+            label = self.label.text()
+            shape = self.canvas.setLastLabel(label)
+            self.addLabel(label, shape)
             # TODO: Add to list of labels.
         elif action == self.label.UNDO:
             self.canvas.undoLastLine()
@@ -304,6 +331,10 @@ class Settings(object):
             method = getattr(QVariant, re.sub('^Q', 'to', t.__name__, count=1))
             return method(value)
         return value
+
+
+def inverted(color):
+    return QColor(*[255 - v for v in color.getRgb()])
 
 
 class struct(object):

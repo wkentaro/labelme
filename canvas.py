@@ -107,6 +107,7 @@ class Canvas(QWidget):
             self.repaint()
 
     def mouseDoubleClickEvent(self, ev):
+        # FIXME: Don't create shape with 2 vertices only.
         if self.current and self.editing():
             # Add first point in the list so that it is consistent
             # with shapes created the normal way.
@@ -267,6 +268,7 @@ class Canvas(QWidget):
         assert text
         print "shape <- '%s'" % text
         self.shapes[-1].label = text
+        return self.shapes[-1]
 
     def undoLastLine(self):
         assert self.shapes
