@@ -100,10 +100,15 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Actions
         quit = action(self, '&Quit', self.close, 'Ctrl+Q', u'Exit application')
+        quit.setIcon(QIcon('Images/quit.png'))
         open = action(self, '&Open', self.openFile, 'Ctrl+O', u'Open file')
+        open.setIcon(QIcon('Images/open.png'))
         color = action(self, '&Color', self.chooseColor, 'Ctrl+C', u'Choose line color')
+        color.setIcon(QIcon('Images/Color.png'))
         new_Label=action(self,'&New Label',self.newlabel,'Ctrl+N',u'Add new label')
+        new_Label.setIcon(QIcon('Images/new.png'))
         delete=action(self,'&delete',self.deleteSelectedShape,'Ctrl+D',u'Delete')
+        delete.setIcon(QIcon('Images/delete.png'))
 
         labl = self.dock.toggleViewAction()
         labl.setShortcut('Ctrl+L')
@@ -112,6 +117,7 @@ class MainWindow(QMainWindow, WindowMixin):
         zoom.setDefaultWidget(self.zoom_widget)
         fit_window = action(self, '&Fit Window', self.setFitWindow,
                 'Ctrl+F', u'Fit image to window', checkable=True)
+        fit_window.setIcon(QIcon('Images/FitSize.png'))
 
         self.menus = struct(
                 file=self.menu('&File'),
