@@ -86,6 +86,8 @@ class Canvas(QWidget):
                     self.repaint()
                 else:
                     pos = self.transformPos(ev.posF())
+                    if self.outOfPixmap(pos):
+                        return
                     self.current = Shape()
                     self.line.points = [pos, pos]
                     self.current.addPoint(pos)
