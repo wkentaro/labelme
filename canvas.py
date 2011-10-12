@@ -9,6 +9,7 @@ from shape import Shape
 class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
+    newShape = pyqtSignal(QPoint)
 
     epsilon = 9.0 # TODO: Tune value
 
@@ -84,7 +85,7 @@ class Canvas(QWidget):
                     self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
-                        self.finalise()
+                        self.finalise(ev)
                     self.repaint()
                 else:
                     pos = self.transformPos(ev.posF())
@@ -105,7 +106,7 @@ class Canvas(QWidget):
             # Add first point in the list so that it is consistent
             # with shapes created the normal way.
             self.current.addPoint(self.current[0])
-            self.finalise()
+            self.finalise(ev)
 
     def selectShape(self, point):
         """Select the first shape created which contains this point."""
@@ -167,7 +168,7 @@ class Canvas(QWidget):
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
 
-    def finalise(self):
+    def finalise(self, ev):
         assert self.current
         self.current.fill = True
         self.shapes.append(self.current)
@@ -176,6 +177,7 @@ class Canvas(QWidget):
         # TODO: Mouse tracking is still useful for selecting shapes!
         self.setMouseTracking(False)
         self.repaint()
+        self.newShape.emit(self.mapToGlobal(ev.pos()))
 
     def closeEnough(self, p1, p2):
         #d = distance(p1 - p2)
@@ -259,6 +261,17 @@ class Canvas(QWidget):
             self.current = None
             self.setMouseTracking(False)
             self.repaint()
+
+    def setLastLabel(self, text):
+        assert text
+        print "Setting shape label to %r" % text
+        self.shapes[-1].label = text
+
+    def undoLastLine(self):
+        print "Undoing last line"
+
+    def deleteLastShape(self):
+        print "Deleting last shape"
 
 
 def distance(p):

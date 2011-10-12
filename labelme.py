@@ -13,9 +13,11 @@ from PyQt4.QtCore import *
 
 import resources
 
+from lib import newAction, addActions
 from shape import Shape
 from canvas import Canvas
 from zoomwidget import ZoomWidget
+from labelDialog import LabelDialog
 
 
 __appname__ = 'labelme'
@@ -25,35 +27,11 @@ __appname__ = 'labelme'
 
 ### Utility functions and classes.
 
-def action(parent, text, slot=None, shortcut=None, icon=None,
-           tip=None, checkable=False):
-    """Create a new action and assign callbacks, shortcuts, etc."""
-    a = QAction(text, parent)
-    if icon is not None:
-        a.setIcon(QIcon(u':/%s' % icon))
-    if shortcut is not None:
-        a.setShortcut(shortcut)
-    if tip is not None:
-        a.setToolTip(tip)
-        a.setStatusTip(tip)
-    if slot is not None:
-        a.triggered.connect(slot)
-    if checkable:
-        a.setCheckable(True)
-    return a
-
-def add_actions(widget, actions):
-    for action in actions:
-        if action is None:
-            widget.addSeparator()
-        else:
-            widget.addAction(action)
-
 class WindowMixin(object):
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
-            add_actions(menu, actions)
+            addActions(menu, actions)
         return menu
 
     def toolbar(self, title, actions=None):
@@ -64,7 +42,7 @@ class WindowMixin(object):
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         toolbar.layout().setContentsMargins(0,0,0,0)
         if actions:
-            add_actions(toolbar, actions)
+            addActions(toolbar, actions)
         self.addToolBar(Qt.LeftToolBarArea, toolbar)
         return toolbar
 
@@ -77,12 +55,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.setContentsMargins(0, 0, 0, 0)
 
         # Main widgets.
-        self.label = QLineEdit(u'Hello world, مرحبا ، العالم, Γεια σου κόσμε!')
-        self.dock = QDockWidget(u'Label', parent=self)
-        self.dock.setObjectName(u'Label')
-        self.dock.setWidget(self.label)
+        self.label = LabelDialog(parent=self)
         self.zoom_widget = ZoomWidget()
-        #self.dock.setFeatures(QDockWidget.DockWidgetMovable|QDockWidget.DockWidgetFloatable)
 
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
@@ -98,41 +72,41 @@ class MainWindow(QMainWindow, WindowMixin):
             }
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
+        self.canvas.newShape.connect(self.newShape)
+
         self.setCentralWidget(scroll)
-        self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
 
         # Actions
-        quit = action(self, '&Quit', self.close,
+        action = partial(newAction, self)
+        quit = action('&Quit', self.close,
                 'Ctrl+Q', 'quit', u'Exit application')
-        open = action(self, '&Open', self.openFile,
+        open = action('&Open', self.openFile,
                 'Ctrl+O', 'open', u'Open file')
-        color = action(self, '&Color', self.chooseColor,
+        color = action('&Color', self.chooseColor,
                 'Ctrl+C', 'color', u'Choose line color')
-        label = action(self,'&New Label', self.newLabel,
+        label = action('&New Item', self.newLabel,
                 'Ctrl+N', 'new', u'Add new label')
-        delete = action(self,'&delete', self.deleteSelectedShape,
+        delete = action('&Delete', self.deleteSelectedShape,
                 'Ctrl+D', 'delete', u'Delete')
 
-        labl = self.dock.toggleViewAction()
-        labl.setShortcut('Ctrl+L')
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoom_widget)
 
-        fit_window = action(self, '&Fit Window', self.setFitWindow,
+        fit_window = action('&Fit Window', self.setFitWindow,
                 'Ctrl+F', 'fit',  u'Fit image to window', checkable=True)
 
         self.menus = struct(
                 file=self.menu('&File'),
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
-        add_actions(self.menus.file, (open, quit))
-        add_actions(self.menus.edit, (label, color, fit_window))
+        addActions(self.menus.file, (open, quit))
+        addActions(self.menus.edit, (label, color, fit_window))
 
-        add_actions(self.menus.view, (labl,))
+        #addActions(self.menus.view, (labl,))
 
         self.tools = self.toolbar('Tools')
-        add_actions(self.tools, (open, color, None, label, delete, None,
+        addActions(self.tools, (open, color, None, label, delete, None,
             zoom, fit_window, None, quit))
 
 
@@ -179,6 +153,24 @@ class MainWindow(QMainWindow, WindowMixin):
 
 
     ## Callback functions:
+    def newShape(self, position):
+        """Pop-up and give focus to the label editor.
+
+        position MUST be in global coordinates.
+        """
+        action = self.label.popUp(position)
+        if action == self.label.OK:
+            print "Setting label to %s" % self.label.text()
+            self.canvas.setLastLabel(self.label.text())
+            # TODO: Add to list of labels.
+        elif action == self.label.UNDO:
+            print "Undo last line"
+            self.canvas.undoLastLine()
+        elif action == self.label.DELETE:
+            self.canvas.deleteLastShape()
+        else:
+            assert False, "unknown label action"
+
     def scrollRequest(self, delta, orientation):
         units = - delta / (8 * 15)
         bar = self.scrollBars[orientation]
