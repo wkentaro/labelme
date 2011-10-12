@@ -16,7 +16,7 @@ import resources
 from lib import newAction, addActions
 from shape import Shape
 from canvas import Canvas
-from zoomwidget import ZoomWidget
+from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
 
 
