@@ -69,6 +69,10 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
+        
+
+
+        
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -96,9 +100,23 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+C', 'color', u'Choose line color')
         label = action('&New Item', self.newLabel,
                 'Ctrl+N', 'new', u'Add new label')
+        copy = action('&Copy', self.copySelectedShape,
+                'Ctrl+C', 'copy', u'Copy')
         delete = action('&Delete', self.deleteSelectedShape,
                 'Ctrl+D', 'delete', u'Delete')
+        hideWhenNew=action('&Hide Labels\n When Adding \n new',self.hideWhenNew,
+        'Ctrl+H','Hide',u'Hide',checkable=True)
 
+        
+        self.canvas.setContextMenuPolicy( Qt.CustomContextMenu )
+        self.connect(self.canvas, SIGNAL('customContextMenuRequested(const QPoint&)'), self.on_context_menu)
+
+        # Popup Menu
+        self.popMenu = QMenu(self )
+        self.popMenu.addAction( label )
+        self.popMenu.addAction( delete )
+        self.popMenu.addAction(copy)
+        
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
 
@@ -118,7 +136,7 @@ class MainWindow(QMainWindow, WindowMixin):
         addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (open, color, None, label, delete, None,
+        addActions(self.tools, (open, color, None, label, delete,hideWhenNew, None,
             zoom, fit_window, None, quit))
 
 
@@ -162,13 +180,20 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Callbacks:
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
+        
 
-
+    def on_context_menu(self, point):
+         self.popMenu.exec_( self.canvas.mapToGlobal(point) )
+         
     def addLabel(self, label, shape):
         item = QListWidgetItem(label)
         self.labels[item] = shape
         self.labelList.addItem(item)
-
+        
+    def copySelectedShape(self):
+        print "copy me"
+        self.canvas.copySelectedShape()
+        
     def highlightLabel(self, item):
         if self.highlighted:
             self.highlighted.fill_color = Shape.fill_color
@@ -215,7 +240,9 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
-
+        
+    def hideWhenNew(self):
+        self.canvas.hideShapesWhenNew =not self.canvas.hideShapesWhenNew
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         if filename is None:
@@ -270,8 +297,10 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/position'] = self.pos()
         s['window/state'] = self.saveState()
         s['line/color'] = self.color
-        #s['window/geometry'] = self.saveGeometry()
+        # ask the use for where to save the labels
+       
 
+        #s['window/geometry'] = self.saveGeometry()
     def updateFileMenu(self):
         """Populate menu with recent files."""
 

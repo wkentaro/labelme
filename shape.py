@@ -86,7 +86,17 @@ class Shape(object):
            newYPos=point.y()+dy
            self.points[index]=QPoint(newXPos,newYPos)
            index +=1
-
+           
+    def copy(self):
+        shapeCopy=Shape()
+        for point in self.points:
+            shapeCopy.points.append(point)
+            shapeCopy.label=self.label
+            shapeCopy.fill = self.fill
+            shapeCopy.selected = self.selected
+        return shapeCopy
+    
+    
     def __len__(self):
         return len(self.points)
 

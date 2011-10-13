@@ -29,6 +29,7 @@ class Canvas(QWidget):
         self.prevPoint=QPoint()
         self.scale = 1.0
         self.pixmap = None
+        self.hideShapesWhenNew=False
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
@@ -41,7 +42,7 @@ class Canvas(QWidget):
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-        if ev.button() == Qt.RightButton:
+        if ev.buttons() & Qt.RightButton:
             if self.selectedShapeCopy:
                 if self.prevPoint:
                     point=QPoint(self.prevPoint)
@@ -55,6 +56,7 @@ class Canvas(QWidget):
                 for point in self.selectedShape.points:
                     newShape.addPoint(point)
                 self.selectedShapeCopy=newShape
+                self.selectedShapeCopy.fill=True
                 self.repaint()
             return
 
@@ -99,13 +101,20 @@ class Canvas(QWidget):
                     if self.outOfPixmap(pos):
                         return
                     self.current = Shape()
+                    self.setMouseTracking(True)
                     self.line.points = [pos, pos]
                     self.current.addPoint(pos)
             else:
+               
                 self.selectShape(ev.pos())
                 self.prevPoint=ev.pos()
             self.repaint()
-
+        if ev.button()==Qt.RightButton and not self.editing():
+            self.selectShape(ev.pos())
+            self.prevPoint=ev.pos()
+    
+    
+                
     def mouseDoubleClickEvent(self, ev):
         # FIXME: Don't create shape with 2 vertices only.
         if self.current and self.editing():
@@ -113,11 +122,12 @@ class Canvas(QWidget):
             # with shapes created the normal way.
             self.current.addPoint(self.current[0])
             self.finalise(ev)
+        
 
     def selectShape(self, point):
         """Select the first shape created which contains this point."""
         self.deSelectShape()
-        for shape in self.shapes:
+        for shape in reversed(self.shapes):
             if shape.containsPoint(point):
                 shape.selected = True
                 self.selectedShape = shape
@@ -126,13 +136,13 @@ class Canvas(QWidget):
     def deSelectShape(self):
         if self.selectedShape:
             self.selectedShape.selected = False
+            self.selectedShape=None
             self.repaint()
 
     def deleteSelected(self):
         if self.selectedShape:
              self.shapes.remove(self.selectedShape)
              self.selectedShape=None
-             #print self.selectedShape()
              self.repaint()
 
     def paintEvent(self, event):
@@ -148,8 +158,9 @@ class Canvas(QWidget):
 
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
-        for shape in self.shapes:
-            shape.paint(p)
+        if not self.hideShapesWhenNew:
+            for shape in self.shapes:
+                shape.paint(p)
         if self.current:
             self.current.paint(p)
             self.line.paint(p)
@@ -182,7 +193,9 @@ class Canvas(QWidget):
         self.current = None
         self.setEditing(False)
         self.repaint()
+        self.hideShapesWhenNew=False
         self.newShape.emit(self.mapToGlobal(ev.pos()))
+        self.setMouseTracking(False)
 
     def closeEnough(self, p1, p2):
         #d = distance(p1 - p2)
@@ -278,11 +291,22 @@ class Canvas(QWidget):
         self.line.points = [self.current[-1], pos]
         self.setEditing()
 
+    def copySelectedShape(self):
+        if self.selectedShape:
+            newShape=self.selectedShape.copy()
+            self.shapes.append(newShape)
+            self.deSelectShape()
+            self.shapes[-1].selected=True
+            self.selectedShape=self.shapes[-1]
+            self.repaint()
+            
     def deleteLastShape(self):
         assert self.shapes
         self.shapes.pop()
 
-
+    
+    
+            
 def distance(p):
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
