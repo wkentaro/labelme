@@ -21,6 +21,7 @@ from shape import Shape
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
+from labelFile import LabelFile
 
 
 __appname__ = 'labelme'
@@ -176,19 +177,22 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
 
 
+    def loadLabels(self, shapes):
+        s = []
+        for label, points in shapes:
+            shape = Shape(label=label)
+            shape.fill = True
+            for x, y in points:
+                shape.addPoint(QPointF(x, y))
+            s.append(shape)
+            self.addLabel(label, shape)
+        self.canvas.loadShapes(s)
+
     def saveLabels(self, filename):
-        shapes = []
-        for shape in self.canvas.shapes:
-            data = {}
-            data['points'] = [(p.x(), p.y()) for p in shape.points]
-            data['label'] = unicode(shape.label)
-            shapes.append(data)
-        with open(filename, 'wb') as f:
-            json.dump(dict(
-                shapes=shapes,
-                image_path=unicode(self.filename),
-                image_data=b64encode(self.image_data)),
-                f, ensure_ascii=True, indent=2)
+        lf = LabelFile()
+        shapes = [(unicode(shape.label), [(p.x(), p.y()) for p in shape.points])\
+                for shape in self.canvas.shapes]
+        lf.save(filename, shapes, unicode(self.filename), self.imageData)
 
     def addLabel(self, label, shape):
         item = QListWidgetItem(label)
@@ -248,29 +252,37 @@ class MainWindow(QMainWindow, WindowMixin):
         """Load the specified file, or the last opened file if None."""
         if filename is None:
             filename = self.settings['filename']
-        # FIXME: Load the actual file here.
+        filename = unicode(filename)
         if QFile.exists(filename):
-            # Load image: read data first and store for saving into label file.
-            #image = QImage(filename)
-            self.image_data = read(filename, None)
-            image = QImage.fromData(self.image_data)
+            if LabelFile.isLabelFile(filename):
+                # TODO: Error handling.
+                lf = LabelFile()
+                lf.load(filename)
+                self.labelFile = lf
+                self.imageData = lf.imageData
+            else:
+                # Load image:
+                # read data first and store for saving into label file.
+                self.imageData = read(filename, None)
+                self.labelFile = None
+            image = QImage.fromData(self.imageData)
             if image.isNull():
                 message = "Failed to read %s" % filename
             else:
                 message = "Loaded %s" % os.path.basename(unicode(filename))
                 self.image = image
                 self.filename = filename
-                self.loadPixmap()
+                self.labels = {}
+                self.labelList.clear()
+                self.canvas.loadPixmap(QPixmap.fromImage(image))
+                if self.labelFile:
+                    self.loadLabels(self.labelFile.shapes)
             self.statusBar().showMessage(message)
 
     def resizeEvent(self, event):
         if self.fit_window and self.canvas and not self.image.isNull():
             self.paintCanvas()
         super(MainWindow, self).resizeEvent(event)
-
-    def loadPixmap(self):
-        assert not self.image.isNull(), "cannot load null image"
-        self.canvas.pixmap = QPixmap.fromImage(self.image)
 
     def paintCanvas(self):
         assert not self.image.isNull(), "cannot paint null image"
@@ -313,8 +325,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 if self.filename else '.'
         formats = ['*.%s' % unicode(fmt).lower()\
                 for fmt in QImageReader.supportedImageFormats()]
+        filters = 'Image files (%s)\nLabel files (*%s)'\
+                % (' '.join(formats), LabelFile.suffix)
         filename = unicode(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image', path, 'Image files (%s)' % ' '.join(formats)))
+            '%s - Choose Image', path, filters))
         if filename:
             self.loadFile(filename)
 
@@ -324,7 +338,7 @@ class MainWindow(QMainWindow, WindowMixin):
         assert self.labels, "cannot save empty labels"
         path = os.path.dirname(unicode(self.filename))\
                 if self.filename else '.'
-        formats = ['*.lif']
+        formats = ['*%s' % LabelFile.suffix]
         filename = unicode(QFileDialog.getSaveFileName(self,
             '%s - Choose File', path, 'Label files (%s)' % ''.join(formats)))
         if filename:

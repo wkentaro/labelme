@@ -285,6 +285,16 @@ class Canvas(QWidget):
         assert self.shapes
         self.shapes.pop()
 
+    def loadPixmap(self, pixmap):
+        self.pixmap = pixmap
+        self.shapes = []
+        self.repaint()
+
+    def loadShapes(self, shapes):
+        self.shapes = list(shapes)
+        self.current = None
+        self.repaint()
+
 
 def distance(p):
     return sqrt(p.x() * p.x() + p.y() * p.y())
