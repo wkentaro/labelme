@@ -114,9 +114,9 @@ class MainWindow(QMainWindow, WindowMixin):
         # Popup Menu
         self.popMenu = QMenu(self )
         self.popMenu.addAction( label )
-        self.popMenu.addAction( delete )
         self.popMenu.addAction(copy)
-        
+        self.popMenu.addAction( delete )
+
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
 
@@ -183,7 +183,7 @@ class MainWindow(QMainWindow, WindowMixin):
         
 
     def on_context_menu(self, point):
-         self.popMenu.exec_( self.canvas.mapToGlobal(point) )
+         self.popMenu.exec_( self.canvas.mapToGlobal(point))
          
     def addLabel(self, label, shape):
         item = QListWidgetItem(label)
@@ -191,8 +191,10 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelList.addItem(item)
         
     def copySelectedShape(self):
-        print "copy me"
-        self.canvas.copySelectedShape()
+        #shape=self.canvas.selectedShape()
+        label="copy"
+        label=self.canvas.copySelectedShape()
+        self.addLabel(label,self.canvas.shapes[-1])
         
     def highlightLabel(self, item):
         if self.highlighted:

@@ -33,7 +33,8 @@ class Canvas(QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
-
+        
+    
     def editing(self):
         return self.mode == self.EDIT
 
@@ -122,6 +123,7 @@ class Canvas(QWidget):
             # with shapes created the normal way.
             self.current.addPoint(self.current[0])
             self.finalise(ev)
+       
         
 
     def selectShape(self, point):
@@ -299,6 +301,7 @@ class Canvas(QWidget):
             self.shapes[-1].selected=True
             self.selectedShape=self.shapes[-1]
             self.repaint()
+            return self.selectedShape.label
             
     def deleteLastShape(self):
         assert self.shapes
