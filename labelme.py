@@ -7,6 +7,9 @@ import sys
 
 from functools import partial
 from collections import defaultdict
+from base64 import b64encode, b64decode
+
+import json
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -25,6 +28,8 @@ __appname__ = 'labelme'
 # TODO:
 # - Zoom is too "steppy".
 # - Add a new column in list widget with checkbox to show/hide shape.
+# - Make sure the `save' action is disabled when no labels are
+#   present in the image, e.g. when all of them are deleted.
 
 ### Utility functions and classes.
 
@@ -92,6 +97,8 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+Q', 'quit', u'Exit application')
         open = action('&Open', self.openFile,
                 'Ctrl+O', 'open', u'Open file')
+        save = action('&Save', self.saveFile,
+                'Ctrl+S', 'save', u'Save file')
         color = action('&Color', self.chooseColor,
                 'Ctrl+C', 'color', u'Choose line color')
         label = action('&New Item', self.newLabel,
@@ -105,6 +112,11 @@ class MainWindow(QMainWindow, WindowMixin):
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoom_widget)
 
+        # Store actions for further handling.
+        self.actions = struct(save=save, open=open, color=color,
+                label=label, delete=delete, zoom=zoom)
+        save.setEnabled(False)
+
         fit_window = action('&Fit Window', self.setFitWindow,
                 'Ctrl+F', 'fit',  u'Fit image to window', checkable=True)
 
@@ -112,13 +124,13 @@ class MainWindow(QMainWindow, WindowMixin):
                 file=self.menu('&File'),
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
-        addActions(self.menus.file, (open, quit))
+        addActions(self.menus.file, (open, save, quit))
         addActions(self.menus.edit, (label, color, fit_window))
 
         addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (open, color, None, label, delete, None,
+        addActions(self.tools, (open, save, color, None, label, delete, None,
             zoom, fit_window, None, quit))
 
 
@@ -164,6 +176,20 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
 
 
+    def saveLabels(self, filename):
+        shapes = []
+        for shape in self.canvas.shapes:
+            data = {}
+            data['points'] = [(p.x(), p.y()) for p in shape.points]
+            data['label'] = unicode(shape.label)
+            shapes.append(data)
+        with open(filename, 'wb') as f:
+            json.dump(dict(
+                shapes=shapes,
+                image_path=unicode(self.filename),
+                image_data=b64encode(self.image_data)),
+                f, ensure_ascii=True, indent=2)
+
     def addLabel(self, label, shape):
         item = QListWidgetItem(label)
         self.labels[item] = shape
@@ -188,6 +214,8 @@ class MainWindow(QMainWindow, WindowMixin):
             label = self.label.text()
             shape = self.canvas.setLastLabel(label)
             self.addLabel(label, shape)
+            # Enable the save action.
+            self.actions.save.setEnabled(True)
             # TODO: Add to list of labels.
         elif action == self.label.UNDO:
             self.canvas.undoLastLine()
@@ -222,8 +250,10 @@ class MainWindow(QMainWindow, WindowMixin):
             filename = self.settings['filename']
         # FIXME: Load the actual file here.
         if QFile.exists(filename):
-            # Load image
-            image = QImage(filename)
+            # Load image: read data first and store for saving into label file.
+            #image = QImage(filename)
+            self.image_data = read(filename, None)
+            image = QImage.fromData(self.image_data)
             if image.isNull():
                 message = "Failed to read %s" % filename
             else:
@@ -288,6 +318,18 @@ class MainWindow(QMainWindow, WindowMixin):
         if filename:
             self.loadFile(filename)
 
+    def saveFile(self):
+        assert not self.image.isNull(), "cannot save empty image"
+        # XXX: What if user wants to remove label file?
+        assert self.labels, "cannot save empty labels"
+        path = os.path.dirname(unicode(self.filename))\
+                if self.filename else '.'
+        formats = ['*.lif']
+        filename = unicode(QFileDialog.getSaveFileName(self,
+            '%s - Choose File', path, 'Label files (%s)' % ''.join(formats)))
+        if filename:
+            self.saveLabels(filename)
+
     def check(self):
         # TODO: Prompt user to save labels etc.
         return True
@@ -336,6 +378,13 @@ class Settings(object):
 def inverted(color):
     return QColor(*[255 - v for v in color.getRgb()])
 
+
+def read(filename, default=None):
+    try:
+        with open(filename, 'rb') as f:
+            return f.read()
+    except:
+        return default
 
 class struct(object):
     def __init__(self, **kwargs):
