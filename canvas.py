@@ -107,11 +107,14 @@ class Canvas(QWidget):
             self.repaint()
 
     def mouseDoubleClickEvent(self, ev):
-        # FIXME: Don't create shape with 2 vertices only.
         if self.current and self.editing():
-            # Add first point in the list so that it is consistent
-            # with shapes created the normal way.
-            self.current.addPoint(self.current[0])
+            # Shapes need to have at least 3 vertices.
+            if len(self.current) < 4:
+                return
+            # Replace the last point with the starting point.
+            # We have to do this because the mousePressEvent handler
+            # adds that point before this handler is called!
+            self.current[-1] = self.current[0]
             self.finalise(ev)
 
     def selectShape(self, point):
