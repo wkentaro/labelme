@@ -61,9 +61,9 @@ class Canvas(QWidget):
                 self.repaint()
             return
 
+        pos = self.transformPos(ev.posF())
         # Polygon drawing.
         if self.current and self.editing():
-            pos = self.transformPos(ev.posF())
             color = self.lineColor
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
@@ -77,19 +77,16 @@ class Canvas(QWidget):
             self.line[1] = pos
             self.line.line_color = color
             self.repaint()
-            return
-
-        if self.selectedShape:
-            if self.prevPoint:
-                    point=QPoint(self.prevPoint)
-                   # print point.x()
-                    dx= ev.x()-point.x()
-                    dy=ev.y()-point.y()
-                    self.selectedShape.moveBy(dx,dy)
-                    self.repaint()
-            self.prevPoint=ev.pos()
+        elif self.selectedShape and self.prevPoint:
+            prev = self.prevPoint
+            dx = pos.x() - prev.x()
+            dy = pos.y() - prev.y()
+            self.selectedShape.moveBy(dx, dy)
+            self.prevPoint = pos
+            self.repaint()
 
     def mousePressEvent(self, ev):
+        pos = self.transformPos(ev.posF())
         if ev.button() == Qt.LeftButton:
             if self.editing():
                 if self.current:
@@ -98,7 +95,6 @@ class Canvas(QWidget):
                     if self.current.isClosed():
                         self.finalise(ev)
                 else:
-                    pos = self.transformPos(ev.posF())
                     if self.outOfPixmap(pos):
                         return
                     self.current = Shape()
@@ -106,16 +102,13 @@ class Canvas(QWidget):
                     self.line.points = [pos, pos]
                     self.current.addPoint(pos)
             else:
-               
-                self.selectShape(ev.pos())
-                self.prevPoint=ev.pos()
+                self.selectShape(pos)
+                self.prevPoint = pos
             self.repaint()
-        if ev.button()==Qt.RightButton and not self.editing():
-            self.selectShape(ev.pos())
-            self.prevPoint=ev.pos()
-    
-    
-                
+        #elif ev.button() == Qt.RightButton and not self.editing():
+        #    self.selectShape(pos)
+        #    self.prevPoint = pos
+
     def mouseDoubleClickEvent(self, ev):
         # FIXME: Don't create shape with 2 vertices only.
         if self.current and self.editing():
