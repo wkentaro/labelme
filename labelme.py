@@ -31,6 +31,7 @@ __appname__ = 'labelme'
 # - Add a new column in list widget with checkbox to show/hide shape.
 # - Make sure the `save' action is disabled when no labels are
 #   present in the image, e.g. when all of them are deleted.
+# - Prevent the user from entering/editing empty labels.
 
 ### Utility functions and classes.
 
@@ -198,7 +199,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def addLabel(self, label, shape):
         item = QListWidgetItem(label)
-        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+        item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
         item.setCheckState(Qt.Checked)
         self.labels[item] = shape
         self.labelList.addItem(item)
@@ -213,7 +214,15 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def labelItemChanged(self, item):
         shape = self.labels[item]
-        self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+        label = unicode(item.text())
+        if label != shape.label:
+            self.stateChanged()
+            shape.label = unicode(item.text())
+        else: # User probably changed item visibility
+            self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+
+    def stateChanged(self):
+        self.actions.save.setEnabled(True)
 
     ## Callback functions:
     def newShape(self, position):
