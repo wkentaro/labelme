@@ -16,7 +16,7 @@ from PyQt4.QtCore import *
 
 import resources
 
-from lib import newAction, addActions
+from lib import newAction, addActions, labelValidator
 from shape import Shape
 from canvas import Canvas
 from zoomWidget import ZoomWidget
@@ -26,12 +26,16 @@ from labelFile import LabelFile
 
 __appname__ = 'labelme'
 
+# FIXME
+# - [low] Label validation/postprocessing breaks with TAB.
+
 # TODO:
-# - Zoom is too "steppy".
 # - Add a new column in list widget with checkbox to show/hide shape.
 # - Make sure the `save' action is disabled when no labels are
 #   present in the image, e.g. when all of them are deleted.
-# - Prevent the user from entering/editing empty labels.
+# - [easy] Add button to Hide/Show all labels.
+# - Zoom is too "steppy".
+
 
 ### Utility functions and classes.
 
@@ -72,6 +76,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock.setWidget(self.labelList)
         self.zoom_widget = ZoomWidget()
 
+        self.labelList.setItemDelegate(LabelDelegate())
         self.labelList.itemActivated.connect(self.highlightLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
@@ -379,6 +384,24 @@ class MainWindow(QMainWindow, WindowMixin):
     def deleteSelectedShape(self):
         self.canvas.deleteSelected()
 
+
+class LabelDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        super(LabelDelegate, self).__init__(parent)
+        self.validator = labelValidator()
+
+    # FIXME: Validation and trimming are completely broken if the
+    # user navigates away from the editor with something like TAB.
+    def createEditor(self, parent, option, index):
+        """Make sure the user cannot enter empty labels.
+        Also remove trailing whitespace."""
+        edit = super(LabelDelegate, self).createEditor(parent, option, index)
+        if isinstance(edit, QLineEdit):
+            edit.setValidator(self.validator)
+            def strip():
+                edit.setText(edit.text().trimmed())
+            edit.editingFinished.connect(strip)
+        return edit
 
 class Settings(object):
     """Convenience dict-like wrapper around QSettings."""
