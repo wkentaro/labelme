@@ -34,6 +34,9 @@ class Canvas(QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
 
+    def isVisible(self, shape):
+        return self.visible.get(shape, True)
+
     def editing(self):
         return self.mode == self.EDIT
 
@@ -86,6 +89,14 @@ class Canvas(QWidget):
                     self.selectedShape.moveBy(dx,dy)
                     self.repaint()
             self.prevPoint=ev.pos()
+            return
+
+        self.setToolTip("Image")
+        pos = self.transformPos(ev.posF())
+        for shape in reversed(self.shapes):
+            if shape.containsPoint(pos) and self.isVisible(shape):
+                return self.setToolTip("Object '%s'" % shape.label)
+
 
     def mousePressEvent(self, ev):
         if ev.button() == Qt.LeftButton:
@@ -153,7 +164,7 @@ class Canvas(QWidget):
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
         for shape in self.shapes:
-            if self.visible.get(shape, True):
+            if self.isVisible(shape):
                 shape.paint(p)
         if self.current:
             self.current.paint(p)
