@@ -29,6 +29,7 @@ class Canvas(QWidget):
         self.prevPoint=QPoint()
         self.scale = 1.0
         self.pixmap = None
+        self.visible = {}
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
@@ -152,7 +153,8 @@ class Canvas(QWidget):
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
         for shape in self.shapes:
-            shape.paint(p)
+            if self.visible.get(shape, True):
+                shape.paint(p)
         if self.current:
             self.current.paint(p)
             self.line.paint(p)
@@ -293,6 +295,10 @@ class Canvas(QWidget):
     def loadShapes(self, shapes):
         self.shapes = list(shapes)
         self.current = None
+        self.repaint()
+
+    def setShapeVisible(self, shape, value):
+        self.visible[shape] = value
         self.repaint()
 
 

@@ -72,6 +72,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoom_widget = ZoomWidget()
 
         self.labelList.itemActivated.connect(self.highlightLabel)
+        # Connect to itemChanged to detect checkbox changes.
+        self.labelList.itemChanged.connect(self.labelItemChanged)
 
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
@@ -196,6 +198,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def addLabel(self, label, shape):
         item = QListWidgetItem(label)
+        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+        item.setCheckState(Qt.Checked)
         self.labels[item] = shape
         self.labelList.addItem(item)
 
@@ -206,6 +210,10 @@ class MainWindow(QMainWindow, WindowMixin):
         shape.fill_color = inverted(Shape.fill_color)
         self.highlighted = shape
         self.canvas.repaint()
+
+    def labelItemChanged(self, item):
+        shape = self.labels[item]
+        self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
 
     ## Callback functions:
     def newShape(self, position):
