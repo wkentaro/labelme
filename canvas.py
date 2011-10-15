@@ -135,6 +135,7 @@ class Canvas(QWidget):
         del shape.line_color
         if copy:
             self.shapes.append(shape)
+            self.selectedShape.selected = False
             self.selectedShape = shape
         else:
             shape.label = self.selectedShape.label
