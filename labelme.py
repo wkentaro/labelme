@@ -225,6 +225,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def copySelectedShape(self):
         self.addLabel(self.canvas.copySelectedShape())
+        #fix copy and delete
+        self.shapeSelectionChanged(True)
 
     def highlightLabel(self, item):
         if self.highlighted:
