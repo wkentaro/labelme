@@ -234,7 +234,7 @@ class MainWindow(QMainWindow, WindowMixin):
         QTimer.singleShot(0, function)
 
     def hideLabelsToggle(self, value):
-        self.canvas.hideShapesWhenNew = value
+        self.canvas.hideBackroundShapes(value)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""

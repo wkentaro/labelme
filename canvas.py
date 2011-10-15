@@ -30,7 +30,9 @@ class Canvas(QWidget):
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
         self.pixmap = None
-        self.hideShapesWhenNew=False
+        # Background label hiding.
+        self._hideBackround = False
+        self.hideBackround = False
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
@@ -87,13 +89,11 @@ class Canvas(QWidget):
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
                         self.finalise(ev)
-                else:
-                    if self.outOfPixmap(pos):
-                        return
+                elif not self.outOfPixmap(pos):
                     self.current = Shape()
-                    self.setMouseTracking(True)
-                    self.line.points = [pos, pos]
                     self.current.addPoint(pos)
+                    self.line.points = [pos, pos]
+                    self.setHiding()
             else:
                 self.selectShape(pos)
                 self.prevPoint = pos
@@ -101,6 +101,17 @@ class Canvas(QWidget):
         #elif ev.button() == Qt.RightButton and not self.editing():
         #    self.selectShape(pos)
         #    self.prevPoint = pos
+
+    def hideBackroundShapes(self, value):
+        self.hideBackround = value
+        if self.selectedShape:
+            # Only hide other shapes if there is a current selection.
+            # Otherwise the user will not be able to select a shape.
+            self.setHiding(True)
+            self.repaint()
+
+    def setHiding(self, enable=True):
+        self._hideBackround = self.hideBackround if enable else False
 
     def mouseDoubleClickEvent(self, ev):
         # FIXME: Don't create shape with 2 vertices only.
@@ -118,6 +129,7 @@ class Canvas(QWidget):
                 shape.selected = True
                 self.selectedShape = shape
                 self.calculateOffsets(shape, point)
+                self.setHiding()
                 self.repaint()
                 return
 
@@ -151,6 +163,7 @@ class Canvas(QWidget):
         if self.selectedShape:
             self.selectedShape.selected = False
             self.selectedShape = None
+            self.setHiding(False)
 
     def deleteSelected(self):
         if self.selectedShape:
@@ -181,8 +194,8 @@ class Canvas(QWidget):
 
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
-        if not self.hideShapesWhenNew:
-            for shape in self.shapes:
+        for shape in self.shapes:
+            if shape.selected or not self._hideBackround:
                 shape.paint(p)
         if self.current:
             self.current.paint(p)
@@ -215,10 +228,9 @@ class Canvas(QWidget):
         self.shapes.append(self.current)
         self.current = None
         self.setEditing(False)
+        self.setHiding(False)
         self.repaint()
-        self.hideShapesWhenNew=False
         self.newShape.emit(self.mapToGlobal(ev.pos()))
-        self.setMouseTracking(False)
 
     def closeEnough(self, p1, p2):
         #d = distance(p1 - p2)
