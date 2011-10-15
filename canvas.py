@@ -122,7 +122,11 @@ class Canvas(QWidget):
         pos = self.transformPos(ev.posF())
         if ev.button() == Qt.RightButton:
             menu = self.menus[bool(self.selectedShapeCopy)]
-            menu.exec_(self.mapToGlobal(ev.pos()))
+            if not menu.exec_(self.mapToGlobal(ev.pos()))\
+               and self.selectedShapeCopy:
+                # Cancel the move by deleting the shadow copy.
+                self.selectedShapeCopy = None
+                self.repaint()
 
     def endMove(self, copy=False):
         assert self.selectedShape and self.selectedShapeCopy
