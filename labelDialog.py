@@ -60,4 +60,7 @@ class LabelDialog(QDialog):
     def keyPressEvent(self, ev):
         if ev.key() == Qt.Key_Escape:
             self.undo()
+            ev.accept()
+        else:
+            super(LabelDialog, self).keyPressEvent(ev)
 
