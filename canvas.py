@@ -358,7 +358,17 @@ class Canvas(QWidget):
         self.shapes = list(shapes)
         self.current = None
         self.repaint()
-
+        
+    def copySelectedShape(self):
+        if self.selectedShape:
+            newShape=self.selectedShape.copy()
+            self.shapes.append(newShape)
+            self.deSelectShape()
+            self.shapes[-1].selected=True
+            self.selectedShape=self.shapes[-1]
+            self.repaint()
+            return self.selectedShape
+    
     def setShapeVisible(self, shape, value):
         self.visible[shape] = value
         self.repaint()
