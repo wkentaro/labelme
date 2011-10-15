@@ -130,8 +130,11 @@ class Canvas(QWidget):
         del shape.fill_color
         del shape.line_color
         if copy:
+            self.deSelectShape()
             self.shapes.append(shape)
             self.selectedShape = shape
+            self.selectionChanged.emit(True)
+
         else:
             shape.label = self.selectedShape.label
             self.deleteSelected()
@@ -203,8 +206,10 @@ class Canvas(QWidget):
             self.selectedShape.selected = False
             self.selectedShape = None
             self.setHiding(False)
-            self.selectionChanged.emit(False)
+            self.repaint()
 
+            self.selectionChanged.emit(False)
+            
     def deleteSelected(self):
         if self.selectedShape:
             shape = self.selectedShape
