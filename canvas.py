@@ -34,6 +34,8 @@ class Canvas(QWidget):
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
+        # Menus:
+        self.menus = (QMenu(), QMenu())
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
@@ -53,13 +55,13 @@ class Canvas(QWidget):
 
         # Polygon copy moving.
         if Qt.RightButton & ev.buttons():
-            if self.selectedShapeCopy:
-                if self.prevPoint:
-                    self.selectedShapeCopy.moveBy(pos - self.prevPoint)
-                    self.repaint()
-                self.prevPoint = pos
+            if self.selectedShapeCopy and self.prevPoint:
+                self.boundedMoveShape(self.selectedShapeCopy, pos)
+                self.repaint()
             elif self.selectedShape:
                 self.selectedShapeCopy = self.selectedShape.copy()
+                self.selectedShapeCopy.line_color = QColor(255, 0, 0, 64)
+                self.selectedShapeCopy.fill_color = QColor(0, 255, 0, 64)
                 self.repaint()
             return
 
@@ -81,7 +83,7 @@ class Canvas(QWidget):
 
         # Polygon moving.
         elif Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
-            self.boundedMoveShape(pos)
+            self.boundedMoveShape(self.selectedShape, pos)
             self.repaint()
             return
 
@@ -115,6 +117,26 @@ class Canvas(QWidget):
             self.selectShape(pos)
             self.prevPoint = pos
             self.repaint()
+
+    def mouseReleaseEvent(self, ev):
+        pos = self.transformPos(ev.posF())
+        if ev.button() == Qt.RightButton:
+            menu = self.menus[bool(self.selectedShapeCopy)]
+            menu.exec_(self.mapToGlobal(ev.pos()))
+
+    def endMove(self, copy=False):
+        assert self.selectedShape and self.selectedShapeCopy
+        shape = self.selectedShapeCopy
+        del shape.fill_color
+        del shape.line_color
+        if copy:
+            self.shapes.append(shape)
+            self.selectedShape = shape
+        else:
+            shape.label = self.selectedShape.label
+            self.deleteSelected()
+            self.shapes.append(shape)
+        self.selectedShapeCopy = None
 
     def hideBackroundShapes(self, value):
         self.hideBackround = value
@@ -158,7 +180,7 @@ class Canvas(QWidget):
         y2 = (rect.y() + rect.height()) - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
-    def boundedMoveShape(self, pos):
+    def boundedMoveShape(self, shape, pos):
         if self.outOfPixmap(pos):
             return # No need to move
         o1 = pos + self.offsets[0]
@@ -173,7 +195,7 @@ class Canvas(QWidget):
         # a bit "shaky" when nearing the border and allows it to
         # go outside of the shape's area for some reason. XXX
         #self.calculateOffsets(self.selectedShape, pos)
-        self.selectedShape.moveBy(pos - self.prevPoint)
+        shape.moveBy(pos - self.prevPoint)
         self.prevPoint = pos
 
     def deSelectShape(self):

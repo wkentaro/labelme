@@ -43,3 +43,8 @@ def addActions(widget, actions):
 def labelValidator():
     return QRegExpValidator(QRegExp(r'^[^ \t].+'), None)
 
+
+class struct(object):
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+

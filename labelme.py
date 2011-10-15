@@ -13,7 +13,7 @@ from PyQt4.QtCore import *
 
 import resources
 
-from lib import newAction, addActions, labelValidator
+from lib import struct, newAction, addActions, labelValidator
 from shape import Shape
 from canvas import Canvas
 from zoomWidget import ZoomWidget
@@ -24,11 +24,11 @@ from labelFile import LabelFile
 __appname__ = 'labelme'
 
 # FIXME
-# - Add copy/move menu when dragging with right click.
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
 # - [easy] Add button to Hide/Show all labels.
+# - [maybe] Open images with drag & drop.
 # - Zoom is too "steppy".
 
 
@@ -78,8 +78,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelList.itemChanged.connect(self.labelItemChanged)
 
         self.canvas = Canvas()
-        #self.canvas.setAlignment(Qt.AlignCenter)
-
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
         scroll = QScrollArea()
@@ -118,10 +116,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 checkable=True)
 
         # Custom context menu for the canvas widget:
-        self.popMenu = QMenu(self)
-        addActions(self.popMenu, (label, copy, delete))
-        self.canvas.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.canvas.customContextMenuRequested.connect(self.popContextMenu)
+        addActions(self.canvas.menus[0], (label, copy, delete))
+        addActions(self.canvas.menus[1], (
+            action('&Copy here', self.copyShape),
+            action('&Move here', self.moveShape)))
 
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
@@ -195,9 +193,6 @@ class MainWindow(QMainWindow, WindowMixin):
     def shapeSelectionChanged(self, selected=False):
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
-
-    def popContextMenu(self, point):
-        self.popMenu.exec_(self.canvas.mapToGlobal(point))
 
     def addLabel(self, shape):
         item = QListWidgetItem(shape.label)
@@ -358,7 +353,6 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/state'] = self.saveState()
         s['line/color'] = self.color
         # ask the use for where to save the labels
-       
 
         #s['window/geometry'] = self.saveGeometry()
     def updateFileMenu(self):
@@ -409,6 +403,13 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def deleteSelectedShape(self):
         self.remLabel(self.canvas.deleteSelected())
+
+    def copyShape(self):
+        self.canvas.endMove(copy=True)
+        self.addLabel(self.canvas.selectedShape)
+
+    def moveShape(self):
+        self.canvas.endMove(copy=False)
 
 
 class LabelDelegate(QItemDelegate):
@@ -465,10 +466,6 @@ def read(filename, default=None):
             return f.read()
     except:
         return default
-
-class struct(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
 
 
 def main(argv):
