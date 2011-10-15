@@ -105,10 +105,11 @@ class Canvas(QWidget):
                     self.current.addPoint(pos)
                     self.line.points = [pos, pos]
                     self.setHiding()
+                    self.repaint()
             else:
                 self.selectShape(pos)
+                self.repaint()
                 self.prevPoint = pos
-            self.repaint()
         #elif ev.button() == Qt.RightButton and not self.editing():
         #    self.selectShape(pos)
         #    self.prevPoint = pos
@@ -139,12 +140,11 @@ class Canvas(QWidget):
         """Select the first shape created which contains this point."""
         self.deSelectShape()
         for shape in reversed(self.shapes):
-            if shape.containsPoint(point):
+            if self.isVisible(shape) and shape.containsPoint(point):
                 shape.selected = True
                 self.selectedShape = shape
                 self.calculateOffsets(shape, point)
                 self.setHiding()
-                self.repaint()
                 return
 
     def calculateOffsets(self, shape, point):

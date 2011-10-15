@@ -25,7 +25,6 @@ __appname__ = 'labelme'
 
 # FIXME
 # - [low] Label validation/postprocessing breaks with TAB.
-# - Don't select hidden labels.
 # - Update label list on shape deletion.
 
 # TODO:
