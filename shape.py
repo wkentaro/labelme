@@ -29,8 +29,7 @@ class Shape(object):
             # with an object attribute. Currently this
             # is used for drawing the pending line a different color.
             self.line_color = line_color
-   
-        
+
     def addPoint(self, point):
         self.points.append(point)
 
@@ -75,29 +74,28 @@ class Shape(object):
             path.addEllipse(point, d/2.0, d/2.0)
 
     def containsPoint(self, point):
-        path = QPainterPath(QPointF(self.points[0]))
-        for p in self.points[1:]:
-            path.lineTo(QPointF(p))
-        return path.contains(QPointF(point))
+        return self.makePath().contains(point)
 
-    def moveBy(self,dx,dy):
-        index=0
-        for point in self.points:
-           newXPos= point.x()+dx
-           newYPos=point.y()+dy
-           self.points[index]=QPoint(newXPos,newYPos)
-           index +=1
-           
+    def makePath(self):
+        path = QPainterPath(self.points[0])
+        for p in self.points[1:]:
+            path.lineTo(p)
+        return path
+
+    def boundingRect(self):
+        return self.makePath().boundingRect()
+
+    def moveBy(self, offset):
+        self.points = [p + offset for p in self.points]
+
     def copy(self):
-        shapeCopy=Shape()
-        for point in self.points:
-            shapeCopy.points.append(point)
-            shapeCopy.label=self.label
-            shapeCopy.fill = self.fill
-            shapeCopy.selected = self.selected
-        return shapeCopy
-    
-    
+        shape = Shape()
+        shape.points= [p for p in self.points]
+        shape.label = "Copy of %s" % self.label
+        shape.fill = self.fill
+        shape.selected = self.selected
+        return shape
+
     def __len__(self):
         return len(self.points)
 

@@ -69,10 +69,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
-        
 
-
-        
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -104,12 +101,12 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+C', 'copy', u'Copy')
         delete = action('&Delete', self.deleteSelectedShape,
                 'Ctrl+D', 'delete', u'Delete')
-        hideWhenNew=action('&Hide Labels\n When Adding \n new',self.hideWhenNew,
-        'Ctrl+H','Hide',u'Hide',checkable=True)
+        hide = action('&Hide labels', self.hideLabelsToggle,
+                'Ctrl+H', 'hide', u'Hide background labels when drawing',
+                checkable=True)
 
-        
         self.canvas.setContextMenuPolicy( Qt.CustomContextMenu )
-        self.connect(self.canvas, SIGNAL('customContextMenuRequested(const QPoint&)'), self.on_context_menu)
+        self.canvas.customContextMenuRequested.connect(self.popContextMenu)
 
         # Popup Menu
         self.popMenu = QMenu(self )
@@ -136,7 +133,7 @@ class MainWindow(QMainWindow, WindowMixin):
         addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (open, color, None, label, delete,hideWhenNew, None,
+        addActions(self.tools, (open, color, None, label, delete, hide, None,
             zoom, fit_window, None, quit))
 
 
@@ -180,22 +177,18 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Callbacks:
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
-        
 
-    def on_context_menu(self, point):
-         self.popMenu.exec_( self.canvas.mapToGlobal(point))
-         
-    def addLabel(self, label, shape):
-        item = QListWidgetItem(label)
+    def popContextMenu(self, point):
+        self.popMenu.exec_(self.canvas.mapToGlobal(point))
+
+    def addLabel(self, shape):
+        item = QListWidgetItem(shape.label)
         self.labels[item] = shape
         self.labelList.addItem(item)
-        
+
     def copySelectedShape(self):
-        #shape=self.canvas.selectedShape()
-        label="copy"
-        label=self.canvas.copySelectedShape()
-        self.addLabel(label,self.canvas.shapes[-1])
-        
+        self.addLabel(self.copySelectedShape())
+
     def highlightLabel(self, item):
         if self.highlighted:
             self.highlighted.fill_color = Shape.fill_color
@@ -212,10 +205,7 @@ class MainWindow(QMainWindow, WindowMixin):
         """
         action = self.label.popUp(position)
         if action == self.label.OK:
-            label = self.label.text()
-            shape = self.canvas.setLastLabel(label)
-            self.addLabel(label, shape)
-            # TODO: Add to list of labels.
+            self.addLabel(self.canvas.setLastLabel(self.label.text()))
         elif action == self.label.UNDO:
             self.canvas.undoLastLine()
         elif action == self.label.DELETE:
@@ -242,9 +232,10 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
-        
-    def hideWhenNew(self):
-        self.canvas.hideShapesWhenNew =not self.canvas.hideShapesWhenNew
+
+    def hideLabelsToggle(self, value):
+        self.canvas.hideShapesWhenNew = value
+
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         if filename is None:

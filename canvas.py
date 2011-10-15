@@ -26,15 +26,15 @@ class Canvas(QWidget):
         self.lineColor = QColor(0, 0, 255)
         self.line = Shape(line_color=self.lineColor)
         self.mouseButtonIsPressed=False #when it is true and shape is selected , move the shape with the mouse move event
-        self.prevPoint=QPoint()
+        self.prevPoint = QPointF()
+        self.offsets = QPointF(), QPointF()
         self.scale = 1.0
         self.pixmap = None
         self.hideShapesWhenNew=False
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
-        
-    
+
     def editing(self):
         return self.mode == self.EDIT
 
@@ -43,32 +43,27 @@ class Canvas(QWidget):
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-        if ev.buttons() & Qt.RightButton:
+        pos = self.transformPos(ev.posF())
+
+        # Polygon copy moving.
+        if ev.button() == Qt.RightButton:
             if self.selectedShapeCopy:
                 if self.prevPoint:
-                    point=QPoint(self.prevPoint)
-                    dx= ev.x()-point.x()
-                    dy=ev.y()-point.y()
-                    self.selectedShapeCopy.moveBy(dx,dy)
+                    self.selectedShapeCopy.moveBy(pos - self.prevPoint)
                     self.repaint()
-                self.prevPoint=ev.pos()
+                self.prevPoint = pos
             elif self.selectedShape:
-                newShape=Shape()
-                for point in self.selectedShape.points:
-                    newShape.addPoint(point)
-                self.selectedShapeCopy=newShape
-                self.selectedShapeCopy.fill=True
+                self.selectedShapeCopy = self.selectedShape.copy()
                 self.repaint()
             return
 
-        pos = self.transformPos(ev.posF())
         # Polygon drawing.
         if self.current and self.editing():
             color = self.lineColor
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
-                pos = self.intersectionPoint(pos)
+                pos = self.intersectionPoint(self.current[-1], pos)
             elif len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
                 # Attract line to starting point and colorise to alert the user:
                 # TODO: I would also like to highlight the pixel somehow.
@@ -77,12 +72,10 @@ class Canvas(QWidget):
             self.line[1] = pos
             self.line.line_color = color
             self.repaint()
+
+        # Polygon moving.
         elif self.selectedShape and self.prevPoint:
-            prev = self.prevPoint
-            dx = pos.x() - prev.x()
-            dy = pos.y() - prev.y()
-            self.selectedShape.moveBy(dx, dy)
-            self.prevPoint = pos
+            self.boundedMoveShape(pos)
             self.repaint()
 
     def mousePressEvent(self, ev):
@@ -116,8 +109,6 @@ class Canvas(QWidget):
             # with shapes created the normal way.
             self.current.addPoint(self.current[0])
             self.finalise(ev)
-       
-        
 
     def selectShape(self, point):
         """Select the first shape created which contains this point."""
@@ -126,19 +117,56 @@ class Canvas(QWidget):
             if shape.containsPoint(point):
                 shape.selected = True
                 self.selectedShape = shape
-                return self.repaint()
+                self.calculateOffsets(shape, point)
+                self.repaint()
+                return
+
+    def calculateOffsets(self, shape, point):
+        rect = shape.boundingRect()
+        x1 = rect.x() - point.x()
+        y1 = rect.y() - point.y()
+        x2 = (rect.x() + rect.width()) - point.x()
+        y2 = (rect.y() + rect.height()) - point.y()
+        self.offsets = QPointF(x1, y1), QPointF(x2, y2)
+
+    def boundedMoveShape(self, pos):
+        if self.outOfPixmap(pos):
+            return # No need to move
+        o1 = pos + self.offsets[0]
+        if self.outOfPixmap(o1):
+            pos -= QPointF(min(0, o1.x()), min(0, o1.y()))
+        o2 = pos + self.offsets[1]
+        if self.outOfPixmap(o2):
+            pos += QPointF(min(0, self.pixmap.width() - o2.x()),
+                           min(0, self.pixmap.height()- o2.y()))
+        # The next line tracks the new position of the cursor
+        # relative to the shape, but also results in making it
+        # a bit "shaky" when nearing the border and allows it to
+        # go outside of the shape's area for some reason. XXX
+        #self.calculateOffsets(self.selectedShape, pos)
+        self.selectedShape.moveBy(pos - self.prevPoint)
+        self.prevPoint = pos
 
     def deSelectShape(self):
         if self.selectedShape:
             self.selectedShape.selected = False
-            self.selectedShape=None
-            self.repaint()
+            self.selectedShape = None
 
     def deleteSelected(self):
         if self.selectedShape:
              self.shapes.remove(self.selectedShape)
-             self.selectedShape=None
+             self.selectedShape = None
              self.repaint()
+
+    def copySelectedShape(self):
+        if self.selectedShape:
+            shape = self.selectedShape.copy()
+            self.shapes.append(shape)
+            self.selectedShape = shape
+            self.deSelectShape()
+            self.repaint()
+            return shape
+
 
     def paintEvent(self, event):
         if not self.pixmap:
@@ -198,7 +226,7 @@ class Canvas(QWidget):
         #print "d %.2f, m %d, %.2f" % (d, m, d - m)
         return distance(p1 - p2) < self.epsilon
 
-    def intersectionPoint(self, mousePos):
+    def intersectionPoint(self, p1, p2):
         # Cycle through each image edge in clockwise fashion,
         # and find the one intersecting the current line segment.
         # http://paulbourke.net/geometry/lineline2d/
@@ -207,8 +235,8 @@ class Canvas(QWidget):
                   (size.width(), 0),
                   (size.width(), size.height()),
                   (0, size.height())]
-        x1, y1 = self.current[-1].x(), self.current[-1].y()
-        x2, y2 = mousePos.x(), mousePos.y()
+        x1, y1 = p1.x(), p1.y()
+        x2, y2 = p2.x(), p2.y()
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
         x4, y4 = points[(i+1)%4]
@@ -286,23 +314,14 @@ class Canvas(QWidget):
         self.line.points = [self.current[-1], pos]
         self.setEditing()
 
-    def copySelectedShape(self):
-        if self.selectedShape:
-            newShape=self.selectedShape.copy()
-            self.shapes.append(newShape)
-            self.deSelectShape()
-            self.shapes[-1].selected=True
-            self.selectedShape=self.shapes[-1]
-            self.repaint()
-            return self.selectedShape.label
-            
     def deleteLastShape(self):
         assert self.shapes
         self.shapes.pop()
 
-    
-    
-            
+
+def pp(p):
+    return '%.2f, %.2f' % (p.x(), p.y())
+
 def distance(p):
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
