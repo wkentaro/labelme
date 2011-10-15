@@ -231,7 +231,7 @@ class MainWindow(QMainWindow, WindowMixin):
         lf.save(filename, shapes, unicode(self.filename), self.imageData)
 
     def copySelectedShape(self):
-        self.addLabel(self.copySelectedShape())
+        self.addLabel(self.canvas.copySelectedShape())
 
     def highlightLabel(self, item):
         if self.highlighted:

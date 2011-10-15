@@ -89,9 +89,9 @@ class Shape(object):
         self.points = [p + offset for p in self.points]
 
     def copy(self):
-        shape = Shape()
+        shape = Shape("Copy of %s" % self.label )
         shape.points= [p for p in self.points]
-        shape.label = "Copy of %s" % self.label
+        #shape.label = 
         shape.fill = self.fill
         shape.selected = self.selected
         return shape
