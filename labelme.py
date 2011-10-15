@@ -13,17 +13,26 @@ from PyQt4.QtCore import *
 
 import resources
 
-from lib import newAction, addActions
+from lib import newAction, addActions, labelValidator
 from shape import Shape
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
+from labelFile import LabelFile
 
 
 __appname__ = 'labelme'
 
+# FIXME
+# - [low] Label validation/postprocessing breaks with TAB.
+
 # TODO:
+# - Add a new column in list widget with checkbox to show/hide shape.
+# - Make sure the `save' action is disabled when no labels are
+#   present in the image, e.g. when all of them are deleted.
+# - [easy] Add button to Hide/Show all labels.
 # - Zoom is too "steppy".
+
 
 ### Utility functions and classes.
 
@@ -56,10 +65,22 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Main widgets.
         self.label = LabelDialog(parent=self)
+        self.labels = {}
+        self.highlighted = None
+        self.labelList = QListWidget()
+        self.dock = QDockWidget(u'Labels', self)
+        self.dock.setObjectName(u'Labels')
+        self.dock.setWidget(self.labelList)
         self.zoom_widget = ZoomWidget()
+
+        self.labelList.setItemDelegate(LabelDelegate())
+        self.labelList.itemActivated.connect(self.highlightLabel)
+        # Connect to itemChanged to detect checkbox changes.
+        self.labelList.itemChanged.connect(self.labelItemChanged)
 
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
+
         self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -75,6 +96,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.newShape.connect(self.newShape)
 
         self.setCentralWidget(scroll)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
 
         # Actions
         action = partial(newAction, self)
@@ -82,16 +104,39 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+Q', 'quit', u'Exit application')
         open = action('&Open', self.openFile,
                 'Ctrl+O', 'open', u'Open file')
+        save = action('&Save', self.saveFile,
+                'Ctrl+S', 'save', u'Save file')
         color = action('&Color', self.chooseColor,
                 'Ctrl+C', 'color', u'Choose line color')
         label = action('&New Item', self.newLabel,
                 'Ctrl+N', 'new', u'Add new label')
+        copy = action('&Copy', self.copySelectedShape,
+                'Ctrl+C', 'copy', u'Copy')
         delete = action('&Delete', self.deleteSelectedShape,
                 'Ctrl+D', 'delete', u'Delete')
+        hide = action('&Hide labels', self.hideLabelsToggle,
+                'Ctrl+H', 'hide', u'Hide background labels when drawing',
+                checkable=True)
 
+        self.canvas.setContextMenuPolicy( Qt.CustomContextMenu )
+        self.canvas.customContextMenuRequested.connect(self.popContextMenu)
+
+        # Popup Menu
+        self.popMenu = QMenu(self )
+        self.popMenu.addAction( label )
+        self.popMenu.addAction(copy)
+        self.popMenu.addAction( delete )
+
+        labels = self.dock.toggleViewAction()
+        labels.setShortcut('Ctrl+L')
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoom_widget)
+
+        # Store actions for further handling.
+        self.actions = struct(save=save, open=open, color=color,
+                label=label, delete=delete, zoom=zoom)
+        save.setEnabled(False)
 
         fit_window = action('&Fit Window', self.setFitWindow,
                 'Ctrl+F', 'fit',  u'Fit image to window', checkable=True)
@@ -100,13 +145,13 @@ class MainWindow(QMainWindow, WindowMixin):
                 file=self.menu('&File'),
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
-        addActions(self.menus.file, (open, quit))
+        addActions(self.menus.file, (open, save, quit))
         addActions(self.menus.edit, (label, color, fit_window))
 
-        #addActions(self.menus.view, (labl,))
+        addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (open, color, None, label, delete, None,
+        addActions(self.tools, (open, save, color, None, label, delete, hide, None,
             zoom, fit_window, None, quit))
 
 
@@ -151,6 +196,56 @@ class MainWindow(QMainWindow, WindowMixin):
         # Callbacks:
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
 
+    def popContextMenu(self, point):
+        self.popMenu.exec_(self.canvas.mapToGlobal(point))
+
+    def addLabel(self, shape):
+        item = QListWidgetItem(shape.label)
+        item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        item.setCheckState(Qt.Checked)
+        self.labels[item] = shape
+        self.labelList.addItem(item)
+
+
+    def loadLabels(self, shapes):
+        s = []
+        for label, points in shapes:
+            shape = Shape(label=label)
+            shape.fill = True
+            for x, y in points:
+                shape.addPoint(QPointF(x, y))
+            s.append(shape)
+            self.addLabel(shape)
+        self.canvas.loadShapes(s)
+
+    def saveLabels(self, filename):
+        lf = LabelFile()
+        shapes = [(unicode(shape.label), [(p.x(), p.y()) for p in shape.points])\
+                for shape in self.canvas.shapes]
+        lf.save(filename, shapes, unicode(self.filename), self.imageData)
+
+    def copySelectedShape(self):
+        self.addLabel(self.copySelectedShape())
+
+    def highlightLabel(self, item):
+        if self.highlighted:
+            self.highlighted.fill_color = Shape.fill_color
+        shape = self.labels[item]
+        shape.fill_color = inverted(Shape.fill_color)
+        self.highlighted = shape
+        self.canvas.repaint()
+
+    def labelItemChanged(self, item):
+        shape = self.labels[item]
+        label = unicode(item.text())
+        if label != shape.label:
+            self.stateChanged()
+            shape.label = unicode(item.text())
+        else: # User probably changed item visibility
+            self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+
+    def stateChanged(self):
+        self.actions.save.setEnabled(True)
 
     ## Callback functions:
     def newShape(self, position):
@@ -160,11 +255,10 @@ class MainWindow(QMainWindow, WindowMixin):
         """
         action = self.label.popUp(position)
         if action == self.label.OK:
-            print "Setting label to %s" % self.label.text()
-            self.canvas.setLastLabel(self.label.text())
-            # TODO: Add to list of labels.
+            self.addLabel(self.canvas.setLastLabel(self.label.text()))
+            # Enable the save action.
+            self.actions.save.setEnabled(True)
         elif action == self.label.UNDO:
-            print "Undo last line"
             self.canvas.undoLastLine()
         elif action == self.label.DELETE:
             self.canvas.deleteLastShape()
@@ -191,31 +285,44 @@ class MainWindow(QMainWindow, WindowMixin):
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
 
+    def hideLabelsToggle(self, value):
+        self.canvas.hideBackroundShapes(value)
+
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         if filename is None:
             filename = self.settings['filename']
-        # FIXME: Load the actual file here.
+        filename = unicode(filename)
         if QFile.exists(filename):
-            # Load image
-            image = QImage(filename)
+            if LabelFile.isLabelFile(filename):
+                # TODO: Error handling.
+                lf = LabelFile()
+                lf.load(filename)
+                self.labelFile = lf
+                self.imageData = lf.imageData
+            else:
+                # Load image:
+                # read data first and store for saving into label file.
+                self.imageData = read(filename, None)
+                self.labelFile = None
+            image = QImage.fromData(self.imageData)
             if image.isNull():
                 message = "Failed to read %s" % filename
             else:
                 message = "Loaded %s" % os.path.basename(unicode(filename))
                 self.image = image
                 self.filename = filename
-                self.loadPixmap()
+                self.labels = {}
+                self.labelList.clear()
+                self.canvas.loadPixmap(QPixmap.fromImage(image))
+                if self.labelFile:
+                    self.loadLabels(self.labelFile.shapes)
             self.statusBar().showMessage(message)
 
     def resizeEvent(self, event):
         if self.fit_window and self.canvas and not self.image.isNull():
             self.paintCanvas()
         super(MainWindow, self).resizeEvent(event)
-
-    def loadPixmap(self):
-        assert not self.image.isNull(), "cannot load null image"
-        self.canvas.pixmap = QPixmap.fromImage(self.image)
 
     def paintCanvas(self):
         assert not self.image.isNull(), "cannot paint null image"
@@ -245,8 +352,10 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/position'] = self.pos()
         s['window/state'] = self.saveState()
         s['line/color'] = self.color
-        #s['window/geometry'] = self.saveGeometry()
+        # ask the use for where to save the labels
+       
 
+        #s['window/geometry'] = self.saveGeometry()
     def updateFileMenu(self):
         """Populate menu with recent files."""
 
@@ -258,10 +367,24 @@ class MainWindow(QMainWindow, WindowMixin):
                 if self.filename else '.'
         formats = ['*.%s' % unicode(fmt).lower()\
                 for fmt in QImageReader.supportedImageFormats()]
+        filters = 'Image files (%s)\nLabel files (*%s)'\
+                % (' '.join(formats), LabelFile.suffix)
         filename = unicode(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image', path, 'Image files (%s)' % ' '.join(formats)))
+            '%s - Choose Image', path, filters))
         if filename:
             self.loadFile(filename)
+
+    def saveFile(self):
+        assert not self.image.isNull(), "cannot save empty image"
+        # XXX: What if user wants to remove label file?
+        assert self.labels, "cannot save empty labels"
+        path = os.path.dirname(unicode(self.filename))\
+                if self.filename else '.'
+        formats = ['*%s' % LabelFile.suffix]
+        filename = unicode(QFileDialog.getSaveFileName(self,
+            '%s - Choose File', path, 'Label files (%s)' % ''.join(formats)))
+        if filename:
+            self.saveLabels(filename)
 
     def check(self):
         # TODO: Prompt user to save labels etc.
@@ -276,11 +399,29 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def newLabel(self):
         self.canvas.deSelectShape()
-        self.canvas.startLabeling=True
+        self.canvas.setEditing()
 
     def deleteSelectedShape(self):
         self.canvas.deleteSelected()
 
+
+class LabelDelegate(QItemDelegate):
+    def __init__(self, parent=None):
+        super(LabelDelegate, self).__init__(parent)
+        self.validator = labelValidator()
+
+    # FIXME: Validation and trimming are completely broken if the
+    # user navigates away from the editor with something like TAB.
+    def createEditor(self, parent, option, index):
+        """Make sure the user cannot enter empty labels.
+        Also remove trailing whitespace."""
+        edit = super(LabelDelegate, self).createEditor(parent, option, index)
+        if isinstance(edit, QLineEdit):
+            edit.setValidator(self.validator)
+            def strip():
+                edit.setText(edit.text().trimmed())
+            edit.editingFinished.connect(strip)
+        return edit
 
 class Settings(object):
     """Convenience dict-like wrapper around QSettings."""
@@ -307,6 +448,17 @@ class Settings(object):
             return method(value)
         return value
 
+
+def inverted(color):
+    return QColor(*[255 - v for v in color.getRgb()])
+
+
+def read(filename, default=None):
+    try:
+        with open(filename, 'rb') as f:
+            return f.read()
+    except:
+        return default
 
 class struct(object):
     def __init__(self, **kwargs):

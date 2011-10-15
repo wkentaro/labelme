@@ -39,3 +39,6 @@ def addActions(widget, actions):
         else:
             widget.addAction(action)
 
+def labelValidator():
+    return QRegExpValidator(QRegExp(r'^[^ \t].+'), None)
+
