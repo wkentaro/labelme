@@ -46,7 +46,7 @@ class Canvas(QWidget):
         pos = self.transformPos(ev.posF())
 
         # Polygon copy moving.
-        if ev.button() == Qt.RightButton:
+        if Qt.RightButton & ev.buttons():
             if self.selectedShapeCopy:
                 if self.prevPoint:
                     self.selectedShapeCopy.moveBy(pos - self.prevPoint)
@@ -74,7 +74,7 @@ class Canvas(QWidget):
             self.repaint()
 
         # Polygon moving.
-        elif self.selectedShape and self.prevPoint:
+        elif Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
             self.boundedMoveShape(pos)
             self.repaint()
 
