@@ -109,11 +109,12 @@ class Canvas(QWidget):
                     self.repaint()
             else:
                 self.selectShape(pos)
-                self.repaint()
                 self.prevPoint = pos
-        #elif ev.button() == Qt.RightButton and not self.editing():
-        #    self.selectShape(pos)
-        #    self.prevPoint = pos
+                self.repaint()
+        elif ev.button() == Qt.RightButton and not self.editing():
+            self.selectShape(pos)
+            self.prevPoint = pos
+            self.repaint()
 
     def hideBackroundShapes(self, value):
         self.hideBackround = value
@@ -198,7 +199,6 @@ class Canvas(QWidget):
             self.deSelectShape()
             self.repaint()
             return shape
-
 
     def paintEvent(self, event):
         if not self.pixmap:

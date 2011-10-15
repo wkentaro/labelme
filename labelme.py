@@ -24,7 +24,7 @@ from labelFile import LabelFile
 __appname__ = 'labelme'
 
 # FIXME
-# - Select shapes with right click as well.
+# - Add copy/move menu when dragging with right click.
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:

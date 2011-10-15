@@ -91,7 +91,6 @@ class Shape(object):
     def copy(self):
         shape = Shape("Copy of %s" % self.label )
         shape.points= [p for p in self.points]
-        #shape.label = 
         shape.fill = self.fill
         shape.selected = self.selected
         return shape
