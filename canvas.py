@@ -30,12 +30,15 @@ class Canvas(QWidget):
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
         self.pixmap = None
-        # Background label hiding.
+        self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
+
+    def isVisible(self, shape):
+        return self.visible.get(shape, True)
 
     def editing(self):
         return self.mode == self.EDIT
@@ -79,6 +82,14 @@ class Canvas(QWidget):
         elif Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
             self.boundedMoveShape(pos)
             self.repaint()
+            return
+
+        self.setToolTip("Image")
+        pos = self.transformPos(ev.posF())
+        for shape in reversed(self.shapes):
+            if shape.containsPoint(pos) and self.isVisible(shape):
+                return self.setToolTip("Object '%s'" % shape.label)
+
 
     def mousePressEvent(self, ev):
         pos = self.transformPos(ev.posF())
@@ -114,11 +125,14 @@ class Canvas(QWidget):
         self._hideBackround = self.hideBackround if enable else False
 
     def mouseDoubleClickEvent(self, ev):
-        # FIXME: Don't create shape with 2 vertices only.
         if self.current and self.editing():
-            # Add first point in the list so that it is consistent
-            # with shapes created the normal way.
-            self.current.addPoint(self.current[0])
+            # Shapes need to have at least 3 vertices.
+            if len(self.current) < 4:
+                return
+            # Replace the last point with the starting point.
+            # We have to do this because the mousePressEvent handler
+            # adds that point before this handler is called!
+            self.current[-1] = self.current[0]
             self.finalise(ev)
 
     def selectShape(self, point):
@@ -195,7 +209,7 @@ class Canvas(QWidget):
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
         for shape in self.shapes:
-            if shape.selected or not self._hideBackround:
+            if (shape.selected or not self._hideBackround) and self.isVisible(shape):
                 shape.paint(p)
         if self.current:
             self.current.paint(p)
@@ -329,6 +343,20 @@ class Canvas(QWidget):
     def deleteLastShape(self):
         assert self.shapes
         self.shapes.pop()
+
+    def loadPixmap(self, pixmap):
+        self.pixmap = pixmap
+        self.shapes = []
+        self.repaint()
+
+    def loadShapes(self, shapes):
+        self.shapes = list(shapes)
+        self.current = None
+        self.repaint()
+
+    def setShapeVisible(self, shape, value):
+        self.visible[shape] = value
+        self.repaint()
 
 
 def pp(p):
