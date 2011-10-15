@@ -15,7 +15,7 @@ def newButton(text, icon=None, slot=None):
     return b
 
 def newAction(parent, text, slot=None, shortcut=None, icon=None,
-        tip=None, checkable=False):
+        tip=None, checkable=False, enabled=True):
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QAction(text, parent)
     if icon is not None:
@@ -29,6 +29,7 @@ def newAction(parent, text, slot=None, shortcut=None, icon=None,
         a.triggered.connect(slot)
     if checkable:
         a.setCheckable(True)
+    a.setEnabled(enabled)
     return a
 
 

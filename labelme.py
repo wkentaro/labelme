@@ -24,13 +24,10 @@ from labelFile import LabelFile
 __appname__ = 'labelme'
 
 # FIXME
+# - Select shapes with right click as well.
 # - [low] Label validation/postprocessing breaks with TAB.
-# - Disable context menu entries depending on context.
 
 # TODO:
-# - Add a new column in list widget with checkbox to show/hide shape.
-# - Make sure the `save' action is disabled when no labels are
-#   present in the image, e.g. when all of them are deleted.
 # - [easy] Add button to Hide/Show all labels.
 # - Zoom is too "steppy".
 
@@ -83,7 +80,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas = Canvas()
         #self.canvas.setAlignment(Qt.AlignCenter)
 
-        self.canvas.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
         scroll = QScrollArea()
@@ -96,6 +92,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
         self.canvas.newShape.connect(self.newShape)
+        self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
@@ -113,21 +110,18 @@ class MainWindow(QMainWindow, WindowMixin):
         label = action('&New Item', self.newLabel,
                 'Ctrl+N', 'new', u'Add new label')
         copy = action('&Copy', self.copySelectedShape,
-                'Ctrl+C', 'copy', u'Copy')
+                'Ctrl+C', 'copy', u'Copy', enabled=False)
         delete = action('&Delete', self.deleteSelectedShape,
-                'Ctrl+D', 'delete', u'Delete')
+                'Ctrl+D', 'delete', u'Delete', enabled=False)
         hide = action('&Hide labels', self.hideLabelsToggle,
                 'Ctrl+H', 'hide', u'Hide background labels when drawing',
                 checkable=True)
 
-        self.canvas.setContextMenuPolicy( Qt.CustomContextMenu )
+        # Custom context menu for the canvas widget:
+        self.popMenu = QMenu(self)
+        addActions(self.popMenu, (label, copy, delete))
+        self.canvas.setContextMenuPolicy(Qt.CustomContextMenu)
         self.canvas.customContextMenuRequested.connect(self.popContextMenu)
-
-        # Popup Menu
-        self.popMenu = QMenu(self )
-        self.popMenu.addAction( label )
-        self.popMenu.addAction(copy)
-        self.popMenu.addAction( delete )
 
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
@@ -137,7 +131,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, color=color,
-                label=label, delete=delete, zoom=zoom)
+                label=label, delete=delete, zoom=zoom, copy=copy)
         save.setEnabled(False)
 
         fit_window = action('&Fit Window', self.setFitWindow,
@@ -153,7 +147,7 @@ class MainWindow(QMainWindow, WindowMixin):
         addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (open, save, color, None, label, delete, hide, None,
+        addActions(self.tools, (open, save, color, labels, None, label, delete, hide, None,
             zoom, fit_window, None, quit))
 
 
@@ -197,6 +191,10 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Callbacks:
         self.zoom_widget.editingFinished.connect(self.paintCanvas)
+
+    def shapeSelectionChanged(self, selected=False):
+        self.actions.delete.setEnabled(selected)
+        self.actions.copy.setEnabled(selected)
 
     def popContextMenu(self, point):
         self.popMenu.exec_(self.canvas.mapToGlobal(point))
@@ -262,8 +260,9 @@ class MainWindow(QMainWindow, WindowMixin):
         action = self.label.popUp(position)
         if action == self.label.OK:
             self.addLabel(self.canvas.setLastLabel(self.label.text()))
-            # Enable the save action.
+            # Enable appropriate actions.
             self.actions.save.setEnabled(True)
+            self.actions.label.setEnabled(True)
         elif action == self.label.UNDO:
             self.canvas.undoLastLine()
         elif action == self.label.DELETE:
@@ -406,6 +405,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def newLabel(self):
         self.canvas.deSelectShape()
         self.canvas.setEditing()
+        self.actions.label.setEnabled(False)
 
     def deleteSelectedShape(self):
         self.remLabel(self.canvas.deleteSelected())

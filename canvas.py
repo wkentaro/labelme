@@ -10,6 +10,7 @@ class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
     newShape = pyqtSignal(QPoint)
+    selectionChanged = pyqtSignal(bool)
 
     SELECT, EDIT = range(2)
 
@@ -145,6 +146,7 @@ class Canvas(QWidget):
                 self.selectedShape = shape
                 self.calculateOffsets(shape, point)
                 self.setHiding()
+                self.selectionChanged.emit(True)
                 return
 
     def calculateOffsets(self, shape, point):
@@ -178,6 +180,7 @@ class Canvas(QWidget):
             self.selectedShape.selected = False
             self.selectedShape = None
             self.setHiding(False)
+            self.selectionChanged.emit(False)
 
     def deleteSelected(self):
         if self.selectedShape:
