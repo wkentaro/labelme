@@ -181,9 +181,11 @@ class Canvas(QWidget):
 
     def deleteSelected(self):
         if self.selectedShape:
-             self.shapes.remove(self.selectedShape)
-             self.selectedShape = None
-             self.repaint()
+            shape = self.selectedShape
+            self.shapes.remove(self.selectedShape)
+            self.selectedShape = None
+            self.repaint()
+            return shape
 
     def copySelectedShape(self):
         if self.selectedShape:

@@ -25,7 +25,7 @@ __appname__ = 'labelme'
 
 # FIXME
 # - [low] Label validation/postprocessing breaks with TAB.
-# - Update label list on shape deletion.
+# - Disable context menu entries depending on context.
 
 # TODO:
 # - Add a new column in list widget with checkbox to show/hide shape.
@@ -67,6 +67,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Main widgets.
         self.label = LabelDialog(parent=self)
         self.labels = {}
+        self.items = {}
         self.highlighted = None
         self.labelList = QListWidget()
         self.dock = QDockWidget(u'Labels', self)
@@ -205,8 +206,12 @@ class MainWindow(QMainWindow, WindowMixin):
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
         item.setCheckState(Qt.Checked)
         self.labels[item] = shape
+        self.items[shape] = item
         self.labelList.addItem(item)
 
+    def remLabel(self, shape):
+        item = self.items.get(shape, None)
+        self.labelList.takeItem(self.labelList.row(item))
 
     def loadLabels(self, shapes):
         s = []
@@ -403,7 +408,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.setEditing()
 
     def deleteSelectedShape(self):
-        self.canvas.deleteSelected()
+        self.remLabel(self.canvas.deleteSelected())
 
 
 class LabelDelegate(QItemDelegate):
