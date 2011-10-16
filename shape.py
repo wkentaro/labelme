@@ -7,6 +7,9 @@ from PyQt4.QtCore import *
 # FIXME:
 # - Add support for highlighting vertices.
 
+# TODO:
+# - [opt] Store paths instead of creating new ones at each paint.
+
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
 
@@ -41,8 +44,6 @@ class Shape(object):
     def isClosed(self):
         return len(self.points) > 1 and self[0] == self[-1]
 
-    # TODO:
-    # The paths could be stored and elements added directly to them.
     def paint(self, painter):
         if self.points:
             pen = QPen(self.select_color if self.selected else self.line_color)

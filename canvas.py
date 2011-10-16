@@ -6,6 +6,10 @@ from PyQt4.QtCore import *
 
 from shape import Shape
 
+# TODO:
+# - [maybe] Highlight source vertex when "attracting" line.
+# - [maybe] Find optimal epsilon value.
+
 class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
@@ -14,7 +18,7 @@ class Canvas(QWidget):
 
     SELECT, EDIT = range(2)
 
-    epsilon = 9.0 # TODO: Tune value
+    epsilon = 9.0
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
@@ -74,7 +78,6 @@ class Canvas(QWidget):
                 pos = self.intersectionPoint(self.current[-1], pos)
             elif len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
                 # Attract line to starting point and colorise to alert the user:
-                # TODO: I would also like to highlight the pixel somehow.
                 pos = self.current[0]
                 color = self.current.line_color
             self.line[1] = pos

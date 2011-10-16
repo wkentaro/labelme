@@ -25,12 +25,19 @@ from toolBar import ToolBar
 __appname__ = 'labelme'
 
 # FIXME
+# - [medium] Set max zoom value to something big enough for FitWidth/Window
 # - [low] Label validation/postprocessing breaks with TAB.
-# - Set max zoom value to something big enough for FitWidth/Window
 
 # TODO:
-# - [easy] Add button to Hide/Show all labels.
-# - [maybe] Open images with drag & drop.
+# - [high] Error handling for malformed .lif files.
+# - [high] Prompt user for unsaved changes.
+# - [medium] Highlight labellist on shape selection.
+# - [medium,maybe] Support vertex moving.
+# - [low,easy] Add button to Hide/Show all labels.
+# - [low,maybe] Open images with drag & drop.
+# - [low,maybe] Preview images on file dialogs.
+# - [extra] Add beginner/advanced mode, where different settings are set for
+#   the application, e.g. closable labels, different toolbuttons etc.
 # - Zoom is too "steppy".
 
 
@@ -183,7 +190,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoom_level = 100
         self.fit_window = False
 
-        # TODO: Could be completely declarative.
+        # XXX: Could be completely declarative.
         # Restore application settings.
         types = {
             'filename': QString,
@@ -334,7 +341,6 @@ class MainWindow(QMainWindow, WindowMixin):
         filename = unicode(filename)
         if QFile.exists(filename):
             if LabelFile.isLabelFile(filename):
-                # TODO: Error handling.
                 lf = LabelFile()
                 lf.load(filename)
                 self.labelFile = lf
@@ -391,7 +397,6 @@ class MainWindow(QMainWindow, WindowMixin):
         return w / self.canvas.pixmap.width()
 
     def closeEvent(self, event):
-        # TODO: Make sure changes are saved.
         s = self.settings
         s['filename'] = self.filename if self.filename else QString()
         s['window/size'] = self.size()
@@ -432,7 +437,6 @@ class MainWindow(QMainWindow, WindowMixin):
             self.saveLabels(filename)
 
     def check(self):
-        # TODO: Prompt user to save labels etc.
         return True
 
     def chooseColor(self):
