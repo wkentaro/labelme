@@ -19,6 +19,7 @@ from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
 from labelFile import LabelFile
+from toolBar import ToolBar
 
 
 __appname__ = 'labelme'
@@ -42,12 +43,10 @@ class WindowMixin(object):
         return menu
 
     def toolbar(self, title, actions=None):
-        toolbar = QToolBar(title)
+        toolbar = ToolBar(title)
         toolbar.setObjectName(u'%sToolBar' % title)
         #toolbar.setOrientation(Qt.Vertical)
-        toolbar.setContentsMargins(0,0,0,0)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        toolbar.layout().setContentsMargins(0,0,0,0)
         if actions:
             addActions(toolbar, actions)
         self.addToolBar(Qt.LeftToolBarArea, toolbar)
@@ -59,7 +58,8 @@ class MainWindow(QMainWindow, WindowMixin):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
-        self.setContentsMargins(0, 0, 0, 0)
+        # Not sure this does anything really.
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
 
         # Main widgets.
         self.label = LabelDialog(parent=self)
@@ -141,13 +141,14 @@ class MainWindow(QMainWindow, WindowMixin):
                 view=self.menu('&View'))
         addActions(self.menus.file, (open, save, quit))
         addActions(self.menus.edit, (label, color, fit_window))
-
         addActions(self.menus.view, (labels,))
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (open, save, color, labels, None, label, delete, hide, None,
-            zoom, fit_window, None, quit))
-
+        addActions(self.tools, (
+            open, save, None,
+            label, delete, color, hide, None,
+            zoom, fit_window, None,
+            quit))
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
