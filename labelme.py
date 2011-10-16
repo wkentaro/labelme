@@ -31,11 +31,14 @@ __appname__ = 'labelme'
 # TODO:
 # - [high] Error handling for malformed .lif files.
 # - [high] Prompt user for unsaved changes.
-# - [medium] Highlight labellist on shape selection.
+# - [high] Only fill shapes on mouse-over.
+# - [medium] Highlight label list on shape selection and vice-verca.
+# - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
 # - [low,easy] Add button to Hide/Show all labels.
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
+# - [low,maybe] Sortable label list.
 # - [extra] Add beginner/advanced mode, where different settings are set for
 #   the application, e.g. closable labels, different toolbuttons etc.
 # - Zoom is too "steppy".
