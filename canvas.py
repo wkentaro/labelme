@@ -15,6 +15,7 @@ class Canvas(QWidget):
     scrollRequest = pyqtSignal(int, int)
     newShape = pyqtSignal(QPoint)
     selectionChanged = pyqtSignal(bool)
+    shapeMoved = pyqtSignal()
 
     SELECT, EDIT = range(2)
 
@@ -87,6 +88,7 @@ class Canvas(QWidget):
         # Polygon moving.
         elif Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
             self.boundedMoveShape(self.selectedShape, pos)
+            self.shapeMoved.emit()
             self.repaint()
             return
 

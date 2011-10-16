@@ -26,11 +26,12 @@ __appname__ = 'labelme'
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
+# - [medium] Disabling the save button prevents the user from saving to
+#   alternate files. Either keep enabled, or add "Save As" button.
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
 # - [high] Error handling for malformed .lif files.
-# - [high] Prompt user for unsaved changes.
 # - [high] Only fill shapes on mouse-over.
 # - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
@@ -74,6 +75,9 @@ class MainWindow(QMainWindow, WindowMixin):
         # Not sure this does anything really.
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
 
+        # Whether we need to save or not.
+        self.dirty = False
+
         # Main widgets.
         self.label = LabelDialog(parent=self)
         self.labels = {}
@@ -103,6 +107,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
         self.canvas.newShape.connect(self.newShape)
+        self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
 
         self.setCentralWidget(scroll)
@@ -223,6 +228,22 @@ class MainWindow(QMainWindow, WindowMixin):
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
 
+    ## Support Functions ##
+
+    def setDirty(self):
+        self.dirty = True
+        self.actions.save.setEnabled(True)
+
+    def setClean(self):
+        self.dirty = False
+        self.actions.save.setEnabled(False)
+
+    def queueEvent(self, function):
+        QTimer.singleShot(0, function)
+
+    ## Callbacks ##
+
+    # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
@@ -273,13 +294,10 @@ class MainWindow(QMainWindow, WindowMixin):
         shape = self.labels[item]
         label = unicode(item.text())
         if label != shape.label:
-            self.stateChanged()
             shape.label = unicode(item.text())
+            self.setDirty()
         else: # User probably changed item visibility
             self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
-
-    def stateChanged(self):
-        self.actions.save.setEnabled(True)
 
     ## Callback functions:
     def newShape(self, position):
@@ -290,8 +308,8 @@ class MainWindow(QMainWindow, WindowMixin):
         action = self.label.popUp(position)
         if action == self.label.OK:
             self.addLabel(self.canvas.setLastLabel(self.label.text()))
+            self.setDirty()
             # Enable appropriate actions.
-            self.actions.save.setEnabled(True)
             self.actions.label.setEnabled(True)
         elif action == self.label.UNDO:
             self.canvas.undoLastLine()
@@ -330,9 +348,6 @@ class MainWindow(QMainWindow, WindowMixin):
             self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
-
-    def queueEvent(self, function):
-        QTimer.singleShot(0, function)
 
     def hideLabelsToggle(self, value):
         self.canvas.hideBackroundShapes(value)
@@ -400,6 +415,8 @@ class MainWindow(QMainWindow, WindowMixin):
         return w / self.canvas.pixmap.width()
 
     def closeEvent(self, event):
+        if not self.mayContinue():
+            event.ignore()
         s = self.settings
         s['filename'] = self.filename if self.filename else QString()
         s['window/size'] = self.size()
@@ -412,9 +429,10 @@ class MainWindow(QMainWindow, WindowMixin):
     def updateFileMenu(self):
         """Populate menu with recent files."""
 
-    ## Dialogs.
-    def openFile(self):
-        if not self.check():
+    ## User Dialogs ##
+
+    def openFile(self, _value=False):
+        if not self.mayContinue():
             return
         path = os.path.dirname(unicode(self.filename))\
                 if self.filename else '.'
@@ -427,20 +445,27 @@ class MainWindow(QMainWindow, WindowMixin):
         if filename:
             self.loadFile(filename)
 
-    def saveFile(self):
+    def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
-        # XXX: What if user wants to remove label file?
         assert self.labels, "cannot save empty labels"
-        path = os.path.dirname(unicode(self.filename))\
-                if self.filename else '.'
         formats = ['*%s' % LabelFile.suffix]
         filename = unicode(QFileDialog.getSaveFileName(self,
-            '%s - Choose File', path, 'Label files (%s)' % ''.join(formats)))
+            '%s - Choose File', self.currentPath(),
+            'Label files (%s)' % ''.join(formats)))
         if filename:
             self.saveLabels(filename)
+            self.setClean()
 
-    def check(self):
-        return True
+    def mayContinue(self):
+        return not (self.dirty and not self.discardChangesDialog())
+
+    def discardChangesDialog(self):
+        yes, no = QMessageBox.Yes, QMessageBox.No
+        msg = u'You have unsaved changes, proceed anyway?'
+        return yes == QMessageBox.warning(self, u'Attention', msg, yes|no)
+
+    def currentPath(self):
+        return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
     def chooseColor(self):
         self.color = QColorDialog.getColor(self.color, self,
@@ -456,13 +481,16 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def deleteSelectedShape(self):
         self.remLabel(self.canvas.deleteSelected())
+        self.setDirty()
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
         self.addLabel(self.canvas.selectedShape)
+        self.setDirty()
 
     def moveShape(self):
         self.canvas.endMove(copy=False)
+        self.setDirty()
 
 
 class LabelDelegate(QItemDelegate):
