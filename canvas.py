@@ -11,8 +11,6 @@ from shape import Shape
 #   since performance on big images is a problem...
 # - [maybe] Highlight source vertex when "attracting" line.
 # - [maybe] Find optimal epsilon value.
-# - [maybe] Add cursor stack so that releasing the mouse after moving
-#   pops the previous, grab cursor.
 
 CURSOR_DEFAULT = Qt.ArrowCursor
 CURSOR_DRAW    = Qt.CrossCursor
@@ -154,11 +152,14 @@ class Canvas(QWidget):
         pos = self.transformPos(ev.posF())
         if ev.button() == Qt.RightButton:
             menu = self.menus[bool(self.selectedShapeCopy)]
+            self.restoreCursor()
             if not menu.exec_(self.mapToGlobal(ev.pos()))\
                and self.selectedShapeCopy:
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapeCopy = None
                 self.repaint()
+        elif ev.button() == Qt.LeftButton and self.selectedShape:
+            self.overrideCursor(CURSOR_GRAB)
 
     def endMove(self, copy=False):
         assert self.selectedShape and self.selectedShapeCopy
