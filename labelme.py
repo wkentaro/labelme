@@ -31,7 +31,6 @@ __appname__ = 'labelme'
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
-# - [high] Only fill shapes on mouse-over.
 # - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.

@@ -7,6 +7,8 @@ from PyQt4.QtCore import *
 from shape import Shape
 
 # TODO:
+# - [maybe] Add 2 painters, one for the pixmap one for the shape,
+#   since performance on big images is a problem...
 # - [maybe] Highlight source vertex when "attracting" line.
 # - [maybe] Find optimal epsilon value.
 
@@ -39,6 +41,7 @@ class Canvas(QWidget):
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
+        self.highlightedShape = None
         # Menus:
         self.menus = (QMenu(), QMenu())
         # Set widget options.
@@ -84,20 +87,29 @@ class Canvas(QWidget):
             self.line[1] = pos
             self.line.line_color = color
             self.repaint()
+            return
 
         # Polygon moving.
-        elif Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
+        if Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
             self.boundedMoveShape(self.selectedShape, pos)
             self.shapeMoved.emit()
             self.repaint()
             return
 
+        # Just hovering over the canvas:
+        # Update tooltip value and fill topmost shape.
         self.setToolTip("Image")
-        pos = self.transformPos(ev.posF())
+        previous = self.highlightedShape
         for shape in reversed(self.shapes):
             if shape.containsPoint(pos) and self.isVisible(shape):
-                return self.setToolTip("Object '%s'" % shape.label)
-
+                self.setToolTip("Object '%s'" % shape.label)
+                self.highlightedShape = shape
+                break
+        else:
+            self.highlightedShape = None
+        if previous != self.highlightedShape:
+            # Try to minimise repaints.
+            self.repaint()
 
     def mousePressEvent(self, ev):
         pos = self.transformPos(ev.posF())
@@ -250,6 +262,7 @@ class Canvas(QWidget):
         Shape.scale = self.scale
         for shape in self.shapes:
             if (shape.selected or not self._hideBackround) and self.isVisible(shape):
+                shape.fill = shape.selected or self.highlightedShape == shape
                 shape.paint(p)
         if self.current:
             self.current.paint(p)
@@ -278,7 +291,6 @@ class Canvas(QWidget):
 
     def finalise(self, ev):
         assert self.current
-        self.current.fill = True
         self.shapes.append(self.current)
         self.current = None
         self.setEditing(False)
@@ -375,7 +387,6 @@ class Canvas(QWidget):
     def undoLastLine(self):
         assert self.shapes
         self.current = self.shapes.pop()
-        self.current.fill = False
         pos = self.current.popPoint()
         self.line.points = [self.current[-1], pos]
         self.setEditing()
