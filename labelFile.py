@@ -10,10 +10,12 @@ class LabelFileError(Exception):
 class LabelFile(object):
     suffix = '.lif'
 
-    def __init__(self):
+    def __init__(self, filename=None):
         self.shapes = ()
         self.imagePath = None
         self.imageData = None
+        if filename is not None:
+            self.load(filename)
 
     def load(self, filename):
         try:

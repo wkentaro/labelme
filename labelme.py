@@ -18,7 +18,7 @@ from shape import Shape
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
-from labelFile import LabelFile
+from labelFile import LabelFile, LabelFileError
 from toolBar import ToolBar
 
 
@@ -124,7 +124,7 @@ class MainWindow(QMainWindow, WindowMixin):
         color = action('&Color', self.chooseColor,
                 'Ctrl+C', 'color', u'Choose line color')
         label = action('&New Item', self.newLabel,
-                'Ctrl+N', 'new', u'Add new label')
+                'Ctrl+N', 'new', u'Add new label', enabled=False)
         copy = action('&Copy', self.copySelectedShape,
                 'Ctrl+C', 'copy', u'Copy', enabled=False)
         delete = action('&Delete', self.deleteSelectedShape,
@@ -237,9 +237,13 @@ class MainWindow(QMainWindow, WindowMixin):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
+        self.actions.label.setEnabled(True)
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
+
+    def status(self, message, delay=5000):
+        self.statusBar().showMessage(message, delay)
 
     ## Callbacks ##
 
@@ -275,7 +279,13 @@ class MainWindow(QMainWindow, WindowMixin):
         lf = LabelFile()
         shapes = [(unicode(shape.label), [(p.x(), p.y()) for p in shape.points])\
                 for shape in self.canvas.shapes]
-        lf.save(filename, shapes, unicode(self.filename), self.imageData)
+        try:
+            lf.save(filename, shapes, unicode(self.filename), self.imageData)
+            return True
+        except LabelFileError, e:
+            self.errorMessage(u'Error saving label data',
+                    u'<b>%s</b>' % e)
+            return False
 
     def copySelectedShape(self):
         self.addLabel(self.canvas.copySelectedShape())
@@ -359,10 +369,16 @@ class MainWindow(QMainWindow, WindowMixin):
         filename = unicode(filename)
         if QFile.exists(filename):
             if LabelFile.isLabelFile(filename):
-                lf = LabelFile()
-                lf.load(filename)
-                self.labelFile = lf
-                self.imageData = lf.imageData
+                try:
+                    self.labelFile = LabelFile(filename)
+                except LabelFileError, e:
+                    self.errorMessage(u'Error opening file',
+                            (u"<p><b>%s</b></p>"
+                             u"<p>Make sure <i>%s</i> is a valid label file.")\
+                            % (e, filename))
+                    self.status("Error reading %s" % filename)
+                    return False
+                self.imageData = self.labelFile.imageData
             else:
                 # Load image:
                 # read data first and store for saving into label file.
@@ -370,17 +386,21 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.labelFile = None
             image = QImage.fromData(self.imageData)
             if image.isNull():
-                message = "Failed to read %s" % filename
-            else:
-                message = "Loaded %s" % os.path.basename(unicode(filename))
-                self.image = image
-                self.filename = filename
-                self.labels = {}
-                self.labelList.clear()
-                self.canvas.loadPixmap(QPixmap.fromImage(image))
-                if self.labelFile:
-                    self.loadLabels(self.labelFile.shapes)
-            self.statusBar().showMessage(message)
+                self.errorMessage(u'Error opening file',
+                        u"<p>Make sure <i>%s</i> is a valid image file." % filename)
+                self.status("Error reading %s" % filename)
+                return False
+            self.status("Loaded %s" % os.path.basename(unicode(filename)))
+            self.image = image
+            self.filename = filename
+            self.labels = {}
+            self.labelList.clear()
+            self.canvas.loadPixmap(QPixmap.fromImage(image))
+            if self.labelFile:
+                self.loadLabels(self.labelFile.shapes)
+            self.setClean()
+            return True
+        return False
 
     def resizeEvent(self, event):
         if self.canvas and not self.image.isNull()\
@@ -453,9 +473,10 @@ class MainWindow(QMainWindow, WindowMixin):
             '%s - Choose File', self.currentPath(),
             'Label files (%s)' % ''.join(formats)))
         if filename:
-            self.saveLabels(filename)
-            self.setClean()
+            if self.saveLabels(filename):
+                self.setClean()
 
+    # Message Dialogs. #
     def mayContinue(self):
         return not (self.dirty and not self.discardChangesDialog())
 
@@ -463,6 +484,10 @@ class MainWindow(QMainWindow, WindowMixin):
         yes, no = QMessageBox.Yes, QMessageBox.No
         msg = u'You have unsaved changes, proceed anyway?'
         return yes == QMessageBox.warning(self, u'Attention', msg, yes|no)
+
+    def errorMessage(self, title, message):
+        return QMessageBox.critical(self, title,
+                '<p><b>%s</b></p>%s' % (title, message))
 
     def currentPath(self):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
