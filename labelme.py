@@ -26,6 +26,7 @@ __appname__ = 'labelme'
 
 # FIXME
 # - [low] Label validation/postprocessing breaks with TAB.
+# - Set max zoom value to something big enough for FitWidth/Window
 
 # TODO:
 # - [easy] Add button to Hide/Show all labels.
@@ -54,6 +55,8 @@ class WindowMixin(object):
 
 
 class MainWindow(QMainWindow, WindowMixin):
+    FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = range(3)
+
     def __init__(self, filename=None):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
@@ -70,7 +73,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock = QDockWidget(u'Labels', self)
         self.dock.setObjectName(u'Labels')
         self.dock.setWidget(self.labelList)
-        self.zoom_widget = ZoomWidget()
+        self.zoomWidget = ZoomWidget()
 
         self.labelList.setItemDelegate(LabelDelegate())
         self.labelList.itemActivated.connect(self.highlightLabel)
@@ -115,6 +118,26 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+H', 'hide', u'Hide background labels when drawing',
                 checkable=True)
 
+        zoom = QWidgetAction(self)
+        zoom.setDefaultWidget(self.zoomWidget)
+        zoomIn = action('Zoom &In', partial(self.addZoom, 10),
+                'Ctrl++', 'zoom-in', u'Increase zoom level')
+        zoomOut = action('&Zoom Out', partial(self.addZoom, -10),
+                'Ctrl+-', 'zoom-out', u'Decrease zoom level')
+        zoomOrg = action('&Original size', partial(self.setZoom, 100),
+                'Ctrl+=', 'zoom', u'Zoom to original size')
+        fitWindow = action('&Fit Window', self.setFitWindow,
+                'Ctrl+F', 'fit-window', u'Zoom follows window size',
+                checkable=True)
+        fitWidth = action('Fit &Width', self.setFitWidth,
+                'Ctrl+W', 'fit-width', u'Zoom follows window width',
+                checkable=True)
+        self.zoomMode = self.MANUAL_ZOOM
+        self.scalers = {
+            self.FIT_WINDOW: self.scaleFitWindow,
+            self.FIT_WIDTH: self.scaleFitWidth,
+        }
+
         # Custom context menu for the canvas widget:
         addActions(self.canvas.menus[0], (label, copy, delete))
         addActions(self.canvas.menus[1], (
@@ -124,30 +147,29 @@ class MainWindow(QMainWindow, WindowMixin):
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
 
-        zoom = QWidgetAction(self)
-        zoom.setDefaultWidget(self.zoom_widget)
-
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, color=color,
-                label=label, delete=delete, zoom=zoom, copy=copy)
+                label=label, delete=delete, zoom=zoom, copy=copy,
+                zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
+                fitWindow=fitWindow, fitWidth=fitWidth)
         save.setEnabled(False)
-
-        fit_window = action('&Fit Window', self.setFitWindow,
-                'Ctrl+F', 'fit',  u'Fit image to window', checkable=True)
 
         self.menus = struct(
                 file=self.menu('&File'),
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
         addActions(self.menus.file, (open, save, quit))
-        addActions(self.menus.edit, (label, color, fit_window))
-        addActions(self.menus.view, (labels,))
+        addActions(self.menus.edit, (label, color, fitWindow, fitWidth))
+        addActions(self.menus.view, (
+            labels, None,
+            zoomIn, zoomOut, zoomOrg, None,
+            fitWindow, fitWidth))
 
         self.tools = self.toolbar('Tools')
         addActions(self.tools, (
             open, save, None,
             label, delete, color, hide, None,
-            zoom, fit_window, None,
+            zoomIn, zoom, zoomOut, fitWindow, fitWidth, None,
             quit))
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -189,7 +211,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.queueEvent(partial(self.loadFile, self.filename))
 
         # Callbacks:
-        self.zoom_widget.editingFinished.connect(self.paintCanvas)
+        self.zoomWidget.valueChanged.connect(self.paintCanvas)
 
     def shapeSelectionChanged(self, selected=False):
         self.actions.delete.setEnabled(selected)
@@ -273,17 +295,31 @@ class MainWindow(QMainWindow, WindowMixin):
         bar = self.scrollBars[orientation]
         bar.setValue(bar.value() + bar.singleStep() * units)
 
+    def setZoom(self, value):
+        self.actions.fitWidth.setChecked(False)
+        self.actions.fitWindow.setChecked(False)
+        self.zoomMode = self.MANUAL_ZOOM
+        self.zoomWidget.setValue(value)
+
+    def addZoom(self, increment=10):
+        self.setZoom(self.zoomWidget.value() + increment)
+
     def zoomRequest(self, delta):
-        if not self.fit_window:
-            units = delta / (8 * 15)
-            scale = 10
-            self.zoom_widget.setValue(self.zoom_widget.value() + scale * units)
-            self.zoom_widget.editingFinished.emit()
+        units = delta / (8 * 15)
+        scale = 10
+        self.addZoom(scale * units)
 
     def setFitWindow(self, value=True):
-        self.zoom_widget.setEnabled(not value)
-        self.fit_window = value
-        self.paintCanvas()
+        if value:
+            self.actions.fitWidth.setChecked(False)
+        self.zoomMode = self.FIT_WINDOW if value else self.MANUAL_ZOOM
+        self.adjustScale()
+
+    def setFitWidth(self, value=True):
+        if value:
+            self.actions.fitWindow.setChecked(False)
+        self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
+        self.adjustScale()
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
@@ -323,18 +359,21 @@ class MainWindow(QMainWindow, WindowMixin):
             self.statusBar().showMessage(message)
 
     def resizeEvent(self, event):
-        if self.fit_window and self.canvas and not self.image.isNull():
-            self.paintCanvas()
+        if self.canvas and not self.image.isNull()\
+           and self.zoomMode != self.MANUAL_ZOOM:
+            self.adjustScale()
         super(MainWindow, self).resizeEvent(event)
 
     def paintCanvas(self):
         assert not self.image.isNull(), "cannot paint null image"
-        self.canvas.scale = self.fitSize() if self.fit_window\
-                            else 0.01 * self.zoom_widget.value()
+        self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
         self.canvas.repaint()
 
-    def fitSize(self):
+    def adjustScale(self):
+        self.zoomWidget.setValue(int(100 * self.scalers[self.zoomMode]()))
+
+    def scaleFitWindow(self):
         """Figure out the size of the pixmap in order to fit the main widget."""
         e = 2.0 # So that no scrollbars are generated.
         w1 = self.centralWidget().width() - e
@@ -346,6 +385,10 @@ class MainWindow(QMainWindow, WindowMixin):
         a2 = w2 / h2
         return w1 / w2 if a2 >= a1 else h1 / h2
 
+    def scaleFitWidth(self):
+        # The epsilon does not seem to work too well here.
+        w = self.centralWidget().width() - 2.0
+        return w / self.canvas.pixmap.width()
 
     def closeEvent(self, event):
         # TODO: Make sure changes are saved.
@@ -356,8 +399,8 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/state'] = self.saveState()
         s['line/color'] = self.color
         # ask the use for where to save the labels
-
         #s['window/geometry'] = self.saveGeometry()
+
     def updateFileMenu(self):
         """Populate menu with recent files."""
 
