@@ -6,10 +6,6 @@ from PyQt4.QtCore import *
 
 from shape import Shape
 
-# FIXME:
-# - After drawing a new shape, the cursor stops changing for a random
-#   amount of time.
-
 # TODO:
 # - [maybe] Add 2 painters, one for the pixmap one for the shape,
 #   since performance on big images is a problem...
@@ -72,12 +68,12 @@ class Canvas(QWidget):
         """Update line with last point and current coordinates."""
         pos = self.transformPos(ev.posF())
 
-        self.setCursor(CURSOR_DEFAULT)
+        self.restoreCursor()
 
         # Polygon copy moving.
         if Qt.RightButton & ev.buttons():
             if self.selectedShapeCopy and self.prevPoint:
-                self.setCursor(CURSOR_MOVE)
+                self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShape(self.selectedShapeCopy, pos)
                 self.repaint()
             elif self.selectedShape:
@@ -89,7 +85,7 @@ class Canvas(QWidget):
 
         # Polygon drawing.
         if self.editing():
-            self.setCursor(CURSOR_DRAW)
+            self.overrideCursor(CURSOR_DRAW)
 
         if self.current and self.editing():
             color = self.lineColor
@@ -108,7 +104,7 @@ class Canvas(QWidget):
 
         # Polygon moving.
         if Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
-            self.setCursor(CURSOR_MOVE)
+            self.overrideCursor(CURSOR_MOVE)
             self.boundedMoveShape(self.selectedShape, pos)
             self.shapeMoved.emit()
             self.repaint()
@@ -122,7 +118,7 @@ class Canvas(QWidget):
             if shape.containsPoint(pos) and self.isVisible(shape):
                 self.setToolTip("Object '%s'" % shape.label)
                 self.highlightedShape = shape
-                self.setCursor(CURSOR_GRAB)
+                self.overrideCursor(CURSOR_GRAB)
                 break
         else:
             self.highlightedShape = None
@@ -433,10 +429,16 @@ class Canvas(QWidget):
             self.selectedShape=self.shapes[-1]
             self.repaint()
             return self.selectedShape
-    
+
     def setShapeVisible(self, shape, value):
         self.visible[shape] = value
         self.repaint()
+
+    def overrideCursor(self, cursor):
+        QApplication.setOverrideCursor(cursor)
+
+    def restoreCursor(self):
+        QApplication.restoreOverrideCursor()
 
 
 def pp(p):
