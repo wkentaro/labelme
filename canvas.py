@@ -12,6 +12,11 @@ from shape import Shape
 # - [maybe] Highlight source vertex when "attracting" line.
 # - [maybe] Find optimal epsilon value.
 
+CURSOR_DEFAULT = Qt.ArrowCursor
+CURSOR_DRAW    = Qt.CrossCursor
+CURSOR_MOVE    = Qt.ClosedHandCursor
+CURSOR_GRAB    = Qt.OpenHandCursor
+
 class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
@@ -61,9 +66,12 @@ class Canvas(QWidget):
         """Update line with last point and current coordinates."""
         pos = self.transformPos(ev.posF())
 
+        self.restoreCursor()
+
         # Polygon copy moving.
         if Qt.RightButton & ev.buttons():
             if self.selectedShapeCopy and self.prevPoint:
+                self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShape(self.selectedShapeCopy, pos)
                 self.repaint()
             elif self.selectedShape:
@@ -74,6 +82,9 @@ class Canvas(QWidget):
             return
 
         # Polygon drawing.
+        if self.editing():
+            self.overrideCursor(CURSOR_DRAW)
+
         if self.current and self.editing():
             color = self.lineColor
             if self.outOfPixmap(pos):
@@ -91,6 +102,7 @@ class Canvas(QWidget):
 
         # Polygon moving.
         if Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
+            self.overrideCursor(CURSOR_MOVE)
             self.boundedMoveShape(self.selectedShape, pos)
             self.shapeMoved.emit()
             self.repaint()
@@ -104,6 +116,7 @@ class Canvas(QWidget):
             if shape.containsPoint(pos) and self.isVisible(shape):
                 self.setToolTip("Object '%s'" % shape.label)
                 self.highlightedShape = shape
+                self.overrideCursor(CURSOR_GRAB)
                 break
         else:
             self.highlightedShape = None
@@ -139,11 +152,14 @@ class Canvas(QWidget):
         pos = self.transformPos(ev.posF())
         if ev.button() == Qt.RightButton:
             menu = self.menus[bool(self.selectedShapeCopy)]
+            self.restoreCursor()
             if not menu.exec_(self.mapToGlobal(ev.pos()))\
                and self.selectedShapeCopy:
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapeCopy = None
                 self.repaint()
+        elif ev.button() == Qt.LeftButton and self.selectedShape:
+            self.overrideCursor(CURSOR_GRAB)
 
     def endMove(self, copy=False):
         assert self.selectedShape and self.selectedShapeCopy
@@ -404,7 +420,7 @@ class Canvas(QWidget):
         self.shapes = list(shapes)
         self.current = None
         self.repaint()
-        
+
     def copySelectedShape(self):
         if self.selectedShape:
             newShape=self.selectedShape.copy()
@@ -414,10 +430,16 @@ class Canvas(QWidget):
             self.selectedShape=self.shapes[-1]
             self.repaint()
             return self.selectedShape
-    
+
     def setShapeVisible(self, shape, value):
         self.visible[shape] = value
         self.repaint()
+
+    def overrideCursor(self, cursor):
+        QApplication.setOverrideCursor(cursor)
+
+    def restoreCursor(self):
+        QApplication.restoreOverrideCursor()
 
 
 def pp(p):
