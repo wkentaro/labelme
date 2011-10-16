@@ -21,7 +21,10 @@ def newAction(parent, text, slot=None, shortcut=None, icon=None,
     if icon is not None:
         a.setIcon(newIcon(icon))
     if shortcut is not None:
-        a.setShortcut(shortcut)
+        if isinstance(shortcut, (list, tuple)):
+            a.setShortcuts(shortcut)
+        else:
+            a.setShortcut(shortcut)
     if tip is not None:
         a.setToolTip(tip)
         a.setStatusTip(tip)

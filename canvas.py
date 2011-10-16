@@ -138,7 +138,6 @@ class Canvas(QWidget):
             self.selectedShape.selected = False
             self.selectedShape = shape
             self.repaint()
-
         else:
             shape.label = self.selectedShape.label
             self.deleteSelected()

@@ -110,7 +110,7 @@ class MainWindow(QMainWindow, WindowMixin):
         copy = action('&Copy', self.copySelectedShape,
                 'Ctrl+C', 'copy', u'Copy', enabled=False)
         delete = action('&Delete', self.deleteSelectedShape,
-                'Ctrl+D', 'delete', u'Delete', enabled=False)
+                ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
         hide = action('&Hide labels', self.hideLabelsToggle,
                 'Ctrl+H', 'hide', u'Hide background labels when drawing',
                 checkable=True)
