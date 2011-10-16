@@ -239,6 +239,7 @@ class Canvas(QWidget):
         p = QPainter()
         p.begin(self)
         p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.SmoothPixmapTransform)
 
         p.scale(self.scale, self.scale)
         p.translate(self.offsetToCenter())
