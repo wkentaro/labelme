@@ -35,7 +35,7 @@ class Canvas(QWidget):
         self.prevPoint = QPointF()
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
-        self.pixmap = None
+        self.pixmap = QPixmap()
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
