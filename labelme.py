@@ -252,6 +252,11 @@ class MainWindow(QMainWindow, WindowMixin):
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
+        shape = self.canvas.selectedShape
+        if shape:
+            self.labelList.setItemSelected(self.items[shape], True)
+        else:
+            self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
 
