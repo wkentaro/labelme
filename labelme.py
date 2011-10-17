@@ -18,6 +18,7 @@ from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
+from simpleLabelDialog import SimpleLabelDialog
 from colorDialog import ColorDialog
 from labelFile import LabelFile, LabelFileError
 from toolBar import ToolBar
@@ -34,7 +35,6 @@ __appname__ = 'labelme'
 # TODO:
 # - [medium] Zoom should keep the image centered.
 # - [high] Label dialog options are vague.
-# - [high] Add 'Edit label' in context menu.
 # - [high] Add recently opened files list in File menu.
 # - [high] Escape should cancel editing mode if no point in canvas.
 # - [medium] Maybe have separate colors for different shapes, and
@@ -94,6 +94,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock.setWidget(self.labelList)
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
+        self.simpleLabelDialog = SimpleLabelDialog(parent=self)
 
         self.labelList.setItemDelegate(LabelDelegate())
         self.labelList.itemActivated.connect(self.highlightLabel)
@@ -163,12 +164,14 @@ class MainWindow(QMainWindow, WindowMixin):
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
         }
-        edit = action('&Modify Label', self.editLabelDialog,
-                'Ctrl+E', 'edit', u'Modify the label of the selected polygon')
+
+        editLabelCanvas = action('&Edit Label', self.editLabelCanvas,
+                'Ctrl+E', 'edit', u'Modify the label of the selected polygon',
+                enabled=False)
 
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (label, edit, copy, delete))
+        addActions(self.canvas.menus[0], (label, copy, delete, editLabelCanvas))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
             action('&Move here', self.moveShape)))
@@ -177,20 +180,22 @@ class MainWindow(QMainWindow, WindowMixin):
         labels.setShortcut('Ctrl+L')
 
         # Context menu for the label
-        editLabel = action('Edit &Label', self.editLabel,
-                'Ctrl+Return', 'edit', u'Modify this label')
+        editLabelList = action('&Edit Label', self.editLabelList,
+                'Ctrl+Return', 'edit', u'Modify this label',
+                enabled=False)
         lmenu = QMenu()
-        addActions(lmenu, (editLabel, delete))
+        addActions(lmenu, (editLabelList, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
         # Add the action to the main window, effectively making its shortcut glogal!
-        self.addAction(editLabel)
+        self.addAction(editLabelList)
 
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, close=close,
                 lineColor=color1, fillColor=color2,
-                label=label, delete=delete, zoom=zoom, copy=copy,
-                zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
+                label=label, delete=delete, copy=copy,
+                editLabelList=editLabelList, editLabelCanvas=editLabelCanvas,
+                zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth)
 
         self.menus = struct(
@@ -283,16 +288,24 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelFile = None
         self.canvas.resetState()
 
+    def currentItem(self):
+        items = self.labelList.selectedItems()
+        if items:
+            return items[0]
+        return None
+
     ## Callbacks ##
 
     def popLabelListMenu(self, point):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
 
-    def editLabelDialog(self):
-        print "TODO"
-        pass
+    def editLabelCanvas(self):
+        item = self.currentItem()
+        text = self.simpleLabelDialog.popUp(item.text())
+        if text is not None:
+            item.setText(text)
 
-    def editLabel(self):
+    def editLabelList(self):
         items = self.labelList.selectedItems()
         if items:
             self.labelList.editItem(items[0])
@@ -309,6 +322,8 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
+        self.actions.editLabelList.setEnabled(selected)
+        self.actions.editLabelCanvas.setEnabled(selected)
 
     def addLabel(self, shape):
         item = QListWidgetItem(shape.label)
