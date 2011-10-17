@@ -88,7 +88,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.items = {}
         self.highlighted = None
         self.labelList = QListWidget()
-        self.dock = QDockWidget(u'Labels', self)
+        self.dock = QDockWidget(u'Polygon Labels', self)
         self.dock.setObjectName(u'Labels')
         self.dock.setWidget(self.labelList)
         self.zoomWidget = ZoomWidget()
@@ -129,18 +129,18 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+S', 'save', u'Save file')
         close = action('&Close', self.closeFile,
                 'Ctrl+K', 'close', u'Close current file')
-        color1 = action('&Line Color', self.chooseColor1,
-                'Ctrl+C', 'color', u'Choose line color')
-        color2 = action('&Fill Color', self.chooseColor2,
-                'Ctrl+Shift+C', 'color', u'Choose fill color')
-        label = action('&New Item', self.newLabel,
-                'Ctrl+N', 'new', u'Add new label', enabled=False)
-        copy = action('&Copy', self.copySelectedShape,
-                'Ctrl+C', 'copy', u'Copy', enabled=False)
-        delete = action('&Delete', self.deleteSelectedShape,
+        color1 = action('Polygon &Line Color', self.chooseColor1,
+                'Ctrl+C', 'color', u'Choose polygon line color')
+        color2 = action('Polygon &Fill Color', self.chooseColor2,
+                'Ctrl+Shift+C', 'color', u'Choose polygon fill color')
+        label = action('&New Polygon', self.newLabel,
+                'Ctrl+N', 'new', u'Start a new polygon', enabled=False)
+        copy = action('&Copy Polygon', self.copySelectedShape,
+                'Ctrl+C', 'copy', u'Copy selected polygon', enabled=False)
+        delete = action('&Delete Polygon', self.deleteSelectedShape,
                 ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
-        hide = action('&Hide labels', self.hideLabelsToggle,
-                'Ctrl+H', 'hide', u'Hide background labels when drawing',
+        hide = action('&Hide Polygons', self.hideLabelsToggle,
+                'Ctrl+H', 'hide', u'Hide all polygons',
                 checkable=True)
 
         zoom = QWidgetAction(self)
@@ -182,7 +182,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.menus = struct(
                 file=self.menu('&File'),
-                edit=self.menu('&Image'),
+                edit=self.menu('&Polygons'),
                 view=self.menu('&View'))
         addActions(self.menus.file, (open, save, close, quit))
         addActions(self.menus.edit, (label, color1, color2))
@@ -400,7 +400,10 @@ class MainWindow(QMainWindow, WindowMixin):
         self.adjustScale()
 
     def hideLabelsToggle(self, value):
-        self.canvas.hideBackroundShapes(value)
+        #self.canvas.hideBackroundShapes(value)
+        for item, shape in self.labels.iteritems():
+            item.setCheckState(Qt.Unchecked if value and not shape.selected\
+                               else Qt.Checked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
