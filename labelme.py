@@ -34,7 +34,6 @@ __appname__ = 'labelme'
 # TODO:
 # - [medium] Zoom should keep the image centered.
 # - [high] Context menu over label list.
-# - [high] Add close image button.
 # - [high] Add recently opened files list in File menu.
 # - [high] Escape should cancel editing mode if no point in canvas.
 # - [medium] Maybe have separate colors for different shapes, and
