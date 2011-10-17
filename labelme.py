@@ -33,7 +33,7 @@ __appname__ = 'labelme'
 
 # TODO:
 # - [medium] Zoom should keep the image centered.
-# - [high] Label dialog options are vague.
+# - [high] Save per-shape colors in label file.
 # - [high] Add recently opened files list in File menu.
 # - [high] Escape should cancel editing mode if no point in canvas.
 # - [medium] Maybe have separate colors for different shapes, and
@@ -616,7 +616,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def deleteSelectedShape(self):
         yes, no = QMessageBox.Yes, QMessageBox.No
-        msg = u'You are about to delete the polygon for ever, proceed anyway?'
+        msg = u'You are about to permanently delete this polygon, proceed anyway?'
         if yes == QMessageBox.warning(self, u'Attention', msg, yes|no):
             self.remLabel(self.canvas.deleteSelected())
             self.setDirty()

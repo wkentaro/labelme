@@ -5,6 +5,7 @@
 <file alias="close">icons/close.png</file>
 <file alias="fit-width">icons/fit-width.png</file>
 <file alias="fit-window">icons/fit-window.png</file>
+<file alias="undo">icons/undo.png</file>
 <file alias="hide">icons/eye.png</file>
 <file alias="quit">icons/quit.png</file>
 <file alias="copy">icons/copy.png</file>
