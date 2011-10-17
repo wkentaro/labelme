@@ -117,12 +117,9 @@ class Canvas(QWidget):
                 self.setToolTip("Object '%s'" % shape.label)
                 self.highlightedShape = shape
                 self.overrideCursor(CURSOR_GRAB)
-                self.repaint()
-
                 break
         else:
             self.highlightedShape = None
-            self.repaint()
 
         if previous != self.highlightedShape:
             # Try to minimise repaints.
@@ -209,7 +206,6 @@ class Canvas(QWidget):
         for shape in reversed(self.shapes):
             if self.isVisible(shape) and shape.containsPoint(point):
                 shape.selected = True
-                
                 self.selectedShape = shape
                 self.calculateOffsets(shape, point)
                 self.setHiding()
@@ -243,7 +239,7 @@ class Canvas(QWidget):
         self.prevPoint = pos
 
     def deSelectShape(self):
-        if self.selectedShape: 
+        if self.selectedShape:
             self.selectedShape.selected = False
             self.selectedShape = None
             self.setHiding(False)
@@ -264,7 +260,6 @@ class Canvas(QWidget):
             self.shapes.append(shape)
             self.selectedShape = shape
             self.deSelectShape()
-            #self.repaint()
             return shape
 
     def paintEvent(self, event):
