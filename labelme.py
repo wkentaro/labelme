@@ -457,8 +457,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def hideLabelsToggle(self, value):
         #self.canvas.hideBackroundShapes(value)
         for item, shape in self.labels.iteritems():
-            item.setCheckState(Qt.Unchecked if value and not shape.selected\
-                               else Qt.Checked)
+            item.setCheckState(Qt.Unchecked if value else Qt.Checked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
