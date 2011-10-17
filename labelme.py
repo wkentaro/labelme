@@ -18,6 +18,7 @@ from shape import Shape
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
+from colorDialog import ColorDialog
 from labelFile import LabelFile, LabelFileError
 from toolBar import ToolBar
 
@@ -87,6 +88,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock.setObjectName(u'Labels')
         self.dock.setWidget(self.labelList)
         self.zoomWidget = ZoomWidget()
+        self.colorDialog = ColorDialog(parent=self)
 
         self.labelList.setItemDelegate(LabelDelegate())
         self.labelList.itemActivated.connect(self.highlightLabel)
@@ -499,8 +501,7 @@ class MainWindow(QMainWindow, WindowMixin):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
-        color = QColorDialog.getColor(self.lineColor, self,
-                u'Choose line color', QColorDialog.ShowAlphaChannel)
+        color = self.colorDialog.getColor(self.lineColor, u'Choose line color')
         if color:
             self.lineColor = color
             # Change the color for all shape lines:
@@ -508,8 +509,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.repaint()
 
     def chooseColor2(self):
-        color = self.fillColor = QColorDialog.getColor(self.fillColor, self,
-                u'Choose fill color', QColorDialog.ShowAlphaChannel)
+        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color')
         if color:
             self.fillColor = color
             Shape.fill_color = self.fillColor
