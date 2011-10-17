@@ -21,6 +21,7 @@ class Shape(object):
     ## of _all_ shape objects.
     line_color = DEFAULT_LINE_COLOR
     fill_color = DEFAULT_FILL_COLOR
+    sel_fill_color=QColor(0, 128, 255, 155)
     select_color = DEFAULT_SELECT_COLOR
     point_type = P_SQUARE
     point_size = 8
@@ -69,7 +70,11 @@ class Shape(object):
             painter.drawPath(line_path)
             painter.fillPath(vrtx_path, self.line_color)
             if self.fill:
-                painter.fillPath(line_path, self.fill_color)
+                if self.selected:
+                    fillColor=self.sel_fill_color
+                else:
+                    fillColor=self.fill_color
+                painter.fillPath(line_path,fillColor)
 
     def drawVertex(self, path, point):
         d = self.point_size / self.scale

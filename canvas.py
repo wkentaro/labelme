@@ -76,8 +76,8 @@ class Canvas(QWidget):
                 self.repaint()
             elif self.selectedShape:
                 self.selectedShapeCopy = self.selectedShape.copy()
-                self.selectedShapeCopy.line_color = QColor(255, 0, 0, 64)
-                self.selectedShapeCopy.fill_color = QColor(0, 255, 0, 64)
+               # self.selectedShapeCopy.line_color = QColor(255, 0, 0, 64)
+                #self.selectedShapeCopy.fill_color = QColor(0, 255, 0, 64)
                 self.repaint()
             return
 
@@ -117,9 +117,13 @@ class Canvas(QWidget):
                 self.setToolTip("Object '%s'" % shape.label)
                 self.highlightedShape = shape
                 self.overrideCursor(CURSOR_GRAB)
+                self.repaint()
+
                 break
         else:
             self.highlightedShape = None
+            self.repaint()
+
         if previous != self.highlightedShape:
             # Try to minimise repaints.
             self.repaint()
@@ -164,8 +168,8 @@ class Canvas(QWidget):
     def endMove(self, copy=False):
         assert self.selectedShape and self.selectedShapeCopy
         shape = self.selectedShapeCopy
-        del shape.fill_color
-        del shape.line_color
+        #del shape.fill_color
+        #del shape.line_color
         if copy:
             self.shapes.append(shape)
             self.selectedShape.selected = False
@@ -205,6 +209,7 @@ class Canvas(QWidget):
         for shape in reversed(self.shapes):
             if self.isVisible(shape) and shape.containsPoint(point):
                 shape.selected = True
+                
                 self.selectedShape = shape
                 self.calculateOffsets(shape, point)
                 self.setHiding()
@@ -238,7 +243,7 @@ class Canvas(QWidget):
         self.prevPoint = pos
 
     def deSelectShape(self):
-        if self.selectedShape:
+        if self.selectedShape: 
             self.selectedShape.selected = False
             self.selectedShape = None
             self.setHiding(False)
@@ -259,7 +264,7 @@ class Canvas(QWidget):
             self.shapes.append(shape)
             self.selectedShape = shape
             self.deSelectShape()
-            self.repaint()
+            #self.repaint()
             return shape
 
     def paintEvent(self, event):
