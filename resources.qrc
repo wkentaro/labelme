@@ -7,6 +7,8 @@
 <file alias="fit-window">icons/fit-window.png</file>
 <file alias="hide">icons/eye.png</file>
 <file alias="quit">icons/quit.png</file>
+<file alias="copy">icons/copy.png</file>
+<file alias="edit">icons/edit.png</file>
 <file alias="open">icons/open.png</file>
 <file alias="save">icons/open.png</file>
 <file alias="color">icons/color.png</file>
