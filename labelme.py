@@ -71,9 +71,6 @@ class MainWindow(QMainWindow, WindowMixin):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
-        # Not sure this does anything really.
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
-
         # Whether we need to save or not.
         self.dirty = False
 
