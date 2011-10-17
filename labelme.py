@@ -18,6 +18,7 @@ from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
+from simpleLabelDialog import SimpleLabelDialog
 from colorDialog import ColorDialog
 from labelFile import LabelFile, LabelFileError
 from toolBar import ToolBar
@@ -29,19 +30,16 @@ __appname__ = 'labelme'
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 # - [medium] Disabling the save button prevents the user from saving to
 #   alternate files. Either keep enabled, or add "Save As" button.
-# - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
 # - [medium] Zoom should keep the image centered.
-# - [high] Context menu over label list.
+# - [high] Label dialog options are vague.
 # - [high] Add recently opened files list in File menu.
 # - [high] Escape should cancel editing mode if no point in canvas.
 # - [medium] Maybe have separate colors for different shapes, and
 #   color the background in the label list accordingly (kostas).
-# - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
-# - [low,easy] Add button to Hide/Show all labels.
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
 # - [low,maybe] Sortable label list.
@@ -88,14 +86,15 @@ class MainWindow(QMainWindow, WindowMixin):
         self.items = {}
         self.highlighted = None
         self.labelList = QListWidget()
-        self.dock = QDockWidget(u'Labels', self)
+        self.dock = QDockWidget(u'Polygon Labels', self)
         self.dock.setObjectName(u'Labels')
         self.dock.setWidget(self.labelList)
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
+        self.simpleLabelDialog = SimpleLabelDialog(parent=self)
 
-        self.labelList.setItemDelegate(LabelDelegate())
         self.labelList.itemActivated.connect(self.highlightLabel)
+        self.labelList.itemDoubleClicked.connect(self.editLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -122,25 +121,25 @@ class MainWindow(QMainWindow, WindowMixin):
         # Actions
         action = partial(newAction, self)
         quit = action('&Quit', self.close,
-                'Ctrl+Q', 'quit', u'Exit application')
+                'Ctrl+Q', 'quit', u'Quit application')
         open = action('&Open', self.openFile,
-                'Ctrl+O', 'open', u'Open file')
+                'Ctrl+O', 'open', u'Open image or label file')
         save = action('&Save', self.saveFile,
-                'Ctrl+S', 'save', u'Save file')
+                'Ctrl+S', 'save', u'Save labels to file', enabled=False)
         close = action('&Close', self.closeFile,
                 'Ctrl+K', 'close', u'Close current file')
-        color1 = action('&Line Color', self.chooseColor1,
-                'Ctrl+C', 'color', u'Choose line color')
-        color2 = action('&Fill Color', self.chooseColor2,
-                'Ctrl+Shift+C', 'color', u'Choose fill color')
-        label = action('&New Item', self.newLabel,
-                'Ctrl+N', 'new', u'Add new label', enabled=False)
-        copy = action('&Copy', self.copySelectedShape,
-                'Ctrl+C', 'copy', u'Copy', enabled=False)
-        delete = action('&Delete', self.deleteSelectedShape,
+        color1 = action('Polygon &Line Color', self.chooseColor1,
+                'Ctrl+C', 'color', u'Choose polygon line color')
+        color2 = action('Polygon &Fill Color', self.chooseColor2,
+                'Ctrl+Shift+C', 'color', u'Choose polygon fill color')
+        label = action('&New Polygon', self.newLabel,
+                'Ctrl+N', 'new', u'Start a new polygon', enabled=False)
+        copy = action('&Copy Polygon', self.copySelectedShape,
+                'Ctrl+C', 'copy', u'Copy selected polygon', enabled=False)
+        delete = action('&Delete Polygon', self.deleteSelectedShape,
                 ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
-        hide = action('&Hide labels', self.hideLabelsToggle,
-                'Ctrl+H', 'hide', u'Hide background labels when drawing',
+        hide = action('&Hide Polygons', self.hideLabelsToggle,
+                'Ctrl+H', 'hide', u'Hide all polygons',
                 checkable=True)
 
         zoom = QWidgetAction(self)
@@ -163,8 +162,13 @@ class MainWindow(QMainWindow, WindowMixin):
             self.FIT_WIDTH: self.scaleFitWidth,
         }
 
+        edit = action('&Edit Label', self.editLabel,
+                'Ctrl+E', 'edit', u'Modify the label of the selected polygon',
+                enabled=False)
+
+
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (label, copy, delete))
+        addActions(self.canvas.menus[0], (label, edit, copy, delete))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
             action('&Move here', self.moveShape)))
@@ -172,18 +176,26 @@ class MainWindow(QMainWindow, WindowMixin):
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
 
+        # Lavel list context menu.
+        labelMenu = QMenu()
+        addActions(labelMenu, (edit, delete))
+        self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
+        # Add the action to the main window, so that its shortcut is global.
+        self.addAction(edit)
+
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, close=close,
                 lineColor=color1, fillColor=color2,
-                label=label, delete=delete, zoom=zoom, copy=copy,
-                zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
+                label=label, delete=delete, edit=edit, copy=copy,
+                zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth)
-        save.setEnabled(False)
 
         self.menus = struct(
                 file=self.menu('&File'),
-                edit=self.menu('&Image'),
-                view=self.menu('&View'))
+                edit=self.menu('&Polygons'),
+                view=self.menu('&View'),
+                labelList=labelMenu)
         addActions(self.menus.file, (open, save, close, quit))
         addActions(self.menus.edit, (label, color1, color2))
         addActions(self.menus.view, (
@@ -269,7 +281,22 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelFile = None
         self.canvas.resetState()
 
+    def currentItem(self):
+        items = self.labelList.selectedItems()
+        if items:
+            return items[0]
+        return None
+
     ## Callbacks ##
+
+    def popLabelListMenu(self, point):
+        self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
+
+    def editLabel(self, item=None):
+        item = item if item else self.currentItem()
+        text = self.simpleLabelDialog.popUp(item.text())
+        if text is not None:
+            item.setText(text)
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
@@ -283,10 +310,11 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
+        self.actions.edit.setEnabled(selected)
 
     def addLabel(self, shape):
         item = QListWidgetItem(shape.label)
-        item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
         self.labels[item] = shape
         self.items[shape] = item
@@ -400,7 +428,10 @@ class MainWindow(QMainWindow, WindowMixin):
         self.adjustScale()
 
     def hideLabelsToggle(self, value):
-        self.canvas.hideBackroundShapes(value)
+        #self.canvas.hideBackroundShapes(value)
+        for item, shape in self.labels.iteritems():
+            item.setCheckState(Qt.Unchecked if value and not shape.selected\
+                               else Qt.Checked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
@@ -578,24 +609,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.endMove(copy=False)
         self.setDirty()
 
-
-class LabelDelegate(QItemDelegate):
-    def __init__(self, parent=None):
-        super(LabelDelegate, self).__init__(parent)
-        self.validator = labelValidator()
-
-    # FIXME: Validation and trimming are completely broken if the
-    # user navigates away from the editor with something like TAB.
-    def createEditor(self, parent, option, index):
-        """Make sure the user cannot enter empty labels.
-        Also remove trailing whitespace."""
-        edit = super(LabelDelegate, self).createEditor(parent, option, index)
-        if isinstance(edit, QLineEdit):
-            edit.setValidator(self.validator)
-            def strip():
-                edit.setText(edit.text().trimmed())
-            edit.editingFinished.connect(strip)
-        return edit
 
 class Settings(object):
     """Convenience dict-like wrapper around QSettings."""
