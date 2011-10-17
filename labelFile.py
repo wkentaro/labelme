@@ -23,19 +23,26 @@ class LabelFile(object):
                 data = json.load(f)
                 imagePath = data['imagePath']
                 imageData = b64decode(data['imageData'])
-                shapes = ((s['label'], s['points']) for s in data['shapes'])
+                lineColor = data['lineColor']
+                fillColor = data['fillColor']
+                shapes = ((s['label'], s['points'], s['line_color'], s['fill_color'])\
+                        for s in data['shapes'])
                 # Only replace data after everything is loaded.
                 self.shapes = shapes
                 self.imagePath = imagePath
                 self.imageData = imageData
+                self.lineColor = lineColor
+                self.fillColor = fillColor
         except Exception, e:
             raise LabelFileError(e)
 
-    def save(self, filename, shapes, imagePath, imageData):
+    def save(self, filename, shapes, imagePath, imageData,
+            lineColor=None, fillColor=None):
         try:
             with open(filename, 'wb') as f:
                 json.dump(dict(
-                    shapes=[dict(label=l, points=p) for (l, p) in shapes],
+                    shapes=shapes,
+                    lineColor=lineColor, fillColor=fillColor,
                     imagePath=imagePath,
                     imageData=b64encode(imageData)),
                     f, ensure_ascii=True, indent=2)

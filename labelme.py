@@ -342,21 +342,32 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def loadLabels(self, shapes):
         s = []
-        for label, points in shapes:
+        for label, points, line_color, fill_color in shapes:
             shape = Shape(label=label)
-            shape.fill = True
             for x, y in points:
                 shape.addPoint(QPointF(x, y))
+            if line_color:
+                shape.line_color = QColor(*line_color)
+            if fill_color:
+                shape.fill_color = QColor(*fill_color)
             s.append(shape)
             self.addLabel(shape)
         self.canvas.loadShapes(s)
 
     def saveLabels(self, filename):
         lf = LabelFile()
-        shapes = [(unicode(shape.label), [(p.x(), p.y()) for p in shape.points])\
-                for shape in self.canvas.shapes]
+        def format_shape(s):
+            return dict(label=unicode(s.label),
+                        line_color=s.line_color.getRgb()\
+                                if s.line_color != self.lineColor else None,
+                        fill_color=s.fill_color.getRgb()\
+                                if s.fill_color != self.fillColor else None,
+                        points=[(p.x(), p.y()) for p in s.points])
+
+        shapes = [format_shape(shape) for shape in self.canvas.shapes]
         try:
-            lf.save(filename, shapes, unicode(self.filename), self.imageData)
+            lf.save(filename, shapes, unicode(self.filename), self.imageData,
+                self.lineColor.getRgb(), self.fillColor.getRgb())
             return True
         except LabelFileError, e:
             self.errorMessage(u'Error saving label data',
@@ -468,6 +479,8 @@ class MainWindow(QMainWindow, WindowMixin):
                     self.status("Error reading %s" % filename)
                     return False
                 self.imageData = self.labelFile.imageData
+                self.lineColor = QColor(*self.labelFile.lineColor)
+                self.fillColor = QColor(*self.labelFile.fillColor)
             else:
                 # Load image:
                 # read data first and store for saving into label file.
@@ -627,6 +640,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if color:
             self.canvas.selectedShape.line_color = color
             self.canvas.update()
+            self.setDirty()
 
     def chshapeFillColor(self):
         color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
@@ -634,6 +648,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if color:
             self.canvas.selectedShape.fill_color = color
             self.canvas.update()
+            self.setDirty()
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
