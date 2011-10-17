@@ -31,6 +31,7 @@ __appname__ = 'labelme'
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
+# - [medium] Add a 'Reset' button to color dialogs.
 # - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
@@ -119,8 +120,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+O', 'open', u'Open file')
         save = action('&Save', self.saveFile,
                 'Ctrl+S', 'save', u'Save file')
-        color = action('&Color', self.chooseColor,
+        color1 = action('&Line Color', self.chooseColor1,
                 'Ctrl+C', 'color', u'Choose line color')
+        color2 = action('&Fill Color', self.chooseColor2,
+                'Ctrl+Shift+C', 'color', u'Choose fill color')
         label = action('&New Item', self.newLabel,
                 'Ctrl+N', 'new', u'Add new label', enabled=False)
         copy = action('&Copy', self.copySelectedShape,
@@ -161,7 +164,8 @@ class MainWindow(QMainWindow, WindowMixin):
         labels.setShortcut('Ctrl+L')
 
         # Store actions for further handling.
-        self.actions = struct(save=save, open=open, color=color,
+        self.actions = struct(save=save, open=open,
+                lineColor=color1, fillColor=color2,
                 label=label, delete=delete, zoom=zoom, copy=copy,
                 zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth)
@@ -172,7 +176,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
         addActions(self.menus.file, (open, save, quit))
-        addActions(self.menus.edit, (label, color, fitWindow, fitWidth))
+        addActions(self.menus.edit, (label, color1, color2))
         addActions(self.menus.view, (
             labels, None,
             zoomIn, zoomOut, zoomOrg, None,
@@ -181,9 +185,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.tools = self.toolbar('Tools')
         addActions(self.tools, (
             open, save, None,
-            label, delete, color, hide, None,
-            zoomIn, zoom, zoomOut, fitWindow, fitWidth, None,
-            quit))
+            label, delete, hide, None,
+            zoomIn, zoom, zoomOut, fitWindow, fitWidth))
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -192,7 +195,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.image = QImage()
         self.filename = filename
         self.recent_files = []
-        self.color = None
+        self.lineColor = None
+        self.fillColor = None
         self.zoom_level = 100
         self.fit_window = False
 
@@ -216,7 +220,10 @@ class MainWindow(QMainWindow, WindowMixin):
         # or simply:
         #self.restoreGeometry(settings['window/geometry']
         self.restoreState(settings['window/state'])
-        self.color = QColor(settings.get('line/color', QColor(0, 255, 0, 128)))
+        self.lineColor = QColor(settings.get('line/color', Shape.line_color))
+        self.fillColor = QColor(settings.get('fill/color', Shape.fill_color))
+        Shape.line_color = self.lineColor
+        Shape.fill_color = self.fillColor
 
         # The file menu has default dynamically generated entries.
         self.updateFileMenu()
@@ -440,7 +447,8 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/size'] = self.size()
         s['window/position'] = self.pos()
         s['window/state'] = self.saveState()
-        s['line/color'] = self.color
+        s['line/color'] = self.lineColor
+        s['fill/color'] = self.fillColor
         # ask the use for where to save the labels
         #s['window/geometry'] = self.saveGeometry()
 
@@ -490,12 +498,22 @@ class MainWindow(QMainWindow, WindowMixin):
     def currentPath(self):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
-    def chooseColor(self):
-        self.color = QColorDialog.getColor(self.color, self,
+    def chooseColor1(self):
+        color = QColorDialog.getColor(self.lineColor, self,
                 u'Choose line color', QColorDialog.ShowAlphaChannel)
-        # Change the color for all shape lines:
-        Shape.line_color = self.color
-        self.canvas.repaint()
+        if color:
+            self.lineColor = color
+            # Change the color for all shape lines:
+            Shape.line_color = self.lineColor
+            self.canvas.repaint()
+
+    def chooseColor2(self):
+        color = self.fillColor = QColorDialog.getColor(self.fillColor, self,
+                u'Choose fill color', QColorDialog.ShowAlphaChannel)
+        if color:
+            self.fillColor = color
+            Shape.fill_color = self.fillColor
+            self.canvas.repaint()
 
     def newLabel(self):
         self.canvas.deSelectShape()
