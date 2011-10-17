@@ -53,6 +53,9 @@ class Canvas(QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
 
+    def focusOutEvent(self, ev):
+        self.restoreCursor()
+
     def isVisible(self, shape):
         return self.visible.get(shape, True)
 
@@ -448,6 +451,12 @@ class Canvas(QWidget):
 
     def restoreCursor(self):
         QApplication.restoreOverrideCursor()
+
+
+    def resetState(self):
+        self.restoreCursor()
+        self.pixmap = None
+        self.update()
 
 
 def pp(p):

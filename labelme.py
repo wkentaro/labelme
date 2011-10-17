@@ -32,8 +32,8 @@ __appname__ = 'labelme'
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
-# - [high] Context menu over labe list.
-# - [high] Issue with image placement when opening new image.
+# - [medium] Zoom should keep the image centered.
+# - [high] Context menu over label list.
 # - [high] Add close image button.
 # - [high] Add recently opened files list in File menu.
 # - [high] Escape should cancel editing mode if no point in canvas.
@@ -128,6 +128,8 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+O', 'open', u'Open file')
         save = action('&Save', self.saveFile,
                 'Ctrl+S', 'save', u'Save file')
+        close = action('&Close', self.closeFile,
+                'Ctrl+K', 'close', u'Close current file')
         color1 = action('&Line Color', self.chooseColor1,
                 'Ctrl+C', 'color', u'Choose line color')
         color2 = action('&Fill Color', self.chooseColor2,
@@ -172,7 +174,7 @@ class MainWindow(QMainWindow, WindowMixin):
         labels.setShortcut('Ctrl+L')
 
         # Store actions for further handling.
-        self.actions = struct(save=save, open=open,
+        self.actions = struct(save=save, open=open, close=close,
                 lineColor=color1, fillColor=color2,
                 label=label, delete=delete, zoom=zoom, copy=copy,
                 zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
@@ -183,7 +185,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 file=self.menu('&File'),
                 edit=self.menu('&Image'),
                 view=self.menu('&View'))
-        addActions(self.menus.file, (open, save, quit))
+        addActions(self.menus.file, (open, save, close, quit))
         addActions(self.menus.edit, (label, color1, color2))
         addActions(self.menus.view, (
             labels, None,
@@ -257,6 +259,16 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
+
+    def resetState(self):
+        self.labels.clear()
+        self.items.clear()
+        self.labelList.clear()
+        self.zoomWidget.setValue(100)
+        self.filename = None
+        self.imageData = None
+        self.labelFile = None
+        self.canvas.resetState()
 
     ## Callbacks ##
 
@@ -393,6 +405,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
+        self.resetState()
+        self.canvas.setEnabled(False)
         if filename is None:
             filename = self.settings['filename']
         filename = unicode(filename)
@@ -422,12 +436,11 @@ class MainWindow(QMainWindow, WindowMixin):
             self.status("Loaded %s" % os.path.basename(unicode(filename)))
             self.image = image
             self.filename = filename
-            self.labels = {}
-            self.labelList.clear()
             self.canvas.loadPixmap(QPixmap.fromImage(image))
             if self.labelFile:
                 self.loadLabels(self.labelFile.shapes)
             self.setClean()
+            self.canvas.setEnabled(True)
             return True
         return False
 
@@ -493,7 +506,9 @@ class MainWindow(QMainWindow, WindowMixin):
         filename = unicode(QFileDialog.getOpenFileName(self,
             '%s - Choose Image', path, filters))
         if filename:
-            self.loadFile(filename)
+            if self.loadFile(filename):
+                self.actions.close.setEnabled(True)
+                self.canvas.setEnabled(True)
 
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
@@ -505,6 +520,13 @@ class MainWindow(QMainWindow, WindowMixin):
         if filename:
             if self.saveLabels(filename):
                 self.setClean()
+
+    def closeFile(self, _value=False):
+        if not self.mayContinue():
+            return
+        self.resetState()
+        self.canvas.setEnabled(False)
+        self.actions.close.setEnabled(False)
 
     # Message Dialogs. #
     def mayContinue(self):

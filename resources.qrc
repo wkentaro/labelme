@@ -2,6 +2,7 @@
 <qresource>
 
 <file alias="new">icons/objects.png</file>
+<file alias="close">icons/close.png</file>
 <file alias="fit-width">icons/fit-width.png</file>
 <file alias="fit-window">icons/fit-window.png</file>
 <file alias="hide">icons/eye.png</file>
