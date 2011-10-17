@@ -32,6 +32,13 @@ __appname__ = 'labelme'
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
+# - [high] Context menu over labe list.
+# - [high] Issue with image placement when opening new image.
+# - [high] Add close image button.
+# - [high] Add recently opened files list in File menu.
+# - [high] Escape should cancel editing mode if no point in canvas.
+# - [medium] Maybe have separate colors for different shapes, and
+#   color the background in the label list accordingly (kostas).
 # - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
