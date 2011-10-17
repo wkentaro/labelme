@@ -30,7 +30,6 @@ __appname__ = 'labelme'
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 # - [medium] Disabling the save button prevents the user from saving to
 #   alternate files. Either keep enabled, or add "Save As" button.
-# - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
 # - [medium] Zoom should keep the image centered.
@@ -39,10 +38,8 @@ __appname__ = 'labelme'
 # - [high] Escape should cancel editing mode if no point in canvas.
 # - [medium] Maybe have separate colors for different shapes, and
 #   color the background in the label list accordingly (kostas).
-# - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
-# - [low,easy] Add button to Hide/Show all labels.
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
 # - [low,maybe] Sortable label list.
@@ -96,8 +93,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.colorDialog = ColorDialog(parent=self)
         self.simpleLabelDialog = SimpleLabelDialog(parent=self)
 
-        self.labelList.setItemDelegate(LabelDelegate())
         self.labelList.itemActivated.connect(self.highlightLabel)
+        self.labelList.itemDoubleClicked.connect(self.editLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -165,13 +162,13 @@ class MainWindow(QMainWindow, WindowMixin):
             self.FIT_WIDTH: self.scaleFitWidth,
         }
 
-        editLabelCanvas = action('&Edit Label', self.editLabelCanvas,
+        edit = action('&Edit Label', self.editLabel,
                 'Ctrl+E', 'edit', u'Modify the label of the selected polygon',
                 enabled=False)
 
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (label, copy, delete, editLabelCanvas))
+        addActions(self.canvas.menus[0], (label, edit, copy, delete))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
             action('&Move here', self.moveShape)))
@@ -179,22 +176,18 @@ class MainWindow(QMainWindow, WindowMixin):
         labels = self.dock.toggleViewAction()
         labels.setShortcut('Ctrl+L')
 
-        # Context menu for the label
-        editLabelList = action('&Edit Label', self.editLabelList,
-                'Ctrl+Return', 'edit', u'Modify this label',
-                enabled=False)
-        lmenu = QMenu()
-        addActions(lmenu, (editLabelList, delete))
+        # Lavel list context menu.
+        labelMenu = QMenu()
+        addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
-        # Add the action to the main window, effectively making its shortcut glogal!
-        self.addAction(editLabelList)
+        # Add the action to the main window, so that its shortcut is global.
+        self.addAction(edit)
 
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, close=close,
                 lineColor=color1, fillColor=color2,
-                label=label, delete=delete, copy=copy,
-                editLabelList=editLabelList, editLabelCanvas=editLabelCanvas,
+                label=label, delete=delete, edit=edit, copy=copy,
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth)
 
@@ -202,7 +195,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 file=self.menu('&File'),
                 edit=self.menu('&Polygons'),
                 view=self.menu('&View'),
-                labelList=lmenu)
+                labelList=labelMenu)
         addActions(self.menus.file, (open, save, close, quit))
         addActions(self.menus.edit, (label, color1, color2))
         addActions(self.menus.view, (
@@ -299,16 +292,11 @@ class MainWindow(QMainWindow, WindowMixin):
     def popLabelListMenu(self, point):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
 
-    def editLabelCanvas(self):
-        item = self.currentItem()
+    def editLabel(self, item=None):
+        item = item if item else self.currentItem()
         text = self.simpleLabelDialog.popUp(item.text())
         if text is not None:
             item.setText(text)
-
-    def editLabelList(self):
-        items = self.labelList.selectedItems()
-        if items:
-            self.labelList.editItem(items[0])
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
@@ -322,12 +310,11 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
-        self.actions.editLabelList.setEnabled(selected)
-        self.actions.editLabelCanvas.setEnabled(selected)
+        self.actions.edit.setEnabled(selected)
 
     def addLabel(self, shape):
         item = QListWidgetItem(shape.label)
-        item.setFlags(item.flags() | Qt.ItemIsUserCheckable | Qt.ItemIsEditable)
+        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
         self.labels[item] = shape
         self.items[shape] = item
@@ -622,24 +609,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.endMove(copy=False)
         self.setDirty()
 
-
-class LabelDelegate(QItemDelegate):
-    def __init__(self, parent=None):
-        super(LabelDelegate, self).__init__(parent)
-        self.validator = labelValidator()
-
-    # FIXME: Validation and trimming are completely broken if the
-    # user navigates away from the editor with something like TAB.
-    def createEditor(self, parent, option, index):
-        """Make sure the user cannot enter empty labels.
-        Also remove trailing whitespace."""
-        edit = super(LabelDelegate, self).createEditor(parent, option, index)
-        if isinstance(edit, QLineEdit):
-            edit.setValidator(self.validator)
-            def strip():
-                edit.setText(edit.text().trimmed())
-            edit.editingFinished.connect(strip)
-        return edit
 
 class Settings(object):
     """Convenience dict-like wrapper around QSettings."""
