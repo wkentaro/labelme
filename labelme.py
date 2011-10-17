@@ -74,6 +74,8 @@ class MainWindow(QMainWindow, WindowMixin):
         # Whether we need to save or not.
         self.dirty = False
 
+        self._noSelectionSlot = False
+
         # Main widgets.
         self.label = LabelDialog(parent=self)
         self.labels = {}
@@ -90,6 +92,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelList.itemActivated.connect(self.highlightLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
+        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
 
         self.canvas = Canvas()
         self.canvas.zoomRequest.connect(self.zoomRequest)
@@ -252,11 +255,14 @@ class MainWindow(QMainWindow, WindowMixin):
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
-        shape = self.canvas.selectedShape
-        if shape:
-            self.labelList.setItemSelected(self.items[shape], True)
+        if self._noSelectionSlot:
+            self._noSelectionSlot = False
         else:
-            self.labelList.clearSelection()
+            shape = self.canvas.selectedShape
+            if shape:
+                self.labelList.setItemSelected(self.items[shape], True)
+            else:
+                self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
 
@@ -307,6 +313,14 @@ class MainWindow(QMainWindow, WindowMixin):
         shape.fill_color = inverted(Shape.fill_color)
         self.highlighted = shape
         self.canvas.repaint()
+
+    def labelSelectionChanged(self):
+        items = self.labelList.selectedItems()
+        if not items:
+            return
+        shape = self.labels[items[0]]
+        self._noSelectionSlot = True
+        self.canvas.selectShape(shape)
 
     def labelItemChanged(self, item):
         shape = self.labels[item]
