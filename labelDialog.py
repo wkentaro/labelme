@@ -49,7 +49,15 @@ class LabelDialog(QDialog):
         self.edit.setSelection(0, len(self.text()))
         self.edit.setFocus(Qt.PopupFocusReason)
         return self.OK if self.exec_() == QDialog.Accepted else self.action
-
+    
+    def popUpEdit(self, text):
+        # It actually works without moving...
+        #self.move(position)
+        self.edit.setText(text)
+        self.edit.setSelection(0, len(self.text()))
+        self.edit.setFocus(Qt.PopupFocusReason)
+        return self.OK if self.exec_() == QDialog.Accepted else self.action
+    
     def validate(self):
         if self.edit.text().trimmed():
             self.accept()

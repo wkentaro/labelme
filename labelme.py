@@ -84,6 +84,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Main widgets.
         self.label = LabelDialog(parent=self)
+       
         self.labels = {}
         self.items = {}
         self.highlighted = None
@@ -129,9 +130,9 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+S', 'save', u'Save file')
         close = action('&Close', self.closeFile,
                 'Ctrl+K', 'close', u'Close current file')
-        color1 = action('&Line Color', self.chooseColor1,
+        color1 = action('&Default Line Color', self.chooseColor1,
                 'Ctrl+C', 'color', u'Choose line color')
-        color2 = action('&Fill Color', self.chooseColor2,
+        color2 = action('&Default Fill Color', self.chooseColor2,
                 'Ctrl+Shift+C', 'color', u'Choose fill color')
         label = action('&New Item', self.newLabel,
                 'Ctrl+N', 'new', u'Add new label', enabled=False)
@@ -164,12 +165,19 @@ class MainWindow(QMainWindow, WindowMixin):
         }
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (label, copy, delete))
+        
+        self.shapeLineColor=action('&Shape Line Color', self.chshapeLineColor,enabled=False)
+        
+        self.shapeFillColor=action('&Shape Fill Color', self.chshapeFillColor,enabled=False)
+        self.editLabel=action('&Edit', self.editLabel,enabled=False)
+
+        addActions(self.canvas.menus[0], (label, self.editLabel,copy, delete,self.shapeLineColor,self.shapeFillColor))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
             action('&Move here', self.moveShape)))
 
         labels = self.dock.toggleViewAction()
+        labels.setText('Show/Hide Label Panel')
         labels.setShortcut('Ctrl+L')
 
         # Store actions for further handling.
@@ -283,6 +291,9 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
         self.actions.copy.setEnabled(selected)
+        self.shapeLineColor.setEnabled(selected)
+        self.shapeFillColor.setEnabled(selected)
+        self.editLabel.setEnabled(selected)
 
     def addLabel(self, shape):
         item = QListWidgetItem(shape.label)
@@ -544,18 +555,20 @@ class MainWindow(QMainWindow, WindowMixin):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
+       
         color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
                 default=DEFAULT_LINE_COLOR)
         if color:
             self.lineColor = color
             # Change the color for all shape lines:
-            Shape.line_color = self.lineColor
+            Shape.line_color = self.lineColor 
             self.canvas.repaint()
 
     def chooseColor2(self):
-        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
+       
+       color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
                 default=DEFAULT_FILL_COLOR)
-        if color:
+       if color:
             self.fillColor = color
             Shape.fill_color = self.fillColor
             self.canvas.repaint()
@@ -566,9 +579,45 @@ class MainWindow(QMainWindow, WindowMixin):
         self.actions.label.setEnabled(False)
 
     def deleteSelectedShape(self):
-        self.remLabel(self.canvas.deleteSelected())
-        self.setDirty()
+        yes, no = QMessageBox.Yes, QMessageBox.No
+        msg = u'You are about to delete the polygon for ever, proceed anyway?'
+        if yes == QMessageBox.warning(self, u'Attention', msg, yes|no):
+            self.remLabel(self.canvas.deleteSelected())
+            self.setDirty()
+        
+    def chshapeLineColor(self):
+        
+        color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
+                default=DEFAULT_LINE_COLOR)
+        if color:
+            self.canvas.selectedShape.line_color = color              
+            self.canvas.repaint()
 
+    
+    def chshapeFillColor(self):
+        color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
+                default=DEFAULT_LINE_COLOR)
+        if color:
+            self.canvas.selectedShape.fill_color = color              
+            self.canvas.repaint()
+   
+    def editLabel(self):
+    
+        currentItem=self.labelList.selectedItems()[0]
+        
+        
+        action = self.label.popUpEdit(self.canvas.selectedShape.label)
+        if action == self.label.OK:
+            self.canvas.selectedShape.label=self.label.text()
+            currentItem.setText(self.label.text())
+            self.setDirty()
+            # Enable appropriate actions.
+            self.actions.label.setEnabled(True)
+        
+        
+        else:
+            assert False, "unknown label action"
+        
     def copyShape(self):
         self.canvas.endMove(copy=True)
         self.addLabel(self.canvas.selectedShape)
