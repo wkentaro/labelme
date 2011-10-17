@@ -10,14 +10,18 @@ from PyQt4.QtCore import *
 # TODO:
 # - [opt] Store paths instead of creating new ones at each paint.
 
+DEFAULT_LINE_COLOR = QColor(0, 255, 0, 128)
+DEFAULT_FILL_COLOR = QColor(255, 0, 0, 128)
+DEFAULT_SELECT_COLOR = QColor(255, 255, 255)
+
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
 
     ## The following class variables influence the drawing
     ## of _all_ shape objects.
-    line_color = QColor(0, 255, 0, 128)
-    fill_color = QColor(255, 0, 0, 128)
-    select_color = QColor(255, 255, 255)
+    line_color = DEFAULT_LINE_COLOR
+    fill_color = DEFAULT_FILL_COLOR
+    select_color = DEFAULT_SELECT_COLOR
     point_type = P_SQUARE
     point_size = 8
     scale = 1.0

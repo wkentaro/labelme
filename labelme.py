@@ -14,7 +14,7 @@ from PyQt4.QtCore import *
 import resources
 
 from lib import struct, newAction, addActions, labelValidator
-from shape import Shape
+from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
@@ -32,7 +32,6 @@ __appname__ = 'labelme'
 # - [low] Label validation/postprocessing breaks with TAB.
 
 # TODO:
-# - [medium] Add a 'Reset' button to color dialogs.
 # - [medium] Highlight label list on shape selection and vice-verca.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
@@ -501,7 +500,8 @@ class MainWindow(QMainWindow, WindowMixin):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
-        color = self.colorDialog.getColor(self.lineColor, u'Choose line color')
+        color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
+                default=DEFAULT_LINE_COLOR)
         if color:
             self.lineColor = color
             # Change the color for all shape lines:
@@ -509,7 +509,8 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.repaint()
 
     def chooseColor2(self):
-        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color')
+        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
+                default=DEFAULT_FILL_COLOR)
         if color:
             self.fillColor = color
             Shape.fill_color = self.fillColor
