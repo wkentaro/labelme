@@ -23,7 +23,7 @@ class Shape(object):
     fill_color = DEFAULT_FILL_COLOR
     sel_fill_color=QColor(0, 128, 255, 155)
     select_color = DEFAULT_SELECT_COLOR
-    point_type = P_SQUARE
+    point_type = P_ROUND
     point_size = 8
     scale = 1.0
 
@@ -32,6 +32,7 @@ class Shape(object):
         self.points = []
         self.fill = False
         self.selected = False
+        self.highlightStart = False
         if line_color is not None:
             # Override the class line_color attribute
             # with an object attribute. Currently this
@@ -60,7 +61,8 @@ class Shape(object):
             vrtx_path = QPainterPath()
 
             line_path.moveTo(QPointF(self.points[0]))
-            self.drawVertex(vrtx_path, self.points[0])
+            self.drawVertex(vrtx_path, self.points[0],
+                    highlight=self.highlightStart)
 
             for p in self.points[1:]:
                 line_path.lineTo(QPointF(p))
@@ -76,8 +78,10 @@ class Shape(object):
                     fillColor=self.fill_color
                 painter.fillPath(line_path,fillColor)
 
-    def drawVertex(self, path, point):
+    def drawVertex(self, path, point, highlight=False):
         d = self.point_size / self.scale
+        if highlight:
+            d *= 4
         if self.point_type == self.P_SQUARE:
             path.addRect(point.x() - d/2, point.y() - d/2, d, d)
         else:

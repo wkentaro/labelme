@@ -8,9 +8,6 @@ from PyQt4.QtOpenGL import *
 from shape import Shape
 
 # TODO:
-# - [maybe] Add 2 painters, one for the pixmap one for the shape,
-#   since performance on big images is a problem...
-# - [maybe] Highlight source vertex when "attracting" line.
 # - [maybe] Find optimal epsilon value.
 
 CURSOR_DEFAULT = Qt.ArrowCursor
@@ -28,7 +25,7 @@ class Canvas(QWidget):
 
     SELECT, EDIT = range(2)
 
-    epsilon = 9.0
+    epsilon = 11.0
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
@@ -99,9 +96,11 @@ class Canvas(QWidget):
                 # Attract line to starting point and colorise to alert the user:
                 pos = self.current[0]
                 color = self.current.line_color
+                self.current.highlightStart = True
             self.line[1] = pos
             self.line.line_color = color
             self.repaint()
+            self.current.highlightStart = False
             return
 
         # Polygon moving.
