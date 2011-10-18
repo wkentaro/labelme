@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 
+<file alias="file">icons/file.png</file>
+<file alias="labels">icons/labels.svg</file>
 <file alias="new">icons/objects.png</file>
 <file alias="close">icons/close.png</file>
 <file alias="fit-width">icons/fit-width.png</file>

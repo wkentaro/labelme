@@ -13,7 +13,7 @@ from PyQt4.QtCore import *
 
 import resources
 
-from lib import struct, newAction, addActions, labelValidator
+from lib import struct, newAction, newIcon, addActions, labelValidator
 from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
@@ -202,19 +202,20 @@ class MainWindow(QMainWindow, WindowMixin):
                 label=label, delete=delete, edit=edit, copy=copy,
                 shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
-                fitWindow=fitWindow, fitWidth=fitWidth)
+                fitWindow=fitWindow, fitWidth=fitWidth,
+                fileMenuActions=(open,save,close,quit))
 
         self.menus = struct(
                 file=self.menu('&File'),
                 edit=self.menu('&Polygons'),
                 view=self.menu('&View'),
                 labelList=labelMenu)
-        addActions(self.menus.file, (open, save, close, quit))
         addActions(self.menus.edit, (label, color1, color2))
         addActions(self.menus.view, (
             labels, None,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
+        self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         self.tools = self.toolbar('Tools')
         addActions(self.tools, (
@@ -228,7 +229,8 @@ class MainWindow(QMainWindow, WindowMixin):
         # Application state.
         self.image = QImage()
         self.filename = filename
-        self.recent_files = []
+        self.recentFiles = []
+        self.maxRecent = 5
         self.lineColor = None
         self.fillColor = None
         self.zoom_level = 100
@@ -238,7 +240,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Restore application settings.
         types = {
             'filename': QString,
-            'recent-files': QStringList,
+            'recentFiles': QStringList,
             'window/size': QSize,
             'window/position': QPoint,
             'window/geometry': QByteArray,
@@ -246,7 +248,7 @@ class MainWindow(QMainWindow, WindowMixin):
             'window/state': QByteArray,
         }
         self.settings = settings = Settings(types)
-        self.recent_files = settings['recent-files']
+        self.recentFiles = list(settings['recentFiles'])
         size = settings.get('window/size', QSize(600, 500))
         position = settings.get('window/position', QPoint(0, 0))
         self.resize(size)
@@ -259,7 +261,7 @@ class MainWindow(QMainWindow, WindowMixin):
         Shape.line_color = self.lineColor
         Shape.fill_color = self.fillColor
 
-        # The file menu has default dynamically generated entries.
+        # Populate the File menu dynamically.
         self.updateFileMenu()
         # Since loading the file may take some time, make sure it runs in the background.
         self.queueEvent(partial(self.loadFile, self.filename))
@@ -300,7 +302,32 @@ class MainWindow(QMainWindow, WindowMixin):
             return items[0]
         return None
 
+    def addRecent(self, filename):
+        if filename in self.recentFiles:
+            self.recentFiles.remove(filename)
+        elif len(self.recentFiles) >= self.maxRecent:
+            self.recentFiles.pop()
+        self.recentFiles.insert(0, filename)
+
     ## Callbacks ##
+
+    def updateFileMenu(self):
+        current = self.filename
+        def exists(filename):
+            return os.path.exists(unicode(filename))
+        menu = self.menus.file
+        menu.clear()
+        files = [f for f in self.recentFiles\
+                 if f != current and exists(f)]
+        addActions(menu, self.actions.fileMenuActions)
+        if files:
+            menu.addSeparator()
+            icon = newIcon('labels')
+            for i, f in enumerate(files):
+                action = QAction(
+                    icon, '&%d %s' % (i+1, QFileInfo(f).fileName()), self)
+                action.triggered.connect(partial(self.loadFile, f))
+                menu.addAction(action)
 
     def popLabelListMenu(self, point):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
@@ -499,6 +526,8 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.loadLabels(self.labelFile.shapes)
             self.setClean()
             self.canvas.setEnabled(True)
+            self.paintCanvas()
+            self.addRecent(self.filename)
             return True
         return False
 
@@ -512,7 +541,7 @@ class MainWindow(QMainWindow, WindowMixin):
         assert not self.image.isNull(), "cannot paint null image"
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
-        self.canvas.repaint()
+        self.canvas.update()
 
     def adjustScale(self):
         self.zoomWidget.setValue(int(100 * self.scalers[self.zoomMode]()))
@@ -544,11 +573,9 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/state'] = self.saveState()
         s['line/color'] = self.lineColor
         s['fill/color'] = self.fillColor
+        s['recentFiles'] = self.recentFiles
         # ask the use for where to save the labels
         #s['window/geometry'] = self.saveGeometry()
-
-    def updateFileMenu(self):
-        """Populate menu with recent files."""
 
     ## User Dialogs ##
 
@@ -603,23 +630,21 @@ class MainWindow(QMainWindow, WindowMixin):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
-       
         color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
                 default=DEFAULT_LINE_COLOR)
         if color:
             self.lineColor = color
             # Change the color for all shape lines:
             Shape.line_color = self.lineColor 
-            self.canvas.repaint()
+            self.canvas.update()
 
     def chooseColor2(self):
-       
        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
                 default=DEFAULT_FILL_COLOR)
        if color:
             self.fillColor = color
             Shape.fill_color = self.fillColor
-            self.canvas.repaint()
+            self.canvas.update()
 
     def newLabel(self):
         self.canvas.deSelectShape()
