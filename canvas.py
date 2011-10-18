@@ -48,11 +48,18 @@ class Canvas(QWidget):
         self.hideBackround = False
         self.highlightedShape = None
         self._painter = QPainter()
+        self._cursor = CURSOR_DEFAULT
         # Menus:
         self.menus = (QMenu(), QMenu())
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
+
+    def enterEvent(self, ev):
+        self.overrideCursor(self._cursor)
+
+    def leaveEvent(self, ev):
+        self.restoreCursor()
 
     def focusOutEvent(self, ev):
         self.restoreCursor()
@@ -72,6 +79,27 @@ class Canvas(QWidget):
 
         self.restoreCursor()
 
+        # Polygon drawing.
+        if self.editing():
+            self.overrideCursor(CURSOR_DRAW)
+            if self.current:
+                color = self.lineColor
+                if self.outOfPixmap(pos):
+                    # Don't allow the user to draw outside the pixmap.
+                    # Project the point to the pixmap's edges.
+                    pos = self.intersectionPoint(self.current[-1], pos)
+                elif len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
+                    # Attract line to starting point and colorise to alert the user:
+                    pos = self.current[0]
+                    color = self.current.line_color
+                    self.overrideCursor(CURSOR_POINT)
+                    self.current.highlightStart = True
+                self.line[1] = pos
+                self.line.line_color = color
+                self.repaint()
+                self.current.highlightStart = False
+            return
+
         # Polygon copy moving.
         if Qt.RightButton & ev.buttons():
             if self.selectedShapeCopy and self.prevPoint:
@@ -81,28 +109,6 @@ class Canvas(QWidget):
             elif self.selectedShape:
                 self.selectedShapeCopy = self.selectedShape.copy()
                 self.repaint()
-            return
-
-        # Polygon drawing.
-        if self.editing():
-            self.overrideCursor(CURSOR_DRAW)
-
-        if self.current and self.editing():
-            color = self.lineColor
-            if self.outOfPixmap(pos):
-                # Don't allow the user to draw outside the pixmap.
-                # Project the point to the pixmap's edges.
-                pos = self.intersectionPoint(self.current[-1], pos)
-            elif len(self.current) > 1 and self.closeEnough(pos, self.current[0]):
-                # Attract line to starting point and colorise to alert the user:
-                pos = self.current[0]
-                color = self.current.line_color
-                self.current.highlightStart = True
-		self.overrideCursor(CURSOR_POINT)
-            self.line[1] = pos
-            self.line.line_color = color
-            self.repaint()
-            self.current.highlightStart = False
             return
 
         # Polygon moving.
@@ -450,11 +456,11 @@ class Canvas(QWidget):
         self.repaint()
 
     def overrideCursor(self, cursor):
+        self._cursor = cursor
         QApplication.setOverrideCursor(cursor)
 
     def restoreCursor(self):
         QApplication.restoreOverrideCursor()
-
 
     def resetState(self):
         self.restoreCursor()
