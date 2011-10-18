@@ -33,11 +33,8 @@ __appname__ = 'labelme'
 
 # TODO:
 # - [medium] Zoom should keep the image centered.
-# - [high] Save per-shape colors in label file.
 # - [high] Add recently opened files list in File menu.
 # - [high] Escape should cancel editing mode if no point in canvas.
-# - [medium] Maybe have separate colors for different shapes, and
-#   color the background in the label list accordingly (kostas).
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
 # - [low,maybe] Open images with drag & drop.
@@ -346,12 +343,13 @@ class MainWindow(QMainWindow, WindowMixin):
             shape = Shape(label=label)
             for x, y in points:
                 shape.addPoint(QPointF(x, y))
-            if line_color:
-                shape.line_color = QColor(*line_color)
-            if fill_color:
-                shape.fill_color = QColor(*fill_color)
             s.append(shape)
             self.addLabel(shape)
+            if line_color:
+                shape.line_color = QColor(*line_color)
+                self.items[shape].setBackgroundColor(shape.line_color)
+            if fill_color:
+                shape.fill_color = QColor(*fill_color)
         self.canvas.loadShapes(s)
 
     def saveLabels(self, filename):
@@ -631,6 +629,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 default=DEFAULT_LINE_COLOR)
         if color:
             self.canvas.selectedShape.line_color = color
+            self.items[self.canvas.selectedShape].setBackgroundColor(color)
             self.canvas.update()
             self.setDirty()
 
