@@ -3,6 +3,7 @@ from math import sqrt
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+from PyQt4.QtOpenGL import *
 
 from shape import Shape
 
@@ -17,6 +18,7 @@ CURSOR_DRAW    = Qt.CrossCursor
 CURSOR_MOVE    = Qt.ClosedHandCursor
 CURSOR_GRAB    = Qt.OpenHandCursor
 
+#class Canvas(QGLWidget):
 class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
@@ -47,6 +49,7 @@ class Canvas(QWidget):
         self._hideBackround = False
         self.hideBackround = False
         self.highlightedShape = None
+        self._painter = QPainter()
         # Menus:
         self.menus = (QMenu(), QMenu())
         # Set widget options.
@@ -79,8 +82,6 @@ class Canvas(QWidget):
                 self.repaint()
             elif self.selectedShape:
                 self.selectedShapeCopy = self.selectedShape.copy()
-               # self.selectedShapeCopy.line_color = QColor(255, 0, 0, 64)
-                #self.selectedShapeCopy.fill_color = QColor(0, 255, 0, 64)
                 self.repaint()
             return
 
@@ -277,9 +278,10 @@ class Canvas(QWidget):
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
 
-        p = QPainter()
+        p = self._painter
         p.begin(self)
         p.setRenderHint(QPainter.Antialiasing)
+        p.setRenderHint(QPainter.HighQualityAntialiasing)
         p.setRenderHint(QPainter.SmoothPixmapTransform)
 
         p.scale(self.scale, self.scale)
