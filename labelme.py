@@ -112,6 +112,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
+        self.canvas.drawMode.connect(self.drawMode)
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
@@ -130,8 +131,9 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+C', 'color', u'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
                 'Ctrl+Shift+C', 'color', u'Choose polygon fill color')
-        label = action('&New Polygon', self.newLabel,
-                'Ctrl+N', 'new', u'Start a new polygon', enabled=False)
+        label = action('&Draw Polygon', self.newLabel,
+                'Ctrl+N', 'new', u'Start a new polygon',
+                checkable=True, enabled=False)
         copy = action('&Copy Polygon', self.copySelectedShape,
                 'Ctrl+C', 'copy', u'Copy selected polygon', enabled=False)
         delete = action('&Delete Polygon', self.deleteSelectedShape,
@@ -612,10 +614,13 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.update()
             self.setDirty()
 
-    def newLabel(self):
-        self.canvas.deSelectShape()
-        self.canvas.setEditing()
-        self.actions.label.setEnabled(False)
+    def newLabel(self, value=True):
+        if value:
+            self.canvas.deSelectShape()
+        self.canvas.setEditing(value)
+
+    def drawMode(self, started=False):
+        self.actions.label.setEnabled(not started)
 
     def deleteSelectedShape(self):
         yes, no = QMessageBox.Yes, QMessageBox.No
