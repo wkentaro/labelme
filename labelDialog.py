@@ -4,8 +4,6 @@ from PyQt4.QtCore import *
 
 from lib import newButton, labelValidator
 
-BB = QDialogButtonBox
-
 # FIXME:
 # - Use the validator when accepting the dialog.
 
@@ -21,14 +19,13 @@ class LabelDialog(QDialog):
         self.edit.editingFinished.connect(self.postProcess)
         layout = QVBoxLayout()
         layout.addWidget(self.edit)
-        delete = newButton('Cancel\npolygon', icon='delete', slot=self.delete)
-        undo = newButton('Cancel\nlast line', icon='undo', slot=self.undo)
-        bb = BB(Qt.Horizontal, self)
-        bb.addButton(BB.Ok)
-        bb.addButton(undo, BB.RejectRole)
-        bb.addButton(delete, BB.RejectRole)
-        bb.accepted.connect(self.validate)
-        layout.addWidget(bb)
+        done = newButton('done', icon='done', slot=self.validate)
+        delete = newButton('delete', icon='delete', slot=self.delete)
+        undo = newButton('undo close', icon='undo', slot=self.undo)
+        bb = QHBoxLayout()
+        for btn in done, undo, delete:
+            bb.addWidget(btn)
+        layout.addLayout(bb)
         self.setLayout(layout)
 
     def undo(self):
@@ -42,22 +39,14 @@ class LabelDialog(QDialog):
     def text(self):
         return self.edit.text()
 
-    def popUp(self, position):
+    def popUp(self, text='', position=None):
         # It actually works without moving...
-        #self.move(position)
-        self.edit.setText(u"Enter label")
-        self.edit.setSelection(0, len(self.text()))
-        self.edit.setFocus(Qt.PopupFocusReason)
-        return self.OK if self.exec_() == QDialog.Accepted else self.action
-    
-    def popUpEdit(self, text):
-        # It actually works without moving...
-        #self.move(position)
+        self.move(position)
         self.edit.setText(text)
-        self.edit.setSelection(0, len(self.text()))
+        self.edit.setSelection(0, len(self.edit.text()))
         self.edit.setFocus(Qt.PopupFocusReason)
         return self.OK if self.exec_() == QDialog.Accepted else self.action
-    
+
     def validate(self):
         if self.edit.text().trimmed():
             self.accept()

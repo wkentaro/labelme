@@ -78,7 +78,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self._noSelectionSlot = False
 
         # Main widgets.
-        self.label = LabelDialog(parent=self)
+        self.labelDialog = LabelDialog(parent=self)
        
         self.labels = {}
         self.items = {}
@@ -400,15 +400,14 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        action = self.label.popUp(position)
-        if action == self.label.OK:
-            self.addLabel(self.canvas.setLastLabel(self.label.text()))
-            self.setDirty()
-            # Enable appropriate actions.
+        action = self.labelDialog.popUp(text='Enter name', position=position)
+        if action == self.labelDialog.OK:
+            self.addLabel(self.canvas.setLastLabel(self.labelDialog.text()))
             self.actions.label.setEnabled(True)
-        elif action == self.label.UNDO:
+            self.setDirty()
+        elif action == self.labelDialog.UNDO:
             self.canvas.undoLastLine()
-        elif action == self.label.DELETE:
+        elif action == self.labelDialog.DELETE:
             self.canvas.deleteLastShape()
         else:
             assert False, "unknown label action"
