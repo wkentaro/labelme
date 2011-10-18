@@ -209,6 +209,8 @@ class MainWindow(QMainWindow, WindowMixin):
                 view=self.menu('&View'),
                 labelList=labelMenu)
         addActions(self.menus.file, (open, save, close, quit))
+        self.fileActions=(open, save, close, quit)
+
         addActions(self.menus.edit, (label, color1, color2))
         addActions(self.menus.view, (
             labels, None,
@@ -455,7 +457,12 @@ class MainWindow(QMainWindow, WindowMixin):
         self.resetState()
         self.canvas.setEnabled(False)
         if filename is None:
-            filename = self.settings['filename']
+            #filename = self.settings['filename']
+            action=self.sender()
+            if isinstance(action,QAction):
+                filename=action.data().toString()
+            else:
+                filename = self.settings['filename']
         filename = unicode(filename)
         if QFile.exists(filename):
             if LabelFile.isLabelFile(filename):
@@ -536,12 +543,35 @@ class MainWindow(QMainWindow, WindowMixin):
         s['window/state'] = self.saveState()
         s['line/color'] = self.lineColor
         s['fill/color'] = self.fillColor
+        s['recent-files']=self.recent_files
+
         # ask the use for where to save the labels
         #s['window/geometry'] = self.saveGeometry()
 
     def updateFileMenu(self):
         """Populate menu with recent files."""
+        fileMenu=self.menus.file
+        fileMenu.clear()
+        addActions(fileMenu, self.fileActions)
+        current = QString(self.filename) if self.filename is not None else None
+        recentFiles = []
+        i=0
+        
+        for fname in self.recent_files:
+            if fname != current and QFile.exists(fname):
+                recentFiles.append(fname)
+        if recentFiles:
+            for i, fname in enumerate(recentFiles):
+                  
+                faction = QAction("&%d %s" % ( i + 1, QFileInfo(fname).fileName()), self)
+                faction.setData(QVariant(fname))
+                self.connect(faction, SIGNAL("triggered()"),
+                                 self.loadFile)
+                fileMenu.addAction(faction)                    
 
+        fileMenu.addSeparator()
+        fileMenu.addAction(self.fileActions[-1])
+        
     ## User Dialogs ##
 
     def openFile(self, _value=False):
@@ -558,6 +588,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if filename:
             if self.loadFile(filename):
                 self.actions.close.setEnabled(True)
+                self.addRecentFile(filename)
                 self.canvas.setEnabled(True)
 
     def saveFile(self, _value=False):
@@ -569,6 +600,7 @@ class MainWindow(QMainWindow, WindowMixin):
             'Label files (%s)' % ''.join(formats)))
         if filename:
             if self.saveLabels(filename):
+                self.addRecentFile(filename)
                 self.setClean()
 
     def closeFile(self, _value=False):
@@ -617,7 +649,14 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.deSelectShape()
         self.canvas.setEditing()
         self.actions.label.setEnabled(False)
-
+        
+    def addRecentFile(self, fname):
+        if fname is None:
+            return
+        if not self.recent_files.contains(fname):
+            self.recent_files.prepend(QString(fname))
+            while self.recent_files.count() > 9:
+                self.recent_files.takeLast()
     def deleteSelectedShape(self):
         yes, no = QMessageBox.Yes, QMessageBox.No
         msg = u'You are about to permanently delete this polygon, proceed anyway?'
