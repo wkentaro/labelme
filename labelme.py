@@ -32,6 +32,7 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
+# - [high] More sensible shortcuts (e.g. Ctrl+C to copy).
 # - [high] Figure out WhatsThis for help.
 # - [medium] Zoom should keep the image centered.
 # - [high] Add recently opened files list in File menu.
