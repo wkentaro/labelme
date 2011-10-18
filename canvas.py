@@ -11,6 +11,7 @@ from shape import Shape
 # - [maybe] Find optimal epsilon value.
 
 CURSOR_DEFAULT = Qt.ArrowCursor
+CURSOR_POINT    = Qt.PointingHandCursor
 CURSOR_DRAW    = Qt.CrossCursor
 CURSOR_MOVE    = Qt.ClosedHandCursor
 CURSOR_GRAB    = Qt.OpenHandCursor
@@ -97,6 +98,7 @@ class Canvas(QWidget):
                 pos = self.current[0]
                 color = self.current.line_color
                 self.current.highlightStart = True
+		self.overrideCursor(CURSOR_POINT)
             self.line[1] = pos
             self.line.line_color = color
             self.repaint()
