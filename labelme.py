@@ -603,6 +603,7 @@ class MainWindow(QMainWindow, WindowMixin):
             # Change the color for all shape lines:
             Shape.line_color = self.lineColor
             self.canvas.update()
+            self.setDirty()
 
     def chooseColor2(self):
        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
@@ -611,6 +612,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.fillColor = color
             Shape.fill_color = self.fillColor
             self.canvas.update()
+            self.setDirty()
 
     def newLabel(self):
         self.canvas.deSelectShape()
