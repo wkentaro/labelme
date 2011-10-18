@@ -94,7 +94,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.colorDialog = ColorDialog(parent=self)
         self.simpleLabelDialog = SimpleLabelDialog(parent=self)
 
-        self.labelList.itemActivated.connect(self.highlightLabel)
+        self.labelList.itemActivated.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
@@ -379,14 +379,6 @@ class MainWindow(QMainWindow, WindowMixin):
         #fix copy and delete
         self.shapeSelectionChanged(True)
 
-    def highlightLabel(self, item):
-        if self.highlighted:
-            self.highlighted.fill_color = Shape.fill_color
-        shape = self.labels[item]
-        shape.fill_color = inverted(Shape.fill_color)
-        self.highlighted = shape
-        self.canvas.repaint()
-
     def labelSelectionChanged(self):
         items = self.labelList.selectedItems()
         if not items:
@@ -499,6 +491,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.loadLabels(self.labelFile.shapes)
             self.setClean()
             self.canvas.setEnabled(True)
+            self.paintCanvas()
             return True
         return False
 
@@ -512,7 +505,7 @@ class MainWindow(QMainWindow, WindowMixin):
         assert not self.image.isNull(), "cannot paint null image"
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
-        self.canvas.repaint()
+        self.canvas.update()
 
     def adjustScale(self):
         self.zoomWidget.setValue(int(100 * self.scalers[self.zoomMode]()))
@@ -603,23 +596,21 @@ class MainWindow(QMainWindow, WindowMixin):
         return os.path.dirname(unicode(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
-       
         color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
                 default=DEFAULT_LINE_COLOR)
         if color:
             self.lineColor = color
             # Change the color for all shape lines:
-            Shape.line_color = self.lineColor 
-            self.canvas.repaint()
+            Shape.line_color = self.lineColor
+            self.canvas.update()
 
     def chooseColor2(self):
-       
        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
                 default=DEFAULT_FILL_COLOR)
        if color:
             self.fillColor = color
             Shape.fill_color = self.fillColor
-            self.canvas.repaint()
+            self.canvas.update()
 
     def newLabel(self):
         self.canvas.deSelectShape()
