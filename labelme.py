@@ -555,12 +555,12 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
 
     ## Callback functions:
-    def newShape(self, position):
+    def newShape(self):
         """Pop-up and give focus to the label editor.
 
         position MUST be in global coordinates.
         """
-        text = self.labelDialog.popUp(position=position)
+        text = self.labelDialog.popUp()
         if text is not None:
             self.addLabel(self.canvas.setLastLabel(text))
             if self.beginner(): # Switch to edit mode.

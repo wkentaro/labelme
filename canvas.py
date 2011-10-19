@@ -19,7 +19,7 @@ CURSOR_GRAB    = Qt.OpenHandCursor
 class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
-    newShape = pyqtSignal(QPoint)
+    newShape = pyqtSignal()
     selectionChanged = pyqtSignal(bool)
     shapeMoved = pyqtSignal()
     drawingPolygon = pyqtSignal(bool)
@@ -393,7 +393,7 @@ class Canvas(QWidget):
         self.shapes.append(self.current)
         self.current = None
         self.setHiding(False)
-        self.newShape.emit(self.mapToGlobal(toPoint(self.line[1])))
+        self.newShape.emit()
         self.update()
 
     def closeEnough(self, p1, p2):
@@ -518,11 +518,4 @@ class Canvas(QWidget):
         self.restoreCursor()
         self.pixmap = None
         self.update()
-
-
-def toPoint(pointf):
-    return QPoint(int(pointf.x()), int(pointf.y()))
-
-def pp(p):
-    return '%.2f, %.2f' % (p.x(), p.y())
 

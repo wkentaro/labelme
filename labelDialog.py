@@ -4,6 +4,9 @@ from PyQt4.QtCore import *
 
 from lib import newIcon, labelValidator
 
+# TODO:
+# - Calculate optimal position so as not to go out of screen area.
+
 BB = QDialogButtonBox
 
 class LabelDialog(QDialog):
@@ -31,11 +34,10 @@ class LabelDialog(QDialog):
     def postProcess(self):
         self.edit.setText(self.edit.text().trimmed())
 
-    def popUp(self, text='', position=None):
+    def popUp(self, text=''):
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         self.edit.setFocus(Qt.PopupFocusReason)
-        if position is not None:
-            self.move(position)
+        self.move(QCursor.pos())
         return self.edit.text() if self.exec_() else None
 
