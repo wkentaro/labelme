@@ -336,6 +336,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def toggleAdvancedMode(self, value=True):
         self._beginner = not value
         self.populateToolbar()
+        self.editButton.setVisible(not value)
         if value:
             self.actions.createMode.setEnabled(True)
             self.actions.editMode.setEnabled(True)
