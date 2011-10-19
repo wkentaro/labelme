@@ -537,7 +537,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        action = self.labelDialog.popUp(text="Enter object's name", position=position)
+        action = self.labelDialog.popUp(position=position)
         if action == self.labelDialog.OK:
             self.addLabel(self.canvas.setLastLabel(self.labelDialog.text()))
             if self.beginner(): # Switch to edit mode.

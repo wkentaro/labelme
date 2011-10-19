@@ -12,6 +12,7 @@ class LabelDialog(QDialog):
 
     def __init__(self, text='', parent=None):
         super(LabelDialog, self).__init__(parent)
+        self.setWindowTitle("Enter object's label")
         self.action = self.OK
         self.edit = QLineEdit()
         self.edit.setText(text)
