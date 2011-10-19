@@ -11,7 +11,7 @@ from shape import Shape
 # - [maybe] Find optimal epsilon value.
 
 CURSOR_DEFAULT = Qt.ArrowCursor
-CURSOR_POINT    = Qt.PointingHandCursor
+CURSOR_POINT   = Qt.PointingHandCursor
 CURSOR_DRAW    = Qt.CrossCursor
 CURSOR_MOVE    = Qt.ClosedHandCursor
 CURSOR_GRAB    = Qt.OpenHandCursor
@@ -412,11 +412,10 @@ class Canvas(QWidget):
     def keyPressEvent(self, ev):
         if ev.key() == Qt.Key_Escape and self.current:
             self.current = None
-            self.repaint()
+            self.update()
 
     def setLastLabel(self, text):
         assert text
-        print "shape <- '%s'" % text
         self.shapes[-1].label = text
         return self.shapes[-1]
 
