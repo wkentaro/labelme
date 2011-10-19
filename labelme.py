@@ -31,6 +31,7 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
+# - [high] Automatically add file suffix when saving.
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
 # - [high] Figure out WhatsThis for help.
@@ -137,6 +138,9 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+O', 'open', u'Open image or label file')
         save = action('&Save', self.saveFile,
                 'Ctrl+S', 'save', u'Save labels to file', enabled=False)
+        saveAs = action('&Save As', self.saveFileAs,
+                'Ctrl+Shift+S', 'save', u'Save labels to a different file',
+                enabled=False)
         close = action('&Close', self.closeFile,
                 'Ctrl+K', 'close', u'Close current file')
         color1 = action('Polygon &Line Color', self.chooseColor1,
@@ -221,7 +225,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
 
         # Store actions for further handling.
-        self.actions = struct(save=save, open=open, close=close,
+        self.actions = struct(save=save, saveAs=saveAs, open=open, close=close,
                 lineColor=color1, fillColor=color2,
                 create=create, delete=delete, edit=edit, copy=copy,
                 createMode=createMode, editMode=editMode, advancedMode=advancedMode,
@@ -229,14 +233,14 @@ class MainWindow(QMainWindow, WindowMixin):
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth,
                 zoomActions=zoomActions,
-                fileMenuActions=(open,save,close,quit),
+                fileMenuActions=(open,save,saveAs,close,quit),
                 beginner=(), advanced=(),
                 editMenu=(edit, copy, delete, None, color1, color2),
                 beginnerContext=(create, edit, copy, delete),
                 advancedContext=(createMode, editMode, edit, copy,
                     delete, shapeLineColor, shapeFillColor),
                 onLoadActive=(close, create, createMode, editMode),
-                onShapesPresent=(hideAll, showAll))
+                onShapesPresent=(saveAs, hideAll, showAll))
 
         self.menus = struct(
                 file=self.menu('&File'),
@@ -722,15 +726,24 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
-        assert self.itemsToShapes, "cannot save empty labels"
-        formats = ['*%s' % LabelFile.suffix]
-        filename = unicode(QFileDialog.getSaveFileName(self,
+        if self.hasLabels():
+            self._saveFile(self.filename if self.labelFile\
+                                         else self.saveFileDialog())
+
+    def saveFileAs(self, _value=False):
+        assert not self.image.isNull(), "cannot save empty image"
+        if self.hasLabels():
+            self._saveFile(self.saveFileDialog())
+
+    def saveFileDialog(self):
+        return unicode(QFileDialog.getSaveFileName(self,
             '%s - Choose File', self.currentPath(),
-            'Label files (%s)' % ''.join(formats)))
-        if filename:
-            if self.saveLabels(filename):
-                self.addRecentFile(filename)
-                self.setClean()
+            'Label files (*%s)' % LabelFile.suffix))
+
+    def _saveFile(self, filename):
+        if filename and self.saveLabels(filename):
+            self.addRecentFile(filename)
+            self.setClean()
 
     def closeFile(self, _value=False):
         if not self.mayContinue():
@@ -739,8 +752,16 @@ class MainWindow(QMainWindow, WindowMixin):
         self.setClean()
         self.toggleActions(False)
         self.canvas.setEnabled(False)
+        self.actions.saveAs.setEnabled(False)
 
     # Message Dialogs. #
+    def hasLabels(self):
+        if not self.itemsToShapes:
+            self.errorMessage(u'No objects labeled',
+                    u'You must label at least one object to save the file.')
+            return False
+        return True
+
     def mayContinue(self):
         return not (self.dirty and not self.discardChangesDialog())
 
