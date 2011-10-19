@@ -32,7 +32,6 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
-# - [high] Add Return as a double-click shortcut in create.
 # - [high] Switch to simpler label dialog.
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
@@ -223,8 +222,6 @@ class MainWindow(QMainWindow, WindowMixin):
         addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
-        # Add the action to the main window, so that its shortcut is global.
-        self.addAction(edit)
 
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, close=close,
@@ -245,15 +242,19 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.menus = struct(
                 file=self.menu('&File'),
-                edit=self.menu('&Polygons'),
+                edit=self.menu('&Edit'),
                 view=self.menu('&View'),
                 labelList=labelMenu)
-        addActions(self.menus.edit, (color1, color2))
+
+        addActions(self.menus.edit, (
+            edit, copy, delete, None, color1, color2))
+
         addActions(self.menus.view, (
             labels, advancedMode, None,
             hideAll, showAll, None,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
+
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
