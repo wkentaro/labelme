@@ -172,6 +172,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.scalers = {
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
+            # Set to one to scale to 100% when loading files.
+            self.MANUAL_ZOOM: lambda: 1,
         }
 
         edit = action('&Edit Label', self.editLabel,
@@ -312,8 +314,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.itemsToShapes.clear()
         self.shapesToItems.clear()
         self.labelList.clear()
-        if self.zoomMode == self.MANUAL_ZOOM:
-            self.zoomWidget.setValue(100)
         self.filename = None
         self.imageData = None
         self.labelFile = None
@@ -624,6 +624,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if not self.mayContinue():
             return
         self.resetState()
+        self.setClean()
         self.toggleActions(False)
         self.canvas.setEnabled(False)
 
