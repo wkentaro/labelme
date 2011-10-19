@@ -93,9 +93,19 @@ class MainWindow(QMainWindow, WindowMixin):
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
 
+        listLayout = QVBoxLayout()
+        listLayout.addWidget(self.labelList)
+        self.editButton = QToolButton()
+        self.editButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.labelListContainer = QWidget()
+        self.labelListContainer.setLayout(listLayout)
+        listLayout.addWidget(self.editButton)
+        listLayout.addWidget(self.labelList)
+
+
         self.dock = QDockWidget(u'Polygon Labels', self)
         self.dock.setObjectName(u'Labels')
-        self.dock.setWidget(self.labelList)
+        self.dock.setWidget(self.labelListContainer)
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
@@ -196,6 +206,7 @@ class MainWindow(QMainWindow, WindowMixin):
         edit = action('&Edit Label', self.editLabel,
                 'Ctrl+E', 'edit', u'Modify the label of the selected polygon',
                 enabled=False)
+        self.editButton.setDefaultAction(edit)
 
         shapeLineColor = action('Shape &Line Color', self.chshapeLineColor,
                 icon='color', tip=u'Change the line color for this specific shape',
@@ -317,6 +328,9 @@ class MainWindow(QMainWindow, WindowMixin):
         #    QWhatsThis.enterWhatsThisMode()
 
     ## Support Functions ##
+
+    def noShapes(self):
+        return not self.itemsToShapes
 
     def toggleAdvancedMode(self, value=True):
         self._beginner = not value
