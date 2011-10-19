@@ -502,6 +502,7 @@ class MainWindow(QMainWindow, WindowMixin):
             shape = Shape(label=label)
             for x, y in points:
                 shape.addPoint(QPointF(x, y))
+            shape.addPoint(shape[0]) # Close shape
             s.append(shape)
             self.addLabel(shape)
             if line_color:
