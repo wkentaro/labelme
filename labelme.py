@@ -713,10 +713,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 if self.filename else '.'
         formats = ['*.%s' % unicode(fmt).lower()\
                 for fmt in QImageReader.supportedImageFormats()]
-        filters = 'Image files (%s)\nLabel files (*%s)'\
-                % (' '.join(formats), LabelFile.suffix)
+        filters = "Image & Label files (%s)" % \
+                ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename = unicode(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image', path, filters))
+            '%s - Choose Image or Label file', path, filters))
         if filename:
             self.loadFile(filename)
 
