@@ -27,7 +27,6 @@ from toolBar import ToolBar
 __appname__ = 'labelme'
 
 # FIXME
-# - [high] Do not select shapes when clicking the label list in edit mode.
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 # - [medium] Disabling the save button prevents the user from saving to
 #   alternate files. Either keep enabled, or add "Save As" button.
@@ -85,9 +84,14 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labelDialog = LabelDialog(parent=self)
 
         self.labelList = QListWidget()
-        self.highlighted = None
         self.itemsToShapes = {}
         self.shapesToItems = {}
+
+        self.labelList.itemActivated.connect(self.labelSelectionChanged)
+        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
+        self.labelList.itemDoubleClicked.connect(self.editLabel)
+        # Connect to itemChanged to detect checkbox changes.
+        self.labelList.itemChanged.connect(self.labelItemChanged)
 
         self.dock = QDockWidget(u'Polygon Labels', self)
         self.dock.setObjectName(u'Labels')
@@ -96,12 +100,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
         self.simpleLabelDialog = SimpleLabelDialog(parent=self)
-
-        self.labelList.itemActivated.connect(self.labelSelectionChanged)
-        self.labelList.itemDoubleClicked.connect(self.editLabel)
-        # Connect to itemChanged to detect checkbox changes.
-        self.labelList.itemChanged.connect(self.labelItemChanged)
-        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
 
         self.canvas = Canvas()
         self.canvas.zoomRequest.connect(self.zoomRequest)
@@ -429,12 +427,10 @@ class MainWindow(QMainWindow, WindowMixin):
         self.shapeSelectionChanged(True)
 
     def labelSelectionChanged(self):
-        items = self.labelList.selectedItems()
-        if not items:
-            return
-        shape = self.itemsToShapes[items[0]]
-        self._noSelectionSlot = True
-        self.canvas.selectShape(shape)
+        item = self.currentItem()
+        if item and not self.canvas.editing():
+            self._noSelectionSlot = True
+            self.canvas.selectShape(self.itemsToShapes[item])
 
     def labelItemChanged(self, item):
         shape = self.itemsToShapes[item]
