@@ -457,6 +457,7 @@ class Canvas(QWidget):
         self.repaint()
 
     def overrideCursor(self, cursor):
+        self.restoreCursor()
         self._cursor = cursor
         QApplication.setOverrideCursor(cursor)
 
