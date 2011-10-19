@@ -80,6 +80,8 @@ class Canvas(QWidget):
             self.deSelectShape()
 
     def unHighlight(self):
+        if self.hShape:
+            self.hShape.highlightClear()
         self.hVertex = self.hShape = None
 
     def selectedVertex(self):
@@ -146,6 +148,8 @@ class Canvas(QWidget):
             # check if we happen to be inside a shape.
             index = shape.nearestVertex(pos, self.epsilon)
             if index is not None:
+                if self.selectedVertex():
+                    self.hShape.highlightClear()
                 self.hVertex, self.hShape = index, shape
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
