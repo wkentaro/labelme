@@ -1,11 +1,10 @@
 
-from math import sqrt
-
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4.QtOpenGL import *
 
 from shape import Shape
+from lib import distance
 
 # TODO:
 # - [maybe] Find optimal epsilon value.
@@ -48,6 +47,7 @@ class Canvas(QWidget):
         self._hideBackround = False
         self.hideBackround = False
         self.highlightedShape = None
+        self._nearest = None
         self._painter = QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
@@ -94,11 +94,11 @@ class Canvas(QWidget):
                     pos = self.current[0]
                     color = self.current.line_color
                     self.overrideCursor(CURSOR_POINT)
-                    self.current.highlightStart = True
+                    self.current.highlightVertex(0, Shape.NEAR_VERTEX)
                 self.line[1] = pos
                 self.line.line_color = color
                 self.repaint()
-                self.current.highlightStart = False
+                self.current.highlightClear()
             return
 
         # Polygon copy moving.
@@ -113,11 +113,15 @@ class Canvas(QWidget):
             return
 
         # Polygon moving.
-        if Qt.LeftButton & ev.buttons() and self.selectedShape and self.prevPoint:
-            self.overrideCursor(CURSOR_MOVE)
-            self.boundedMoveShape(self.selectedShape, pos)
-            self.shapeMoved.emit()
-            self.repaint()
+        if Qt.LeftButton & ev.buttons():
+            if self._nearest and self.prevPoint:
+                self.boundedMoveVertex(pos)
+                self.repaint()
+            elif self.selectedShape and self.prevPoint:
+                self.overrideCursor(CURSOR_MOVE)
+                self.boundedMoveShape(self.selectedShape, pos)
+                self.shapeMoved.emit()
+                self.repaint()
             return
 
         # Just hovering over the canvas:
@@ -125,17 +129,29 @@ class Canvas(QWidget):
         self.setToolTip("Image")
         previous = self.highlightedShape
         for shape in reversed(self.shapes):
-            if shape.containsPoint(pos) and self.isVisible(shape):
-                self.setToolTip("Object '%s'" % shape.label)
-                self.highlightedShape = shape
-                self.overrideCursor(CURSOR_GRAB)
-                break
+            if self.isVisible(shape):
+                v = shape.nearestVertex(pos, self.epsilon)
+                if v is not None:
+                    self._nearest = (v, shape)
+                    shape.highlightVertex(v, shape.MOVE_VERTEX)
+                    self.highlightedShape = shape
+                    self.overrideCursor(CURSOR_POINT)
+                    self.setStatusTip("Click & drag to move point")
+                    break
+                if shape.containsPoint(pos):
+                    self.setToolTip("Object '%s'" % shape.label)
+                    self.highlightedShape = shape
+                    self.overrideCursor(CURSOR_GRAB)
+                    break
         else:
+            if self.highlightedShape:
+                self.highlightedShape.highlightClear()
             self.highlightedShape = None
+            self._nearest = None
 
         if previous != self.highlightedShape:
             # Try to minimise repaints.
-            self.repaint()
+            self.update()
 
     def mousePressEvent(self, ev):
         pos = self.transformPos(ev.posF())
@@ -163,7 +179,6 @@ class Canvas(QWidget):
             self.repaint()
 
     def mouseReleaseEvent(self, ev):
-        pos = self.transformPos(ev.posF())
         if ev.button() == Qt.RightButton:
             menu = self.menus[bool(self.selectedShapeCopy)]
             self.restoreCursor()
@@ -210,7 +225,8 @@ class Canvas(QWidget):
             # Replace the last point with the starting point.
             # We have to do this because the mousePressEvent handler
             # adds that point before this handler is called!
-            self.current[-1] = self.current[0]
+            self.current.popPoint()
+            self.current.addPoint(self.current[0])
             self.finalise(ev)
 
     def selectShape(self, shape):
@@ -224,6 +240,10 @@ class Canvas(QWidget):
     def selectShapePoint(self, point):
         """Select the first shape created which contains this point."""
         self.deSelectShape()
+        if self._nearest:
+            i, s = self._nearest
+            s.highlightVertex(i, s.MOVE_VERTEX)
+            return
         for shape in reversed(self.shapes):
             if self.isVisible(shape) and shape.containsPoint(point):
                 shape.selected = True
@@ -240,6 +260,13 @@ class Canvas(QWidget):
         x2 = (rect.x() + rect.width()) - point.x()
         y2 = (rect.y() + rect.height()) - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
+
+    def boundedMoveVertex(self, pos):
+        i, shape = self._nearest
+        point = shape[i]
+        if self.outOfPixmap(pos):
+            pos = self.intersectionPoint(point, pos)
+        shape.moveVertexBy(i, pos - point)
 
     def boundedMoveShape(self, shape, pos):
         if self.outOfPixmap(pos):
@@ -278,9 +305,10 @@ class Canvas(QWidget):
     def copySelectedShape(self):
         if self.selectedShape:
             shape = self.selectedShape.copy()
-            self.shapes.append(shape)
-            self.selectedShape = shape
             self.deSelectShape()
+            self.shapes.append(shape)
+            shape.selected = True
+            self.selectedShape = shape
             return shape
 
     def paintEvent(self, event):
@@ -442,16 +470,6 @@ class Canvas(QWidget):
         self.current = None
         self.repaint()
 
-    def copySelectedShape(self):
-        if self.selectedShape:
-            newShape=self.selectedShape.copy()
-            self.shapes.append(newShape)
-            self.deSelectShape()
-            self.shapes[-1].selected=True
-            self.selectedShape=self.shapes[-1]
-            self.repaint()
-            return self.selectedShape
-
     def setShapeVisible(self, shape, value):
         self.visible[shape] = value
         self.repaint()
@@ -472,7 +490,4 @@ class Canvas(QWidget):
 
 def pp(p):
     return '%.2f, %.2f' % (p.x(), p.y())
-
-def distance(p):
-    return sqrt(p.x() * p.x() + p.y() * p.y())
 

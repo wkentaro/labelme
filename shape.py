@@ -4,25 +4,29 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-# FIXME:
-# - Add support for highlighting vertices.
+from lib import distance
 
 # TODO:
 # - [opt] Store paths instead of creating new ones at each paint.
 
 DEFAULT_LINE_COLOR = QColor(0, 255, 0, 128)
 DEFAULT_FILL_COLOR = QColor(255, 0, 0, 128)
-DEFAULT_SELECT_COLOR = QColor(255, 255, 255)
+DEFAULT_SELECT_LINE_COLOR = QColor(255, 255, 255)
+DEFAULT_SELECT_FILL_COLOR = QColor(0, 128, 255, 155)
+DEFAULT_VERTEX_FILL_COLOR = QColor(255, 0, 0)
 
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
+
+    MOVE_VERTEX, NEAR_VERTEX = range(2)
 
     ## The following class variables influence the drawing
     ## of _all_ shape objects.
     line_color = DEFAULT_LINE_COLOR
     fill_color = DEFAULT_FILL_COLOR
-    sel_fill_color=QColor(0, 128, 255, 155)
-    select_color = DEFAULT_SELECT_COLOR
+    select_line_color = DEFAULT_SELECT_LINE_COLOR
+    select_fill_color = DEFAULT_SELECT_FILL_COLOR
+    vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -32,7 +36,16 @@ class Shape(object):
         self.points = []
         self.fill = False
         self.selected = False
-        self.highlightStart = False
+
+        self._highlightIndex = None
+        self._highlightMode = self.NEAR_VERTEX
+        self._highlightSettings = {
+            self.NEAR_VERTEX: (4, self.P_ROUND),
+            self.MOVE_VERTEX: (2, self.P_SQUARE),
+            }
+
+        self._closed = False
+
         if line_color is not None:
             # Override the class line_color attribute
             # with an object attribute. Currently this
@@ -40,6 +53,9 @@ class Shape(object):
             self.line_color = line_color
 
     def addPoint(self, point):
+        if self.points and point == self.points[0]:
+            self._closed = True
+            return
         self.points.append(point)
 
     def popPoint(self):
@@ -48,11 +64,12 @@ class Shape(object):
         return None
 
     def isClosed(self):
-        return len(self.points) > 1 and self[0] == self[-1]
+        return self._closed
 
     def paint(self, painter):
         if self.points:
-            pen = QPen(self.select_color if self.selected else self.line_color)
+            color = self.select_line_color if self.selected else self.line_color
+            pen = QPen(color)
             # Try using integer sizes for smoother drawing(?)
             pen.setWidth(max(1, int(round(2.0 / self.scale))))
             painter.setPen(pen)
@@ -60,32 +77,44 @@ class Shape(object):
             line_path = QPainterPath()
             vrtx_path = QPainterPath()
 
-            line_path.moveTo(QPointF(self.points[0]))
-            self.drawVertex(vrtx_path, self.points[0],
-                    highlight=self.highlightStart)
+            line_path.moveTo(self.points[0])
+            # Uncommenting the following line will draw 2 paths
+            # for the 1st vertex, and make it non-filled, which
+            # may be desirable.
+            #self.drawVertex(vrtx_path, 0)
 
-            for p in self.points[1:]:
-                line_path.lineTo(QPointF(p))
-                # Skip last element, otherwise its vertex is not filled.
-                if p != self.points[0]:
-                    self.drawVertex(vrtx_path, p)
+            for i, p in enumerate(self.points):
+                line_path.lineTo(p)
+                self.drawVertex(vrtx_path, i)
+            if self.isClosed():
+                line_path.lineTo(self.points[0])
+
             painter.drawPath(line_path)
-            painter.fillPath(vrtx_path, self.line_color)
+            painter.drawPath(vrtx_path)
+            painter.fillPath(vrtx_path, self.vertex_fill_color)
             if self.fill:
-                if self.selected:
-                    fillColor=self.sel_fill_color
-                else:
-                    fillColor=self.fill_color
-                painter.fillPath(line_path,fillColor)
+                color = self.select_fill_color if self.selected else self.fill_color
+                painter.fillPath(line_path, color)
 
-    def drawVertex(self, path, point, highlight=False):
+    def drawVertex(self, path, i):
         d = self.point_size / self.scale
-        if highlight:
-            d *= 4
-        if self.point_type == self.P_SQUARE:
+        shape = self.point_type
+        point = self.points[i]
+        if i == self._highlightIndex:
+            size, shape = self._highlightSettings[self._highlightMode]
+            d *= size
+        if shape == self.P_SQUARE:
             path.addRect(point.x() - d/2, point.y() - d/2, d, d)
-        else:
+        elif shape == self.P_ROUND:
             path.addEllipse(point, d/2.0, d/2.0)
+        else:
+            assert False, "unsupported vertex shape"
+
+    def nearestVertex(self, point, epsilon):
+        for i, p in enumerate(self.points):
+            if distance(p - point) <= epsilon:
+                return i
+        return None
 
     def containsPoint(self, point):
         return self.makePath().contains(point)
@@ -101,6 +130,16 @@ class Shape(object):
 
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
+
+    def moveVertexBy(self, i, offset):
+        self.points[i] = self.points[i] + offset
+
+    def highlightVertex(self, i, action):
+        self._highlightIndex = i
+        self._highlightMode = action
+
+    def highlightClear(self):
+        self._highlightIndex = None
 
     def copy(self):
         shape = Shape("Copy of %s" % self.label )

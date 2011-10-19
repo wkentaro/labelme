@@ -1,4 +1,6 @@
 
+from math import sqrt
+
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -50,6 +52,9 @@ def labelValidator():
 class struct(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
+
+def distance(p):
+    return sqrt(p.x() * p.x() + p.y() * p.y())
 
 def fmtShortcut(text):
     mod, key = text.split('+', 1)
