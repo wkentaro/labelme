@@ -197,16 +197,16 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+E', 'edit', u'Modify the label of the selected polygon',
                 enabled=False)
 
-        shapeLineColor = action('Current &Line Color', self.chshapeLineColor,
+        shapeLineColor = action('Shape &Line Color', self.chshapeLineColor,
                 icon='color', tip=u'Change the line color for this specific shape',
                 enabled=False)
-        shapeFillColor = action('Current &Fill Color', self.chshapeFillColor,
+        shapeFillColor = action('Shape &Fill Color', self.chshapeFillColor,
                 icon='color', tip=u'Change the fill color for this specific shape',
                 enabled=False)
 
         # Custom context menu for the canvas widget:
         addActions(self.canvas.menus[0], (
-            create, edit, copy, delete,
+            edit, copy, delete,
             shapeLineColor, shapeFillColor))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
