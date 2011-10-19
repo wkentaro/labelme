@@ -794,8 +794,8 @@ class MainWindow(QMainWindow, WindowMixin):
             self.setDirty()
 
     def chshapeFillColor(self):
-        color = self.colorDialog.getColor(self.lineColor, u'Choose line color',
-                default=DEFAULT_LINE_COLOR)
+        color = self.colorDialog.getColor(self.fillColor, u'Choose fill color',
+                default=DEFAULT_FILL_COLOR)
         if color:
             self.canvas.selectedShape.fill_color = color
             self.canvas.update()
