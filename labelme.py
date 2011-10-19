@@ -355,6 +355,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
 
     def editLabel(self, item=None):
+        if self.canvas.editing():
+            return
         item = item if item else self.currentItem()
         text = self.simpleLabelDialog.popUp(item.text())
         if text is not None:
