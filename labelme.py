@@ -32,6 +32,7 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
+# - [high] Draw mode is confusing in current implementation.
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] More sensible shortcuts (e.g. Ctrl+C to copy).
 # - [high] Figure out WhatsThis for help.
@@ -539,7 +540,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.loadLabels(self.labelFile.shapes)
             self.setClean()
             self.canvas.setEnabled(True)
-            self.adjustScale()
+            self.adjustScale(initial=True)
             self.paintCanvas()
             self.addRecentFile(self.filename)
             self.toggleActions(True)
@@ -558,8 +559,9 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.adjustSize()
         self.canvas.update()
 
-    def adjustScale(self):
-        self.zoomWidget.setValue(int(100 * self.scalers[self.zoomMode]()))
+    def adjustScale(self, initial=False):
+        value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
+        self.zoomWidget.setValue(int(100 * value))
 
     def scaleFitWindow(self):
         """Figure out the size of the pixmap in order to fit the main widget."""
