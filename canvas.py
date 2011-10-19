@@ -24,14 +24,14 @@ class Canvas(QWidget):
     shapeMoved = pyqtSignal()
     drawingPolygon = pyqtSignal(bool)
 
-    SELECT, EDIT = range(2)
+    CREATE, EDIT = range(2)
 
     epsilon = 11.0
 
     def __init__(self, *args, **kwargs):
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
-        self.mode = self.SELECT
+        self.mode = self.EDIT
         self.shapes = []
         self.current = None
         self.selectedShape=None # save the selected shape here
@@ -68,11 +68,14 @@ class Canvas(QWidget):
     def isVisible(self, shape):
         return self.visible.get(shape, True)
 
+    def drawing(self):
+        return self.mode == self.CREATE
+
     def editing(self):
         return self.mode == self.EDIT
 
     def setEditing(self, value=True):
-        self.mode = self.EDIT if value else self.SELECT
+        self.mode = self.EDIT if value else self.CREATE
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
@@ -81,7 +84,7 @@ class Canvas(QWidget):
         self.restoreCursor()
 
         # Polygon drawing.
-        if self.editing():
+        if self.drawing():
             self.overrideCursor(CURSOR_DRAW)
             if self.current:
                 color = self.lineColor
@@ -156,7 +159,7 @@ class Canvas(QWidget):
     def mousePressEvent(self, ev):
         pos = self.transformPos(ev.posF())
         if ev.button() == Qt.LeftButton:
-            if self.editing():
+            if self.drawing():
                 if self.current:
                     self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
@@ -173,7 +176,7 @@ class Canvas(QWidget):
                 self.selectShapePoint(pos)
                 self.prevPoint = pos
                 self.repaint()
-        elif ev.button() == Qt.RightButton and not self.editing():
+        elif ev.button() == Qt.RightButton and self.editing():
             self.selectShapePoint(pos)
             self.prevPoint = pos
             self.repaint()
@@ -218,7 +221,7 @@ class Canvas(QWidget):
         self._hideBackround = self.hideBackround if enable else False
 
     def mouseDoubleClickEvent(self, ev):
-        if self.current and self.editing():
+        if self.current and self.drawing():
             # Shapes need to have at least 3 vertices.
             if len(self.current) < 4:
                 return

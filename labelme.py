@@ -78,6 +78,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dirty = False
 
         self._noSelectionSlot = False
+        self._beginner = True
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(parent=self)
@@ -134,17 +135,30 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+L', 'color', u'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
                 'Ctrl+Shift+F', 'color', u'Choose polygon fill color')
-        mode = action('Draw &Polygon', self.toggleDrawing,
-                'Ctrl+N', 'new', u'Start drawing polygons',
-                checkable=True, enabled=False)
+
+        createMode = action('Create &Polygons', self.setCreateMode,
+                'Ctrl+N', 'new', u'Start drawing polygons', enabled=False)
+        editMode = action('&Edit Polygons', self.setEditMode,
+                'Ctrl+E', 'edit', u'Move and edit polygons', enabled=False)
+
+        create = action('Create &Polygon', self.createShape,
+                'Ctrl+N', 'new', u'Draw a new polygon')
+        delete = action('&Delete Polygon', self.deleteSelectedShape,
+                ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
         copy = action('&Copy Polygon', self.copySelectedShape,
                 'Ctrl+C', 'copy', u'Create a duplicate of the selected polygon',
                 enabled=False)
-        delete = action('&Delete Polygon', self.deleteSelectedShape,
-                ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
-        hide = action('&Hide Polygons', self.hideLabelsToggle,
-                'Ctrl+H', 'hide', u'Hide all polygons',
+
+        advancedMode = action('&Advanced Mode', self.toggleAdvancedMode,
+                'Ctrl+Shift+A', 'expert', u'Switch to advanced mode',
                 checkable=True)
+
+        hideAll = action('&Hide Polygons', partial(self.togglePolygons, False),
+                'Ctrl+H', 'hide', u'Hide all polygons',
+                enabled=False)
+        showAll = action('&Show Polygons', partial(self.togglePolygons, True),
+                'Ctrl+A', 'hide', u'Show all polygons',
+                enabled=False)
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
@@ -188,10 +202,8 @@ class MainWindow(QMainWindow, WindowMixin):
                 enabled=False)
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (mode, edit, copy, delete))
-
         addActions(self.canvas.menus[0], (
-            mode, edit, copy, delete,
+            create, edit, copy, delete,
             shapeLineColor, shapeFillColor))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
@@ -212,30 +224,38 @@ class MainWindow(QMainWindow, WindowMixin):
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, close=close,
                 lineColor=color1, fillColor=color2,
-                mode=mode, delete=delete, edit=edit, copy=copy,
+                create=create, delete=delete, edit=edit, copy=copy,
+                createMode=createMode, editMode=editMode, advancedMode=advancedMode,
                 shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth,
                 zoomActions=zoomActions,
-                fileMenuActions=(open,save,close,quit))
+                fileMenuActions=(open,save,close,quit),
+                beginner=(), advanced=(),
+                onLoadActive=(close, create, createMode, editMode),
+                onShapesPresent=(hideAll, showAll))
 
         self.menus = struct(
                 file=self.menu('&File'),
                 edit=self.menu('&Polygons'),
                 view=self.menu('&View'),
                 labelList=labelMenu)
-        addActions(self.menus.edit, (mode, color1, color2))
+        addActions(self.menus.edit, (color1, color2))
         addActions(self.menus.view, (
-            labels, None,
+            labels, advancedMode, None,
+            hideAll, showAll, None,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         self.tools = self.toolbar('Tools')
-        addActions(self.tools, (
-            open, save, None,
-            mode, delete, hide, None,
-            zoomIn, zoom, zoomOut, fitWindow, fitWidth))
+        self.actions.beginner = (
+            open, save, None, create, delete, hideAll, showAll, None,
+            zoomIn, zoom, zoomOut, fitWindow, fitWidth)
+
+        self.actions.advanced = (
+            open, save, None, createMode, editMode, delete, None,
+            zoom, fitWidth)
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -275,6 +295,10 @@ class MainWindow(QMainWindow, WindowMixin):
         Shape.line_color = self.lineColor
         Shape.fill_color = self.fillColor
 
+        if settings.get('advanced', QVariant()).toBool():
+            self.actions.advancedMode.setChecked(True)
+            self.toggleAdvancedMode()
+
         # Populate the File menu dynamically.
         self.updateFileMenu()
         # Since loading the file may take some time, make sure it runs in the background.
@@ -283,11 +307,33 @@ class MainWindow(QMainWindow, WindowMixin):
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
 
+        self.populateToolbar()
+
         #self.firstStart = True
         #if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
 
     ## Support Functions ##
+
+    def toggleAdvancedMode(self, value=True):
+        self._beginner = not value
+        self.populateToolbar()
+        if value:
+            self.actions.createMode.setEnabled(True)
+            self.actions.editMode.setEnabled(True)
+
+    def populateToolbar(self):
+        self.tools.clear()
+        addActions(self.tools, self.actions.beginner if self.beginner()\
+                else self.actions.advanced)
+
+    def setBeginner(self):
+        self.tools.clear()
+        addActions(self.tools, self.actions.beginner)
+
+    def setAdvanced(self):
+        self.tools.clear()
+        addActions(self.tools, self.actions.advanced)
 
     def setDirty(self):
         self.dirty = True
@@ -296,14 +342,15 @@ class MainWindow(QMainWindow, WindowMixin):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.mode.setEnabled(True)
+        self.actions.create.setEnabled(True)
+        # XXX
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
         for z in self.actions.zoomActions:
             z.setEnabled(value)
-        self.actions.close.setEnabled(value)
-        self.actions.mode.setEnabled(value)
+        for action in self.actions.onLoadActive:
+            action.setEnabled(value)
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
@@ -333,7 +380,35 @@ class MainWindow(QMainWindow, WindowMixin):
             self.recentFiles.pop()
         self.recentFiles.insert(0, filename)
 
+    def beginner(self):
+        return self._beginner
+
+    def advanced(self):
+        return not self.beginner()
+
     ## Callbacks ##
+    def createShape(self):
+        assert self.beginner()
+        self.canvas.setEditing(False)
+        #XXX
+
+    def toggleDrawingSensitive(self, drawing=True):
+        """In the middle of drawing, toggling between modes should be disabled."""
+        self.actions.createMode.setEnabled(not drawing)
+        self.actions.editMode.setEnabled(not drawing)
+
+    def toggleDrawMode(self, edit=True):
+        self.canvas.setEditing(edit)
+        self.actions.createMode.setEnabled(edit)
+        self.actions.editMode.setEnabled(not edit)
+
+    def setCreateMode(self):
+        assert self.advanced()
+        self.toggleDrawMode(False)
+
+    def setEditMode(self):
+        assert self.advanced()
+        self.toggleDrawMode(True)
 
     def updateFileMenu(self):
         current = self.filename
@@ -356,7 +431,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
 
     def editLabel(self, item=None):
-        if self.canvas.editing():
+        if not self.canvas.editing():
             return
         item = item if item else self.currentItem()
         text = self.simpleLabelDialog.popUp(item.text())
@@ -387,10 +462,14 @@ class MainWindow(QMainWindow, WindowMixin):
         self.itemsToShapes[item] = shape
         self.shapesToItems[shape] = item
         self.labelList.addItem(item)
+        for action in self.actions.onShapesPresent:
+            action.setEnabled(True)
 
     def remLabel(self, shape):
-        item = self.shapesToItems.get(shape, None)
+        item = self.shapesToItems[shape]
         self.labelList.takeItem(self.labelList.row(item))
+        del self.shapesToItems[shape]
+        del self.itemsToShapes[item]
 
     def loadLabels(self, shapes):
         s = []
@@ -433,7 +512,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def labelSelectionChanged(self):
         item = self.currentItem()
-        if item and not self.canvas.editing():
+        if item and self.canvas.editing():
             self._noSelectionSlot = True
             self.canvas.selectShape(self.itemsToShapes[item])
 
@@ -455,7 +534,11 @@ class MainWindow(QMainWindow, WindowMixin):
         action = self.labelDialog.popUp(text="Enter object's name", position=position)
         if action == self.labelDialog.OK:
             self.addLabel(self.canvas.setLastLabel(self.labelDialog.text()))
-            self.actions.mode.setEnabled(True)
+            if self.beginner(): # Switch to edit mode.
+                self.canvas.setEditing(True)
+                self.actions.create.setEnabled(True)
+            else:
+                self.actions.editMode.setEnabled(True)
             self.setDirty()
         elif action == self.labelDialog.UNDO:
             self.canvas.undoLastLine()
@@ -495,10 +578,9 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
 
-    def hideLabelsToggle(self, value):
-        #self.canvas.hideBackroundShapes(value)
+    def togglePolygons(self, value):
         for item, shape in self.itemsToShapes.iteritems():
-            item.setCheckState(Qt.Unchecked if value else Qt.Checked)
+            item.setCheckState(Qt.Checked if value else Qt.Unchecked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
@@ -591,6 +673,7 @@ class MainWindow(QMainWindow, WindowMixin):
         s['line/color'] = self.lineColor
         s['fill/color'] = self.fillColor
         s['recentFiles'] = self.recentFiles
+        s['advanced'] = not self._beginner
         # ask the use for where to save the labels
         #s['window/geometry'] = self.saveGeometry()
 
@@ -665,21 +748,15 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.update()
             self.setDirty()
 
-    def toggleDrawing(self, value=True):
-        if value:
-            self.canvas.deSelectShape()
-        self.canvas.setEditing(value)
-
-    def toggleDrawingSensitive(self, drawing=True):
-        """In the middle of drawing, toggling between modes should be disabled."""
-        self.actions.mode.setEnabled(not drawing)
-
     def deleteSelectedShape(self):
         yes, no = QMessageBox.Yes, QMessageBox.No
         msg = u'You are about to permanently delete this polygon, proceed anyway?'
         if yes == QMessageBox.warning(self, u'Attention', msg, yes|no):
             self.remLabel(self.canvas.deleteSelected())
             self.setDirty()
+            if self.noShapes():
+                for action in self.actions.onShapesPresent:
+                    action.setEnabled(False)
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(self.lineColor, u'Choose line color',

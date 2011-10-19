@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 
+<file alias="expert">icons/expert2.png</file>
 <file alias="done">icons/done.svg</file>
 <file alias="file">icons/file.png</file>
 <file alias="labels">icons/labels.svg</file>
