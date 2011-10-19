@@ -13,7 +13,8 @@ DEFAULT_LINE_COLOR = QColor(0, 255, 0, 128)
 DEFAULT_FILL_COLOR = QColor(255, 0, 0, 128)
 DEFAULT_SELECT_LINE_COLOR = QColor(255, 255, 255)
 DEFAULT_SELECT_FILL_COLOR = QColor(0, 128, 255, 155)
-DEFAULT_VERTEX_FILL_COLOR = QColor(255, 0, 0)
+DEFAULT_VERTEX_FILL_COLOR = QColor(0, 255, 0, 255)
+DEFAULT_HVERTEX_FILL_COLOR = QColor(255, 0, 0)
 
 class Shape(object):
     P_SQUARE, P_ROUND = range(2)
@@ -27,6 +28,7 @@ class Shape(object):
     select_line_color = DEFAULT_SELECT_LINE_COLOR
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
+    hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -41,7 +43,7 @@ class Shape(object):
         self._highlightMode = self.NEAR_VERTEX
         self._highlightSettings = {
             self.NEAR_VERTEX: (4, self.P_ROUND),
-            self.MOVE_VERTEX: (2, self.P_SQUARE),
+            self.MOVE_VERTEX: (1.5, self.P_SQUARE),
             }
 
         self._closed = False
@@ -106,6 +108,10 @@ class Shape(object):
         if i == self._highlightIndex:
             size, shape = self._highlightSettings[self._highlightMode]
             d *= size
+        if self._highlightIndex is not None:
+            self.vertex_fill_color = self.hvertex_fill_color
+        else:
+            self.vertex_fill_color = Shape.vertex_fill_color
         if shape == self.P_SQUARE:
             path.addRect(point.x() - d/2, point.y() - d/2, d, d)
         elif shape == self.P_ROUND:
