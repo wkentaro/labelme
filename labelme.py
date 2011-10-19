@@ -13,7 +13,7 @@ from PyQt4.QtCore import *
 
 import resources
 
-from lib import struct, newAction, newIcon, addActions, labelValidator
+from lib import struct, newAction, newIcon, addActions, labelValidator, fmtShortcut
 from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
@@ -27,11 +27,13 @@ from toolBar import ToolBar
 __appname__ = 'labelme'
 
 # FIXME
+# - [high] Do not select shapes when clicking the label list in edit mode.
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 # - [medium] Disabling the save button prevents the user from saving to
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
+# - [high] Deselect shape when clicking and already selected(?)
 # - [high] More sensible shortcuts (e.g. Ctrl+C to copy).
 # - [high] Figure out WhatsThis for help.
 # - [medium] Zoom should keep the image centered.
@@ -144,18 +146,26 @@ class MainWindow(QMainWindow, WindowMixin):
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
+        self.zoomWidget.setWhatsThis(
+            u"Zoom in or out of the image. Also accessible with"\
+             " %s and %s from the canvas." % (fmtShortcut("Ctrl+[-+]"),
+                 fmtShortcut("Ctrl+Wheel")))
+        self.zoomWidget.setEnabled(False)
+
         zoomIn = action('Zoom &In', partial(self.addZoom, 10),
-                'Ctrl++', 'zoom-in', u'Increase zoom level')
+                'Ctrl++', 'zoom-in', u'Increase zoom level', enabled=False)
         zoomOut = action('&Zoom Out', partial(self.addZoom, -10),
-                'Ctrl+-', 'zoom-out', u'Decrease zoom level')
+                'Ctrl+-', 'zoom-out', u'Decrease zoom level', enabled=False)
         zoomOrg = action('&Original size', partial(self.setZoom, 100),
-                'Ctrl+=', 'zoom', u'Zoom to original size')
+                'Ctrl+=', 'zoom', u'Zoom to original size', enabled=False)
         fitWindow = action('&Fit Window', self.setFitWindow,
                 'Ctrl+F', 'fit-window', u'Zoom follows window size',
-                checkable=True)
+                checkable=True, enabled=False)
         fitWidth = action('Fit &Width', self.setFitWidth,
                 'Ctrl+W', 'fit-width', u'Zoom follows window width',
-                checkable=True)
+                checkable=True, enabled=False)
+        # Group zoom controls into a list for easier toggling.
+        zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg, fitWindow, fitWidth)
         self.zoomMode = self.MANUAL_ZOOM
         self.scalers = {
             self.FIT_WINDOW: self.scaleFitWindow,
@@ -202,6 +212,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth,
+                zoomActions=zoomActions,
                 fileMenuActions=(open,save,close,quit))
 
         self.menus = struct(
@@ -268,6 +279,10 @@ class MainWindow(QMainWindow, WindowMixin):
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
 
+        #self.firstStart = True
+        #if self.firstStart:
+        #    QWhatsThis.enterWhatsThisMode()
+
     ## Support Functions ##
 
     def setDirty(self):
@@ -279,6 +294,12 @@ class MainWindow(QMainWindow, WindowMixin):
         self.actions.save.setEnabled(False)
         self.actions.label.setEnabled(True)
 
+    def toggleActions(self, value=True):
+        """Enable/Disable widgets which depend on an opened image."""
+        for z in self.actions.zoomActions:
+            z.setEnabled(value)
+        self.actions.close.setEnabled(value)
+
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
 
@@ -289,7 +310,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.labels.clear()
         self.items.clear()
         self.labelList.clear()
-        self.zoomWidget.setValue(100)
+        if self.zoomMode == self.MANUAL_ZOOM:
+            self.zoomWidget.setValue(100)
         self.filename = None
         self.imageData = None
         self.labelFile = None
@@ -375,7 +397,6 @@ class MainWindow(QMainWindow, WindowMixin):
             self.addLabel(shape)
             if line_color:
                 shape.line_color = QColor(*line_color)
-                self.items[shape].setBackgroundColor(shape.line_color)
             if fill_color:
                 shape.fill_color = QColor(*fill_color)
         self.canvas.loadShapes(s)
@@ -516,8 +537,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.loadLabels(self.labelFile.shapes)
             self.setClean()
             self.canvas.setEnabled(True)
+            self.adjustScale()
             self.paintCanvas()
             self.addRecentFile(self.filename)
+            self.toggleActions(True)
             return True
         return False
 
@@ -581,9 +604,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filename = unicode(QFileDialog.getOpenFileName(self,
             '%s - Choose Image', path, filters))
         if filename:
-            if self.loadFile(filename):
-                self.actions.close.setEnabled(True)
-                self.canvas.setEnabled(True)
+            self.loadFile(filename)
 
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
@@ -601,8 +622,8 @@ class MainWindow(QMainWindow, WindowMixin):
         if not self.mayContinue():
             return
         self.resetState()
+        self.toggleActions(False)
         self.canvas.setEnabled(False)
-        self.actions.close.setEnabled(False)
 
     # Message Dialogs. #
     def mayContinue(self):
@@ -656,7 +677,6 @@ class MainWindow(QMainWindow, WindowMixin):
                 default=DEFAULT_LINE_COLOR)
         if color:
             self.canvas.selectedShape.line_color = color
-            self.items[self.canvas.selectedShape].setBackgroundColor(color)
             self.canvas.update()
             self.setDirty()
 

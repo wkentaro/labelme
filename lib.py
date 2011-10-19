@@ -51,3 +51,7 @@ class struct(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
+def fmtShortcut(text):
+    mod, key = text.split('+', 1)
+    return '<b>%s</b>+<b>%s</b>' % (mod, key)
+
