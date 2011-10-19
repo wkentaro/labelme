@@ -130,14 +130,15 @@ class MainWindow(QMainWindow, WindowMixin):
         close = action('&Close', self.closeFile,
                 'Ctrl+K', 'close', u'Close current file')
         color1 = action('Polygon &Line Color', self.chooseColor1,
-                'Ctrl+C', 'color', u'Choose polygon line color')
+                'Ctrl+L', 'color', u'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
-                'Ctrl+Shift+C', 'color', u'Choose polygon fill color')
-        mode = action('&Draw Polygon', self.toggleDrawing,
+                'Ctrl+Shift+F', 'color', u'Choose polygon fill color')
+        mode = action('Draw &Polygon', self.toggleDrawing,
                 'Ctrl+N', 'new', u'Start drawing polygons',
                 checkable=True, enabled=False)
         copy = action('&Copy Polygon', self.copySelectedShape,
-                'Ctrl+C', 'copy', u'Copy selected polygon', enabled=False)
+                'Ctrl+C', 'copy', u'Create a duplicate of the selected polygon',
+                enabled=False)
         delete = action('&Delete Polygon', self.deleteSelectedShape,
                 ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
         hide = action('&Hide Polygons', self.hideLabelsToggle,
@@ -178,10 +179,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+E', 'edit', u'Modify the label of the selected polygon',
                 enabled=False)
 
-        shapeLineColor = action('&Shape Line Color', self.chshapeLineColor,
+        shapeLineColor = action('Current &Line Color', self.chshapeLineColor,
                 icon='color', tip=u'Change the line color for this specific shape',
                 enabled=False)
-        shapeFillColor = action('&Shape Fill Color', self.chshapeFillColor,
+        shapeFillColor = action('Current &Fill Color', self.chshapeFillColor,
                 icon='color', tip=u'Change the fill color for this specific shape',
                 enabled=False)
 
@@ -197,7 +198,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         labels = self.dock.toggleViewAction()
         labels.setText('Show/Hide Label Panel')
-        labels.setShortcut('Ctrl+L')
+        labels.setShortcut('Ctrl+Shift+L')
 
         # Lavel list context menu.
         labelMenu = QMenu()
