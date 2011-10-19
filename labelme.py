@@ -418,7 +418,6 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def toggleDrawingSensitive(self, drawing=True):
         """In the middle of drawing, toggling between modes should be disabled."""
-        self.actions.createMode.setEnabled(not drawing)
         self.actions.editMode.setEnabled(not drawing)
         if not drawing and self.beginner():
             # Cancel creation.
