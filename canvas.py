@@ -76,6 +76,10 @@ class Canvas(QWidget):
 
     def setEditing(self, value=True):
         self.mode = self.EDIT if value else self.CREATE
+        if not value:
+            self.highlightedShape = None
+            self.deSelectShape()
+
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""

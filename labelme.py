@@ -416,7 +416,6 @@ class MainWindow(QMainWindow, WindowMixin):
     def createShape(self):
         assert self.beginner()
         self.canvas.setEditing(False)
-        #XXX
 
     def toggleDrawingSensitive(self, drawing=True):
         """In the middle of drawing, toggling between modes should be disabled."""
