@@ -32,9 +32,8 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
-# - [high] Draw mode is confusing in current implementation.
 # - [high] Deselect shape when clicking and already selected(?)
-# - [high] More sensible shortcuts (e.g. Ctrl+C to copy).
+# - [high] Sanitize shortcuts between beginner/advanced mode.
 # - [high] Figure out WhatsThis for help.
 # - [medium] Zoom should keep the image centered.
 # - [medium] Add undo button for vertex addition.
@@ -42,8 +41,6 @@ __appname__ = 'labelme'
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
 # - [low,maybe] Sortable label list.
-# - [extra] Add beginner/advanced mode, where different settings are set for
-#   the application, e.g. closable labels, different toolbuttons etc.
 # - Zoom is too "steppy".
 
 
@@ -216,14 +213,6 @@ class MainWindow(QMainWindow, WindowMixin):
                 icon='color', tip=u'Change the fill color for this specific shape',
                 enabled=False)
 
-        # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (
-            edit, copy, delete,
-            shapeLineColor, shapeFillColor))
-        addActions(self.canvas.menus[1], (
-            action('&Copy here', self.copyShape),
-            action('&Move here', self.moveShape)))
-
         labels = self.dock.toggleViewAction()
         labels.setText('Show/Hide Label Panel')
         labels.setShortcut('Ctrl+Shift+L')
@@ -247,6 +236,9 @@ class MainWindow(QMainWindow, WindowMixin):
                 zoomActions=zoomActions,
                 fileMenuActions=(open,save,close,quit),
                 beginner=(), advanced=(),
+                beginnerContext=(create, edit, copy, delete),
+                advancedContext=(createMode, editMode, edit, copy,
+                    delete, shapeLineColor, shapeFillColor),
                 onLoadActive=(close, create, createMode, editMode),
                 onShapesPresent=(hideAll, showAll))
 
@@ -263,15 +255,21 @@ class MainWindow(QMainWindow, WindowMixin):
             fitWindow, fitWidth))
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
+        # Custom context menu for the canvas widget:
+        addActions(self.canvas.menus[0], self.actions.beginnerContext)
+        addActions(self.canvas.menus[1], (
+            action('&Copy here', self.copyShape),
+            action('&Move here', self.moveShape)))
+
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
             open, save, None, create, delete, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
-            open, save, None, createMode, editMode, copy, delete, None,
-            hideAll, showAll, None,
-            zoomIn, zoom, zoomOut)
+            open, save, None,
+            createMode, editMode, copy, delete, None,
+            hideAll, showAll)
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -323,7 +321,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
 
-        self.populateToolbar()
+        self.populateModeActions()
 
         #self.firstStart = True
         #if self.firstStart:
@@ -336,7 +334,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def toggleAdvancedMode(self, value=True):
         self._beginner = not value
-        self.populateToolbar()
+        self.populateModeActions()
         self.editButton.setVisible(not value)
         if value:
             self.actions.createMode.setEnabled(True)
@@ -345,10 +343,15 @@ class MainWindow(QMainWindow, WindowMixin):
         else:
             self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
 
-    def populateToolbar(self):
+    def populateModeActions(self):
+        if self.beginner():
+            tool, menu = self.actions.beginner, self.actions.beginnerContext
+        else:
+            tool, menu = self.actions.advanced, self.actions.advancedContext
         self.tools.clear()
-        addActions(self.tools, self.actions.beginner if self.beginner()\
-                else self.actions.advanced)
+        addActions(self.tools, tool)
+        self.canvas.menus[0].clear()
+        addActions(self.canvas.menus[0], menu)
 
     def setBeginner(self):
         self.tools.clear()
