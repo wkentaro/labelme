@@ -752,6 +752,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.setClean()
         self.toggleActions(False)
         self.canvas.setEnabled(False)
+        self.actions.saveAs.setEnabled(False)
 
     # Message Dialogs. #
     def hasLabels(self):
