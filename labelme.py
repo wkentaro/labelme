@@ -368,7 +368,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dirty = False
         self.actions.save.setEnabled(False)
         self.actions.create.setEnabled(True)
-        # XXX
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
@@ -415,11 +414,17 @@ class MainWindow(QMainWindow, WindowMixin):
     def createShape(self):
         assert self.beginner()
         self.canvas.setEditing(False)
+        self.actions.create.setEnabled(False)
 
     def toggleDrawingSensitive(self, drawing=True):
         """In the middle of drawing, toggling between modes should be disabled."""
         self.actions.createMode.setEnabled(not drawing)
         self.actions.editMode.setEnabled(not drawing)
+        if not drawing and self.beginner():
+            # Cancel creation.
+            self.canvas.setEditing(True)
+            self.canvas.restoreCursor()
+            self.actions.create.setEnabled(True)
 
     def toggleDrawMode(self, edit=True):
         self.canvas.setEditing(edit)
