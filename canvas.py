@@ -452,13 +452,14 @@ class Canvas(QWidget):
     def undoLastLine(self):
         assert self.shapes
         self.current = self.shapes.pop()
-        pos = self.current.popPoint()
-        self.line.points = [self.current[-1], pos]
-        self.setEditing()
+        self.current.setOpen()
+        self.line.points = [self.current[-1], self.current[0]]
+        self.drawingPolygon.emit(True)
 
     def deleteLastShape(self):
         assert self.shapes
         self.shapes.pop()
+        self.drawingPolygon.emit(False)
 
     def loadPixmap(self, pixmap):
         self.pixmap = pixmap

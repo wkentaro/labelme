@@ -66,6 +66,9 @@ class Shape(object):
     def isClosed(self):
         return self._closed
 
+    def setOpen(self):
+        self._closed = False
+
     def paint(self, painter):
         if self.points:
             color = self.select_line_color if self.selected else self.line_color
