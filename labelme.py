@@ -231,6 +231,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 zoomActions=zoomActions,
                 fileMenuActions=(open,save,close,quit),
                 beginner=(), advanced=(),
+                editMenu=(edit, copy, delete, None, color1, color2),
                 beginnerContext=(create, edit, copy, delete),
                 advancedContext=(createMode, editMode, edit, copy,
                     delete, shapeLineColor, shapeFillColor),
@@ -242,9 +243,6 @@ class MainWindow(QMainWindow, WindowMixin):
                 edit=self.menu('&Edit'),
                 view=self.menu('&View'),
                 labelList=labelMenu)
-
-        addActions(self.menus.edit, (
-            edit, copy, delete, None, color1, color2))
 
         addActions(self.menus.view, (
             labels, advancedMode, None,
@@ -351,6 +349,10 @@ class MainWindow(QMainWindow, WindowMixin):
         addActions(self.tools, tool)
         self.canvas.menus[0].clear()
         addActions(self.canvas.menus[0], menu)
+        self.menus.edit.clear()
+        addActions(self.menus.edit,
+                (self.actions.create,) + self.actions.editMenu\
+                        if self.beginner() else self.actions.editMenu)
 
     def setBeginner(self):
         self.tools.clear()
