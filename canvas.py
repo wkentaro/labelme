@@ -23,6 +23,7 @@ class Canvas(QWidget):
     newShape = pyqtSignal(QPoint)
     selectionChanged = pyqtSignal(bool)
     shapeMoved = pyqtSignal()
+    drawingPolygon = pyqtSignal(bool)
 
     SELECT, EDIT = range(2)
 
@@ -150,7 +151,8 @@ class Canvas(QWidget):
                     self.current.addPoint(pos)
                     self.line.points = [pos, pos]
                     self.setHiding()
-                    self.repaint()
+                    self.drawingPolygon.emit(True)
+                    self.update()
             else:
                 self.selectShapePoint(pos)
                 self.prevPoint = pos
@@ -329,7 +331,6 @@ class Canvas(QWidget):
         assert self.current
         self.shapes.append(self.current)
         self.current = None
-        self.setEditing(False)
         self.setHiding(False)
         self.repaint()
         self.newShape.emit(self.mapToGlobal(ev.pos()))
@@ -412,6 +413,7 @@ class Canvas(QWidget):
     def keyPressEvent(self, ev):
         if ev.key() == Qt.Key_Escape and self.current:
             self.current = None
+            self.drawingPolygon.emit(False)
             self.update()
 
     def setLastLabel(self, text):

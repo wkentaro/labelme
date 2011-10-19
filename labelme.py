@@ -115,6 +115,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
+        self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
@@ -133,8 +134,9 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+C', 'color', u'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
                 'Ctrl+Shift+C', 'color', u'Choose polygon fill color')
-        label = action('&New Polygon', self.newLabel,
-                'Ctrl+N', 'new', u'Start a new polygon', enabled=False)
+        mode = action('&Draw Polygon', self.toggleDrawing,
+                'Ctrl+N', 'new', u'Start drawing polygons',
+                checkable=True, enabled=False)
         copy = action('&Copy Polygon', self.copySelectedShape,
                 'Ctrl+C', 'copy', u'Copy selected polygon', enabled=False)
         delete = action('&Delete Polygon', self.deleteSelectedShape,
@@ -185,10 +187,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 enabled=False)
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], (label, edit, copy, delete))
+        addActions(self.canvas.menus[0], (mode, edit, copy, delete))
 
         addActions(self.canvas.menus[0], (
-            label, edit, copy, delete,
+            mode, edit, copy, delete,
             shapeLineColor, shapeFillColor))
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
@@ -209,7 +211,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # Store actions for further handling.
         self.actions = struct(save=save, open=open, close=close,
                 lineColor=color1, fillColor=color2,
-                label=label, delete=delete, edit=edit, copy=copy,
+                mode=mode, delete=delete, edit=edit, copy=copy,
                 shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth,
@@ -221,7 +223,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 edit=self.menu('&Polygons'),
                 view=self.menu('&View'),
                 labelList=labelMenu)
-        addActions(self.menus.edit, (label, color1, color2))
+        addActions(self.menus.edit, (mode, color1, color2))
         addActions(self.menus.view, (
             labels, None,
             zoomIn, zoomOut, zoomOrg, None,
@@ -231,7 +233,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.tools = self.toolbar('Tools')
         addActions(self.tools, (
             open, save, None,
-            label, delete, hide, None,
+            mode, delete, hide, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth))
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -293,13 +295,14 @@ class MainWindow(QMainWindow, WindowMixin):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.label.setEnabled(True)
+        self.actions.mode.setEnabled(True)
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
         for z in self.actions.zoomActions:
             z.setEnabled(value)
         self.actions.close.setEnabled(value)
+        self.actions.mode.setEnabled(value)
 
     def queueEvent(self, function):
         QTimer.singleShot(0, function)
@@ -449,7 +452,7 @@ class MainWindow(QMainWindow, WindowMixin):
         action = self.labelDialog.popUp(text='Enter name', position=position)
         if action == self.labelDialog.OK:
             self.addLabel(self.canvas.setLastLabel(self.labelDialog.text()))
-            self.actions.label.setEnabled(True)
+            self.actions.mode.setEnabled(True)
             self.setDirty()
         elif action == self.labelDialog.UNDO:
             self.canvas.undoLastLine()
@@ -658,10 +661,14 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.update()
             self.setDirty()
 
-    def newLabel(self):
-        self.canvas.deSelectShape()
-        self.canvas.setEditing()
-        self.actions.label.setEnabled(False)
+    def toggleDrawing(self, value=True):
+        if value:
+            self.canvas.deSelectShape()
+        self.canvas.setEditing(value)
+
+    def toggleDrawingSensitive(self, drawing=True):
+        """In the middle of drawing, toggling between modes should be disabled."""
+        self.actions.mode.setEnabled(not drawing)
 
     def deleteSelectedShape(self):
         yes, no = QMessageBox.Yes, QMessageBox.No
