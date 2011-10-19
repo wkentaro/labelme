@@ -13,7 +13,7 @@ from PyQt4.QtCore import *
 
 import resources
 
-from lib import struct, newAction, newIcon, addActions, labelValidator, fmtShortcut
+from lib import struct, newAction, newIcon, addActions, fmtShortcut
 from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
@@ -81,16 +81,18 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self._noSelectionSlot = False
 
-        # Main widgets.
+        # Main widgets and related state.
         self.labelDialog = LabelDialog(parent=self)
-       
-        self.labels = {}
-        self.items = {}
-        self.highlighted = None
+
         self.labelList = QListWidget()
+        self.highlighted = None
+        self.itemsToShapes = {}
+        self.shapesToItems = {}
+
         self.dock = QDockWidget(u'Polygon Labels', self)
         self.dock.setObjectName(u'Labels')
         self.dock.setWidget(self.labelList)
+
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
         self.simpleLabelDialog = SimpleLabelDialog(parent=self)
@@ -307,8 +309,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.statusBar().showMessage(message, delay)
 
     def resetState(self):
-        self.labels.clear()
-        self.items.clear()
+        self.itemsToShapes.clear()
+        self.shapesToItems.clear()
         self.labelList.clear()
         if self.zoomMode == self.MANUAL_ZOOM:
             self.zoomWidget.setValue(100)
@@ -366,7 +368,7 @@ class MainWindow(QMainWindow, WindowMixin):
         else:
             shape = self.canvas.selectedShape
             if shape:
-                self.labelList.setItemSelected(self.items[shape], True)
+                self.labelList.setItemSelected(self.shapesToItems[shape], True)
             else:
                 self.labelList.clearSelection()
         self.actions.delete.setEnabled(selected)
@@ -379,12 +381,12 @@ class MainWindow(QMainWindow, WindowMixin):
         item = QListWidgetItem(shape.label)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
-        self.labels[item] = shape
-        self.items[shape] = item
+        self.itemsToShapes[item] = shape
+        self.shapesToItems[shape] = item
         self.labelList.addItem(item)
 
     def remLabel(self, shape):
-        item = self.items.get(shape, None)
+        item = self.shapesToItems.get(shape, None)
         self.labelList.takeItem(self.labelList.row(item))
 
     def loadLabels(self, shapes):
@@ -430,12 +432,12 @@ class MainWindow(QMainWindow, WindowMixin):
         items = self.labelList.selectedItems()
         if not items:
             return
-        shape = self.labels[items[0]]
+        shape = self.itemsToShapes[items[0]]
         self._noSelectionSlot = True
         self.canvas.selectShape(shape)
 
     def labelItemChanged(self, item):
-        shape = self.labels[item]
+        shape = self.itemsToShapes[item]
         label = unicode(item.text())
         if label != shape.label:
             shape.label = unicode(item.text())
@@ -494,7 +496,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def hideLabelsToggle(self, value):
         #self.canvas.hideBackroundShapes(value)
-        for item, shape in self.labels.iteritems():
+        for item, shape in self.itemsToShapes.iteritems():
             item.setCheckState(Qt.Unchecked if value else Qt.Checked)
 
     def loadFile(self, filename=None):
@@ -608,7 +610,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
-        assert self.labels, "cannot save empty labels"
+        assert self.itemsToShapes, "cannot save empty labels"
         formats = ['*%s' % LabelFile.suffix]
         filename = unicode(QFileDialog.getSaveFileName(self,
             '%s - Choose File', self.currentPath(),
