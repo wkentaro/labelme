@@ -150,7 +150,6 @@ class Shape(object):
         shape.fill = self.fill
         shape.selected = self.selected
         shape._closed = self._closed
-        shape.moveBy(QPointF(2.0, 2.0))
         return shape
 
     def __len__(self):

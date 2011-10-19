@@ -270,7 +270,7 @@ class Canvas(QWidget):
 
     def boundedMoveShape(self, shape, pos):
         if self.outOfPixmap(pos):
-            return # No need to move
+            return False # No need to move
         o1 = pos + self.offsets[0]
         if self.outOfPixmap(o1):
             pos -= QPointF(min(0, o1.x()), min(0, o1.y()))
@@ -283,8 +283,12 @@ class Canvas(QWidget):
         # a bit "shaky" when nearing the border and allows it to
         # go outside of the shape's area for some reason. XXX
         #self.calculateOffsets(self.selectedShape, pos)
-        shape.moveBy(pos - self.prevPoint)
-        self.prevPoint = pos
+        dp = pos - self.prevPoint
+        if dp:
+            shape.moveBy(dp)
+            self.prevPoint = pos
+            return True
+        return False
 
     def deSelectShape(self):
         if self.selectedShape:
@@ -309,7 +313,18 @@ class Canvas(QWidget):
             self.shapes.append(shape)
             shape.selected = True
             self.selectedShape = shape
+            self.boundedShiftShape(shape)
             return shape
+
+    def boundedShiftShape(self, shape):
+        # Try to move in one direction, and if it fails in another.
+        # Give up if both fail.
+        point = shape[0]
+        offset = QPointF(2.0, 2.0)
+        self.calculateOffsets(shape, point)
+        self.prevPoint = point
+        if not self.boundedMoveShape(shape, point - offset):
+            self.boundedMoveShape(shape, point + offset)
 
     def paintEvent(self, event):
         if not self.pixmap:
