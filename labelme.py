@@ -32,12 +32,13 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
+# - [high] Add Return as a double-click shortcut in create.
+# - [high] Switch to simpler label dialog.
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
 # - [high] Figure out WhatsThis for help.
 # - [medium] Zoom should keep the image centered.
 # - [medium] Add undo button for vertex addition.
-# - [medium,maybe] Support vertex moving.
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
 # - [low,maybe] Sortable label list.
@@ -150,24 +151,24 @@ class MainWindow(QMainWindow, WindowMixin):
         createMode = action('Create\n&Polygons', self.setCreateMode,
                 'Ctrl+N', 'new', u'Start drawing polygons', enabled=False)
         editMode = action('&Edit\nPolygons', self.setEditMode,
-                'Ctrl+E', 'edit', u'Move and edit polygons', enabled=False)
+                'Ctrl+J', 'edit', u'Move and edit polygons', enabled=False)
 
-        create = action('Create &Polygon', self.createShape,
+        create = action('&Create\nPolygon', self.createShape,
                 'Ctrl+N', 'new', u'Draw a new polygon')
-        delete = action('&Delete Polygon', self.deleteSelectedShape,
-                ['Ctrl+D', 'Delete'], 'delete', u'Delete', enabled=False)
-        copy = action('&Copy Polygon', self.copySelectedShape,
-                'Ctrl+C', 'copy', u'Create a duplicate of the selected polygon',
+        delete = action('&Delete\nPolygon', self.deleteSelectedShape,
+                'Delete', 'delete', u'Delete', enabled=False)
+        copy = action('&Duplicate\nPolygon', self.copySelectedShape,
+                'Ctrl+D', 'copy', u'Create a duplicate of the selected polygon',
                 enabled=False)
 
         advancedMode = action('&Advanced Mode', self.toggleAdvancedMode,
                 'Ctrl+Shift+A', 'expert', u'Switch to advanced mode',
                 checkable=True)
 
-        hideAll = action('&Hide Polygons', partial(self.togglePolygons, False),
+        hideAll = action('&Hide\nPolygons', partial(self.togglePolygons, False),
                 'Ctrl+H', 'hide', u'Hide all polygons',
                 enabled=False)
-        showAll = action('&Show Polygons', partial(self.togglePolygons, True),
+        showAll = action('&Show\nPolygons', partial(self.togglePolygons, True),
                 'Ctrl+A', 'hide', u'Show all polygons',
                 enabled=False)
 
@@ -263,12 +264,12 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
-            open, save, None, create, delete, None,
+            open, save, None, create, copy, delete, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
             open, save, None,
-            createMode, editMode, copy, delete, None,
+            createMode, editMode, None,
             hideAll, showAll)
 
         self.statusBar().showMessage('%s started.' % __appname__)
