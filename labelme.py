@@ -18,7 +18,6 @@ from shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from canvas import Canvas
 from zoomWidget import ZoomWidget
 from labelDialog import LabelDialog
-from simpleLabelDialog import SimpleLabelDialog
 from colorDialog import ColorDialog
 from labelFile import LabelFile, LabelFileError
 from toolBar import ToolBar
@@ -106,7 +105,6 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
-        self.simpleLabelDialog = LabelDialog(parent=self)
 
         self.canvas = Canvas()
         self.canvas.zoomRequest.connect(self.zoomRequest)
@@ -460,7 +458,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if not self.canvas.editing():
             return
         item = item if item else self.currentItem()
-        text = self.simpleLabelDialog.popUp(item.text())
+        text = self.labelDialog.popUp(item.text())
         if text is not None:
             item.setText(text)
             self.setDirty()
@@ -558,8 +556,9 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        if self.labelDialog.popUp(position=position):
-            self.addLabel(self.canvas.setLastLabel(self.labelDialog.text()))
+        text = self.labelDialog.popUp(position=position)
+        if text is not None:
+            self.addLabel(self.canvas.setLastLabel(text))
             if self.beginner(): # Switch to edit mode.
                 self.canvas.setEditing(True)
                 self.actions.create.setEnabled(True)
