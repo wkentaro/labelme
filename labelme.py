@@ -120,6 +120,9 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+        self.dockFeatures = QDockWidget.DockWidgetClosable\
+                          | QDockWidget.DockWidgetFloatable
+        self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
 
         # Actions
         action = partial(newAction, self)
@@ -136,9 +139,9 @@ class MainWindow(QMainWindow, WindowMixin):
         color2 = action('Polygon &Fill Color', self.chooseColor2,
                 'Ctrl+Shift+F', 'color', u'Choose polygon fill color')
 
-        createMode = action('Create &Polygons', self.setCreateMode,
+        createMode = action('Create\n&Polygons', self.setCreateMode,
                 'Ctrl+N', 'new', u'Start drawing polygons', enabled=False)
-        editMode = action('&Edit Polygons', self.setEditMode,
+        editMode = action('&Edit\nPolygons', self.setEditMode,
                 'Ctrl+E', 'edit', u'Move and edit polygons', enabled=False)
 
         create = action('Create &Polygon', self.createShape,
@@ -254,8 +257,8 @@ class MainWindow(QMainWindow, WindowMixin):
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
-            open, save, None, createMode, editMode, delete, None,
-            zoom, fitWidth)
+            open, save, None, createMode, editMode, copy, delete, None,
+            zoomIn, zoom, zoomOut)
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -321,6 +324,9 @@ class MainWindow(QMainWindow, WindowMixin):
         if value:
             self.actions.createMode.setEnabled(True)
             self.actions.editMode.setEnabled(True)
+            self.dock.setFeatures(self.dock.features() | self.dockFeatures)
+        else:
+            self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
 
     def populateToolbar(self):
         self.tools.clear()
