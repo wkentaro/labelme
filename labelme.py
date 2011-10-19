@@ -265,11 +265,12 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
-            open, save, None, create, delete, hideAll, showAll, None,
+            open, save, None, create, delete, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
             open, save, None, createMode, editMode, copy, delete, None,
+            hideAll, showAll, None,
             zoomIn, zoom, zoomOut)
 
         self.statusBar().showMessage('%s started.' % __appname__)
