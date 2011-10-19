@@ -8,7 +8,7 @@ BB = QDialogButtonBox
 
 class SimpleLabelDialog(QDialog):
 
-    def __init__(self, text='', parent=None):
+    def __init__(self, text="Enter object label", parent=None):
         super(SimpleLabelDialog, self).__init__(parent)
         self.edit = QLineEdit()
         self.edit.setText(text)
@@ -16,7 +16,7 @@ class SimpleLabelDialog(QDialog):
         self.edit.editingFinished.connect(self.postProcess)
         layout = QVBoxLayout()
         layout.addWidget(self.edit)
-        bb = BB(BB.Ok | BB.Cancel, Qt.Horizontal, self)
+        self.buttonBox = bb = BB(BB.Ok | BB.Cancel, Qt.Horizontal, self)
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
@@ -29,11 +29,14 @@ class SimpleLabelDialog(QDialog):
     def postProcess(self):
         self.edit.setText(self.edit.text().trimmed())
 
-    def popUp(self, text='', pos=None):
+    def popUp(self, text='', position=None):
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         self.edit.setFocus(Qt.PopupFocusReason)
-        if pos is not None:
-            self.move(pos)
+        if position is not None:
+            self.move(position)
         return self.edit.text() if self.exec_() else None
+
+    def text(self):
+        return self.edit.text()
 

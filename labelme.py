@@ -32,7 +32,6 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
-# - [high] Switch to simpler label dialog.
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
 # - [high] Figure out WhatsThis for help.
@@ -107,7 +106,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
-        self.simpleLabelDialog = SimpleLabelDialog(parent=self)
+        self.simpleLabelDialog = LabelDialog(parent=self)
 
         self.canvas = Canvas()
         self.canvas.zoomRequest.connect(self.zoomRequest)
@@ -559,8 +558,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        action = self.labelDialog.popUp(position=position)
-        if action == self.labelDialog.OK:
+        if self.labelDialog.popUp(position=position):
             self.addLabel(self.canvas.setLastLabel(self.labelDialog.text()))
             if self.beginner(): # Switch to edit mode.
                 self.canvas.setEditing(True)
@@ -568,12 +566,8 @@ class MainWindow(QMainWindow, WindowMixin):
             else:
                 self.actions.editMode.setEnabled(True)
             self.setDirty()
-        elif action == self.labelDialog.UNDO:
-            self.canvas.undoLastLine()
-        elif action == self.labelDialog.DELETE:
-            self.canvas.deleteLastShape()
         else:
-            assert False, "unknown label action"
+            self.canvas.undoLastLine()
 
     def scrollRequest(self, delta, orientation):
         units = - delta / (8 * 15)
