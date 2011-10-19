@@ -176,7 +176,7 @@ class Canvas(QWidget):
                     self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
-                        self.finalise(ev)
+                        self.finalise()
                 elif not self.outOfPixmap(pos):
                     self.current = Shape()
                     self.current.addPoint(pos)
@@ -232,17 +232,15 @@ class Canvas(QWidget):
     def setHiding(self, enable=True):
         self._hideBackround = self.hideBackround if enable else False
 
+    def canCloseShape(self):
+        return self.drawing() and self.current and len(self.current) > 2
+
     def mouseDoubleClickEvent(self, ev):
-        if self.current and self.drawing():
-            # Shapes need to have at least 3 vertices.
-            if len(self.current) < 4:
-                return
-            # Replace the last point with the starting point.
-            # We have to do this because the mousePressEvent handler
-            # adds that point before this handler is called!
+        # We need at least 4 points here, since the mousePress handler
+        # adds an extra one before this handler is called.
+        if self.canCloseShape() and len(self.current) > 3:
             self.current.popPoint()
-            self.current.addPoint(self.current[0])
-            self.finalise(ev)
+            self.finalise()
 
     def selectShape(self, shape):
         self.deSelectShape()
@@ -385,13 +383,14 @@ class Canvas(QWidget):
         w, h = self.pixmap.width(), self.pixmap.height()
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
-    def finalise(self, ev):
+    def finalise(self):
         assert self.current
+        self.current.close()
         self.shapes.append(self.current)
         self.current = None
         self.setHiding(False)
-        self.repaint()
-        self.newShape.emit(self.mapToGlobal(ev.pos()))
+        self.newShape.emit(self.mapToGlobal(toPoint(self.line[1])))
+        self.update()
 
     def closeEnough(self, p1, p2):
         #d = distance(p1 - p2)
@@ -469,10 +468,13 @@ class Canvas(QWidget):
         ev.accept()
 
     def keyPressEvent(self, ev):
-        if ev.key() == Qt.Key_Escape and self.current:
+        key = ev.key()
+        if key == Qt.Key_Escape and self.current:
             self.current = None
             self.drawingPolygon.emit(False)
             self.update()
+        elif key == Qt.Key_Return and self.canCloseShape():
+            self.finalise()
 
     def setLastLabel(self, text):
         assert text
@@ -518,6 +520,9 @@ class Canvas(QWidget):
         self.pixmap = None
         self.update()
 
+
+def toPoint(pointf):
+    return QPoint(int(pointf.x()), int(pointf.y()))
 
 def pp(p):
     return '%.2f, %.2f' % (p.x(), p.y())

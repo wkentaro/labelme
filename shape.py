@@ -54,11 +54,15 @@ class Shape(object):
             # is used for drawing the pending line a different color.
             self.line_color = line_color
 
+    def close(self):
+        assert len(self.points) > 2
+        self._closed = True
+
     def addPoint(self, point):
         if self.points and point == self.points[0]:
-            self._closed = True
-            return
-        self.points.append(point)
+            self.close()
+        else:
+            self.points.append(point)
 
     def popPoint(self):
         if self.points:
