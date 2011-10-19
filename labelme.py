@@ -36,7 +36,6 @@ __appname__ = 'labelme'
 # - [high] More sensible shortcuts (e.g. Ctrl+C to copy).
 # - [high] Figure out WhatsThis for help.
 # - [medium] Zoom should keep the image centered.
-# - [high] Escape should cancel editing mode if no point in canvas.
 # - [medium] Add undo button for vertex addition.
 # - [medium,maybe] Support vertex moving.
 # - [low,maybe] Open images with drag & drop.
