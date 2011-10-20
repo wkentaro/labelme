@@ -142,20 +142,20 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+Shift+S', 'save', u'Save labels to a different file',
                 enabled=False)
         close = action('&Close', self.closeFile,
-                'Ctrl+K', 'close', u'Close current file')
+                'Ctrl+W', 'close', u'Close current file')
         color1 = action('Polygon &Line Color', self.chooseColor1,
                 'Ctrl+L', 'color', u'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
-                'Ctrl+Shift+F', 'color', u'Choose polygon fill color')
+                'Ctrl+Shift+L', 'color', u'Choose polygon fill color')
 
-        createMode = action('Create\n&Polygons', self.setCreateMode,
+        createMode = action('Create\nPolygo&ns', self.setCreateMode,
                 'Ctrl+N', 'new', u'Start drawing polygons', enabled=False)
         editMode = action('&Edit\nPolygons', self.setEditMode,
                 'Ctrl+J', 'edit', u'Move and edit polygons', enabled=False)
 
-        create = action('&Create\nPolygon', self.createShape,
+        create = action('Create\nPolygo&n', self.createShape,
                 'Ctrl+N', 'new', u'Draw a new polygon')
-        delete = action('&Delete\nPolygon', self.deleteSelectedShape,
+        delete = action('Delete\nPolygon', self.deleteSelectedShape,
                 'Delete', 'delete', u'Delete', enabled=False)
         copy = action('&Duplicate\nPolygon', self.copySelectedShape,
                 'Ctrl+D', 'copy', u'Create a duplicate of the selected polygon',
@@ -190,7 +190,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+F', 'fit-window', u'Zoom follows window size',
                 checkable=True, enabled=False)
         fitWidth = action('Fit &Width', self.setFitWidth,
-                'Ctrl+W', 'fit-width', u'Zoom follows window width',
+                'Ctrl+Shift+F', 'fit-width', u'Zoom follows window width',
                 checkable=True, enabled=False)
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg, fitWindow, fitWidth)
