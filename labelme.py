@@ -168,7 +168,7 @@ class MainWindow(QMainWindow, WindowMixin):
         hideAll = action('&Hide\nPolygons', partial(self.togglePolygons, False),
                 'Ctrl+H', 'hide', u'Hide all polygons',
                 enabled=False)
-        showAll = action('&Show\nnPolygons', partial(self.togglePolygons, True),
+        showAll = action('&Show\nPolygons', partial(self.togglePolygons, True),
                 'Ctrl+A', 'hide', u'Show all polygons',
                 enabled=False)
 
