@@ -8,6 +8,8 @@ class ColorDialog(QColorDialog):
     def __init__(self, parent=None):
         super(ColorDialog, self).__init__(parent)
         self.setOption(QColorDialog.ShowAlphaChannel)
+        # The Mac native dialog does not support our restore button.
+        self.setOption(QColorDialog.DontUseNativeDialog)
         ## Add a restore defaults button.
         # The default is set at invocation time, so that it
         # works across dialogs for different elements.
