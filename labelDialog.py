@@ -34,10 +34,11 @@ class LabelDialog(QDialog):
     def postProcess(self):
         self.edit.setText(self.edit.text().trimmed())
 
-    def popUp(self, text=''):
+    def popUp(self, text='', move=True):
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         self.edit.setFocus(Qt.PopupFocusReason)
-        self.move(QCursor.pos())
+        if move:
+            self.move(QCursor.pos())
         return self.edit.text() if self.exec_() else None
 

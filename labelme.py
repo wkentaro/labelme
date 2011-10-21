@@ -347,11 +347,12 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def toggleAdvancedMode(self, value=True):
         self._beginner = not value
+        self.canvas.setEditing(True)
         self.populateModeActions()
         self.editButton.setVisible(not value)
         if value:
             self.actions.createMode.setEnabled(True)
-            self.actions.editMode.setEnabled(True)
+            self.actions.editMode.setEnabled(False)
             self.dock.setFeatures(self.dock.features() | self.dockFeatures)
         else:
             self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
