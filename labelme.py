@@ -4,6 +4,7 @@
 import os.path
 import re
 import sys
+import subprocess
 
 from functools import partial
 from collections import defaultdict
@@ -31,8 +32,8 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
-# - [high] Add polygon movement with arrow keys
 # - [high] Automatically add file suffix when saving.
+# - [high] Add polygon movement with arrow keys
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
 # - [high] Figure out WhatsThis for help.
@@ -76,6 +77,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self._noSelectionSlot = False
         self._beginner = True
+        self.screencastViewer = "firefox"
+        self.screencast = "screencast.ogv"
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(parent=self)
@@ -140,12 +143,12 @@ class MainWindow(QMainWindow, WindowMixin):
         save = action('&Save', self.saveFile,
                 'Ctrl+S', 'save', u'Save labels to file', enabled=False)
         saveAs = action('&Save As', self.saveFileAs,
-                'Ctrl+Shift+S', 'save', u'Save labels to a different file',
+                'Ctrl+Shift+S', 'save-as', u'Save labels to a different file',
                 enabled=False)
         close = action('&Close', self.closeFile,
                 'Ctrl+W', 'close', u'Close current file')
         color1 = action('Polygon &Line Color', self.chooseColor1,
-                'Ctrl+L', 'color', u'Choose polygon line color')
+                'Ctrl+L', 'color_line', u'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
                 'Ctrl+Shift+L', 'color', u'Choose polygon fill color')
 
@@ -172,6 +175,9 @@ class MainWindow(QMainWindow, WindowMixin):
         showAll = action('&Show\nPolygons', partial(self.togglePolygons, True),
                 'Ctrl+A', 'hide', u'Show all polygons',
                 enabled=False)
+
+        help = action('&Tutorial', self.tutorial, 'Ctrl+T', 'help',
+                u'Show screencast of introductory tutorial')
 
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
@@ -209,7 +215,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.editButton.setDefaultAction(edit)
 
         shapeLineColor = action('Shape &Line Color', self.chshapeLineColor,
-                icon='color', tip=u'Change the line color for this specific shape',
+                icon='color_line', tip=u'Change the line color for this specific shape',
                 enabled=False)
         shapeFillColor = action('Shape &Fill Color', self.chshapeFillColor,
                 icon='color', tip=u'Change the fill color for this specific shape',
@@ -247,8 +253,10 @@ class MainWindow(QMainWindow, WindowMixin):
                 file=self.menu('&File'),
                 edit=self.menu('&Edit'),
                 view=self.menu('&View'),
+                help=self.menu('&Help'),
                 labelList=labelMenu)
 
+        addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
             labels, advancedMode, None,
             hideAll, showAll, None,
@@ -418,6 +426,9 @@ class MainWindow(QMainWindow, WindowMixin):
         return not self.beginner()
 
     ## Callbacks ##
+    def tutorial(self):
+        subprocess.Popen([self.screencastViewer, self.screencast])
+
     def createShape(self):
         assert self.beginner()
         self.canvas.setEditing(False)

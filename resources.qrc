@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 
+<file alias="app">icons/expert2.png</file>
 <file alias="expert">icons/expert2.png</file>
 <file alias="done">icons/done.svg</file>
 <file alias="file">icons/file.png</file>
@@ -15,12 +16,14 @@
 <file alias="copy">icons/copy.png</file>
 <file alias="edit">icons/edit.png</file>
 <file alias="open">icons/open.png</file>
-<file alias="save">icons/open.png</file>
+<file alias="save">icons/save.svg</file>
+<file alias="save-as">icons/save-as.png</file>
 <file alias="color">icons/color.png</file>
+<file alias="color_line">icons/color_line.png</file>
 <file alias="zoom">icons/zoom.png</file>
 <file alias="zoom-in">icons/zoom-in.png</file>
 <file alias="zoom-out">icons/zoom-out.png</file>
-<file alias="delete">icons/delete.png</file>
+<file alias="delete">icons/cancel.png</file>
 
 </qresource>
 </RCC>

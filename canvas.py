@@ -1,7 +1,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from PyQt4.QtOpenGL import *
+#from PyQt4.QtOpenGL import *
 
 from shape import Shape
 from lib import distance
