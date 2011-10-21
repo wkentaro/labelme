@@ -471,7 +471,7 @@ class MainWindow(QMainWindow, WindowMixin):
             icon = newIcon('labels')
             action = QAction(
                     icon, '&%d %s' % (i+1, QFileInfo(f).fileName()), self)
-            action.triggered.connect(partial(self.loadFile, f))
+            action.triggered.connect(partial(self.loadRecent, f))
             menu.addAction(action)
 
     def popLabelListMenu(self, point):
@@ -724,6 +724,10 @@ class MainWindow(QMainWindow, WindowMixin):
         #s['window/geometry'] = self.saveGeometry()
 
     ## User Dialogs ##
+
+    def loadRecent(self, filename):
+        if self.mayContinue():
+            self.loadFile(filename)
 
     def openFile(self, _value=False):
         if not self.mayContinue():

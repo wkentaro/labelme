@@ -1,0 +1,12 @@
+
+# INSTRUCTIONS
+
+Since the Python Qt bindings are not currently installed on DICE
+machines, we have prepared a binary suitable for execution with
+[cxfreeze]. To run the program enter ./bin/labelme from the toplevel
+folder of the application. This has been tested succesfully on
+student.compute.
+
+[cxfreeze]: http://cx-freeze.sourceforge.net/
+
+<!-- vim: set ft=markdown tw=72: -->
