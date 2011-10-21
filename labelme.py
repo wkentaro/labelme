@@ -367,9 +367,9 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.menus[0].clear()
         addActions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
-        addActions(self.menus.edit,
-                (self.actions.create,) + self.actions.editMenu\
-                        if self.beginner() else self.actions.editMenu)
+        actions = (self.actions.create,) if self.beginner()\
+                else (self.actions.createMode, self.actions.editMode)
+        addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setBeginner(self):
         self.tools.clear()
