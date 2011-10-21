@@ -158,7 +158,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+J', 'edit', u'Move and edit polygons', enabled=False)
 
         create = action('Create\nPolygo&n', self.createShape,
-                'Ctrl+N', 'new', u'Draw a new polygon')
+                'Ctrl+N', 'new', u'Draw a new polygon', enabled=False)
         delete = action('Delete\nPolygon', self.deleteSelectedShape,
                 'Delete', 'delete', u'Delete', enabled=False)
         copy = action('&Duplicate\nPolygon', self.copySelectedShape,
@@ -546,6 +546,8 @@ class MainWindow(QMainWindow, WindowMixin):
         try:
             lf.save(filename, shapes, unicode(self.filename), self.imageData,
                 self.lineColor.getRgb(), self.fillColor.getRgb())
+            self.labelFile = lf
+            self.filename = filename
             return True
         except LabelFileError, e:
             self.errorMessage(u'Error saving label data',
@@ -732,7 +734,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filters = "Image & Label files (%s)" % \
                 ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename = unicode(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image or Label file', path, filters))
+            '%s - Choose Image or Label file' % __appname__, path, filters))
         if filename:
             self.loadFile(filename)
 
@@ -748,9 +750,19 @@ class MainWindow(QMainWindow, WindowMixin):
             self._saveFile(self.saveFileDialog())
 
     def saveFileDialog(self):
-        return unicode(QFileDialog.getSaveFileName(self,
-            '%s - Choose File', self.currentPath(),
-            'Label files (*%s)' % LabelFile.suffix))
+        caption = '%s - Choose File' % __appname__
+        filters = 'Label files (*%s)' % LabelFile.suffix
+        dlg = QFileDialog(self, caption, self.currentPath(), filters)
+        dlg.setDefaultSuffix(LabelFile.suffix[1:])
+        dlg.setAcceptMode(QFileDialog.AcceptSave)
+        dlg.setConfirmOverwrite(True)
+        dlg.setOption(QFileDialog.DontUseNativeDialog, False)
+        if dlg.exec_():
+            return dlg.selectedFiles()[0]
+        return ''
+        #return unicode(QFileDialog.getSaveFileName(self,
+        #    '%s - Choose File', self.currentPath(),
+        #    'Label files (*%s)' % LabelFile.suffix))
 
     def _saveFile(self, filename):
         if filename and self.saveLabels(filename):
