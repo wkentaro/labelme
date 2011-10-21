@@ -254,8 +254,11 @@ class MainWindow(QMainWindow, WindowMixin):
                 edit=self.menu('&Edit'),
                 view=self.menu('&View'),
                 help=self.menu('&Help'),
+                recentFiles=QMenu('Open &Recent'),
                 labelList=labelMenu)
 
+        addActions(self.menus.file,
+                (open, self.menus.recentFiles, save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
             labels, advancedMode, None,
@@ -288,7 +291,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.image = QImage()
         self.filename = filename
         self.recentFiles = []
-        self.maxRecent = 5
+        self.maxRecent = 7
         self.lineColor = None
         self.fillColor = None
         self.zoom_level = 100
@@ -460,18 +463,15 @@ class MainWindow(QMainWindow, WindowMixin):
         current = self.filename
         def exists(filename):
             return os.path.exists(unicode(filename))
-        menu = self.menus.file
+        menu = self.menus.recentFiles
         menu.clear()
         files = [f for f in self.recentFiles if f != current and exists(f)]
-        addActions(menu, self.actions.fileMenuActions)
-        if files:
-            menu.addSeparator()
+        for i, f in enumerate(files):
             icon = newIcon('labels')
-            for i, f in enumerate(files):
-                action = QAction(
+            action = QAction(
                     icon, '&%d %s' % (i+1, QFileInfo(f).fileName()), self)
-                action.triggered.connect(partial(self.loadFile, f))
-                menu.addAction(action)
+            action.triggered.connect(partial(self.loadFile, f))
+            menu.addAction(action)
 
     def popLabelListMenu(self, point):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))

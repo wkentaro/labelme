@@ -42,6 +42,8 @@ def addActions(widget, actions):
     for action in actions:
         if action is None:
             widget.addSeparator()
+        elif isinstance(action, QMenu):
+            widget.addMenu(action)
         else:
             widget.addAction(action)
 
