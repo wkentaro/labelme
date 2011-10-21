@@ -31,6 +31,7 @@ __appname__ = 'labelme'
 #   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
+# - [high] Add polygon movement with arrow keys
 # - [high] Automatically add file suffix when saving.
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
