@@ -886,6 +886,7 @@ def main(argv):
     """Standard boilerplate Qt application code."""
     app = QApplication(argv)
     app.setApplicationName(__appname__)
+    app.setWindowIcon(newIcon("app"))
     win = MainWindow(argv[1] if len(argv) == 2 else None)
     win.show()
     return app.exec_()
