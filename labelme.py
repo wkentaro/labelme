@@ -1,5 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+#
+# Copyright (C) 2011 Michael Pitidis, Hussein Abdulwahid.
+#
+# This file is part of Labelme.
+#
+# Labelme is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Labelme is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 import os.path
 import re
@@ -28,15 +46,12 @@ __appname__ = 'labelme'
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
-# - [medium] Disabling the save button prevents the user from saving to
-#   alternate files. Either keep enabled, or add "Save As" button.
 
 # TODO:
 # - [high] Automatically add file suffix when saving.
 # - [high] Add polygon movement with arrow keys
 # - [high] Deselect shape when clicking and already selected(?)
 # - [high] Sanitize shortcuts between beginner/advanced mode.
-# - [high] Figure out WhatsThis for help.
 # - [medium] Zoom should keep the image centered.
 # - [medium] Add undo button for vertex addition.
 # - [low,maybe] Open images with drag & drop.
