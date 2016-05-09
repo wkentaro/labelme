@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 
-version = '1.0.1'
+version = '1.1.0'
 
 
 class LabelmeBuildPyCommand(BuildPyCommand):
