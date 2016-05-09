@@ -33,7 +33,7 @@ setup(
     packages=find_packages(),
     cmdclass={'build_py': LabelmeBuildPyCommand},
     description='Simple Image Annotation Tool.',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='mpitid',
     author_email='mpitid@gmail.com',
     url='https://github.com/mpitid/pylabelme',
