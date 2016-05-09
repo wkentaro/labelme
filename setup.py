@@ -14,12 +14,12 @@ class LabelmeBuildPyCommand(BuildPyCommand):
 
     def run(self):
         BuildPyCommand.run(self)
-        src = 'labelme/resources.qrc'
-        dst = 'labelme/resources.py'
+        this_dir = osp.dirname(osp.abspath(__file__))
+        src = osp.join(this_dir, 'labelme/resources.qrc')
+        dst = osp.join(this_dir, 'labelme/resources.py')
         cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
         print('converting {0} -> {1}'.format(src, dst))
-        this_dir = osp.dirname(osp.abspath(__file__))
-        subprocess.call(shlex.split(cmd), cwd=this_dir)
+        subprocess.call(shlex.split(cmd))
 
 
 try:
