@@ -1,4 +1,4 @@
-# Labelme
+# labelme: Image Annotation Tool with Python
 
 Labelme is a graphical image annotation tool inspired by
 http://labelme.csail.mit.edu.
