@@ -13,13 +13,13 @@ version = '1.1.5'
 class LabelmeBuildPyCommand(BuildPyCommand):
 
     def run(self):
-        BuildPyCommand.run(self)
         this_dir = osp.dirname(osp.abspath(__file__))
         src = osp.join(this_dir, 'labelme/resources.qrc')
         dst = osp.join(this_dir, 'labelme/resources.py')
         cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
         print('converting {0} -> {1}'.format(src, dst))
         subprocess.call(shlex.split(cmd))
+        BuildPyCommand.run(self)
 
 
 try:
