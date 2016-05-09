@@ -31,4 +31,4 @@ be added.
 Screencast
 ----------
 
-.. figure:: _media/screencast.gif
+.. figure:: https://github.com/wkentaro/labelme/raw/master/_media/screencast.gif
