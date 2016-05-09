@@ -1,4 +1,5 @@
 from distutils.command.build_py import build_py as BuildPyCommand
+import os.path as osp
 from setuptools import find_packages
 from setuptools import setup
 import shlex
@@ -13,11 +14,12 @@ class LabelmeBuildPyCommand(BuildPyCommand):
 
     def run(self):
         BuildPyCommand.run(self)
-        src = 'labelme/resources.py'
-        dst = 'labelme/resources.qrc'
-        cmd = 'pyrcc4 -o {0} {1}'.format(src, dst)
+        src = 'labelme/resources.qrc'
+        dst = 'labelme/resources.py'
+        cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
         print('converting {0} -> {1}'.format(src, dst))
-        subprocess.check_call(shlex.split(cmd))
+        this_dir = osp.dirname(osp.abspath(__file__))
+        subprocess.check_call(shlex.split(cmd), cwd=this_dir)
 
 
 try:
