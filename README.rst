@@ -32,3 +32,4 @@ Screencast
 ----------
 
 .. figure:: https://github.com/wkentaro/labelme/raw/master/_media/screencast.gif
+   :width: 80%
