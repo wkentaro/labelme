@@ -19,7 +19,7 @@ class LabelmeBuildPyCommand(BuildPyCommand):
         cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
         print('converting {0} -> {1}'.format(src, dst))
         this_dir = osp.dirname(osp.abspath(__file__))
-        subprocess.check_call(shlex.split(cmd), cwd=this_dir)
+        subprocess.call(shlex.split(cmd), cwd=this_dir)
 
 
 try:
