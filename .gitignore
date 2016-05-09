@@ -1,8 +1,7 @@
+build/
+dist/
+*.py[cdo]
+*.egg-info/
 
 icons/.DS_Store
-
-resources.py
-
-*.pyc
-.*.swp
-
+labelme/resources.py
