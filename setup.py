@@ -1,4 +1,5 @@
 from distutils.command.build_py import build_py as BuildPyCommand
+from distutils.spawn import find_executable
 import os.path as osp
 from setuptools import find_packages
 from setuptools import setup
@@ -16,6 +17,10 @@ class LabelmeBuildPyCommand(BuildPyCommand):
         this_dir = osp.dirname(osp.abspath(__file__))
         src = osp.join(this_dir, 'labelme/resources.qrc')
         dst = osp.join(this_dir, 'labelme/resources.py')
+        if find_executable('pyrcc4') is None:
+            sys.stderr.write('Please install pyrcc4 command.\n')
+            sys.stderr.write('(See https://github.com/wkentaro/labelme.git)\n')
+            sys.exit(1)
         cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
         print('converting {0} -> {1}'.format(src, dst))
         subprocess.call(shlex.split(cmd))
