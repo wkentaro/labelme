@@ -54,6 +54,6 @@ setup(
         'Operating System :: POSIX',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    package_data={'labelme': ['icons']},
+    package_data={'labelme': ['icons', 'resources.qrc']},
     scripts=['scripts/labelme'],
 )
