@@ -913,15 +913,11 @@ def read(filename, default=None):
         return default
 
 
-def main(argv):
+def main():
     """Standard boilerplate Qt application code."""
-    app = QApplication(argv)
+    app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("app"))
-    win = MainWindow(argv[1] if len(argv) == 2 else None)
+    win = MainWindow(sys.argv[1] if len(sys.argv) == 2 else None)
     win.show()
-    return app.exec_()
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv))
-
+    sys.exit(app.exec_())

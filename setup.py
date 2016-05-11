@@ -57,5 +57,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     package_data={'labelme': ['icons/*', 'resources.qrc']},
-    scripts=['scripts/labelme'],
+    entry_points={'console_scripts': ['labelme=labelme.app:main']},
 )
