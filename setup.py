@@ -58,4 +58,5 @@ setup(
     ],
     package_data={'labelme': ['icons/*', 'resources.qrc']},
     entry_points={'console_scripts': ['labelme=labelme.app:main']},
+    scripts=['scripts/labelme_draw_json'],
 )
