@@ -8,14 +8,14 @@ import subprocess
 import sys
 
 
-version = '2.0.0'
+version = '2.0.1'
 
 
 if sys.argv[1] == 'release':
     for cmd in [
+            'python setup.py sdist upload',
             'git tag v{0}'.format(version),
-            'git push origin master --tag',
-            'python setup.py sdist upload']:
+            'git push origin master --tag']:
         subprocess.call(shlex.split(cmd))
 
 
