@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 
-version = '2.0.1'
+version = '2.0.2'
 
 
 if sys.argv[1] == 'release':
@@ -17,6 +17,7 @@ if sys.argv[1] == 'release':
             'git tag v{0}'.format(version),
             'git push origin master --tag']:
         subprocess.call(shlex.split(cmd))
+    sys.exit(0)
 
 
 class LabelmeBuildPyCommand(BuildPyCommand):
