@@ -776,12 +776,13 @@ class MainWindow(QMainWindow, WindowMixin):
         dlg.setAcceptMode(QFileDialog.AcceptSave)
         dlg.setConfirmOverwrite(True)
         dlg.setOption(QFileDialog.DontUseNativeDialog, False)
-        if dlg.exec_():
-            return dlg.selectedFiles()[0]
-        return ''
-        #return unicode(QFileDialog.getSaveFileName(self,
-        #    '%s - Choose File', self.currentPath(),
-        #    'Label files (*%s)' % LabelFile.suffix))
+        basename = os.path.splitext(self.filename)[0]
+        default_labelfile_name = os.path.join(self.currentPath(),
+                                              basename + LabelFile.suffix)
+        filename = dlg.getSaveFileName(
+            self, 'Choose File', default_labelfile_name,
+            'Label files (*%s)' % LabelFile.suffix)
+        return unicode(filename)
 
     def _saveFile(self, filename):
         if filename and self.saveLabels(filename):
