@@ -26,7 +26,7 @@ class LabelFileError(Exception):
     pass
 
 class LabelFile(object):
-    suffix = '.lif'
+    suffix = '.json'
 
     def __init__(self, filename=None):
         self.shapes = ()
