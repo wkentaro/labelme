@@ -45,7 +45,7 @@ file includes the image itself.
 To view the json file quickly, you can use utility script:
 
 ```bash
-$ labelme_draw_json sample.json
+$ labelme_draw_json _media/IMG_6319.json
 ```
 
 
