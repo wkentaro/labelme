@@ -8,7 +8,15 @@ import subprocess
 import sys
 
 
-version = '1.2.3'
+version = '2.0.0'
+
+
+if sys.argv[1] == 'release':
+    for cmd in [
+            'git tag v{0}'.format(version),
+            'git push origin master --tag',
+            'python setup.py sdist upload']:
+        subprocess.call(shlex.split(cmd))
 
 
 class LabelmeBuildPyCommand(BuildPyCommand):
