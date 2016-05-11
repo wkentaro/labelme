@@ -25,6 +25,15 @@ On Ubuntu:
   $ sudo pip install labelme
 
 
+On OS X:
+
+.. code-block:: bash
+
+  $ brew install qt qt4
+
+  $ pip install labelme
+
+
 Usage
 -----
 
