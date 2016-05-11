@@ -41,10 +41,14 @@ Usage
 
   $ labelme  # Open GUI
 
-At the moment annotations are saved as a `JSON <http://www.json.org/>`_
-file. The file includes the image itself. In the feature support for XML
-output or possibly even `SVG <http://www.w3.org/Graphics/SVG/>`_ will
-be added.
+The annotations are saved as a `JSON <http://www.json.org/>`_ file.
+The file includes the image itself.
+
+To view the json file quickly, you can use utility script:
+
+.. code-block:: bash
+
+  $ labelme_draw_json sample.json
 
 
 Screencast
