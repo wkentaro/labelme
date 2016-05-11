@@ -13,14 +13,24 @@ Dependencies
 -  `PyQt4 <http://www.riverbankcomputing.co.uk/software/pyqt/intro>`_
 
 
+Installation
+------------
+
+On Ubuntu:
+
+.. code-block:: bash
+
+  $ sudo apt-get install python-qt4 qt4-dev-tools
+
+  $ sudo pip install labelme
+
+
 Usage
 -----
 
 .. code:: bash
 
-    $ pip install labelme
-
-    $ labelme  # Open GUI
+  $ labelme  # Open GUI
 
 At the moment annotations are saved as a `JSON <http://www.json.org/>`_
 file. The file includes the image itself. In the feature support for XML
