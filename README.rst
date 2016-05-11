@@ -51,8 +51,18 @@ To view the json file quickly, you can use utility script:
   $ labelme_draw_json sample.json
 
 
+Sample
+------
+
+- `Original Image <https://github.com/wkentaro/labelme/blob/master/_media/IMG_6319.jpg>`_
+- `Screenshot <https://github.com/wkentaro/labelme/blob/master/_media/IMG_6319_screenshot.png>`_
+- `Generated Json File <https://github.com/wkentaro/labelme/blob/master/_media/IMG_6319.json>`_
+- `Visualized Json File <https://github.com/wkentaro/labelme/blob/master/_media/IMG_6319_draw_json.png>`_
+
+
 Screencast
 ----------
 
-.. figure:: https://github.com/wkentaro/labelme/raw/master/_media/screencast.gif
+.. image:: https://github.com/wkentaro/labelme/raw/master/_media/screencast.gif
    :width: 80%
+
