@@ -920,4 +920,5 @@ def main():
     app.setWindowIcon(newIcon("app"))
     win = MainWindow(sys.argv[1] if len(sys.argv) == 2 else None)
     win.show()
+    win.raise_()
     sys.exit(app.exec_())
