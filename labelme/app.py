@@ -19,6 +19,7 @@
 # along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import argparse
 import os.path
 import re
 import sys
@@ -82,7 +83,7 @@ class WindowMixin(object):
 class MainWindow(QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = range(3)
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, output=None):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -304,6 +305,8 @@ class MainWindow(QMainWindow, WindowMixin):
         # Application state.
         self.image = QImage()
         self.filename = filename
+        self.labeling_once = output is not None
+        self.output = output
         self.recentFiles = []
         self.maxRecent = 7
         self.lineColor = None
@@ -760,8 +763,12 @@ class MainWindow(QMainWindow, WindowMixin):
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
         if self.hasLabels():
-            self._saveFile(self.filename if self.labelFile\
-                                         else self.saveFileDialog())
+            if self.labelFile:
+                self._saveFile(self.filename)
+            elif self.output:
+                self._saveFile(self.output)
+            else:
+                self.saveFileDialog()
 
     def saveFileAs(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
@@ -788,6 +795,8 @@ class MainWindow(QMainWindow, WindowMixin):
         if filename and self.saveLabels(filename):
             self.addRecentFile(filename)
             self.setClean()
+            if self.labeling_once:
+                self.close()
 
     def closeFile(self, _value=False):
         if not self.mayContinue():
@@ -916,10 +925,18 @@ def read(filename, default=None):
 
 def main():
     """Standard boilerplate Qt application code."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filename', default=None, help='image or label filename')
+    parser.add_argument('-O', '--output', help='output label name')
+    args = parser.parse_args()
+
+    filename = args.filename
+    output = args.output
+
     app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("app"))
-    win = MainWindow(sys.argv[1] if len(sys.argv) == 2 else None)
+    win = MainWindow(filename, output)
     win.show()
     win.raise_()
     sys.exit(app.exec_())
