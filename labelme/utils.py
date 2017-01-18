@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
+import scipy.misc
 import skimage.color
 
 
@@ -53,8 +54,10 @@ def draw_label(label, img, label_names):
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
 
     cmap = labelcolormap(len(label_names))
-    label_viz = skimage.color.label2rgb(label, img, bg_label=0)
+    label_viz = skimage.color.label2rgb(
+        label, img, colors=cmap[1:], bg_label=0)
     plt.imshow(label_viz)
+    plt.axis('off')
 
     plt_handlers = []
     plt_titles = []
@@ -68,9 +71,11 @@ def draw_label(label, img, label_names):
     f = StringIO.StringIO()
     plt.savefig(f, bbox_inches='tight', pad_inches=0)
     plt.cla()
+    plt.close()
 
-    img = np.array(PIL.Image.open(f))[:, :, :3]
-    return img
+    out = np.array(PIL.Image.open(f))[:, :, :3]
+    out = scipy.misc.imresize(out, img.shape[:2])
+    return out
 
 
 def labelme_shapes_to_label(img_shape, shapes):
