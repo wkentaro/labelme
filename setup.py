@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 
-version = '2.2.0'
+version = '2.2.1'
 
 
 if sys.argv[1] == 'release':
