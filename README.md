@@ -18,7 +18,7 @@ Installation
 On Ubuntu:
 
 ```bash
-$ sudo apt-get install python-qt4 qt4-dev-tools
+$ sudo apt-get install python-qt4 pyqt4-dev-tools
 
 $ sudo pip install labelme
 ```
