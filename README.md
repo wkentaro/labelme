@@ -31,6 +31,14 @@ $ brew install qt qt4
 $ pip install labelme
 ```
 
+On macOS Sierra:
+
+```bash
+$ brew install pyqt5
+
+$ pip install git+https://github.com/wkentaro/labelme.git@pyqt5
+```
+
 
 Usage
 -----
