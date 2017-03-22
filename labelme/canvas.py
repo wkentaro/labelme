@@ -43,7 +43,7 @@ class Canvas(QWidget):
     shapeMoved = pyqtSignal()
     drawingPolygon = pyqtSignal(bool)
 
-    CREATE, EDIT = range(2)
+    CREATE, EDIT = list(range(2))
 
     epsilon = 11.0
 
@@ -443,12 +443,14 @@ class Canvas(QWidget):
                 return QPointF(min(max(0, x2), max(x3, x4)), y3)
         return QPointF(x, y)
 
-    def intersectingEdges(self, (x1, y1), (x2, y2), points):
+    def intersectingEdges(self, point1, point2, points):
         """For each edge formed by `points', yield the intersection
         with the line segment `(x1,y1) - (x2,y2)`, if it exists.
         Also return the distance of `(x2,y2)' to the middle of the
         edge along with its index, so that the one closest can be chosen."""
-        for i in xrange(4):
+        (x1, y1) = point1
+        (x2, y2) = point2
+        for i in range(4):
             x3, y3 = points[i]
             x4, y4 = points[(i+1) % 4]
             denom = (y4-y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)

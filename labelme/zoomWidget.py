@@ -28,7 +28,7 @@ class ZoomWidget(QSpinBox):
         self.setRange(1, 500)
         self.setSuffix(' %')
         self.setValue(value)
-        self.setToolTip(u'Zoom Level')
+        self.setToolTip('Zoom Level')
         self.setStatusTip(self.toolTip())
         self.setAlignment(Qt.AlignCenter)
 

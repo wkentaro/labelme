@@ -22,7 +22,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from lib import distance
+from .lib import distance
 
 # TODO:
 # - [opt] Store paths instead of creating new ones at each paint.
@@ -35,9 +35,9 @@ DEFAULT_VERTEX_FILL_COLOR = QColor(0, 255, 0, 255)
 DEFAULT_HVERTEX_FILL_COLOR = QColor(255, 0, 0)
 
 class Shape(object):
-    P_SQUARE, P_ROUND = range(2)
+    P_SQUARE, P_ROUND = list(range(2))
 
-    MOVE_VERTEX, NEAR_VERTEX = range(2)
+    MOVE_VERTEX, NEAR_VERTEX = list(range(2))
 
     ## The following class variables influence the drawing
     ## of _all_ shape objects.

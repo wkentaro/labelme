@@ -51,7 +51,7 @@ class LabelFile(object):
                 self.imageData = imageData
                 self.lineColor = lineColor
                 self.fillColor = fillColor
-        except Exception, e:
+        except Exception as e:
             raise LabelFileError(e)
 
     def save(self, filename, shapes, imagePath, imageData,
@@ -64,7 +64,7 @@ class LabelFile(object):
                     imagePath=imagePath,
                     imageData=b64encode(imageData)),
                     f, ensure_ascii=True, indent=2)
-        except Exception, e:
+        except Exception as e:
             raise LabelFileError(e)
 
     @staticmethod

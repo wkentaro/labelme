@@ -2,7 +2,7 @@ import base64
 try:
     import io
 except ImportError:
-    import cStringIO as io
+    import io as io
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,10 +18,10 @@ def labelcolormap(N=256):
         return ((byteval & (1 << idx)) != 0)
 
     cmap = np.zeros((N, 3))
-    for i in xrange(0, N):
+    for i in range(0, N):
         id = i
         r, g, b = 0, 0, 0
-        for j in xrange(0, 8):
+        for j in range(0, 8):
             r = np.bitwise_or(r, (bitget(id, 0) << 7-j))
             g = np.bitwise_or(g, (bitget(id, 1) << 7-j))
             b = np.bitwise_or(b, (bitget(id, 2) << 7-j))
@@ -34,7 +34,7 @@ def labelcolormap(N=256):
 
 
 def img_b64_to_array(img_b64):
-    f = io.StringIO()
+    f = io.BytesIO()
     f.write(base64.b64decode(img_b64))
     img_arr = np.array(PIL.Image.open(f))
     return img_arr
@@ -43,7 +43,7 @@ def img_b64_to_array(img_b64):
 def polygons_to_mask(img_shape, polygons):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
-    xy = map(tuple, polygons)
+    xy = list(map(tuple, polygons))
     PIL.ImageDraw.Draw(mask).polygon(xy=xy, outline=1, fill=1)
     mask = np.array(mask, dtype=bool)
     return mask
@@ -73,7 +73,7 @@ def draw_label(label, img, label_names, colormap=None):
         plt_titles.append(label_name)
     plt.legend(plt_handlers, plt_titles, loc='lower right', framealpha=.5)
 
-    f = io.StringIO()
+    f = io.BytesIO()
     plt.savefig(f, bbox_inches='tight', pad_inches=0)
     plt.cla()
     plt.close()

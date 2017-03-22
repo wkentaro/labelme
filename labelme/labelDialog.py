@@ -21,7 +21,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from lib import newIcon, labelValidator
+from .lib import newIcon, labelValidator
 
 # TODO:
 # - Calculate optimal position so as not to go out of screen area.
