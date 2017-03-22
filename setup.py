@@ -23,8 +23,8 @@ if sys.argv[1] == 'release':
 class LabelmeBuildPyCommand(BuildPyCommand):
 
     def run(self):
-        if find_executable('pyrcc4') is None:
-            sys.stderr.write('Please install pyrcc4 command.\n')
+        if find_executable('pyrcc5') is None:
+            sys.stderr.write('Please install pyrcc5 command.\n')
             sys.stderr.write('(See https://github.com/wkentaro/labelme.git)\n')
             sys.exit(1)
         this_dir = osp.dirname(osp.abspath(__file__))
@@ -33,15 +33,15 @@ class LabelmeBuildPyCommand(BuildPyCommand):
         dst = 'resources.py'
         print('converting {0} -> {1}'
               .format(osp.join(package_dir, src), osp.join(package_dir, dst)))
-        cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
+        cmd = 'pyrcc5 -o {1} {0}'.format(src, dst)
         subprocess.call(shlex.split(cmd), cwd=package_dir)
         BuildPyCommand.run(self)
 
 
 try:
-    import PyQt4
+    import PyQt5
 except ImportError:
-    sys.stderr.write('Please install PyQt4.\n')
+    sys.stderr.write('Please install PyQt5.\n')
     sys.exit(1)
 
 

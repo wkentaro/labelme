@@ -1,5 +1,8 @@
 import base64
-import cStringIO as StringIO
+try:
+    import io
+except ImportError:
+    import cStringIO as io
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,7 +34,7 @@ def labelcolormap(N=256):
 
 
 def img_b64_to_array(img_b64):
-    f = StringIO.StringIO()
+    f = io.StringIO()
     f.write(base64.b64decode(img_b64))
     img_arr = np.array(PIL.Image.open(f))
     return img_arr
@@ -70,7 +73,7 @@ def draw_label(label, img, label_names, colormap=None):
         plt_titles.append(label_name)
     plt.legend(plt_handlers, plt_titles, loc='lower right', framealpha=.5)
 
-    f = StringIO.StringIO()
+    f = io.StringIO()
     plt.savefig(f, bbox_inches='tight', pad_inches=0)
     plt.cla()
     plt.close()

@@ -28,8 +28,9 @@ import subprocess
 from functools import partial
 from collections import defaultdict
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 from labelme import resources
 from labelme.lib import struct, newAction, newIcon, addActions, fmtShortcut
@@ -314,32 +315,21 @@ class MainWindow(QMainWindow, WindowMixin):
         self.zoom_level = 100
         self.fit_window = False
 
-        # XXX: Could be completely declarative.
-        # Restore application settings.
-        types = {
-            'filename': QString,
-            'recentFiles': QStringList,
-            'window/size': QSize,
-            'window/position': QPoint,
-            'window/geometry': QByteArray,
-            # Docks and toolbars:
-            'window/state': QByteArray,
-        }
-        self.settings = settings = Settings(types)
-        self.recentFiles = list(settings['recentFiles'])
-        size = settings.get('window/size', QSize(600, 500))
-        position = settings.get('window/position', QPoint(0, 0))
+        self.settings = {}
+        self.recentFiles = self.settings.get('recentFiles', [])
+        size = self.settings.get('window/size', QSize(600, 500))
+        position = self.settings.get('window/position', QPoint(0, 0))
         self.resize(size)
         self.move(position)
         # or simply:
         #self.restoreGeometry(settings['window/geometry']
-        self.restoreState(settings['window/state'])
-        self.lineColor = QColor(settings.get('line/color', Shape.line_color))
-        self.fillColor = QColor(settings.get('fill/color', Shape.fill_color))
+        self.restoreState(self.settings.get('window/state', QByteArray()))
+        self.lineColor = QColor(self.settings.get('line/color', Shape.line_color))
+        self.fillColor = QColor(self.settings.get('fill/color', Shape.fill_color))
         Shape.line_color = self.lineColor
         Shape.fill_color = self.fillColor
 
-        if settings.get('advanced', QVariant()).toBool():
+        if self.settings.get('advanced', QVariant()):
             self.actions.advancedMode.setChecked(True)
             self.toggleAdvancedMode()
 
@@ -650,7 +640,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.resetState()
         self.canvas.setEnabled(False)
         if filename is None:
-            filename = self.settings['filename']
+            filename = self.settings.get('filename', '')
         filename = unicode(filename)
         if QFile.exists(filename):
             if LabelFile.isLabelFile(filename):
@@ -729,7 +719,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if not self.mayContinue():
             event.ignore()
         s = self.settings
-        s['filename'] = self.filename if self.filename else QString()
+        s['filename'] = self.filename if self.filename else ''
         s['window/size'] = self.size()
         s['window/position'] = self.pos()
         s['window/state'] = self.saveState()
@@ -756,7 +746,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filters = "Image & Label files (%s)" % \
                 ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename = unicode(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image or Label file' % __appname__, path, filters))
+            '%s - Choose Image or Label file' % __appname__, path, filters)[0])
         if filename:
             self.loadFile(filename)
 
@@ -781,12 +771,12 @@ class MainWindow(QMainWindow, WindowMixin):
         dlg = QFileDialog(self, caption, self.currentPath(), filters)
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
         dlg.setAcceptMode(QFileDialog.AcceptSave)
-        dlg.setConfirmOverwrite(True)
+        dlg.setOption(QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QFileDialog.DontUseNativeDialog, False)
         basename = os.path.splitext(self.filename)[0]
         default_labelfile_name = os.path.join(self.currentPath(),
                                               basename + LabelFile.suffix)
-        filename = dlg.getSaveFileName(
+        filename, _ = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
             'Label files (*%s)' % LabelFile.suffix)
         return unicode(filename)

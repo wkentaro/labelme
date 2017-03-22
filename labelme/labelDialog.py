@@ -17,8 +17,9 @@
 # along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 from lib import newIcon, labelValidator
 
@@ -46,11 +47,11 @@ class LabelDialog(QDialog):
         self.setLayout(layout)
 
     def validate(self):
-        if self.edit.text().trimmed():
+        if self.edit.text().strip():
             self.accept()
 
     def postProcess(self):
-        self.edit.setText(self.edit.text().trimmed())
+        self.edit.setText(self.edit.text().strip())
 
     def popUp(self, text='', move=True):
         self.edit.setText(text)
