@@ -45,8 +45,12 @@ Usage
 
 **Annotation**
 
+Run `labelme --help` for detail.
+
 ```bash
 $ labelme  # Open GUI
+$ labelme _static/IMG_6319.jpg  # Specify file
+$ labelme _static/IMG_6319.jpg -O _static/IMG_6319.json  # Close window after the save
 ```
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
