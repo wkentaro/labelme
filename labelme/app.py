@@ -926,7 +926,7 @@ def read(filename, default=None):
 def main():
     """Standard boilerplate Qt application code."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('filename', default=None, help='image or label filename')
+    parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('-O', '--output', help='output label name')
     args = parser.parse_args()
 
