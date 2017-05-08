@@ -768,7 +768,7 @@ class MainWindow(QMainWindow, WindowMixin):
             elif self.output:
                 self._saveFile(self.output)
             else:
-                self.saveFileDialog()
+                self._saveFile(self.saveFileDialog())
 
     def saveFileAs(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
