@@ -55,7 +55,7 @@ setup(
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',
     url='https://github.com/mpitid/pylabelme',
-    install_requires=[],
+    install_requires=['matplotlib'],
     license='GPLv3',
     keywords='Image Annotation, Machine Learning',
     classifiers=[
