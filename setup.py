@@ -57,9 +57,10 @@ setup(
     url='https://github.com/mpitid/pylabelme',
     install_requires=[
         'matplotlib',
-        'pillow',
+        'Pillow',
         'scipy',
         'scikit-image',
+        'PyYAML',
     ],
     license='GPLv3',
     keywords='Image Annotation, Machine Learning',
