@@ -9,6 +9,7 @@ python:
 
 before_install:
   - sudo -H apt-get install -qq -y python-matplotlib
+  - sudo -H apt-get install -qq -y python-nose
   - sudo -H apt-get install -qq -y python-numpy
   - sudo -H apt-get install -qq -y python-qt4
   - sudo -H apt-get install -qq -y pyqt4-dev-tools
@@ -21,5 +22,4 @@ install:
   - sudo -H python setup.py install
 
 script:
-  - sudo -H pip install nose
   - nosetests tests
