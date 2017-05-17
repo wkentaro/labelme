@@ -8,12 +8,12 @@ python:
   - '2.7'
 
 before_install:
-  - sudo -H apt-get install python-matplotlib
-  - sudo -H apt-get install python-numpy
-  - sudo -H apt-get install python-qt4
-  - sudo -H apt-get install pyqt4-dev-tools
-  - sudo -H apt-get install python-scipy
-  - sudo -H apt-get install python-skimage
+  - sudo -H apt-get install -qq -y python-matplotlib
+  - sudo -H apt-get install -qq -y python-numpy
+  - sudo -H apt-get install -qq -y python-qt4
+  - sudo -H apt-get install -qq -y pyqt4-dev-tools
+  - sudo -H apt-get install -qq -y python-scipy
+  - sudo -H apt-get install -qq -y python-skimage
   # - pip install flake8 hacking
   # - flake8 .
 
