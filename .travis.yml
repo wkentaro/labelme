@@ -22,4 +22,5 @@ install:
   - sudo -H python setup.py install
 
 script:
+  - sudo -H pip install matplotlib  # FIXME
   - nosetests tests
