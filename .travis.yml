@@ -13,6 +13,7 @@ install:
   - sudo -H apt-get install -qq -y pyqt4-dev-tools
   - sudo -H apt-get install -qq -y python-qt4
   - sudo -H pip install -U pip setuptools
+  - sudo -H pip install numpy scikit-image
   - sudo -H python setup.py install
 
 script:
