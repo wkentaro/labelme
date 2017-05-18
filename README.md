@@ -21,25 +21,25 @@ Installation
 On Ubuntu:
 
 ```bash
-$ sudo apt-get install python-qt4 pyqt4-dev-tools
+sudo apt-get install python-qt4 pyqt4-dev-tools
 
-$ sudo pip install labelme
+sudo pip install labelme
 ```
 
 On OS X:
 
 ```bash
-$ brew install qt qt4
+brew install qt qt4
 
-$ pip install labelme
+pip install labelme
 ```
 
 On macOS Sierra:
 
 ```bash
-$ brew install pyqt5
+brew install pyqt5
 
-$ pip install git+https://github.com/wkentaro/labelme.git@pyqt5
+pip install git+https://github.com/wkentaro/labelme.git@pyqt5
 ```
 
 
@@ -51,9 +51,15 @@ Usage
 Run `labelme --help` for detail.
 
 ```bash
-$ labelme  # Open GUI
-$ labelme _static/IMG_6319.jpg  # Specify file
-$ labelme _static/IMG_6319.jpg -O _static/IMG_6319.json  # Close window after the save
+labelme  # Open GUI
+labelme _static/IMG_6319.jpg  # Specify file
+labelme _static/IMG_6319.jpg -O _static/IMG_6319.json  # Close window after the save
+```
+
+If you are installed [docker](https://www.docker.com), you can run:
+
+```bash
+labelme_on_docker _static/IMG_6319.jpg -O _static/IMG_6319.json
 ```
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
@@ -64,7 +70,7 @@ file includes the image itself.
 To view the json file quickly, you can use utility script:
 
 ```bash
-$ labelme_draw_json _static/IMG_6319.json
+labelme_draw_json _static/IMG_6319.json
 ```
 
 **Convert to Dataset**
@@ -73,7 +79,7 @@ To convert the json to set of image and label, you can run following:
 
 
 ```bash
-$ labelme_json_to_dataset _static/IMG_6319.json
+labelme_json_to_dataset _static/IMG_6319.json
 ```
 
 
