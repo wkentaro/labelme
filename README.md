@@ -20,7 +20,7 @@ Installation
 
 **Docker**
 
-You need install [docker](https://www.docker.com), just run below:
+You need install [docker](https://www.docker.com), then just run below:
 
 ```bash
 wget https://raw.githubusercontent.com/wkentaro/labelme/master/scripts/labelme_on_docker
