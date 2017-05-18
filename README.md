@@ -20,8 +20,15 @@ Installation
 
 **Docker**
 
-You need install [docker](https://www.docker.com), and please follow below section
-for usage of `labelme_draw_json`.
+You need install [docker](https://www.docker.com), just run below:
+
+```bash
+wget https://raw.githubusercontent.com/wkentaro/labelme/master/scripts/labelme_on_docker
+chmod u+x labelme_on_docker
+
+# Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
+./labelme_on_docker _static/IMG_6319.jpg -O _static/IMG_6319.json
+```
 
 **Ubuntu**
 
@@ -59,13 +66,6 @@ Run `labelme --help` for detail.
 labelme  # Open GUI
 labelme _static/IMG_6319.jpg  # Specify file
 labelme _static/IMG_6319.jpg -O _static/IMG_6319.json  # Close window after the save
-```
-
-If you are installed [docker](https://www.docker.com), you can run:
-
-```bash
-# Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
-labelme_on_docker _static/IMG_6319.jpg -O _static/IMG_6319.json
 ```
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
