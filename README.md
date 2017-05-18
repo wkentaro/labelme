@@ -59,6 +59,7 @@ labelme _static/IMG_6319.jpg -O _static/IMG_6319.json  # Close window after the 
 If you are installed [docker](https://www.docker.com), you can run:
 
 ```bash
+# Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
 labelme_on_docker _static/IMG_6319.jpg -O _static/IMG_6319.json
 ```
 
