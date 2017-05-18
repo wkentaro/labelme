@@ -1,6 +1,6 @@
 FROM ubuntu:trusty
 
-# Replace 1000 with your user / group id
+# http://fabiorehm.com/blog/2014/09/11/running-gui-apps-with-docker/
 RUN export uid=1000 gid=1000 && \
     mkdir -p /home/developer && \
     echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
