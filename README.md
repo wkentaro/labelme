@@ -18,7 +18,12 @@ Dependencies
 Installation
 ------------
 
-On Ubuntu:
+**Docker**
+
+You need install [docker](https://www.docker.com), and please follow below section
+for usage of `labelme_draw_json`.
+
+**Ubuntu**
 
 ```bash
 sudo apt-get install python-qt4 pyqt4-dev-tools
@@ -26,7 +31,7 @@ sudo apt-get install python-qt4 pyqt4-dev-tools
 sudo pip install labelme
 ```
 
-On OS X:
+**OS X**
 
 ```bash
 brew install qt qt4
@@ -34,18 +39,13 @@ brew install qt qt4
 pip install labelme
 ```
 
-On macOS Sierra:
+**macOS Sierra**
 
 ```bash
 brew install pyqt5
 
 pip install git+https://github.com/wkentaro/labelme.git@pyqt5
 ```
-
-Docker:
-
-You need install [docker](https://www.docker.com), and please follow below section
-for usage of `labelme_draw_json`.
 
 
 Usage
