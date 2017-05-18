@@ -57,7 +57,7 @@ setup(
     url='https://github.com/mpitid/pylabelme',
     install_requires=[
         'matplotlib',
-        'Pillow',
+        'Pillow>=2.8.0',
         'scipy',
         'scikit-image',
         'PyYAML',
