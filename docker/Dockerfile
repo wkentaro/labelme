@@ -1,13 +1,6 @@
 FROM ubuntu:trusty
 
 RUN \
-  useradd wkentaro && \
-  echo wkentaro:wkentaro | chpasswd && \
-  mkdir -p /home/wkentaro && \
-  chown -R wkentaro:wkentaro /home/wkentaro && \
-  adduser wkentaro sudo
-
-RUN \
   apt-get update -qq && \
   apt-get upgrade -qq -y && \
   apt-get install -qq -y \
@@ -26,7 +19,3 @@ RUN apt-get install -qq -y python-scipy
 RUN apt-get install -qq -y python-skimage
 
 RUN pip install -v git+https://github.com/wkentaro/labelme.git
-
-USER wkentaro
-ENV HOME /home/wkentaro
-CMD /usr/local/bin/labelme
