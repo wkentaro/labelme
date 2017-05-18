@@ -42,6 +42,11 @@ brew install pyqt5
 pip install git+https://github.com/wkentaro/labelme.git@pyqt5
 ```
 
+Docker:
+
+You need install [docker](https://www.docker.com), and please follow below section
+for usage of `labelme_draw_json`.
+
 
 Usage
 -----
