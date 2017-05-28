@@ -16,4 +16,4 @@ def test_img_b64_to_array():
     img_b64 = data['imageData']
     img = utils.img_b64_to_array(img_b64)
     nose.tools.assert_equal(img.dtype, np.uint8)
-    nose.tools.assert_equal(img.shape, (3024, 4032, 3))
+    nose.tools.assert_equal(img.shape, (907, 1210, 3))
