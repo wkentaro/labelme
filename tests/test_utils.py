@@ -11,7 +11,7 @@ here = osp.dirname(osp.abspath(__file__))
 
 
 def test_img_b64_to_array():
-    json_file = osp.join(here, '../_static/IMG_6319.json')
+    json_file = osp.join(here, '../_static/apc2016_obj3.json')
     data = json.load(open(json_file))
     img_b64 = data['imageData']
     img = utils.img_b64_to_array(img_b64)
