@@ -34,7 +34,6 @@ chmod u+x labelme_on_docker
 
 ```bash
 sudo apt-get install python-qt4 pyqt4-dev-tools
-
 sudo pip install labelme
 ```
 
@@ -42,16 +41,19 @@ sudo pip install labelme
 
 ```bash
 brew install qt qt4
-
 pip install labelme
 ```
 
 **macOS Sierra**
 
 ```bash
-brew install pyqt5
-
+# on python2
+brew install pyqt5 --with-python
 pip install git+https://github.com/wkentaro/labelme.git@pyqt5
+
+# on python3
+brew install pyqt5
+pip3 install git+https://github.com/wkentaro/labelme.git@pyqt5
 ```
 
 
