@@ -37,7 +37,7 @@ sudo apt-get install python-qt4 pyqt4-dev-tools
 sudo pip install labelme
 ```
 
-**OS X**
+**macOS (older than Sierra)**
 
 ```bash
 brew install qt qt4
@@ -47,13 +47,8 @@ pip install labelme
 **macOS Sierra**
 
 ```bash
-# on python2
 brew install pyqt5 --with-python
-pip install git+https://github.com/wkentaro/labelme.git@pyqt5
-
-# on python3
-brew install pyqt5
-pip3 install git+https://github.com/wkentaro/labelme.git@pyqt5
+pip install labelme
 ```
 
 
