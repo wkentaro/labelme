@@ -3,28 +3,34 @@ matrix:
     - os: linux
       dist: trusty
       language: python
+      env:
+        - PYTHONEXE=$(which python)
       addons:
         apt:
           packages:
             - pyqt4-dev-tools
             - python-qt4
       before_install:
-        - cp -r $(dirname $(python -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp -r $(dirname $($PYTHONEXE -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode9
       python: 2.7
+      env:
+        - PYTHONEXE=$(which python)
       before_install:
-        - brew install pyqt --with-python
-        - cp -r $(dirname $(python -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - brew install pyqt
+        - cp -r $(dirname $($PYTHONEXE -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode9
       python: 3.5
+      env:
+        - PYTHONEXE=$(which python3)
       before_install:
-        - brew install pyqt --with-python
-        - cp -r $(dirname $(python -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python3.5/lib/python3.5/site-packages/
-        - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python3.5/lib/python3.5/site-packages/
+        - brew install pyqt
+        - cp -r $(dirname $($PYTHONEXE -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python3.5/lib/python3.5/site-packages/
+        - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python3.5/lib/python3.5/site-packages/
 
 install:
   - python setup.py install
