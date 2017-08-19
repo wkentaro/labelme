@@ -12,15 +12,19 @@ matrix:
         - cp -r $(dirname $(python -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
         - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
-      osx_image: xcode8
-      language: generic
-      before_install:
-        - brew install qt qt4
-    - os: osx
       osx_image: xcode9
-      language: generic
+      python: 2.7
       before_install:
         - brew install pyqt --with-python
+        - cp -r $(dirname $(python -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+    - os: osx
+      osx_image: xcode9
+      python: 3.5
+      before_install:
+        - brew install pyqt --with-python
+        - cp -r $(dirname $(python -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python3.5/lib/python3.5/site-packages/
+        - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python3.5/lib/python3.5/site-packages/
 
 install:
   - python setup.py install
