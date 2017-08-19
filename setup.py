@@ -61,7 +61,7 @@ setup(
     long_description=open('README.md').read(),
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',
-    url='https://github.com/mpitid/pylabelme',
+    url='https://github.com/wkentaro/labelme',
     install_requires=[
         'matplotlib',
         'Pillow>=2.8.0',
