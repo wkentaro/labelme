@@ -8,7 +8,7 @@ matrix:
       dist: trusty
       language: python
       env:
-        - PYTHONEXE=/usr/bin/python
+        - PYTHON=/usr/bin/python
       addons:
         apt:
           packages:
@@ -17,20 +17,21 @@ matrix:
             - pyqt4-dev-tools
             - python-qt4
       before_install:
-        - cp -r $(dirname $($PYTHONEXE -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp -r $(dirname $($PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $($PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode9
       language: generic
       env:
-        - PYTHONEXE=/usr/local/opt/python/libexec/bin/python
+        - PYTHON=/usr/local/opt/python/libexec/bin/python
+        - PIP=/usr/local/opt/python/libexec/bin/pip
       before_install:
         - brew install pyqt
-        - pip install virtualenv
+        - $PIP install virtualenv
         - virtualenv ~/virtualenv/python2.7
         - source ~/virtualenv/python2.7/bin/activate
-        - cp -r $(dirname $($PYTHONEXE -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp -r $(dirname $($PYTHON -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $($PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
 
 install:
   - pip install -U pip setuptools
