@@ -35,6 +35,7 @@ matrix:
 
 install:
   - pip install -U pip setuptools
+  - pip install -U numpy  # for scikit-image
   - python setup.py install
 
 before_script:
