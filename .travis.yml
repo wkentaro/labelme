@@ -8,6 +8,9 @@ matrix:
           packages:
             - pyqt4-dev-tools
             - python-qt4
+      before_install:
+        - cp -r $(dirname $(python -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $(python -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode8
       language: generic
