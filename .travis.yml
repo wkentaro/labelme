@@ -1,22 +1,29 @@
-sudo: required
-
-dist: trusty
-
-language: generic
-
-before_install:
-  - sudo -H apt-get install -qq -y libpython2.7-dev
-  - sudo -H apt-get install -qq -y python-minimal
-  - sudo -H apt-get install -qq -y python-tk
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      language: python
+      addons:
+        apt:
+          packages:
+            - pyqt4-dev-tools
+            - python-qt4
+    - os: osx
+      osx_image: xcode8
+      language: generic
+      before_install:
+        - brew install qt qt4
+    - os: osx
+      osx_image: xcode9
+      language: generic
+      before_install:
+        - brew install pyqt --with-python
 
 install:
-  - sudo -H apt-get install -qq -y pyqt4-dev-tools
-  - sudo -H apt-get install -qq -y python-qt4
-  - sudo -H pip install -U pip setuptools
-  # scikit-image needs numpy and to be installed by pip
-  - sudo -H pip install numpy scikit-image
-  - sudo -H python setup.py install
+  - python setup.py install
+
+before_script:
+  - pip install nose
 
 script:
-  - sudo -H apt-get install -qq -y python-nose
   - nosetests tests
