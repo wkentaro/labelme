@@ -1,13 +1,19 @@
+sudo: false
+
+cache: pip
+
 matrix:
   include:
     - os: linux
       dist: trusty
       language: python
       env:
-        - PYTHONEXE=$(which python)
+        - PYTHONEXE=/usr/bin/python
       addons:
         apt:
           packages:
+            - gfortran
+            - liblapack-dev
             - pyqt4-dev-tools
             - python-qt4
       before_install:
@@ -15,24 +21,19 @@ matrix:
         - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode9
-      python: 2.7
+      language: generic
       env:
-        - PYTHONEXE=$(which python)
+        - PYTHONEXE=/usr/local/opt/python/libexec/bin/python
       before_install:
         - brew install pyqt
+        - pip install virtualenv
+        - virtualenv ~/virtualenv/python2.7
+        - source ~/virtualenv/python2.7/bin/activate
         - cp -r $(dirname $($PYTHONEXE -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
         - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
-    - os: osx
-      osx_image: xcode9
-      python: 3.5
-      env:
-        - PYTHONEXE=$(which python3)
-      before_install:
-        - brew install pyqt
-        - cp -r $(dirname $($PYTHONEXE -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python3.5/lib/python3.5/site-packages/
-        - cp $($PYTHONEXE -c 'import sip; print(sip.__file__)') ~/virtualenv/python3.5/lib/python3.5/site-packages/
 
 install:
+  - pip install -U pip setuptools
   - python setup.py install
 
 before_script:
