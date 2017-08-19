@@ -26,6 +26,7 @@ matrix:
         - PYTHON=/usr/local/opt/python/libexec/bin/python
         - PIP=/usr/local/opt/python/libexec/bin/pip
       before_install:
+        - brew install numpy
         - brew install pyqt
         - $PIP install virtualenv
         - virtualenv ~/virtualenv/python2.7
@@ -35,7 +36,7 @@ matrix:
 
 install:
   - pip install -U pip setuptools
-  - pip install -U numpy Cython  # for scikit-image
+  - pip install -U numpy  # for scikit-image
   - python setup.py install
 
 before_script:
