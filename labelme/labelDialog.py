@@ -17,10 +17,17 @@
 # along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+try:
+    from PyQt5.QtGui import *
+    from PyQt5.QtCore import *
+    from PyQt5.QtWidgets import *
+    PYQT5 = True
+except ImportError:
+    from PyQt4.QtGui import *
+    from PyQt4.QtCore import *
+    PYQT5 = False
 
-from lib import newIcon, labelValidator
+from .lib import newIcon, labelValidator
 
 # TODO:
 # - Calculate optimal position so as not to go out of screen area.
@@ -46,11 +53,18 @@ class LabelDialog(QDialog):
         self.setLayout(layout)
 
     def validate(self):
-        if self.edit.text().trimmed():
-            self.accept()
+        if PYQT5:
+            if self.edit.text().strip():
+                self.accept()
+        else:
+            if self.edit.text().trimmed():
+                self.accept()
 
     def postProcess(self):
-        self.edit.setText(self.edit.text().trimmed())
+        if PYQT5:
+            self.edit.setText(self.edit.text().strip())
+        else:
+            self.edit.setText(self.edit.text().trimmed())
 
     def popUp(self, text='', move=True):
         self.edit.setText(text)

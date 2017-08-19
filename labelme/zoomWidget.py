@@ -17,8 +17,14 @@
 # along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+try:
+    from PyQt5.QtGui import *
+    from PyQt5.QtCore import *
+    from PyQt5.QtWidgets import *
+except ImportError:
+    from PyQt4.QtGui import *
+    from PyQt4.QtCore import *
+
 
 class ZoomWidget(QSpinBox):
     def __init__(self, value=100):
@@ -27,7 +33,7 @@ class ZoomWidget(QSpinBox):
         self.setRange(1, 500)
         self.setSuffix(' %')
         self.setValue(value)
-        self.setToolTip(u'Zoom Level')
+        self.setToolTip('Zoom Level')
         self.setStatusTip(self.toolTip())
         self.setAlignment(Qt.AlignCenter)
 

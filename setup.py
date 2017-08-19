@@ -8,6 +8,18 @@ import subprocess
 import sys
 
 
+try:
+    import PyQt5  # NOQA
+    PYQT_VERSION = 5
+except ImportError:
+    try:
+        import PyQt4  # NOQA
+        PYQT_VERSION = 4
+    except ImportError:
+        sys.stderr.write('Please install PyQt4 or PyQt5.\n')
+        sys.exit(1)
+
+
 version = '2.3.1'
 
 
@@ -20,29 +32,24 @@ if sys.argv[1] == 'release':
     sys.exit(0)
 
 
+here = osp.dirname(osp.abspath(__file__))
+
+
 class LabelmeBuildPyCommand(BuildPyCommand):
 
     def run(self):
-        if find_executable('pyrcc4') is None:
-            sys.stderr.write('Please install pyrcc4 command.\n')
+        pyrcc = 'pyrcc{:d}'.format(PYQT_VERSION)
+        if find_executable(pyrcc) is None:
+            sys.stderr.write('Please install {:s} command.\n'.format(pyrcc))
             sys.stderr.write('(See https://github.com/wkentaro/labelme.git)\n')
             sys.exit(1)
-        this_dir = osp.dirname(osp.abspath(__file__))
-        package_dir = osp.join(this_dir, 'labelme')
+        package_dir = osp.join(here, 'labelme')
         src = 'resources.qrc'
         dst = 'resources.py'
-        print('converting {0} -> {1}'
-              .format(osp.join(package_dir, src), osp.join(package_dir, dst)))
-        cmd = 'pyrcc4 -o {1} {0}'.format(src, dst)
+        cmd = '{pyrcc} -o {dst} {src}'.format(pyrcc=pyrcc, src=src, dst=dst)
+        print('+ {:s}'.format(cmd))
         subprocess.call(shlex.split(cmd), cwd=package_dir)
         BuildPyCommand.run(self)
-
-
-try:
-    import PyQt4
-except ImportError:
-    sys.stderr.write('Please install PyQt4.\n')
-    sys.exit(1)
 
 
 setup(
