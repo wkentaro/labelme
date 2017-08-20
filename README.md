@@ -20,9 +20,20 @@ Dependencies
 Installation
 ------------
 
+**Anaconda**
+
+You need install [Anaconda](https://www.continuum.io/downloads), then run below:
+
+```bash
+conda create --name=labelme python=2.7
+source activate labelme
+conda install pyqt
+pip install labelme
+```
+
 **Docker**
 
-You need install [docker](https://www.docker.com), then just run below:
+You need install [docker](https://www.docker.com), then run below:
 
 ```bash
 wget https://raw.githubusercontent.com/wkentaro/labelme/master/scripts/labelme_on_docker
