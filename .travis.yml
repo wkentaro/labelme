@@ -1,22 +1,57 @@
-sudo: required
+sudo: false
 
-dist: trusty
+cache: pip
 
-language: generic
-
-before_install:
-  - sudo -H apt-get install -qq -y libpython2.7-dev
-  - sudo -H apt-get install -qq -y python-minimal
-  - sudo -H apt-get install -qq -y python-tk
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      language: python
+      env:
+        - SYSTEM_PYTHON=/usr/bin/python
+        - PIP=pip
+        - PYTHON=python
+      addons:
+        apt:
+          packages:
+            - gfortran
+            - liblapack-dev
+            - pyqt4-dev-tools
+            - python-qt4
+      before_install:
+        - cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+    - os: osx
+      osx_image: xcode9
+      language: generic
+      env:
+        - PYTHON_VERSION=2.7.10
+        - PYENV_ROOT=~/.pyenv
+        - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
+      before_install:
+        - brew update >/dev/null
+        - brew outdated pyenv || brew upgrade --quiet pyenv
+        - PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION
+        - pyenv global $PYTHON_VERSION
+        - python --version
+        # Install PyQt5
+        - brew install pyqt
+        - cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
+        - cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
+        # for matplotlib
+        - mkdir -p ~/.matplotlib
+        - echo "backend':' Agg" > ~/.matplotlib/matplotlibrc
 
 install:
-  - sudo -H apt-get install -qq -y pyqt4-dev-tools
-  - sudo -H apt-get install -qq -y python-qt4
-  - sudo -H pip install -U pip setuptools
-  # scikit-image needs numpy and to be installed by pip
-  - sudo -H pip install numpy scikit-image
-  - sudo -H python setup.py install
+  - pip install -U pip setuptools
+  # Install scikit-image
+  - pip install -U numpy
+  - pip install -U scipy
+  - pip install -U scikit-image
+  - python setup.py install
+
+before_script:
+  - pip install nose
 
 script:
-  - sudo -H apt-get install -qq -y python-nose
   - nosetests tests
