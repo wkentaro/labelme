@@ -62,7 +62,7 @@ before_install:
       which pyenv &>/dev/null || brew install --quiet pyenv;
       PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION;
       mkdir -p ~/.matplotlib;
-      echo "backend':' Agg" > ~/.matplotlib/matplotlibrc;
+      echo "backend: Agg" > ~/.matplotlib/matplotlibrc;
     fi
 
 install:
