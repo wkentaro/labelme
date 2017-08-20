@@ -20,6 +20,11 @@ Dependencies
 Installation
 ------------
 
+There are options:
+
+- Platform agonistic installation: Anaconda, Docker
+- Platform specific installation: Ubuntu, macOS
+
 **Anaconda**
 
 You need install [Anaconda](https://www.continuum.io/downloads), then run below:
@@ -50,17 +55,10 @@ sudo apt-get install python-qt4 pyqt4-dev-tools
 sudo pip install labelme
 ```
 
-**macOS (older than Sierra)**
+**macOS**
 
 ```bash
-brew install qt qt4
-pip install labelme
-```
-
-**macOS Sierra**
-
-```bash
-brew install pyqt
+brew install qt qt4 || brew install pyqt  # qt4 is deprecated
 pip install labelme
 ```
 
