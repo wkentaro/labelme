@@ -24,10 +24,13 @@ version = '2.4.0'
 
 
 if sys.argv[1] == 'release':
-    for cmd in [
-            'python setup.py sdist upload',
-            'git tag v{0}'.format(version),
-            'git push origin master --tag']:
+    commands = [
+        'python setup.py sdist',
+        'twine upload dist/labelme-{:s}.tar.gz'.format(version),
+        'git tag v{:s}'.format(version),
+        'git push origin master --tag',
+    ]
+    for cmd in commands:
         subprocess.call(shlex.split(cmd))
     sys.exit(0)
 
