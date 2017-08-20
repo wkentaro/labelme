@@ -38,6 +38,9 @@ matrix:
         - brew install pyqt
         - cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
         - cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
+        # for matplotlib
+        - mkdir -p ~/.matplotlib
+        - echo "backend':' Agg" > ~/.matplotlib/matplotlibrc
 
 install:
   - pip install -U pip setuptools
