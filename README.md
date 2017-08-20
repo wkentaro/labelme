@@ -1,6 +1,7 @@
 labelme: Image Annotation Tool with Python
 ==========================================
 
+[![](https://badge.fury.io/gh/wkentaro%2Flabelme.svg)](https://badge.fury.io/gh/wkentaro%2Flabelme)
 [![Build Status](https://travis-ci.org/wkentaro/labelme.svg?branch=master)](https://travis-ci.org/wkentaro/labelme)
 
 
