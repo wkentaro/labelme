@@ -8,7 +8,9 @@ matrix:
       dist: trusty
       language: python
       env:
-        - PYTHON=/usr/bin/python
+        - SYSTEM_PYTHON=/usr/bin/python
+        - PIP=pip
+        - PYTHON=python
       addons:
         apt:
           packages:
@@ -17,30 +19,24 @@ matrix:
             - pyqt4-dev-tools
             - python-qt4
       before_install:
-        - cp -r $(dirname $($PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $($PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
+        - cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode9
       language: generic
       env:
-        - PYTHON=/usr/local/opt/python/libexec/bin/python
         - PIP=/usr/local/opt/python/libexec/bin/pip
+        - PYTHON=/usr/local/opt/python/libexec/bin/python
       before_install:
-        - brew install numpy
         - brew install pyqt
-        - $PIP install virtualenv
-        - virtualenv ~/virtualenv/python2.7
-        - source ~/virtualenv/python2.7/bin/activate
-        - cp -r $(dirname $($PYTHON -c 'import PyQt5; print(PyQt5.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $($PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
 
 install:
-  - pip install -U pip setuptools
-  - pip install -U numpy  # for scikit-image
-  - python setup.py install
+  - $PIP install -U pip setuptools
+  - $PIP install -U numpy  # for scikit-image
+  - $PYTHON setup.py install
 
 before_script:
-  - pip install nose
+  - $PIP install nose
 
 script:
   - nosetests tests
