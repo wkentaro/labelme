@@ -19,6 +19,13 @@ matrix:
             - pyqt4-dev-tools
             - python-qt4
     - os: osx
+      osx_image: xcode8
+      language: generic
+      env:
+        - PYTHON_VERSION=2.7.10
+        - PYENV_ROOT=~/.pyenv
+        - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
+    - os: osx
       osx_image: xcode9
       language: generic
       env:
