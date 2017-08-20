@@ -59,8 +59,7 @@ before_install:
       conda update -q conda;
       conda info -a;
     elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew update >/dev/null;
-      brew outdated pyenv || brew upgrade --quiet pyenv;
+      which pyenv &>/dev/null || brew install --quiet pyenv;
       PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION;
       mkdir -p ~/.matplotlib;
       echo "backend':' Agg" > ~/.matplotlib/matplotlibrc;
