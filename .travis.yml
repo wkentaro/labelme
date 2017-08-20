@@ -44,7 +44,7 @@ before_install:
         wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
       else
         wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
+      fi;
       bash miniconda.sh -b -p $HOME/miniconda;
       export PATH="$HOME/miniconda/bin:$PATH";
       hash -r;
@@ -67,7 +67,7 @@ install:
       else
         cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/;
         cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/;
-      fi
+      fi;
     elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
       pyenv global $PYTHON_VERSION;
       brew install pyqt;
