@@ -31,10 +31,13 @@ matrix:
       before_install:
         - brew update >/dev/null
         - brew outdated pyenv || brew upgrade --quiet pyenv
-        - brew install pyqt
         - PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION
         - pyenv global $PYTHON_VERSION
         - python --version
+        # Install PyQt5
+        - brew install pyqt
+        - cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
+        - cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
 
 install:
   - pip install -U pip setuptools
