@@ -3,6 +3,7 @@ labelme: Image Annotation Tool with Python
 
 [![](https://badge.fury.io/gh/wkentaro%2Flabelme.svg)](https://badge.fury.io/gh/wkentaro%2Flabelme)
 [![Build Status](https://travis-ci.org/wkentaro/labelme.svg?branch=master)](https://travis-ci.org/wkentaro/labelme)
+[![Docker Build Status](https://img.shields.io/docker/build/wkentaro/labelme.svg)](https://hub.docker.com/r/wkentaro/labelme)
 
 
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.
