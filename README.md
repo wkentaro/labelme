@@ -12,7 +12,7 @@ It is written in Python and uses Qt for its graphical interface.
 Dependencies
 ------------
 
-- [PyQt4](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+- [PyQt4 or PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
 
 
 Installation
@@ -47,7 +47,7 @@ pip install labelme
 **macOS Sierra**
 
 ```bash
-brew install pyqt5 --with-python
+brew install pyqt
 pip install labelme
 ```
 
