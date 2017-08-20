@@ -30,9 +30,7 @@ if sys.argv[1] == 'release':
         'git tag v{:s}'.format(version),
         'git push origin master --tag',
     ]
-    for cmd in commands:
-        subprocess.call(shlex.split(cmd))
-    sys.exit(0)
+    sys.exit(sum(subprocess.call(shlex.split(cmd)) for cmd in commands))
 
 
 here = osp.dirname(osp.abspath(__file__))
