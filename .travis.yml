@@ -18,9 +18,6 @@ matrix:
             - liblapack-dev
             - pyqt4-dev-tools
             - python-qt4
-      before_install:
-        - cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/
-        - cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/
     - os: osx
       osx_image: xcode9
       language: generic
@@ -28,26 +25,56 @@ matrix:
         - PYTHON_VERSION=2.7.10
         - PYENV_ROOT=~/.pyenv
         - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-      before_install:
-        - brew update >/dev/null
-        - brew outdated pyenv || brew upgrade --quiet pyenv
-        - PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION
-        - pyenv global $PYTHON_VERSION
-        - python --version
-        # Install PyQt5
-        - brew install pyqt
-        - cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
-        - cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/
-        # for matplotlib
-        - mkdir -p ~/.matplotlib
-        - echo "backend':' Agg" > ~/.matplotlib/matplotlibrc
+    - os: linux
+      dist: trusty
+      language: python
+      python: 2.7
+      env:
+        - USE_CONDA=true
+    - os: linux
+      dist: trusty
+      language: python
+      python: 3.5
+      env:
+        - USE_CONDA=true
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" -a "$USE_CONDA" = "true" ]; then
+      if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ]; then
+        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+      else
+        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+      fi
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda update -q conda;
+      conda info -a;
+    elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew update >/dev/null;
+      brew outdated pyenv || brew upgrade --quiet pyenv;
+      PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION;
+      mkdir -p ~/.matplotlib;
+      echo "backend':' Agg" > ~/.matplotlib/matplotlibrc;
+    fi
 
 install:
-  - pip install -U pip setuptools
-  # Install scikit-image
-  - pip install -U numpy
-  - pip install -U scipy
-  - pip install -U scikit-image
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      if [ "$USE_CONDA" = "true" ]; then
+        conda create --name=labelme python=$TRAVIS_PYTHON_VERSION -q -y;
+        conda install pyqt=4 -q -y;
+      else
+        cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/;
+        cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/;
+      fi
+    elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      pyenv global $PYTHON_VERSION;
+      brew install pyqt;
+      cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/;
+      cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/;
+      pip install -U numpy scipy scikit-image;
+    fi
   - python setup.py install
 
 before_script:
