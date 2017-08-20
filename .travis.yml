@@ -75,19 +75,21 @@ install:
       else
         cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/;
         cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/;
-        pip install -U numpy scipy scikit-image;
+        pip install -q -U pip setuptools;
+        pip install -q -U numpy scipy scikit-image;
       fi;
     elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
       pyenv global $PYTHON_VERSION;
       brew install pyqt;
       cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/;
       cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/;
-      pip install -U numpy scipy scikit-image;
+      pip install -q -U pip setuptools;
+      pip install -q -U numpy scipy scikit-image;
     fi
-  - python setup.py install
+  - pip install .
 
 before_script:
-  - pip install nose
+  - pip install -q nose
 
 script:
   - nosetests tests
