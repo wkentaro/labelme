@@ -20,7 +20,7 @@ except ImportError:
         sys.exit(1)
 
 
-version = '2.3.1'
+version = '2.4.0'
 
 
 if sys.argv[1] == 'release':
