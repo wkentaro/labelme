@@ -8,6 +8,9 @@ import subprocess
 import sys
 
 
+version = '2.5.0'
+
+
 try:
     import PyQt5  # NOQA
     PYQT_VERSION = 5
@@ -18,9 +21,6 @@ except ImportError:
     except ImportError:
         sys.stderr.write('Please install PyQt4 or PyQt5.\n')
         sys.exit(1)
-
-
-version = '2.4.0'
 
 
 if sys.argv[1] == 'release':
