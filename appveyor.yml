@@ -60,7 +60,7 @@ install:
 
 build_script:
   # Build the compiled extension
-  - "%CMD_IN_ENV% python setup.py build install -vvvv"
+  - "%CMD_IN_ENV% pip install . -vvv"
 
 test_script:
   # Run the project tests
