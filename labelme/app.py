@@ -758,7 +758,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filters = "Image & Label files (%s)" % \
                 ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename = str(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image or Label file' % __appname__, path, filters)[0])
+            '%s - Choose Image or Label file' % __appname__, path, filters))
         if filename:
             self.loadFile(filename)
 
