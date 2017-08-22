@@ -92,3 +92,6 @@ before_script:
 
 script:
   - nosetests tests
+
+notifications:
+  email: false
