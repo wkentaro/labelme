@@ -93,5 +93,9 @@ before_script:
 script:
   - nosetests tests
 
+branches:
+  only:
+    - master
+
 notifications:
   email: false
