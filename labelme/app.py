@@ -32,9 +32,11 @@ try:
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
     from PyQt5.QtWidgets import *
+    PYQT_VERSION = 5
 except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
+    PYQT_VERSION = 4
 
 from labelme import resources
 from labelme.lib import struct, newAction, newIcon, addActions, fmtShortcut
@@ -658,6 +660,14 @@ class MainWindow(QMainWindow, WindowMixin):
             if LabelFile.isLabelFile(filename):
                 try:
                     self.labelFile = LabelFile(filename)
+                    # FIXME: PyQt4 installed via Anaconda fails to load JPEG
+                    # and JSON encoded images.
+                    # https://github.com/ContinuumIO/anaconda-issues/issues/131
+                    if QImage.fromData(self.labelFile.imageData).isNull():
+                        raise LabelFileError(
+                            'Failed loading image data from label file.\n'
+                            'Maybe this is a known issue of PyQt4 built on'
+                            ' Anaconda, and may be fixed by installing PyQt5.')
                 except LabelFileError as e:
                     self.errorMessage('Error opening file',
                             ("<p><b>%s</b></p>"
@@ -757,8 +767,11 @@ class MainWindow(QMainWindow, WindowMixin):
                 for fmt in QImageReader.supportedImageFormats()]
         filters = "Image & Label files (%s)" % \
                 ' '.join(formats + ['*%s' % LabelFile.suffix])
-        filename = str(QFileDialog.getOpenFileName(self,
-            '%s - Choose Image or Label file' % __appname__, path, filters))
+        filename = QFileDialog.getOpenFileName(self,
+            '%s - Choose Image or Label file' % __appname__, path, filters)
+        if PYQT_VERSION >= 5:
+            filename, _ = filename
+        filename = str(filename)
         if filename:
             self.loadFile(filename)
 
@@ -790,8 +803,11 @@ class MainWindow(QMainWindow, WindowMixin):
                                               basename + LabelFile.suffix)
         filename = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
-            'Label files (*%s)' % LabelFile.suffix)[0]
-        return str(filename)
+            'Label files (*%s)' % LabelFile.suffix)
+        if PYQT_VERSION >= 5:
+            filename, _ = filename
+        filename = str(filename)
+        return filename
 
     def _saveFile(self, filename):
         if filename and self.saveLabels(filename):
