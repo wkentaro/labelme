@@ -66,3 +66,7 @@ test_script:
   # Run the project tests
   - "%CMD_IN_ENV% pip install nose"
   - "nosetests -vs tests"
+
+branches:
+  only:
+    - master
