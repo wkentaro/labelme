@@ -2,8 +2,8 @@
 <qresource>
 
 <file alias="help">icons/help.png</file>
-<file alias="app">icons/expert2.png</file>
-<file alias="expert">icons/expert2.png</file>
+<file alias="app">icons/icon.png</file>
+<file alias="expert">icons/expert.png</file>
 <file alias="done">icons/done.png</file>
 <file alias="file">icons/file.png</file>
 <file alias="labels">icons/labels.png</file>
