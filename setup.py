@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 
-version = '2.5.3'
+version = '2.5.4'
 
 
 try:
