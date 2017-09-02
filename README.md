@@ -15,7 +15,7 @@ It is written in Python and uses Qt for its graphical interface.
 Dependencies
 ------------
 
-- [PyQt4 or PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+- [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
 
 
 Installation
