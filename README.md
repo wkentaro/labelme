@@ -1,3 +1,5 @@
+<img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
+
 labelme: Image Annotation Tool with Python
 ==========================================
 
