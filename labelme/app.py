@@ -763,8 +763,8 @@ class MainWindow(QMainWindow, WindowMixin):
             return
         path = os.path.dirname(str(self.filename))\
                 if self.filename else '.'
-        formats = ['*.%s' % str(fmt).lower()\
-                for fmt in QImageReader.supportedImageFormats()]
+        formats = ['*.{}'.format(fmt.data().decode())
+                   for fmt in QImageReader.supportedImageFormats()]
         filters = "Image & Label files (%s)" % \
                 ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename = QFileDialog.getOpenFileName(self,
