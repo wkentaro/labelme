@@ -9,14 +9,15 @@ labelme: Image Annotation Tool with Python
 [![Docker Build Status](https://img.shields.io/docker/build/wkentaro/labelme.svg)](https://hub.docker.com/r/wkentaro/labelme)
 
 
-Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.
-
+Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
 
-Dependencies
+Requirements
 ------------
 
+- Ubuntu / macOS / Windows
+- Python2 / Python3
 - [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
 
 
