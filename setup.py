@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from distutils.command.build_py import build_py as BuildPyCommand
 from distutils.spawn import find_executable
 import os.path as osp
@@ -87,4 +89,23 @@ setup(
         'scripts/labelme_json_to_dataset',
         'scripts/labelme_on_docker',
     ],
+    # py2app settings
+    app=['labelme/app.py'],
+    setup_requires=['py2app'],
+    options={
+        'py2app': {
+            'argv_emulation': True,
+            'iconfile': 'labelme/icons/icon.icns',
+            'plist': {
+                'CFBundleName': 'labelme',
+                'CFBundleDisplayName': 'labelme',
+                'CFBundleGetInfoString': 'Image Annotation Tool with Python.',
+                'CFBundleIdentifier': 'com.wkentaro.labelme',
+                'CFBundleVersion': version,
+                'CFBundleShortVersionString': version,
+                'NSHumanReadableCopyright':
+                    u'Copyright © 2017, Kentaro Wada, All Rights Reserved',
+            },
+        },
+    }
 )
