@@ -114,3 +114,9 @@ Screencast
 ----------
 
 <img src="https://github.com/wkentaro/labelme/raw/master/static/screencast.gif" width="70%"/>
+
+
+Acknowledgement
+---------------
+
+This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme), whose development is currently stopped.
