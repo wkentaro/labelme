@@ -56,7 +56,6 @@ install:
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
   - "conda install -y -q pyqt=4"
-  - "conda install -y -q scikit-image"
 
 build_script:
   # Build the compiled extension
