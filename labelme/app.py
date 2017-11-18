@@ -684,8 +684,13 @@ class MainWindow(QMainWindow, WindowMixin):
                 self.labelFile = None
             image = QImage.fromData(self.imageData)
             if image.isNull():
-                self.errorMessage('Error opening file',
-                        "<p>Make sure <i>%s</i> is a valid image file." % filename)
+                formats = ['*.{}'.format(fmt.data().decode())
+                           for fmt in QImageReader.supportedImageFormats()]
+                self.errorMessage(
+                    'Error opening file',
+                    '<p>Make sure <i>{0}</i> is a valid image file.<br/>'
+                    'Supported image formats: {1}</p>'
+                    .format(filename, ','.join(formats)))
                 self.status("Error reading %s" % filename)
                 return False
             self.status("Loaded %s" % os.path.basename(str(filename)))
