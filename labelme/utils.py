@@ -3,16 +3,16 @@ try:
     import io
 except ImportError:
     import io as io
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
 import scipy.misc
-import skimage.color
 
 
-def labelcolormap(N=256):
+def label_colormap(N=256):
 
     def bitget(byteval, idx):
         return ((byteval & (1 << idx)) != 0)
@@ -31,6 +31,33 @@ def labelcolormap(N=256):
         cmap[i, 2] = b
     cmap = cmap.astype(np.float32) / 255
     return cmap
+
+
+def labelcolormap(N=256):
+    warnings.warn('labelcolormap is deprecated. Please use label_colormap.')
+    return label_colormap(N=N)
+
+
+# similar function as skimage.color.label2rgb
+def label2rgb(lbl, img=None, n_labels=None, alpha=0.3, thresh_suppress=0):
+    if n_labels is None:
+        n_labels = len(np.unique(lbl))
+
+    cmap = label_colormap(n_labels)
+    cmap = (cmap * 255).astype(np.uint8)
+
+    lbl_viz = cmap[lbl]
+    lbl_viz[lbl == -1] = (0, 0, 0)  # unlabeled
+
+    if img is not None:
+        img_gray = PIL.Image.fromarray(img).convert('LA')
+        img_gray = np.asarray(img_gray.convert('RGB'))
+        # img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        # img_gray = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2RGB)
+        lbl_viz = alpha * lbl_viz + (1 - alpha) * img_gray
+        lbl_viz = lbl_viz.astype(np.uint8)
+
+    return lbl_viz
 
 
 def img_b64_to_array(img_b64):
@@ -57,10 +84,9 @@ def draw_label(label, img, label_names, colormap=None):
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
 
     if colormap is None:
-        colormap = labelcolormap(len(label_names))
+        colormap = label_colormap(len(label_names))
 
-    label_viz = skimage.color.label2rgb(
-        label, img, colors=colormap[1:], bg_label=0, bg_color=colormap[0])
+    label_viz = label2rgb(label, img, n_labels=len(label_names))
     plt.imshow(label_viz)
     plt.axis('off')
 

@@ -67,7 +67,6 @@ setup(
         'matplotlib',
         'Pillow>=2.8.0',
         'scipy',
-        'scikit-image',
         'six',
         'PyYAML',
     ],
