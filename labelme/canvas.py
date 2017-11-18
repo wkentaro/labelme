@@ -492,23 +492,19 @@ class Canvas(QWidget):
 
     def wheelEvent(self, ev):
         if PYQT5:
-            if not hasattr(ev, 'inverted'):
-                # supported >=5.9
-                return
-            if ev.inverted():
-                mods = ev.modifiers()
-                if Qt.ControlModifier == int(mods):
-                    self.zoomRequest.emit(ev.pixelDelta())
-                else:
-                    self.scrollRequest.emit(ev.pixelDelta(),
-                            Qt.Horizontal if (Qt.ShiftModifier == int(mods))\
-                                          else Qt.Vertical)
+            mods = ev.modifiers()
+            delta = ev.pixelDelta()
+            if Qt.ControlModifier == int(mods):  # with Ctrl/Command key
+                # zoom
+                self.zoomRequest.emit(delta.y())
             else:
-                self.scrollRequest.emit(ev.pixelDelta(), Qt.Horizontal)
+                # scroll
+                self.scrollRequest.emit(delta.x(), Qt.Horizontal)
+                self.scrollRequest.emit(delta.y(), Qt.Vertical)
         else:
-            if ev.orientation() == qt.Vertical:
+            if ev.orientation() == Qt.Vertical:
                 mods = ev.modifiers()
-                if Qt.ControlModifier == int(mods):
+                if Qt.ControlModifier == int(mods):  # with Ctrl/Command key
                     self.zoomRequest.emit(ev.delta())
                 else:
                     self.scrollRequest.emit(ev.delta(),
