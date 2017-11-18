@@ -32,11 +32,11 @@ try:
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
     from PyQt5.QtWidgets import *
-    PYQT_VERSION = 5
+    PYQT5 = True
 except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
-    PYQT_VERSION = 4
+    PYQT5 = False
 
 from labelme import resources
 from labelme.lib import struct, newAction, newIcon, addActions, fmtShortcut
@@ -615,7 +615,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.canvas.undoLastLine()
 
     def scrollRequest(self, delta, orientation):
-        units = - delta / (8 * 15)
+        units = - delta * 0.1 # natural scroll
         bar = self.scrollBars[orientation]
         bar.setValue(bar.value() + bar.singleStep() * units)
 
@@ -629,9 +629,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.setZoom(self.zoomWidget.value() + increment)
 
     def zoomRequest(self, delta):
-        units = delta / (8 * 15)
-        scale = 10
-        self.addZoom(scale * units)
+        units = delta * 0.1
+        self.addZoom(units)
 
     def setFitWindow(self, value=True):
         if value:
@@ -769,7 +768,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename = QFileDialog.getOpenFileName(self,
             '%s - Choose Image or Label file' % __appname__, path, filters)
-        if PYQT_VERSION >= 5:
+        if PYQT5:
             filename, _ = filename
         filename = str(filename)
         if filename:
@@ -804,7 +803,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filename = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
             'Label files (*%s)' % LabelFile.suffix)
-        if PYQT_VERSION >= 5:
+        if PYQT5:
             filename, _ = filename
         filename = str(filename)
         return filename
