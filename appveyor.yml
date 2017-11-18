@@ -27,13 +27,13 @@ environment:
 #      PYTHON_VERSION: "3.4.x"
 #      PYTHON_ARCH: "64"
 
-    - PYTHON: "C:\\Miniconda35"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "32"
+    # - PYTHON: "C:\\Miniconda35"
+    #   PYTHON_VERSION: "3.5.x"
+    #   PYTHON_ARCH: "32"
 
-    - PYTHON: "C:\\Miniconda35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
+    # - PYTHON: "C:\\Miniconda35-x64"
+    #   PYTHON_VERSION: "3.5.x"
+    #   PYTHON_ARCH: "64"
 
 install:
   - ECHO "Filesystem root:"
