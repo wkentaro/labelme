@@ -147,10 +147,14 @@ class Shape(object):
             assert False, "unsupported vertex shape"
 
     def nearestVertex(self, point, epsilon):
+        min_distance = float('inf')
+        min_i = None
         for i, p in enumerate(self.points):
-            if distance(p - point) <= epsilon:
-                return i
-        return None
+            dist = distance(p - point)
+            if dist <= epsilon and dist < min_distance:
+                min_distance = dist
+                min_i = i
+        return min_i
 
     def containsPoint(self, point):
         return self.makePath().contains(point)
