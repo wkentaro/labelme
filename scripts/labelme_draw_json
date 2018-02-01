@@ -19,7 +19,8 @@ def main():
     img = utils.img_b64_to_array(data['imageData'])
     lbl, lbl_names = utils.labelme_shapes_to_label(img.shape, data['shapes'])
 
-    lbl_viz = utils.draw_label(lbl, img, lbl_names)
+    captions = ['%d: %s' % (l, name) for l, name in enumerate(lbl_names)]
+    lbl_viz = utils.draw_label(lbl, img, captions)
 
     plt.subplot(121)
     plt.imshow(img)
