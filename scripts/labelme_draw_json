@@ -21,6 +21,9 @@ def main():
 
     lbl_viz = utils.draw_label(lbl, img, lbl_names)
 
+    plt.subplot(121)
+    plt.imshow(img)
+    plt.subplot(122)
     plt.imshow(lbl_viz)
     plt.show()
 
