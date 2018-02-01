@@ -89,10 +89,10 @@ install:
   - pip install .
 
 before_script:
-  - pip install -q nose
+  - pip install -q pytest
 
 script:
-  - nosetests tests
+  - pytest -v tests
 
 branches:
   only:
