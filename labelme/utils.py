@@ -112,7 +112,7 @@ def draw_label(label, img, label_names, colormap=None):
 def labelme_shapes_to_label(img_shape, shapes):
     label_name_to_val = {'background': 0}
     lbl = np.zeros(img_shape[:2], dtype=np.int32)
-    for shape in sorted(shapes, key=lambda x: x['label']):
+    for shape in shapes:
         polygons = shape['points']
         label_name = shape['label']
         if label_name in label_name_to_val:
