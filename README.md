@@ -76,9 +76,11 @@ Run `labelme --help` for detail.
 
 ```bash
 labelme  # Open GUI
-labelme static/apc2016_obj3.jpg  # Specify file
-labelme static/apc2016_obj3.jpg -O static/apc2016_obj3.json  # Close window after the save
+labelme tutorial/apc2016_obj3.jpg  # Specify file
+labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window after the save
 ```
+
+<img src=".readme/apc2016_obj3_screenshot.jpg" width="50%" />
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
 file includes the image itself.
@@ -88,8 +90,10 @@ file includes the image itself.
 To view the json file quickly, you can use utility script:
 
 ```bash
-labelme_draw_json static/apc2016_obj3.json
+labelme_draw_json tutorial/apc2016_obj3.json
 ```
+
+<img src=".readme/apc2016_obj3_draw_json.jpg" width="70%" />
 
 **Convert to Dataset**
 
@@ -97,26 +101,44 @@ To convert the json to set of image and label, you can run following:
 
 
 ```bash
-labelme_json_to_dataset static/apc2016_obj3.json
+labelme_json_to_dataset tutorial/apc2016_obj3.json -o tutorial/apc2016_obj3_json
 ```
 
+It generates standard files from the JSON file.
 
-Sample
-------
+- [img.png](tutorial/apc2016_obj3_json/img.png): Image file.
+- [label.png](tutorial/apc2016_obj3_json/label.png): Int32 label file.
+- [label_viz.png](tutorial/apc2016_obj3_json/label_viz.png): Visualization of `label.png`.
+- [label_names.txt](tutorial/apc2016_obj3_json/label_names.txt): Label names for values in `label.png`.
 
-- [Original Image](https://github.com/wkentaro/labelme/blob/master/static/apc2016_obj3.jpg)
-- [Screenshot](https://github.com/wkentaro/labelme/blob/master/static/apc2016_obj3_screenshot.jpg)
-- [Generated Json File](https://github.com/wkentaro/labelme/blob/master/static/apc2016_obj3.json)
-- [Visualized Json File](https://github.com/wkentaro/labelme/blob/master/static/apc2016_obj3_draw_json.jpg)
+Note that loading `label.png` is a bit difficult
+(`scipy.misc.imread`, `skimage.io.imread` may not work correctly),
+and please use `PIL.Image.open` to avoid unexpected behavior:
+
+```python
+# see tutorial/load_label_png.py also.
+>>> import numpy as np
+>>> import PIL.Image
+
+>>> label_png = 'tutorial/apc2016_obj3_json/label.png'
+>>> lbl = np.asarray(PIL.Image.open(label_png))
+>>> print(lbl.dtype)
+dtype('int32')
+>>> np.unique(lbl)
+array([0, 1, 2, 3], dtype=int32)
+>>> lbl.shape
+(907, 1210)
+```
 
 
 Screencast
 ----------
 
-<img src="https://github.com/wkentaro/labelme/raw/master/static/screencast.gif" width="70%"/>
+<img src=".readme/screencast.gif" width="70%"/>
 
 
 Acknowledgement
 ---------------
 
-This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme), whose development has already stopped.
+This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme),
+whose development has already stopped.
