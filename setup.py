@@ -1,6 +1,7 @@
-from distutils.command.build_py import build_py as BuildPyCommand
 from distutils.spawn import find_executable
 import os.path as osp
+from setuptools.command.develop import develop as DevelopCommand
+from setuptools.command.install import install as InstallCommand
 from setuptools import find_packages
 from setuptools import setup
 import shlex
@@ -53,9 +54,10 @@ if sys.argv[1] == 'release':
 here = osp.dirname(osp.abspath(__file__))
 
 
-class LabelmeBuildPyCommand(BuildPyCommand):
+def customize(command_subclass):
+    orig_run = command_subclass.run
 
-    def run(self):
+    def customized_run(self):
         pyrcc = 'pyrcc{:d}'.format(PYQT_VERSION)
         if find_executable(pyrcc) is None:
             sys.stderr.write('Please install {:s} command.\n'.format(pyrcc))
@@ -67,14 +69,30 @@ class LabelmeBuildPyCommand(BuildPyCommand):
         cmd = '{pyrcc} -o {dst} {src}'.format(pyrcc=pyrcc, src=src, dst=dst)
         print('+ {:s}'.format(cmd))
         subprocess.call(shlex.split(cmd), cwd=package_dir)
-        BuildPyCommand.run(self)
+        orig_run(self)
+
+    command_subclass.run = customized_run
+    return command_subclass
+
+
+@customize
+class CustomDevelopCommand(DevelopCommand):
+    pass
+
+
+@customize
+class CustomInstallCommand(InstallCommand):
+    pass
 
 
 setup(
     name='labelme',
     version=version,
     packages=find_packages(),
-    cmdclass={'build_py': LabelmeBuildPyCommand},
+    cmdclass={
+        'develop': CustomDevelopCommand,
+        'install': CustomInstallCommand,
+    },
     description='Annotation Tool for Object Segmentation.',
     long_description=open('README.md').read(),
     author='Kentaro Wada',
