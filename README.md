@@ -62,6 +62,7 @@ chmod u+x labelme_on_docker
 **Ubuntu**
 
 ```bash
+# Ubuntu 14.04
 sudo apt-get install python-qt4 pyqt4-dev-tools
 sudo pip install labelme  # python2 works
 ```
@@ -69,6 +70,7 @@ sudo pip install labelme  # python2 works
 **macOS**
 
 ```bash
+# macOS Sierra
 brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
 ```
