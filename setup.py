@@ -8,7 +8,20 @@ import subprocess
 import sys
 
 
+PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+
+
 version = '2.6.4'
+
+
+install_requires = [
+    'matplotlib',
+    'Pillow>=2.8.0',
+    'scipy',
+    'six',
+    'PyYAML',
+]
 
 
 try:
@@ -19,16 +32,21 @@ except ImportError:
         import PyQt4  # NOQA
         PYQT_VERSION = 4
     except ImportError:
-        sys.stderr.write('Please install PyQt4 or PyQt5.\n')
-        sys.exit(1)
+        if PY2:
+            sys.stderr.write(
+                'Please install PyQt4 or PyQt5 for Python2.\n'
+                'Note that PyQt5 can be installed via pip for Python3.')
+            sys.exit(1)
+        assert PY3
+        # PyQt5 can be installed via pip for Python3
+        install_requires.append('pyqt5')
 
 
 if sys.argv[1] == 'release':
     commands = [
         'git tag v{:s}'.format(version),
         'git push origin master --tag',
-        'python setup.py sdist',
-        'twine upload dist/labelme-{:s}.tar.gz'.format(version),
+        'python setup.py sdist upload',
     ]
     sys.exit(sum(subprocess.call(shlex.split(cmd)) for cmd in commands))
 
@@ -63,13 +81,7 @@ setup(
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',
     url='https://github.com/wkentaro/labelme',
-    install_requires=[
-        'matplotlib',
-        'Pillow>=2.8.0',
-        'scipy',
-        'six',
-        'PyYAML',
-    ],
+    install_requires=install_requires,
     license='GPLv3',
     keywords='Image Annotation, Machine Learning',
     classifiers=[
