@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
-import scipy.misc
 
 
 def label_colormap(N=256):
@@ -104,8 +103,9 @@ def draw_label(label, img, label_names, colormap=None):
     plt.cla()
     plt.close()
 
-    out = np.array(PIL.Image.open(f))[:, :, :3]
-    out = scipy.misc.imresize(out, img.shape[:2])
+    out_size = (img.shape[1], img.shape[0])
+    out = PIL.Image.open(f).resize(out_size, PIL.Image.BILINEAR).convert('RGB')
+    out = np.asarray(out)
     return out
 
 
