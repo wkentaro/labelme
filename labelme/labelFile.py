@@ -20,8 +20,10 @@
 from base64 import b64encode, b64decode
 import json
 import os.path
+import sys
 
-import six
+
+PY2 = sys.version_info[0] == 2
 
 
 class LabelFileError(Exception):
@@ -39,7 +41,7 @@ class LabelFile(object):
 
     def load(self, filename):
         try:
-            with open(filename, 'rb' if six.PY2 else 'r') as f:
+            with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
                 imagePath = data['imagePath']
                 imageData = b64decode(data['imageData'])
@@ -66,7 +68,7 @@ class LabelFile(object):
             imageData=b64encode(imageData).decode('utf-8'),
         )
         try:
-            with open(filename, 'wb' if six.PY2 else 'w') as f:
+            with open(filename, 'wb' if PY2 else 'w') as f:
                 json.dump(data, f, ensure_ascii=True, indent=2)
         except Exception as e:
             raise LabelFileError(e)

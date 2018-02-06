@@ -17,9 +17,8 @@ version = '2.6.4'
 
 install_requires = [
     'matplotlib',
+    'numpy',
     'Pillow>=2.8.0',
-    'scipy',
-    'six',
     'PyYAML',
 ]
 
