@@ -34,9 +34,17 @@ There are options:
 You need install [Anaconda](https://www.continuum.io/downloads), then run below:
 
 ```bash
+# python2
 conda create --name=labelme python=2.7
 source activate labelme
 conda install pyqt
+pip install labelme
+
+# python3
+conda create --name=labelme python=3.6
+source activate labelme
+# conda install pyqt
+pip install pyqt5  # pyut5 can be installed via pip on python3
 pip install labelme
 ```
 
@@ -56,14 +64,14 @@ chmod u+x labelme_on_docker
 
 ```bash
 sudo apt-get install python-qt4 pyqt4-dev-tools
-sudo pip install labelme
+sudo pip install labelme  # python2 works
 ```
 
 **macOS**
 
 ```bash
-brew install qt qt4 || brew install pyqt  # qt4 is deprecated
-pip install labelme
+brew install pyqt  # maybe pyqt5
+pip install labelme  # both python2/3 should work
 ```
 
 
