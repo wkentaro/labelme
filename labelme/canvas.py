@@ -17,6 +17,10 @@
 # along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import print_function
+
+import sys
+
 try:
     from PyQt5.QtGui import *
     from PyQt5.QtCore import *
@@ -207,7 +211,11 @@ class Canvas(QWidget):
         if ev.button() == Qt.LeftButton:
             if self.drawing():
                 if self.current:
-                    self.current.addPoint(self.line[1])
+                    try:
+                        self.current.addPoint(self.line[1])
+                    except Exception as e:
+                        print(e, file=sys.stderr)
+                        return
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
                         self.finalise()
