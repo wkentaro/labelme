@@ -44,7 +44,13 @@ class LabelFile(object):
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
                 imagePath = data['imagePath']
-                imageData = b64decode(data['imageData'])
+                if data['imageData'] is not None:
+                    imageData = b64decode(data['imageData'])
+                else:
+                    imagePath = os.path.join(
+                        os.path.dirname(filename), data['imagePath'])
+                    with open(imagePath, 'rb') as f:
+                        imageData = f.read()
                 lineColor = data['lineColor']
                 fillColor = data['fillColor']
                 shapes = ((s['label'], s['points'], s['line_color'], s['fill_color'])\
@@ -58,14 +64,16 @@ class LabelFile(object):
         except Exception as e:
             raise LabelFileError(e)
 
-    def save(self, filename, shapes, imagePath, imageData,
+    def save(self, filename, shapes, imagePath, imageData=None,
             lineColor=None, fillColor=None):
+        if imageData is not None:
+            imageData = b64encode(imageData).decode('utf-8')
         data = dict(
             shapes=shapes,
             lineColor=lineColor,
             fillColor=fillColor,
             imagePath=imagePath,
-            imageData=b64encode(imageData).decode('utf-8'),
+            imageData=imageData,
         )
         try:
             with open(filename, 'wb' if PY2 else 'w') as f:
