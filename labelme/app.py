@@ -90,7 +90,7 @@ class WindowMixin(object):
 class MainWindow(QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
-    def __init__(self, filename=None, output=None):
+    def __init__(self, filename=None, output=None, store_data=True):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -310,9 +310,11 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Application state.
         self.image = QImage()
+        self.imagePath = None
         self.filename = filename
         self.labeling_once = output is not None
         self.output = output
+        self._store_data = store_data
         self.recentFiles = []
         self.maxRecent = 7
         self.lineColor = None
@@ -561,7 +563,10 @@ class MainWindow(QMainWindow, WindowMixin):
 
         shapes = [format_shape(shape) for shape in self.canvas.shapes]
         try:
-            lf.save(filename, shapes, str(self.filename), self.imageData,
+            imagePath = os.path.relpath(
+                self.imagePath, os.path.dirname(filename))
+            imageData = self.imageData if self._store_data else None
+            lf.save(filename, shapes, imagePath, imageData,
                 self.lineColor.getRgb(), self.fillColor.getRgb())
             self.labelFile = lf
             self.filename = filename
@@ -675,12 +680,17 @@ class MainWindow(QMainWindow, WindowMixin):
                     self.status("Error reading %s" % filename)
                     return False
                 self.imageData = self.labelFile.imageData
+                self.imagePath = os.path.join(os.path.dirname(filename),
+                                              self.labelFile.imagePath)
                 self.lineColor = QColor(*self.labelFile.lineColor)
                 self.fillColor = QColor(*self.labelFile.fillColor)
             else:
                 # Load image:
                 # read data first and store for saving into label file.
                 self.imageData = read(filename, None)
+                if self.imageData is not None:
+                    # the filename is image not JSON
+                    self.imagePath = filename
                 self.labelFile = None
             image = QImage.fromData(self.imageData)
             if image.isNull():
@@ -949,16 +959,16 @@ def main():
     """Standard boilerplate Qt application code."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', nargs='?', help='image or label filename')
-    parser.add_argument('-O', '--output', help='output label name')
+    parser.add_argument('--output', '-O', '-o', help='output label name')
+    parser.add_argument('--nodata', '-nd', dest='store_data',
+                        action='store_false',
+                        help='Stop storing image data to JSON file.')
     args = parser.parse_args()
-
-    filename = args.filename
-    output = args.output
 
     app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("app"))
-    win = MainWindow(filename, output)
+    win = MainWindow(args.filename, args.output, args.store_data)
     win.show()
     win.raise_()
     sys.exit(app.exec_())
