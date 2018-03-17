@@ -13,12 +13,11 @@ import yaml
 from labelme import utils
 
 
-warnings.warn("This script is aimed to demonstrate how to convert the\n"
-              "JSON file to a single image dataset, and not to handle\n"
-              "multiple JSON files to generate a real-use dataset.")
-
-
 def main():
+    warnings.warn("This script is aimed to demonstrate how to convert the\n"
+                "JSON file to a single image dataset, and not to handle\n"
+                "multiple JSON files to generate a real-use dataset.")
+
     parser = argparse.ArgumentParser()
     parser.add_argument('json_file')
     parser.add_argument('-o', '--out', default=None)

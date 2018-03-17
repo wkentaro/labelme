@@ -109,10 +109,12 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     package_data={'labelme': ['icons/*', 'resources.qrc']},
-    entry_points={'console_scripts': ['labelme=labelme.app:main']},
-    scripts=[
-        'scripts/labelme_draw_json',
-        'scripts/labelme_json_to_dataset',
-        'scripts/labelme_on_docker',
-    ],
+    entry_points={
+        'console_scripts': [
+            'labelme=labelme.app:main',
+            'labelme_draw_json=labelme.cli.draw_json:main',
+            'labelme_json_to_dataset=labelme.cli.json_to_dataset:main',
+            'labelme_on_docker=labelme.cli.on_docker:main',
+        ],
+    },
 )
