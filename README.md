@@ -86,6 +86,7 @@ Run `labelme --help` for detail.
 ```bash
 labelme  # Open GUI
 labelme tutorial/apc2016_obj3.jpg  # Specify file
+labelme tutorial/apc2016_obj3.jpg --nodata  # Include image data in JSON file (relative image path is included)
 labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window after the save
 ```
 
