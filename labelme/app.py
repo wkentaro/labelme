@@ -960,8 +960,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('--output', '-O', '-o', help='output label name')
-    parser.add_argument('--nodata', '-nd', dest='store_data',
-                        action='store_false',
+    parser.add_argument('--nodata', dest='store_data', action='store_false',
                         help='Stop storing image data to JSON file.')
     args = parser.parse_args()
 
