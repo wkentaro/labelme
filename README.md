@@ -79,7 +79,7 @@ pip install labelme  # both python2/3 should work
 Usage
 -----
 
-**Annotation**
+### Annotation
 
 Run `labelme --help` for detail.
 
@@ -95,7 +95,7 @@ labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
 file includes the image itself.
 
-**Visualization**
+### Visualization
 
 To view the json file quickly, you can use utility script:
 
@@ -105,7 +105,7 @@ labelme_draw_json tutorial/apc2016_obj3.json
 
 <img src=".readme/apc2016_obj3_draw_json.jpg" width="70%" />
 
-**Convert to Dataset**
+### Convert to Dataset
 
 To convert the json to set of image and label, you can run following:
 
