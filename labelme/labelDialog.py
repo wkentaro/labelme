@@ -36,7 +36,7 @@ BB = QDialogButtonBox
 
 class LabelDialog(QDialog):
 
-    def __init__(self, text="Enter object label", parent=None):
+    def __init__(self, text="Enter object label", parent=None, labels=None):
         super(LabelDialog, self).__init__(parent)
         self.edit = QLineEdit()
         self.edit.setPlaceholderText(text)
@@ -44,13 +44,29 @@ class LabelDialog(QDialog):
         self.edit.editingFinished.connect(self.postProcess)
         layout = QVBoxLayout()
         layout.addWidget(self.edit)
+        # buttons
         self.buttonBox = bb = BB(BB.Ok | BB.Cancel, Qt.Horizontal, self)
         bb.button(BB.Ok).setIcon(newIcon('done'))
         bb.button(BB.Cancel).setIcon(newIcon('undo'))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
+        # label_list
+        self.labelList = QListWidget()
+        if labels:
+            self.labelList.addItems(labels)
+        self.labelList.currentItemChanged.connect(self.labelSelected)
+        layout.addWidget(self.labelList)
         self.setLayout(layout)
+
+    def addLabelHistory(self, label):
+        if self.labelList.findItems(label, Qt.MatchExactly):
+            return
+        self.labelList.addItem(label)
+        self.labelList.sortItems()
+
+    def labelSelected(self, item):
+        self.edit.setText(item.text())
 
     def validate(self):
         if PYQT5:
