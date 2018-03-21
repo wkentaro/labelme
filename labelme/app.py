@@ -91,7 +91,7 @@ class MainWindow(QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
     def __init__(self, filename=None, output=None, store_data=True,
-                 labels=None):
+                 labels=None, sort_labels=True):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -104,7 +104,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.screencast = "screencast.ogv"
 
         # Main widgets and related state.
-        self.labelDialog = LabelDialog(parent=self, labels=labels)
+        self.labelDialog = LabelDialog(parent=self, labels=labels,
+                                       sort_labels=sort_labels)
 
         self.labelList = QListWidget()
         self.itemsToShapes = []
@@ -963,8 +964,10 @@ def main():
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('--output', '-O', '-o', help='output label name')
     parser.add_argument('--nodata', dest='store_data', action='store_false',
-                        help='Stop storing image data to JSON file.')
-    parser.add_argument('--labels', help='Camma separated list of labels')
+                        help='stop storing image data to JSON file')
+    parser.add_argument('--labels', help='comma separated list of labels')
+    parser.add_argument('--nosortlabels', dest='sort_labels',
+                        action='store_false', help='stop sorting labels')
     args = parser.parse_args()
 
     if args.labels is not None:
@@ -973,7 +976,13 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("app"))
-    win = MainWindow(args.filename, args.output, args.store_data, args.labels)
+    win = MainWindow(
+        filename=args.filename,
+        output=args.output,
+        store_data=args.store_data,
+        labels=args.labels,
+        sort_labels=args.sort_labels,
+    )
     win.show()
     win.raise_()
     sys.exit(app.exec_())
