@@ -90,7 +90,8 @@ class WindowMixin(object):
 class MainWindow(QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
-    def __init__(self, filename=None, output=None, store_data=True):
+    def __init__(self, filename=None, output=None, store_data=True,
+                 labels=None):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -103,7 +104,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.screencast = "screencast.ogv"
 
         # Main widgets and related state.
-        self.labelDialog = LabelDialog(parent=self)
+        self.labelDialog = LabelDialog(parent=self, labels=labels)
 
         self.labelList = QListWidget()
         self.itemsToShapes = []
@@ -610,6 +611,7 @@ class MainWindow(QMainWindow, WindowMixin):
         text = self.labelDialog.popUp()
         if text is not None:
             self.addLabel(self.canvas.setLastLabel(text))
+            self.labelDialog.addLabelHistory(text)
             if self.beginner(): # Switch to edit mode.
                 self.canvas.setEditing(True)
                 self.actions.create.setEnabled(True)
@@ -962,12 +964,16 @@ def main():
     parser.add_argument('--output', '-O', '-o', help='output label name')
     parser.add_argument('--nodata', dest='store_data', action='store_false',
                         help='Stop storing image data to JSON file.')
+    parser.add_argument('--labels', help='Camma separated list of labels')
     args = parser.parse_args()
+
+    if args.labels is not None:
+        args.labels = args.labels.split(',')
 
     app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("app"))
-    win = MainWindow(args.filename, args.output, args.store_data)
+    win = MainWindow(args.filename, args.output, args.store_data, args.labels)
     win.show()
     win.raise_()
     sys.exit(app.exec_())
