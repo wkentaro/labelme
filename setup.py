@@ -40,6 +40,7 @@ except ImportError:
         assert PY3
         # PyQt5 can be installed via pip for Python3
         install_requires.append('pyqt5')
+        PYQT_VERSION = 5
 
 
 if sys.argv[1] == 'release':
