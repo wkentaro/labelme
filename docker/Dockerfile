@@ -26,6 +26,7 @@ RUN apt-get install -qq -y python-qt4 pyqt4-dev-tools
 RUN apt-get install -qq -y python-matplotlib
 RUN apt-get install -qq -y python-scipy
 RUN apt-get install -qq -y python-skimage
+RUN apt-get install -qq -y python-tornado
 
 RUN pip install -v git+https://github.com/wkentaro/labelme.git
 
