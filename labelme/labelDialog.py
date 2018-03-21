@@ -36,7 +36,8 @@ BB = QDialogButtonBox
 
 class LabelDialog(QDialog):
 
-    def __init__(self, text="Enter object label", parent=None, labels=None):
+    def __init__(self, text="Enter object label", parent=None, labels=None,
+                 sort_labels=True):
         super(LabelDialog, self).__init__(parent)
         self.edit = QLineEdit()
         self.edit.setPlaceholderText(text)
@@ -53,8 +54,13 @@ class LabelDialog(QDialog):
         layout.addWidget(bb)
         # label_list
         self.labelList = QListWidget()
+        self._sort_labels = sort_labels
         if labels:
             self.labelList.addItems(labels)
+        if self._sort_labels:
+            self.labelList.sortItems()
+        else:
+            self.labelList.setDragDropMode(QAbstractItemView.InternalMove)
         self.labelList.currentItemChanged.connect(self.labelSelected)
         layout.addWidget(self.labelList)
         self.setLayout(layout)
@@ -63,7 +69,8 @@ class LabelDialog(QDialog):
         if self.labelList.findItems(label, Qt.MatchExactly):
             return
         self.labelList.addItem(label)
-        self.labelList.sortItems()
+        if self._sort_labels:
+            self.labelList.sortItems()
 
     def labelSelected(self, item):
         self.edit.setText(item.text())
