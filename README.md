@@ -92,7 +92,7 @@ labelme apc2016_obj3.jpg \
   --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # Specify label list
 ```
 
-<img src=".readme/apc2016_obj3_annotate_label.jpg" width="44%" /> <img src=".readme/apc2016_obj3_screenshot.jpg" width="50%" />
+<img src=".readme/apc2016_obj3_screenshot.jpg" width="50%" /> <img src=".readme/apc2016_obj3_annotate_label.jpg" width="44%" />
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
 file includes the image itself.
