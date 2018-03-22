@@ -90,7 +90,7 @@ labelme tutorial/apc2016_obj3.jpg --nodata  # Not include image data but relativ
 labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window after the save
 ```
 
-<img src=".readme/apc2016_obj3_screenshot.jpg" width="50%" />
+<img src=".readme/apc2016_obj3_annotate_label.jpg" width="44%" /> <img src=".readme/apc2016_obj3_screenshot.jpg" width="50%" />
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
 file includes the image itself.
