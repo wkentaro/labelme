@@ -86,8 +86,10 @@ Run `labelme --help` for detail.
 ```bash
 labelme  # Open GUI
 labelme tutorial/apc2016_obj3.jpg  # Specify file
-labelme tutorial/apc2016_obj3.jpg --nodata  # Not include image data but relative image path in JSON file
 labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window after the save
+labelme tutorial/apc2016_obj3.jpg --nodata  # Not include image data but relative image path in JSON file
+labelme apc2016_obj3.jpg \
+  --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # Specify label list
 ```
 
 <img src=".readme/apc2016_obj3_annotate_label.jpg" width="44%" /> <img src=".readme/apc2016_obj3_screenshot.jpg" width="50%" />
