@@ -88,7 +88,7 @@ labelme  # Open GUI
 labelme tutorial/apc2016_obj3.jpg  # Specify file
 labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window after the save
 labelme tutorial/apc2016_obj3.jpg --nodata  # Not include image data but relative image path in JSON file
-labelme apc2016_obj3.jpg \
+labelme tutorial/apc2016_obj3.jpg \
   --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # Specify label list
 ```
 
