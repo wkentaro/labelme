@@ -11,7 +11,7 @@ labelme: Image Annotation Tool with Python
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
-<img src=".readme/legend.jpg" width="80%" />
+<img src=".readme/apc2016_obj3_screenshot.jpg" width="80%" />
 
 
 Requirements
