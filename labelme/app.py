@@ -528,6 +528,7 @@ class MainWindow(QMainWindow, WindowMixin):
         item.setCheckState(Qt.Checked)
         self.itemsToShapes.append((item, shape))
         self.labelList.addItem(item)
+        self.labelDialog.addLabelHistory(item.text())
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
@@ -612,7 +613,6 @@ class MainWindow(QMainWindow, WindowMixin):
         text = self.labelDialog.popUp()
         if text is not None:
             self.addLabel(self.canvas.setLastLabel(text))
-            self.labelDialog.addLabelHistory(text)
             if self.beginner(): # Switch to edit mode.
                 self.canvas.setEditing(True)
                 self.actions.create.setEnabled(True)
