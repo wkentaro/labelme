@@ -510,9 +510,8 @@ class MainWindow(QMainWindow, WindowMixin):
         else:
             shape = self.canvas.selectedShape
             if shape:
-                for item, shape_ in self.itemsToShapes:
-                    if shape_ == shape:
-                        break
+                index = self._find_item_from_shape(shape)
+                item, _ = self.itemsToShapes[index]
                 item.setSelected(True)
             else:
                 self.labelList.clearSelection()
@@ -532,11 +531,19 @@ class MainWindow(QMainWindow, WindowMixin):
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
-    def remLabel(self, shape):
+    def _find_item_from_shape(self, shape):
         for index, (item, shape_) in enumerate(self.itemsToShapes):
             if shape_ == shape:
-                break
-        self.itemsToShapes.pop(index)
+                return index
+
+    def _find_shape_from_item(self, item):
+        for index, (item_, shape) in enumerate(self.itemsToShapes):
+            if item_ == item:
+                return index
+
+    def remLabel(self, shape):
+        index = self._find_item_from_shape(shape)
+        item, _ = self.itemsToShapes.pop(index)
         self.labelList.takeItem(self.labelList.row(item))
 
     def loadLabels(self, shapes):
@@ -588,15 +595,13 @@ class MainWindow(QMainWindow, WindowMixin):
         item = self.currentItem()
         if item and self.canvas.editing():
             self._noSelectionSlot = True
-            for item_, shape in self.itemsToShapes:
-                if item_ == item:
-                    break
+            index = self._find_shape_from_item(item)
+            _, shape = self.itemsToShapes[index]
             self.canvas.selectShape(shape)
 
     def labelItemChanged(self, item):
-        for item_, shape in self.itemsToShapes:
-            if item_ == item:
-                break
+        index = self._find_shape_from_item(item)
+        _, shape = self.itemsToShapes[index]
         label = str(item.text())
         if label != shape.label:
             shape.label = str(item.text())
