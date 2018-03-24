@@ -1,7 +1,7 @@
 <img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
 
-labelme: Image Annotation Tool with Python
-==========================================
+labelme: Image Polygonal Annotation Tool with Python
+====================================================
 
 [![PyPI Version](https://img.shields.io/pypi/v/labelme.svg)](https://pypi.python.org/pypi/labelme)
 [![Travis Build Status](https://travis-ci.org/wkentaro/labelme.svg?branch=master)](https://travis-ci.org/wkentaro/labelme)
