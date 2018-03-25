@@ -17,6 +17,8 @@
 <file alias="copy">icons/copy.png</file>
 <file alias="edit">icons/edit.png</file>
 <file alias="open">icons/open.png</file>
+<file alias="next">icons/next.png</file>
+<file alias="prev">icons/prev.png</file>
 <file alias="save">icons/save.png</file>
 <file alias="save-as">icons/save-as.png</file>
 <file alias="color">icons/color.png</file>

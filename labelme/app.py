@@ -109,6 +109,9 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.labelList = QListWidget()
         self.itemsToShapes = []
+        self.imageList = []
+        self.lastOpenDir = None
+        self.dirname = None
 
         self.labelList.itemActivated.connect(self.labelSelectionChanged)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -130,6 +133,17 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock = QDockWidget('Polygon Labels', self)
         self.dock.setObjectName('Labels')
         self.dock.setWidget(self.labelListContainer)
+
+        self.fileListWidget = QListWidget()
+        self.fileListWidget.itemDoubleClicked.connect(self.fileitemDoubleClicked)
+        filelistLayout = QVBoxLayout()
+        filelistLayout.setContentsMargins(0, 0, 0, 0)
+        filelistLayout.addWidget(self.fileListWidget)
+        fileListContainer = QWidget()
+        fileListContainer.setLayout(filelistLayout)
+        self.filedock = QDockWidget(u'File List', self)
+        self.filedock.setObjectName(u'Files')
+        self.filedock.setWidget(fileListContainer)
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
@@ -153,6 +167,10 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.setCentralWidget(scroll)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.filedock)
+        self.filedock.setFeatures(QDockWidget.DockWidgetFloatable)
+
         self.dockFeatures = QDockWidget.DockWidgetClosable\
                           | QDockWidget.DockWidgetFloatable
         self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
@@ -163,6 +181,13 @@ class MainWindow(QMainWindow, WindowMixin):
                 'Ctrl+Q', 'quit', 'Quit application')
         open = action('&Open', self.openFile,
                 'Ctrl+O', 'open', 'Open image or label file')
+        opendir = action('&Open Dir', self.openDirDialog,
+                         'Ctrl+u', 'open', u'Open Dir')
+        openNextImg = action('&Next Image', self.openNextImg,
+                             'd', 'next', u'Open Next')
+
+        openPrevImg = action('&Prev Image', self.openPrevImg,
+                             'a', 'prev', u'Open Prev')
         save = action('&Save', self.saveFile,
                 'Ctrl+S', 'save', 'Save labels to file', enabled=False)
         saveAs = action('&Save As', self.saveFileAs,
@@ -263,7 +288,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
                 fitWindow=fitWindow, fitWidth=fitWidth,
                 zoomActions=zoomActions,
-                fileMenuActions=(open,save,saveAs,close,quit),
+                fileMenuActions=(open,opendir,save,saveAs,close,quit),
                 beginner=(), advanced=(),
                 editMenu=(edit, copy, delete, None, color1, color2),
                 beginnerContext=(create, edit, copy, delete),
@@ -281,7 +306,7 @@ class MainWindow(QMainWindow, WindowMixin):
                 labelList=labelMenu)
 
         addActions(self.menus.file,
-                (open, self.menus.recentFiles, save, saveAs, close, None, quit))
+                (open, opendir, self.menus.recentFiles, save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
             labels, advancedMode, None,
@@ -299,11 +324,11 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
-            open, save, None, create, copy, delete, None,
+            open, opendir, openNextImg, openPrevImg, save, None, create, copy, delete, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
-            open, save, None,
+            open, opendir, openNextImg, openPrevImg, save, None,
             createMode, editMode, None,
             hideAll, showAll)
 
@@ -357,6 +382,10 @@ class MainWindow(QMainWindow, WindowMixin):
         #self.firstStart = True
         #if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
+
+        # Open Dir if deafult file
+        if self.filename and os.path.isdir(self.filename):
+            self.openDirDialog(dirpath=self.filename)
 
     ## Support Functions ##
 
@@ -503,6 +532,13 @@ class MainWindow(QMainWindow, WindowMixin):
             item.setText(text)
             self.setDirty()
 
+    def fileitemDoubleClicked(self, item=None):
+        currIndex = self.imageList.index(str(item.text()))
+        if currIndex < len(self.imageList):
+            filename = self.imageList[currIndex]
+            if filename:
+                self.loadFile(filename)
+
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
         if self._noSelectionSlot:
@@ -510,8 +546,9 @@ class MainWindow(QMainWindow, WindowMixin):
         else:
             shape = self.canvas.selectedShape
             if shape:
-                index = self._find_item_from_shape(shape)
-                item, _ = self.itemsToShapes[index]
+                for item, shape_ in self.itemsToShapes:
+                    if shape_ == shape:
+                        break
                 item.setSelected(True)
             else:
                 self.labelList.clearSelection()
@@ -531,19 +568,11 @@ class MainWindow(QMainWindow, WindowMixin):
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
-    def _find_item_from_shape(self, shape):
+    def remLabel(self, shape):
         for index, (item, shape_) in enumerate(self.itemsToShapes):
             if shape_ == shape:
-                return index
-
-    def _find_shape_from_item(self, item):
-        for index, (item_, shape) in enumerate(self.itemsToShapes):
-            if item_ == item:
-                return index
-
-    def remLabel(self, shape):
-        index = self._find_item_from_shape(shape)
-        item, _ = self.itemsToShapes.pop(index)
+                break
+        self.itemsToShapes.pop(index)
         self.labelList.takeItem(self.labelList.row(item))
 
     def loadLabels(self, shapes):
@@ -579,7 +608,7 @@ class MainWindow(QMainWindow, WindowMixin):
             lf.save(filename, shapes, imagePath, imageData,
                 self.lineColor.getRgb(), self.fillColor.getRgb())
             self.labelFile = lf
-            self.filename = filename
+            # self.filename = filename # disable allows next and previous image to proceed
             return True
         except LabelFileError as e:
             self.errorMessage('Error saving label data',
@@ -595,13 +624,15 @@ class MainWindow(QMainWindow, WindowMixin):
         item = self.currentItem()
         if item and self.canvas.editing():
             self._noSelectionSlot = True
-            index = self._find_shape_from_item(item)
-            _, shape = self.itemsToShapes[index]
+            for item_, shape in self.itemsToShapes:
+                if item_ == item:
+                    break
             self.canvas.selectShape(shape)
 
     def labelItemChanged(self, item):
-        index = self._find_shape_from_item(item)
-        _, shape = self.itemsToShapes[index]
+        for item_, shape in self.itemsToShapes:
+            if item_ == item:
+                break
         label = str(item.text())
         if label != shape.label:
             shape.label = str(item.text())
@@ -669,9 +700,11 @@ class MainWindow(QMainWindow, WindowMixin):
             filename = self.settings.get('filename', '')
         filename = str(filename)
         if QFile.exists(filename):
-            if LabelFile.isLabelFile(filename):
+            # assumes same name, but json extension
+            label_file = os.path.splitext(filename)[0] + '.json'
+            if QFile.exists(label_file) and LabelFile.isLabelFile(label_file):
                 try:
-                    self.labelFile = LabelFile(filename)
+                    self.labelFile = LabelFile(label_file)
                     # FIXME: PyQt4 installed via Anaconda fails to load JPEG
                     # and JSON encoded images.
                     # https://github.com/ContinuumIO/anaconda-issues/issues/131
@@ -684,11 +717,11 @@ class MainWindow(QMainWindow, WindowMixin):
                     self.errorMessage('Error opening file',
                             ("<p><b>%s</b></p>"
                              "<p>Make sure <i>%s</i> is a valid label file.")\
-                            % (e, filename))
-                    self.status("Error reading %s" % filename)
+                            % (e, label_file))
+                    self.status("Error reading %s" % label_file)
                     return False
                 self.imageData = self.labelFile.imageData
-                self.imagePath = os.path.join(os.path.dirname(filename),
+                self.imagePath = os.path.join(os.path.dirname(label_file),
                                               self.labelFile.imagePath)
                 self.lineColor = QColor(*self.labelFile.lineColor)
                 self.fillColor = QColor(*self.labelFile.fillColor)
@@ -780,6 +813,40 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.mayContinue():
             self.loadFile(filename)
 
+    def openPrevImg(self, _value=False):
+        if not self.mayContinue():
+            return
+
+        if len(self.imageList) <= 0:
+            return
+
+        if self.filename is None:
+            return
+
+        currIndex = self.imageList.index(self.filename)
+        if currIndex - 1 >= 0:
+            filename = self.imageList[currIndex - 1]
+            if filename:
+                self.loadFile(filename)
+
+    def openNextImg(self, _value=False):
+        if not self.mayContinue():
+            return
+
+        if len(self.imageList) <= 0:
+            return
+
+        filename = None
+        if self.filename is None:
+            filename = self.imageList[0]
+        else:
+            currIndex = self.imageList.index(self.filename)
+            if currIndex + 1 < len(self.imageList):
+                filename = self.imageList[currIndex + 1]
+
+        if filename:
+            self.loadFile(filename)
+
     def openFile(self, _value=False):
         if not self.mayContinue():
             return
@@ -801,7 +868,8 @@ class MainWindow(QMainWindow, WindowMixin):
         assert not self.image.isNull(), "cannot save empty image"
         if self.hasLabels():
             if self.labelFile:
-                self._saveFile(self.filename)
+                # DL20180323 - overwrite when in directory
+                self._saveFile(self.saveFileDialog())
             elif self.output:
                 self._saveFile(self.output)
             else:
@@ -923,6 +991,48 @@ class MainWindow(QMainWindow, WindowMixin):
     def moveShape(self):
         self.canvas.endMove(copy=False)
         self.setDirty()
+
+    def openDirDialog(self, _value=False, dirpath=None):
+        if not self.mayContinue():
+            return
+
+        defaultOpenDirPath = dirpath if dirpath else '.'
+        if self.lastOpenDir and os.path.exists(self.lastOpenDir):
+            defaultOpenDirPath = self.lastOpenDir
+        else:
+            defaultOpenDirPath = os.path.dirname(self.filename) if self.filename else '.'
+
+        targetDirPath = str(QFileDialog.getExistingDirectory(self,
+                                                     '%s - Open Directory' % __appname__, defaultOpenDirPath,
+                                                     QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks))
+        self.importDirImages(targetDirPath)
+
+    def importDirImages(self, dirpath):
+        if not self.mayContinue() or not dirpath:
+            return
+
+        self.lastOpenDir = dirpath
+        self.dirname = dirpath
+        self.filename = None
+        self.fileListWidget.clear()
+        self.imageList = self.scanAllImages(dirpath)
+        self.openNextImg()
+        for imgPath in self.imageList:
+            item = QListWidgetItem(imgPath)
+            self.fileListWidget.addItem(item)
+
+    def scanAllImages(self, folderPath):
+        extensions = ['.%s' % fmt.data().decode("ascii").lower() for fmt in QImageReader.supportedImageFormats()]
+        images = []
+
+        for root, dirs, files in os.walk(folderPath):
+            for file in files:
+                if file.lower().endswith(tuple(extensions)):
+                    relativePath = os.path.join(root, file)
+                    path = str(os.path.abspath(relativePath))
+                    images.append(path)
+        images.sort(key=lambda x: x.lower())
+        return images
 
 
 class Settings(object):
