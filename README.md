@@ -92,6 +92,7 @@ labelme tutorial/apc2016_obj3.jpg -O tutorial/apc2016_obj3.json  # Close window 
 labelme tutorial/apc2016_obj3.jpg --nodata  # Not include image data but relative image path in JSON file
 labelme tutorial/apc2016_obj3.jpg \
   --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # Specify label list
+labelme tutorial/  # Open directory to annotate all images in it
 ```
 
 The annotations are saved as a [JSON](http://www.json.org/) file. The
