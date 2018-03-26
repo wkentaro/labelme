@@ -338,7 +338,6 @@ class MainWindow(QMainWindow, WindowMixin):
         # Application state.
         self.image = QImage()
         self.imagePath = None
-        self.filename = filename
         self.labeling_once = output is not None
         self.output = output
         self._store_data = store_data
@@ -348,6 +347,11 @@ class MainWindow(QMainWindow, WindowMixin):
         self.fillColor = None
         self.zoom_level = 100
         self.fit_window = False
+
+        if filename is not None and os.path.isdir(filename):
+            self.importDirImages(filename)
+        else:
+            self.filename = filename
 
         # XXX: Could be completely declarative.
         # Restore application settings.
@@ -382,10 +386,6 @@ class MainWindow(QMainWindow, WindowMixin):
         #self.firstStart = True
         #if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
-
-        # Open Dir if deafult file
-        if self.filename and os.path.isdir(self.filename):
-            self.openDirDialog(dirpath=self.filename)
 
     ## Support Functions ##
 
