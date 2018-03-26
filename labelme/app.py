@@ -111,7 +111,6 @@ class MainWindow(QMainWindow, WindowMixin):
         self.itemsToShapes = []
         self.imageList = []
         self.lastOpenDir = None
-        self.dirname = None
 
         self.labelList.itemActivated.connect(self.labelSelectionChanged)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -1012,7 +1011,6 @@ class MainWindow(QMainWindow, WindowMixin):
             return
 
         self.lastOpenDir = dirpath
-        self.dirname = dirpath
         self.filename = None
         self.fileListWidget.clear()
         self.imageList = self.scanAllImages(dirpath)
