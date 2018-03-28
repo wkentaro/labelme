@@ -1039,8 +1039,7 @@ class MainWindow(QMainWindow, WindowMixin):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = os.path.join(root, file)
-                    path = str(os.path.abspath(relativePath))
-                    images.append(path)
+                    images.append(relativePath)
         images.sort(key=lambda x: x.lower())
         return images
 
