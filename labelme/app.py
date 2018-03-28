@@ -532,6 +532,9 @@ class MainWindow(QMainWindow, WindowMixin):
             self.setDirty()
 
     def fileitemDoubleClicked(self, item=None):
+        if not self.mayContinue():
+            return
+
         currIndex = self.imageList.index(str(item.text()))
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
