@@ -837,6 +837,7 @@ class MainWindow(QMainWindow, WindowMixin):
             filename = self.imageList[currIndex - 1]
             if filename:
                 self.loadFile(filename)
+                self.fileListWidget.setCurrentRow(self.imageList.index(self.filename))
 
     def openNextImg(self, _value=False):
         if not self.mayContinue():
@@ -855,6 +856,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         if filename:
             self.loadFile(filename)
+            self.fileListWidget.setCurrentRow(self.imageList.index(self.filename))
 
     def openFile(self, _value=False):
         if not self.mayContinue():
