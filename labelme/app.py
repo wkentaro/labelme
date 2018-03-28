@@ -708,6 +708,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filename = str(filename)
         if QFile.exists(filename):
             # assumes same name, but json extension
+            self.status("Loading %s..." % os.path.basename(str(filename)))
             label_file = os.path.splitext(filename)[0] + '.json'
             if QFile.exists(label_file) and LabelFile.isLabelFile(label_file):
                 try:
@@ -751,7 +752,6 @@ class MainWindow(QMainWindow, WindowMixin):
                     .format(filename, ','.join(formats)))
                 self.status("Error reading %s" % filename)
                 return False
-            self.status("Loaded %s" % os.path.basename(str(filename)))
             self.image = image
             self.filename = filename
             self.canvas.loadPixmap(QPixmap.fromImage(image))
@@ -763,6 +763,8 @@ class MainWindow(QMainWindow, WindowMixin):
             self.paintCanvas()
             self.addRecentFile(self.filename)
             self.toggleActions(True)
+            self.status("Loaded %s" % os.path.basename(str(filename)))
+            self.setWindowTitle('{} - {}'.format(__appname__, os.path.basename(str(filename))))
             return True
         return False
 
