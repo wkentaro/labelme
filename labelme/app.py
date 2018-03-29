@@ -965,12 +965,22 @@ class MainWindow(QMainWindow, WindowMixin):
         return True
 
     def mayContinue(self):
-        return not (self.dirty and not self.discardChangesDialog())
-
-    def discardChangesDialog(self):
-        yes, no = QMessageBox.Yes, QMessageBox.No
-        msg = 'You have unsaved changes, proceed anyway?'
-        return yes == QMessageBox.warning(self, 'Attention', msg, yes|no)
+        if not self.dirty:
+            return True
+        mb = QMessageBox
+        msg = 'Save annotations to "{}" before closing?'.format(self.filename)
+        answer = mb.question(self,
+                             'Save annotations?',
+                             msg,
+                             mb.Save | mb.Discard | mb.Cancel,
+                             mb.Save)
+        if answer == mb.Discard:
+            return True
+        elif answer == mb.Save:
+            self.saveFile()
+            return True
+        else: # answer == mb.Cancel
+            return False
 
     def errorMessage(self, title, message):
         return QMessageBox.critical(self, title,
