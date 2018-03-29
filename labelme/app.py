@@ -134,7 +134,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.dock.setWidget(self.labelListContainer)
 
         self.fileListWidget = QListWidget()
-        self.fileListWidget.itemDoubleClicked.connect(self.fileitemDoubleClicked)
+        self.fileListWidget.itemSelectionChanged.connect(self.fileSelectionChanged)
         filelistLayout = QVBoxLayout()
         filelistLayout.setContentsMargins(0, 0, 0, 0)
         filelistLayout.addWidget(self.fileListWidget)
@@ -531,7 +531,12 @@ class MainWindow(QMainWindow, WindowMixin):
             item.setText(text)
             self.setDirty()
 
-    def fileitemDoubleClicked(self, item=None):
+    def fileSelectionChanged(self):
+        items = self.fileListWidget.selectedItems()
+        if not items:
+            return
+        item = items[0]
+
         if not self.mayContinue():
             return
 
