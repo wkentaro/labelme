@@ -11,7 +11,7 @@ labelme: Image Polygonal Annotation with Python
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
-<img src="examples/single_image/.readme/apc2016_obj3_screenshot.jpg" width="80%" />
+<img src="examples/single_image/.readme/screenshot.jpg" width="80%" />
 
 
 Requirements
@@ -106,7 +106,7 @@ To view the json file quickly, you can use utility script:
 labelme_draw_json examples/single_image/apc2016_obj3.json
 ```
 
-<img src="examples/single_image/.readme/apc2016_obj3_draw_json.jpg" width="70%" />
+<img src="examples/single_image/.readme/draw_json.jpg" width="70%" />
 
 ### Convert to Dataset
 
