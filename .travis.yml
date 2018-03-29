@@ -93,6 +93,7 @@ before_script:
 
 script:
   - pytest -v tests
+  - (cd examples/semantic_segmentation&& rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
 
 branches:
   only:
