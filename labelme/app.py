@@ -765,6 +765,8 @@ class MainWindow(QMainWindow, WindowMixin):
             self.toggleActions(True)
             self.status("Loaded %s" % os.path.basename(str(filename)))
             self.setWindowTitle('{} - {}'.format(__appname__, os.path.basename(str(filename))))
+            if filename in self.imageList:
+                self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             return True
         return False
 
@@ -837,7 +839,6 @@ class MainWindow(QMainWindow, WindowMixin):
             filename = self.imageList[currIndex - 1]
             if filename:
                 self.loadFile(filename)
-                self.fileListWidget.setCurrentRow(self.imageList.index(self.filename))
 
     def openNextImg(self, _value=False):
         if not self.mayContinue():
@@ -856,7 +857,6 @@ class MainWindow(QMainWindow, WindowMixin):
 
         if filename:
             self.loadFile(filename)
-            self.fileListWidget.setCurrentRow(self.imageList.index(self.filename))
 
     def openFile(self, _value=False):
         if not self.mayContinue():
