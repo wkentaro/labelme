@@ -17,6 +17,8 @@ def get_ip():
     elif dist == 'Darwin':
         cmd = 'ifconfig en0'
         output = subprocess.check_output(shlex.split(cmd))
+        if str != bytes:  # Python3
+            output = output.decode('utf-8')
         for row in output.splitlines():
             cols = row.strip().split(' ')
             if cols[0] == 'inet':
@@ -46,7 +48,7 @@ def labelme_on_docker(image_file, out_file):
         ' -v {1}:{2}' \
         ' -v {3}:{4}' \
         ' -w /home/developer' \
-        ' labelme' \
+        ' wkentaro/labelme' \
         ' labelme {2} -O {4}'
     cmd = cmd.format(
         ip,
