@@ -58,7 +58,8 @@ wget https://raw.githubusercontent.com/wkentaro/labelme/master/scripts/labelme_o
 chmod u+x labelme_on_docker
 
 # Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
-./labelme_on_docker static/apc2016_obj3.jpg -O static/apc2016_obj3.json
+labelme_on_docker examples/single_image/apc2016_obj3.jpg -O examples/single_image/apc2016_obj3.json
+labelme_on_docker examples/semantic_segmentation/data_annotated
 ```
 
 **Ubuntu**
