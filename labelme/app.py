@@ -1130,18 +1130,19 @@ def main():
     parser.add_argument('--output', '-O', '-o', help='output label name')
     parser.add_argument('--nodata', dest='store_data', action='store_false',
                         help='stop storing image data to JSON file')
-    parser.add_argument('--labels', help='comma separated list of labels OR file containing one label per line')
+    parser.add_argument('--labels',
+                        help='comma separated list of labels OR file '
+                        'containing one label per line')
     parser.add_argument('--nosortlabels', dest='sort_labels',
                         action='store_false', help='stop sorting labels')
     args = parser.parse_args()
 
     if args.labels is not None:
         if os.path.isfile(args.labels):
-            args.labels = [l.strip()
-                           for l in open(args.labels, 'r').readlines()
-                           if len(l.strip()) > 0]
+            args.labels = [l.strip() for l in open(args.labels, 'r')
+                           if l.strip()]
         else:
-            args.labels = [l for l in args.labels.split(',') if len(l) > 0]
+            args.labels = [l for l in args.labels.split(',') if l]
 
     app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
