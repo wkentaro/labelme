@@ -34,12 +34,25 @@ from .lib import newIcon, labelValidator
 
 BB = QDialogButtonBox
 
+
+class LabelQLineEdit(QLineEdit):
+
+    def setListWidget(self, list_widget):
+        self.list_widget = list_widget
+
+    def keyPressEvent(self, e):
+        if e.key() in [Qt.Key_Up, Qt.Key_Down]:
+            self.list_widget.keyPressEvent(e)
+        else:
+            super(LabelQLineEdit, self).keyPressEvent(e)
+
+
 class LabelDialog(QDialog):
 
     def __init__(self, text="Enter object label", parent=None, labels=None,
                  sort_labels=True):
         super(LabelDialog, self).__init__(parent)
-        self.edit = QLineEdit()
+        self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
         self.edit.setValidator(labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
@@ -62,6 +75,7 @@ class LabelDialog(QDialog):
         else:
             self.labelList.setDragDropMode(QAbstractItemView.InternalMove)
         self.labelList.currentItemChanged.connect(self.labelSelected)
+        self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         self.setLayout(layout)
 
