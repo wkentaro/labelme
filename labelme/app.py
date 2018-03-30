@@ -796,7 +796,6 @@ class MainWindow(QMainWindow, WindowMixin):
             self.addRecentFile(self.filename)
             self.toggleActions(True)
             self.status("Loaded %s" % os.path.basename(str(filename)))
-            self.setWindowTitle('{} - {}'.format(__appname__, os.path.basename(str(filename))))
             if filename in self.imageList:
                 self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             return True
@@ -1137,7 +1136,7 @@ def main():
     args = parser.parse_args()
 
     if args.labels is not None:
-        args.labels = args.labels.split(',')
+        args.labels = [l for l in args.labels.split(',') if len(l) > 0]
 
     app = QApplication(sys.argv)
     app.setApplicationName(__appname__)
