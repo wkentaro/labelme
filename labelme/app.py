@@ -87,6 +87,13 @@ class WindowMixin(object):
         return toolbar
 
 
+class EscapableQListWidget(QListWidget):
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.clearSelection()
+
+
 class MainWindow(QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
@@ -128,6 +135,16 @@ class MainWindow(QMainWindow, WindowMixin):
         listLayout.addWidget(self.editButton)#, 0, Qt.AlignCenter)
         listLayout.addWidget(self.labelList)
 
+        self.uniqLabelList = EscapableQListWidget()
+        self.uniqLabelList.setToolTip(
+            "Select label to start annotating for it. "
+            "Press 'Esc' to deselect.")
+        if labels:
+            self.uniqLabelList.addItems(labels)
+            self.uniqLabelList.sortItems()
+        self.labelsdock = QDockWidget(u'Label List', self)
+        self.labelsdock.setObjectName(u'Label List')
+        self.labelsdock.setWidget(self.uniqLabelList)
 
         self.dock = QDockWidget('Polygon Labels', self)
         self.dock.setObjectName('Labels')
@@ -165,8 +182,9 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scroll)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
 
+        self.addDockWidget(Qt.RightDockWidgetArea, self.labelsdock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.filedock)
         self.filedock.setFeatures(QDockWidget.DockWidgetFloatable)
 
@@ -570,6 +588,9 @@ class MainWindow(QMainWindow, WindowMixin):
         item.setCheckState(Qt.Checked)
         self.itemsToShapes.append((item, shape))
         self.labelList.addItem(item)
+        if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
+            self.uniqLabelList.addItem(shape.label)
+            self.uniqLabelList.sortItems()
         self.labelDialog.addLabelHistory(item.text())
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
@@ -658,7 +679,11 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        text = self.labelDialog.popUp()
+        text = ''
+        items = self.uniqLabelList.selectedItems()
+        if items:
+            text = items[0].text()
+        text = self.labelDialog.popUp(text)
         if text is not None:
             self.addLabel(self.canvas.setLastLabel(text))
             if self.beginner(): # Switch to edit mode.
