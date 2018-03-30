@@ -446,11 +446,13 @@ class MainWindow(QMainWindow, WindowMixin):
     def setDirty(self):
         self.dirty = True
         self.actions.save.setEnabled(True)
+        self.setWindowTitle('{} - {}*'.format(__appname__, os.path.basename(self.filename)))
 
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
         self.actions.create.setEnabled(True)
+        self.setWindowTitle('{} - {}'.format(__appname__, os.path.basename(self.filename)))
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
