@@ -681,8 +681,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
         position MUST be in global coordinates.
         """
-        text = ''
         items = self.uniqLabelList.selectedItems()
+        text = None
         if items:
             text = items[0].text()
         text = self.labelDialog.popUp(text)
