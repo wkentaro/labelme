@@ -95,19 +95,15 @@ class LabelDialog(QDialog):
             self.edit.setText(self.edit.text().trimmed())
 
     def popUp(self, text=None, move=True):
-        if isinstance(text, str):
-            self.edit.setText(text)
-            self.edit.setSelection(0, len(text))
-            i = self.labelList.findItems(text, Qt.MatchFixedString)
-            if len(i) == 1:
-                self.labelList.setCurrentItem(i[0])
+        if text is None:
+            text = ''
+        self.edit.setText(text)
+        self.edit.setSelection(0, len(text))
+        items = self.labelList.findItems(text, Qt.MatchFixedString)
+        if items:
+            assert len(items) == 1
+            self.labelList.setCurrentItem(items[0])
         self.edit.setFocus(Qt.PopupFocusReason)
         if move:
             self.move(QCursor.pos())
         return self.edit.text() if self.exec_() else None
-
-    def keyPressEvent(self, e):
-        if e.key() in [Qt.Key_Up, Qt.Key_Down]:
-            self.labelList.keyPressEvent(e)
-        else:
-            super().keyPressEvent(e)
