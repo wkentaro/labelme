@@ -64,6 +64,11 @@ class LabelDialog(QDialog):
         self.labelList.currentItemChanged.connect(self.labelSelected)
         layout.addWidget(self.labelList)
         self.setLayout(layout)
+        # completion
+        completer = QCompleter()
+        completer.setCompletionMode(QCompleter.InlineCompletion)
+        completer.setModel(self.labelList.model())
+        self.edit.setCompleter(completer)
 
     def addLabelHistory(self, label):
         if self.labelList.findItems(label, Qt.MatchExactly):
