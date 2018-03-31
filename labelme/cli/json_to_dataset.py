@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-
 import argparse
 import json
 import os
 import os.path as osp
 import warnings
+
+import matplotlib
+matplotlib.use('Agg')
 
 import numpy as np
 import PIL.Image
@@ -15,8 +16,8 @@ from labelme import utils
 
 def main():
     warnings.warn("This script is aimed to demonstrate how to convert the\n"
-                "JSON file to a single image dataset, and not to handle\n"
-                "multiple JSON files to generate a real-use dataset.")
+                  "JSON file to a single image dataset, and not to handle\n"
+                  "multiple JSON files to generate a real-use dataset.")
 
     parser = argparse.ArgumentParser()
     parser.add_argument('json_file')
