@@ -94,7 +94,7 @@ setup(
         'develop': CustomDevelopCommand,
         'install': CustomInstallCommand,
     },
-    description='Annotation Tool for Object Segmentation.',
+    description='Image Polygonal Annotation with Python.',
     long_description=open('README.md').read(),
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',
