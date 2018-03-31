@@ -11,6 +11,7 @@ matrix:
         - SYSTEM_PYTHON=/usr/bin/python
         - PIP=pip
         - PYTHON=python
+        - MPLBACKEND=Agg
       addons:
         apt:
           packages:
