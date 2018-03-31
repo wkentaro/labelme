@@ -17,7 +17,7 @@
 # along with Labelme.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from base64 import b64encode, b64decode
+import base64
 import json
 import os.path
 import sys
@@ -29,7 +29,9 @@ PY2 = sys.version_info[0] == 2
 class LabelFileError(Exception):
     pass
 
+
 class LabelFile(object):
+
     suffix = '.json'
 
     def __init__(self, filename=None):
@@ -45,7 +47,7 @@ class LabelFile(object):
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
                 if data['imageData'] is not None:
-                    imageData = b64decode(data['imageData'])
+                    imageData = base64.b64decode(data['imageData'])
                 else:
                     # relative path from label file to relative path from cwd
                     imagePath = os.path.join(os.path.dirname(filename),
@@ -54,8 +56,10 @@ class LabelFile(object):
                         imageData = f.read()
                 lineColor = data['lineColor']
                 fillColor = data['fillColor']
-                shapes = ((s['label'], s['points'], s['line_color'], s['fill_color'])\
-                        for s in data['shapes'])
+                shapes = (
+                    (s['label'], s['points'], s['line_color'], s['fill_color'])
+                    for s in data['shapes']
+                )
                 # Only replace data after everything is loaded.
                 self.shapes = shapes
                 self.imagePath = data['imagePath']
@@ -67,9 +71,9 @@ class LabelFile(object):
             raise LabelFileError(e)
 
     def save(self, filename, shapes, imagePath, imageData=None,
-            lineColor=None, fillColor=None):
+             lineColor=None, fillColor=None):
         if imageData is not None:
-            imageData = b64encode(imageData).decode('utf-8')
+            imageData = base64.b64encode(imageData).decode('utf-8')
         data = dict(
             shapes=shapes,
             lineColor=lineColor,

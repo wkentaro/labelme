@@ -89,9 +89,10 @@ install:
   - pip install .
 
 before_script:
-  - pip install -q pytest
+  - pip install -q hacking pytest
 
 script:
+  - flake8 .
   - pytest -v tests
   - labelme --help
   - (cd examples/single_image && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
