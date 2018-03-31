@@ -16,8 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 import PIL.ImagePalette
-import skimage.color
-import skimage.io
 
 import labelme
 from labelme.utils import label2rgb
@@ -76,8 +74,8 @@ def main():
             data = json.load(f)
 
             img_file = osp.join(osp.dirname(label_file), data['imagePath'])
-            img = skimage.io.imread(img_file)
-            skimage.io.imsave(out_img_file, img)
+            img = np.asarray(PIL.Image.open(img_file))
+            PIL.Image.fromarray(img).save(out_img_file)
 
             lbl = labelme.utils.shapes_to_label(
                 img_shape=img.shape,
@@ -93,7 +91,7 @@ def main():
 
             viz = labelme.utils.draw_label(
                 lbl, img, class_names, colormap=colormap)
-            skimage.io.imsave(out_viz_file, viz)
+            PIL.Image.fromarray(viz).save(out_viz_file)
 
 
 if __name__ == '__main__':
