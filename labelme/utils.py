@@ -95,6 +95,10 @@ def draw_label(label, img, label_names, colormap=None):
     plt_handlers = []
     plt_titles = []
     for label_value, label_name in enumerate(label_names):
+        if label_value not in label:
+            continue
+        if label_name.startswith('_'):
+            continue
         fc = colormap[label_value]
         p = plt.Rectangle((0, 0), 1, 1, fc=fc)
         plt_handlers.append(p)
@@ -114,22 +118,29 @@ def draw_label(label, img, label_names, colormap=None):
     return out
 
 
-def labelme_shapes_to_label(img_shape, shapes):
-    label_name_to_val = {'background': 0}
+def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
     lbl = np.zeros(img_shape[:2], dtype=np.int32)
     for shape in shapes:
         polygons = shape['points']
         label_name = shape['label']
-        if label_name in label_name_to_val:
-            label_value = label_name_to_val[label_name]
-        else:
-            label_value = len(label_name_to_val)
-            label_name_to_val[label_name] = label_value
+        label_value = label_name_to_value[label_name]
         mask = polygons_to_mask(img_shape[:2], polygons)
         lbl[mask] = label_value
+    return lbl
 
-    lbl_names = [None] * (max(label_name_to_val.values()) + 1)
-    for label_name, label_value in label_name_to_val.items():
-        lbl_names[label_value] = label_name
 
-    return lbl, lbl_names
+def labelme_shapes_to_label(img_shape, shapes):
+    warnings.warn('labelme_shapes_to_label is deprecated, so please use '
+                  'shapes_to_label.')
+
+    label_name_to_value = {}
+    for shape in shapes:
+        label_name = shape['label']
+        if label_name in label_name_to_value:
+            label_value = label_name_to_value[label_name]
+        else:
+            label_value = len(label_name_to_value)
+            label_name_to_value[label_name] = label_value
+
+    lbl = shapes_to_label(img_shape, shapes, label_name_to_value)
+    return lbl, label_name_to_value
