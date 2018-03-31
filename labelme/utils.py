@@ -76,6 +76,9 @@ def polygons_to_mask(img_shape, polygons):
 
 
 def draw_label(label, img, label_names, colormap=None):
+    backend_org = plt.rcParams['backend']
+    plt.switch_backend('agg')
+
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0,
                         wspace=0, hspace=0)
     plt.margins(0, 0)
@@ -102,6 +105,8 @@ def draw_label(label, img, label_names, colormap=None):
     plt.savefig(f, bbox_inches='tight', pad_inches=0)
     plt.cla()
     plt.close()
+
+    plt.switch_backend(backend_org)
 
     out_size = (img.shape[1], img.shape[0])
     out = PIL.Image.open(f).resize(out_size, PIL.Image.BILINEAR).convert('RGB')

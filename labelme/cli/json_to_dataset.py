@@ -4,9 +4,6 @@ import os
 import os.path as osp
 import warnings
 
-import matplotlib
-matplotlib.use('Agg')
-
 import numpy as np
 import PIL.Image
 import yaml
