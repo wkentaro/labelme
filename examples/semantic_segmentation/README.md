@@ -3,7 +3,7 @@
 ## Annotation
 
 ```bash
-labelme data_annotated --labels="$(tr '\n' , < labels.txt)" --nodata
+labelme data_annotated --labels labels.txt --nodata
 ```
 
 ![](.readme/annotation.jpg)
