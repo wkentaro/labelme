@@ -738,68 +738,70 @@ class MainWindow(QMainWindow, WindowMixin):
         if filename is None:
             filename = self.settings.get('filename', '')
         filename = str(filename)
-        if QFile.exists(filename):
-            # assumes same name, but json extension
-            self.status("Loading %s..." % os.path.basename(str(filename)))
-            label_file = os.path.splitext(filename)[0] + '.json'
-            if QFile.exists(label_file) and LabelFile.isLabelFile(label_file):
-                try:
-                    self.labelFile = LabelFile(label_file)
-                    # FIXME: PyQt4 installed via Anaconda fails to load JPEG
-                    # and JSON encoded images.
-                    # https://github.com/ContinuumIO/anaconda-issues/issues/131
-                    if QImage.fromData(self.labelFile.imageData).isNull():
-                        raise LabelFileError(
-                            'Failed loading image data from label file.\n'
-                            'Maybe this is a known issue of PyQt4 built on'
-                            ' Anaconda, and may be fixed by installing PyQt5.')
-                except LabelFileError as e:
-                    self.errorMessage('Error opening file',
-                            ("<p><b>%s</b></p>"
-                             "<p>Make sure <i>%s</i> is a valid label file.")\
-                            % (e, label_file))
-                    self.status("Error reading %s" % label_file)
-                    return False
-                self.imageData = self.labelFile.imageData
-                self.imagePath = os.path.join(os.path.dirname(label_file),
-                                              self.labelFile.imagePath)
-                self.lineColor = QColor(*self.labelFile.lineColor)
-                self.fillColor = QColor(*self.labelFile.fillColor)
-            else:
-                # Load image:
-                # read data first and store for saving into label file.
-                self.imageData = read(filename, None)
-                if self.imageData is not None:
-                    # the filename is image not JSON
-                    self.imagePath = filename
-                self.labelFile = None
-            image = QImage.fromData(self.imageData)
-            if image.isNull():
-                formats = ['*.{}'.format(fmt.data().decode())
-                           for fmt in QImageReader.supportedImageFormats()]
-                self.errorMessage(
-                    'Error opening file',
-                    '<p>Make sure <i>{0}</i> is a valid image file.<br/>'
-                    'Supported image formats: {1}</p>'
-                    .format(filename, ','.join(formats)))
-                self.status("Error reading %s" % filename)
+        if not QFile.exists(filename):
+            self.errorMessage(
+                'Error opening file', 'No such file: <b>%s</b>' % filename)
+            return False
+        # assumes same name, but json extension
+        self.status("Loading %s..." % os.path.basename(str(filename)))
+        label_file = os.path.splitext(filename)[0] + '.json'
+        if QFile.exists(label_file) and LabelFile.isLabelFile(label_file):
+            try:
+                self.labelFile = LabelFile(label_file)
+                # FIXME: PyQt4 installed via Anaconda fails to load JPEG
+                # and JSON encoded images.
+                # https://github.com/ContinuumIO/anaconda-issues/issues/131
+                if QImage.fromData(self.labelFile.imageData).isNull():
+                    raise LabelFileError(
+                        'Failed loading image data from label file.\n'
+                        'Maybe this is a known issue of PyQt4 built on'
+                        ' Anaconda, and may be fixed by installing PyQt5.')
+            except LabelFileError as e:
+                self.errorMessage('Error opening file',
+                        ("<p><b>%s</b></p>"
+                            "<p>Make sure <i>%s</i> is a valid label file.")\
+                        % (e, label_file))
+                self.status("Error reading %s" % label_file)
                 return False
-            self.image = image
-            self.filename = filename
-            self.canvas.loadPixmap(QPixmap.fromImage(image))
-            if self.labelFile:
-                self.loadLabels(self.labelFile.shapes)
-            self.setClean()
-            self.canvas.setEnabled(True)
-            self.adjustScale(initial=True)
-            self.paintCanvas()
-            self.addRecentFile(self.filename)
-            self.toggleActions(True)
-            self.status("Loaded %s" % os.path.basename(str(filename)))
-            if filename in self.imageList:
-                self.fileListWidget.setCurrentRow(self.imageList.index(filename))
-            return True
-        return False
+            self.imageData = self.labelFile.imageData
+            self.imagePath = os.path.join(os.path.dirname(label_file),
+                                            self.labelFile.imagePath)
+            self.lineColor = QColor(*self.labelFile.lineColor)
+            self.fillColor = QColor(*self.labelFile.fillColor)
+        else:
+            # Load image:
+            # read data first and store for saving into label file.
+            self.imageData = read(filename, None)
+            if self.imageData is not None:
+                # the filename is image not JSON
+                self.imagePath = filename
+            self.labelFile = None
+        image = QImage.fromData(self.imageData)
+        if image.isNull():
+            formats = ['*.{}'.format(fmt.data().decode())
+                        for fmt in QImageReader.supportedImageFormats()]
+            self.errorMessage(
+                'Error opening file',
+                '<p>Make sure <i>{0}</i> is a valid image file.<br/>'
+                'Supported image formats: {1}</p>'
+                .format(filename, ','.join(formats)))
+            self.status("Error reading %s" % filename)
+            return False
+        self.image = image
+        self.filename = filename
+        self.canvas.loadPixmap(QPixmap.fromImage(image))
+        if self.labelFile:
+            self.loadLabels(self.labelFile.shapes)
+        self.setClean()
+        self.canvas.setEnabled(True)
+        self.adjustScale(initial=True)
+        self.paintCanvas()
+        self.addRecentFile(self.filename)
+        self.toggleActions(True)
+        self.status("Loaded %s" % os.path.basename(str(filename)))
+        if filename in self.imageList:
+            self.fileListWidget.setCurrentRow(self.imageList.index(filename))
+        return True
 
     def resizeEvent(self, event):
         if self.canvas and not self.image.isNull()\
