@@ -99,6 +99,8 @@ labelme examples/single_image/  # Open directory to annotate all images in it
 The annotations are saved as a [JSON](http://www.json.org/) file. The
 file includes the image itself.
 
+For more advanced usage, please refer to [the examples](examples).
+
 ### Visualization
 
 To view the json file quickly, you can use utility script:
