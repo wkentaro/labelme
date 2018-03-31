@@ -93,7 +93,9 @@ before_script:
 
 script:
   - pytest -v tests
-  - (cd examples/semantic_segmentation&& rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
+  - labelme --help
+  - (cd examples/single_image && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
+  - (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
 
 branches:
   only:
