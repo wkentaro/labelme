@@ -70,7 +70,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       if [ "$USE_CONDA" = "true" ]; then
         conda create --name=labelme python=$TRAVIS_PYTHON_VERSION -q -y;
-        conda install pyqt=4 -q -y;
+        conda install pyqt -q -y;
         conda install scikit-image -q -y;
       else
         cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/;
