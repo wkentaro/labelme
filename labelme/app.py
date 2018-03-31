@@ -913,7 +913,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.hasLabels():
             if self.labelFile:
                 # DL20180323 - overwrite when in directory
-                self._saveFile(self.saveFileDialog())
+                self._saveFile(self.labelFile.filename)
             elif self.output:
                 self._saveFile(self.output)
             else:

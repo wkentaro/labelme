@@ -38,6 +38,7 @@ class LabelFile(object):
         self.imageData = None
         if filename is not None:
             self.load(filename)
+        self.filename = filename
 
     def load(self, filename):
         try:
@@ -61,6 +62,7 @@ class LabelFile(object):
                 self.imageData = imageData
                 self.lineColor = lineColor
                 self.fillColor = fillColor
+                self.filename = filename
         except Exception as e:
             raise LabelFileError(e)
 
@@ -78,6 +80,7 @@ class LabelFile(object):
         try:
             with open(filename, 'wb' if PY2 else 'w') as f:
                 json.dump(data, f, ensure_ascii=True, indent=2)
+            self.filename = filename
         except Exception as e:
             raise LabelFileError(e)
 
