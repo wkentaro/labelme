@@ -4,22 +4,15 @@ from __future__ import print_function
 
 import argparse
 import glob
-import io
 import json
 import os
 import os.path as osp
 
-import matplotlib
-matplotlib.use('Agg')
-
-import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 import PIL.ImagePalette
 
 import labelme
-from labelme.utils import label2rgb
-from labelme.utils import label_colormap
 
 
 def main():

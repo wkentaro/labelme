@@ -1,3 +1,4 @@
+# flake8: noqa
 #
 # Copyright (C) 2011 Michael Pitidis, Hussein Abdulwahid.
 #

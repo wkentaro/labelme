@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# flake8: noqa
 # -*- coding: utf8 -*-
 #
 # Copyright (C) 2011 Michael Pitidis, Hussein Abdulwahid.

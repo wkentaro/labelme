@@ -68,7 +68,7 @@ def labelme_on_docker(in_file, out_file):
         try:
             json.load(open(out_file))
             return out_file
-        except Exception as e:
+        except Exception:
             if open(out_file).read() == '':
                 os.remove(out_file)
             raise RuntimeError('Annotation is cancelled.')
