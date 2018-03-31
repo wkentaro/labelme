@@ -43,12 +43,12 @@ class LabelFile(object):
         try:
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
-                imagePath = data['imagePath']
                 if data['imageData'] is not None:
                     imageData = b64decode(data['imageData'])
                 else:
-                    imagePath = os.path.join(
-                        os.path.dirname(filename), data['imagePath'])
+                    # relative path from label file to relative path from cwd
+                    imagePath = os.path.join(os.path.dirname(filename),
+                                             data['imagePath'])
                     with open(imagePath, 'rb') as f:
                         imageData = f.read()
                 lineColor = data['lineColor']
@@ -57,7 +57,7 @@ class LabelFile(object):
                         for s in data['shapes'])
                 # Only replace data after everything is loaded.
                 self.shapes = shapes
-                self.imagePath = imagePath
+                self.imagePath = data['imagePath']
                 self.imageData = imageData
                 self.lineColor = lineColor
                 self.fillColor = fillColor
