@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# flake8: noqa
 
 from . import draw_json
 from . import json_to_dataset
