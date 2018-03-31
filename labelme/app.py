@@ -547,9 +547,13 @@ class MainWindow(QMainWindow, WindowMixin):
             return
         item = item if item else self.currentItem()
         text = self.labelDialog.popUp(item.text())
-        if text is not None:
-            item.setText(text)
-            self.setDirty()
+        if text is None:
+            return
+        item.setText(text)
+        self.setDirty()
+        if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
+            self.uniqLabelList.addItem(text)
+            self.uniqLabelList.sortItems()
 
     def fileSelectionChanged(self):
         items = self.fileListWidget.selectedItems()
