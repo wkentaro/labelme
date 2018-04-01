@@ -1,4 +1,3 @@
-# flake8: noqa
 #
 # Copyright (C) 2011 Michael Pitidis, Hussein Abdulwahid.
 #
@@ -19,28 +18,29 @@
 #
 
 try:
-    from PyQt5.QtGui import *
-    from PyQt5.QtCore import *
-    from PyQt5.QtWidgets import *
+    from PyQt5 import QtCore
+    from PyQt5 import QtGui
+    from PyQt5 import QtWidgets
 except ImportError:
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
+    from PyQt4 import QtCore
+    from PyQt4 import QtGui
+    from PyQt4 import QtGui as QtWidgets
 
 
-class ZoomWidget(QSpinBox):
+class ZoomWidget(QtWidgets.QSpinBox):
+
     def __init__(self, value=100):
         super(ZoomWidget, self).__init__()
-        self.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.setRange(1, 500)
         self.setSuffix(' %')
         self.setValue(value)
         self.setToolTip('Zoom Level')
         self.setStatusTip(self.toolTip())
-        self.setAlignment(Qt.AlignCenter)
+        self.setAlignment(QtCore.Qt.AlignCenter)
 
     def minimumSizeHint(self):
         height = super(ZoomWidget, self).minimumSizeHint().height()
-        fm = QFontMetrics(self.font())
+        fm = QtGui.QFontMetrics(self.font())
         width = fm.width(str(self.maximum()))
-        return QSize(width, height)
-
+        return QtCore.QSize(width, height)
