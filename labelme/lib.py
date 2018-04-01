@@ -26,7 +26,7 @@ def newButton(text, icon=None, slot=None):
 def newAction(parent, text, slot=None, shortcut=None, icon=None,
               tip=None, checkable=False, enabled=True):
     """Create a new action and assign callbacks, shortcuts, etc."""
-    a = QtGui.QAction(text, parent)
+    a = QtWidgets.QAction(text, parent)
     if icon is not None:
         a.setIcon(newIcon(icon))
     if shortcut is not None:
@@ -49,7 +49,7 @@ def addActions(widget, actions):
     for action in actions:
         if action is None:
             widget.addSeparator()
-        elif isinstance(action, QtGui.QMenu):
+        elif isinstance(action, QtWidgets.QMenu):
             widget.addMenu(action)
         else:
             widget.addAction(action)
