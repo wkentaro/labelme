@@ -1,8 +1,12 @@
-.cache/
-build/
-dist/
-*.py[cdo]
-*.egg-info/
+/.cache/
+/.pytest_cache/
 
-icons/.DS_Store
-labelme/resources.py
+/build/
+/dist/
+/*.egg-info/
+
+*.py[cdo]
+
+.DS_Store
+
+/labelme/resources.py
