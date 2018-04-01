@@ -219,6 +219,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         copy = action('&Duplicate\nPolygon', self.copySelectedShape, 'Ctrl+D',
                       'copy', 'Create a duplicate of the selected polygon',
                       enabled=False)
+        undoLastPoint = action('Undo last point', self.undoLastPoint,
+                               'Backspace', 'undoLastPoint',
+                               'Undo last drawn point', enabled=False)
 
         advancedMode = action('&Advanced Mode', self.toggleAdvancedMode,
                               'Ctrl+Shift+A', 'expert',
@@ -297,6 +300,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             save=save, saveAs=saveAs, open=open, close=close,
             lineColor=color1, fillColor=color2,
             create=create, delete=delete, edit=edit, copy=copy,
+            undoLastPoint=undoLastPoint,
             createMode=createMode, editMode=editMode,
             advancedMode=advancedMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
@@ -305,11 +309,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             zoomActions=zoomActions,
             fileMenuActions=(open, opendir, save, saveAs, close, quit),
             beginner=(), advanced=(),
-            editMenu=(edit, copy, delete, None, color1, color2),
-            beginnerContext=(create, edit, copy, delete),
+            editMenu=(edit, copy, delete, None, undoLastPoint, None, color1, color2),
+            beginnerContext=(create, edit, copy, delete, undoLastPoint),
             advancedContext=(
                 createMode, editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
+                undoLastPoint,
             ),
             onLoadActive=(close, create, createMode, editMode),
             onShapesPresent=(saveAs, hideAll, showAll),
@@ -524,6 +529,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         In the middle of drawing, toggling between modes should be disabled.
         """
         self.actions.editMode.setEnabled(not drawing)
+        self.actions.undoLastPoint.setEnabled(drawing)
         if not drawing and self.beginner():
             # Cancel creation.
             self.canvas.setEditing(True)
@@ -1051,6 +1057,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if self.noShapes():
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
+    
+    def undoLastPoint(self):
+        self.canvas.undoLastPoint()
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(
