@@ -57,9 +57,9 @@ def test_LabelDialog_popUp(qtbot):
     # popUp(text='cat')
 
     def interact():
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_P)  # enter 'p' for 'person'
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_P)  # enter 'p' for 'person'  # NOQA
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
     text = widget.popUp('cat')
@@ -68,8 +68,8 @@ def test_LabelDialog_popUp(qtbot):
     # popUp()
 
     def interact():
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
     text = widget.popUp()
@@ -78,9 +78,9 @@ def test_LabelDialog_popUp(qtbot):
     # popUp() + key_Up
 
     def interact():
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Up)  # 'person' -> 'dog'
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)
-        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Up)  # 'person' -> 'dog'  # NOQA
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
+        qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
     text = widget.popUp()
