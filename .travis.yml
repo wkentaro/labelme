@@ -1,98 +1,33 @@
-sudo: false
+language: generic
+sudo: required
+dist: trusty
 
-cache: pip
-
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      language: python
-      env:
-        - SYSTEM_PYTHON=/usr/bin/python
-        - PIP=pip
-        - PYTHON=python
-      addons:
-        apt:
-          packages:
-            - gfortran
-            - liblapack-dev
-            - pyqt4-dev-tools
-            - python-qt4
-    # FIXME: brew cannot be run on Travis.
-    # - os: osx
-    #   osx_image: xcode8
-    #   language: generic
-    #   env:
-    #     - PYTHON_VERSION=2.7.10
-    #     - PYENV_ROOT=~/.pyenv
-    #     - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-    # - os: osx
-    #   osx_image: xcode9
-    #   language: generic
-    #   env:
-    #     - PYTHON_VERSION=2.7.10
-    #     - PYENV_ROOT=~/.pyenv
-    #     - PATH=$PYENV_ROOT/shims:$PATH:$PYENV_ROOT/bin
-    - os: linux
-      dist: trusty
-      language: python
-      python: 2.7
-      env:
-        - USE_CONDA=true
-    - os: linux
-      dist: trusty
-      language: python
-      python: 3.6
-      env:
-        - USE_CONDA=true
-
-before_install:
-  - if [ "$USE_CONDA" = "true" ]; then
-      if [ "$TRAVIS_PYTHON_VERSION" = "2.7" ]; then
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi;
-      bash miniconda.sh -b -p $HOME/miniconda;
-      export PATH="$HOME/miniconda/bin:$PATH";
-      hash -r;
-      conda config --set always_yes yes --set changeps1 no;
-      conda update -q conda;
-      conda info -a;
-    elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      which pyenv &>/dev/null || brew install --quiet pyenv;
-      PYTHON_CONFIGURE_OPTS="--enable-unicode=ucs2" pyenv install -ks $PYTHON_VERSION;
-      mkdir -p ~/.matplotlib;
-      echo backend':' Agg > ~/.matplotlib/matplotlibrc;
-    fi
+env:
+  global:
+    # used by ci-helpers
+    - CONDA_CHANNELS=conda-forge SETUP_XVFB=true PIP_DEPENDENCIES='hacking pytest pytest-qt'
+  matrix:
+    - PYTEST_QT_API=pyqt4 PYQT_PACKAGE='pyqt=4' PYTHON_VERSION=2.7
+    - PYTEST_QT_API=pyqt5 PYQT_PACKAGE='pyqt=5' PYTHON_VERSION=3.6
 
 install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      if [ "$USE_CONDA" = "true" ]; then
-        conda create --name=labelme python=$TRAVIS_PYTHON_VERSION -q -y;
-        conda install pyqt -q -y;
-        conda install scikit-image -q -y;
-      else
-        cp -r $(dirname $($SYSTEM_PYTHON -c 'import PyQt4; print(PyQt4.__file__)')) ~/virtualenv/python2.7/lib/python2.7/site-packages/;
-        cp $($SYSTEM_PYTHON -c 'import sip; print(sip.__file__)') ~/virtualenv/python2.7/lib/python2.7/site-packages/;
-        pip install -q -U pip setuptools;
-        pip install -q -U numpy scipy scikit-image;
-      fi;
-    elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      pyenv global $PYTHON_VERSION;
-      brew install pyqt;
-      cp -r /usr/local/lib/python2.7/site-packages/PyQt5 ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/;
-      cp /usr/local/lib/python2.7/site-packages/sip.so ~/.pyenv/versions/2.7.10/lib/python2.7/site-packages/;
-      pip install -q -U pip setuptools;
-      pip install -q -U numpy scipy scikit-image;
-    fi
-  - pip install .
+  - sudo apt-get update
+
+  # Xvfb / window manager
+  - sudo apt-get install -y xvfb herbstluftwm
+
+  # Setup miniconda
+  - git clone --depth 1 git://github.com/astropy/ci-helpers.git
+  - CONDA_DEPENDENCIES=$PYQT_PACKAGE source ci-helpers/travis/setup_conda.sh
+  - source activate test && pip install .
 
 before_script:
-  - pip install -q hacking pytest
+ - "herbstluftwm &"
+ - sleep 1
 
 script:
-  - flake8 .
+  - source activate test
+  - flake8 examples labelme setup.py tests
   - pytest -v tests
   - labelme --help
   - (cd examples/single_image && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
