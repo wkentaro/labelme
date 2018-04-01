@@ -36,9 +36,6 @@ from .lib import newIcon
 # - Calculate optimal position so as not to go out of screen area.
 
 
-BB = QtWidgets.QDialogButtonBox
-
-
 class LabelQLineEdit(QtWidgets.QLineEdit):
 
     def setListWidget(self, list_widget):
@@ -63,9 +60,13 @@ class LabelDialog(QtWidgets.QDialog):
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.edit)
         # buttons
-        self.buttonBox = bb = BB(BB.Ok | BB.Cancel, QtCore.Qt.Horizontal, self)
-        bb.button(BB.Ok).setIcon(newIcon('done'))
-        bb.button(BB.Cancel).setIcon(newIcon('undo'))
+        self.buttonBox = bb = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
+            QtCore.Qt.Horizontal,
+            self,
+        )
+        bb.button(bb.Ok).setIcon(newIcon('done'))
+        bb.button(bb.Cancel).setIcon(newIcon('undo'))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
