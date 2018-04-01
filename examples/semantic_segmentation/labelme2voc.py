@@ -10,7 +10,6 @@ import os.path as osp
 
 import numpy as np
 import PIL.Image
-import PIL.ImagePalette
 
 import labelme
 
