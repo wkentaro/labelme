@@ -67,7 +67,15 @@ labelme_on_docker examples/semantic_segmentation/data_annotated
 ```bash
 # Ubuntu 14.04
 sudo apt-get install python-qt4 pyqt4-dev-tools
-sudo pip install labelme  # python2 works
+sudo pip install labelme  # python2
+sudo apt-get install python3-pyqt5 pyqt5-dev-tools
+sudo pip3 install labelme  # python3
+
+# Ubuntu 16.04
+sudo apt-get install python-pyqt5 pyqt5-dev-tools
+sudo pip install labelme  # python2
+sudo apt-get install python3-pyqt5 pyqt5-dev-tools
+sudo pip3 install labelme  # python3
 ```
 
 **macOS**
