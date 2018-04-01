@@ -5,7 +5,7 @@ dist: trusty
 env:
   global:
     # used by ci-helpers
-    - CONDA_CHANNELS=conda-forge SETUP_XVFB=true PIP_DEPENDENCIES='hacking pytest pytest-qt'
+    - SETUP_XVFB=true PIP_DEPENDENCIES='hacking pytest pytest-qt'
   matrix:
     - PYTEST_QT_API=pyqt4 PYQT_PACKAGE='pyqt=4' PYTHON_VERSION=2.7
     - PYTEST_QT_API=pyqt5 PYQT_PACKAGE='pyqt=5' PYTHON_VERSION=3.6
