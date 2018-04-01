@@ -66,8 +66,8 @@ class LabelDialog(QtWidgets.QDialog):
         layout.addWidget(self.labelList)
         self.setLayout(layout)
         # completion
-        completer = QtGui.QCompleter()
-        completer.setCompletionMode(QtGui.QCompleter.InlineCompletion)
+        completer = QtWidgets.QCompleter()
+        completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 
