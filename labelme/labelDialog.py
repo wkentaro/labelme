@@ -1,4 +1,3 @@
-# flake8: noqa
 #
 # Copyright (C) 2011 Michael Pitidis, Hussein Abdulwahid.
 #
@@ -19,36 +18,40 @@
 #
 
 try:
-    from PyQt5.QtGui import *
-    from PyQt5.QtCore import *
-    from PyQt5.QtWidgets import *
+    from PyQt5 import QtCore
+    from PyQt5 import QtGui
+    from PyQt5 import QtWidgets
     PYQT5 = True
 except ImportError:
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
+    from PyQt4 import QtCore
+    from PyQt4 import QtGui
+    from PyQt4 import QtGui as QtWidgets
     PYQT5 = False
 
-from .lib import newIcon, labelValidator
+from .lib import labelValidator
+from .lib import newIcon
 
-# TODO:
+
+# TODO(unknown):
 # - Calculate optimal position so as not to go out of screen area.
 
-BB = QDialogButtonBox
+
+BB = QtWidgets.QDialogButtonBox
 
 
-class LabelQLineEdit(QLineEdit):
+class LabelQLineEdit(QtWidgets.QLineEdit):
 
     def setListWidget(self, list_widget):
         self.list_widget = list_widget
 
     def keyPressEvent(self, e):
-        if e.key() in [Qt.Key_Up, Qt.Key_Down]:
+        if e.key() in [QtCore.Qt.Key_Up, QtCore.Qt.Key_Down]:
             self.list_widget.keyPressEvent(e)
         else:
             super(LabelQLineEdit, self).keyPressEvent(e)
 
 
-class LabelDialog(QDialog):
+class LabelDialog(QtWidgets.QDialog):
 
     def __init__(self, text="Enter object label", parent=None, labels=None,
                  sort_labels=True):
@@ -57,36 +60,37 @@ class LabelDialog(QDialog):
         self.edit.setPlaceholderText(text)
         self.edit.setValidator(labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
-        layout = QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.edit)
         # buttons
-        self.buttonBox = bb = BB(BB.Ok | BB.Cancel, Qt.Horizontal, self)
+        self.buttonBox = bb = BB(BB.Ok | BB.Cancel, QtCore.Qt.Horizontal, self)
         bb.button(BB.Ok).setIcon(newIcon('done'))
         bb.button(BB.Cancel).setIcon(newIcon('undo'))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
         # label_list
-        self.labelList = QListWidget()
+        self.labelList = QtWidgets.QListWidget()
         self._sort_labels = sort_labels
         if labels:
             self.labelList.addItems(labels)
         if self._sort_labels:
             self.labelList.sortItems()
         else:
-            self.labelList.setDragDropMode(QAbstractItemView.InternalMove)
+            self.labelList.setDragDropMode(
+                QtGui.QAbstractItemView.InternalMove)
         self.labelList.currentItemChanged.connect(self.labelSelected)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         self.setLayout(layout)
         # completion
-        completer = QCompleter()
-        completer.setCompletionMode(QCompleter.InlineCompletion)
+        completer = QtGui.QCompleter()
+        completer.setCompletionMode(QtGui.QCompleter.InlineCompletion)
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 
     def addLabelHistory(self, label):
-        if self.labelList.findItems(label, Qt.MatchExactly):
+        if self.labelList.findItems(label, QtCore.Qt.MatchExactly):
             return
         self.labelList.addItem(label)
         if self._sort_labels:
@@ -114,11 +118,11 @@ class LabelDialog(QDialog):
         if text is not None:
             self.edit.setText(text)
             self.edit.setSelection(0, len(text))
-            items = self.labelList.findItems(text, Qt.MatchFixedString)
+            items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
             if items:
                 assert len(items) == 1
                 self.labelList.setCurrentItem(items[0])
-        self.edit.setFocus(Qt.PopupFocusReason)
+        self.edit.setFocus(QtCore.Qt.PopupFocusReason)
         if move:
-            self.move(QCursor.pos())
+            self.move(QtGui.QCursor.pos())
         return self.edit.text() if self.exec_() else None
