@@ -454,15 +454,19 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def setDirty(self):
         self.dirty = True
         self.actions.save.setEnabled(True)
-        self.setWindowTitle('{} - {}*'.format(__appname__,
-                                              os.path.basename(self.filename)))
+        title = __appname__
+        if self.filename is not None:
+            title = '{} - {}*'.format(title, self.filename)
+        self.setWindowTitle(title)
 
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
         self.actions.create.setEnabled(True)
-        self.setWindowTitle('{} - {}'.format(__appname__,
-                                             os.path.basename(self.filename)))
+        title = __appname__
+        if self.filename is not None:
+            title = '{} - {}'.format(title, self.filename)
+        self.setWindowTitle(title)
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
