@@ -1,8 +1,5 @@
 import base64
-try:
-    import io
-except ImportError:
-    import io as io
+import io
 import warnings
 
 import matplotlib.pyplot as plt
