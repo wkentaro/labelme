@@ -82,69 +82,31 @@ pip install labelme  # both python2/3 should work
 Usage
 -----
 
-### Annotation
-
-Run `labelme --help` for detail.
-
-```bash
-labelme  # Open GUI
-labelme examples/single_image/apc2016_obj3.jpg  # Specify file
-labelme examples/single_image/apc2016_obj3.jpg -O examples/single_image/apc2016_obj3.json  # Close window after the save
-labelme examples/single_image/apc2016_obj3.jpg --nodata  # Not include image data but relative image path in JSON file
-labelme examples/single_image/apc2016_obj3.jpg \
-  --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # Specify label list
-labelme examples/single_image/  # Open directory to annotate all images in it
-```
-
-The annotations are saved as a [JSON](http://www.json.org/) file. The
-file includes the image itself.
-
-For more advanced usage, please refer to [the examples](examples).
-
-### Visualization
-
-To view the json file quickly, you can use utility script:
+Run `labelme --help` for detail.  
+The annotations are saved as a [JSON](http://www.json.org/) file.
 
 ```bash
-labelme_draw_json examples/single_image/apc2016_obj3.json
+labelme  # just open gui
+
+# single image example
+cd examples/single_image
+labelme apc2016_obj3.jpg  # specify image file
+labelme apc2016_obj3.jpg -O apc2016_obj3.json  # close window after the save
+labelme apc2016_obj3.jpg --nodata  # not include image data but relative image path in JSON file
+labelme apc2016_obj3.jpg \
+  --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # specify label list
+
+# semantic segmentation example
+cd examples/semantic_segmentation
+labelme data_annotated/  # Open directory to annotate all images in it
+labelme data_annotated/ --labels labels.txt  # specify label list with a file
 ```
 
-<img src="examples/single_image/.readme/draw_json.jpg" width="70%" />
+For more advanced usage, please refer to the examples:
 
-### Convert to Dataset
-
-To convert the json to set of image and label, you can run following:
-
-
-```bash
-labelme_json_to_dataset examples/single_image/apc2016_obj3.json -o examples/single_image/apc2016_obj3_json
-```
-
-It generates standard files from the JSON file.
-
-- [img.png](examples/single_image/apc2016_obj3_json/img.png): Image file.
-- [label.png](examples/single_image/apc2016_obj3_json/label.png): Int32 label file.
-- [label_viz.png](examples/single_image/apc2016_obj3_json/label_viz.png): Visualization of `label.png`.
-- [label_names.txt](examples/single_image/apc2016_obj3_json/label_names.txt): Label names for values in `label.png`.
-
-Note that loading `label.png` is a bit difficult
-(`scipy.misc.imread`, `skimage.io.imread` may not work correctly),
-and please use `PIL.Image.open` to avoid unexpected behavior:
-
-```python
-# see examples/single_image/load_label_png.py also.
->>> import numpy as np
->>> import PIL.Image
-
->>> label_png = 'examples/single_image/apc2016_obj3_json/label.png'
->>> lbl = np.asarray(PIL.Image.open(label_png))
->>> print(lbl.dtype)
-dtype('int32')
->>> np.unique(lbl)
-array([0, 1, 2, 3], dtype=int32)
->>> lbl.shape
-(907, 1210)
-```
+* [Single Image Example](examples/single_image)
+* [Semantic Segmentation Example](examples/semantic_segmentation)
+* [Instance Segmentation Example](examples/instance_segmentation)
 
 
 Screencast
