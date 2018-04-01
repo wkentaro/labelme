@@ -1,5 +1,3 @@
-# flake8: noqa
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011 Michael Pitidis, Hussein Abdulwahid.
 #
@@ -20,32 +18,32 @@
 #
 
 try:
-    from PyQt5.QtGui import *
-    from PyQt5.QtCore import *
+    from PyQt5 import QtGui
 except ImportError:
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
-
+    from PyQt4 import QtGui
 
 from .lib import distance
 
-# TODO:
+
+# TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
-DEFAULT_LINE_COLOR = QColor(0, 255, 0, 128)
-DEFAULT_FILL_COLOR = QColor(255, 0, 0, 128)
-DEFAULT_SELECT_LINE_COLOR = QColor(255, 255, 255)
-DEFAULT_SELECT_FILL_COLOR = QColor(0, 128, 255, 155)
-DEFAULT_VERTEX_FILL_COLOR = QColor(0, 255, 0, 255)
-DEFAULT_HVERTEX_FILL_COLOR = QColor(255, 0, 0)
+
+DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
+DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)
+DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)
+DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)
+DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 0, 0)
+
 
 class Shape(object):
+
     P_SQUARE, P_ROUND = 0, 1
 
     MOVE_VERTEX, NEAR_VERTEX = 0, 1
 
-    ## The following class variables influence the drawing
-    ## of _all_ shape objects.
+    # The following class variables influence the drawing of all shape objects.
     line_color = DEFAULT_LINE_COLOR
     fill_color = DEFAULT_FILL_COLOR
     select_line_color = DEFAULT_SELECT_LINE_COLOR
@@ -67,7 +65,7 @@ class Shape(object):
         self._highlightSettings = {
             self.NEAR_VERTEX: (4, self.P_ROUND),
             self.MOVE_VERTEX: (1.5, self.P_SQUARE),
-            }
+        }
 
         self._closed = False
 
@@ -100,20 +98,21 @@ class Shape(object):
 
     def paint(self, painter):
         if self.points:
-            color = self.select_line_color if self.selected else self.line_color
-            pen = QPen(color)
+            color = self.select_line_color \
+                if self.selected else self.line_color
+            pen = QtGui.QPen(color)
             # Try using integer sizes for smoother drawing(?)
             pen.setWidth(max(1, int(round(2.0 / self.scale))))
             painter.setPen(pen)
 
-            line_path = QPainterPath()
-            vrtx_path = QPainterPath()
+            line_path = QtGui.QPainterPath()
+            vrtx_path = QtGui.QPainterPath()
 
             line_path.moveTo(self.points[0])
             # Uncommenting the following line will draw 2 paths
             # for the 1st vertex, and make it non-filled, which
             # may be desirable.
-            #self.drawVertex(vrtx_path, 0)
+            # self.drawVertex(vrtx_path, 0)
 
             for i, p in enumerate(self.points):
                 line_path.lineTo(p)
@@ -125,7 +124,8 @@ class Shape(object):
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self.vertex_fill_color)
             if self.fill:
-                color = self.select_fill_color if self.selected else self.fill_color
+                color = self.select_fill_color \
+                    if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
 
     def drawVertex(self, path, i):
@@ -140,9 +140,9 @@ class Shape(object):
         else:
             self.vertex_fill_color = Shape.vertex_fill_color
         if shape == self.P_SQUARE:
-            path.addRect(point.x() - d/2, point.y() - d/2, d, d)
+            path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
         elif shape == self.P_ROUND:
-            path.addEllipse(point, d/2.0, d/2.0)
+            path.addEllipse(point, d / 2.0, d / 2.0)
         else:
             assert False, "unsupported vertex shape"
 
@@ -160,7 +160,7 @@ class Shape(object):
         return self.makePath().contains(point)
 
     def makePath(self):
-        path = QPainterPath(self.points[0])
+        path = QtGui.QPainterPath(self.points[0])
         for p in self.points[1:]:
             path.lineTo(p)
         return path
@@ -183,7 +183,7 @@ class Shape(object):
 
     def copy(self):
         shape = Shape(self.label)
-        shape.points= [p for p in self.points]
+        shape.points = [p for p in self.points]
         shape.fill = self.fill
         shape.selected = self.selected
         shape._closed = self._closed
@@ -201,4 +201,3 @@ class Shape(object):
 
     def __setitem__(self, key, value):
         self.points[key] = value
-
