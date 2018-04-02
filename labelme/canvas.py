@@ -493,7 +493,7 @@ class Canvas(QtWidgets.QWidget):
     def wheelEvent(self, ev):
         if PYQT5:
             mods = ev.modifiers()
-            delta = ev.pixelDelta()
+            delta = ev.angleDelta()
             if QtCore.Qt.ControlModifier == int(mods):
                 # with Ctrl/Command key
                 # zoom
