@@ -29,7 +29,7 @@ CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.pyqtSignal(int)
+    zoomRequest = QtCore.pyqtSignal(int, QtCore.QPointF)
     scrollRequest = QtCore.pyqtSignal(int, int)
     newShape = QtCore.pyqtSignal()
     selectionChanged = QtCore.pyqtSignal(bool)
@@ -497,7 +497,7 @@ class Canvas(QtWidgets.QWidget):
             if QtCore.Qt.ControlModifier == int(mods):
                 # with Ctrl/Command key
                 # zoom
-                self.zoomRequest.emit(delta.y())
+                self.zoomRequest.emit(delta.y(), ev.pos())
             else:
                 # scroll
                 self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
@@ -507,7 +507,7 @@ class Canvas(QtWidgets.QWidget):
                 mods = ev.modifiers()
                 if QtCore.Qt.ControlModifier == int(mods):
                     # with Ctrl/Command key
-                    self.zoomRequest.emit(ev.delta())
+                    self.zoomRequest.emit(ev.delta(), ev.pos())
                 else:
                     self.scrollRequest.emit(
                         ev.delta(),
