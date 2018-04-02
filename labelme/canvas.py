@@ -538,7 +538,7 @@ class Canvas(QtWidgets.QWidget):
         self.current.setOpen()
         self.line.points = [self.current[-1], self.current[0]]
         self.drawingPolygon.emit(True)
-        
+
     def undoLastPoint(self):
         if self.current and not self.current.isClosed():
             self.current.popPoint()
@@ -547,7 +547,7 @@ class Canvas(QtWidgets.QWidget):
             else:
                 self.current = None
                 self.drawingPolygon.emit(False)
-            self.repaint()                
+            self.repaint()
 
     def loadPixmap(self, pixmap):
         self.pixmap = pixmap
