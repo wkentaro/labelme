@@ -309,7 +309,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             zoomActions=zoomActions,
             fileMenuActions=(open, opendir, save, saveAs, close, quit),
             beginner=(), advanced=(),
-            editMenu=(edit, copy, delete, None, undoLastPoint, None, color1, color2),
+            editMenu=(edit, copy, delete, None, undoLastPoint,
+                      None, color1, color2),
             beginnerContext=(create, edit, copy, delete, undoLastPoint),
             advancedContext=(
                 createMode, editMode, edit, copy,
@@ -1057,7 +1058,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if self.noShapes():
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
-    
+
     def undoLastPoint(self):
         self.canvas.undoLastPoint()
 
