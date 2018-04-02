@@ -202,12 +202,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas = self.labelList.canvas = Canvas()
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
-        scroll = QtWidgets.QScrollArea()
-        scroll.setWidget(self.canvas)
-        scroll.setWidgetResizable(True)
+        self.scrollArea = QtWidgets.QScrollArea()
+        self.scrollArea.setWidget(self.canvas)
+        self.scrollArea.setWidgetResizable(True)
         self.scrollBars = {
-            Qt.Vertical: scroll.verticalScrollBar(),
-            Qt.Horizontal: scroll.horizontalScrollBar(),
+            Qt.Vertical: self.scrollArea.verticalScrollBar(),
+            Qt.Horizontal: self.scrollArea.horizontalScrollBar(),
         }
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
@@ -216,7 +216,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
-        self.setCentralWidget(scroll)
+        self.setCentralWidget(self.scrollArea)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.labelsdock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
@@ -773,9 +773,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def addZoom(self, increment=10):
         self.setZoom(self.zoomWidget.value() + increment)
 
-    def zoomRequest(self, delta):
+    def zoomRequest(self, delta, pos):
         units = delta * 0.1
         self.addZoom(units)
+        x, y = pos.x(), pos.y()
+        w, h = self.scrollArea.width(), self.scrollArea.height()
+        self.scrollArea.ensureVisible(x, y, w // 2, h // 2)
 
     def setFitWindow(self, value=True):
         if value:
