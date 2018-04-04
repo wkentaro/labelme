@@ -120,6 +120,16 @@ Screencast
 <img src=".readme/screencast.gif" width="70%"/>
 
 
+Testing
+-------
+
+```bash
+pip install hacking pytest pytest-qt
+flake8 .
+pytest -v tests
+```
+
+
 Acknowledgement
 ---------------
 
