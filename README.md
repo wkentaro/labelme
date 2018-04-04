@@ -9,7 +9,8 @@ labelme: Image Polygonal Annotation with Python
 
 
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
-It is written in Python and uses Qt for its graphical interface.
+It is written in Python and uses Qt for its graphical interface,  
+and supports annotations for semantic and instance segmentation.
 
 <img src="examples/single_image/.readme/screenshot.jpg" width="80%" />
 
