@@ -219,7 +219,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         copy = action('&Duplicate\nPolygon', self.copySelectedShape, 'Ctrl+D',
                       'copy', 'Create a duplicate of the selected polygon',
                       enabled=False)
-        undoLastPoint = action('Undo last point', self.undoLastPoint,
+        undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
                                ['Ctrl+Z', 'Backspace'], 'undoLastPoint',
                                'Undo last drawn point', enabled=False)
 
@@ -1058,9 +1058,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if self.noShapes():
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
-
-    def undoLastPoint(self):
-        self.canvas.undoLastPoint()
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(
