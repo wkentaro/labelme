@@ -17,7 +17,7 @@ To view the json file quickly, you can use utility script:
 labelme_draw_json examples/single_image/apc2016_obj3.json
 ```
 
-<img src="examples/single_image/.readme/draw_json.jpg" width="70%" />
+<img src=".readme/draw_json.jpg" width="70%" />
 
 
 ## Convert to Dataset
