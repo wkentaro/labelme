@@ -220,7 +220,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                       'copy', 'Create a duplicate of the selected polygon',
                       enabled=False)
         undoLastPoint = action('Undo last point', self.undoLastPoint,
-                               'Backspace', 'undoLastPoint',
+                               ['Ctrl+Z', 'Backspace'], 'undoLastPoint',
                                'Undo last drawn point', enabled=False)
 
         advancedMode = action('&Advanced Mode', self.toggleAdvancedMode,
