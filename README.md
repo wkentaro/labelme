@@ -12,7 +12,7 @@ It is written in Python and uses Qt for its graphical interface,
 and supports annotations for semantic and instance segmentation.
 
 <img src="examples/instance_segmentation/.readme/annotation.jpg" width="80%" />  
-*Fig 1. Example of annotations for instance segmentation.*
+Fig 1. Example of annotations for instance segmentation.
 
 
 ## Requirements
