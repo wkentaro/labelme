@@ -1,7 +1,6 @@
 <img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
 
-labelme: Image Polygonal Annotation with Python
-===============================================
+# labelme: Image Polygonal Annotation with Python
 
 [![PyPI Version](https://img.shields.io/pypi/v/labelme.svg)](https://pypi.python.org/pypi/labelme)
 [![Travis Build Status](https://travis-ci.org/wkentaro/labelme.svg?branch=master)](https://travis-ci.org/wkentaro/labelme)
@@ -15,23 +14,21 @@ and supports annotations for semantic and instance segmentation.
 <img src="examples/single_image/.readme/screenshot.jpg" width="80%" />
 
 
-Requirements
-------------
+## Requirements
 
 - Ubuntu / macOS / Windows
 - Python2 / Python3
 - [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
 
 
-Installation
-------------
+## Installation
 
 There are options:
 
 - Platform agonistic installation: Anaconda, Docker
 - Platform specific installation: Ubuntu, macOS
 
-**Anaconda**
+### Anaconda
 
 You need install [Anaconda](https://www.continuum.io/downloads), then run below:
 
@@ -52,7 +49,7 @@ pip install pyqt5  # pyqt5 can be installed via pip on python3
 pip install labelme
 ```
 
-**Docker**
+### Docker
 
 You need install [docker](https://www.docker.com), then run below:
 
@@ -65,7 +62,7 @@ labelme_on_docker examples/single_image/apc2016_obj3.jpg -O examples/single_imag
 labelme_on_docker examples/semantic_segmentation/data_annotated
 ```
 
-**Ubuntu**
+### Ubuntu
 
 ```bash
 # Ubuntu 14.04 / Ubuntu 16.04
@@ -78,7 +75,7 @@ sudo apt-get install python3-pyqt5 pyqt5-dev-tools  # PyQt5
 sudo pip3 install labelme
 ```
 
-**macOS**
+### macOS
 
 ```bash
 # macOS Sierra
@@ -87,8 +84,7 @@ pip install labelme  # both python2/3 should work
 ```
 
 
-Usage
------
+## Usage
 
 Run `labelme --help` for detail.  
 The annotations are saved as a [JSON](http://www.json.org/) file.
@@ -117,14 +113,12 @@ For more advanced usage, please refer to the examples:
 * [Instance Segmentation Example](examples/instance_segmentation)
 
 
-Screencast
-----------
+## Screencast
 
 <img src=".readme/screencast.gif" width="70%"/>
 
 
-Testing
--------
+## Testing
 
 ```bash
 pip install hacking pytest pytest-qt
@@ -133,8 +127,7 @@ pytest -v tests
 ```
 
 
-Acknowledgement
----------------
+## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme),
 whose development has already stopped.
