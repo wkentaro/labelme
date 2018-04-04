@@ -58,7 +58,7 @@ wget https://raw.githubusercontent.com/wkentaro/labelme/master/scripts/labelme_o
 chmod u+x labelme_on_docker
 
 # Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
-labelme_on_docker examples/single_image/apc2016_obj3.jpg -O examples/single_image/apc2016_obj3.json
+labelme_on_docker examples/tutorial/apc2016_obj3.jpg -O examples/tutorial/apc2016_obj3.json
 labelme_on_docker examples/semantic_segmentation/data_annotated
 ```
 
@@ -92,8 +92,8 @@ The annotations are saved as a [JSON](http://www.json.org/) file.
 ```bash
 labelme  # just open gui
 
-# single image example
-cd examples/single_image
+# tutorial (single image example)
+cd examples/tutorial
 labelme apc2016_obj3.jpg  # specify image file
 labelme apc2016_obj3.jpg -O apc2016_obj3.json  # close window after the save
 labelme apc2016_obj3.jpg --nodata  # not include image data but relative image path in JSON file
@@ -108,7 +108,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 For more advanced usage, please refer to the examples:
 
-* [Single Image Example](examples/single_image)
+* [Tutorial (Single Image Example)](examples/tutorial)
 * [Semantic Segmentation Example](examples/semantic_segmentation)
 * [Instance Segmentation Example](examples/instance_segmentation)
 
