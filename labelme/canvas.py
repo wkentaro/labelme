@@ -540,14 +540,15 @@ class Canvas(QtWidgets.QWidget):
         self.drawingPolygon.emit(True)
 
     def undoLastPoint(self):
-        if self.current and not self.current.isClosed():
-            self.current.popPoint()
-            if len(self.current) > 0:
-                self.line[0] = self.current[-1]
-            else:
-                self.current = None
-                self.drawingPolygon.emit(False)
-            self.repaint()
+        if not self.current or self.current.isClosed():
+            return
+        self.current.popPoint()
+        if len(self.current) > 0:
+            self.line[0] = self.current[-1]
+        else:
+            self.current = None
+            self.drawingPolygon.emit(False)
+        self.repaint()
 
     def loadPixmap(self, pixmap):
         self.pixmap = pixmap
