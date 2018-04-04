@@ -11,7 +11,8 @@ Labelme is a graphical image annotation tool inspired by <http://labelme.csail.m
 It is written in Python and uses Qt for its graphical interface,  
 and supports annotations for semantic and instance segmentation.
 
-<img src="examples/instance_segmentation/.readme/annotation.jpg" width="80%" />
+<img src="examples/instance_segmentation/.readme/annotation.jpg" width="80%" />  
+*Fig 1. Example of annotations for instance segmentation.*
 
 
 ## Requirements
