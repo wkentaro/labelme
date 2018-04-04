@@ -41,6 +41,8 @@ conda create --name=labelme python=2.7
 source activate labelme
 conda install pyqt
 pip install labelme
+# if you'd like to use the latest version. run below:
+# pip install git+https://github.com/wkentaro/labelme.git
 
 # python3
 conda create --name=labelme python=3.6
