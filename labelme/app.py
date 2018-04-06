@@ -106,7 +106,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         self.labelList = QtWidgets.QListWidget()
         self.itemsToShapes = []
-        self.imageList = []
         self.lastOpenDir = None
 
         self.labelList.itemActivated.connect(self.labelSelectionChanged)
@@ -1101,6 +1100,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             QtWidgets.QFileDialog.DontResolveSymlinks))
         self.importDirImages(targetDirPath)
 
+    @property
+    def imageList(self):
+        lst = []
+        for i in range(self.fileListWidget.count()):
+            item = self.fileListWidget.item(i)
+            lst.append(item.text())
+        return lst
+
     def importDirImages(self, dirpath):
         if not self.mayContinue() or not dirpath:
             return
@@ -1108,11 +1115,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.lastOpenDir = dirpath
         self.filename = None
         self.fileListWidget.clear()
-        self.imageList = self.scanAllImages(dirpath)
-        self.openNextImg()
-        for imgPath in self.imageList:
+        for imgPath in self.scanAllImages(dirpath):
             item = QtWidgets.QListWidgetItem(imgPath)
             self.fileListWidget.addItem(item)
+        self.openNextImg()
 
     def scanAllImages(self, folderPath):
         extensions = ['.%s' % fmt.data().decode("ascii").lower()
