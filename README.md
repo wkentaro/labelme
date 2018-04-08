@@ -136,6 +136,31 @@ pytest -v tests
 ```
 
 
+## How to build standalone app
+
+Below is an example on macOS.
+
+```bash
+git clone https://github.com/wkentaro/labelme.git
+cd labelme
+
+virtualenv venv --python /usr/local/bin/python3
+. venv/bin/activate
+pip install -e .
+pip uninstall matplotlib
+pip install pyinstaller
+
+pyinstaller app.py \
+  --onefile \
+  --windowed \
+  --name labelme \
+  --icon labelme/icons/icon.icns \
+  --specpath $(mktemp -d) \
+  --noconfirm
+open dist/labelme.app
+```
+
+
 ## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme),
