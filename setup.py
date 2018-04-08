@@ -13,7 +13,7 @@ PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
 
-version = '2.10.0'
+version = '2.10.1'
 
 
 install_requires = [
@@ -96,6 +96,7 @@ setup(
     },
     description='Image Polygonal Annotation with Python.',
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',
     url='https://github.com/wkentaro/labelme',
