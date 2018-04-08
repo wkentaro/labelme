@@ -138,7 +138,9 @@ pytest -v tests
 
 ## How to build standalone app
 
-Below is an example on macOS.
+Below is an example on macOS,
+and there are pre-built apps in
+[the release section](https://github.com/wkentaro/labelme/releases).
 
 ```bash
 git clone https://github.com/wkentaro/labelme.git
