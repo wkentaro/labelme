@@ -1,4 +1,4 @@
-<img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png" align="right" />
+<img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
 
 # labelme: Image Polygonal Annotation with Python
 
@@ -11,7 +11,7 @@ Labelme is a graphical image annotation tool inspired by <http://labelme.csail.m
 It is written in Python and uses Qt for its graphical interface,  
 and supports annotations for semantic and instance segmentation.
 
-<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg" width="80%" />  
+<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />  
 Fig 1. Example of annotations for instance segmentation.
 
 
@@ -128,7 +128,7 @@ For more advanced usage, please refer to the examples:
 
 ## Screencast
 
-<img src="https://github.com/wkentaro/labelme/blob/master/.readme/screencast.gif" width="70%"/>
+<img src="https://github.com/wkentaro/labelme/blob/master/.readme/screencast.gif?raw=true" width="70%"/>
 
 
 ## Testing
