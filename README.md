@@ -82,6 +82,9 @@ sudo pip3 install labelme
 # macOS Sierra
 brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
+
+# or install standalone app
+brew cask install wkentaro/labelme/labelme
 ```
 
 
