@@ -13,7 +13,7 @@ PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 
 
-version = '2.9.0'
+version = '2.10.0'
 
 
 install_requires = [
