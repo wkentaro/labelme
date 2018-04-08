@@ -2,7 +2,6 @@ import base64
 import io
 import warnings
 
-import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
@@ -88,6 +87,7 @@ def polygons_to_mask(img_shape, polygons):
 
 
 def draw_label(label, img, label_names, colormap=None):
+    import matplotlib.pyplot as plt
     backend_org = plt.rcParams['backend']
     plt.switch_backend('agg')
 
