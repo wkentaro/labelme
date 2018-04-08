@@ -83,7 +83,8 @@ sudo pip3 install labelme
 brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
 
-# or install standalone app
+# or install standalone executable / app
+brew install wkentaro/labelme/labelme
 brew cask install wkentaro/labelme/labelme
 ```
 
