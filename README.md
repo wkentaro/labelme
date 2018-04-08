@@ -1,4 +1,4 @@
-<img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
+<img src="labelme/icons/icon.png" align="right" />
 
 # labelme: Image Polygonal Annotation with Python
 
