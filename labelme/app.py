@@ -290,11 +290,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.zoomWidget.setEnabled(False)
 
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 10),
-                        ['Ctrl++', 'Ctrl+='], 'zoom-in', 'Increase zoom level',
-                        enabled=False)
+                        QtGui.QKeySequence.ZoomIn, 'zoom-in',
+                        'Increase zoom level', enabled=False)
         zoomOut = action('&Zoom Out', functools.partial(self.addZoom, -10),
-                         'Ctrl+-', 'zoom-out', 'Decrease zoom level',
-                         enabled=False)
+                         QtGui.QKeySequence.ZoomOut, 'zoom-out',
+                         'Decrease zoom level', enabled=False)
         zoomOrg = action('&Original size',
                          functools.partial(self.setZoom, 100),
                          'Ctrl+0', 'zoom', 'Zoom to original size',
