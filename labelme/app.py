@@ -202,12 +202,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas = self.labelList.canvas = Canvas()
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
-        self.scrollArea = QtWidgets.QScrollArea()
-        self.scrollArea.setWidget(self.canvas)
-        self.scrollArea.setWidgetResizable(True)
+        scrollArea = QtWidgets.QScrollArea()
+        scrollArea.setWidget(self.canvas)
+        scrollArea.setWidgetResizable(True)
         self.scrollBars = {
-            Qt.Vertical: self.scrollArea.verticalScrollBar(),
-            Qt.Horizontal: self.scrollArea.horizontalScrollBar(),
+            Qt.Vertical: scrollArea.verticalScrollBar(),
+            Qt.Horizontal: scrollArea.horizontalScrollBar(),
         }
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
@@ -216,7 +216,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
-        self.setCentralWidget(self.scrollArea)
+        self.setCentralWidget(scrollArea)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.labelsdock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
