@@ -773,7 +773,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def addZoom(self, increment=10):
         self.setZoom(self.zoomWidget.value() + increment)
 
-    def zoomRequest(self, delta, pos, globalPos):
+    def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
 
         units = delta * 0.1
