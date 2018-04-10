@@ -162,13 +162,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         listLayout = QtWidgets.QVBoxLayout()
         listLayout.setContentsMargins(0, 0, 0, 0)
-        listLayout.addWidget(self.labelList)
         self.editButton = QtWidgets.QToolButton()
         self.editButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.labelListContainer = QtWidgets.QWidget()
-        self.labelListContainer.setLayout(listLayout)
         listLayout.addWidget(self.editButton)  # 0, Qt.AlignCenter)
         listLayout.addWidget(self.labelList)
+        self.labelListContainer = QtWidgets.QWidget()
+        self.labelListContainer.setLayout(listLayout)
 
         self.uniqLabelList = EscapableQListWidget()
         self.uniqLabelList.setToolTip(
