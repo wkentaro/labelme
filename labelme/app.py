@@ -786,11 +786,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
             y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
 
-            sb_h = self.scrollArea.horizontalScrollBar()
-            sb_v = self.scrollArea.verticalScrollBar()
-
-            sb_h.setValue(sb_h.value() + x_shift)
-            sb_v.setValue(sb_v.value() + y_shift)
+            self.scrollBars[Qt.Horizontal].setValue(
+                    self.scrollBars[Qt.Horizontal].value() + x_shift)
+            self.scrollBars[Qt.Vertical].setValue(
+                    self.scrollBars[Qt.Vertical].value() + y_shift)
 
     def setFitWindow(self, value=True):
         if value:
