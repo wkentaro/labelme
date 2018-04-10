@@ -136,7 +136,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
     cls = np.zeros(img_shape[:2], dtype=np.int32)
     if type == 'instance':
         ins = np.zeros(img_shape[:2], dtype=np.int32)
-        instance_names = ['__background__']
+        instance_names = ['_background_']
     for shape in shapes:
         polygons = shape['points']
         label = shape['label']
@@ -162,7 +162,7 @@ def labelme_shapes_to_label(img_shape, shapes):
     warnings.warn('labelme_shapes_to_label is deprecated, so please use '
                   'shapes_to_label.')
 
-    label_name_to_value = {}
+    label_name_to_value = {'_background_': 0}
     for shape in shapes:
         label_name = shape['label']
         if label_name in label_name_to_value:
