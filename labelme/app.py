@@ -773,12 +773,24 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def addZoom(self, increment=10):
         self.setZoom(self.zoomWidget.value() + increment)
 
-    def zoomRequest(self, delta, pos):
+    def zoomRequest(self, delta, pos, globalPos):
+        canvas_width_old = self.canvas.width()
+
         units = delta * 0.1
         self.addZoom(units)
-        x, y = pos.x(), pos.y()
-        w, h = self.scrollArea.width(), self.scrollArea.height()
-        self.scrollArea.ensureVisible(x, y, w // 2, h // 2)
+
+        canvas_width_new = self.canvas.width()
+        if canvas_width_old != canvas_width_new:
+            canvas_scale_factor = canvas_width_new / canvas_width_old
+
+            x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
+            y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
+
+            sb_h = self.scrollArea.horizontalScrollBar()
+            sb_v = self.scrollArea.verticalScrollBar()
+
+            sb_h.setValue(sb_h.value() + x_shift)
+            sb_v.setValue(sb_v.value() + y_shift)
 
     def setFitWindow(self, value=True):
         if value:
