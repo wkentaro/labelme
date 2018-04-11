@@ -11,9 +11,10 @@ import sys
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
+assert PY3 or PY2
 
 
-version = '2.10.4'
+version = '2.10.5'
 
 
 install_requires = [
