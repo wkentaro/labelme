@@ -55,12 +55,12 @@ pip install labelme
 You need install [docker](https://www.docker.com), then run below:
 
 ```bash
-wget https://raw.githubusercontent.com/wkentaro/labelme/master/scripts/labelme_on_docker
+wget https://raw.githubusercontent.com/wkentaro/labelme/master/labelme/cli/on_docker.py -O labelme_on_docker
 chmod u+x labelme_on_docker
 
 # Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
-labelme_on_docker examples/tutorial/apc2016_obj3.jpg -O examples/tutorial/apc2016_obj3.json
-labelme_on_docker examples/semantic_segmentation/data_annotated
+./labelme_on_docker examples/tutorial/apc2016_obj3.jpg -O examples/tutorial/apc2016_obj3.json
+./labelme_on_docker examples/semantic_segmentation/data_annotated
 ```
 
 ### Ubuntu
