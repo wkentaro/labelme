@@ -156,13 +156,7 @@ pip install -e .
 pip uninstall matplotlib
 pip install pyinstaller
 
-pyinstaller app.py \
-  --onefile \
-  --windowed \
-  --name labelme \
-  --icon labelme/icons/icon.icns \
-  --specpath $(mktemp -d) \
-  --noconfirm
+pyinstaller labelme.spec
 open dist/labelme.app
 ```
 
