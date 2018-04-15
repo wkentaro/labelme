@@ -1,9 +1,5 @@
-try:
-    from PyQt5 import QtCore
-    from PyQt5 import QtWidgets
-except ImportError:
-    from PyQt4 import QtCore
-    from PyQt4 import QtGui as QtWidgets
+from qtpy import QtCore
+from qtpy import QtWidgets
 
 from labelme import labelDialog
 

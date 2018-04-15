@@ -1,13 +1,7 @@
-try:
-    from PyQt5 import QtCore
-    from PyQt5 import QtGui
-    from PyQt5 import QtWidgets
-    PYQT5 = True
-except ImportError:
-    from PyQt4 import QtCore
-    from PyQt4 import QtGui
-    from PyQt4 import QtGui as QtWidgets
-    PYQT5 = False
+from qtpy import PYQT5
+from qtpy import QtCore
+from qtpy import QtGui
+from qtpy import QtWidgets
 
 from .lib import labelValidator
 from .lib import newIcon

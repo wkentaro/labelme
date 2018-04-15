@@ -6,18 +6,11 @@ import re
 import subprocess
 import sys
 
-try:
-    from PyQt5 import QtCore
-    from PyQt5.QtCore import Qt
-    from PyQt5 import QtGui
-    from PyQt5 import QtWidgets
-    PYQT5 = True
-except ImportError:
-    from PyQt4 import QtCore
-    from PyQt4.QtCore import Qt
-    from PyQt4 import QtGui
-    from PyQt4 import QtGui as QtWidgets
-    PYQT5 = False
+from qtpy import PYQT5
+from qtpy import QtCore
+from qtpy.QtCore import Qt
+from qtpy import QtGui
+from qtpy import QtWidgets
 
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
@@ -979,7 +972,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         filename = QtWidgets.QFileDialog.getOpenFileName(
             self, '%s - Choose Image or Label file' % __appname__,
             path, filters)
-        if PYQT5:
+        if qtpy.PYQT5:
             filename, _ = filename
         filename = str(filename)
         if filename:
@@ -1015,7 +1008,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         filename = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
             'Label files (*%s)' % LabelFile.suffix)
-        if PYQT5:
+        if qtpy.PYQT5:
             filename, _ = filename
         filename = str(filename)
         return filename
