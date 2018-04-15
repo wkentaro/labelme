@@ -29,7 +29,6 @@ from labelme.lib import fmtShortcut
 from labelme.lib import newAction
 from labelme.lib import newIcon
 from labelme.lib import struct
-from labelme import resources  # NOQA
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
@@ -252,14 +251,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                         'Ctrl+Shift+L', 'color', 'Choose polygon fill color')
 
         createMode = action('Create\nPolygo&ns', self.setCreateMode, 'Ctrl+N',
-                            'new', 'Start drawing polygons', enabled=False)
+                            'objects', 'Start drawing polygons', enabled=False)
         editMode = action('&Edit\nPolygons', self.setEditMode, 'Ctrl+J',
                           'edit', 'Move and edit polygons', enabled=False)
 
         create = action('Create\nPolygo&n', self.createShape, 'Ctrl+N', 'new',
                         'Draw a new polygon', enabled=False)
         delete = action('Delete\nPolygon', self.deleteSelectedShape, 'Delete',
-                        'delete', 'Delete', enabled=False)
+                        'cancel', 'Delete', enabled=False)
         copy = action('&Duplicate\nPolygon', self.copySelectedShape, 'Ctrl+D',
                       'copy', 'Create a duplicate of the selected polygon',
                       enabled=False)
@@ -273,10 +272,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         hideAll = action('&Hide\nPolygons',
                          functools.partial(self.togglePolygons, False),
-                         'Ctrl+H', 'hide', 'Hide all polygons', enabled=False)
+                         'Ctrl+H', 'eye', 'Hide all polygons', enabled=False)
         showAll = action('&Show\nPolygons',
                          functools.partial(self.togglePolygons, True),
-                         'Ctrl+A', 'hide', 'Show all polygons', enabled=False)
+                         'Ctrl+A', 'eye', 'Show all polygons', enabled=False)
 
         help = action('&Tutorial', self.tutorial, 'Ctrl+T', 'help',
                       'Show screencast of introductory tutorial')
@@ -322,7 +321,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.editButton.setDefaultAction(edit)
 
         shapeLineColor = action(
-            'Shape &Line Color', self.chshapeLineColor, icon='color_line',
+            'Shape &Line Color', self.chshapeLineColor, icon='color-line',
             tip='Change the line color for this specific shape', enabled=False)
         shapeFillColor = action(
             'Shape &Fill Color', self.chshapeFillColor, icon='color',
@@ -1243,7 +1242,7 @@ def main():
 
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(newIcon("app"))
+    app.setWindowIcon(newIcon("icon"))
     win = MainWindow(
         filename=args.filename,
         output=args.output,
