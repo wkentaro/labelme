@@ -54,48 +54,10 @@ if sys.argv[1] == 'release':
     sys.exit(sum(subprocess.call(shlex.split(cmd)) for cmd in commands))
 
 
-here = osp.dirname(osp.abspath(__file__))
-
-
-def customize(command_subclass):
-    orig_run = command_subclass.run
-
-    def customized_run(self):
-        pyrcc = 'pyrcc{:d}'.format(PYQT_VERSION)
-        if find_executable(pyrcc) is None:
-            sys.stderr.write('Please install {:s} command.\n'.format(pyrcc))
-            sys.stderr.write('(See https://github.com/wkentaro/labelme.git)\n')
-            sys.exit(1)
-        package_dir = osp.join(here, 'labelme')
-        src = 'resources.qrc'
-        dst = 'resources.py'
-        cmd = '{pyrcc} -o {dst} {src}'.format(pyrcc=pyrcc, src=src, dst=dst)
-        print('+ {:s}'.format(cmd))
-        subprocess.call(shlex.split(cmd), cwd=package_dir)
-        orig_run(self)
-
-    command_subclass.run = customized_run
-    return command_subclass
-
-
-@customize
-class CustomDevelopCommand(DevelopCommand):
-    pass
-
-
-@customize
-class CustomInstallCommand(InstallCommand):
-    pass
-
-
 setup(
     name='labelme',
     version=version,
     packages=find_packages(),
-    cmdclass={
-        'develop': CustomDevelopCommand,
-        'install': CustomInstallCommand,
-    },
     description='Image Polygonal Annotation with Python.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -112,7 +74,7 @@ setup(
         'Operating System :: POSIX',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    package_data={'labelme': ['icons/*', 'resources.qrc']},
+    package_data={'labelme': ['icons/*']},
     entry_points={
         'console_scripts': [
             'labelme=labelme.app:main',

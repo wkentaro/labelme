@@ -1,4 +1,5 @@
 from math import sqrt
+import os.path as osp
 
 try:
     from PyQt5 import QtCore
@@ -10,8 +11,12 @@ except ImportError:
     from PyQt4 import QtGui as QtWidgets
 
 
+here = osp.dirname(osp.abspath(__file__))
+
+
 def newIcon(icon):
-    return QtGui.QIcon(':/' + icon)
+    icons_dir = osp.join(here, 'icons')
+    return QtGui.QIcon(osp.join(':/', icons_dir, '%s.png' % icon))
 
 
 def newButton(text, icon=None, slot=None):

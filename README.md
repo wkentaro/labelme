@@ -68,11 +68,11 @@ chmod u+x labelme_on_docker
 ```bash
 # Ubuntu 14.04 / Ubuntu 16.04
 # Python2
-# sudo apt-get install python-qt4 pyqt4-dev-tools  # PyQt4
-sudo apt-get install python-pyqt5 pyqt5-dev-tools  # PyQt5
+# sudo apt-get install python-qt4  # PyQt4
+sudo apt-get install python-pyqt5  # PyQt5
 sudo pip install labelme
 # Python3
-sudo apt-get install python3-pyqt5 pyqt5-dev-tools  # PyQt5
+sudo apt-get install python3-pyqt5  # PyQt5
 sudo pip3 install labelme
 ```
 
