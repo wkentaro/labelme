@@ -18,6 +18,7 @@ install_requires = [
     'numpy',
     'Pillow>=2.8.0',
     'PyYAML',
+    'qtpy',
 ]
 
 

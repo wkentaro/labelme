@@ -2,16 +2,10 @@ from __future__ import print_function
 
 import sys
 
-try:
-    from PyQt5 import QtCore
-    from PyQt5 import QtGui
-    from PyQt5 import QtWidgets
-    PYQT5 = True
-except ImportError:
-    from PyQt4 import QtCore
-    from PyQt4 import QtGui
-    from PyQt4 import QtGui as QtWidgets
-    PYQT5 = False
+from qtpy import PYQT5
+from qtpy import QtCore
+from qtpy import QtGui
+from qtpy import QtWidgets
 
 from labelme.lib import distance
 from labelme.shape import Shape
@@ -29,12 +23,12 @@ CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.pyqtSignal(int, QtCore.QPoint)
-    scrollRequest = QtCore.pyqtSignal(int, int)
-    newShape = QtCore.pyqtSignal()
-    selectionChanged = QtCore.pyqtSignal(bool)
-    shapeMoved = QtCore.pyqtSignal()
-    drawingPolygon = QtCore.pyqtSignal(bool)
+    zoomRequest = QtCore.Signal(int, QtCore.QPoint)
+    scrollRequest = QtCore.Signal(int, int)
+    newShape = QtCore.Signal()
+    selectionChanged = QtCore.Signal(bool)
+    shapeMoved = QtCore.Signal()
+    drawingPolygon = QtCore.Signal(bool)
 
     CREATE, EDIT = 0, 1
 
