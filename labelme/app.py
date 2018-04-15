@@ -255,8 +255,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         editMode = action('&Edit\nPolygons', self.setEditMode, 'Ctrl+J',
                           'edit', 'Move and edit polygons', enabled=False)
 
-        create = action('Create\nPolygo&n', self.createShape, 'Ctrl+N', 'new',
-                        'Draw a new polygon', enabled=False)
+        create = action('Create\nPolygo&n', self.createShape, 'Ctrl+N',
+                        'objects', 'Draw a new polygon', enabled=False)
         delete = action('Delete\nPolygon', self.deleteSelectedShape, 'Delete',
                         'cancel', 'Delete', enabled=False)
         copy = action('&Duplicate\nPolygon', self.copySelectedShape, 'Ctrl+D',
