@@ -2,10 +2,12 @@ from __future__ import print_function
 
 import sys
 
-from qtpy import PYQT5
+from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
+
+QT5 = QT_VERSION[0] == '5'
 
 from labelme.lib import distance
 from labelme.shape import Shape
@@ -95,7 +97,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-        if PYQT5:
+        if QT5:
             pos = self.transformPos(ev.pos())
         else:
             pos = self.transformPos(ev.posF())
@@ -186,7 +188,7 @@ class Canvas(QtWidgets.QWidget):
             self.hVertex, self.hShape = None, None
 
     def mousePressEvent(self, ev):
-        if PYQT5:
+        if QT5:
             pos = self.transformPos(ev.pos())
         else:
             pos = self.transformPos(ev.posF())
@@ -402,7 +404,10 @@ class Canvas(QtWidgets.QWidget):
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
-        return QtCore.QPointF(x, y)
+        if QT5:
+            return QtCore.QPoint(x, y)
+        else:
+            return QtCore.QPointF(x, y)
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
@@ -485,7 +490,7 @@ class Canvas(QtWidgets.QWidget):
         return super(Canvas, self).minimumSizeHint()
 
     def wheelEvent(self, ev):
-        if PYQT5:
+        if QT5:
             mods = ev.modifiers()
             delta = ev.angleDelta()
             if QtCore.Qt.ControlModifier == int(mods):

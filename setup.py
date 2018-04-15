@@ -21,24 +21,39 @@ install_requires = [
     'qtpy',
 ]
 
+# Find python binding for qt with priority:
+# PyQt5 -> PySide2 -> PyQt4,
+# and PyQt5 is automatically installed on Python3.
+QT_BINDING = None
 
 try:
     import PyQt5  # NOQA
-    PYQT_VERSION = 5
+    QT_BINDING = 'pyqt5'
 except ImportError:
+    pass
+
+if QT_BINDING is None:
+    try:
+        import PySide2  # NOQA
+        QT_BINDING = 'pyside2'
+    except ImportError:
+        pass
+
+if QT_BINDING is None:
     try:
         import PyQt4  # NOQA
-        PYQT_VERSION = 4
+        QT_BINDING = 'pyqt4'
     except ImportError:
         if PY2:
             sys.stderr.write(
-                'Please install PyQt4 or PyQt5 for Python2.\n'
+                'Please install PyQt5, PySide2 or PyQt4 for Python2.\n'
                 'Note that PyQt5 can be installed via pip for Python3.')
             sys.exit(1)
         assert PY3
         # PyQt5 can be installed via pip for Python3
         install_requires.append('pyqt5')
-        PYQT_VERSION = 5
+        QT_BINDING = 'pyqt5'
+del QT_BINDING
 
 
 if sys.argv[1] == 'release':

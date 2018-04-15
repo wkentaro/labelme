@@ -1,16 +1,16 @@
 import argparse
-import collections
 import functools
 import os.path
-import re
 import subprocess
 import sys
 
-from qtpy import PYQT5
+from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
+
+QT5 = QT_VERSION[0] == '5'
 
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
@@ -85,12 +85,12 @@ class LabelQListWidget(QtWidgets.QListWidget):
 
     def get_shape_from_item(self, item):
         for index, (item_, shape) in enumerate(self.itemsToShapes):
-            if item_ == item:
+            if item_ is item:
                 return shape
 
     def get_item_from_shape(self, shape):
         for index, (item, shape_) in enumerate(self.itemsToShapes):
-            if shape_ == shape:
+            if shape_ is shape:
                 return item
 
     def clear(self):
@@ -972,7 +972,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         filename = QtWidgets.QFileDialog.getOpenFileName(
             self, '%s - Choose Image or Label file' % __appname__,
             path, filters)
-        if qtpy.PYQT5:
+        if QT5:
             filename, _ = filename
         filename = str(filename)
         if filename:
@@ -1008,7 +1008,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         filename = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
             'Label files (*%s)' % LabelFile.suffix)
-        if qtpy.PYQT5:
+        if QT5:
             filename, _ = filename
         filename = str(filename)
         return filename

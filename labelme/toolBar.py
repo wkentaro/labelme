@@ -32,5 +32,5 @@ class ToolButton(QtWidgets.QToolButton):
         ms = super(ToolButton, self).minimumSizeHint()
         w1, h1 = ms.width(), ms.height()
         w2, h2 = self.minSize
-        ToolButton.minSize = max(w1, w2), max(h1, h2)
-        return QtCore.QSize(*ToolButton.minSize)
+        self.minSize = max(w1, w2), max(h1, h2)
+        return QtCore.QSize(*self.minSize)
