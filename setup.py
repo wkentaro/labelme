@@ -1,7 +1,3 @@
-from distutils.spawn import find_executable
-import os.path as osp
-from setuptools.command.develop import develop as DevelopCommand
-from setuptools.command.install import install as InstallCommand
 from setuptools import find_packages
 from setuptools import setup
 import shlex
