@@ -1,7 +1,4 @@
-try:
-    from PyQt5 import QtWidgets
-except ImportError:
-    from PyQt4 import QtGui as QtWidgets
+from qtpy import QtWidgets
 
 
 class ColorDialog(QtWidgets.QColorDialog):

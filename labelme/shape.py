@@ -1,7 +1,4 @@
-try:
-    from PyQt5 import QtGui
-except ImportError:
-    from PyQt4 import QtGui
+from qtpy import QtGui
 
 from .lib import distance
 

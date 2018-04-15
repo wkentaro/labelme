@@ -1,11 +1,6 @@
-try:
-    from PyQt5 import QtCore
-    from PyQt5 import QtGui
-    from PyQt5 import QtWidgets
-except ImportError:
-    from PyQt4 import QtCore
-    from PyQt4 import QtGui
-    from PyQt4 import QtGui as QtWidgets
+from qtpy import QtCore
+from qtpy import QtGui
+from qtpy import QtWidgets
 
 
 class ZoomWidget(QtWidgets.QSpinBox):
