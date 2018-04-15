@@ -8,5 +8,3 @@
 *.py[cdo]
 
 .DS_Store
-
-/labelme/resources.py
