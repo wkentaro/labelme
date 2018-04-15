@@ -19,7 +19,7 @@ Fig 1. Example of annotations for instance segmentation.
 
 - Ubuntu / macOS / Windows
 - Python2 / Python3
-- [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+- [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro) / [PySide2](https://wiki.qt.io/PySide2_GettingStarted)
 
 
 ## Installation
@@ -37,6 +37,7 @@ You need install [Anaconda](https://www.continuum.io/downloads), then run below:
 # python2
 conda create --name=labelme python=2.7
 source activate labelme
+# conda install -c conda-forge pyside2
 conda install pyqt
 pip install labelme
 # if you'd like to use the latest version. run below:
@@ -45,6 +46,7 @@ pip install labelme
 # python3
 conda create --name=labelme python=3.6
 source activate labelme
+# conda install -c conda-forge pyside2
 # conda install pyqt
 pip install pyqt5  # pyqt5 can be installed via pip on python3
 pip install labelme
