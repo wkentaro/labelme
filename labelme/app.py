@@ -441,7 +441,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         Shape.line_color = self.lineColor
         Shape.fill_color = self.fillColor
 
-        if self.settings.get('advanced', QtCore.QVariant()):
+        if self.settings.get('advanced', False):
             self.actions.advancedMode.setChecked(True)
             self.toggleAdvancedMode()
 
@@ -1175,36 +1175,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
         return images
-
-
-class Settings(object):
-
-    """Convenience dict-like wrapper around QSettings."""
-
-    def __init__(self, types=None):
-        self.data = QtCore.QSettings()
-        self.types = collections.defaultdict(
-            lambda: QtCore.QVariant, types if types else {})
-
-    def __setitem__(self, key, value):
-        t = self.types[key]
-        self.data.setValue(
-            key, t(value) if not isinstance(value, t) else value)
-
-    def __getitem__(self, key):
-        return self._cast(key, self.data.value(key))
-
-    def get(self, key, default=None):
-        return self._cast(key, self.data.value(key, default))
-
-    def _cast(self, key, value):
-        # XXX: Very nasty way of converting types to QVariant methods :P
-        t = self.types[key]
-        if t != QtCore.QVariant:
-            method = getattr(QtCore.QVariant,
-                             re.sub('^Q', 'to', t.__name__, count=1))
-            return method(value)
-        return value
 
 
 def inverted(color):
