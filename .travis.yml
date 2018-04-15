@@ -7,7 +7,7 @@ env:
     # used by ci-helpers
     - SETUP_XVFB=true PIP_DEPENDENCIES='hacking pytest pytest-qt'
   matrix:
-    - PYTEST_QT_API=pyqt4 PYQT_PACKAGE='pyqt=4' PYTHON_VERSION=2.7
+    - PYTEST_QT_API=pyqt4v2 PYQT_PACKAGE='pyqt=4' PYTHON_VERSION=2.7
     - PYTEST_QT_API=pyside2 CONDA_CHANNELS='conda-forge' PYQT_PACKAGE='pyside2' PYTHON_VERSION=2.7
     - PYTEST_QT_API=pyside2 CONDA_CHANNELS='conda-forge' PYQT_PACKAGE='pyside2' PYTHON_VERSION=3.6
     - PYTEST_QT_API=pyqt5 PYQT_PACKAGE='pyqt=5' PYTHON_VERSION=2.7
