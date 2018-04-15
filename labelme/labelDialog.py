@@ -1,7 +1,9 @@
-from qtpy import PYQT5
+from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
+
+QT5 = QT_VERSION[0] == '5'
 
 from .lib import labelValidator
 from .lib import newIcon
@@ -76,7 +78,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setText(item.text())
 
     def validate(self):
-        if PYQT5:
+        if QT5:
             if self.edit.text().strip():
                 self.accept()
         else:
@@ -84,7 +86,7 @@ class LabelDialog(QtWidgets.QDialog):
                 self.accept()
 
     def postProcess(self):
-        if PYQT5:
+        if QT5:
             self.edit.setText(self.edit.text().strip())
         else:
             self.edit.setText(self.edit.text().trimmed())
