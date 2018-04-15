@@ -78,18 +78,21 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setText(item.text())
 
     def validate(self):
-        if QT5:
-            if self.edit.text().strip():
-                self.accept()
+        text = self.edit.text()
+        if hasattr(text, 'strip'):
+            text = text.strip()
         else:
-            if self.edit.text().trimmed():
-                self.accept()
+            text = text.trimmed()
+        if text:
+            self.accept()
 
     def postProcess(self):
-        if QT5:
-            self.edit.setText(self.edit.text().strip())
+        text = self.edit.text()
+        if hasattr(text, 'strip'):
+            text = text.strip()
         else:
-            self.edit.setText(self.edit.text().trimmed())
+            text = text.trimmed()
+        self.edit.setText(text)
 
     def popUp(self, text=None, move=True):
         # if text is None, the previous label in self.edit is kept
