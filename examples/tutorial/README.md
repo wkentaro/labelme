@@ -36,6 +36,8 @@ It generates standard files from the JSON file.
 - [label_viz.png](apc2016_obj3_json/label_viz.png): Visualization of `label.png`.
 - [label_names.txt](apc2016_obj3_json/label_names.txt): Label names for values in `label.png`.
 
+## How to load label PNG file?
+
 Note that loading `label.png` is a bit difficult
 (`scipy.misc.imread`, `skimage.io.imread` may not work correctly),
 and please use `PIL.Image.open` to avoid unexpected behavior:
