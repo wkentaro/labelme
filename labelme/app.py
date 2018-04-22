@@ -422,6 +422,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.maxRecent = 7
         self.lineColor = None
         self.fillColor = None
+        self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
 
@@ -551,8 +552,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def resetState(self):
         self.labelList.clear()
         self.filename = None
+        self.imagePath = None
         self.imageData = None
         self.labelFile = None
+        self.otherData = None
         self.canvas.resetState()
 
     def currentItem(self):
@@ -727,7 +730,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self.imagePath, os.path.dirname(filename))
             imageData = self.imageData if self._store_data else None
             lf.save(filename, shapes, imagePath, imageData,
-                    self.lineColor.getRgb(), self.fillColor.getRgb())
+                    self.lineColor.getRgb(), self.fillColor.getRgb(),
+                    self.otherData)
             self.labelFile = lf
             # disable allows next and previous image to proceed
             # self.filename = filename
@@ -868,6 +872,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                                           self.labelFile.imagePath)
             self.lineColor = QtGui.QColor(*self.labelFile.lineColor)
             self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
+            self.otherData = self.labelFile.otherData
         else:
             # Load image:
             # read data first and store for saving into label file.
