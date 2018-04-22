@@ -386,7 +386,11 @@ class Canvas(QtWidgets.QWidget):
                 shape.fill = shape.selected or shape == self.hShape
                 shape.paint(p)
         if self.current:
-            self.current.paint(p)
+            current = self.current.copy()
+            if current.points[-1] != self.line[1]:
+                current.addPoint(self.line[1])
+            current.fill = True
+            current.paint(p)
             self.line.paint(p)
         if self.selectedShapeCopy:
             self.selectedShapeCopy.paint(p)
@@ -416,6 +420,7 @@ class Canvas(QtWidgets.QWidget):
     def finalise(self):
         assert self.current
         self.current.close()
+        self.hShape = self.current
         self.shapes.append(self.current)
         self.current = None
         self.setHiding(False)
