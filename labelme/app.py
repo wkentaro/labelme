@@ -225,12 +225,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                       'Quit application')
         open_ = action('&Open', self.openFile, 'Ctrl+O', 'open',
                        'Open image or label file')
-        opendir = action('&Open Dir', self.openDirDialog, 'Ctrl+u', 'open',
+        opendir = action('&Open Dir', self.openDirDialog, 'Ctrl+U', 'open',
                          u'Open Dir')
-        openNextImg = action('&Next Image', self.openNextImg, 'd', 'next',
+        openNextImg = action('&Next Image', self.openNextImg, 'D', 'next',
                              u'Open Next')
 
-        openPrevImg = action('&Prev Image', self.openPrevImg, 'a', 'prev',
+        openPrevImg = action('&Prev Image', self.openPrevImg, 'A', 'prev',
                              u'Open Prev')
         save = action('&Save', self.saveFile, 'Ctrl+S', 'save',
                       'Save labels to file', enabled=False)
@@ -282,10 +282,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.zoomWidget.setEnabled(False)
 
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 10),
-                        QtGui.QKeySequence.ZoomIn, 'zoom-in',
+                        'Ctrl++', 'zoom-in',
                         'Increase zoom level', enabled=False)
         zoomOut = action('&Zoom Out', functools.partial(self.addZoom, -10),
-                         QtGui.QKeySequence.ZoomOut, 'zoom-out',
+                         'Ctrl+-', 'zoom-out',
                          'Decrease zoom level', enabled=False)
         zoomOrg = action('&Original size',
                          functools.partial(self.setZoom, 100),
