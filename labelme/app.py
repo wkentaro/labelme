@@ -135,7 +135,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.dirty = False
 
         self._noSelectionSlot = False
-        self._beginner = True
         self.screencastViewer = "firefox"
         self.screencast = "screencast.ogv"
 
@@ -254,14 +253,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         createMode = action('Create\nPolygo&ns', self.setCreateMode,
                             shortcuts['create_polygon'], 'objects',
-                            'Start drawing polygons', enabled=False)
+                            'Start drawing polygons', enabled=True)
         editMode = action('&Edit\nPolygons', self.setEditMode,
                           shortcuts['edit_polygon'], 'edit',
                           'Move and edit polygons', enabled=False)
 
-        create = action('Create\nPolygo&n', self.createShape,
-                        shortcuts['create_polygon'], 'objects',
-                        'Draw a new polygon', enabled=False)
         delete = action('Delete\nPolygon', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
                         'Delete', enabled=False)
@@ -272,10 +268,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
                                shortcuts['undo_last_point'], 'undoLastPoint',
                                'Undo last drawn point', enabled=False)
-
-        advancedMode = action('&Advanced Mode', self.toggleAdvancedMode,
-                              'Ctrl+Shift+A', 'expert',
-                              'Switch to advanced mode', checkable=True)
 
         hideAll = action('&Hide\nPolygons',
                          functools.partial(self.togglePolygons, False),
@@ -352,25 +344,23 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions = struct(
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
-            create=create, delete=delete, edit=edit, copy=copy,
+            delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint,
             createMode=createMode, editMode=editMode,
-            advancedMode=advancedMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
-            beginner=(), advanced=(),
+            advanced=(),
             editMenu=(edit, copy, delete, None, undoLastPoint,
                       None, color1, color2),
-            beginnerContext=(create, edit, copy, delete, undoLastPoint),
             advancedContext=(
                 createMode, editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
                 undoLastPoint,
             ),
-            onLoadActive=(close, create, createMode, editMode),
+            onLoadActive=(close, createMode, editMode),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
 
@@ -387,7 +377,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                                      save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
-            labels, advancedMode, None,
+            labels, None,
             hideAll, showAll, None,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
@@ -395,21 +385,16 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], self.actions.beginnerContext)
+        addActions(self.canvas.menus[0], self.actions.advancedContext)
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
             action('&Move here', self.moveShape)))
 
         self.tools = self.toolbar('Tools')
-        self.actions.beginner = (
-            open_, opendir, openNextImg, openPrevImg, save,
-            None, create, copy, delete, None,
-            zoomIn, zoom, zoomOut, fitWindow, fitWidth)
-
         self.actions.advanced = (
-            open_, opendir, openNextImg, openPrevImg, save, None,
-            createMode, editMode, None,
-            hideAll, showAll)
+            open_, opendir, openNextImg, openPrevImg, save,
+            None, createMode, copy, delete, editMode, None,
+            zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
@@ -451,10 +436,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.settings.value('fill/color', Shape.fill_color))
         Shape.line_color = self.lineColor
         Shape.fill_color = self.fillColor
-
-        if self.settings.value('advanced', False):
-            self.actions.advancedMode.setChecked(True)
-            self.toggleAdvancedMode()
 
         # Populate the File menu dynamically.
         self.updateFileMenu()
@@ -509,35 +490,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def noShapes(self):
         return not self.labelList.itemsToShapes
 
-    def toggleAdvancedMode(self, value=True):
-        self._beginner = not value
-        self.canvas.setEditing(True)
-        self.populateModeActions()
-        self.editButton.setVisible(not value)
-        if value:
-            self.actions.createMode.setEnabled(True)
-            self.actions.editMode.setEnabled(False)
-            self.dock.setFeatures(self.dock.features() | self.dockFeatures)
-        else:
-            self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
-
     def populateModeActions(self):
-        if self.beginner():
-            tool, menu = self.actions.beginner, self.actions.beginnerContext
-        else:
-            tool, menu = self.actions.advanced, self.actions.advancedContext
+        tool, menu = self.actions.advanced, self.actions.advancedContext
         self.tools.clear()
         addActions(self.tools, tool)
         self.canvas.menus[0].clear()
         addActions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
-        actions = (self.actions.create,) if self.beginner() else \
-                  (self.actions.createMode, self.actions.editMode)
+        actions = (self.actions.createMode, self.actions.editMode)
         addActions(self.menus.edit, actions + self.actions.editMenu)
-
-    def setBeginner(self):
-        self.tools.clear()
-        addActions(self.tools, self.actions.beginner)
 
     def setAdvanced(self):
         self.tools.clear()
@@ -554,7 +515,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.create.setEnabled(True)
+        self.actions.createMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = '{} - {}'.format(title, self.filename)
@@ -593,21 +554,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.recentFiles.pop()
         self.recentFiles.insert(0, filename)
 
-    def beginner(self):
-        return self._beginner
-
-    def advanced(self):
-        return not self.beginner()
-
     # Callbacks
 
     def tutorial(self):
         subprocess.Popen([self.screencastViewer, self.screencast])
-
-    def createShape(self):
-        assert self.beginner()
-        self.canvas.setEditing(False)
-        self.actions.create.setEnabled(False)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
@@ -616,11 +566,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         """
         self.actions.editMode.setEnabled(not drawing)
         self.actions.undoLastPoint.setEnabled(drawing)
-        if not drawing and self.beginner():
-            # Cancel creation.
-            self.canvas.setEditing(True)
-            self.canvas.restoreCursor()
-            self.actions.create.setEnabled(True)
 
     def toggleDrawMode(self, edit=True):
         self.canvas.setEditing(edit)
@@ -628,11 +573,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.editMode.setEnabled(not edit)
 
     def setCreateMode(self):
-        assert self.advanced()
         self.toggleDrawMode(False)
 
     def setEditMode(self):
-        assert self.advanced()
         self.toggleDrawMode(True)
 
     def updateFileMenu(self):
@@ -792,11 +735,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         text = self.labelDialog.popUp(text)
         if text is not None:
             self.addLabel(self.canvas.setLastLabel(text))
-            if self.beginner():  # Switch to edit mode.
-                self.canvas.setEditing(True)
-                self.actions.create.setEnabled(True)
-            else:
-                self.actions.editMode.setEnabled(True)
+            self.actions.editMode.setEnabled(True)
             self.setDirty()
         else:
             self.canvas.undoLastLine()
@@ -967,7 +906,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.settings.setValue('line/color', self.lineColor)
         self.settings.setValue('fill/color', self.fillColor)
         self.settings.setValue('recentFiles', self.recentFiles)
-        self.settings.setValue('advanced', not self._beginner)
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
