@@ -1,9 +1,9 @@
 import argparse
 import functools
 import os.path
-import subprocess
 import sys
 import warnings
+import webbrowser
 
 from qtpy import QT_VERSION
 from qtpy import QtCore
@@ -134,8 +134,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.dirty = False
 
         self._noSelectionSlot = False
-        self.screencastViewer = "firefox"
-        self.screencast = "screencast.ogv"
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(parent=self, labels=labels,
@@ -276,7 +274,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                          icon='eye', tip='Show all polygons', enabled=False)
 
         help = action('&Tutorial', self.tutorial, icon='help',
-                      tip='Show screencast of introductory tutorial')
+                      tip='Show tutorial page')
 
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
@@ -552,7 +550,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     # Callbacks
 
     def tutorial(self):
-        subprocess.Popen([self.screencastViewer, self.screencast])
+        url = 'https://github.com/wkentaro/labelme/tree/master/examples/tutorial'  # NOQA
+        webbrowser.open(url)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
