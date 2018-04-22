@@ -86,7 +86,7 @@ setup(
         'Operating System :: POSIX',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    package_data={'labelme': ['icons/*']},
+    package_data={'labelme': ['icons/*', 'config/*.yaml']},
     entry_points={
         'console_scripts': [
             'labelme=labelme.app:main',
