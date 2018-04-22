@@ -909,7 +909,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def closeEvent(self, event):
         if not self.mayContinue():
             event.ignore()
-        s = self.settings
         self.settings.setValue(
             'filename', self.filename if self.filename else '')
         self.settings.setValue('window/size', self.size())
