@@ -126,7 +126,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
     def __init__(self, filename=None, output=None, store_data=True,
-                 labels=None, sort_labels=True):
+                 labels=None, sort_labels=True, auto_save=False):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -399,8 +399,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # Application state.
         self.image = QtGui.QImage()
         self.imagePath = None
+        if auto_save and output is not None:
+            warnings.warn('If `auto_save` argument is True, `output` argument '
+                          'is ignored and output filename is automatically '
+                          'set as IMAGE_BASENAME.json.')
         self.labeling_once = output is not None
         self.output = output
+        self._auto_save = auto_save
         self._store_data = store_data
         self.recentFiles = []
         self.maxRecent = 7
@@ -498,6 +503,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
+        if self._auto_save:
+            label_file = os.path.splitext(self.imagePath)[0] + '.json'
+            self.saveLabels(label_file)
+            return
         self.dirty = True
         self.actions.save.setEnabled(True)
         title = __appname__
@@ -1171,6 +1180,7 @@ def main():
     parser.add_argument('--output', '-O', '-o', help='output label name')
     parser.add_argument('--nodata', dest='store_data', action='store_false',
                         help='stop storing image data to JSON file')
+    parser.add_argument('--autosave', action='store_true', help='auto save')
     parser.add_argument('--labels',
                         help='comma separated list of labels OR file '
                         'containing one label per line')
@@ -1194,6 +1204,7 @@ def main():
         store_data=args.store_data,
         labels=args.labels,
         sort_labels=args.sort_labels,
+        auto_save=args.autosave,
     )
     win.show()
     win.raise_()
