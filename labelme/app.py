@@ -3,17 +3,20 @@ import functools
 import os.path
 import subprocess
 import sys
+import warnings
 
 from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
+import yaml
 
 QT5 = QT_VERSION[0] == '5'
 
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
+from labelme.config import default_config
 from labelme.labelDialog import LabelDialog
 from labelme.labelFile import LabelFile
 from labelme.labelFile import LabelFileError
@@ -219,44 +222,55 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                              QtWidgets.QDockWidget.DockWidgetFloatable)
         self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
 
+        config = self.getConfig()
+
         # Actions
         action = functools.partial(newAction, self)
-        quit = action('&Quit', self.close, 'Ctrl+Q', 'quit',
+        shortcuts = config['shortcuts']
+        quit = action('&Quit', self.close, shortcuts['quit'], 'quit',
                       'Quit application')
-        open_ = action('&Open', self.openFile, 'Ctrl+O', 'open',
+        open_ = action('&Open', self.openFile, shortcuts['open'], 'open',
                        'Open image or label file')
-        opendir = action('&Open Dir', self.openDirDialog, 'Ctrl+U', 'open',
-                         u'Open Dir')
-        openNextImg = action('&Next Image', self.openNextImg, 'D', 'next',
-                             u'Open Next')
+        opendir = action('&Open Dir', self.openDirDialog,
+                         shortcuts['open_dir'], 'open', u'Open Dir')
+        openNextImg = action('&Next Image', self.openNextImg,
+                             shortcuts['open_next'], 'next', u'Open Next')
 
-        openPrevImg = action('&Prev Image', self.openPrevImg, 'A', 'prev',
-                             u'Open Prev')
-        save = action('&Save', self.saveFile, 'Ctrl+S', 'save',
+        openPrevImg = action('&Prev Image', self.openPrevImg,
+                             shortcuts['open_prev'], 'prev', u'Open Prev')
+        save = action('&Save', self.saveFile, shortcuts['save'], 'save',
                       'Save labels to file', enabled=False)
-        saveAs = action('&Save As', self.saveFileAs, 'Ctrl+Shift+S', 'save-as',
-                        'Save labels to a different file', enabled=False)
-        close = action('&Close', self.closeFile, 'Ctrl+W', 'close',
+        saveAs = action('&Save As', self.saveFileAs, shortcuts['save_as'],
+                        'save-as', 'Save labels to a different file',
+                        enabled=False)
+        close = action('&Close', self.closeFile, shortcuts['close'], 'close',
                        'Close current file')
-        color1 = action('Polygon &Line Color', self.chooseColor1, 'Ctrl+L',
-                        'color_line', 'Choose polygon line color')
+        color1 = action('Polygon &Line Color', self.chooseColor1,
+                        shortcuts['edit_line_color'], 'color_line',
+                        'Choose polygon line color')
         color2 = action('Polygon &Fill Color', self.chooseColor2,
-                        'Ctrl+Shift+L', 'color', 'Choose polygon fill color')
+                        shortcuts['edit_fill_color'], 'color',
+                        'Choose polygon fill color')
 
-        createMode = action('Create\nPolygo&ns', self.setCreateMode, 'Ctrl+N',
-                            'objects', 'Start drawing polygons', enabled=False)
-        editMode = action('&Edit\nPolygons', self.setEditMode, 'Ctrl+J',
-                          'edit', 'Move and edit polygons', enabled=False)
+        createMode = action('Create\nPolygo&ns', self.setCreateMode,
+                            shortcuts['create_polygon'], 'objects',
+                            'Start drawing polygons', enabled=False)
+        editMode = action('&Edit\nPolygons', self.setEditMode,
+                          shortcuts['edit_polygon'], 'edit',
+                          'Move and edit polygons', enabled=False)
 
-        create = action('Create\nPolygo&n', self.createShape, 'Ctrl+N',
-                        'objects', 'Draw a new polygon', enabled=False)
-        delete = action('Delete\nPolygon', self.deleteSelectedShape, 'Delete',
-                        'cancel', 'Delete', enabled=False)
-        copy = action('&Duplicate\nPolygon', self.copySelectedShape, 'Ctrl+D',
-                      'copy', 'Create a duplicate of the selected polygon',
+        create = action('Create\nPolygo&n', self.createShape,
+                        shortcuts['create_polygon'], 'objects',
+                        'Draw a new polygon', enabled=False)
+        delete = action('Delete\nPolygon', self.deleteSelectedShape,
+                        shortcuts['delete_polygon'], 'cancel',
+                        'Delete', enabled=False)
+        copy = action('&Duplicate\nPolygon', self.copySelectedShape,
+                      shortcuts['duplicate_polygon'], 'copy',
+                      'Create a duplicate of the selected polygon',
                       enabled=False)
         undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
-                               ['Ctrl+Z', 'Backspace'], 'undoLastPoint',
+                               shortcuts['undo_last_point'], 'undoLastPoint',
                                'Undo last drawn point', enabled=False)
 
         advancedMode = action('&Advanced Mode', self.toggleAdvancedMode,
@@ -265,37 +279,41 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         hideAll = action('&Hide\nPolygons',
                          functools.partial(self.togglePolygons, False),
-                         'Ctrl+H', 'eye', 'Hide all polygons', enabled=False)
+                         icon='eye', tip='Hide all polygons', enabled=False)
         showAll = action('&Show\nPolygons',
                          functools.partial(self.togglePolygons, True),
-                         'Ctrl+A', 'eye', 'Show all polygons', enabled=False)
+                         icon='eye', tip='Show all polygons', enabled=False)
 
-        help = action('&Tutorial', self.tutorial, 'Ctrl+T', 'help',
-                      'Show screencast of introductory tutorial')
+        help = action('&Tutorial', self.tutorial, icon='help',
+                      tip='Show screencast of introductory tutorial')
 
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
             "Zoom in or out of the image. Also accessible with"
             " %s and %s from the canvas." %
-            (fmtShortcut("Ctrl+[-+]"), fmtShortcut("Ctrl+Wheel")))
+            (fmtShortcut('%s,%s' % (shortcuts['zoom_in'],
+                                    shortcuts['zoom_out'])),
+             fmtShortcut("Ctrl+Wheel")))
         self.zoomWidget.setEnabled(False)
 
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 10),
-                        'Ctrl++', 'zoom-in',
+                        shortcuts['zoom_in'], 'zoom-in',
                         'Increase zoom level', enabled=False)
         zoomOut = action('&Zoom Out', functools.partial(self.addZoom, -10),
-                         'Ctrl+-', 'zoom-out',
+                         shortcuts['zoom_out'], 'zoom-out',
                          'Decrease zoom level', enabled=False)
         zoomOrg = action('&Original size',
                          functools.partial(self.setZoom, 100),
-                         'Ctrl+0', 'zoom', 'Zoom to original size',
-                         enabled=False)
-        fitWindow = action('&Fit Window', self.setFitWindow, 'Ctrl+F',
-                           'fit-window', 'Zoom follows window size',
-                           checkable=True, enabled=False)
-        fitWidth = action('Fit &Width', self.setFitWidth, 'Ctrl+Shift+F',
-                          'fit-width', 'Zoom follows window width',
+                         shortcuts['zoom_to_original'], 'zoom',
+                         'Zoom to original size', enabled=False)
+        fitWindow = action('&Fit Window', self.setFitWindow,
+                           shortcuts['fit_window'], 'fit-window',
+                           'Zoom follows window size', checkable=True,
+                           enabled=False)
+        fitWidth = action('Fit &Width', self.setFitWidth,
+                          shortcuts['fit_width'], 'fit-width',
+                          'Zoom follows window width',
                           checkable=True, enabled=False)
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
@@ -308,8 +326,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.MANUAL_ZOOM: lambda: 1,
         }
 
-        edit = action('&Edit Label', self.editLabel, 'Ctrl+E', 'edit',
-                      'Modify the label of the selected polygon',
+        edit = action('&Edit Label', self.editLabel, shortcuts['edit_label'],
+                      'edit', 'Modify the label of the selected polygon',
                       enabled=False)
         self.editButton.setDefaultAction(edit)
 
@@ -322,7 +340,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         labels = self.dock.toggleViewAction()
         labels.setText('Show/Hide Label Panel')
-        labels.setShortcut('Ctrl+Shift+L')
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
@@ -456,6 +473,38 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         #    QWhatsThis.enterWhatsThisMode()
 
     # Support Functions
+
+    def getConfig(self):
+        # shortcuts for actions
+        home = os.path.expanduser('~')
+        config_file = os.path.join(home, '.labelmerc')
+
+        # default config
+        config = default_config.copy()
+
+        def update_dict(target_dict, new_dict):
+            for key, value in new_dict.items():
+                if key not in target_dict:
+                    print('Skipping unexpected key in config: {}'.format(key))
+                    continue
+                if isinstance(target_dict[key], dict) and \
+                        isinstance(value, dict):
+                    update_dict(target_dict[key], value)
+                else:
+                    target_dict[key] = value
+
+        if os.path.exists(config_file):
+            user_config = yaml.load(open(config_file)) or {}
+            update_dict(config, user_config)
+
+        # save config
+        try:
+            yaml.safe_dump(config, open(config_file, 'w'),
+                           default_flow_style=False)
+        except Exception:
+            warnings.warn('Failed to save config: {}'.format(config_file))
+
+        return config
 
     def noShapes(self):
         return not self.labelList.itemsToShapes
