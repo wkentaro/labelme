@@ -169,6 +169,8 @@ class Shape(object):
             shape.line_color = self.line_color
         if self.fill_color != Shape.fill_color:
             shape.fill_color = self.fill_color
+        shape._highlightIndex = self._highlightIndex
+        shape._highlightMode = self._highlightMode
         return shape
 
     def __len__(self):
