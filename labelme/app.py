@@ -1,5 +1,6 @@
 import argparse
 import functools
+import logging
 import os.path
 import re
 import sys
@@ -34,6 +35,10 @@ from labelme.zoomWidget import ZoomWidget
 
 
 __appname__ = 'labelme'
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__appname__)
 
 
 # FIXME
@@ -474,7 +479,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         def update_dict(target_dict, new_dict):
             for key, value in new_dict.items():
                 if key not in target_dict:
-                    print('Skipping unexpected key in config: {}'.format(key))
+                    logger.warn('Skipping unexpected key in config: {}'
+                                .format(key))
                     continue
                 if isinstance(target_dict[key], dict) and \
                         isinstance(value, dict):
@@ -1222,7 +1228,11 @@ def main():
                         help='label validation types')
     args = parser.parse_args()
 
-    if args.labels is not None:
+    if args.labels is None:
+        if args.validatelabel is not None:
+            logger.error('--labels must be specified with --validatelabel')
+            sys.exit(1)
+    else:
         if os.path.isfile(args.labels):
             args.labels = [l.strip() for l in open(args.labels, 'r')
                            if l.strip()]
