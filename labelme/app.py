@@ -1,6 +1,7 @@
 import argparse
 import functools
 import os.path
+import re
 import sys
 import warnings
 import webbrowser
@@ -126,7 +127,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
     def __init__(self, filename=None, output=None, store_data=True,
-                 labels=None, sort_labels=True, auto_save=False):
+                 labels=None, sort_labels=True, auto_save=False,
+                 validate_label=None):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -407,6 +409,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.output = output
         self._auto_save = auto_save
         self._store_data = store_data
+        if validate_label not in [None, 'exact', 'instance']:
+            raise ValueError('Unexpected `validate_label`: {}'
+                             .format(validate_label))
+        self._validate_label = validate_label
         self.recentFiles = []
         self.maxRecent = 7
         self.lineColor = None
@@ -600,11 +606,32 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def popLabelListMenu(self, point):
         self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
 
+    def validateLabel(self, label):
+        # no validation
+        if self._validate_label is None:
+            return True
+
+        for i in range(self.uniqLabelList.count()):
+            l = self.uniqLabelList.item(i).text()
+            if self._validate_label in ['exact', 'instance']:
+                if l == label:
+                    return True
+            if self._validate_label == 'instance':
+                m = re.match(r'^{}-[0-9]*$'.format(l), label)
+                if m:
+                    return True
+        return False
+
     def editLabel(self, item=None):
         if not self.canvas.editing():
             return
         item = item if item else self.currentItem()
         text = self.labelDialog.popUp(item.text())
+        if not self.validateLabel(text):
+            self.errorMessage('Invalid label',
+                              "Invalid label '{}' with validation type '{}'"
+                              .format(text, self._validate_label))
+            text = None
         if text is None:
             return
         item.setText(text)
@@ -736,12 +763,17 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if items:
             text = items[0].text()
         text = self.labelDialog.popUp(text)
-        if text is not None:
+        if not self.validateLabel(text):
+            self.errorMessage('Invalid label',
+                              "Invalid label '{}' with validation type '{}'"
+                              .format(text, self._validate_label))
+            text = None
+        if text is None:
+            self.canvas.undoLastLine()
+        else:
             self.addLabel(self.canvas.setLastLabel(text))
             self.actions.editMode.setEnabled(True)
             self.setDirty()
-        else:
-            self.canvas.undoLastLine()
 
     def scrollRequest(self, delta, orientation):
         units = - delta * 0.1  # natural scroll
@@ -1186,6 +1218,8 @@ def main():
                         'containing one label per line')
     parser.add_argument('--nosortlabels', dest='sort_labels',
                         action='store_false', help='stop sorting labels')
+    parser.add_argument('--validatelabel', choices=['exact', 'instance'],
+                        help='label validation types')
     args = parser.parse_args()
 
     if args.labels is not None:
@@ -1205,6 +1239,7 @@ def main():
         labels=args.labels,
         sort_labels=args.sort_labels,
         auto_save=args.autosave,
+        validate_label=args.validatelabel,
     )
     win.show()
     win.raise_()
