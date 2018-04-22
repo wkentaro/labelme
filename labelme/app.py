@@ -223,8 +223,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         action = functools.partial(newAction, self)
         quit = action('&Quit', self.close, 'Ctrl+Q', 'quit',
                       'Quit application')
-        open = action('&Open', self.openFile, 'Ctrl+O', 'open',
-                      'Open image or label file')
+        open_ = action('&Open', self.openFile, 'Ctrl+O', 'open',
+                       'Open image or label file')
         opendir = action('&Open Dir', self.openDirDialog, 'Ctrl+u', 'open',
                          u'Open Dir')
         openNextImg = action('&Next Image', self.openNextImg, 'd', 'next',
@@ -333,7 +333,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # Store actions for further handling.
         self.actions = struct(
-            save=save, saveAs=saveAs, open=open, close=close,
+            save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             create=create, delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint,
@@ -343,7 +343,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
-            fileMenuActions=(open, opendir, save, saveAs, close, quit),
+            fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             beginner=(), advanced=(),
             editMenu=(edit, copy, delete, None, undoLastPoint,
                       None, color1, color2),
@@ -366,7 +366,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             labelList=labelMenu,
         )
 
-        addActions(self.menus.file, (open, opendir, self.menus.recentFiles,
+        addActions(self.menus.file, (open_, opendir, self.menus.recentFiles,
                                      save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
@@ -385,12 +385,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         self.tools = self.toolbar('Tools')
         self.actions.beginner = (
-            open, opendir, openNextImg, openPrevImg, save,
+            open_, opendir, openNextImg, openPrevImg, save,
             None, create, copy, delete, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.actions.advanced = (
-            open, opendir, openNextImg, openPrevImg, save, None,
+            open_, opendir, openNextImg, openPrevImg, save, None,
             createMode, editMode, None,
             hideAll, showAll)
 
