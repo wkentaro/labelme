@@ -417,24 +417,24 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # XXX: Could be completely declarative.
         # Restore application settings.
-        self.settings = {}
-        self.recentFiles = self.settings.get('recentFiles', [])
-        size = self.settings.get('window/size', QtCore.QSize(600, 500))
-        position = self.settings.get('window/position', QtCore.QPoint(0, 0))
+        self.settings = QtCore.QSettings('labelme', 'labelme')
+        self.recentFiles = self.settings.value('recentFiles', [])
+        size = self.settings.value('window/size', QtCore.QSize(600, 500))
+        position = self.settings.value('window/position', QtCore.QPoint(0, 0))
         self.resize(size)
         self.move(position)
         # or simply:
         # self.restoreGeometry(settings['window/geometry']
         self.restoreState(
-            self.settings.get('window/state', QtCore.QByteArray()))
+            self.settings.value('window/state', QtCore.QByteArray()))
         self.lineColor = QtGui.QColor(
-            self.settings.get('line/color', Shape.line_color))
+            self.settings.value('line/color', Shape.line_color))
         self.fillColor = QtGui.QColor(
-            self.settings.get('fill/color', Shape.fill_color))
+            self.settings.value('fill/color', Shape.fill_color))
         Shape.line_color = self.lineColor
         Shape.fill_color = self.fillColor
 
-        if self.settings.get('advanced', False):
+        if self.settings.value('advanced', False):
             self.actions.advancedMode.setChecked(True)
             self.toggleAdvancedMode()
 
@@ -804,7 +804,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.resetState()
         self.canvas.setEnabled(False)
         if filename is None:
-            filename = self.settings.get('filename', '')
+            filename = self.settings.value('filename', '')
         filename = str(filename)
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
@@ -910,16 +910,17 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if not self.mayContinue():
             event.ignore()
         s = self.settings
-        s['filename'] = self.filename if self.filename else ''
-        s['window/size'] = self.size()
-        s['window/position'] = self.pos()
-        s['window/state'] = self.saveState()
-        s['line/color'] = self.lineColor
-        s['fill/color'] = self.fillColor
-        s['recentFiles'] = self.recentFiles
-        s['advanced'] = not self._beginner
+        self.settings.setValue(
+            'filename', self.filename if self.filename else '')
+        self.settings.setValue('window/size', self.size())
+        self.settings.setValue('window/position', self.pos())
+        self.settings.setValue('window/state', self.saveState())
+        self.settings.setValue('line/color', self.lineColor)
+        self.settings.setValue('fill/color', self.fillColor)
+        self.settings.setValue('recentFiles', self.recentFiles)
+        self.settings.setValue('advanced', not self._beginner)
         # ask the use for where to save the labels
-        # s['window/geometry'] = self.saveGeometry()
+        # self.settings.setValue('window/geometry', self.saveGeometry())
 
     # User Dialogs #
 
