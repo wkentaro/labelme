@@ -42,7 +42,6 @@ __appname__ = 'labelme'
 # - [high] Automatically add file suffix when saving.
 # - [high] Add polygon movement with arrow keys
 # - [high] Deselect shape when clicking and already selected(?)
-# - [high] Sanitize shortcuts between beginner/advanced mode.
 # - [medium] Zoom should keep the image centered.
 # - [medium] Add undo button for vertex addition.
 # - [low,maybe] Open images with drag & drop.
@@ -352,10 +351,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
-            advanced=(),
+            tool=(),
             editMenu=(edit, copy, delete, None, undoLastPoint,
                       None, color1, color2),
-            advancedContext=(
+            menu=(
                 createMode, editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
                 undoLastPoint,
@@ -385,13 +384,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], self.actions.advancedContext)
+        addActions(self.canvas.menus[0], self.actions.menu)
         addActions(self.canvas.menus[1], (
             action('&Copy here', self.copyShape),
             action('&Move here', self.moveShape)))
 
         self.tools = self.toolbar('Tools')
-        self.actions.advanced = (
+        self.actions.tool = (
             open_, opendir, openNextImg, openPrevImg, save,
             None, createMode, copy, delete, editMode, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
@@ -491,7 +490,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         return not self.labelList.itemsToShapes
 
     def populateModeActions(self):
-        tool, menu = self.actions.advanced, self.actions.advancedContext
+        tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
         addActions(self.tools, tool)
         self.canvas.menus[0].clear()
@@ -499,10 +498,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.menus.edit.clear()
         actions = (self.actions.createMode, self.actions.editMode)
         addActions(self.menus.edit, actions + self.actions.editMenu)
-
-    def setAdvanced(self):
-        self.tools.clear()
-        addActions(self.tools, self.actions.advanced)
 
     def setDirty(self):
         self.dirty = True
