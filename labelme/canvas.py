@@ -41,6 +41,7 @@ class Canvas(QtWidgets.QWidget):
         # Initialise local state.
         self.mode = self.EDIT
         self.shapes = []
+        self.shapesBackups = []
         self.current = None
         self.selectedShape = None  # save the selected shape here
         self.selectedShapeCopy = None
@@ -62,6 +63,29 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+
+    def storeShapes(self):
+        shapesBackup = []
+        for shape in self.shapes:
+            shapesBackup.append(shape.copy())
+        if len(self.shapesBackups) >= 10:
+            self.shapesBackups = self.shapesBackups[-9:]
+        self.shapesBackups.append(shapesBackup)
+
+    @property
+    def isShapeRestorable(self):
+        if len(self.shapesBackups) < 2:
+            return False
+        return True
+
+    def restoreShape(self):
+        if not self.isShapeRestorable:
+            return
+        self.shapesBackups.pop()  # latest
+        shapesBackup = self.shapesBackups.pop()
+        self.shapes = shapesBackup
+        self.storeShapes()
+        self.repaint()
 
     def enterEvent(self, ev):
         self.overrideCursor(self._cursor)
@@ -140,16 +164,17 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon/Vertex moving.
+        self.movingShape = False
         if QtCore.Qt.LeftButton & ev.buttons():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
-                self.shapeMoved.emit()
                 self.repaint()
+                self.movingShape = True
             elif self.selectedShape and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShape(self.selectedShape, pos)
-                self.shapeMoved.emit()
                 self.repaint()
+                self.movingShape = True
             return
 
         # Just hovering over the canvas, 2 posibilities:
@@ -230,6 +255,9 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShape:
             self.overrideCursor(CURSOR_GRAB)
+        if self.movingShape:
+            self.storeShapes()
+            self.shapeMoved.emit()
 
     def endMove(self, copy=False):
         assert self.selectedShape and self.selectedShapeCopy
@@ -245,6 +273,7 @@ class Canvas(QtWidgets.QWidget):
             shape.label = self.selectedShape.label
             self.deleteSelected()
             self.shapes.append(shape)
+        self.storeShapes()
         self.selectedShapeCopy = None
 
     def hideBackroundShapes(self, value):
@@ -341,6 +370,7 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShape:
             shape = self.selectedShape
             self.shapes.remove(self.selectedShape)
+            self.storeShapes()
             self.selectedShape = None
             self.update()
             return shape
@@ -350,6 +380,7 @@ class Canvas(QtWidgets.QWidget):
             shape = self.selectedShape.copy()
             self.deSelectShape()
             self.shapes.append(shape)
+            self.storeShapes()
             shape.selected = True
             self.selectedShape = shape
             self.boundedShiftShape(shape)
@@ -417,6 +448,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
+        self.storeShapes()
         self.current = None
         self.setHiding(False)
         self.newShape.emit()
@@ -529,6 +561,8 @@ class Canvas(QtWidgets.QWidget):
     def setLastLabel(self, text):
         assert text
         self.shapes[-1].label = text
+        self.shapesBackups.pop()
+        self.storeShapes()
         return self.shapes[-1]
 
     def undoLastLine(self):
@@ -556,6 +590,7 @@ class Canvas(QtWidgets.QWidget):
 
     def loadShapes(self, shapes):
         self.shapes = list(shapes)
+        self.storeShapes()
         self.current = None
         self.repaint()
 
@@ -574,4 +609,5 @@ class Canvas(QtWidgets.QWidget):
     def resetState(self):
         self.restoreCursor()
         self.pixmap = None
+        self.shapesBackups = []
         self.update()
