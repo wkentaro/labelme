@@ -116,7 +116,7 @@ class LabelQListWidget(QtWidgets.QListWidget):
         if self.canvas is None:
             raise RuntimeError('self.canvas must be set beforehand.')
         self.parent.setDirty()
-        self.canvas.shapes = self.shapes
+        self.canvas.loadShapes(shapes)
 
     @property
     def shapes(self):
@@ -270,8 +270,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                       'Create a duplicate of the selected polygon',
                       enabled=False)
         undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
-                               shortcuts['undo_last_point'], 'undoLastPoint',
+                               shortcuts['undo_last_point'], 'undo',
                                'Undo last drawn point', enabled=False)
+
+        undo = action('Undo', self.undoShapeEdit, shortcuts['undo'], 'undo',
+                      'Undo last add and edit of shape', enabled=False)
 
         hideAll = action('&Hide\nPolygons',
                          functools.partial(self.togglePolygons, False),
@@ -349,7 +352,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             delete=delete, edit=edit, copy=copy,
-            undoLastPoint=undoLastPoint,
+            undoLastPoint=undoLastPoint, undo=undo,
             createMode=createMode, editMode=editMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
@@ -357,12 +360,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             zoomActions=zoomActions,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
-            editMenu=(edit, copy, delete, None, undoLastPoint,
+            editMenu=(edit, copy, delete, None, undo, undoLastPoint,
                       None, color1, color2),
             menu=(
                 createMode, editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
-                undoLastPoint,
+                undo, undoLastPoint,
             ),
             onLoadActive=(close, createMode, editMode),
             onShapesPresent=(saveAs, hideAll, showAll),
@@ -397,7 +400,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.tools = self.toolbar('Tools')
         self.actions.tool = (
             open_, opendir, openNextImg, openPrevImg, save,
-            None, createMode, copy, delete, editMode, None,
+            None, createMode, copy, delete, editMode, undo, None,
             zoomIn, zoom, zoomOut, fitWindow, fitWidth)
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -522,6 +525,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
+        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
         title = __appname__
         if self.filename is not None:
             title = '{} - {}*'.format(title, self.filename)
@@ -573,6 +577,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     # Callbacks
 
+    def undoShapeEdit(self):
+        self.canvas.restoreShape()
+        self.labelList.clear()
+        self.uniqLabelList.clear()
+        self.loadShapes(self.canvas.shapes)
+        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
+
     def tutorial(self):
         url = 'https://github.com/wkentaro/labelme/tree/master/examples/tutorial'  # NOQA
         webbrowser.open(url)
@@ -584,6 +595,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         """
         self.actions.editMode.setEnabled(not drawing)
         self.actions.undoLastPoint.setEnabled(drawing)
+        self.actions.undo.setEnabled(not drawing)
 
     def toggleDrawMode(self, edit=True):
         self.canvas.setEditing(edit)
@@ -698,6 +710,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         item = self.labelList.get_item_from_shape(shape)
         self.labelList.takeItem(self.labelList.row(item))
 
+    def loadShapes(self, shapes):
+        for shape in shapes:
+            self.addLabel(shape)
+        self.canvas.loadShapes(shapes)
+
     def loadLabels(self, shapes):
         s = []
         for label, points, line_color, fill_color in shapes:
@@ -706,12 +723,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
             s.append(shape)
-            self.addLabel(shape)
             if line_color:
                 shape.line_color = QtGui.QColor(*line_color)
             if fill_color:
                 shape.fill_color = QtGui.QColor(*fill_color)
-        self.canvas.loadShapes(s)
+        self.loadShapes(s)
 
     def saveLabels(self, filename):
         lf = LabelFile()
@@ -780,9 +796,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             text = None
         if text is None:
             self.canvas.undoLastLine()
+            self.canvas.shapesBackups.pop()
         else:
             self.addLabel(self.canvas.setLastLabel(text))
             self.actions.editMode.setEnabled(True)
+            self.actions.undoLastPoint.setEnabled(False)
+            self.actions.undo.setEnabled(True)
             self.setDirty()
 
     def scrollRequest(self, delta, orientation):
@@ -835,6 +854,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
+        # changing fileListWidget loads file
+        if (filename in self.imageList and
+                self.fileListWidget.currentRow() !=
+                self.imageList.index(filename)):
+            self.fileListWidget.setCurrentRow(self.imageList.index(filename))
+            return
+
         self.resetState()
         self.canvas.setEnabled(False)
         if filename is None:
@@ -904,8 +930,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.addRecentFile(self.filename)
         self.toggleActions(True)
         self.status("Loaded %s" % os.path.basename(str(filename)))
-        if filename in self.imageList:
-            self.fileListWidget.setCurrentRow(self.imageList.index(filename))
         return True
 
     def resizeEvent(self, event):
@@ -977,7 +1001,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if filename:
                 self.loadFile(filename)
 
-    def openNextImg(self, _value=False):
+    def openNextImg(self, _value=False, load=True):
         if not self.mayContinue():
             return
 
@@ -991,9 +1015,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             currIndex = self.imageList.index(self.filename)
             if currIndex + 1 < len(self.imageList):
                 filename = self.imageList[currIndex + 1]
+        self.filename = filename
 
-        if filename:
-            self.loadFile(filename)
+        if self.filename and load:
+            self.loadFile(self.filename)
 
     def openFile(self, _value=False):
         if not self.mayContinue():
@@ -1188,7 +1213,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for imgPath in self.scanAllImages(dirpath):
             item = QtWidgets.QListWidgetItem(imgPath)
             self.fileListWidget.addItem(item)
-        self.openNextImg()
+        self.openNextImg(load=False)
 
     def scanAllImages(self, folderPath):
         extensions = ['.%s' % fmt.data().decode("ascii").lower()
