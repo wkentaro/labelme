@@ -52,6 +52,7 @@ class Canvas(QtWidgets.QWidget):
         self.hideBackround = False
         self.hShape = None
         self.hVertex = None
+        self.movingShape = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
