@@ -55,7 +55,8 @@ class Shape(object):
             self.line_color = line_color
 
     def close(self):
-        logger.warn('Polygon should be created with points >2')
+        if len(self.points) <= 2:
+            logger.warn('Polygon should be created with points >2')
         self._closed = True
 
     def addPoint(self, point):
