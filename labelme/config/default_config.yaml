@@ -19,6 +19,7 @@ shortcuts:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
+  undo: Ctrl+Z
   undo_last_point: [Ctrl+Z, Backspace]
   edit_label: Ctrl+E
   edit_line_color: Ctrl+L
