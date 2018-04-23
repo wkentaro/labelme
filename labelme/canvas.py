@@ -1,7 +1,3 @@
-from __future__ import print_function
-
-import sys
-
 from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
@@ -220,11 +216,7 @@ class Canvas(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
-                    try:
-                        self.current.addPoint(self.line[1])
-                    except Exception as e:
-                        print(e, file=sys.stderr)
-                        return
+                    self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
                     if self.current.isClosed():
                         self.finalise()

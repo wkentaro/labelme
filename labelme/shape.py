@@ -1,6 +1,7 @@
 from qtpy import QtGui
 
-from .lib import distance
+from labelme.lib import distance
+from labelme import logger
 
 
 # TODO(unknown):
@@ -54,7 +55,7 @@ class Shape(object):
             self.line_color = line_color
 
     def close(self):
-        assert len(self.points) > 2, 'Polygon should be created with points >2'
+        logger.warn('Polygon should be created with points >2')
         self._closed = True
 
     def addPoint(self, point):

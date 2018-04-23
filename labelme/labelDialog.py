@@ -5,8 +5,8 @@ from qtpy import QtWidgets
 
 QT5 = QT_VERSION[0] == '5'
 
-from .lib import labelValidator
-from .lib import newIcon
+from labelme.lib import labelValidator
+from labelme.lib import newIcon
 
 
 # TODO(unknown):
