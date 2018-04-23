@@ -1,6 +1,5 @@
 import argparse
 import functools
-import logging
 import os.path
 import re
 import sys
@@ -12,13 +11,13 @@ from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
-import yaml
 
 QT5 = QT_VERSION[0] == '5'
 
+from labelme import __appname__
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
-from labelme.config import default_config
+from labelme.config import get_config
 from labelme.labelDialog import LabelDialog
 from labelme.labelFile import LabelFile
 from labelme.labelFile import LabelFileError
@@ -27,18 +26,12 @@ from labelme.lib import fmtShortcut
 from labelme.lib import newAction
 from labelme.lib import newIcon
 from labelme.lib import struct
+from labelme import logger
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
 from labelme.toolBar import ToolBar
 from labelme.zoomWidget import ZoomWidget
-
-
-__appname__ = 'labelme'
-
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__appname__)
 
 
 # FIXME
@@ -133,9 +126,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def __init__(self, filename=None, output=None, store_data=True,
                  labels=None, sort_labels=True, auto_save=False,
-                 validate_label=None):
+                 validate_label=None, config=None):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
+
+        if config is None:
+            config = get_config()
 
         # Whether we need to save or not.
         self.dirty = False
@@ -224,8 +220,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.dockFeatures = (QtWidgets.QDockWidget.DockWidgetClosable |
                              QtWidgets.QDockWidget.DockWidgetFloatable)
         self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
-
-        config = self.getConfig()
 
         # Actions
         action = functools.partial(newAction, self)
@@ -471,39 +465,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         #    QWhatsThis.enterWhatsThisMode()
 
     # Support Functions
-
-    def getConfig(self):
-        # shortcuts for actions
-        home = os.path.expanduser('~')
-        config_file = os.path.join(home, '.labelmerc')
-
-        # default config
-        config = default_config.copy()
-
-        def update_dict(target_dict, new_dict):
-            for key, value in new_dict.items():
-                if key not in target_dict:
-                    logger.warn('Skipping unexpected key in config: {}'
-                                .format(key))
-                    continue
-                if isinstance(target_dict[key], dict) and \
-                        isinstance(value, dict):
-                    update_dict(target_dict[key], value)
-                else:
-                    target_dict[key] = value
-
-        if os.path.exists(config_file):
-            user_config = yaml.load(open(config_file)) or {}
-            update_dict(config, user_config)
-
-        # save config
-        try:
-            yaml.safe_dump(config, open(config_file, 'w'),
-                           default_flow_style=False)
-        except Exception:
-            warnings.warn('Failed to save config: {}'.format(config_file))
-
-        return config
 
     def noShapes(self):
         return not self.labelList.itemsToShapes
