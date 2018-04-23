@@ -260,7 +260,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                             'Start drawing polygons', enabled=True)
         editMode = action('&Edit\nPolygons', self.setEditMode,
                           shortcuts['edit_polygon'], 'edit',
-                          'Move and edit polygons', enabled=False)
+                          'Move and edit polygons', enabled=True)
 
         delete = action('Delete\nPolygon', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
