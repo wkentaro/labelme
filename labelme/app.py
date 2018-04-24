@@ -424,7 +424,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.fit_window = False
 
         if filename is not None and os.path.isdir(filename):
-            self.importDirImages(filename)
+            self.importDirImages(filename, load=False)
         else:
             self.filename = filename
 
@@ -1164,7 +1164,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             lst.append(item.text())
         return lst
 
-    def importDirImages(self, dirpath):
+    def importDirImages(self, dirpath, load=True):
         if not self.mayContinue() or not dirpath:
             return
 
@@ -1174,7 +1174,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for imgPath in self.scanAllImages(dirpath):
             item = QtWidgets.QListWidgetItem(imgPath)
             self.fileListWidget.addItem(item)
-        self.openNextImg(load=False)
+        self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):
         extensions = ['.%s' % fmt.data().decode("ascii").lower()
