@@ -86,7 +86,7 @@ def polygons_to_mask(img_shape, polygons):
     return mask
 
 
-def draw_label(label, img, label_names, colormap=None):
+def draw_label(label, img=None, label_names=None, colormap=None):
     import matplotlib.pyplot as plt
     backend_org = plt.rcParams['backend']
     plt.switch_backend('agg')
@@ -96,6 +96,9 @@ def draw_label(label, img, label_names, colormap=None):
     plt.margins(0, 0)
     plt.gca().xaxis.set_major_locator(plt.NullLocator())
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
+
+    if label_names is None:
+        label_names = [str(l) for l in range(label.max() + 1)]
 
     if colormap is None:
         colormap = label_colormap(len(label_names))
@@ -124,7 +127,7 @@ def draw_label(label, img, label_names, colormap=None):
 
     plt.switch_backend(backend_org)
 
-    out_size = (img.shape[1], img.shape[0])
+    out_size = (label_viz.shape[1], label_viz.shape[0])
     out = PIL.Image.open(f).resize(out_size, PIL.Image.BILINEAR).convert('RGB')
     out = np.asarray(out)
     return out

@@ -56,3 +56,11 @@ array([0, 1, 2, 3], dtype=int32)
 >>> lbl.shape
 (907, 1210)
 ```
+
+Also, you can see the label PNG file by:
+
+```python
+labelme_draw_label_png apc2016_obj3_json/label.png
+```
+
+<img src=".readme/draw_label_png.jpg" width="35%" />
