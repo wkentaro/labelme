@@ -10,7 +10,7 @@ PY2 = sys.version_info[0] == 2
 assert PY3 or PY2
 
 
-version = '2.11.0'
+version = '2.12.0'
 
 
 install_requires = [
