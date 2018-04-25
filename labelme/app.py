@@ -15,6 +15,7 @@ from qtpy import QtWidgets
 QT5 = QT_VERSION[0] == '5'
 
 from labelme import __appname__
+from labelme import __version__
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
 from labelme.config import get_config
@@ -1205,6 +1206,8 @@ def read(filename, default=None):
 def main():
     """Standard boilerplate Qt application code."""
     parser = argparse.ArgumentParser()
+    parser.add_argument('--version', '-V', action='store_true',
+                        help='show version')
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('--output', '-O', '-o', help='output label name')
     parser.add_argument('--nodata', dest='store_data', action='store_false',
@@ -1218,6 +1221,10 @@ def main():
     parser.add_argument('--validatelabel', choices=['exact', 'instance'],
                         help='label validation types')
     args = parser.parse_args()
+
+    if args.version:
+        print('{0} {1}'.format(__appname__, __version__))
+        sys.exit(0)
 
     if args.labels is None:
         if args.validatelabel is not None:
