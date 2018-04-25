@@ -6,7 +6,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['app.py'],
+    ['labelme/app.py'],
     pathex=['.'],
     binaries=[],
     datas=[
