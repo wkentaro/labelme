@@ -39,14 +39,10 @@ from labelme.zoomWidget import ZoomWidget
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
 # TODO(unknown):
-# - [high] Automatically add file suffix when saving.
 # - [high] Add polygon movement with arrow keys
 # - [high] Deselect shape when clicking and already selected(?)
-# - [medium] Zoom should keep the image centered.
-# - [medium] Add undo button for vertex addition.
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
-# - [low,maybe] Sortable label list.
 # - Zoom is too "steppy".
 
 
