@@ -606,12 +606,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return
         item = item if item else self.currentItem()
         text = self.labelDialog.popUp(item.text())
+        if text is None:
+            return
         if not self.validateLabel(text):
             self.errorMessage('Invalid label',
                               "Invalid label '{}' with validation type '{}'"
                               .format(text, self._validate_label))
-            text = None
-        if text is None:
             return
         item.setText(text)
         self.setDirty()
@@ -747,7 +747,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if items:
             text = items[0].text()
         text = self.labelDialog.popUp(text)
-        if not self.validateLabel(text):
+        if text is not None and not self.validateLabel(text):
             self.errorMessage('Invalid label',
                               "Invalid label '{}' with validation type '{}'"
                               .format(text, self._validate_label))
