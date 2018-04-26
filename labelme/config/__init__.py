@@ -9,17 +9,22 @@ from labelme import logger
 here = osp.dirname(osp.abspath(__file__))
 
 
-def update_dict(target_dict, new_dict):
+def update_dict(target_dict, new_dict, validate_item=None):
     for key, value in new_dict.items():
+        if validate_item:
+            validate_item(key, value)
         if key not in target_dict:
             logger.warn('Skipping unexpected key in config: {}'
                         .format(key))
             continue
         if isinstance(target_dict[key], dict) and \
                 isinstance(value, dict):
-            update_dict(target_dict[key], value)
+            update_dict(target_dict[key], value, validate_item=validate_item)
         else:
             target_dict[key] = value
+
+
+# -----------------------------------------------------------------------------
 
 
 def get_default_config():
@@ -28,23 +33,35 @@ def get_default_config():
     return config
 
 
-def get_config():
+def validate_config_item(key, value):
+    if key == 'validate_label' and value not in [None, 'exact', 'instance']:
+        raise ValueError('Unexpected value `{}` for key `{}`'
+                         .format(value, key))
+
+
+def get_config(config_from_args=None, config_file=None):
     # default config
     config = get_default_config()
 
-    # shortcuts for actions
-    home = os.path.expanduser('~')
-    config_file = os.path.join(home, '.labelmerc')
+    if config_from_args is not None:
+        update_dict(config, config_from_args,
+                    validate_item=validate_config_item)
+
+    save_config_file = False
+    if config_file is None:
+        home = os.path.expanduser('~')
+        config_file = os.path.join(home, '.labelmerc')
+        save_config_file = True
 
     if os.path.exists(config_file):
         user_config = yaml.load(open(config_file)) or {}
-        update_dict(config, user_config)
+        update_dict(config, user_config, validate_item=validate_config_item)
 
-    # save config
-    try:
-        yaml.safe_dump(config, open(config_file, 'w'),
-                       default_flow_style=False)
-    except Exception:
-        logger.warn('Failed to save config: {}'.format(config_file))
+    if save_config_file:
+        try:
+            yaml.safe_dump(config, open(config_file, 'w'),
+                           default_flow_style=False)
+        except Exception:
+            logger.warn('Failed to save config: {}'.format(config_file))
 
     return config
