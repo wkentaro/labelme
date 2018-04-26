@@ -29,7 +29,8 @@ def update_dict(target_dict, new_dict, validate_item=None):
 
 def get_default_config():
     config_file = osp.join(here, 'default_config.yaml')
-    config = yaml.load(open(config_file))
+    with open(config_file) as f:
+        config = yaml.load(f)
     return config
 
 
@@ -54,13 +55,14 @@ def get_config(config_from_args=None, config_file=None):
         save_config_file = True
 
     if os.path.exists(config_file):
-        user_config = yaml.load(open(config_file)) or {}
+        with open(config_file) as f:
+            user_config = yaml.load(f) or {}
         update_dict(config, user_config, validate_item=validate_config_item)
 
     if save_config_file:
         try:
-            yaml.safe_dump(config, open(config_file, 'w'),
-                           default_flow_style=False)
+            with open(config_file, 'w') as f:
+                yaml.safe_dump(config, f, default_flow_style=False)
         except Exception:
             logger.warn('Failed to save config: {}'.format(config_file))
 
