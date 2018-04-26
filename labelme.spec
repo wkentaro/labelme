@@ -7,7 +7,7 @@ block_cipher = None
 
 a = Analysis(
     ['labelme/app.py'],
-    pathex=['.'],
+    pathex=['labelme'],
     binaries=[],
     datas=[
         ('labelme/config/default_config.yaml', 'labelme/config'),

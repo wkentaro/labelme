@@ -1,3 +1,5 @@
+import imp
+import os.path
 from setuptools import find_packages
 from setuptools import setup
 import shlex
@@ -10,7 +12,10 @@ PY2 = sys.version_info[0] == 2
 assert PY3 or PY2
 
 
-version = '2.12.0'
+here = os.path.abspath(os.path.dirname(__file__))
+version = imp.load_source(
+    '_version', os.path.join(here, 'labelme', '_version.py')).__version__
+del here
 
 
 install_requires = [
