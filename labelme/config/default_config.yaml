@@ -1,3 +1,11 @@
+auto_save: false
+store_data: true
+
+labels: null
+sort_labels: true
+validate_label: null
+show_label_text_field: true
+
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O

@@ -121,14 +121,14 @@ class LabelQListWidget(QtWidgets.QListWidget):
 class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
-    def __init__(self, filename=None, output=None, store_data=True,
-                 labels=None, sort_labels=True, auto_save=False,
-                 validate_label=None, config=None):
-        super(MainWindow, self).__init__()
-        self.setWindowTitle(__appname__)
-
+    def __init__(self, config=None, filename=None, output=None):
+        # see labelme/config/default_config.yaml for valid configuration
         if config is None:
             config = get_config()
+        self._config = config
+
+        super(MainWindow, self).__init__()
+        self.setWindowTitle(__appname__)
 
         # Whether we need to save or not.
         self.dirty = False
@@ -136,8 +136,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self._noSelectionSlot = False
 
         # Main widgets and related state.
-        self.labelDialog = LabelDialog(parent=self, labels=labels,
-                                       sort_labels=sort_labels)
+        self.labelDialog = LabelDialog(
+            parent=self,
+            labels=self._config['labels'],
+            sort_labels=self._config['sort_labels'],
+            show_text_field=self._config['show_label_text_field'],
+        )
 
         self.labelList = LabelQListWidget()
         self.lastOpenDir = None
@@ -164,8 +168,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.uniqLabelList.setToolTip(
             "Select label to start annotating for it. "
             "Press 'Esc' to deselect.")
-        if labels:
-            self.uniqLabelList.addItems(labels)
+        if self._config['labels']:
+            self.uniqLabelList.addItems(self._config['labels'])
             self.uniqLabelList.sortItems()
         self.labelsdock = QtWidgets.QDockWidget(u'Label List', self)
         self.labelsdock.setObjectName(u'Label List')
@@ -220,7 +224,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # Actions
         action = functools.partial(newAction, self)
-        shortcuts = config['shortcuts']
+        shortcuts = self._config['shortcuts']
         quit = action('&Quit', self.close, shortcuts['quit'], 'quit',
                       'Quit application')
         open_ = action('&Open', self.openFile, shortcuts['open'], 'open',
@@ -400,18 +404,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # Application state.
         self.image = QtGui.QImage()
         self.imagePath = None
-        if auto_save and output is not None:
+        if self._config['auto_save'] and output is not None:
             warnings.warn('If `auto_save` argument is True, `output` argument '
                           'is ignored and output filename is automatically '
                           'set as IMAGE_BASENAME.json.')
         self.labeling_once = output is not None
         self.output = output
-        self._auto_save = auto_save
-        self._store_data = store_data
-        if validate_label not in [None, 'exact', 'instance']:
-            raise ValueError('Unexpected `validate_label`: {}'
-                             .format(validate_label))
-        self._validate_label = validate_label
         self.recentFiles = []
         self.maxRecent = 7
         self.lineColor = None
@@ -477,7 +475,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
-        if self._auto_save:
+        if self._config['auto_save']:
             label_file = os.path.splitext(self.imagePath)[0] + '.json'
             self.saveLabels(label_file)
             return
@@ -587,15 +585,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def validateLabel(self, label):
         # no validation
-        if self._validate_label is None:
+        if self._config['validate_label'] is None:
             return True
 
         for i in range(self.uniqLabelList.count()):
             l = self.uniqLabelList.item(i).text()
-            if self._validate_label in ['exact', 'instance']:
+            if self._config['validate_label'] in ['exact', 'instance']:
                 if l == label:
                     return True
-            if self._validate_label == 'instance':
+            if self._config['validate_label'] == 'instance':
                 m = re.match(r'^{}-[0-9]*$'.format(l), label)
                 if m:
                     return True
@@ -611,7 +609,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if not self.validateLabel(text):
             self.errorMessage('Invalid label',
                               "Invalid label '{}' with validation type '{}'"
-                              .format(text, self._validate_label))
+                              .format(text, self._config['validate_label']))
             return
         item.setText(text)
         self.setDirty()
@@ -702,7 +700,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         try:
             imagePath = os.path.relpath(
                 self.imagePath, os.path.dirname(filename))
-            imageData = self.imageData if self._store_data else None
+            imageData = self.imageData if self._config['store_data'] else None
             lf.save(filename, shapes, imagePath, imageData,
                     self.lineColor.getRgb(), self.fillColor.getRgb(),
                     self.otherData)
@@ -750,7 +748,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if text is not None and not self.validateLabel(text):
             self.errorMessage('Invalid label',
                               "Invalid label '{}' with validation type '{}'"
-                              .format(text, self._validate_label))
+                              .format(text, self._config['validate_label']))
             text = None
         if text is None:
             self.canvas.undoLastLine()
@@ -1200,21 +1198,24 @@ def read(filename, default=None):
 
 
 def main():
-    """Standard boilerplate Qt application code."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', '-V', action='store_true',
                         help='show version')
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('--output', '-O', '-o', help='output label name')
+    parser.add_argument('--config', dest='config_file', help='config file')
+    # config
     parser.add_argument('--nodata', dest='store_data', action='store_false',
                         help='stop storing image data to JSON file')
-    parser.add_argument('--autosave', action='store_true', help='auto save')
+    parser.add_argument('--autosave', dest='auto_save', action='store_true',
+                        help='auto save')
     parser.add_argument('--labels',
                         help='comma separated list of labels OR file '
                         'containing one label per line')
     parser.add_argument('--nosortlabels', dest='sort_labels',
                         action='store_false', help='stop sorting labels')
-    parser.add_argument('--validatelabel', choices=['exact', 'instance'],
+    parser.add_argument('--validatelabel', dest='validate_label',
+                        choices=['exact', 'instance'],
                         help='label validation types')
     args = parser.parse_args()
 
@@ -1223,8 +1224,10 @@ def main():
         sys.exit(0)
 
     if args.labels is None:
-        if args.validatelabel is not None:
-            logger.error('--labels must be specified with --validatelabel')
+        if args.validate_label is not None:
+            logger.error('--labels must be specified with --validatelabel or '
+                         'validate_label: true in the config file '
+                         '(ex. ~/.labelmerc).')
             sys.exit(1)
     else:
         if os.path.isfile(args.labels):
@@ -1233,18 +1236,17 @@ def main():
         else:
             args.labels = [l for l in args.labels.split(',') if l]
 
+    config_from_args = args.__dict__
+    config_from_args.pop('version')
+    filename = config_from_args.pop('filename')
+    output = config_from_args.pop('output')
+    config_file = config_from_args.pop('config_file')
+    config = get_config(config_from_args, config_file)
+
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(newIcon("icon"))
-    win = MainWindow(
-        filename=args.filename,
-        output=args.output,
-        store_data=args.store_data,
-        labels=args.labels,
-        sort_labels=args.sort_labels,
-        auto_save=args.autosave,
-        validate_label=args.validatelabel,
-    )
+    app.setWindowIcon(newIcon('icon'))
+    win = MainWindow(config=config, filename=filename, output=output)
     win.show()
     win.raise_()
     sys.exit(app.exec_())
