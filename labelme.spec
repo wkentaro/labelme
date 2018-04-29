@@ -34,7 +34,7 @@ exe = EXE(
     upx=True,
     runtime_tmpdir=None,
     console=False,
-    icon='labelme/icons/icon.icns',
+    icon='labelme/icons/icon.ico',
 )
 app = BUNDLE(
     exe,
