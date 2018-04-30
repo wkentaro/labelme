@@ -1,23 +1,61 @@
 language: generic
+
 sudo: required
+
 dist: trusty
 
 env:
   global:
     # used by ci-helpers
     - SETUP_XVFB=true PIP_DEPENDENCIES='hacking pytest pytest-qt'
-  matrix:
-    - PYTEST_QT_API=pyqt4v2 PYQT_PACKAGE='pyqt=4' PYTHON_VERSION=2.7.14
-    - PYTEST_QT_API=pyside2 CONDA_CHANNELS='conda-forge' PYQT_PACKAGE='pyside2' PYTHON_VERSION=2.7.14
-    - PYTEST_QT_API=pyside2 CONDA_CHANNELS='conda-forge' PYQT_PACKAGE='pyside2' PYTHON_VERSION=3.6.5
-    - PYTEST_QT_API=pyqt5 PYQT_PACKAGE='pyqt=5' PYTHON_VERSION=2.7.14
-    - PYTEST_QT_API=pyqt5 PYQT_PACKAGE='pyqt=5' PYTHON_VERSION=3.6.5
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      env:
+        - PYTEST_QT_API=pyqt4v2
+        - PYQT_PACKAGE='pyqt=4'
+        - PYTHON_VERSION=2.7.14
+    - os: linux
+      dist: trusty
+      env:
+        - PYTEST_QT_API=pyside2
+        - CONDA_CHANNELS='conda-forge'
+        - PYQT_PACKAGE='pyside2'
+        - PYTHON_VERSION=2.7.14
+    - os: linux
+      dist: trusty
+      env:
+        - PYTEST_QT_API=pyside2
+        - CONDA_CHANNELS='conda-forge'
+        - PYQT_PACKAGE='pyside2'
+        - PYTHON_VERSION=3.6.5
+    - os: linux
+      dist: trusty
+      env:
+        - PYTEST_QT_API=pyqt5
+        - PYQT_PACKAGE='pyqt=5'
+        - PYTHON_VERSION=2.7.14
+    - os: linux
+      dist: trusty
+      env:
+        - PYTEST_QT_API=pyqt5
+        - PYQT_PACKAGE='pyqt=5'
+        - PYTHON_VERSION=3.6.5
+    - os: osx
+      env:
+        - PYTEST_QT_API=pyqt5
+        - PYQT_PACKAGE='pyqt=5'
+        - PYTHON_VERSION=3.6.5
 
 install:
-  - sudo apt-get update
+  - |
+    if [ $TRAVIS_OS_NAME = "linux" ]; then
+      sudo apt-get update
 
-  # Xvfb / window manager
-  - sudo apt-get install -y xvfb herbstluftwm
+      # Xvfb / window manager
+      sudo apt-get install -y xvfb herbstluftwm
+    fi
 
   # Setup miniconda
   - git clone --depth 1 git://github.com/astropy/ci-helpers.git
@@ -33,7 +71,14 @@ before_script:
 script:
   - source activate test
   - flake8 examples labelme setup.py tests
-  - pytest -v tests
+  - |
+    if [ $TRAVIS_OS_NAME = "linux" ]; then
+      pytest -v tests
+    fi
+  - |
+    if [ $TRAVIS_OS_NAME = "osx" ]; then
+      export MPLBACKEND=TkAgg
+    fi
   - labelme --help
   - labelme --version
   - (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
@@ -51,7 +96,7 @@ after_script:
       git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv
       export PYENV_ROOT=$HOME/.pyenv
       export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-      pyenv install -ks $PYTHON_VERSION
+      CONFIGURE_OPTS=--enable-shared pyenv install -ks $PYTHON_VERSION
       pyenv global $PYTHON_VERSION
       which python && python --version
       which pip && pip --version
