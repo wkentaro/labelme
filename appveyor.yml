@@ -1,0 +1,89 @@
+# AppVeyor.com is a Continuous Integration service to build and run tests under
+# Windows
+
+environment:
+
+  global:
+      PYTHON: "C:\\conda"
+      MINICONDA_VERSION: "latest"
+      CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\ci-helpers\\appveyor\\windows_sdk.cmd"
+      PYTHON_ARCH: "64" # needs to be set for CMD_IN_ENV to succeed. If a mix
+                        # of 32 bit and 64 bit builds are needed, move this
+                        # to the matrix section.
+      TEST_CMD: "py.test test_env.py"
+
+  matrix:
+        # Note that setting CONDA_CHANNEL_PRIORITY in the next two builds is
+        # unrelated to the rest of the builds and won't change anything, except
+        # that we can make sure the conda config was correctly updated.
+
+      - PYTHON_VERSION: "2.7"
+        NUMPY_VERSION: "development"
+        CONDA_DEPENDENCIES: "scipy glymur"
+        CONDA_CHANNELS: "conda-forge astrofrog"
+        PIP_DEPENDENCIES: "requests pyparsing"
+        CONDA_CHANNEL_PRIORITY: "True"
+        DEBUG: "True"
+
+
+      - PYTHON_VERSION: "3.6"
+        NUMPY_VERSION: "stable"
+        ASTROPY_VERSION: "stable"
+        CONDA_DEPENDENCIES: "matplotlib h5py"
+        PIP_DEPENDENCIES: "astrodendro"
+        CONDA_CHANNEL_PRIORITY: "False"
+        SUNPY_VERSION: "dev"
+        DEBUG: "True"
+
+      - PYTHON_VERSION: "2.7"
+        DEBUG: "True"
+
+        # For the Numpy dev build, we also specify a conda package that depends
+        # on Numpy to make sure that Numpy dev is used (because conda will also
+        # install Numpy stable)
+
+      - PYTHON_VERSION: "3.4"
+        NUMPY_VERSION: "1.9"
+
+        # We deliberately test with Numpy 1.10 to check that installing Astropy
+        # dev doesn't upgrade Numpy.
+      - PYTHON_VERSION: "3.5"
+        NUMPY_VERSION: "1.10"
+        ASTROPY_VERSION: "development"
+
+      - PYTHON_VERSION: "3.5"
+        NUMPY_VERSION: "1.13"
+        ASTROPY_VERSION: "lts"
+
+      # Have to supply "PYTHON_VERSION" only because of windows_sdk.cmd code
+      - PYTHON_VERSION: "3.5"
+        CONDA_ENVIRONMENT: "conda_environment.yml"
+        TEST_CMD: "python -c \"import matplotlib\""
+
+matrix:
+   fast_finish: true
+
+platform:
+    -x64
+
+# os: Visual Studio 2015 Update 2
+
+install:
+
+    # Install Miniconda
+    - "git clone https://github.com/astropy/ci-helpers.git ci-helpers"
+    - "powershell ci-helpers/appveyor/install-miniconda.ps1"
+
+    # Set path again, need to find a way to avoid doing this again
+    - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+    - "activate test"
+
+    # Test that PATH is set correctly
+    - "conda --version"
+    - "python --version"
+
+# Not a .NET project, we build ci-helpers in the install step instead
+build: false
+
+test_script:
+  - "%CMD_IN_ENV% %TEST_CMD%"
