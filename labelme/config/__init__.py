@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 
 import yaml
@@ -41,29 +40,36 @@ def validate_config_item(key, value):
 
 
 def get_config(config_from_args=None, config_file=None):
-    # default config
+    # Configuration load order:
+    #
+    #   1. default config (lowest priority)
+    #   2. config file passed by command line argument or ~/.labelmerc
+    #   3. command line argument (highest priority)
+
+    # 1. default config
     config = get_default_config()
 
-    if config_from_args is not None:
-        update_dict(config, config_from_args,
-                    validate_item=validate_config_item)
-
-    save_config_file = False
-    if config_file is None:
-        home = os.path.expanduser('~')
-        config_file = os.path.join(home, '.labelmerc')
-        save_config_file = True
-
-    if os.path.exists(config_file):
-        with open(config_file) as f:
-            user_config = yaml.load(f) or {}
-        update_dict(config, user_config, validate_item=validate_config_item)
-
-    if save_config_file:
+    # save default config to ~/.labelmerc
+    home = osp.expanduser('~')
+    default_config_file = osp.join(home, '.labelmerc')
+    if not osp.exists(default_config_file):
         try:
             with open(config_file, 'w') as f:
                 yaml.safe_dump(config, f, default_flow_style=False)
         except Exception:
             logger.warn('Failed to save config: {}'.format(config_file))
+
+    # 2. config from yaml file
+    if config_file is None:
+        config_file = default_config_file
+    if osp.exists(config_file):
+        with open(config_file) as f:
+            user_config = yaml.load(f) or {}
+        update_dict(config, user_config, validate_item=validate_config_item)
+
+    # 3. command line argument
+    if config_from_args is not None:
+        update_dict(config, config_from_args,
+                    validate_item=validate_config_item)
 
     return config

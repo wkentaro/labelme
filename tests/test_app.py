@@ -3,6 +3,7 @@ import shutil
 import tempfile
 
 import labelme.app
+import labelme.config
 import labelme.testing
 
 
@@ -33,7 +34,9 @@ def test_MainWindow_annotate_jpg(qtbot):
                 filename)
     output = osp.join(tmp_dir, 'apc2016_obj3.json')
 
-    win = labelme.app.MainWindow(filename=filename, output=output)
+    config = labelme.config.get_default_config()
+    win = labelme.app.MainWindow(
+        config=config, filename=filename, output=output)
     qtbot.addWidget(win)
     win.show()
 
