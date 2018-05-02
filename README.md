@@ -142,24 +142,27 @@ pytest -v tests
 ```
 
 
-## How to build standalone app
+## How to build standalone executable
 
-Below is an example on macOS,
-and there are pre-built apps in
+Below shows how to build the standalone executable on macOS, Linux and Windows.
+Also, there are pre-built executables in
 [the release section](https://github.com/wkentaro/labelme/releases).
 
 ```bash
-git clone https://github.com/wkentaro/labelme.git
-cd labelme
+# Setup pyenv
+TMPDIR=$(mktemp -d)
+git clone https://github.com/pyenv/pyenv.git $TMPDIR/pyenv
+export PYENV_ROOT=$TMPDIR/pyenv
+export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+CONFIGURE_OPTS=--enable-shared pyenv install -ks $PYTHON_VERSION
+pyenv global $PYTHON_VERSION
 
-virtualenv venv --python /usr/local/bin/python3
-. venv/bin/activate
-pip install -e .
-pip uninstall matplotlib
+# Build the standalone executable
+pip install .
+pip uninstall -y matplotlib
 pip install pyinstaller
-
 pyinstaller labelme.spec
-open dist/labelme.app
+dist/labelme --version
 ```
 
 
