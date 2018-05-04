@@ -149,13 +149,9 @@ Also, there are pre-built executables in
 [the release section](https://github.com/wkentaro/labelme/releases).
 
 ```bash
-# Setup pyenv
-TMPDIR=$(mktemp -d)
-git clone https://github.com/pyenv/pyenv.git $TMPDIR/pyenv
-export PYENV_ROOT=$TMPDIR/pyenv
-export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-CONFIGURE_OPTS=--enable-shared pyenv install -ks $PYTHON_VERSION
-pyenv global $PYTHON_VERSION
+# Setup conda
+conda create --name labelme python=3.6
+conda activate labelme
 
 # Build the standalone executable
 pip install .

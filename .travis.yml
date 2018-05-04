@@ -7,7 +7,10 @@ dist: trusty
 env:
   global:
     # used by ci-helpers
-    - SETUP_XVFB=true PIP_DEPENDENCIES='hacking pytest pytest-qt'
+    - SETUP_XVFB=true
+    - PIP_DEPENDENCIES='hacking pytest pytest-qt'
+
+    - MPLBACKEND=TkAgg  # for osx
 matrix:
   include:
     - os: linux
@@ -15,70 +18,65 @@ matrix:
       env:
         - PYTEST_QT_API=pyqt4v2
         - PYQT_PACKAGE='pyqt=4'
-        - PYTHON_VERSION=2.7.14
+        - PYTHON_VERSION=2.7
     - os: linux
       dist: trusty
       env:
         - PYTEST_QT_API=pyside2
         - CONDA_CHANNELS='conda-forge'
         - PYQT_PACKAGE='pyside2'
-        - PYTHON_VERSION=2.7.14
+        - PYTHON_VERSION=2.7
     - os: linux
       dist: trusty
       env:
         - PYTEST_QT_API=pyside2
         - CONDA_CHANNELS='conda-forge'
         - PYQT_PACKAGE='pyside2'
-        - PYTHON_VERSION=3.6.5
+        - PYTHON_VERSION=3.6
     - os: linux
       dist: trusty
       env:
         - PYTEST_QT_API=pyqt5
         - PYQT_PACKAGE='pyqt=5'
-        - PYTHON_VERSION=2.7.14
+        - PYTHON_VERSION=2.7
     - os: linux
       dist: trusty
       env:
         - PYTEST_QT_API=pyqt5
         - PYQT_PACKAGE='pyqt=5'
-        - PYTHON_VERSION=3.6.5
+        - PYTHON_VERSION=3.6
+        - RUN_PYINSTALLER=true
     - os: osx
       env:
         - PYTEST_QT_API=pyqt5
         - PYQT_PACKAGE='pyqt=5'
-        - PYTHON_VERSION=3.6.5
+        - PYTHON_VERSION=3.6
+        - RUN_PYINSTALLER=true
 
 install:
   - |
     if [ $TRAVIS_OS_NAME = "linux" ]; then
       sudo apt-get update
-
       # Xvfb / window manager
       sudo apt-get install -y xvfb herbstluftwm
+    elif [ $TRAVIS_OS_NAME = "osx" ]; then
+      brew cask install xquartz
     fi
 
   # Setup miniconda
   - git clone --depth 1 git://github.com/astropy/ci-helpers.git
-  - export __PATH__=$PATH
-  - export __PYTHONPATH__=$PYTHONPATH
   - CONDA_DEPENDENCIES=$PYQT_PACKAGE source ci-helpers/travis/setup_conda.sh
-  - source activate test && pip install .
+  - source activate test && export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+  - pip install .
 
 before_script:
- - "herbstluftwm &"
- - sleep 1
+  - if [ $TRAVIS_OS_NAME = "linux" ]; then (herbstluftwm )& fi
+  - if [ $TRAVIS_OS_NAME = "osx" ]; then (sudo Xvfb :99 -ac -screen 0 1024x768x8 )& fi
+  - sleep 1
 
 script:
-  - source activate test
   - flake8 examples labelme setup.py tests
-  - |
-    if [ $TRAVIS_OS_NAME = "linux" ]; then
-      pytest -v tests
-    fi
-  - |
-    if [ $TRAVIS_OS_NAME = "osx" ]; then
-      export MPLBACKEND=TkAgg
-    fi
+  - pytest -v tests
   - labelme --help
   - labelme --version
   - (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
@@ -87,23 +85,12 @@ script:
 
 after_script:
   - |
-    if [ $PYTHON_VERSION = "3.6.5" -a $PYQT_PACKAGE = "pyqt=5" ]; then
+    if [ $RUN_PYINSTALLER = "true" ]; then
       # Cleanup
-      export PATH=$__PATH__
-      export PYTHONPATH=$__PYTHONPATH__
-
-      # Setup pyenv
-      git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv
-      export PYENV_ROOT=$HOME/.pyenv
-      export PATH=$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
-      CONFIGURE_OPTS=--enable-shared pyenv install -ks $PYTHON_VERSION
-      pyenv global $PYTHON_VERSION
-      which python && python --version
-      which pip && pip --version
+      pip uninstall -y $PIP_DEPENDENCIES
+      pip uninstall -y matplotlib
 
       # Build the standalone executable
-      pip install .
-      pip uninstall -y matplotlib
       pip install pyinstaller
       pyinstaller labelme.spec
       dist/labelme --version
