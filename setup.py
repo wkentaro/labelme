@@ -56,7 +56,7 @@ if QT_BINDING is None:
             sys.exit(1)
         assert PY3
         # PyQt5 can be installed via pip for Python3
-        install_requires.append('pyqt5')
+        install_requires.append('PyQt5')
         QT_BINDING = 'pyqt5'
 del QT_BINDING
 
