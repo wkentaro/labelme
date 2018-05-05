@@ -65,8 +65,7 @@ if sys.argv[1] == 'release':
     commands = [
         'git tag v{:s}'.format(version),
         'git push origin master --tag',
-        'python setup.py sdist',
-        'twine upload dist/labelme-{:s}.tar.gz'.format(version),
+        'python setup.py sdist upload',
     ]
     sys.exit(sum(subprocess.call(shlex.split(cmd)) for cmd in commands))
 
