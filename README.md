@@ -144,7 +144,7 @@ pytest -v tests
 
 ## How to build standalone executable
 
-Below shows how to build the standalone executable on macOS, Linux and Windows.
+Below shows how to build the standalone executable on macOS, Linux and Windows.  
 Also, there are pre-built executables in
 [the release section](https://github.com/wkentaro/labelme/releases).
 
