@@ -1231,8 +1231,8 @@ def main():
             sys.exit(1)
     else:
         if os.path.isfile(args.labels):
-            args.labels = [l.strip() for l in open(args.labels, 'r', encoding='utf-8')
-                           if l.strip()]
+            args.labels = [l.strip() for l in 
+                    open(args.labels, 'r', encoding='utf-8') if l.strip()]
         else:
             args.labels = [l for l in args.labels.split(',') if l]
 
