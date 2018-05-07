@@ -1,4 +1,5 @@
 import argparse
+import codecs
 import functools
 import os.path
 import re
@@ -1231,8 +1232,8 @@ def main():
             sys.exit(1)
     else:
         if os.path.isfile(args.labels):
-            args.labels = [l.strip() for l in open(args.labels, 'r')
-                           if l.strip()]
+            with codecs.open(args.labels, 'r', encoding='utf-8') as f:
+                args.labels = [l.strip() for l in f if l.strip()]
         else:
             args.labels = [l for l in args.labels.split(',') if l]
 
