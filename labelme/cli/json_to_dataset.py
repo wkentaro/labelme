@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import os.path as osp
+import base64
 import warnings
 
 import PIL.Image
@@ -32,7 +33,15 @@ def main():
 
     data = json.load(open(json_file))
 
-    img = utils.img_b64_to_arr(data['imageData'])
+    if data['imageData'] is not None:
+        imageData = data['imageData']
+    else:
+        imagePath = os.path.join(os.path.dirname(json_file), data['imagePath'])
+        with open(imagePath, 'rb') as f:
+            imageData = f.read()
+            imageData = base64.b64encode(imageData).decode('utf-8')
+
+    img = utils.img_b64_to_arr(imageData)
 
     label_name_to_value = {'_background_': 0}
     for shape in data['shapes']:
