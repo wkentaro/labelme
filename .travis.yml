@@ -8,7 +8,7 @@ env:
   global:
     # used by ci-helpers
     - SETUP_XVFB=true
-    - PIP_DEPENDENCIES='hacking pytest pytest-qt'
+    - PIP_DEPENDENCIES='flake8 pytest pytest-qt'
 
     - MPLBACKEND=TkAgg  # for osx
 matrix:
