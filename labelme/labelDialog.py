@@ -3,7 +3,7 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-QT5 = QT_VERSION[0] == '5'
+QT5 = QT_VERSION[0] == '5'  # NOQA
 
 from labelme.lib import labelValidator
 from labelme.lib import newIcon

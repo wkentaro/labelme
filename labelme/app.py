@@ -13,7 +13,7 @@ from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-QT5 = QT_VERSION[0] == '5'
+QT5 = QT_VERSION[0] == '5'  # NOQA
 
 from labelme import __appname__
 from labelme import __version__
@@ -590,12 +590,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return True
 
         for i in range(self.uniqLabelList.count()):
-            l = self.uniqLabelList.item(i).text()
+            label_i = self.uniqLabelList.item(i).text()
             if self._config['validate_label'] in ['exact', 'instance']:
-                if l == label:
+                if label_i == label:
                     return True
             if self._config['validate_label'] == 'instance':
-                m = re.match(r'^{}-[0-9]*$'.format(l), label)
+                m = re.match(r'^{}-[0-9]*$'.format(label_i), label)
                 if m:
                     return True
         return False
