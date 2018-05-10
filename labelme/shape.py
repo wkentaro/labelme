@@ -56,7 +56,8 @@ class Shape(object):
 
     def close(self):
         if len(self.points) <= 2:
-            logger.warn('Polygon should be created with points >2')
+            logger.error('Polygon should be created with points >2')
+            return
         self._closed = True
 
     def addPoint(self, point):
