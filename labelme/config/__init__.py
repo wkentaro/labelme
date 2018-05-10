@@ -54,10 +54,11 @@ def get_config(config_from_args=None, config_file=None):
     default_config_file = osp.join(home, '.labelmerc')
     if not osp.exists(default_config_file):
         try:
-            with open(config_file, 'w') as f:
+            with open(default_config_file, 'w') as f:
                 yaml.safe_dump(config, f, default_flow_style=False)
         except Exception:
-            logger.warn('Failed to save config: {}'.format(config_file))
+            logger.warn('Failed to save config: {}'
+                        .format(default_config_file))
 
     # 2. config from yaml file
     if config_file is None:
