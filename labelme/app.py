@@ -1242,6 +1242,17 @@ def main():
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
     config_file = config_from_args.pop('config_file')
+    # drop the default config
+    if not config_from_args['auto_save']:
+        config_from_args.pop('auto_save')
+    if config_from_args['store_data']:
+        config_from_args.pop('store_data')
+    if not config_from_args['labels']:
+        config_from_args.pop('labels')
+    if not config_from_args['sort_labels']:
+        config_from_args.pop('sort_labels')
+    if not config_from_args['validate_label']:
+        config_from_args.pop('validate_label')
     config = get_config(config_from_args, config_file)
 
     app = QtWidgets.QApplication(sys.argv)
