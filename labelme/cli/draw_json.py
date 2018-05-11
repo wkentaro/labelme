@@ -7,9 +7,10 @@ import sys
 import base64
 import matplotlib.pyplot as plt
 
-PY2 = sys.version_info[0] == 2
-
 from labelme import utils
+
+
+PY2 = sys.version_info[0] == 2
 
 
 def main():
