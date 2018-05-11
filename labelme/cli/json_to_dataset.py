@@ -33,7 +33,7 @@ def main():
 
     data = json.load(open(json_file))
 
-    if data['imageData'] is not None:
+    if data['imageData']:
         imageData = data['imageData']
     else:
         imagePath = os.path.join(os.path.dirname(json_file), data['imagePath'])
