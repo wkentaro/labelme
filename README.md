@@ -3,6 +3,7 @@
 # labelme: Image Polygonal Annotation with Python
 
 [![PyPI Version](https://img.shields.io/pypi/v/labelme.svg)](https://pypi.python.org/pypi/labelme)
+[![Python Versions](https://img.shields.io/pypi/pyversions/labelme.svg)](https://pypi.org/project/labelme)
 [![Travis Build Status](https://travis-ci.org/wkentaro/labelme.svg?branch=master)](https://travis-ci.org/wkentaro/labelme)
 [![Docker Build Status](https://img.shields.io/docker/build/wkentaro/labelme.svg)](https://hub.docker.com/r/wkentaro/labelme)
 
