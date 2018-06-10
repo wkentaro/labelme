@@ -77,7 +77,7 @@ class LabelFile(object):
             data[key] = value
         try:
             with open(filename, 'wb' if PY2 else 'w') as f:
-                json.dump(data, f, ensure_ascii=True, indent=2)
+                json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
         except Exception as e:
             raise LabelFileError(e)
