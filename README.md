@@ -9,11 +9,22 @@
 
 
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
-It is written in Python and uses Qt for its graphical interface,  
-and supports annotations for semantic and instance segmentation.
+It is written in Python and uses Qt for its graphical interface.
 
 <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />  
 Fig 1. Example of annotations for instance segmentation.
+
+
+## Features
+
+- [x] Polygonal annotation
+- [x] Predefined labels ([#76](https://github.com/wkentaro/labelme/pull/76))
+- [x] Auto save mode ([#138](https://github.com/wkentaro/labelme/pull/138))
+- [x] Support custom json keys ([#140](https://github.com/wkentaro/labelme/pull/140))
+- [x] Undo by Ctrl-Z ([#112](https://github.com/wkentaro/labelme/pull/112), [#143](https://github.com/wkentaro/labelme/pull/143))
+- [x] Customize by config file ([#144](https://github.com/wkentaro/labelme/pull/144))
+- [x] VOC dataset export ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
+- [x] Image level flag annotation ([#166](https://github.com/wkentaro/labelme/pull/166))
 
 
 ## Requirements
