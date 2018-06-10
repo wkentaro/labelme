@@ -67,7 +67,8 @@ if sys.argv[1] == 'release':
         'git push origin master --tag',
         'python setup.py sdist upload',
     ]
-    sys.exit(sum(subprocess.call(shlex.split(cmd)) for cmd in commands))
+    for cmd in commands:
+        subprocess.check_call(shlex.split(cmd))
 
 
 setup(
