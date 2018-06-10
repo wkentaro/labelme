@@ -24,7 +24,14 @@ class LabelFile(object):
         self.filename = filename
 
     def load(self, filename):
-        keys = ['imageData', 'imagePath', 'lineColor', 'fillColor', 'shapes']
+        keys = [
+            'imageData',
+            'imagePath',
+            'lineColor',
+            'fillColor',
+            'shapes',  # polygonal annotations
+            'flags',   # image level flags
+        ]
         try:
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
@@ -36,6 +43,7 @@ class LabelFile(object):
                                          data['imagePath'])
                 with open(imagePath, 'rb') as f:
                     imageData = f.read()
+            flags = data.get('flags')
             imagePath = data['imagePath']
             lineColor = data['lineColor']
             fillColor = data['fillColor']
@@ -52,6 +60,7 @@ class LabelFile(object):
                 otherData[key] = value
 
         # Only replace data after everything is loaded.
+        self.flags = flags
         self.shapes = shapes
         self.imagePath = imagePath
         self.imageData = imageData
@@ -61,12 +70,16 @@ class LabelFile(object):
         self.otherData = otherData
 
     def save(self, filename, shapes, imagePath, imageData=None,
-             lineColor=None, fillColor=None, otherData=None):
+             lineColor=None, fillColor=None, otherData=None,
+             flags=None):
         if imageData is not None:
             imageData = base64.b64encode(imageData).decode('utf-8')
         if otherData is None:
             otherData = {}
+        if flags is None:
+            flags = []
         data = dict(
+            flags=flags,
             shapes=shapes,
             lineColor=lineColor,
             fillColor=fillColor,

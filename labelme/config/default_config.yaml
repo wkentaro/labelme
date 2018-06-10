@@ -1,6 +1,7 @@
 auto_save: false
 store_data: true
 
+flags: null
 labels: null
 sort_labels: true
 validate_label: null
