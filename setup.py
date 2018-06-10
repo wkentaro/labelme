@@ -69,6 +69,7 @@ if sys.argv[1] == 'release':
     ]
     for cmd in commands:
         subprocess.check_call(shlex.split(cmd))
+    sys.exit(0)
 
 
 setup(
