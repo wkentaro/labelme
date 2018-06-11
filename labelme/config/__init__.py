@@ -1,4 +1,5 @@
 import os.path as osp
+import shutil
 
 import yaml
 
@@ -30,6 +31,15 @@ def get_default_config():
     config_file = osp.join(here, 'default_config.yaml')
     with open(config_file) as f:
         config = yaml.load(f)
+
+    # save default config to ~/.labelmerc
+    user_config_file = osp.join(osp.expanduser('~'), '.labelmerc')
+    if not osp.exists(user_config_file):
+        try:
+            shutil.copy(config_file, user_config_file)
+        except Exception:
+            logger.warn('Failed to save config: {}'.format(user_config_file))
+
     return config
 
 
@@ -49,21 +59,8 @@ def get_config(config_from_args=None, config_file=None):
     # 1. default config
     config = get_default_config()
 
-    # save default config to ~/.labelmerc
-    home = osp.expanduser('~')
-    default_config_file = osp.join(home, '.labelmerc')
-    if not osp.exists(default_config_file):
-        try:
-            with open(default_config_file, 'w') as f:
-                yaml.safe_dump(config, f, default_flow_style=False)
-        except Exception:
-            logger.warn('Failed to save config: {}'
-                        .format(default_config_file))
-
     # 2. config from yaml file
-    if config_file is None:
-        config_file = default_config_file
-    if osp.exists(config_file):
+    if config_file is not None and osp.exists(config_file):
         with open(config_file) as f:
             user_config = yaml.load(f) or {}
         update_dict(config, user_config, validate_item=validate_config_item)
