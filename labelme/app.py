@@ -1249,6 +1249,9 @@ def main():
                         help='stop storing image data to JSON file')
     parser.add_argument('--autosave', dest='auto_save', action='store_true',
                         help='auto save')
+    parser.add_argument('--flags',
+                        help='comma separated list of flags OR file '
+                        'containing one flag per line')
     parser.add_argument('--labels',
                         help='comma separated list of labels OR file '
                         'containing one label per line')
@@ -1262,6 +1265,13 @@ def main():
     if args.version:
         print('{0} {1}'.format(__appname__, __version__))
         sys.exit(0)
+
+    if args.flags is not None:
+        if os.path.isfile(args.flags):
+            with codecs.open(args.flags, 'r', encoding='utf-8') as f:
+                args.flags = [l.strip() for l in f if l.strip()]
+        else:
+            args.flags = [l for l in args.flags.split(',') if l]
 
     if args.labels is not None:
         if os.path.isfile(args.labels):
