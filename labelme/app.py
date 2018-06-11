@@ -1237,8 +1237,14 @@ def main():
                         help='show version')
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('--output', '-O', '-o', help='output label name')
-    parser.add_argument('--config', dest='config_file', help='config file')
-    # config
+    default_config_file = os.path.join(os.path.expanduser('~'), '.labelmerc')
+    parser.add_argument(
+        '--config',
+        dest='config_file',
+        default=default_config_file,
+        help='config file (default: %s)' % default_config_file,
+    )
+    # config for the gui
     parser.add_argument('--nodata', dest='store_data', action='store_false',
                         help='stop storing image data to JSON file')
     parser.add_argument('--autosave', dest='auto_save', action='store_true',
@@ -1257,13 +1263,7 @@ def main():
         print('{0} {1}'.format(__appname__, __version__))
         sys.exit(0)
 
-    if args.labels is None:
-        if args.validate_label is not None:
-            logger.error('--labels must be specified with --validatelabel or '
-                         'validate_label: true in the config file '
-                         '(ex. ~/.labelmerc).')
-            sys.exit(1)
-    else:
+    if args.labels is not None:
         if os.path.isfile(args.labels):
             with codecs.open(args.labels, 'r', encoding='utf-8') as f:
                 args.labels = [l.strip() for l in f if l.strip()]
@@ -1275,11 +1275,17 @@ def main():
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
     config_file = config_from_args.pop('config_file')
-    # drop the default config
+    # drop the unspecified config
     for k, v in list(config_from_args.items()):
         if v is None:
             config_from_args.pop(k)
     config = get_config(config_from_args, config_file)
+
+    if not config['labels'] and config['validate_label']:
+        logger.error('--labels must be specified with --validatelabel or '
+                     'validate_label: true in the config file '
+                     '(ex. ~/.labelmerc).')
+        sys.exit(1)
 
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
