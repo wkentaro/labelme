@@ -1241,39 +1241,62 @@ def main():
     parser.add_argument(
         '--config',
         dest='config_file',
-        default=default_config_file,
         help='config file (default: %s)' % default_config_file,
+        default=default_config_file,
     )
     # config for the gui
-    parser.add_argument('--nodata', dest='store_data', action='store_false',
-                        help='stop storing image data to JSON file')
-    parser.add_argument('--autosave', dest='auto_save', action='store_true',
-                        help='auto save')
-    parser.add_argument('--flags',
-                        help='comma separated list of flags OR file '
-                        'containing one flag per line')
-    parser.add_argument('--labels',
-                        help='comma separated list of labels OR file '
-                        'containing one label per line')
-    parser.add_argument('--nosortlabels', dest='sort_labels',
-                        action='store_false', help='stop sorting labels')
-    parser.add_argument('--validatelabel', dest='validate_label',
-                        choices=['exact', 'instance'],
-                        help='label validation types')
+    parser.add_argument(
+        '--nodata',
+        dest='store_data',
+        action='store_false',
+        help='stop storing image data to JSON file',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--autosave',
+        dest='auto_save',
+        action='store_true',
+        help='auto save',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--nosortlabels',
+        dest='sort_labels',
+        action='store_false',
+        help='stop sorting labels',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--flags',
+        help='comma separated list of flags OR file containing flags',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--labels',
+        help='comma separated list of labels OR file containing labels',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--validatelabel',
+        dest='validate_label',
+        choices=['exact', 'instance'],
+        help='label validation types',
+        default=argparse.SUPPRESS,
+    )
     args = parser.parse_args()
 
     if args.version:
         print('{0} {1}'.format(__appname__, __version__))
         sys.exit(0)
 
-    if args.flags is not None:
+    if hasattr(args, 'flags'):
         if os.path.isfile(args.flags):
             with codecs.open(args.flags, 'r', encoding='utf-8') as f:
                 args.flags = [l.strip() for l in f if l.strip()]
         else:
             args.flags = [l for l in args.flags.split(',') if l]
 
-    if args.labels is not None:
+    if hasattr(args, 'labels'):
         if os.path.isfile(args.labels):
             with codecs.open(args.labels, 'r', encoding='utf-8') as f:
                 args.labels = [l.strip() for l in f if l.strip()]
@@ -1285,10 +1308,6 @@ def main():
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
     config_file = config_from_args.pop('config_file')
-    # drop the unspecified config
-    for k, v in list(config_from_args.items()):
-        if v is None:
-            config_from_args.pop(k)
     config = get_config(config_from_args, config_file)
 
     if not config['labels'] and config['validate_label']:
