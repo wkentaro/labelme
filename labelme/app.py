@@ -908,7 +908,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return False
         self.image = image
         self.filename = filename
+        if self._config['keep_prev']:
+            prev_shapes = self.canvas.shapes
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
+        if self._config['keep_prev']:
+            self.loadShapes(prev_shapes)
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
@@ -1281,6 +1285,12 @@ def main():
         dest='validate_label',
         choices=['exact', 'instance'],
         help='label validation types',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--keep-prev',
+        action='store_true',
+        help='keep annotation of previous frame',
         default=argparse.SUPPRESS,
     )
     args = parser.parse_args()
