@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import distutils.spawn
 import json
 import os
 import os.path as osp
@@ -8,6 +9,8 @@ import platform
 import shlex
 import subprocess
 import sys
+
+from labelme import logger
 
 
 def get_ip():
@@ -79,6 +82,10 @@ def main():
     parser.add_argument('in_file', help='Input file or directory.')
     parser.add_argument('-O', '--output')
     args = parser.parse_args()
+
+    if not distutils.spawn.find_executable('docker'):
+        logger.error('Please install docker.')
+        sys.exit(1)
 
     try:
         out_file = labelme_on_docker(args.in_file, args.output)
