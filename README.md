@@ -23,8 +23,9 @@ Fig 1. Example of annotations for instance segmentation.
 - [x] Support custom json keys ([#140](https://github.com/wkentaro/labelme/pull/140))
 - [x] Undo by Ctrl-Z ([#112](https://github.com/wkentaro/labelme/pull/112), [#143](https://github.com/wkentaro/labelme/pull/143))
 - [x] Customize by config file ([#144](https://github.com/wkentaro/labelme/pull/144))
-- [x] VOC dataset export ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
+- [x] VOC dataset export ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
 - [x] Image level flag annotation ([#166](https://github.com/wkentaro/labelme/pull/166))
+- [x] Video annotation ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
 
 
 ## Requirements
@@ -130,6 +131,7 @@ For more advanced usage, please refer to the examples:
 * [Tutorial (Single Image Example)](https://github.com/wkentaro/labelme/blob/master/examples/tutorial)
 * [Semantic Segmentation Example](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation)
 * [Instance Segmentation Example](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation)
+* [Video Annotation Example](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation)
 
 
 ## FAQ
