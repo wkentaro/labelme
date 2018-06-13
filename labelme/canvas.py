@@ -52,6 +52,7 @@ class Canvas(QtWidgets.QWidget):
         self.hideBackround = False
         self.hShape = None
         self.hVertex = None
+        self.addVertex = None
         self.movingShape = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
@@ -115,6 +116,9 @@ class Canvas(QtWidgets.QWidget):
 
     def selectedVertex(self):
         return self.hVertex is not None
+
+    def addedVertex(self):
+        return self.addVertex is not None
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
@@ -183,6 +187,7 @@ class Canvas(QtWidgets.QWidget):
             # Look for a nearby vertex to highlight. If that fails,
             # check if we happen to be inside a shape.
             index = shape.nearestVertex(pos, self.epsilon)
+            index2 = shape.nearestEdge(pos, self.epsilon)
             if index is not None:
                 if self.selectedVertex():
                     self.hShape.highlightClear()
@@ -193,10 +198,20 @@ class Canvas(QtWidgets.QWidget):
                 self.setStatusTip(self.toolTip())
                 self.update()
                 break
+            elif index2 is not None:
+                if self.selectedVertex():
+                    self.hShape.highlightClear()
+                self.addVertex, self.hShape = index2, shape
+                self.hVertex = None
+                self.overrideCursor(CURSOR_DRAW)
+                self.setToolTip("Click & drag to add point")
+                self.setStatusTip(self.toolTip())
+                self.update()
+                break
             elif shape.containsPoint(pos):
                 if self.selectedVertex():
                     self.hShape.highlightClear()
-                self.hVertex, self.hShape = None, shape
+                self.hVertex,  self.addVertex, self.hShape = None, None, shape
                 self.setToolTip(
                     "Click & drag to move shape '%s'" % shape.label)
                 self.setStatusTip(self.toolTip())
@@ -304,6 +319,13 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedVertex():  # A vertex is marked for selection.
             index, shape = self.hVertex, self.hShape
             shape.highlightVertex(index, shape.MOVE_VERTEX)
+            return
+        if self.addedVertex() and self.hShape is not None:
+            index2, shape = self.addVertex, self.hShape
+            shape.insertPoint(index2, point)
+            shape.highlightVertex(index2, shape.MOVE_VERTEX)
+            self.addVertex = None
+            self.hVertex = index2
             return
         for shape in reversed(self.shapes):
             if self.isVisible(shape) and shape.containsPoint(point):
