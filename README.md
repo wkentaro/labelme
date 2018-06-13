@@ -169,7 +169,6 @@ conda activate labelme
 
 # Build the standalone executable
 pip install .
-pip uninstall -y matplotlib
 pip install pyinstaller
 pyinstaller labelme.spec
 dist/labelme --version
