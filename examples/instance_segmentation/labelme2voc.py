@@ -61,11 +61,11 @@ def main():
             out_img_file = osp.join(
                 args.out_dir, 'JPEGImages', base + '.jpg')
             out_cls_file = osp.join(
-                args.out_dir, 'SegmentationClass', base + '.png')
+                args.out_dir, 'SegmentationClass', base + '.npy')
             out_clsv_file = osp.join(
                 args.out_dir, 'SegmentationClassVisualization', base + '.jpg')
             out_ins_file = osp.join(
-                args.out_dir, 'SegmentationObject', base + '.png')
+                args.out_dir, 'SegmentationObject', base + '.npy')
             out_insv_file = osp.join(
                 args.out_dir, 'SegmentationObjectVisualization', base + '.jpg')
 
@@ -81,15 +81,16 @@ def main():
                 label_name_to_value=class_name_to_id,
                 type='instance',
             )
+            ins[cls == -1] = 0  # ignore it.
 
-            PIL.Image.fromarray(cls).save(out_cls_file)
+            np.save(out_cls_file, cls)
             label_names = ['%d: %s' % (cls_id, cls_name)
                            for cls_id, cls_name in enumerate(class_names)]
             clsv = labelme.utils.draw_label(
                 cls, img, label_names, colormap=colormap)
             PIL.Image.fromarray(clsv).save(out_clsv_file)
 
-            PIL.Image.fromarray(ins).save(out_ins_file)
+            np.save(out_ins_file, ins)
             instance_ids = np.unique(ins)
             instance_names = [str(i) for i in range(max(instance_ids) + 1)]
             insv = labelme.utils.draw_label(

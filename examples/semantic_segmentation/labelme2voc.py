@@ -59,7 +59,7 @@ def main():
             out_img_file = osp.join(
                 args.out_dir, 'JPEGImages', base + '.jpg')
             out_lbl_file = osp.join(
-                args.out_dir, 'SegmentationClass', base + '.png')
+                args.out_dir, 'SegmentationClass', base + '.npy')
             out_viz_file = osp.join(
                 args.out_dir, 'SegmentationClassVisualization', base + '.jpg')
 
@@ -75,11 +75,10 @@ def main():
                 label_name_to_value=class_name_to_id,
             )
 
-            lbl_pil = PIL.Image.fromarray(lbl)
             # Only works with uint8 label
             # lbl_pil = PIL.Image.fromarray(lbl, mode='P')
             # lbl_pil.putpalette((colormap * 255).flatten())
-            lbl_pil.save(out_lbl_file)
+            np.save(out_lbl_file, lbl)
 
             label_names = ['%d: %s' % (cls_id, cls_name)
                            for cls_id, cls_name in enumerate(class_names)]
