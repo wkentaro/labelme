@@ -88,7 +88,6 @@ after_script:
     if [ $RUN_PYINSTALLER = "true" ]; then
       # Cleanup
       pip uninstall -y $PIP_DEPENDENCIES
-      pip uninstall -y matplotlib
 
       # Build the standalone executable
       pip install pyinstaller
