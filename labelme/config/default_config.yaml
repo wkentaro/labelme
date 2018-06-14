@@ -25,6 +25,7 @@ shortcuts:
   fit_window: Ctrl+F
   fit_width: Ctrl+Shift+F
 
+  add_point: Ctrl+Shift+P
   create_polygon: Ctrl+N
   edit_polygon: Ctrl+J
   delete_polygon: Delete
