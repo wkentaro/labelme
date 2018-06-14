@@ -43,6 +43,7 @@ There are options:
 - Platform specific installation: Ubuntu, macOS
 
 ### Anaconda
+Note: when i use in window, if you use pillow 5 it will cause some error so try install pillow 4 instead, conda install pillow=4.0.0
 
 You need install [Anaconda](https://www.continuum.io/downloads), then run below:
 
