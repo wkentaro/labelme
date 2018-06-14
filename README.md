@@ -17,15 +17,11 @@ Fig 1. Example of annotations for instance segmentation.
 
 ## Features
 
-- [x] Polygonal annotation
-- [x] Predefined labels ([#76](https://github.com/wkentaro/labelme/pull/76))
-- [x] Auto save mode ([#138](https://github.com/wkentaro/labelme/pull/138))
-- [x] Support custom json keys ([#140](https://github.com/wkentaro/labelme/pull/140))
-- [x] Undo by Ctrl-Z ([#112](https://github.com/wkentaro/labelme/pull/112), [#143](https://github.com/wkentaro/labelme/pull/143))
-- [x] Customize by config file ([#144](https://github.com/wkentaro/labelme/pull/144))
-- [x] VOC dataset export ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
-- [x] Image level flag annotation ([#166](https://github.com/wkentaro/labelme/pull/166))
-- [x] Video annotation ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
+- [x] Image / Video polygonal annotation. ([tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial), [video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
+- [x] Image level flag annotation. ([#166](https://github.com/wkentaro/labelme/pull/166))
+- [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
+- [x] Exporting VOC-like dataset for semantic/instance segmentation. ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
+
 
 
 ## Requirements
