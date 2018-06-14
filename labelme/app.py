@@ -278,6 +278,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
                                shortcuts['undo_last_point'], 'undo',
                                'Undo last drawn point', enabled=False)
+        addPoint = action('Add Point to Edge', self.canvas.addPointToEdge,
+                          None, 'edit', 'Add point to the nearest edge',
+                          enabled=False)
 
         undo = action('Undo', self.undoShapeEdit, shortcuts['undo'], 'undo',
                       'Undo last add and edit of shape', enabled=False)
@@ -359,6 +362,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             lineColor=color1, fillColor=color2,
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
+            addPoint=addPoint,
             createMode=createMode, editMode=editMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
@@ -371,11 +375,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             menu=(
                 createMode, editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
-                undo, undoLastPoint,
+                undo, undoLastPoint, addPoint,
             ),
             onLoadActive=(close, createMode, editMode),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
+
+        self.canvas.edgeSelected.connect(self.actions.addPoint.setEnabled)
 
         self.menus = struct(
             file=self.menu('&File'),
@@ -554,6 +560,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def tutorial(self):
         url = 'https://github.com/wkentaro/labelme/tree/master/examples/tutorial'  # NOQA
         webbrowser.open(url)
+
+    def toggleAddPointEnabled(self, enabled):
+        self.actions.addPoint.setEnabled(enabled)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
