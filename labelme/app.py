@@ -16,7 +16,6 @@ from labelme import __appname__
 from labelme import __version__
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
-from labelme.compat import QPoint
 from labelme.compat import QT5
 from labelme.config import get_config
 from labelme.labelDialog import LabelDialog
@@ -445,7 +444,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # FIXME: QSettings.value can return None on PyQt4
         self.recentFiles = self.settings.value('recentFiles', []) or []
         size = self.settings.value('window/size', QtCore.QSize(600, 500))
-        position = self.settings.value('window/position', QPoint(0, 0))
+        position = self.settings.value('window/position', QtCore.QPoint(0, 0))
         self.resize(size)
         self.move(position)
         # or simply:
@@ -695,7 +694,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for label, points, line_color, fill_color in shapes:
             shape = Shape(label=label)
             for x, y in points:
-                shape.addPoint(QPoint(x, y))
+                shape.addPoint(QtCore.QPoint(x, y))
             shape.close()
             s.append(shape)
             if line_color:
