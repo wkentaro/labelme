@@ -1,0 +1,22 @@
+{
+  "flags": {
+    "__ignore__": false,
+    "cat": false,
+    "dog": true
+  },
+  "shapes": [],
+  "lineColor": [
+    0,
+    255,
+    0,
+    128
+  ],
+  "fillColor": [
+    255,
+    0,
+    0,
+    128
+  ],
+  "imagePath": "0002.jpg",
+  "imageData": null
+}
