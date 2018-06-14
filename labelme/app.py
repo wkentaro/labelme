@@ -918,6 +918,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if self._config['keep_prev']:
             prev_shapes = self.canvas.shapes
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
+        if self._config['flags']:
+            self.loadFlags({k: False for k in self._config['flags']})
         if self._config['keep_prev']:
             self.loadShapes(prev_shapes)
         if self.labelFile:
