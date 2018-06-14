@@ -1,6 +1,6 @@
 <img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
 
-# labelme: Image Polygonal Annotation with Python
+# labelme: Image/Video Polygonal Annotation with Python
 
 [![PyPI Version](https://img.shields.io/pypi/v/labelme.svg)](https://pypi.python.org/pypi/labelme)
 [![Python Versions](https://img.shields.io/pypi/pyversions/labelme.svg)](https://pypi.org/project/labelme)
