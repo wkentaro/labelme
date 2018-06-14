@@ -39,8 +39,8 @@ Fig 1. Example of annotations for instance segmentation.
 
 There are options:
 
-- Platform agonistic installation: Anaconda, Docker
-- Platform specific installation: Ubuntu, macOS
+- Platform agonistic installation: [Anaconda](#anaconda), [Docker](#docker)
+- Platform specific installation: [Ubuntu](#ubuntu), [macOS](#macos), [Windows](#windows)
 
 ### Anaconda
 
@@ -101,6 +101,16 @@ pip install labelme  # both python2/3 should work
 # or install standalone executable / app
 brew install wkentaro/labelme/labelme
 brew cask install wkentaro/labelme/labelme
+```
+
+### Windows
+
+Firstly, follow instruction in [Anaconda](#anaconda).
+
+```bash
+# Pillow 5 causes dll load error on Windows.
+# https://github.com/wkentaro/labelme/pull/174
+conda install pillow=4.0.0
 ```
 
 
