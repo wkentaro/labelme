@@ -18,8 +18,8 @@ Fig 1. Example of annotations for instance segmentation.
 ## Features
 
 - [x] Image polygon annotation for segmentation. ([tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial))
-- [x] Image flag annotation for classification. ([#166](https://github.com/wkentaro/labelme/pull/166))
-- [x] Video annotation. [video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation)
+- [x] Image flag annotation for classification or cleaning. ([#166](https://github.com/wkentaro/labelme/pull/166))
+- [x] Video annotation. ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
 - [x] Exporting VOC-like dataset for semantic/instance segmentation. ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
 
