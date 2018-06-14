@@ -1042,7 +1042,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
-        if self.hasLabels():
+        if self._config['flags'] or self.hasLabels():
             if self.labelFile:
                 # DL20180323 - overwrite when in directory
                 self._saveFile(self.labelFile.filename)
