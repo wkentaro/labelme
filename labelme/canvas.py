@@ -1,10 +1,9 @@
-from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-QT5 = QT_VERSION[0] == '5'  # NOQA
-
+from labelme.compat import QPoint
+from labelme.compat import QT5
 from labelme.lib import distance
 from labelme.shape import Shape
 
@@ -22,7 +21,7 @@ CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 
 class Canvas(QtWidgets.QWidget):
 
-    zoomRequest = QtCore.Signal(int, QtCore.QPoint)
+    zoomRequest = QtCore.Signal(int, QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
     selectionChanged = QtCore.Signal(bool)
@@ -45,9 +44,9 @@ class Canvas(QtWidgets.QWidget):
         self.selectedShapeCopy = None
         self.lineColor = QtGui.QColor(0, 0, 255)
         self.line = Shape(line_color=self.lineColor)
-        self.prevPoint = QtCore.QPointF()
-        self.prevMovePoint = QtCore.QPointF()
-        self.offsets = QtCore.QPointF(), QtCore.QPointF()
+        self.prevPoint = QPoint()
+        self.prevMovePoint = QPoint()
+        self.offsets = QPoint(), QPoint()
         self.scale = 1.0
         self.pixmap = QtGui.QPixmap()
         self.visible = {}
@@ -345,7 +344,7 @@ class Canvas(QtWidgets.QWidget):
         y1 = rect.y() - point.y()
         x2 = (rect.x() + rect.width()) - point.x()
         y2 = (rect.y() + rect.height()) - point.y()
-        self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
+        self.offsets = QPoint(x1, y1), QPoint(x2, y2)
 
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
@@ -359,11 +358,11 @@ class Canvas(QtWidgets.QWidget):
             return False  # No need to move
         o1 = pos + self.offsets[0]
         if self.outOfPixmap(o1):
-            pos -= QtCore.QPointF(min(0, o1.x()), min(0, o1.y()))
+            pos -= QPoint(min(0, o1.x()), min(0, o1.y()))
         o2 = pos + self.offsets[1]
         if self.outOfPixmap(o2):
-            pos += QtCore.QPointF(min(0, self.pixmap.width() - o2.x()),
-                                  min(0, self.pixmap.height() - o2.y()))
+            pos += QPoint(min(0, self.pixmap.width() - o2.x()),
+                          min(0, self.pixmap.height() - o2.y()))
         # XXX: The next line tracks the new position of the cursor
         # relative to the shape, but also results in making it
         # a bit "shaky" when nearing the border and allows it to
@@ -408,7 +407,7 @@ class Canvas(QtWidgets.QWidget):
         # Try to move in one direction, and if it fails in another.
         # Give up if both fail.
         point = shape[0]
-        offset = QtCore.QPointF(2.0, 2.0)
+        offset = QPoint(2.0, 2.0)
         self.calculateOffsets(shape, point)
         self.prevPoint = point
         if not self.boundedMoveShape(shape, point - offset):
@@ -453,10 +452,7 @@ class Canvas(QtWidgets.QWidget):
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
-        if QT5:
-            return QtCore.QPoint(x, y)
-        else:
-            return QtCore.QPointF(x, y)
+        return QPoint(x, y)
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
@@ -495,10 +491,10 @@ class Canvas(QtWidgets.QWidget):
         if (x, y) == (x1, y1):
             # Handle cases where previous point is on one of the edges.
             if x3 == x4:
-                return QtCore.QPointF(x3, min(max(0, y2), max(y3, y4)))
+                return QPoint(x3, min(max(0, y2), max(y3, y4)))
             else:  # y3 == y4
-                return QtCore.QPointF(min(max(0, x2), max(x3, x4)), y3)
-        return QtCore.QPointF(x, y)
+                return QPoint(min(max(0, x2), max(x3, x4)), y3)
+        return QPoint(x, y)
 
     def intersectingEdges(self, point1, point2, points):
         """Find intersecting edges.
@@ -525,8 +521,8 @@ class Canvas(QtWidgets.QWidget):
             if 0 <= ua <= 1 and 0 <= ub <= 1:
                 x = x1 + ua * (x2 - x1)
                 y = y1 + ua * (y2 - y1)
-                m = QtCore.QPointF((x3 + x4) / 2, (y3 + y4) / 2)
-                d = distance(m - QtCore.QPointF(x2, y2))
+                m = QPoint((x3 + x4) / 2, (y3 + y4) / 2)
+                d = distance(m - QPoint(x2, y2))
                 yield d, i, (x, y)
 
     # These two, along with a call to adjustSize are required for the

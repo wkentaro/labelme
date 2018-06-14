@@ -13,3 +13,4 @@ from labelme._version import __version__
 
 from labelme import testing
 from labelme import utils
+from labelme import compat
