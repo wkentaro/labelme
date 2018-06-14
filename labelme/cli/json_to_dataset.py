@@ -1,8 +1,8 @@
 import argparse
+import base64
 import json
 import os
 import os.path as osp
-import base64
 import warnings
 
 import PIL.Image

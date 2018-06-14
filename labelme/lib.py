@@ -1,6 +1,6 @@
 from math import sqrt
 import os.path as osp
-from numpy.linalg import norm
+
 import numpy as np
 
 from qtpy import QtCore
@@ -76,10 +76,10 @@ def distancetoline(point, line):
     p2 = np.array([p2.x(), p2.y()])
     p3 = np.array([point.x(), point.y()])
     if np.dot((p3 - p1), (p2 - p1)) < 0:
-        return norm(p3 - p1)
+        return np.linalg.norm(p3 - p1)
     if np.dot((p3 - p2), (p1 - p2)) < 0:
-        return norm(p3 - p2)
-    return norm(np.cross(p2 - p1, p1 - p3)) / norm(p2 - p1)
+        return np.linalg.norm(p3 - p2)
+    return np.linalg.norm(np.cross(p2 - p1, p1 - p3)) / np.linalg.norm(p2 - p1)
 
 
 def fmtShortcut(text):
