@@ -1,0 +1,88 @@
+{
+  "flags": {},
+  "shapes": [
+    {
+      "label": "bus",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          85,
+          24
+        ],
+        [
+          435,
+          26
+        ],
+        [
+          438,
+          373
+        ],
+        [
+          88,
+          374
+        ]
+      ]
+    },
+    {
+      "label": "bus",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          0,
+          100
+        ],
+        [
+          107,
+          101
+        ],
+        [
+          107,
+          290
+        ],
+        [
+          0,
+          291
+        ]
+      ]
+    },
+    {
+      "label": "car",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          407,
+          168
+        ],
+        [
+          500,
+          168
+        ],
+        [
+          500,
+          268
+        ],
+        [
+          407,
+          268
+        ]
+      ]
+    }
+  ],
+  "lineColor": [
+    0,
+    255,
+    0,
+    128
+  ],
+  "fillColor": [
+    255,
+    0,
+    0,
+    128
+  ],
+  "imagePath": "2011_000025.jpg",
+  "imageData": null
+}
