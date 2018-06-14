@@ -7,18 +7,17 @@ import sys
 import warnings
 import webbrowser
 
-from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-QT5 = QT_VERSION[0] == '5'  # NOQA
-
 from labelme import __appname__
 from labelme import __version__
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
+from labelme.compat import QPoint
+from labelme.compat import QT5
 from labelme.config import get_config
 from labelme.labelDialog import LabelDialog
 from labelme.labelFile import LabelFile
@@ -446,7 +445,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # FIXME: QSettings.value can return None on PyQt4
         self.recentFiles = self.settings.value('recentFiles', []) or []
         size = self.settings.value('window/size', QtCore.QSize(600, 500))
-        position = self.settings.value('window/position', QtCore.QPoint(0, 0))
+        position = self.settings.value('window/position', QPoint(0, 0))
         self.resize(size)
         self.move(position)
         # or simply:
@@ -696,7 +695,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for label, points, line_color, fill_color in shapes:
             shape = Shape(label=label)
             for x, y in points:
-                shape.addPoint(QtCore.QPointF(x, y))
+                shape.addPoint(QPoint(x, y))
             shape.close()
             s.append(shape)
             if line_color:
