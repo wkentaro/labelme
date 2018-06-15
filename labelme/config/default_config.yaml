@@ -1,4 +1,5 @@
 auto_save: false
+display_label_popup: true
 store_data: true
 keep_prev: false
 
