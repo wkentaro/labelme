@@ -32,7 +32,8 @@ class LabelFile(object):
             'shapes',  # polygonal annotations
             'flags',   # image level flags
         ]
-        try:
+        #try:
+        if True:
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
             if data['imageData'] is not None:
@@ -44,15 +45,15 @@ class LabelFile(object):
                 with open(imagePath, 'rb') as f:
                     imageData = f.read()
             flags = data.get('flags')
-            imagePath = data['imagePath']
+            imagePath = data['imagePath']#.decode("utf-8")
             lineColor = data['lineColor']
             fillColor = data['fillColor']
             shapes = (
                 (s['label'], s['points'], s['line_color'], s['fill_color'])
                 for s in data['shapes']
             )
-        except Exception as e:
-            raise LabelFileError(e)
+        #except Exception as e:
+        #    raise LabelFileError(e)
 
         otherData = {}
         for key, value in data.items():
@@ -72,6 +73,9 @@ class LabelFile(object):
     def save(self, filename, shapes, imagePath, imageData=None,
              lineColor=None, fillColor=None, otherData=None,
              flags=None):
+
+        for s in shapes:
+            s['label'] = s['label'].encode("utf-8")
         if imageData is not None:
             imageData = base64.b64encode(imageData).decode('utf-8')
         if otherData is None:
@@ -83,17 +87,18 @@ class LabelFile(object):
             shapes=shapes,
             lineColor=lineColor,
             fillColor=fillColor,
-            imagePath=imagePath,
+            imagePath=imagePath.encode("utf-8"),
             imageData=imageData,
         )
         for key, value in otherData.items():
             data[key] = value
-        try:
+        #try:
+        if True:
             with open(filename, 'wb' if PY2 else 'w') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
-        except Exception as e:
-            raise LabelFileError(e)
+        #except Exception as e:
+        #    raise LabelFileError(e)
 
     @staticmethod
     def isLabelFile(filename):
