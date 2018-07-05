@@ -121,8 +121,7 @@ cd labelme
 pyinstaller labelme.spec
 # your app is upder dist\labelme
 ```
-if you found that a target computer cannot open jpg/gif file, this is because the target computer has no vc2008 redistratable installed.
-but the dlls under qt4_pulgins need VC runtime to load. You can either copy the msvc*90.dll and Microsoft.VC90.CRT.manifest files to qt4_pulgins\imageformats directory or install vc2008 redistratable on target computer.
+If you found that a target computer cannot open jpg/gif file, this is because the target computer has no vc2008 redistratable installed while the dlls under qt4_pulgins\imageformats directory need vc2008 runtime. You can either copy the msvc*90.dll and Microsoft.VC90.CRT.manifest files to qt4_pulgins\imageformats directory or install vc2008 redistratable on target computer.
 
 
 ## Usage
