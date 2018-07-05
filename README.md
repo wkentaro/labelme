@@ -109,6 +109,20 @@ Firstly, follow instruction in [Anaconda](#anaconda).
 # https://github.com/wkentaro/labelme/pull/174
 conda install pillow=4.0.0
 ```
+### Build under Windows XP + Python 2.7.15 + PyQT4 + PyInstaller3.2
+
+
+download PyQT whl file PyQt4‑4.11.4‑cp27‑cp27m‑win32.whl from https://www.lfd.uci.edu/~gohlke/pythonlibs/
+```bash
+pip install PyQt4‑4.11.4‑cp27‑cp27m‑win32.whl
+pip install pillow numpy pyinstaller qtpy
+git clone https://github.com/windhw/labelme/edit/py27_winxp_pyinstaller/
+cd labelme
+pyinstaller labelme.spec
+# your app is upder dist\labelme
+```
+if you found that a target computer cannot open jpg/gif file, this is because the target computer has no vc2008 redistratable installed.
+but the dlls under qt4_pulgins need VC runtime to load. You can either copy the msvc*90.dll and Microsoft.VC90.CRT.manifest files to qt4_pulgins\imageformats directory or install vc2008 redistratable on target computer.
 
 
 ## Usage
