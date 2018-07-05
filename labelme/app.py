@@ -7,6 +7,7 @@ import sys
 import warnings
 import webbrowser
 
+
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -34,6 +35,13 @@ from labelme.toolBar import ToolBar
 from labelme.zoomWidget import ZoomWidget
 
 
+#edit to use unicode
+if '_MEIPASS' in dir(sys):
+    d = "qt4_plugins"
+    d = os.path.join(sys._MEIPASS, d)
+    QtCore.QCoreApplication.setLibraryPaths([unicode(os.path.abspath(d),'cp936')])
+
+
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
@@ -46,7 +54,12 @@ from labelme.zoomWidget import ZoomWidget
 
 
 # Utility functions and classes.
-
+import __builtin__
+def str(a):
+    if type(a) == unicode:
+        return a
+    else:
+        return __builtin__.str(a)
 
 class WindowMixin(object):
     def menu(self, title, actions=None):
@@ -510,7 +523,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
         title = __appname__
         if self.filename is not None:
-            title = '{} - {}*'.format(title, self.filename)
+            title = u'{} - {}*'.format(title, self.filename)
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -520,7 +533,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.createRectangleMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = '{} - {}'.format(title, self.filename)
+            title = u'{} - {}'.format(title, self.filename)
         self.setWindowTitle(title)
 
     def toggleActions(self, value=True):
@@ -610,7 +623,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         def exists(filename):
             return os.path.exists(str(filename))
-
         menu = self.menus.recentFiles
         menu.clear()
         files = [f for f in self.recentFiles if f != current and exists(f)]
@@ -635,7 +647,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 if label_i == label:
                     return True
             if self._config['validate_label'] == 'instance':
-                m = re.match(r'^{}-[0-9]*$'.format(label_i), label)
+                m = re.match(ur'^{}-[0-9]*$'.format(label_i), label)
                 if m:
                     return True
         return False
@@ -648,8 +660,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if text is None:
             return
         if not self.validateLabel(text):
-            self.errorMessage('Invalid label',
-                              "Invalid label '{}' with validation type '{}'"
+            self.errorMessage(u'Invalid label',
+                              u"Invalid label '{}' with validation type '{}'"
                               .format(text, self._config['validate_label']))
             return
         item.setText(text)
@@ -752,7 +764,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             key = item.text()
             flag = item.checkState() == Qt.Checked
             flags[key] = flag
-        try:
+        #try:
+        if True:
             imagePath = os.path.relpath(
                 self.imagePath, os.path.dirname(filename))
             imageData = self.imageData if self._config['store_data'] else None
@@ -770,9 +783,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             # disable allows next and previous image to proceed
             # self.filename = filename
             return True
-        except LabelFileError as e:
-            self.errorMessage('Error saving label data', '<b>%s</b>' % e)
-            return False
+        #except LabelFileError as e:
+        #    self.errorMessage('Error saving label data', '<b>%s</b>' % e)
+        #    return False
 
     def copySelectedShape(self):
         self.addLabel(self.canvas.copySelectedShape())
@@ -808,8 +821,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             text = items[0].text()
         text = self.labelDialog.popUp(text)
         if text is not None and not self.validateLabel(text):
-            self.errorMessage('Invalid label',
-                              "Invalid label '{}' with validation type '{}'"
+            self.errorMessage(u'Invalid label',
+                              u"Invalid label '{}' with validation type '{}'"
                               .format(text, self._config['validate_label']))
             text = None
         if text is None:
@@ -890,7 +903,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return False
         # assumes same name, but json extension
         self.status("Loading %s..." % os.path.basename(str(filename)))
-        label_file = os.path.splitext(filename)[0] + '.json'
+        label_file = os.path.splitext(filename)[0] + u'.json'
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.isLabelFile(label_file):
             try:
@@ -930,9 +943,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             formats = ['*.{}'.format(fmt.data().decode())
                        for fmt in QtGui.QImageReader.supportedImageFormats()]
             self.errorMessage(
-                'Error opening file',
-                '<p>Make sure <i>{0}</i> is a valid image file.<br/>'
-                'Supported image formats: {1}</p>'
+                u'Error opening file',
+                u'<p>Make sure <i>{0}</i> is a valid image file.<br/>'
+                u'Supported image formats: {1}</p>'
                 .format(filename, ','.join(formats)))
             self.status("Error reading %s" % filename)
             return False
@@ -965,7 +978,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         super(MainWindow, self).resizeEvent(event)
 
     def paintCanvas(self):
-        assert not self.image.isNull(), "cannot paint null image"
+        assert not self.image.isNull(), u"cannot paint null image"
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
         self.canvas.update()
@@ -1052,10 +1065,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         path = os.path.dirname(str(self.filename)) if self.filename else '.'
         formats = ['*.{}'.format(fmt.data().decode())
                    for fmt in QtGui.QImageReader.supportedImageFormats()]
-        filters = "Image & Label files (%s)" % ' '.join(
+        filters = u"Image & Label files (%s)" % ' '.join(
             formats + ['*%s' % LabelFile.suffix])
         filename = QtWidgets.QFileDialog.getOpenFileName(
-            self, '%s - Choose Image or Label file' % __appname__,
+            self, u'%s - Choose Image or Label file' % __appname__,
             path, filters)
         if QT5:
             filename, _ = filename
@@ -1064,7 +1077,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.loadFile(filename)
 
     def saveFile(self, _value=False):
-        assert not self.image.isNull(), "cannot save empty image"
+        assert not self.image.isNull(), u"cannot save empty image"
         if self._config['flags'] or self.hasLabels():
             if self.labelFile:
                 # DL20180323 - overwrite when in directory
@@ -1075,13 +1088,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self._saveFile(self.saveFileDialog())
 
     def saveFileAs(self, _value=False):
-        assert not self.image.isNull(), "cannot save empty image"
+        assert not self.image.isNull(), u"cannot save empty image"
         if self.hasLabels():
             self._saveFile(self.saveFileDialog())
 
     def saveFileDialog(self):
-        caption = '%s - Choose File' % __appname__
-        filters = 'Label files (*%s)' % LabelFile.suffix
+        caption = u'%s - Choose File' % __appname__
+        filters = u'Label files (*%s)' % LabelFile.suffix
         dlg = QtWidgets.QFileDialog(self, caption, self.currentPath(), filters)
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
@@ -1091,8 +1104,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         default_labelfile_name = os.path.join(
             self.currentPath(), basename + LabelFile.suffix)
         filename = dlg.getSaveFileName(
-            self, 'Choose File', default_labelfile_name,
-            'Label files (*%s)' % LabelFile.suffix)
+            self, u'Choose File', default_labelfile_name,
+            u'Label files (*%s)' % LabelFile.suffix)
         if QT5:
             filename, _ = filename
         filename = str(filename)
@@ -1118,8 +1131,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def hasLabels(self):
         if not self.labelList.itemsToShapes:
             self.errorMessage(
-                'No objects labeled',
-                'You must label at least one object to save the file.')
+                u'No objects labeled',
+                u'You must label at least one object to save the file.')
             return False
         return True
 
@@ -1127,7 +1140,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if not self.dirty:
             return True
         mb = QtWidgets.QMessageBox
-        msg = 'Save annotations to "{}" before closing?'.format(self.filename)
+        msg = u'Save annotations to "{}" before closing?'.format(self.filename)
         answer = mb.question(self,
                              'Save annotations?',
                              msg,
@@ -1143,14 +1156,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def errorMessage(self, title, message):
         return QtWidgets.QMessageBox.critical(
-            self, title, '<p><b>%s</b></p>%s' % (title, message))
+            self, title, u'<p><b>%s</b></p>%s' % (title, message))
 
     def currentPath(self):
         return os.path.dirname(str(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
         color = self.colorDialog.getColor(
-            self.lineColor, 'Choose line color', default=DEFAULT_LINE_COLOR)
+            self.lineColor, u'Choose line color', default=DEFAULT_LINE_COLOR)
         if color:
             self.lineColor = color
             # Change the color for all shape lines:
@@ -1160,7 +1173,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def chooseColor2(self):
         color = self.colorDialog.getColor(
-            self.fillColor, 'Choose fill color', default=DEFAULT_FILL_COLOR)
+            self.fillColor, u'Choose fill color', default=DEFAULT_FILL_COLOR)
         if color:
             self.fillColor = color
             Shape.fill_color = self.fillColor
@@ -1169,8 +1182,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-        msg = 'You are about to permanently delete this polygon, ' \
-              'proceed anyway?'
+        msg = u'You are about to permanently delete this polygon, ' \
+              u'proceed anyway?'
         if yes == QtWidgets.QMessageBox.warning(self, 'Attention', msg,
                                                 yes | no):
             self.remLabel(self.canvas.deleteSelected())
@@ -1181,7 +1194,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(
-            self.lineColor, 'Choose line color', default=DEFAULT_LINE_COLOR)
+            self.lineColor, u'Choose line color', default=DEFAULT_LINE_COLOR)
         if color:
             self.canvas.selectedShape.line_color = color
             self.canvas.update()
@@ -1189,7 +1202,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def chshapeFillColor(self):
         color = self.colorDialog.getColor(
-            self.fillColor, 'Choose fill color', default=DEFAULT_FILL_COLOR)
+            self.fillColor, u'Choose fill color', default=DEFAULT_FILL_COLOR)
         if color:
             self.canvas.selectedShape.fill_color = color
             self.canvas.update()
@@ -1216,7 +1229,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 if self.filename else '.'
 
         targetDirPath = str(QtWidgets.QFileDialog.getExistingDirectory(
-            self, '%s - Open Directory' % __appname__, defaultOpenDirPath,
+            self, u'%s - Open Directory' % __appname__, defaultOpenDirPath,
             QtWidgets.QFileDialog.ShowDirsOnly |
             QtWidgets.QFileDialog.DontResolveSymlinks))
         self.importDirImages(targetDirPath)
@@ -1328,7 +1341,7 @@ def main():
     args = parser.parse_args()
 
     if args.version:
-        print('{0} {1}'.format(__appname__, __version__))
+        print(u'{0} {1}'.format(__appname__, __version__))
         sys.exit(0)
 
     if hasattr(args, 'flags'):
@@ -1368,4 +1381,5 @@ def main():
 
 
 if __name__ == '__main__':
+    print "Welcome to LabelMe"
     main()
