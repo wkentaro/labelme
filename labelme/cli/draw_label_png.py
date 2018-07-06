@@ -18,9 +18,6 @@ def main():
     args = parser.parse_args()
 
     lbl = np.asarray(PIL.Image.open(args.label_png))
-    if lbl.dtype != np.int32:
-        logger.warn('We recomment numpy.int32 for the label, but it has: {}'
-                    .format(lbl.dtype))
 
     logger.info('label shape: {}'.format(lbl.shape))
     logger.info('unique label values: {}'.format(np.unique(lbl)))
