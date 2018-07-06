@@ -28,8 +28,10 @@ def main():
     os.makedirs(args.out_dir)
     os.makedirs(osp.join(args.out_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClass'))
+    os.makedirs(osp.join(args.out_dir, 'SegmentationClassPNG'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClassVisualization'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationObject'))
+    os.makedirs(osp.join(args.out_dir, 'SegmentationObjectPNG'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationObjectVisualization'))
     print('Creating dataset:', args.out_dir)
 
@@ -62,10 +64,14 @@ def main():
                 args.out_dir, 'JPEGImages', base + '.jpg')
             out_cls_file = osp.join(
                 args.out_dir, 'SegmentationClass', base + '.npy')
+            out_clsp_file = osp.join(
+                args.out_dir, 'SegmentationClassPNG', base + '.png')
             out_clsv_file = osp.join(
                 args.out_dir, 'SegmentationClassVisualization', base + '.jpg')
             out_ins_file = osp.join(
                 args.out_dir, 'SegmentationObject', base + '.npy')
+            out_insp_file = osp.join(
+                args.out_dir, 'SegmentationObjectPNG', base + '.png')
             out_insv_file = osp.join(
                 args.out_dir, 'SegmentationObjectVisualization', base + '.jpg')
 
@@ -83,12 +89,40 @@ def main():
             )
             ins[cls == -1] = 0  # ignore it.
 
+            # class label
+
+            # Assume class label ranses [-1, 254] for int32,
+            # and [0, 255] for uint8 as VOC.
+            if cls.min() >= -1 and cls.max() < 255:
+                cls_pil = PIL.Image.fromarray(cls.astype(np.uint8), mode='P')
+                cls_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
+                cls_pil.save(out_clsp_file)
+            else:
+                labelme.logger.warn(
+                    '[%s] Cannot save the pixel-wise class label as PNG, '
+                    'so please use the npy file.' % label_file
+                )
+
             np.save(out_cls_file, cls)
             label_names = ['%d: %s' % (cls_id, cls_name)
                            for cls_id, cls_name in enumerate(class_names)]
             clsv = labelme.utils.draw_label(
                 cls, img, label_names, colormap=colormap)
             PIL.Image.fromarray(clsv).save(out_clsv_file)
+
+            # instance label
+
+            # Assume instance label ranses [-1, 254] for int32,
+            # and [0, 255] for uint8 as VOC.
+            if ins.min() >= -1 and ins.max() < 255:
+                ins_pil = PIL.Image.fromarray(ins.astype(np.uint8), mode='P')
+                ins_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
+                ins_pil.save(out_insp_file)
+            else:
+                labelme.logger.warn(
+                    '[%s] Cannot save the pixel-wise instance label as PNG, '
+                    'so please use the npy file.' % label_file
+                )
 
             np.save(out_ins_file, ins)
             instance_ids = np.unique(ins)

@@ -18,8 +18,8 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('labels_file')
-    parser.add_argument('in_dir')
-    parser.add_argument('out_dir')
+    parser.add_argument('in_dir', help='input dir with annotated files')
+    parser.add_argument('out_dir', help='output dataset directory')
     args = parser.parse_args()
 
     if osp.exists(args.out_dir):
@@ -28,6 +28,7 @@ def main():
     os.makedirs(args.out_dir)
     os.makedirs(osp.join(args.out_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClass'))
+    os.makedirs(osp.join(args.out_dir, 'SegmentationClassPNG'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClassVisualization'))
     print('Creating dataset:', args.out_dir)
 
@@ -60,6 +61,8 @@ def main():
                 args.out_dir, 'JPEGImages', base + '.jpg')
             out_lbl_file = osp.join(
                 args.out_dir, 'SegmentationClass', base + '.npy')
+            out_png_file = osp.join(
+                args.out_dir, 'SegmentationClassPNG', base + '.png')
             out_viz_file = osp.join(
                 args.out_dir, 'SegmentationClassVisualization', base + '.jpg')
 
@@ -75,9 +78,18 @@ def main():
                 label_name_to_value=class_name_to_id,
             )
 
-            # Only works with uint8 label
-            # lbl_pil = PIL.Image.fromarray(lbl, mode='P')
-            # lbl_pil.putpalette((colormap * 255).flatten())
+            # Assume label ranses [-1, 254] for int32,
+            # and [0, 255] for uint8 as VOC.
+            if lbl.min() >= -1 and lbl.max() < 255:
+                lbl_pil = PIL.Image.fromarray(lbl.astype(np.uint8), mode='P')
+                lbl_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
+                lbl_pil.save(out_png_file)
+            else:
+                labelme.logger.warn(
+                    '[%s] Cannot save the pixel-wise class label as PNG, '
+                    'so please use the npy file.' % label_file
+                )
+
             np.save(out_lbl_file, lbl)
 
             label_names = ['%d: %s' % (cls_id, cls_name)
