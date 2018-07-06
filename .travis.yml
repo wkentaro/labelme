@@ -68,6 +68,12 @@ install:
   - CONDA_DEPENDENCIES=$PYQT_PACKAGE source ci-helpers/travis/setup_conda.sh
   - source activate test && export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
   - pip install .
+  # https://github.com/wkentaro/labelme/issues/183
+  - |
+    if [ $TRAVIS_OS_NAME = "osx" ]; then
+      pip uninstall -y Pillow
+      conda install -y Pillow
+    fi
 
 before_script:
   - if [ $TRAVIS_OS_NAME = "linux" ]; then (herbstluftwm )& fi
