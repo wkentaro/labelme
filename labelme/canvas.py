@@ -2,7 +2,7 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-from labelme.compat import QT5
+from labelme import QT5
 from labelme.lib import distance
 from labelme.shape import Shape
 

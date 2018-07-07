@@ -14,9 +14,9 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
+from labelme import QT5
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
-from labelme.compat import QT5
 from labelme.config import get_config
 from labelme.labelDialog import LabelDialog
 from labelme.labelFile import LabelFile
