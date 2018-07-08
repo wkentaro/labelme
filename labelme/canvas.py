@@ -2,8 +2,8 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-from labelme import QT5
 from labelme.lib import distance
+from labelme import QT5
 from labelme.shape import Shape
 
 
