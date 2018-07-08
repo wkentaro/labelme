@@ -26,6 +26,9 @@ def update_dict(target_dict, new_dict, validate_item=None):
 
 # -----------------------------------------------------------------------------
 
+def get_user_config_file():
+    user_config_file = osp.join(osp.expanduser('~'), '.labelmerc')
+    return user_config_file
 
 def get_default_config():
     config_file = osp.join(here, 'default_config.yaml')
@@ -33,7 +36,7 @@ def get_default_config():
         config = yaml.load(f)
 
     # save default config to ~/.labelmerc
-    user_config_file = osp.join(osp.expanduser('~'), '.labelmerc')
+    user_config_file = get_user_config_file()
     if not osp.exists(user_config_file):
         try:
             shutil.copy(config_file, user_config_file)

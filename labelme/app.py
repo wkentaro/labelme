@@ -17,6 +17,7 @@ from labelme import __version__
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
 from labelme.config import get_config
+from labelme.config import get_user_config_file
 from labelme.labelDialog import LabelDialog
 from labelme.labelFile import LabelFile
 from labelme.labelFile import LabelFileError
@@ -33,6 +34,11 @@ from labelme.shape import Shape
 from labelme.toolBar import ToolBar
 from labelme.zoomWidget import ZoomWidget
 
+def getInt(file):
+    v = 0
+    with open(file) as f:
+        v = f.read()
+    return int(v)
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -199,7 +205,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.filedock.setObjectName(u'Files')
         self.filedock.setWidget(fileListContainer)
 
-        self.zoomWidget = ZoomWidget()
+        zmax=500
+        zoomfile = os.path.join(get_user_config_file()+'_zmax')
+        if os.path.exists(zoomfile):
+            zmax = getInt(zoomfile)
+        self.zoomWidget = ZoomWidget(zmax)
         self.colorDialog = ColorDialog(parent=self)
 
         self.canvas = self.labelList.canvas = Canvas()
@@ -307,6 +317,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
              fmtShortcut("Ctrl+Wheel")))
         self.zoomWidget.setEnabled(False)
 
+        setMyZoom = action('change Zoo&M', self.setMyZoom,
+                        shortcuts['my_zoom'], 'myzoom', u'toggle zooM!', enabled=True)
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 10),
                         shortcuts['zoom_in'], 'zoom-in',
                         'Increase zoom level', enabled=False)
@@ -326,7 +338,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                           'Zoom follows window width',
                           checkable=True, enabled=False)
         # Group zoom controls into a list for easier toggling.
-        zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
+        zoomActions = (self.zoomWidget, setMyZoom, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
         self.zoomMode = self.MANUAL_ZOOM
         self.scalers = {
@@ -365,6 +377,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
             addPoint=addPoint,
+            setMyZoom=setMyZoom,
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
@@ -376,6 +389,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             editMenu=(edit, copy, delete, None, undo, undoLastPoint,
                       None, color1, color2),
             menu=(
+                setMyZoom,
                 createMode, createRectangleMode,
                 editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
@@ -402,6 +416,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.view, (
             labels, None,
             hideAll, showAll, None,
+            setMyZoom,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
 
@@ -429,6 +444,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             delete,
             undo,
             None,
+            setMyZoom,
             zoomIn,
             zoom,
             zoomOut,
@@ -454,6 +470,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.fillColor = None
         self.otherData = None
         self.zoom_level = 100
+        self.myzoom = False
+
         self.fit_window = False
 
         if filename is not None and os.path.isdir(filename):
@@ -515,6 +533,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.actions.editMode,
         )
         addActions(self.menus.edit, actions + self.actions.editMenu)
+
+    def setMyZoom(self):
+        self.myzoom = not self.myzoom
 
     def setDirty(self):
         if self._config['auto_save']:
@@ -849,14 +870,51 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.zoomMode = self.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
 
-    def addZoom(self, increment=10):
+    def addZoomOrg(self, increment=10):
         self.setZoom(self.zoomWidget.value() + increment)
+
+    def addZoom(self, increment=10):
+        #self.setZoom(self.zoomWidget.value() + increment)
+        v = self.zoomWidget.value()
+        v0 = v
+        inc = 0
+        zrate = 0.5
+        zrate2 = 0.5*(v/80.0)**1.011
+        lg=[v, zrate, zrate2]
+        if v>100 and increment>0:
+            v = v*(1.0 + zrate2) + increment*5
+        elif v<40:
+            vr =160.0/v
+            inc = increment/vr
+            if 0 <= inc < 1:
+                inc=0.01+inc
+            elif 0 > inc > -1:
+                inc=-0.01+inc
+            v = v*(1.0 + zrate/300) + inc
+        elif v<80:
+            v = v*(1.0 + zrate/300) + increment/2
+        else:
+            v = v*(1.0 + zrate/120 * increment) + increment
+        if increment>0 and v0+1>v:
+            v = v0 + 1
+        elif increment<0 and v0-1<v:
+            v = v0 - 1
+        if v>v0*1.3 and v0>100:
+            v = v0*1.3
+        #print lg,[v,v0,inc]
+        self.setZoom(v)
+
+    def myZoom(self):
+        return self.myzoom
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
 
         units = delta * 0.1
-        self.addZoom(units)
+        if self.myZoom():
+            self.addZoom(units)
+        else:
+            self.addZoomOrg(units)
 
         canvas_width_new = self.canvas.width()
         if canvas_width_old != canvas_width_new:

@@ -36,3 +36,5 @@ shortcuts:
   edit_label: Ctrl+E
   edit_line_color: Ctrl+L
   edit_fill_color: Ctrl+Shift+L
+
+  my_zoom: Ctrl+M
