@@ -414,11 +414,27 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             action('&Move here', self.moveShape)))
 
         self.tools = self.toolbar('Tools')
+        # Menu buttons on Left
         self.actions.tool = (
-            open_, opendir, openNextImg, openPrevImg, save,
-            None, createMode, createRectangleMode,
-            copy, delete, editMode, undo, None,
-            zoomIn, zoom, zoomOut, fitWindow, fitWidth)
+            open_,
+            opendir,
+            openNextImg,
+            openPrevImg,
+            save,
+            None,
+            createMode,
+            createRectangleMode,
+            editMode,
+            copy,
+            delete,
+            undo,
+            None,
+            zoomIn,
+            zoom,
+            zoomOut,
+            fitWindow,
+            fitWidth,
+        )
 
         self.statusBar().showMessage('%s started.' % __appname__)
         self.statusBar().show()
