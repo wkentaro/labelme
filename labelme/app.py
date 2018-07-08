@@ -14,7 +14,6 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
-from labelme import QT5
 from labelme.canvas import Canvas
 from labelme.colorDialog import ColorDialog
 from labelme.config import get_config
@@ -27,6 +26,7 @@ from labelme.lib import newAction
 from labelme.lib import newIcon
 from labelme.lib import struct
 from labelme import logger
+from labelme import QT5
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
