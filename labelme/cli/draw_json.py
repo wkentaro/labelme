@@ -33,21 +33,17 @@ def main():
 
     img = utils.img_b64_to_arr(imageData)
 
-    label_name_to_value = {'_background_': 0}
-    for shape in data['shapes']:
-        label_name = shape['label']
-        if label_name in label_name_to_value:
-            label_value = label_name_to_value[label_name]
-        else:
-            label_value = len(label_name_to_value)
-            label_name_to_value[label_name] = label_value
+    lbl, label_name_to_value = utils.shapes_to_label(img.shape, data['shapes'])
 
     lbl = utils.shapes_to_label(
-        img.shape, data['shapes'], label_name_to_value)
+        img.shape, shapes=data['shapes'],
+        label_name_to_value=label_name_to_value,
+    )
 
-    captions = ['{}: {}'.format(lv, ln)
-                for ln, lv in label_name_to_value.items()]
-    lbl_viz = utils.draw_label(lbl, img, captions)
+    label_names = [None] * (max(label_name_to_value.values()) + 1)
+    for name, value in label_name_to_value.items():
+        label_names[value] = name
+    lbl_viz = utils.draw_label(lbl, img, label_names)
 
     plt.subplot(121)
     plt.imshow(img)
