@@ -92,10 +92,8 @@ def main():
 
             np.save(out_lbl_file, lbl)
 
-            label_names = ['%d: %s' % (cls_id, cls_name)
-                           for cls_id, cls_name in enumerate(class_names)]
             viz = labelme.utils.draw_label(
-                lbl, img, label_names, colormap=colormap)
+                lbl, img, class_names, colormap=colormap)
             PIL.Image.fromarray(viz).save(out_viz_file)
 
 

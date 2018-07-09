@@ -104,10 +104,8 @@ def main():
                 )
 
             np.save(out_cls_file, cls)
-            label_names = ['%d: %s' % (cls_id, cls_name)
-                           for cls_id, cls_name in enumerate(class_names)]
             clsv = labelme.utils.draw_label(
-                cls, img, label_names, colormap=colormap)
+                cls, img, class_names, colormap=colormap)
             PIL.Image.fromarray(clsv).save(out_clsv_file)
 
             # instance label
