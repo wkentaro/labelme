@@ -117,7 +117,8 @@ def draw_label(label, img=None, label_names=None, colormap=None):
         fc = colormap[label_value]
         p = plt.Rectangle((0, 0), 1, 1, fc=fc)
         plt_handlers.append(p)
-        plt_titles.append(label_name)
+        plt_titles.append('{value}: {name}'
+                          .format(value=label_value, name=label_name))
     plt.legend(plt_handlers, plt_titles, loc='lower right', framealpha=.5)
 
     f = io.BytesIO()
