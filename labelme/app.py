@@ -471,6 +471,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.otherData = None
         self.zoom_level = 100
         self.myzoom = False
+        self.currIndex = 0
 
         self.fit_window = False
 
@@ -708,7 +709,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
             if filename:
+                self.currIndex=currIndex
+                num = currIndex + 1
+                print(num, filename)
                 self.loadFile(filename)
+                self.status("%d) %s" % (num, os.path.basename(str(filename))))
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
