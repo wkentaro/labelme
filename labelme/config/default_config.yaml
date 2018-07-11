@@ -8,6 +8,8 @@ sort_labels: true
 validate_label: null
 show_label_text_field: true
 
+epsilon: 11.0
+
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O

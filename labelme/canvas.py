@@ -33,9 +33,8 @@ class Canvas(QtWidgets.QWidget):
     # polygon, rectangle
     createMode = 'polygon'
 
-    epsilon = 11.0
-
     def __init__(self, *args, **kwargs):
+        self.epsilon = kwargs.pop('epsilon', 11.0)
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
