@@ -166,6 +166,7 @@ class Canvas(QtWidgets.QWidget):
             self.line.line_color = color
             self.repaint()
             self.current.highlightClear()
+            return
 
         # Polygon copy moving.
         if QtCore.Qt.RightButton & ev.buttons():
