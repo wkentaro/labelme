@@ -202,7 +202,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
 
-        self.canvas = self.labelList.canvas = Canvas()
+        self.canvas = self.labelList.canvas = Canvas(
+            epsilon=self._config['epsilon'],
+        )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
         scrollArea = QtWidgets.QScrollArea()
@@ -1339,6 +1341,12 @@ def main():
         '--keep-prev',
         action='store_true',
         help='keep annotation of previous frame',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--epsilon',
+        type=float,
+        help='epsilon to find nearest vertex on canvas',
         default=argparse.SUPPRESS,
     )
     args = parser.parse_args()
