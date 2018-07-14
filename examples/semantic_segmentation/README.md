@@ -19,7 +19,7 @@ labelme data_annotated --labels labels.txt --nodata
 ./labelme2voc.py labels.txt data_annotated data_dataset_voc
 ```
 
-<img src="data_dataset_voc/JPEGImages/2011_000003.jpg" width="33%" /> <img src="data_dataset_voc/SegmentationClass/2011_000003.png" width="33%" /> <img src="data_dataset_voc/SegmentationClassVisualization/2011_000003.jpg" width="33%" />
+<img src="data_dataset_voc/JPEGImages/2011_000003.jpg" width="33%" /> <img src="data_dataset_voc/SegmentationClassPNG/2011_000003.png" width="33%" /> <img src="data_dataset_voc/SegmentationClassVisualization/2011_000003.jpg" width="33%" />
 
 Fig 1. JPEG image (left), PNG label (center), JPEG label visualization (right)  
 
