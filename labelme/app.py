@@ -261,21 +261,38 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                         shortcuts['edit_fill_color'], 'color',
                         'Choose polygon fill color')
 
-        createMode = action('Create\nPolygo&ns', self.setCreateMode,
-                            shortcuts['create_polygon'], 'objects',
-                            'Start drawing polygons', enabled=True)
+        createMode = action(
+            'Create Polygons',
+            lambda: self.toggleDrawMode(False, createMode='polygon'),
+            shortcuts['create_polygon'],
+            'objects',
+            'Start drawing polygons',
+            enabled=True,
+        )
         createRectangleMode = action(
-            'Create\nRectangle', self.setCreateRectangleMode,
-            shortcuts['create_rectangle'], 'objects',
-            'Start drawing rectangles', enabled=True)
-        editMode = action('&Edit\nPolygons', self.setEditMode,
+            'Create Rectangle',
+            lambda: self.toggleDrawMode(False, createMode='rectangle'),
+            shortcuts['create_rectangle'],
+            'objects',
+            'Start drawing rectangles',
+            enabled=True,
+        )
+        createLineMode = action(
+            'Create Line',
+            lambda: self.toggleDrawMode(False, createMode='line'),
+            shortcuts['create_line'],
+            'objects',
+            'Start drawing lines',
+            enabled=True,
+        )
+        editMode = action('Edit Polygons', self.setEditMode,
                           shortcuts['edit_polygon'], 'edit',
                           'Move and edit polygons', enabled=True)
 
-        delete = action('Delete\nPolygon', self.deleteSelectedShape,
+        delete = action('Delete Polygon', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
                         'Delete', enabled=False)
-        copy = action('&Duplicate\nPolygon', self.copySelectedShape,
+        copy = action('Duplicate Polygon', self.copySelectedShape,
                       shortcuts['duplicate_polygon'], 'copy',
                       'Create a duplicate of the selected polygon',
                       enabled=False)
@@ -369,6 +386,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             addPoint=addPoint,
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
+            createLineMode=createLineMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
@@ -377,13 +395,20 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             tool=(),
             editMenu=(edit, copy, delete, None, undo, undoLastPoint,
                       None, color1, color2),
+            # menu shown at right click
             menu=(
-                createMode, createRectangleMode,
+                createMode, createRectangleMode, createLineMode,
                 editMode, edit, copy,
                 delete, shapeLineColor, shapeFillColor,
                 undo, undoLastPoint, addPoint,
             ),
-            onLoadActive=(close, createMode, createRectangleMode, editMode),
+            onLoadActive=(
+                close,
+                createMode,
+                createRectangleMode,
+                createLineMode,
+                editMode,
+            ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
 
@@ -426,7 +451,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             save,
             None,
             createMode,
-            createRectangleMode,
             editMode,
             copy,
             delete,
@@ -515,6 +539,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         actions = (
             self.actions.createMode,
             self.actions.createRectangleMode,
+            self.actions.createLineMode,
             self.actions.editMode,
         )
         addActions(self.menus.edit, actions + self.actions.editMenu)
@@ -537,6 +562,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.save.setEnabled(False)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
+        self.actions.createLineMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = '{} - {}'.format(title, self.filename)
@@ -608,18 +634,18 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if createMode == 'polygon':
             self.actions.createMode.setEnabled(edit)
             self.actions.createRectangleMode.setEnabled(not edit)
+            self.actions.createLineMode.setEnabled(not edit)
         elif createMode == 'rectangle':
             self.actions.createMode.setEnabled(not edit)
             self.actions.createRectangleMode.setEnabled(edit)
+            self.actions.createLineMode.setEnabled(not edit)
+        elif createMode == 'line':
+            self.actions.createMode.setEnabled(not edit)
+            self.actions.createRectangleMode.setEnabled(not edit)
+            self.actions.createLineMode.setEnabled(edit)
         else:
             raise ValueError
         self.actions.editMode.setEnabled(not edit)
-
-    def setCreateRectangleMode(self):
-        self.toggleDrawMode(False, createMode='rectangle')
-
-    def setCreateMode(self):
-        self.toggleDrawMode(False, createMode='polygon')
 
     def setEditMode(self):
         self.toggleDrawMode(True)
