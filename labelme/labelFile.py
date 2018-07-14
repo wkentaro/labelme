@@ -14,6 +14,8 @@ class LabelFileError(Exception):
 class LabelFile(object):
 
     suffix = '.json'
+    imageDataOrg = None
+    imgDebug = False
 
     def __init__(self, filename=None):
         self.shapes = ()
@@ -68,11 +70,22 @@ class LabelFile(object):
         self.fillColor = fillColor
         self.filename = filename
         self.otherData = otherData
+        # test cp for check
+        if LabelFile.imgDebug:
+            LabelFile.imageDataOrg = imageData[:]
+            print(len(LabelFile.imageDataOrg),' org-len')
 
     def save(self, filename, shapes, imagePath, imageData=None,
              lineColor=None, fillColor=None, otherData=None,
              flags=None):
         if imageData is not None:
+            if LabelFile.imgDebug:
+                if LabelFile.imageDataOrg == imageData:
+                    print 'same jsonImg.'
+                else:
+                    print type(imageData),type(LabelFile.imageDataOrg)
+                    print 'update jsonImg.'
+                print base64.b64encode(LabelFile.imageDataOrg[:100]),base64.b64encode(imageData[:100]),len(LabelFile.imageDataOrg),len(imageData)
             imageData = base64.b64encode(imageData).decode('utf-8')
         if otherData is None:
             otherData = {}

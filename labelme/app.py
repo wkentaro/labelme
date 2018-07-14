@@ -470,8 +470,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.fillColor = None
         self.otherData = None
         self.zoom_level = 100
+        #
         self.myzoom = False
         self.currIndex = 0
+        self.imgMax = 0
 
         self.fit_window = False
 
@@ -710,10 +712,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             filename = self.imageList[currIndex]
             if filename:
                 self.currIndex=currIndex
+                basename = os.path.basename(str(filename))
+                dirname = os.path.dirname(str(filename))
                 num = currIndex + 1
-                print(num, filename)
+                print(" {}/{}) \"{}\"".format(num, self.imgMax, basename))
                 self.loadFile(filename)
-                self.status("%d) %s" % (num, os.path.basename(str(filename))))
+                self.status("%d) %s" % (num, basename))
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
@@ -808,6 +812,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 otherData=self.otherData,
                 flags=flags,
             )
+            # imageData debug
+            imgDebug = False
+            if imgDebug and self.imageData:
+                testImgName = 'mytest.png'
+                with open(testImgName,"wb") as fp:
+                    fp.write(imageData)
+
             self.labelFile = lf
             # disable allows next and previous image to proceed
             # self.filename = filename
@@ -1318,6 +1329,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for imgPath in self.scanAllImages(dirpath):
             item = QtWidgets.QListWidgetItem(imgPath)
             self.fileListWidget.addItem(item)
+            self.imgMax += 1
         self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):
