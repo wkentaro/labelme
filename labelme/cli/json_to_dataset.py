@@ -66,7 +66,7 @@ def main():
     lbl_viz = utils.draw_label(lbl, img, captions)
 
     PIL.Image.fromarray(img).save(osp.join(out_dir, 'img.png'))
-    PIL.Image.fromarray(lbl).save(osp.join(out_dir, 'label.png'))
+    utils.lblsave(osp.join(out_dir, 'label.png'), lbl)
     PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, 'label_viz.png'))
 
     with open(osp.join(out_dir, 'label_names.txt'), 'w') as f:

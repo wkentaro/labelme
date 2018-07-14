@@ -1,10 +1,13 @@
 import base64
 import io
+import os.path as osp
 import warnings
 
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
+
+from labelme import logger
 
 
 def label_colormap(N=256):
@@ -177,3 +180,20 @@ def labelme_shapes_to_label(img_shape, shapes):
 
     lbl = shapes_to_label(img_shape, shapes, label_name_to_value)
     return lbl, label_name_to_value
+
+
+def lblsave(filename, lbl):
+    if osp.splitext(filename)[1] != '.png':
+        filename += '.png'
+    # Assume label ranses [-1, 254] for int32,
+    # and [0, 255] for uint8 as VOC.
+    if lbl.min() >= -1 and lbl.max() < 255:
+        lbl_pil = PIL.Image.fromarray(lbl.astype(np.uint8), mode='P')
+        colormap = label_colormap(255)
+        lbl_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
+        lbl_pil.save(filename)
+    else:
+        logger.warn(
+            '[%s] Cannot save the pixel-wise class label as PNG, '
+            'so please use the npy file.' % filename
+        )
