@@ -285,6 +285,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             'Start drawing lines',
             enabled=True,
         )
+        createPointMode = action(
+            'Create Point',
+            lambda: self.toggleDrawMode(False, createMode='point'),
+            shortcuts['create_point'],
+            'objects',
+            'Start drawing points',
+            enabled=True,
+        )
         editMode = action('Edit Polygons', self.setEditMode,
                           shortcuts['edit_polygon'], 'edit',
                           'Move and edit polygons', enabled=True)
@@ -387,6 +395,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             createLineMode=createLineMode,
+            createPointMode=createPointMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
@@ -397,16 +406,26 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                       None, color1, color2),
             # menu shown at right click
             menu=(
-                createMode, createRectangleMode, createLineMode,
-                editMode, edit, copy,
-                delete, shapeLineColor, shapeFillColor,
-                undo, undoLastPoint, addPoint,
+                createMode,
+                createRectangleMode,
+                createLineMode,
+                createPointMode,
+                editMode,
+                edit,
+                copy,
+                delete,
+                shapeLineColor,
+                shapeFillColor,
+                undo,
+                undoLastPoint,
+                addPoint,
             ),
             onLoadActive=(
                 close,
                 createMode,
                 createRectangleMode,
                 createLineMode,
+                createPointMode,
                 editMode,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
@@ -540,6 +559,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.actions.createMode,
             self.actions.createRectangleMode,
             self.actions.createLineMode,
+            self.actions.createPointMode,
             self.actions.editMode,
         )
         addActions(self.menus.edit, actions + self.actions.editMenu)
@@ -563,6 +583,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createLineMode.setEnabled(True)
+        self.actions.createPointMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = '{} - {}'.format(title, self.filename)
@@ -635,16 +656,24 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.actions.createMode.setEnabled(edit)
             self.actions.createRectangleMode.setEnabled(not edit)
             self.actions.createLineMode.setEnabled(not edit)
+            self.actions.createPointMode.setEnabled(not edit)
         elif createMode == 'rectangle':
             self.actions.createMode.setEnabled(not edit)
             self.actions.createRectangleMode.setEnabled(edit)
             self.actions.createLineMode.setEnabled(not edit)
+            self.actions.createPointMode.setEnabled(not edit)
         elif createMode == 'line':
             self.actions.createMode.setEnabled(not edit)
             self.actions.createRectangleMode.setEnabled(not edit)
             self.actions.createLineMode.setEnabled(edit)
+            self.actions.createPointMode.setEnabled(not edit)
+        elif createMode == 'point':
+            self.actions.createMode.setEnabled(not edit)
+            self.actions.createRectangleMode.setEnabled(not edit)
+            self.actions.createLineMode.setEnabled(not edit)
+            self.actions.createPointMode.setEnabled(edit)
         else:
-            raise ValueError
+            raise ValueError('Unsupported createMode: %s' % createMode)
         self.actions.editMode.setEnabled(not edit)
 
     def setEditMode(self):
