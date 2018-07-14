@@ -37,7 +37,7 @@ def labelcolormap(N=256):
 
 
 # similar function as skimage.color.label2rgb
-def label2rgb(lbl, img=None, n_labels=None, alpha=0.3, thresh_suppress=0):
+def label2rgb(lbl, img=None, n_labels=None, alpha=0.5, thresh_suppress=0):
     if n_labels is None:
         n_labels = len(np.unique(lbl))
 
