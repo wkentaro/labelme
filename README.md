@@ -11,8 +11,14 @@
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
-<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />  
-Fig 1. Example of annotations for instance segmentation.
+<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="96%" />
+<i>Fig 1. Example of annotations for instance segmentation.</i>
+
+<br/>
+<br/>
+
+<img src="https://github.com/wkentaro/labelme/raw/master/examples/semantic_segmentation/.readme/annotation.jpg?raw=true" width="30%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/bbox_detection/.readme/annotation.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/classification/.readme/annotation_cat.jpg?raw=true" width="33%" />  
+<i>Fig 2. Example of annotation of semantic segmentation (left), bbox detection (center), classification (right).</i>
 
 
 ## Features
