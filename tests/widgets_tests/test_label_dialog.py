@@ -1,7 +1,8 @@
 from qtpy import QtCore
 from qtpy import QtWidgets
 
-from labelme import labelDialog
+from labelme.widgets import LabelDialog
+from labelme.widgets import LabelQLineEdit
 
 
 def test_LabelQLineEdit(qtbot):
@@ -11,7 +12,7 @@ def test_LabelQLineEdit(qtbot):
         'dog',
         'person',
     ])
-    widget = labelDialog.LabelQLineEdit()
+    widget = LabelQLineEdit()
     widget.setListWidget(list_widget)
     qtbot.addWidget(widget)
 
@@ -34,7 +35,7 @@ def test_LabelQLineEdit(qtbot):
 
 def test_LabelDialog_addLabelHistory(qtbot):
     labels = ['cat', 'dog', 'person']
-    widget = labelDialog.LabelDialog(labels=labels, sort_labels=True)
+    widget = LabelDialog(labels=labels, sort_labels=True)
     qtbot.addWidget(widget)
 
     widget.addLabelHistory('bicycle')
@@ -47,7 +48,7 @@ def test_LabelDialog_addLabelHistory(qtbot):
 
 def test_LabelDialog_popUp(qtbot):
     labels = ['cat', 'dog', 'person']
-    widget = labelDialog.LabelDialog(labels=labels, sort_labels=True)
+    widget = LabelDialog(labels=labels, sort_labels=True)
     qtbot.addWidget(widget)
 
     # popUp(text='cat')
