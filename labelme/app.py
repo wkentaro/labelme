@@ -652,28 +652,34 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def toggleDrawMode(self, edit=True, createMode='polygon'):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
-        if createMode == 'polygon':
-            self.actions.createMode.setEnabled(edit)
-            self.actions.createRectangleMode.setEnabled(not edit)
-            self.actions.createLineMode.setEnabled(not edit)
-            self.actions.createPointMode.setEnabled(not edit)
-        elif createMode == 'rectangle':
-            self.actions.createMode.setEnabled(not edit)
-            self.actions.createRectangleMode.setEnabled(edit)
-            self.actions.createLineMode.setEnabled(not edit)
-            self.actions.createPointMode.setEnabled(not edit)
-        elif createMode == 'line':
-            self.actions.createMode.setEnabled(not edit)
-            self.actions.createRectangleMode.setEnabled(not edit)
-            self.actions.createLineMode.setEnabled(edit)
-            self.actions.createPointMode.setEnabled(not edit)
-        elif createMode == 'point':
-            self.actions.createMode.setEnabled(not edit)
-            self.actions.createRectangleMode.setEnabled(not edit)
-            self.actions.createLineMode.setEnabled(not edit)
-            self.actions.createPointMode.setEnabled(edit)
+        if edit:
+            self.actions.createMode.setEnabled(True)
+            self.actions.createRectangleMode.setEnabled(True)
+            self.actions.createLineMode.setEnabled(True)
+            self.actions.createPointMode.setEnabled(True)
         else:
-            raise ValueError('Unsupported createMode: %s' % createMode)
+            if createMode == 'polygon':
+                self.actions.createMode.setEnabled(False)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+            elif createMode == 'rectangle':
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(False)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+            elif createMode == 'line':
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(False)
+                self.actions.createPointMode.setEnabled(True)
+            elif createMode == 'point':
+                self.actions.createMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(False)
+            else:
+                raise ValueError('Unsupported createMode: %s' % createMode)
         self.actions.editMode.setEnabled(not edit)
 
     def setEditMode(self):
