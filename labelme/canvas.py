@@ -30,7 +30,7 @@ class Canvas(QtWidgets.QWidget):
 
     CREATE, EDIT = 0, 1
 
-    # polygon, rectangle, or line
+    # polygon, rectangle, line, or point
     _createMode = 'polygon'
 
     def __init__(self, *args, **kwargs):
@@ -48,6 +48,7 @@ class Canvas(QtWidgets.QWidget):
         #   - createMode == 'polygon': edge from last point to current
         #   - createMode == 'rectangle': diagonal line of the rectangle
         #   - createMode == 'line': the line
+        #   - createMode == 'point': the point
         self.line = Shape(line_color=self.lineColor)
         self.prevPoint = QtCore.QPoint()
         self.prevMovePoint = QtCore.QPoint()
@@ -75,7 +76,7 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['polygon', 'rectangle', 'line']:
+        if value not in ['polygon', 'rectangle', 'line', 'point']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
 
@@ -173,6 +174,9 @@ class Canvas(QtWidgets.QWidget):
                 self.line.close()
             elif self.createMode == 'line':
                 self.line.points = [self.current[0], pos]
+                self.line.close()
+            elif self.createMode == 'point':
+                self.line.points = [self.current[0]]
                 self.line.close()
             self.line.line_color = color
             self.repaint()
@@ -288,10 +292,13 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape()
                     self.current.addPoint(pos)
-                    self.line.points = [pos, pos]
-                    self.setHiding()
-                    self.drawingPolygon.emit(True)
-                    self.update()
+                    if self.createMode == 'point':
+                        self.finalise()
+                    else:
+                        self.line.points = [pos, pos]
+                        self.setHiding()
+                        self.drawingPolygon.emit(True)
+                        self.update()
             else:
                 self.selectShapePoint(pos)
                 self.prevPoint = pos
@@ -627,6 +634,8 @@ class Canvas(QtWidgets.QWidget):
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ['rectangle', 'line']:
             self.current.points = self.current.points[0:1]
+        elif self.createMode == 'point':
+            self.current = None
         self.drawingPolygon.emit(True)
 
     def undoLastPoint(self):
