@@ -14,11 +14,12 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
-from labelme.config import get_config
-from labelme.labelFile import LabelFile
-from labelme.labelFile import LabelFileError
 from labelme import logger
 from labelme import QT5
+
+from labelme.config import get_config
+from labelme.label_file import LabelFile
+from labelme.label_file import LabelFileError
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
