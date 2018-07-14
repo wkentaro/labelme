@@ -31,6 +31,7 @@ shortcuts:
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
   create_line: null
+  create_point: null
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
