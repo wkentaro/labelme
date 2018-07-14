@@ -5,8 +5,7 @@ from qtpy import QtWidgets
 
 QT5 = QT_VERSION[0] == '5'  # NOQA
 
-from labelme.lib import labelValidator
-from labelme.lib import newIcon
+import labelme.utils
 
 
 # TODO(unknown):
@@ -32,7 +31,7 @@ class LabelDialog(QtWidgets.QDialog):
         super(LabelDialog, self).__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
-        self.edit.setValidator(labelValidator())
+        self.edit.setValidator(labelme.utils.labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
         layout = QtWidgets.QVBoxLayout()
         if show_text_field:
@@ -43,8 +42,8 @@ class LabelDialog(QtWidgets.QDialog):
             QtCore.Qt.Horizontal,
             self,
         )
-        bb.button(bb.Ok).setIcon(newIcon('done'))
-        bb.button(bb.Cancel).setIcon(newIcon('undo'))
+        bb.button(bb.Ok).setIcon(labelme.utils.newIcon('done'))
+        bb.button(bb.Cancel).setIcon(labelme.utils.newIcon('undo'))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
