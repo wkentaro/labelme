@@ -14,10 +14,7 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
-from labelme.canvas import Canvas
-from labelme.colorDialog import ColorDialog
 from labelme.config import get_config
-from labelme.labelDialog import LabelDialog
 from labelme.labelFile import LabelFile
 from labelme.labelFile import LabelFileError
 from labelme.lib import addActions
@@ -30,8 +27,11 @@ from labelme import QT5
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
-from labelme.toolBar import ToolBar
-from labelme.zoomWidget import ZoomWidget
+from labelme.widgets import Canvas
+from labelme.widgets import ColorDialog
+from labelme.widgets import LabelDialog
+from labelme.widgets import ToolBar
+from labelme.widgets import ZoomWidget
 
 
 # FIXME
