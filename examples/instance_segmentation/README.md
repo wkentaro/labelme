@@ -24,7 +24,7 @@ labelme data_annotated --labels labels.txt --nodata
 Fig 1. JPEG image (left), JPEG class label visualization (center), JPEG instance label visualization (right)
 
 
-Note that the reason why the label file is mostly black is it contains only very low label values (ex. `0, 4, 14`), and
+Note that the label file contains only very low label values (ex. `0, 4, 14`), and
 `255` indicates the `__ignore__` label value (`-1` in the npy file).  
 You can see the label PNG file by following.
 
