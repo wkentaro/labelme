@@ -90,43 +90,18 @@ def main():
             ins[cls == -1] = 0  # ignore it.
 
             # class label
-
-            # Assume class label ranses [-1, 254] for int32,
-            # and [0, 255] for uint8 as VOC.
-            if cls.min() >= -1 and cls.max() < 255:
-                cls_pil = PIL.Image.fromarray(cls.astype(np.uint8), mode='P')
-                cls_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
-                cls_pil.save(out_clsp_file)
-            else:
-                labelme.logger.warn(
-                    '[%s] Cannot save the pixel-wise class label as PNG, '
-                    'so please use the npy file.' % label_file
-                )
-
+            labelme.utils.lblsave(out_clsp_file, cls)
             np.save(out_cls_file, cls)
             clsv = labelme.utils.draw_label(
                 cls, img, class_names, colormap=colormap)
             PIL.Image.fromarray(clsv).save(out_clsv_file)
 
             # instance label
-
-            # Assume instance label ranses [-1, 254] for int32,
-            # and [0, 255] for uint8 as VOC.
-            if ins.min() >= -1 and ins.max() < 255:
-                ins_pil = PIL.Image.fromarray(ins.astype(np.uint8), mode='P')
-                ins_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
-                ins_pil.save(out_insp_file)
-            else:
-                labelme.logger.warn(
-                    '[%s] Cannot save the pixel-wise instance label as PNG, '
-                    'so please use the npy file.' % label_file
-                )
-
+            labelme.utils.lblsave(out_insp_file, ins)
             np.save(out_ins_file, ins)
             instance_ids = np.unique(ins)
             instance_names = [str(i) for i in range(max(instance_ids) + 1)]
-            insv = labelme.utils.draw_label(
-                ins, img, instance_names)
+            insv = labelme.utils.draw_label(ins, img, instance_names)
             PIL.Image.fromarray(insv).save(out_insv_file)
 
 

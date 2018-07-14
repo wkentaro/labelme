@@ -77,18 +77,7 @@ def main():
                 shapes=data['shapes'],
                 label_name_to_value=class_name_to_id,
             )
-
-            # Assume label ranses [-1, 254] for int32,
-            # and [0, 255] for uint8 as VOC.
-            if lbl.min() >= -1 and lbl.max() < 255:
-                lbl_pil = PIL.Image.fromarray(lbl.astype(np.uint8), mode='P')
-                lbl_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
-                lbl_pil.save(out_png_file)
-            else:
-                labelme.logger.warn(
-                    '[%s] Cannot save the pixel-wise class label as PNG, '
-                    'so please use the npy file.' % label_file
-                )
+            labelme.utils.lblsave(out_png_file, lbl)
 
             np.save(out_lbl_file, lbl)
 
