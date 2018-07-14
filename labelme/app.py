@@ -398,7 +398,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             labelList=labelMenu,
         )
 
-        addActions(self.menus.file, (open_, opendir, self.menus.recentFiles,
+        addActions(self.menus.file, (open_, openNextImg, openPrevImg, opendir,
+                                     self.menus.recentFiles,
                                      save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
