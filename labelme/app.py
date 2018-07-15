@@ -550,7 +550,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
         title = __appname__
         if self.filename is not None:
-            title = '{} - {}*'.format(title, self.filename)
+            title = '{} *'.format(title)
+            pass
+            #title = '{} - {}*'.format(title, self.filename)
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -559,7 +561,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         title = __appname__
-        if self.filename is not None:
+        if self.filename is not None and type(self.filename) != unicode:
             title = '{} - {}'.format(title, self.filename)
         self.setWindowTitle(title)
 
@@ -649,7 +651,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         current = self.filename
 
         def exists(filename):
-            return os.path.exists(str(filename))
+            #return os.path.exists(str(filename))
+            return os.path.exists(unicode(filename))
 
         menu = self.menus.recentFiles
         menu.clear()
@@ -714,7 +717,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 basename = os.path.basename(filename)
                 dirname = os.path.dirname(filename)
                 num = currIndex + 1
-                print(" {}/{}) \"{}\"".format(num, self.imgMax, basename))
+                print(" {}/{}) \"".format(num, self.imgMax) + basename + "\"")
                 self.loadFile(filename)
                 self.status("%d) %s" % (num, basename))
 
@@ -801,6 +804,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             imagePath = os.path.relpath(
                 self.imagePath, os.path.dirname(filename))
             imageData = self.imageData if self._config['store_data'] else None
+            imagePath = imagePath.encode('utf-8')
             lf.save(
                 filename=filename,
                 shapes=shapes,
@@ -973,7 +977,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if filename is None:
             filename = self.settings.value('filename', '')
         if type(filename) != str and type(filename) != unicode:
-            print '!',type(filename)
+            print('!',type(filename))
             filename = str(filename)
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
@@ -1178,7 +1182,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
-        basename = os.path.splitext(self.filename)[0]
+        try:
+            basename = os.path.splitext(self.filename)[0]
+        except:
+            basename = self.filename[:-4]
+
         default_labelfile_name = os.path.join(
             self.currentPath(), basename + LabelFile.suffix)
         filename = dlg.getSaveFileName(
@@ -1186,7 +1194,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             'Label files (*%s)' % LabelFile.suffix)
         if QT5:
             filename, _ = filename
-        filename = str(filename)
+        #filename = str(filename)
+        filename = unicode(filename)
         return filename
 
     def _saveFile(self, filename):
@@ -1218,7 +1227,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if not self.dirty:
             return True
         mb = QtWidgets.QMessageBox
-        msg = 'Save annotations to "{}" before closing?'.format(self.filename)
+        fname = self.filename
+        if type(fname) == unicode:
+            fname = '?'
+        msg = 'Save annotations to "{}" before closing?'.format(fname)
         answer = mb.question(self,
                              'Save annotations?',
                              msg,
@@ -1237,7 +1249,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self, title, '<p><b>%s</b></p>%s' % (title, message))
 
     def currentPath(self):
-        return os.path.dirname(str(self.filename)) if self.filename else '.'
+        #return os.path.dirname(str(self.filename)) if self.filename else '.'
+        return os.path.dirname(self.filename) if self.filename else '.'
 
     def chooseColor1(self):
         color = self.colorDialog.getColor(
@@ -1340,7 +1353,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         for root, dirs, files in os.walk(folderPath):
             for file in files:
-                if file.lower().endswith(tuple(extensions)):
+                if os.path.splitext(file)[-1].lower().endswith(tuple(extensions)):
                     relativePath = os.path.join(root, file)
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())

@@ -81,11 +81,11 @@ class LabelFile(object):
         if imageData is not None:
             if LabelFile.imgDebug:
                 if LabelFile.imageDataOrg == imageData:
-                    print 'same jsonImg.'
+                    print('same jsonImg.')
                 else:
-                    print type(imageData),type(LabelFile.imageDataOrg)
-                    print 'update jsonImg.'
-                print base64.b64encode(LabelFile.imageDataOrg[:100]),base64.b64encode(imageData[:100]),len(LabelFile.imageDataOrg),len(imageData)
+                    print(type(imageData),type(LabelFile.imageDataOrg))
+                    print('update jsonImg.')
+                print(base64.b64encode(LabelFile.imageDataOrg[:100]),base64.b64encode(imageData[:100]),len(LabelFile.imageDataOrg),len(imageData))
             imageData = base64.b64encode(imageData).decode('utf-8')
         if otherData is None:
             otherData = {}
@@ -105,6 +105,7 @@ class LabelFile(object):
             with open(filename, 'wb' if PY2 else 'w') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
+            print('saved: ' + filename)
         except Exception as e:
             raise LabelFileError(e)
 
