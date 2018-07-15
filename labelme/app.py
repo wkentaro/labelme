@@ -706,14 +706,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         if not self.mayContinue():
             return
-
-        currIndex = self.imageList.index(str(item.text()))
+        currIndex = self.imageList.index(item.text())
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
             if filename:
                 self.currIndex=currIndex
-                basename = os.path.basename(str(filename))
-                dirname = os.path.dirname(str(filename))
+                basename = os.path.basename(filename)
+                dirname = os.path.dirname(filename)
                 num = currIndex + 1
                 print(" {}/{}) \"{}\"".format(num, self.imgMax, basename))
                 self.loadFile(filename)
@@ -973,13 +972,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.setEnabled(False)
         if filename is None:
             filename = self.settings.value('filename', '')
-        filename = str(filename)
+        if type(filename) != str and type(filename) != unicode:
+            print '!',type(filename)
+            filename = str(filename)
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
                 'Error opening file', 'No such file: <b>%s</b>' % filename)
             return False
         # assumes same name, but json extension
-        self.status("Loading %s..." % os.path.basename(str(filename)))
+        self.status("Loading %s..." % os.path.basename(filename))
         label_file = os.path.splitext(filename)[0] + '.json'
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.isLabelFile(label_file):
@@ -1045,7 +1046,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
-        self.status("Loaded %s" % os.path.basename(str(filename)))
+        self.status("Loaded %s" % os.path.basename(filename))
         return True
 
     def resizeEvent(self, event):
