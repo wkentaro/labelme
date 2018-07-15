@@ -14,7 +14,7 @@ It is written in Python and uses Qt for its graphical interface.
 <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />
 <i>Fig 1. Annotation example of instance segmentation.</i>
 
-<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg?raw=true" width="32%" />  
+<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg?raw=true" width="20%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg?raw=true" width="20%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg?raw=true" width="20%" />  
 <i>Fig 2. VOC dataset example of instance segmentation.</i>
 
 <img src="https://github.com/wkentaro/labelme/raw/master/examples/semantic_segmentation/.readme/annotation.jpg?raw=true" width="30%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/bbox_detection/.readme/annotation.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/classification/.readme/annotation_cat.jpg?raw=true" width="33%" />  
