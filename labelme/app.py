@@ -33,6 +33,7 @@ from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
 from labelme.toolBar import ToolBar
 from labelme.zoomWidget import ZoomWidget
+from labelme.zoomWidget import FileNumWidget
 
 def getInt(file):
     v = 0
@@ -210,6 +211,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if os.path.exists(zoomfile):
             zmax = getInt(zoomfile)
         self.zoomWidget = ZoomWidget(zmax)
+        self.fileNumWidget = FileNumWidget(0)
         self.colorDialog = ColorDialog(parent=self)
 
         self.canvas = self.labelList.canvas = Canvas()
@@ -316,6 +318,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                                     shortcuts['zoom_out'])),
              fmtShortcut("Ctrl+Wheel")))
         self.zoomWidget.setEnabled(False)
+
+        filenum = QtWidgets.QWidgetAction(self)
+        filenum.setDefaultWidget(self.fileNumWidget)
+        self.fileNumWidget.setWhatsThis(
+            "file number")
+        self.fileNumWidget.setEnabled(True)
 
         setMyZoom = action('change Zoo&M', self.setMyZoom,
                         shortcuts['my_zoom'], 'myzoom', u'toggle zooM!', enabled=True)
@@ -435,6 +443,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             opendir,
             openNextImg,
             openPrevImg,
+            filenum,
             save,
             None,
             createMode,
@@ -511,6 +520,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
+        self.fileNumWidget.valueChanged.connect(self.fileNumChange)
 
         self.populateModeActions()
 
@@ -720,6 +730,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 print(" {}/{}) \"".format(num, self.imgMax) + basename + "\"")
                 self.loadFile(filename)
                 self.status("%d) %s" % (num, basename))
+                self.fileNumWidget.setValue(num)
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
@@ -1065,6 +1076,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.adjustSize()
         self.canvas.update()
 
+    def fileNumChange(self):
+        v = self.fileNumWidget.value()
+        if v > 0:
+            num = v - 1
+        else:
+            num = self.fileNumWidget.getMax() + v
+        self.fileListWidget.setCurrentRow(num) 
+        self.fileNumWidget.setValue(v)
+
     def adjustScale(self, initial=False):
         value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
         self.zoomWidget.setValue(int(100 * value))
@@ -1344,6 +1364,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             item = QtWidgets.QListWidgetItem(imgPath)
             self.fileListWidget.addItem(item)
             self.imgMax += 1
+        self.fileNumWidget.setMax(self.imgMax)
         self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):

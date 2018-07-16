@@ -78,6 +78,8 @@ class LabelFile(object):
     def save(self, filename, shapes, imagePath, imageData=None,
              lineColor=None, fillColor=None, otherData=None,
              flags=None):
+        def compareImg(a,b):
+            return [base64.b64encode(a[:100]),base64.b64encode(b[:100]),len(a),len(b)]
         if imageData is not None:
             if LabelFile.imgDebug:
                 if LabelFile.imageDataOrg == imageData:
@@ -85,7 +87,7 @@ class LabelFile(object):
                 else:
                     print(type(imageData),type(LabelFile.imageDataOrg))
                     print('update jsonImg.')
-                print(base64.b64encode(LabelFile.imageDataOrg[:100]),base64.b64encode(imageData[:100]),len(LabelFile.imageDataOrg),len(imageData))
+                print(compareImg(LabelFile.imageDataOrg, imageData))
             imageData = base64.b64encode(imageData).decode('utf-8')
         if otherData is None:
             otherData = {}
