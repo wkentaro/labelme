@@ -1317,8 +1317,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.lastOpenDir = dirpath
         self.filename = None
         self.fileListWidget.clear()
-        for imgPath in self.scanAllImages(dirpath):
-            item = QtWidgets.QListWidgetItem(imgPath)
+        for filename in self.scanAllImages(dirpath):
+            label_file = os.path.splitext(filename)[0] + '.json'
+            item = QtWidgets.QListWidgetItem(filename)
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+            if QtCore.QFile.exists(label_file) and \
+                    LabelFile.isLabelFile(label_file):
+                item.setCheckState(Qt.Checked)
+            else:
+                item.setCheckState(Qt.Unchecked)
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
 
