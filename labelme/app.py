@@ -228,11 +228,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.addDockWidget(Qt.RightDockWidgetArea, self.labelsdock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.filedock)
-        self.filedock.setFeatures(QtWidgets.QDockWidget.DockWidgetFloatable)
-
-        self.dockFeatures = (QtWidgets.QDockWidget.DockWidgetClosable |
-                             QtWidgets.QDockWidget.DockWidgetFloatable)
-        self.dock.setFeatures(self.dock.features() ^ self.dockFeatures)
 
         # Actions
         action = functools.partial(newAction, self)
