@@ -1336,10 +1336,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         return images
 
 
-def inverted(color):
-    return QtGui.QColor(*[255 - v for v in color.getRgb()])
-
-
 def read(filename, default=None):
     try:
         with open(filename, 'rb') as f:
