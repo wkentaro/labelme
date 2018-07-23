@@ -1044,6 +1044,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             currIndex = self.imageList.index(self.filename)
             if currIndex + 1 < len(self.imageList):
                 filename = self.imageList[currIndex + 1]
+            else:
+                filename = self.imageList[-1]
         self.filename = filename
 
         if self.filename and load:
