@@ -568,7 +568,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def undoShapeEdit(self):
         self.canvas.restoreShape()
         self.labelList.clear()
-        self.uniqLabelList.clear()
         self.loadShapes(self.canvas.shapes)
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
