@@ -121,13 +121,23 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.labelsdock.setObjectName(u'Label List')
         self.labelsdock.setWidget(self.uniqLabelList)
 
+        self.fileSearch = QtWidgets.QLineEdit()
+        self.fileSearch.setPlaceholderText('Search Filename')
+        self.fileSearch.textChanged.connect(self.fileSearchChanged)
         self.fileListWidget = QtWidgets.QListWidget()
         self.fileListWidget.itemSelectionChanged.connect(
             self.fileSelectionChanged
         )
+        fileListLayout = QtWidgets.QVBoxLayout()
+        fileListLayout.setContentsMargins(0, 0, 0, 0)
+        fileListLayout.setSpacing(0)
+        fileListLayout.addWidget(self.fileSearch)
+        fileListLayout.addWidget(self.fileListWidget)
         self.filedock = QtWidgets.QDockWidget(u'File List', self)
         self.filedock.setObjectName(u'Files')
-        self.filedock.setWidget(self.fileListWidget)
+        fileListWidget = QtWidgets.QWidget()
+        fileListWidget.setLayout(fileListLayout)
+        self.filedock.setWidget(fileListWidget)
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
@@ -660,6 +670,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
             self.uniqLabelList.addItem(text)
             self.uniqLabelList.sortItems()
+
+    def fileSearchChanged(self):
+        self.importDirImages(
+            self.lastOpenDir,
+            pattern=self.fileSearch.text(),
+            load=False,
+        )
 
     def fileSelectionChanged(self):
         items = self.fileListWidget.selectedItems()
@@ -1234,7 +1251,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             lst.append(item.text())
         return lst
 
-    def importDirImages(self, dirpath, load=True):
+    def importDirImages(self, dirpath, pattern=None, load=True):
         if not self.mayContinue() or not dirpath:
             return
 
@@ -1242,6 +1259,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.filename = None
         self.fileListWidget.clear()
         for filename in self.scanAllImages(dirpath):
+            if pattern and pattern not in filename:
+                continue
             label_file = os.path.splitext(filename)[0] + '.json'
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
