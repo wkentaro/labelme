@@ -89,15 +89,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.labelList = LabelQListWidget()
         self.lastOpenDir = None
 
-        self.labelList.itemActivated.connect(self.labelSelectionChanged)
-        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
-        self.labelList.itemDoubleClicked.connect(self.editLabel)
-        # Connect to itemChanged to detect checkbox changes.
-        self.labelList.itemChanged.connect(self.labelItemChanged)
-        self.labelList.setDragDropMode(
-            QtWidgets.QAbstractItemView.InternalMove)
-        self.labelList.setParent(self)
-
         self.flag_dock = self.flag_widget = None
         self.flag_dock = QtWidgets.QDockWidget('Flags', self)
         self.flag_dock.setObjectName('Flags')
@@ -106,6 +97,18 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.loadFlags({k: False for k in config['flags']})
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
+
+        self.labelList.itemActivated.connect(self.labelSelectionChanged)
+        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
+        self.labelList.itemDoubleClicked.connect(self.editLabel)
+        # Connect to itemChanged to detect checkbox changes.
+        self.labelList.itemChanged.connect(self.labelItemChanged)
+        self.labelList.setDragDropMode(
+            QtWidgets.QAbstractItemView.InternalMove)
+        self.labelList.setParent(self)
+        self.dock = QtWidgets.QDockWidget('Polygon Labels', self)
+        self.dock.setObjectName('Labels')
+        self.dock.setWidget(self.labelList)
 
         self.uniqLabelList = EscapableQListWidget()
         self.uniqLabelList.setToolTip(
@@ -118,21 +121,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.labelsdock.setObjectName(u'Label List')
         self.labelsdock.setWidget(self.uniqLabelList)
 
-        self.dock = QtWidgets.QDockWidget('Polygon Labels', self)
-        self.dock.setObjectName('Labels')
-        self.dock.setWidget(self.labelList)
-
         self.fileListWidget = QtWidgets.QListWidget()
         self.fileListWidget.itemSelectionChanged.connect(
-            self.fileSelectionChanged)
-        filelistLayout = QtWidgets.QVBoxLayout()
-        filelistLayout.setContentsMargins(0, 0, 0, 0)
-        filelistLayout.addWidget(self.fileListWidget)
-        fileListContainer = QtWidgets.QWidget()
-        fileListContainer.setLayout(filelistLayout)
+            self.fileSelectionChanged
+        )
         self.filedock = QtWidgets.QDockWidget(u'File List', self)
         self.filedock.setObjectName(u'Files')
-        self.filedock.setWidget(fileListContainer)
+        self.filedock.setWidget(self.fileListWidget)
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
