@@ -98,15 +98,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             QtWidgets.QAbstractItemView.InternalMove)
         self.labelList.setParent(self)
 
-        listLayout = QtWidgets.QVBoxLayout()
-        listLayout.setContentsMargins(0, 0, 0, 0)
-        self.editButton = QtWidgets.QToolButton()
-        self.editButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        listLayout.addWidget(self.editButton)  # 0, Qt.AlignCenter)
-        listLayout.addWidget(self.labelList)
-        self.labelListContainer = QtWidgets.QWidget()
-        self.labelListContainer.setLayout(listLayout)
-
         self.flag_dock = self.flag_widget = None
         self.flag_dock = QtWidgets.QDockWidget('Flags', self)
         self.flag_dock.setObjectName('Flags')
@@ -129,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         self.dock = QtWidgets.QDockWidget('Polygon Labels', self)
         self.dock.setObjectName('Labels')
-        self.dock.setWidget(self.labelListContainer)
+        self.dock.setWidget(self.labelList)
 
         self.fileListWidget = QtWidgets.QListWidget()
         self.fileListWidget.itemSelectionChanged.connect(
@@ -305,7 +296,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         edit = action('&Edit Label', self.editLabel, shortcuts['edit_label'],
                       'edit', 'Modify the label of the selected polygon',
                       enabled=False)
-        self.editButton.setDefaultAction(edit)
 
         shapeLineColor = action(
             'Shape &Line Color', self.chshapeLineColor, icon='color-line',
