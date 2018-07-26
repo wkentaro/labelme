@@ -8,3 +8,5 @@
 *.py[cdo]
 
 .DS_Store
+
+/src/
