@@ -1,3 +1,7 @@
+import os
+import sys
+
+import numpy as np
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -69,6 +73,9 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+
+        self.use_polyrnn = False
+        self._polyrnn = None
 
     @property
     def createMode(self):
@@ -505,9 +512,49 @@ class Canvas(QtWidgets.QWidget):
         w, h = self.pixmap.width(), self.pixmap.height()
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
+    def setup_polyrnn(self):
+        if self._polyrnn is None:
+            os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+            sys.path.insert(0, '../../src/polyrnn-pp/src')
+            from inference import Inferencer
+            self._polyrnn = Inferencer()
+
+    def run_polyrnn(self):
+        self.setup_polyrnn()
+
+        W = self.pixmap.width()
+        H = self.pixmap.height()
+        poly = np.array(
+            [(p.x(), p.y()) for p in self.current.points],
+            dtype=np.float32,
+        )
+        mask = labelme.utils.polygons_to_mask((H, W), poly)
+        x1, y1, x2, y2 = labelme.utils.mask_to_bbox(mask)
+        poly[:, 0] /= W
+        poly[:, 1] /= H
+
+        qimage = self.pixmap.toImage()
+        C = 4  # RGBA
+        qimage = qimage.bits().asstring(H * W * C)
+        image = np.fromstring(qimage, dtype=np.uint8)
+        image = image.reshape((H, W, C))
+        image = image[:, :, :3][:, :, ::-1]  # BGRA -> RGB
+        image = image[y1:y2, x1:x2]
+
+        output = self._polyrnn(image)
+        points = []
+        for x, y in output['polys_ggnn'][0]:
+            x = x1 + x * image.shape[1]
+            y = y1 + y * image.shape[0]
+            points.append(QtCore.QPoint(x, y))
+        self.current.points = points
+        self.update()
+
     def finalise(self):
         assert self.current
         self.current.close()
+        if self.use_polyrnn:
+            self.run_polyrnn()
         self.shapes.append(self.current)
         self.storeShapes()
         self.current = None

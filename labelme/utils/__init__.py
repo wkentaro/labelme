@@ -7,6 +7,7 @@ from .image import img_b64_to_arr
 
 from .shape import labelme_shapes_to_label
 from .shape import polygons_to_mask
+from .shape import mask_to_bbox
 from .shape import shapes_to_label
 
 from .draw import draw_label

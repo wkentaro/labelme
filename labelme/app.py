@@ -287,6 +287,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                           shortcuts['fit_width'], 'fit-width',
                           'Zoom follows window width',
                           checkable=True, enabled=False)
+        aiAssist = action('AI assist', self.setAIAssist,
+                          shortcuts['ai_assist'], 'objects',
+                          'AI assist by Polygon RNN++',
+                          checkable=True, enabled=True)
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
@@ -333,7 +337,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
-            zoomActions=zoomActions,
+            aiAssist=aiAssist, zoomActions=zoomActions,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
             editMenu=(edit, copy, delete, None, undo, undoLastPoint,
@@ -414,6 +418,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             zoomOut,
             fitWindow,
             fitWidth,
+            None,
+            aiAssist
         )
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -873,6 +879,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self.scrollBars[Qt.Horizontal].value() + x_shift)
             self.scrollBars[Qt.Vertical].setValue(
                 self.scrollBars[Qt.Vertical].value() + y_shift)
+
+    def setAIAssist(self, value=True):
+        if value:
+            self.canvas.setup_polyrnn()
+        self.canvas.use_polyrnn = value
 
     def setFitWindow(self, value=True):
         if value:

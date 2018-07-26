@@ -14,6 +14,12 @@ def polygons_to_mask(img_shape, polygons):
     return mask
 
 
+def mask_to_bbox(mask):
+    where = np.argwhere(mask)
+    (y1, x1), (y2, x2) = where.min(0), where.max(0) + 1
+    return x1, y1, x2, y2
+
+
 def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
     assert type in ['class', 'instance']
 
