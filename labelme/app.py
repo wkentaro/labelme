@@ -787,6 +787,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 flags=flags,
             )
             self.labelFile = lf
+            item = self.fileListWidget.findItems(
+                self.imagePath, Qt.MatchExactly
+            )[0]
+            item.setCheckState(Qt.Checked)
             # disable allows next and previous image to proceed
             # self.filename = filename
             return True
