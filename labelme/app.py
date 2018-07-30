@@ -441,6 +441,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         else:
             self.filename = filename
 
+        if config['file_search']:
+            self.fileSearch.setText(config['file_search'])
+            self.fileSearchChanged()
+
         # XXX: Could be completely declarative.
         # Restore application settings.
         self.settings = QtCore.QSettings('labelme', 'labelme')
