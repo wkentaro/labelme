@@ -4,6 +4,7 @@ keep_prev: false
 
 flags: null
 labels: null
+file_search: null
 sort_labels: true
 validate_label: null
 show_label_text_field: true
