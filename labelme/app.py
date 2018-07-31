@@ -796,7 +796,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self.imagePath, Qt.MatchExactly
             )
             if len(items) > 0:
-                if len(items) == 1:
+                if len(items) != 1:
                     raise RuntimeError('There are duplicate files.')
                 items[0].setCheckState(Qt.Checked)
             # disable allows next and previous image to proceed
