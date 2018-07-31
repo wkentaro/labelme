@@ -27,7 +27,8 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
 class LabelDialog(QtWidgets.QDialog):
 
     def __init__(self, text="Enter object label", parent=None, labels=None,
-                 sort_labels=True, show_text_field=True):
+                 sort_labels=True, show_text_field=True,
+                 completion='startswith'):
         super(LabelDialog, self).__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
@@ -64,8 +65,14 @@ class LabelDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
-        completer.setFilterMode(QtCore.Qt.MatchContains)
-        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        if completion == 'startswith':
+            completer.setFilterMode(QtCore.Qt.MatchStartsWith)
+            completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
+        elif completion == 'contains':
+            completer.setFilterMode(QtCore.Qt.MatchContains)
+            completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        else:
+            raise ValueError('Unsupported completion: {}'.format(completion))
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 

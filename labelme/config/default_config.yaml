@@ -7,7 +7,10 @@ labels: null
 file_search: null
 sort_labels: true
 validate_label: null
+
+# label_dialog
 show_label_text_field: true
+label_completion: startswith
 
 epsilon: 11.0
 
