@@ -33,7 +33,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
         self.edit.setValidator(labelme.utils.labelValidator())
-        self.edit.textChanged.connect(self.textChangedCallback)
         self.edit.editingFinished.connect(self.postProcess)
         layout = QtWidgets.QVBoxLayout()
         if show_text_field:
@@ -75,11 +74,6 @@ class LabelDialog(QtWidgets.QDialog):
             raise ValueError('Unsupported completion: {}'.format(completion))
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
-
-    def textChangedCallback(self):
-        text = self.edit.text().strip()
-        for i in range(self.labelList.count()):
-            item = self.labelList.item(i)
 
     def addLabelHistory(self, label):
         if self.labelList.findItems(label, QtCore.Qt.MatchExactly):
