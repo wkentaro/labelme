@@ -64,7 +64,8 @@ class LabelDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
-        completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
+        completer.setFilterMode(QtCore.Qt.MatchContains)
+        completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 
@@ -72,10 +73,6 @@ class LabelDialog(QtWidgets.QDialog):
         text = self.edit.text().strip()
         for i in range(self.labelList.count()):
             item = self.labelList.item(i)
-            if text in item.text():
-                item.setHidden(False)
-            else:
-                item.setHidden(True)
 
     def addLabelHistory(self, label):
         if self.labelList.findItems(label, QtCore.Qt.MatchExactly):
