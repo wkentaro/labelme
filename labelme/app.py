@@ -791,10 +791,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 flags=flags,
             )
             self.labelFile = lf
-            item = self.fileListWidget.findItems(
+            items = self.fileListWidget.findItems(
                 self.imagePath, Qt.MatchExactly
-            )[0]
-            item.setCheckState(Qt.Checked)
+            )
+            if len(items) > 0:
+                if len(items) == 1:
+                    raise RuntimeError('There are duplicate files.')
+                items[0].setCheckState(Qt.Checked)
             # disable allows next and previous image to proceed
             # self.filename = filename
             return True
