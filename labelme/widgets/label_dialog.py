@@ -5,6 +5,7 @@ from qtpy import QtWidgets
 
 QT5 = QT_VERSION[0] == '5'  # NOQA
 
+from labelme import logger
 import labelme.utils
 
 
@@ -64,12 +65,19 @@ class LabelDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
+        if not QT5 and completion != 'startswith':
+            logger.warn(
+                "completion other than 'startswith' is only "
+                "supported with Qt5. Using 'startswith'"
+            )
+            completion = 'startswith'
         if completion == 'startswith':
-            completer.setFilterMode(QtCore.Qt.MatchStartsWith)
             completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
+            # Default settings.
+            # completer.setFilterMode(QtCore.Qt.MatchStartsWith)
         elif completion == 'contains':
-            completer.setFilterMode(QtCore.Qt.MatchContains)
             completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+            completer.setFilterMode(QtCore.Qt.MatchContains)
         else:
             raise ValueError('Unsupported completion: {}'.format(completion))
         completer.setModel(self.labelList.model())
