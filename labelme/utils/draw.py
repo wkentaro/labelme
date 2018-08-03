@@ -74,8 +74,6 @@ def draw_label(label, img=None, label_names=None, colormap=None):
     for label_value, label_name in enumerate(label_names):
         if label_value not in label:
             continue
-        if label_name.startswith('_'):
-            continue
         fc = colormap[label_value]
         p = plt.Rectangle((0, 0), 1, 1, fc=fc)
         plt_handlers.append(p)
