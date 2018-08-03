@@ -486,6 +486,15 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapeCopy:
             self.selectedShapeCopy.paint(p)
 
+        if (
+            self.createMode == 'polygon' and self.current is not None and
+            len(self.current.points) >= 2
+        ):
+            realTimeShape = self.current.copy()
+            realTimeShape.addPoint(self.line[1])
+            realTimeShape.fill = True
+            realTimeShape.paint(p)
+
         p.end()
 
     def transformPos(self, point):
