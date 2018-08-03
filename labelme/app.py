@@ -310,9 +310,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             'Shape &Fill Color', self.chshapeFillColor, icon='color',
             tip='Change the fill color for this specific shape', enabled=False)
 
-        labels = self.dock.toggleViewAction()
-        labels.setText('Show/Hide Label Panel')
-
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
         addActions(labelMenu, (edit, delete))
@@ -382,7 +379,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                                      save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
-            labels, None,
             hideAll, showAll, None,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
