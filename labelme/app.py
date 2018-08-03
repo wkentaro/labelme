@@ -309,6 +309,16 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         shapeFillColor = action(
             'Shape &Fill Color', self.chshapeFillColor, icon='color',
             tip='Change the fill color for this specific shape', enabled=False)
+        fill_drawing = action(
+            'Fill Drawing Polygon',
+            lambda x: self.canvas.setFillDrawing(x),
+            None,
+            'color',
+            'Fill polygon while drawing',
+            checkable=True,
+            enabled=True,
+        )
+        fill_drawing.setChecked(True)
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
@@ -379,6 +389,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                                      save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
+            fill_drawing, None,
             hideAll, showAll, None,
             zoomIn, zoomOut, zoomOrg, None,
             fitWindow, fitWidth))
