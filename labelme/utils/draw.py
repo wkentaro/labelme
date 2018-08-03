@@ -71,7 +71,7 @@ def draw_label(label, img=None, label_names=None, colormap=None):
 
     plt_handlers = []
     plt_titles = []
-    for label_value, label_name in enumerate(label_names):
+    for label_value, label_name in enumerate(sorted(label_names)):
         if label_value not in label:
             continue
         if label_name.startswith('_'):
