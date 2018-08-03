@@ -33,6 +33,8 @@ class Canvas(QtWidgets.QWidget):
     # polygon, rectangle, line, or point
     _createMode = 'polygon'
 
+    _fill_drawing = False
+
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop('epsilon', 11.0)
         super(Canvas, self).__init__(*args, **kwargs)
@@ -69,6 +71,12 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+
+    def fillDrawing(self):
+        return self._fill_drawing
+
+    def setFillDrawing(self, value):
+        self._fill_drawing = value
 
     @property
     def createMode(self):
@@ -486,14 +494,13 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapeCopy:
             self.selectedShapeCopy.paint(p)
 
-        if (
-            self.createMode == 'polygon' and self.current is not None and
-            len(self.current.points) >= 2
-        ):
-            realTimeShape = self.current.copy()
-            realTimeShape.addPoint(self.line[1])
-            realTimeShape.fill = True
-            realTimeShape.paint(p)
+        if (self.fillDrawing() and self.createMode == 'polygon' and
+                self.current is not None and len(self.current.points) >= 2):
+            drawing_shape = self.current.copy()
+            drawing_shape.addPoint(self.line[1])
+            drawing_shape.fill = True
+            drawing_shape.fill_color.setAlpha(64)
+            drawing_shape.paint(p)
 
         p.end()
 
