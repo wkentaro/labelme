@@ -33,7 +33,7 @@ class LabelQListWidget(QtWidgets.QListWidget):
         if self.canvas is None:
             raise RuntimeError('self.canvas must be set beforehand.')
         self.parent.setDirty()
-        self.canvas.loadShapes(shapes)
+        self.canvas.loadShapes(self.shapes)
 
     @property
     def shapes(self):
