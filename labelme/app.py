@@ -389,10 +389,24 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                                      save, saveAs, close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
-            fill_drawing, None,
-            hideAll, showAll, None,
-            zoomIn, zoomOut, zoomOrg, None,
-            fitWindow, fitWidth))
+            self.flag_dock.toggleViewAction(),
+            self.labelsdock.toggleViewAction(),
+            self.dock.toggleViewAction(),
+            self.filedock.toggleViewAction(),
+            None,
+            fill_drawing,
+            None,
+            hideAll,
+            showAll,
+            None,
+            zoomIn,
+            zoomOut,
+            zoomOrg,
+            None,
+            fitWindow,
+            fitWidth,
+            None,
+        ))
 
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
