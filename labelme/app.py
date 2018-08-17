@@ -235,7 +235,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         delete = action('Delete Polygon', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
-                        'Delete', enabled=False)
+                        'Delete', enabled=True)
         copy = action('Duplicate Polygon', self.copySelectedShape,
                       shortcuts['duplicate_polygon'], 'copy',
                       'Create a duplicate of the selected polygon',
