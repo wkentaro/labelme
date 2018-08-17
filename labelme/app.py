@@ -930,6 +930,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self.fileListWidget.currentRow() !=
                 self.imageList.index(filename)):
             self.fileListWidget.setCurrentRow(self.imageList.index(filename))
+            self.fileListWidget.repaint()
             return
 
         self.resetState()
