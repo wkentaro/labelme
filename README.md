@@ -190,7 +190,7 @@ Also, there are pre-built executables in
 
 ```bash
 # Setup conda
-conda create --name labelme python=3.6
+conda create --name labelme python==3.6.0
 conda activate labelme
 
 # Build the standalone executable
