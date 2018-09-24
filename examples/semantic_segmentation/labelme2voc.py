@@ -18,8 +18,8 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('labels_file')
-    parser.add_argument('in_dir')
-    parser.add_argument('out_dir')
+    parser.add_argument('in_dir', help='input dir with annotated files')
+    parser.add_argument('out_dir', help='output dataset directory')
     args = parser.parse_args()
 
     if osp.exists(args.out_dir):
@@ -28,6 +28,7 @@ def main():
     os.makedirs(args.out_dir)
     os.makedirs(osp.join(args.out_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClass'))
+    os.makedirs(osp.join(args.out_dir, 'SegmentationClassPNG'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClassVisualization'))
     print('Creating dataset:', args.out_dir)
 
@@ -60,6 +61,8 @@ def main():
                 args.out_dir, 'JPEGImages', base + '.jpg')
             out_lbl_file = osp.join(
                 args.out_dir, 'SegmentationClass', base + '.npy')
+            out_png_file = osp.join(
+                args.out_dir, 'SegmentationClassPNG', base + '.png')
             out_viz_file = osp.join(
                 args.out_dir, 'SegmentationClassVisualization', base + '.jpg')
 
@@ -74,16 +77,12 @@ def main():
                 shapes=data['shapes'],
                 label_name_to_value=class_name_to_id,
             )
+            labelme.utils.lblsave(out_png_file, lbl)
 
-            # Only works with uint8 label
-            # lbl_pil = PIL.Image.fromarray(lbl, mode='P')
-            # lbl_pil.putpalette((colormap * 255).flatten())
             np.save(out_lbl_file, lbl)
 
-            label_names = ['%d: %s' % (cls_id, cls_name)
-                           for cls_id, cls_name in enumerate(class_names)]
             viz = labelme.utils.draw_label(
-                lbl, img, label_names, colormap=colormap)
+                lbl, img, class_names, colormap=colormap)
             PIL.Image.fromarray(viz).save(out_viz_file)
 
 

@@ -82,12 +82,19 @@ script:
   - (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
   - (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
   - (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
+  - (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
 
 after_script:
   - |
     if [ $RUN_PYINSTALLER = "true" ]; then
       # Cleanup
       pip uninstall -y $PIP_DEPENDENCIES
+
+      # https://github.com/wkentaro/labelme/issues/183
+      if [ $TRAVIS_OS_NAME = "osx" ]; then
+        pip uninstall -y Pillow
+        conda install -y Pillow
+      fi
 
       # Build the standalone executable
       pip install pyinstaller

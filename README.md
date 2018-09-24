@@ -11,21 +11,24 @@
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
-<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />  
-Fig 1. Example of annotations for instance segmentation.
+<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />
+<i>Fig 1. Annotation example of instance segmentation.</i>
+
+<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationClassPNG/2011_000006.png?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationObjectPNG/2011_000006.png?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg?raw=true" width="19%" />  
+<i>Fig 2. VOC dataset example of instance segmentation.</i>
+
+<img src="https://github.com/wkentaro/labelme/raw/master/examples/semantic_segmentation/.readme/annotation.jpg?raw=true" width="30%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/bbox_detection/.readme/annotation.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/classification/.readme/annotation_cat.jpg?raw=true" width="33%" />  
+<i>Fig 3. Other examples (semantic segmentation, bbox detection, and classification).</i>
 
 
 ## Features
 
-- [x] Polygonal annotation
-- [x] Predefined labels ([#76](https://github.com/wkentaro/labelme/pull/76))
-- [x] Auto save mode ([#138](https://github.com/wkentaro/labelme/pull/138))
-- [x] Support custom json keys ([#140](https://github.com/wkentaro/labelme/pull/140))
-- [x] Undo by Ctrl-Z ([#112](https://github.com/wkentaro/labelme/pull/112), [#143](https://github.com/wkentaro/labelme/pull/143))
-- [x] Customize by config file ([#144](https://github.com/wkentaro/labelme/pull/144))
-- [x] VOC dataset export ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
-- [x] Image level flag annotation ([#166](https://github.com/wkentaro/labelme/pull/166))
-- [x] Video annotation ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
+- [x] Image annotation for polygon, rectangle, line and point. ([tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial))
+- [x] Image flag annotation for classification and cleaning. ([#166](https://github.com/wkentaro/labelme/pull/166))
+- [x] Video annotation. ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
+- [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
+- [x] Exporting VOC-like dataset for semantic/instance segmentation. ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
+
 
 
 ## Requirements
@@ -166,6 +169,19 @@ pytest -v tests
 ```
 
 
+## Developing
+
+```bash
+git clone https://github.com/wkentaro/labelme.git
+cd labelme
+
+# Install anaconda3 and labelme
+curl -L https://github.com/wkentaro/dotfiles/raw/master/local/bin/install_anaconda3.sh | bash -s .
+source .anaconda3/bin/activate
+pip install -e .
+```
+
+
 ## How to build standalone executable
 
 Below shows how to build the standalone executable on macOS, Linux and Windows.  
@@ -174,10 +190,11 @@ Also, there are pre-built executables in
 
 ```bash
 # Setup conda
-conda create --name labelme python=3.6
+conda create --name labelme python==3.6.0
 conda activate labelme
 
 # Build the standalone executable
+conda install pyqt
 pip install .
 pip install pyinstaller
 pyinstaller labelme.spec

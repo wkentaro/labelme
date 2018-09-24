@@ -2,9 +2,9 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-from labelme.compat import QT5
-from labelme.lib import distance
+from labelme import QT5
 from labelme.shape import Shape
+import labelme.utils
 
 
 # TODO(unknown):
@@ -30,9 +30,13 @@ class Canvas(QtWidgets.QWidget):
 
     CREATE, EDIT = 0, 1
 
-    epsilon = 11.0
+    # polygon, rectangle, line, or point
+    _createMode = 'polygon'
+
+    _fill_drawing = False
 
     def __init__(self, *args, **kwargs):
+        self.epsilon = kwargs.pop('epsilon', 11.0)
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -42,6 +46,11 @@ class Canvas(QtWidgets.QWidget):
         self.selectedShape = None  # save the selected shape here
         self.selectedShapeCopy = None
         self.lineColor = QtGui.QColor(0, 0, 255)
+        # self.line represents:
+        #   - createMode == 'polygon': edge from last point to current
+        #   - createMode == 'rectangle': diagonal line of the rectangle
+        #   - createMode == 'line': the line
+        #   - createMode == 'point': the point
         self.line = Shape(line_color=self.lineColor)
         self.prevPoint = QtCore.QPoint()
         self.prevMovePoint = QtCore.QPoint()
@@ -62,6 +71,22 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+
+    def fillDrawing(self):
+        return self._fill_drawing
+
+    def setFillDrawing(self, value):
+        self._fill_drawing = value
+
+    @property
+    def createMode(self):
+        return self._createMode
+
+    @createMode.setter
+    def createMode(self, value):
+        if value not in ['polygon', 'rectangle', 'line', 'point']:
+            raise ValueError('Unsupported createMode: %s' % value)
+        self._createMode = value
 
     def storeShapes(self):
         shapesBackup = []
@@ -131,25 +156,39 @@ class Canvas(QtWidgets.QWidget):
         # Polygon drawing.
         if self.drawing():
             self.overrideCursor(CURSOR_DRAW)
-            if self.current:
-                color = self.lineColor
-                if self.outOfPixmap(pos):
-                    # Don't allow the user to draw outside the pixmap.
-                    # Project the point to the pixmap's edges.
-                    pos = self.intersectionPoint(self.current[-1], pos)
-                elif len(self.current) > 1 and \
-                        self.closeEnough(pos, self.current[0]):
-                    # Attract line to starting point and
-                    # colorise to alert the user.
-                    pos = self.current[0]
-                    color = self.current.line_color
-                    self.overrideCursor(CURSOR_POINT)
-                    self.current.highlightVertex(0, Shape.NEAR_VERTEX)
+            if not self.current:
+                return
+
+            color = self.lineColor
+            if self.outOfPixmap(pos):
+                # Don't allow the user to draw outside the pixmap.
+                # Project the point to the pixmap's edges.
+                pos = self.intersectionPoint(self.current[-1], pos)
+            elif len(self.current) > 1 and \
+                    self.closeEnough(pos, self.current[0]):
+                # Attract line to starting point and
+                # colorise to alert the user.
+                pos = self.current[0]
+                color = self.current.line_color
+                self.overrideCursor(CURSOR_POINT)
+                self.current.highlightVertex(0, Shape.NEAR_VERTEX)
+            if self.createMode == 'polygon':
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
-                self.line.line_color = color
-                self.repaint()
-                self.current.highlightClear()
+            elif self.createMode == 'rectangle':
+                self.line.points = list(self.getRectangleFromLine(
+                    (self.current[0], pos)
+                ))
+                self.line.close()
+            elif self.createMode == 'line':
+                self.line.points = [self.current[0], pos]
+                self.line.close()
+            elif self.createMode == 'point':
+                self.line.points = [self.current[0]]
+                self.line.close()
+            self.line.line_color = color
+            self.repaint()
+            self.current.highlightClear()
             return
 
         # Polygon copy moving.
@@ -232,6 +271,13 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
 
+    def getRectangleFromLine(self, line):
+        pt1 = line[0]
+        pt3 = line[1]
+        pt2 = QtCore.QPoint(pt3.x(), pt1.y())
+        pt4 = QtCore.QPoint(pt1.x(), pt3.y())
+        return pt1, pt2, pt3, pt4
+
     def mousePressEvent(self, ev):
         if QT5:
             pos = self.transformPos(ev.pos())
@@ -240,17 +286,27 @@ class Canvas(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
-                    self.current.addPoint(self.line[1])
-                    self.line[0] = self.current[-1]
-                    if self.current.isClosed():
+                    # Add point to existing shape.
+                    if self.createMode == 'polygon':
+                        self.current.addPoint(self.line[1])
+                        self.line[0] = self.current[-1]
+                        if self.current.isClosed():
+                            self.finalise()
+                    elif self.createMode in ['rectangle', 'line']:
+                        assert len(self.current.points) == 1
+                        self.current.points = self.line.points
                         self.finalise()
                 elif not self.outOfPixmap(pos):
+                    # Create new shape.
                     self.current = Shape()
                     self.current.addPoint(pos)
-                    self.line.points = [pos, pos]
-                    self.setHiding()
-                    self.drawingPolygon.emit(True)
-                    self.update()
+                    if self.createMode == 'point':
+                        self.finalise()
+                    else:
+                        self.line.points = [pos, pos]
+                        self.setHiding()
+                        self.drawingPolygon.emit(True)
+                        self.update()
             else:
                 self.selectShapePoint(pos)
                 self.prevPoint = pos
@@ -438,6 +494,14 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapeCopy:
             self.selectedShapeCopy.paint(p)
 
+        if (self.fillDrawing() and self.createMode == 'polygon' and
+                self.current is not None and len(self.current.points) >= 2):
+            drawing_shape = self.current.copy()
+            drawing_shape.addPoint(self.line[1])
+            drawing_shape.fill = True
+            drawing_shape.fill_color.setAlpha(64)
+            drawing_shape.paint(p)
+
         p.end()
 
     def transformPos(self, point):
@@ -471,7 +535,7 @@ class Canvas(QtWidgets.QWidget):
         # d = distance(p1 - p2)
         # m = (p1-p2).manhattanLength()
         # print "d %.2f, m %d, %.2f" % (d, m, d - m)
-        return distance(p1 - p2) < self.epsilon
+        return labelme.utils.distance(p1 - p2) < self.epsilon
 
     def intersectionPoint(self, p1, p2):
         # Cycle through each image edge in clockwise fashion,
@@ -521,7 +585,7 @@ class Canvas(QtWidgets.QWidget):
                 x = x1 + ua * (x2 - x1)
                 y = y1 + ua * (y2 - y1)
                 m = QtCore.QPoint((x3 + x4) / 2, (y3 + y4) / 2)
-                d = distance(m - QtCore.QPoint(x2, y2))
+                d = labelme.utils.distance(m - QtCore.QPoint(x2, y2))
                 yield d, i, (x, y)
 
     # These two, along with a call to adjustSize are required for the
@@ -582,7 +646,12 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        self.line.points = [self.current[-1], self.current[0]]
+        if self.createMode == 'polygon':
+            self.line.points = [self.current[-1], self.current[0]]
+        elif self.createMode in ['rectangle', 'line']:
+            self.current.points = self.current.points[0:1]
+        elif self.createMode == 'point':
+            self.current = None
         self.drawingPolygon.emit(True)
 
     def undoLastPoint(self):

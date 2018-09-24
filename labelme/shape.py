@@ -1,8 +1,8 @@
+import copy
+
 from qtpy import QtGui
 
-from labelme.lib import distance
-from labelme.lib import distancetoline
-from labelme import logger
+import labelme.utils
 
 
 # TODO(unknown):
@@ -56,9 +56,6 @@ class Shape(object):
             self.line_color = line_color
 
     def close(self):
-        if len(self.points) <= 2:
-            logger.error('Polygon should be created with points >2')
-            return
         self._closed = True
 
     def addPoint(self, point):
@@ -135,7 +132,7 @@ class Shape(object):
         min_distance = float('inf')
         min_i = None
         for i, p in enumerate(self.points):
-            dist = distance(p - point)
+            dist = labelme.utils.distance(p - point)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 min_i = i
@@ -146,7 +143,7 @@ class Shape(object):
         post_i = None
         for i in range(len(self.points)):
             line = [self.points[i - 1], self.points[i]]
-            dist = distancetoline(point, line)
+            dist = labelme.utils.distancetoline(point, line)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 post_i = i
@@ -179,14 +176,12 @@ class Shape(object):
 
     def copy(self):
         shape = Shape(self.label)
-        shape.points = [p for p in self.points]
+        shape.points = [copy.deepcopy(p) for p in self.points]
         shape.fill = self.fill
         shape.selected = self.selected
         shape._closed = self._closed
-        if self.line_color != Shape.line_color:
-            shape.line_color = self.line_color
-        if self.fill_color != Shape.fill_color:
-            shape.fill_color = self.fill_color
+        shape.line_color = copy.deepcopy(self.line_color)
+        shape.fill_color = copy.deepcopy(self.fill_color)
         return shape
 
     def __len__(self):

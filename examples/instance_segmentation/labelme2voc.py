@@ -28,8 +28,10 @@ def main():
     os.makedirs(args.out_dir)
     os.makedirs(osp.join(args.out_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClass'))
+    os.makedirs(osp.join(args.out_dir, 'SegmentationClassPNG'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationClassVisualization'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationObject'))
+    os.makedirs(osp.join(args.out_dir, 'SegmentationObjectPNG'))
     os.makedirs(osp.join(args.out_dir, 'SegmentationObjectVisualization'))
     print('Creating dataset:', args.out_dir)
 
@@ -62,10 +64,14 @@ def main():
                 args.out_dir, 'JPEGImages', base + '.jpg')
             out_cls_file = osp.join(
                 args.out_dir, 'SegmentationClass', base + '.npy')
+            out_clsp_file = osp.join(
+                args.out_dir, 'SegmentationClassPNG', base + '.png')
             out_clsv_file = osp.join(
                 args.out_dir, 'SegmentationClassVisualization', base + '.jpg')
             out_ins_file = osp.join(
                 args.out_dir, 'SegmentationObject', base + '.npy')
+            out_insp_file = osp.join(
+                args.out_dir, 'SegmentationObjectPNG', base + '.png')
             out_insv_file = osp.join(
                 args.out_dir, 'SegmentationObjectVisualization', base + '.jpg')
 
@@ -83,18 +89,19 @@ def main():
             )
             ins[cls == -1] = 0  # ignore it.
 
+            # class label
+            labelme.utils.lblsave(out_clsp_file, cls)
             np.save(out_cls_file, cls)
-            label_names = ['%d: %s' % (cls_id, cls_name)
-                           for cls_id, cls_name in enumerate(class_names)]
             clsv = labelme.utils.draw_label(
-                cls, img, label_names, colormap=colormap)
+                cls, img, class_names, colormap=colormap)
             PIL.Image.fromarray(clsv).save(out_clsv_file)
 
+            # instance label
+            labelme.utils.lblsave(out_insp_file, ins)
             np.save(out_ins_file, ins)
             instance_ids = np.unique(ins)
             instance_names = [str(i) for i in range(max(instance_ids) + 1)]
-            insv = labelme.utils.draw_label(
-                ins, img, instance_names)
+            insv = labelme.utils.draw_label(ins, img, instance_names)
             PIL.Image.fromarray(insv).save(out_insv_file)
 
 

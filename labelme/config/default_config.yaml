@@ -5,9 +5,15 @@ keep_prev: false
 
 flags: null
 labels: null
+file_search: null
 sort_labels: true
 validate_label: null
+
+# label_dialog
 show_label_text_field: true
+label_completion: startswith
+
+epsilon: 11.0
 
 shortcuts:
   close: Ctrl+W
@@ -28,6 +34,9 @@ shortcuts:
 
   add_point: Ctrl+Shift+P
   create_polygon: Ctrl+N
+  create_rectangle: Ctrl+R
+  create_line: null
+  create_point: null
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D

@@ -40,33 +40,25 @@ def main():
         with open(imagePath, 'rb') as f:
             imageData = f.read()
             imageData = base64.b64encode(imageData).decode('utf-8')
-
     img = utils.img_b64_to_arr(imageData)
 
     label_name_to_value = {'_background_': 0}
-    for shape in data['shapes']:
+    for shape in sorted(data['shapes'], key=lambda x: x['label']):
         label_name = shape['label']
         if label_name in label_name_to_value:
             label_value = label_name_to_value[label_name]
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-
-    # label_values must be dense
-    label_values, label_names = [], []
-    for ln, lv in sorted(label_name_to_value.items(), key=lambda x: x[1]):
-        label_values.append(lv)
-        label_names.append(ln)
-    assert label_values == list(range(len(label_values)))
-
     lbl = utils.shapes_to_label(img.shape, data['shapes'], label_name_to_value)
 
-    captions = ['{}: {}'.format(lv, ln)
-                for ln, lv in label_name_to_value.items()]
-    lbl_viz = utils.draw_label(lbl, img, captions)
+    label_names = [None] * (max(label_name_to_value.values()) + 1)
+    for name, value in label_name_to_value.items():
+        label_names[value] = name
+    lbl_viz = utils.draw_label(lbl, img, label_names)
 
     PIL.Image.fromarray(img).save(osp.join(out_dir, 'img.png'))
-    PIL.Image.fromarray(lbl).save(osp.join(out_dir, 'label.png'))
+    utils.lblsave(osp.join(out_dir, 'label.png'), lbl)
     PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, 'label_viz.png'))
 
     with open(osp.join(out_dir, 'label_names.txt'), 'w') as f:

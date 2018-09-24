@@ -5,8 +5,8 @@ from qtpy import QtWidgets
 
 QT5 = QT_VERSION[0] == '5'  # NOQA
 
-from labelme.lib import labelValidator
-from labelme.lib import newIcon
+from labelme import logger
+import labelme.utils
 
 
 # TODO(unknown):
@@ -28,11 +28,12 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
 class LabelDialog(QtWidgets.QDialog):
 
     def __init__(self, text="Enter object label", parent=None, labels=None,
-                 sort_labels=True, show_text_field=True):
+                 sort_labels=True, show_text_field=True,
+                 completion='startswith'):
         super(LabelDialog, self).__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
-        self.edit.setValidator(labelValidator())
+        self.edit.setValidator(labelme.utils.labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
         layout = QtWidgets.QVBoxLayout()
         if show_text_field:
@@ -43,8 +44,8 @@ class LabelDialog(QtWidgets.QDialog):
             QtCore.Qt.Horizontal,
             self,
         )
-        bb.button(bb.Ok).setIcon(newIcon('done'))
-        bb.button(bb.Cancel).setIcon(newIcon('undo'))
+        bb.button(bb.Ok).setIcon(labelme.utils.newIcon('done'))
+        bb.button(bb.Cancel).setIcon(labelme.utils.newIcon('undo'))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
@@ -64,7 +65,21 @@ class LabelDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
-        completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
+        if not QT5 and completion != 'startswith':
+            logger.warn(
+                "completion other than 'startswith' is only "
+                "supported with Qt5. Using 'startswith'"
+            )
+            completion = 'startswith'
+        if completion == 'startswith':
+            completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
+            # Default settings.
+            # completer.setFilterMode(QtCore.Qt.MatchStartsWith)
+        elif completion == 'contains':
+            completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+            completer.setFilterMode(QtCore.Qt.MatchContains)
+        else:
+            raise ValueError('Unsupported completion: {}'.format(completion))
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 
