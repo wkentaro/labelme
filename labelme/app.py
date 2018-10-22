@@ -859,7 +859,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         text = None
         if items:
             text = items[0].text()
-        if self._config['display_label_popup']:
+        if self._config['display_label_popup'] or not text:
             text = self.labelDialog.popUp(text)
         if text is not None and not self.validateLabel(text):
             self.errorMessage('Invalid label',
