@@ -33,7 +33,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
     for shape in shapes:
         polygons = shape['points']
         label = shape['label']
-        shape_type = shape['shape_type']
+        shape_type = shape.get('shape_type', None)
         if type == 'class':
             cls_name = label
         elif type == 'instance':
