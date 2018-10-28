@@ -1,6 +1,6 @@
-import numpy as np
-from math import sqrt
 from math import pow
+from math import sqrt
+import numpy as np
 
 import PIL.Image
 import PIL.ImageDraw
