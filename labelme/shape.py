@@ -1,8 +1,10 @@
 import copy
 
-from qtpy import QtGui
+from qtpy import QtGui, QtCore
+
 
 import labelme.utils
+import math
 
 
 # TODO(unknown):
@@ -34,11 +36,12 @@ class Shape(object):
     point_size = 8
     scale = 1.0
 
-    def __init__(self, label=None, line_color=None):
+    def __init__(self, label=None, line_color=None, shape_type=None):
         self.label = label
         self.points = []
         self.fill = False
         self.selected = False
+        self.shape_type = shape_type
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
@@ -89,18 +92,28 @@ class Shape(object):
 
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
+            if self.shape_type == "circle":
+                shape_params = self.getCircleShapeFromLine(self.points)
+                if shape_params is not None:
+                    (start_point, rectangle) = shape_params
+                    line_path.moveTo(start_point)
+                    line_path.arcTo(rectangle, 0, 360)
+                self.drawVertex(vrtx_path, 0)
+                if len(self.points) > 1: 
+                    # we suppose that there are <= 2 vertices
+                    self.drawVertex(vrtx_path, 1)
+            else:
+                line_path.moveTo(self.points[0])
+                # Uncommenting the following line will draw 2 paths
+                # for the 1st vertex, and make it non-filled, which
+                # may be desirable.
+                # self.drawVertex(vrtx_path, 0)
 
-            line_path.moveTo(self.points[0])
-            # Uncommenting the following line will draw 2 paths
-            # for the 1st vertex, and make it non-filled, which
-            # may be desirable.
-            # self.drawVertex(vrtx_path, 0)
-
-            for i, p in enumerate(self.points):
-                line_path.lineTo(p)
-                self.drawVertex(vrtx_path, i)
-            if self.isClosed():
-                line_path.lineTo(self.points[0])
+                for i, p in enumerate(self.points):
+                    line_path.lineTo(p)
+                    self.drawVertex(vrtx_path, i)
+                if self.isClosed():
+                    line_path.lineTo(self.points[0])
 
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
@@ -151,11 +164,34 @@ class Shape(object):
 
     def containsPoint(self, point):
         return self.makePath().contains(point)
+    
+    def getCircleShapeFromLine(self, line):
+        """from 2 points (center and point at the circle) computes
+        starting point and coordinates to draw the circle with 
+        `QPainterPath::arcTo` method
+        """
+        if len(line) != 2:
+            return None
+        (c, point) = line
+        r = line[0] - line[1]
+        dist = math.sqrt(math.pow(r.x(), 2) + math.pow(r.y(), 2))
+        start_point = QtCore.QPoint(c.x() + dist, c.y())
+        rectangle = QtCore.QRectF(c.x() - dist, c.y() - dist, 2*dist, 2*dist)
+        return start_point, rectangle
 
     def makePath(self):
-        path = QtGui.QPainterPath(self.points[0])
-        for p in self.points[1:]:
-            path.lineTo(p)
+        if self.shape_type == "circle":
+            shape_params = self.getCircleShapeFromLine(self.points)
+            path = QtGui.QPainterPath()
+            if shape_params is None:
+                return path
+            (start_point, rectangle) = shape_params
+            path.moveTo(start_point)
+            path.arcTo(rectangle, 0, 360)
+        else:
+            path = QtGui.QPainterPath(self.points[0])
+            for p in self.points[1:]:
+                path.lineTo(p)
         return path
 
     def boundingRect(self):
@@ -175,7 +211,7 @@ class Shape(object):
         self._highlightIndex = None
 
     def copy(self):
-        shape = Shape(self.label)
+        shape = Shape(self.label, shape_type=self.shape_type)
         shape.points = [copy.deepcopy(p) for p in self.points]
         shape.fill = self.fill
         shape.selected = self.selected

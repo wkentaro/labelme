@@ -1,15 +1,21 @@
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
-
+from math import sqrt, pow
 from labelme import logger
 
 
-def polygons_to_mask(img_shape, polygons):
+def polygons_to_mask(img_shape, polygons, shape_type=None):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
-    xy = list(map(tuple, polygons))
-    PIL.ImageDraw.Draw(mask).polygon(xy=xy, outline=1, fill=1)
+    draw = PIL.ImageDraw.Draw(mask)
+    if shape_type == "circle" and len(polygons) == 2:
+        ((cx, cy), (px, py)) = polygons
+        d = sqrt(pow(cx - px, 2) + pow(cy - py, 2))
+        draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
+    else:
+        xy = list(map(tuple, polygons))
+        draw.polygon(xy=xy, outline=1, fill=1)
     mask = np.array(mask, dtype=bool)
     return mask
 
@@ -24,6 +30,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
     for shape in shapes:
         polygons = shape['points']
         label = shape['label']
+        shape_type = shape['shape_type']
         if type == 'class':
             cls_name = label
         elif type == 'instance':
@@ -32,7 +39,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
                 instance_names.append(label)
             ins_id = len(instance_names) - 1
         cls_id = label_name_to_value[cls_name]
-        mask = polygons_to_mask(img_shape[:2], polygons)
+        mask = polygons_to_mask(img_shape[:2], polygons, shape_type)
         cls[mask] = cls_id
         if type == 'instance':
             ins[mask] = ins_id
