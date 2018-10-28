@@ -1,6 +1,7 @@
 import copy
 
-from qtpy import QtGui, QtCore
+from qtpy import QtGui
+from qtpy import QtCore
 
 
 import labelme.utils
@@ -99,7 +100,7 @@ class Shape(object):
                     line_path.moveTo(start_point)
                     line_path.arcTo(rectangle, 0, 360)
                 self.drawVertex(vrtx_path, 0)
-                if len(self.points) > 1: 
+                if len(self.points) > 1:
                     # we suppose that there are <= 2 vertices
                     self.drawVertex(vrtx_path, 1)
             else:
@@ -164,19 +165,16 @@ class Shape(object):
 
     def containsPoint(self, point):
         return self.makePath().contains(point)
-    
+
     def getCircleShapeFromLine(self, line):
-        """from 2 points (center and point at the circle) computes
-        starting point and coordinates to draw the circle with 
-        `QPainterPath::arcTo` method
-        """
+        """Computes parameters to draw the circle with `QPainterPath::arcTo`"""
         if len(line) != 2:
             return None
-        (c, point) = line
+        (c, point) = line 
         r = line[0] - line[1]
         dist = math.sqrt(math.pow(r.x(), 2) + math.pow(r.y(), 2))
         start_point = QtCore.QPoint(c.x() + dist, c.y())
-        rectangle = QtCore.QRectF(c.x() - dist, c.y() - dist, 2*dist, 2*dist)
+        rectangle = QtCore.QRectF(c.x() - dist, c.y() - dist, 2 * dist, 2 * dist)
         return start_point, rectangle
 
     def makePath(self):

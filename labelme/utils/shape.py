@@ -1,7 +1,8 @@
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
-from math import sqrt, pow
+from math import sqrt
+from math import pow
 from labelme import logger
 
 
