@@ -93,11 +93,9 @@ class Shape(object):
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
             if self.shape_type == "circle":
-                shape_params = self.getCircleShapeFromLine(self.points)
-                if shape_params is not None:
-                    (start_point, rectangle) = shape_params
-                    line_path.moveTo(start_point)
-                    line_path.arcTo(rectangle, 0, 360)
+                rectangle = self.getCircleRectFromLine(self.points)
+                if rectangle is not None:
+                    line_path.addEllipse(rectangle)
                 self.drawVertex(vrtx_path, 0)
                 if len(self.points) > 1:
                     # we suppose that there are <= 2 vertices
@@ -165,26 +163,23 @@ class Shape(object):
     def containsPoint(self, point):
         return self.makePath().contains(point)
 
-    def getCircleShapeFromLine(self, line):
-        """Computes parameters to draw the circle with `QPainterPath::arcTo`"""
+    def getCircleRectFromLine(self, line):
+        """Computes parameters to draw with `QPainterPath::addEllipse`"""
         if len(line) != 2:
             return None
         (c, point) = line
         r = line[0] - line[1]
         d = math.sqrt(math.pow(r.x(), 2) + math.pow(r.y(), 2))
-        start_point = QtCore.QPoint(c.x() + d, c.y())
         rectangle = QtCore.QRectF(c.x() - d, c.y() - d, 2 * d, 2 * d)
-        return start_point, rectangle
+        return rectangle
 
     def makePath(self):
         if self.shape_type == "circle":
-            shape_params = self.getCircleShapeFromLine(self.points)
+            rectangle = self.getCircleRectFromLine(self.points)
             path = QtGui.QPainterPath()
-            if shape_params is None:
+            if rectangle is None:
                 return path
-            (start_point, rectangle) = shape_params
-            path.moveTo(start_point)
-            path.arcTo(rectangle, 0, 360)
+            path.addEllipse(rectangle)
         else:
             path = QtGui.QPainterPath(self.points[0])
             for p in self.points[1:]:
