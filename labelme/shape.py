@@ -1,11 +1,10 @@
 import copy
+import math
 
-from qtpy import QtGui
 from qtpy import QtCore
-
+from qtpy import QtGui
 
 import labelme.utils
-import math
 
 
 # TODO(unknown):
@@ -170,11 +169,11 @@ class Shape(object):
         """Computes parameters to draw the circle with `QPainterPath::arcTo`"""
         if len(line) != 2:
             return None
-        (c, point) = line 
+        (c, point) = line
         r = line[0] - line[1]
-        dist = math.sqrt(math.pow(r.x(), 2) + math.pow(r.y(), 2))
-        start_point = QtCore.QPoint(c.x() + dist, c.y())
-        rectangle = QtCore.QRectF(c.x() - dist, c.y() - dist, 2 * dist, 2 * dist)
+        d = math.sqrt(math.pow(r.x(), 2) + math.pow(r.y(), 2))
+        start_point = QtCore.QPoint(c.x() + d, c.y())
+        rectangle = QtCore.QRectF(c.x() - d, c.y() - d, 2 * d, 2 * d)
         return start_point, rectangle
 
     def makePath(self):
