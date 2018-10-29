@@ -1,8 +1,11 @@
 import functools
+import io
 import os.path
 import re
 import warnings
 import webbrowser
+
+import PIL.Image
 
 from qtpy import QtCore
 from qtpy.QtCore import Qt
@@ -949,6 +952,16 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for item, shape in self.labelList.itemsToShapes:
             item.setCheckState(Qt.Checked if value else Qt.Unchecked)
 
+    def convertImageDataToPng(self, imageData):
+        if imageData is None:
+            return
+        img = PIL.Image.open(io.BytesIO(imageData))
+        with io.BytesIO() as imgBytesIO:
+            img.save(imgBytesIO, "PNG")
+            imgBytesIO.seek(0)
+            data = imgBytesIO.read()
+        return data
+
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
@@ -979,6 +992,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 # and JSON encoded images.
                 # https://github.com/ContinuumIO/anaconda-issues/issues/131
                 if QtGui.QImage.fromData(self.labelFile.imageData).isNull():
+                    # tries to read image with PIL and convert it to PNG
+                    self.labelFile.imageData = self.convertImageDataToPng(
+                        self.labelFile.imageData)
+                if QtGui.QImage.fromData(self.labelFile.imageData).isNull():
                     raise LabelFileError(
                         'Failed loading image data from label file.\n'
                         'Maybe this is a known issue of PyQt4 built on'
@@ -1004,6 +1021,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if self.imageData is not None:
                 # the filename is image not JSON
                 self.imagePath = filename
+                if QtGui.QImage.fromData(self.imageData).isNull():
+                    self.imageData = self.convertImageDataToPng(self.imageData)
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
         if image.isNull():
