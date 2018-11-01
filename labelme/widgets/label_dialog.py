@@ -29,7 +29,11 @@ class LabelDialog(QtWidgets.QDialog):
 
     def __init__(self, text="Enter object label", parent=None, labels=None,
                  sort_labels=True, show_text_field=True,
-                 completion='startswith'):
+                 completion='startswith', fit_to_content=None):
+        if fit_to_content is None:
+            fit_to_content = {'row': False, 'column': True}
+        self._fit_to_content = fit_to_content
+
         super(LabelDialog, self).__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
@@ -51,6 +55,14 @@ class LabelDialog(QtWidgets.QDialog):
         layout.addWidget(bb)
         # label_list
         self.labelList = QtWidgets.QListWidget()
+        if self._fit_to_content['row']:
+            self.labelList.setHorizontalScrollBarPolicy(
+                QtCore.Qt.ScrollBarAlwaysOff
+            )
+        if self._fit_to_content['column']:
+            self.labelList.setVerticalScrollBarPolicy(
+                QtCore.Qt.ScrollBarAlwaysOff
+            )
         self._sort_labels = sort_labels
         if labels:
             self.labelList.addItems(labels)
@@ -111,6 +123,14 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setText(text)
 
     def popUp(self, text=None, move=True):
+        if self._fit_to_content['row']:
+            self.labelList.setMinimumHeight(
+                self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
+            )
+        if self._fit_to_content['column']:
+            self.labelList.setMinimumWidth(
+                self.labelList.sizeHintForColumn(0) + 2
+            )
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()

@@ -85,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             sort_labels=self._config['sort_labels'],
             show_text_field=self._config['show_label_text_field'],
             completion=self._config['label_completion'],
+            fit_to_content=self._config['fit_to_content'],
         )
 
         self.labelList = LabelQListWidget()
