@@ -8,6 +8,28 @@ file_search: null
 sort_labels: true
 validate_label: null
 
+# main
+flag_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+label_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+shape_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+file_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+
 # label_dialog
 show_label_text_field: true
 label_completion: startswith
