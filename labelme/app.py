@@ -108,9 +108,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.labelList.setDragDropMode(
             QtWidgets.QAbstractItemView.InternalMove)
         self.labelList.setParent(self)
-        self.dock = QtWidgets.QDockWidget('Polygon Labels', self)
-        self.dock.setObjectName('Labels')
-        self.dock.setWidget(self.labelList)
+        self.shape_dock = QtWidgets.QDockWidget('Polygon Labels', self)
+        self.shape_dock.setObjectName('Labels')
+        self.shape_dock.setWidget(self.labelList)
 
         self.uniqLabelList = EscapableQListWidget()
         self.uniqLabelList.setToolTip(
@@ -119,9 +119,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if self._config['labels']:
             self.uniqLabelList.addItems(self._config['labels'])
             self.uniqLabelList.sortItems()
-        self.labelsdock = QtWidgets.QDockWidget(u'Label List', self)
-        self.labelsdock.setObjectName(u'Label List')
-        self.labelsdock.setWidget(self.uniqLabelList)
+        self.label_dock = QtWidgets.QDockWidget(u'Label List', self)
+        self.label_dock.setObjectName(u'Label List')
+        self.label_dock.setWidget(self.uniqLabelList)
 
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText('Search Filename')
@@ -135,11 +135,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         fileListLayout.setSpacing(0)
         fileListLayout.addWidget(self.fileSearch)
         fileListLayout.addWidget(self.fileListWidget)
-        self.filedock = QtWidgets.QDockWidget(u'File List', self)
-        self.filedock.setObjectName(u'Files')
+        self.file_dock = QtWidgets.QDockWidget(u'File List', self)
+        self.file_dock.setObjectName(u'Files')
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
-        self.filedock.setWidget(fileListWidget)
+        self.file_dock.setWidget(fileListWidget)
 
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
@@ -165,10 +165,22 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         self.setCentralWidget(scrollArea)
 
+        features = QtWidgets.QDockWidget.DockWidgetFeatures()
+        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
+            if self._config[dock]['closable']:
+                features = features | QtWidgets.QDockWidget.DockWidgetClosable
+            if self._config[dock]['floatable']:
+                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
+            if self._config[dock]['movable']:
+                features = features | QtWidgets.QDockWidget.DockWidgetMovable
+            getattr(self, dock).setFeatures(features)
+            if self._config[dock]['show'] is False:
+                getattr(self, dock).setVisible(False)
+
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.labelsdock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.filedock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
         # Actions
         action = functools.partial(newAction, self)
@@ -391,9 +403,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
             self.flag_dock.toggleViewAction(),
-            self.labelsdock.toggleViewAction(),
-            self.dock.toggleViewAction(),
-            self.filedock.toggleViewAction(),
+            self.label_dock.toggleViewAction(),
+            self.shape_dock.toggleViewAction(),
+            self.file_dock.toggleViewAction(),
             None,
             fill_drawing,
             None,
