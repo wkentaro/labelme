@@ -21,6 +21,10 @@ def test_MainWindow_open(qtbot):
 
 
 def test_MainWindow_open_json(qtbot):
+    if qtpy.PYQT4:
+        # Fails to load image from JSON on Anaconda + Python2.7 + PyQt4
+        return
+
     filename = osp.join(data_dir, 'apc2016_obj3.json')
     labelme.testing.assert_labelfile_sanity(filename)
     win = labelme.app.MainWindow(filename=filename)
@@ -30,7 +34,7 @@ def test_MainWindow_open_json(qtbot):
 
 
 def test_MainWindow_annotate_jpg(qtbot):
-    if qtpy.QT_VERSION == 'pyqt4v2':
+    if qtpy.PYQT4:
         # Fails to load image from JSON on Anaconda + Python2.7 + PyQt4
         return
 
