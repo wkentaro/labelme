@@ -11,6 +11,9 @@ validate_label: null
 # label_dialog
 show_label_text_field: true
 label_completion: startswith
+fit_to_content:
+  column: true
+  row: false
 
 epsilon: 11.0
 
