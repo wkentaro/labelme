@@ -20,10 +20,13 @@ It is written in Python and uses Qt for its graphical interface.
 <img src="https://github.com/wkentaro/labelme/raw/master/examples/semantic_segmentation/.readme/annotation.jpg?raw=true" width="30%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/bbox_detection/.readme/annotation.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/classification/.readme/annotation_cat.jpg?raw=true" width="33%" />  
 <i>Fig 3. Other examples (semantic segmentation, bbox detection, and classification).</i>
 
+<img src="https://user-images.githubusercontent.com/4310419/47907116-85667800-de82-11e8-83d0-b9f4eb33268f.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/4310419/47922172-57972880-deae-11e8-84f8-e4324a7c856a.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/14256482/46932075-92145f00-d080-11e8-8d09-2162070ae57c.png" width="32%" />  
+<i>Fig 4. Various primitives (polygon, rectangle, circle, line, and point).</i>
+
 
 ## Features
 
-- [x] Image annotation for polygon, rectangle, line and point. ([tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial))
+- [x] Image annotation for polygon, rectangle, circle, line and point. ([tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial))
 - [x] Image flag annotation for classification and cleaning. ([#166](https://github.com/wkentaro/labelme/pull/166))
 - [x] Video annotation. ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
