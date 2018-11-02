@@ -1,7 +1,6 @@
-from math import pow
-from math import sqrt
-import numpy as np
+import math
 
+import numpy as np
 import PIL.Image
 import PIL.ImageDraw
 
@@ -9,15 +8,26 @@ from labelme import logger
 
 
 def polygons_to_mask(img_shape, polygons, shape_type=None):
+    logger.warning(
+        "The 'polygons_to_mask' function is deprecated, "
+        "use 'shape_to_mask' instead."
+    )
+    return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
+
+
+def shape_to_mask(img_shape, points, shape_type=None):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
     draw = PIL.ImageDraw.Draw(mask)
-    if shape_type == "circle" and len(polygons) == 2:
-        ((cx, cy), (px, py)) = polygons
-        d = sqrt(pow(cx - px, 2) + pow(cy - py, 2))
+    if shape_type == 'circle' and len(points) == 2:
+        (cx, cy), (px, py) = points
+        d = math.sqrt((cx - px) ** 2 + (cy - py) ** 2)
         draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
+    elif shape_type == 'rectangle' and len(points) == 2:
+        xy = [tuple(point) for point in points]
+        draw.rectangle(xy, outline=1, fill=1)
     else:
-        xy = list(map(tuple, polygons))
+        xy = [tuple(point) for point in points]
         draw.polygon(xy=xy, outline=1, fill=1)
     mask = np.array(mask, dtype=bool)
     return mask
@@ -31,7 +41,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
         ins = np.zeros(img_shape[:2], dtype=np.int32)
         instance_names = ['_background_']
     for shape in shapes:
-        polygons = shape['points']
+        points = shape['points']
         label = shape['label']
         shape_type = shape.get('shape_type', None)
         if type == 'class':
@@ -42,7 +52,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
                 instance_names.append(label)
             ins_id = len(instance_names) - 1
         cls_id = label_name_to_value[cls_name]
-        mask = polygons_to_mask(img_shape[:2], polygons, shape_type)
+        mask = shape_to_mask(img_shape[:2], points, shape_type)
         cls[mask] = cls_id
         if type == 'instance':
             ins[mask] = ins_id
