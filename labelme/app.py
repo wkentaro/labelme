@@ -776,8 +776,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def loadLabels(self, shapes):
         s = []
-        for label, points, line_color, fill_color in shapes:
-            shape = Shape(label=label)
+        for label, points, line_color, fill_color, shape_type in shapes:
+            shape = Shape(label=label, shape_type=shape_type)
             for x, y in points:
                 shape.addPoint(QtCore.QPoint(x, y))
             shape.close()
@@ -805,7 +805,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                         if s.line_color != self.lineColor else None,
                         fill_color=s.fill_color.getRgb()
                         if s.fill_color != self.fillColor else None,
-                        points=[(p.x(), p.y()) for p in s.points])
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type)
 
         shapes = [format_shape(shape) for shape in self.labelList.shapes]
         flags = {}
