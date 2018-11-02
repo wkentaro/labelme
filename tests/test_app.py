@@ -53,7 +53,7 @@ def test_MainWindow_annotate_jpg(qtbot):
         (986, 742),
         (1184, 102),
     ]
-    shape = label, points, None, None
+    shape = label, points, None, None, 'polygon'
     shapes = [shape]
     win.loadLabels(shapes)
     win.saveFile()
