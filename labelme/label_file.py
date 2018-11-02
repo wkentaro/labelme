@@ -3,6 +3,8 @@ import json
 import os.path
 import sys
 
+from ._version import __version__
+
 
 PY2 = sys.version_info[0] == 2
 
@@ -85,6 +87,7 @@ class LabelFile(object):
         if flags is None:
             flags = []
         data = dict(
+            version=__version__,
             flags=flags,
             shapes=shapes,
             lineColor=lineColor,
