@@ -155,6 +155,8 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
+            self.line.shape_type = self.createMode
+
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
                 return
@@ -176,9 +178,7 @@ class Canvas(QtWidgets.QWidget):
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
             elif self.createMode == 'rectangle':
-                self.line.points = list(self.getRectangleFromLine(
-                    (self.current[0], pos)
-                ))
+                self.line.points = [self.current[0], pos]
                 self.line.close()
             elif self.createMode == 'line':
                 self.line.points = [self.current[0], pos]
@@ -271,13 +271,6 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
 
-    def getRectangleFromLine(self, line):
-        pt1 = line[0]
-        pt3 = line[1]
-        pt2 = QtCore.QPoint(pt3.x(), pt1.y())
-        pt4 = QtCore.QPoint(pt1.x(), pt3.y())
-        return pt1, pt2, pt3, pt4
-
     def mousePressEvent(self, ev):
         if QT5:
             pos = self.transformPos(ev.pos())
@@ -298,7 +291,7 @@ class Canvas(QtWidgets.QWidget):
                         self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
-                    self.current = Shape()
+                    self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
                     if self.createMode == 'point':
                         self.finalise()

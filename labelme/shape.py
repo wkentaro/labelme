@@ -1,5 +1,6 @@
 import copy
 
+from qtpy import QtCore
 from qtpy import QtGui
 
 import labelme.utils
@@ -34,7 +35,7 @@ class Shape(object):
     point_size = 8
     scale = 1.0
 
-    def __init__(self, label=None, line_color=None):
+    def __init__(self, label=None, line_color=None, shape_type=None):
         self.label = label
         self.points = []
         self.fill = False
@@ -54,6 +55,20 @@ class Shape(object):
             # with an object attribute. Currently this
             # is used for drawing the pending line a different color.
             self.line_color = line_color
+
+        self.shape_type = shape_type
+
+    @property
+    def shape_type(self):
+        return self._shape_type
+
+    @shape_type.setter
+    def shape_type(self, value):
+        if value is None:
+            value = 'polygon'
+        if value not in ['polygon', 'rectangle', 'point', 'line']:
+            raise ValueError('Unexpected shape_type: {}'.format(value))
+        self._shape_type = value
 
     def close(self):
         self._closed = True
@@ -78,6 +93,11 @@ class Shape(object):
     def setOpen(self):
         self._closed = False
 
+    def getRectFromLine(self, pt1, pt2):
+        x1, y1 = pt1.x(), pt1.y()
+        x2, y2 = pt2.x(), pt2.y()
+        return QtCore.QRectF(x1, y1, x2 - x1, y2 - y1)
+
     def paint(self, painter):
         if self.points:
             color = self.select_line_color \
@@ -90,17 +110,25 @@ class Shape(object):
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
 
-            line_path.moveTo(self.points[0])
-            # Uncommenting the following line will draw 2 paths
-            # for the 1st vertex, and make it non-filled, which
-            # may be desirable.
-            # self.drawVertex(vrtx_path, 0)
+            if self.shape_type == 'rectangle':
+                assert len(self.points) in [1, 2]
+                if len(self.points) == 2:
+                    rectangle = self.getRectFromLine(*self.points)
+                    line_path.addRect(rectangle)
+                for i in range(len(self.points)):
+                    self.drawVertex(vrtx_path, i)
+            else:
+                line_path.moveTo(self.points[0])
+                # Uncommenting the following line will draw 2 paths
+                # for the 1st vertex, and make it non-filled, which
+                # may be desirable.
+                # self.drawVertex(vrtx_path, 0)
 
-            for i, p in enumerate(self.points):
-                line_path.lineTo(p)
-                self.drawVertex(vrtx_path, i)
-            if self.isClosed():
-                line_path.lineTo(self.points[0])
+                for i, p in enumerate(self.points):
+                    line_path.lineTo(p)
+                    self.drawVertex(vrtx_path, i)
+                if self.isClosed():
+                    line_path.lineTo(self.points[0])
 
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
@@ -153,9 +181,15 @@ class Shape(object):
         return self.makePath().contains(point)
 
     def makePath(self):
-        path = QtGui.QPainterPath(self.points[0])
-        for p in self.points[1:]:
-            path.lineTo(p)
+        if self.shape_type == 'rectangle':
+            path = QtGui.QPainterPath()
+            if len(self.points) == 2:
+                rectangle = self.getRectFromLine(*self.points)
+                path.addRect(rectangle)
+        else:
+            path = QtGui.QPainterPath(self.points[0])
+            for p in self.points[1:]:
+                path.lineTo(p)
         return path
 
     def boundingRect(self):
@@ -175,7 +209,7 @@ class Shape(object):
         self._highlightIndex = None
 
     def copy(self):
-        shape = Shape(self.label)
+        shape = Shape(label=self.label, shape_type=self.shape_type)
         shape.points = [copy.deepcopy(p) for p in self.points]
         shape.fill = self.fill
         shape.selected = self.selected
