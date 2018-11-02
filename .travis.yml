@@ -13,6 +13,12 @@ env:
     - MPLBACKEND=TkAgg  # for osx
 matrix:
   include:
+    - os: osx
+      env:
+        - PYTEST_QT_API=pyqt5
+        - PYQT_PACKAGE='pyqt=5'
+        - PYTHON_VERSION=3.6
+        - RUN_PYINSTALLER=true
     - os: linux
       dist: trusty
       env:
@@ -41,12 +47,6 @@ matrix:
         - PYTHON_VERSION=2.7
     - os: linux
       dist: trusty
-      env:
-        - PYTEST_QT_API=pyqt5
-        - PYQT_PACKAGE='pyqt=5'
-        - PYTHON_VERSION=3.6
-        - RUN_PYINSTALLER=true
-    - os: osx
       env:
         - PYTEST_QT_API=pyqt5
         - PYQT_PACKAGE='pyqt=5'
