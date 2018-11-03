@@ -1,8 +1,10 @@
 import io
+import os.path as osp
 
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
+import PIL.ImageFont
 
 
 def label_colormap(N=256):
@@ -116,3 +118,40 @@ def draw_label(label, img=None, label_names=None, colormap=None, **kwargs):
     out = PIL.Image.open(f).resize(out_size, PIL.Image.BILINEAR).convert('RGB')
     out = np.asarray(out)
     return out
+
+
+def draw_instances(
+    image=None,
+    bboxes=None,
+    labels=None,
+    masks=None,
+    captions=None,
+):
+    import matplotlib
+
+    # TODO(wkentaro)
+    assert image is not None
+    assert bboxes is not None
+    assert labels is not None
+    assert masks is None
+    assert captions is not None
+
+    viz = PIL.Image.fromarray(image)
+    draw = PIL.ImageDraw.ImageDraw(viz)
+
+    font_path = osp.join(
+        osp.dirname(matplotlib.__file__),
+        'mpl-data/fonts/ttf/DejaVuSans.ttf'
+    )
+    font = PIL.ImageFont.truetype(font_path)
+
+    colormap = label_colormap(255)
+    for bbox, label, caption in zip(bboxes, labels, captions):
+        color = colormap[label]
+        color = tuple((color * 255).astype(np.uint8).tolist())
+
+        xmin, ymin, xmax, ymax = bbox
+        draw.rectangle((xmin, ymin, xmax, ymax), outline=color)
+        draw.text((xmin, ymin), caption, font=font)
+
+    return np.asarray(viz)

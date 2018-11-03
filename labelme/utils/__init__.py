@@ -10,6 +10,7 @@ from .shape import polygons_to_mask
 from .shape import shape_to_mask
 from .shape import shapes_to_label
 
+from .draw import draw_instances
 from .draw import draw_label
 from .draw import label_colormap
 from .draw import label2rgb
