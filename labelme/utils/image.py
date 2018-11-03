@@ -17,5 +17,8 @@ def img_arr_to_b64(img_arr):
     f = io.BytesIO()
     img_pil.save(f, format='PNG')
     img_bin = f.getvalue()
-    img_b64 = base64.encodestring(img_bin)
+    if hasattr(base64, 'encodebytes'):
+        img_b64 = base64.encodebytes(img_bin)
+    else:
+        img_b64 = base64.encodestring(img_bin)
     return img_b64
