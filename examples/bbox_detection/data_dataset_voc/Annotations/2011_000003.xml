@@ -1,0 +1,37 @@
+<annotation>
+  <folder/>
+  <filename>2011_000003.jpg</filename>
+  <database/>
+  <annotation/>
+  <image/>
+  <size>
+    <height>338</height>
+    <width>500</width>
+    <depth>3</depth>
+  </size>
+  <segmented/>
+  <object>
+    <name>person</name>
+    <pose/>
+    <truncated/>
+    <difficult/>
+    <bndbox>
+      <xmin>191</xmin>
+      <ymin>107</ymin>
+      <xmax>313</xmax>
+      <ymax>329</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>person</name>
+    <pose/>
+    <truncated/>
+    <difficult/>
+    <bndbox>
+      <xmin>365</xmin>
+      <ymin>83</ymin>
+      <xmax>500</xmax>
+      <ymax>333</ymax>
+    </bndbox>
+  </object>
+</annotation>
