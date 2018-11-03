@@ -19,6 +19,7 @@ del here
 
 
 install_requires = [
+    'lxml',
     'matplotlib',
     'numpy',
     'Pillow>=2.8.0',
