@@ -67,11 +67,11 @@ def test_shapes_to_label():
     assert cls.shape == img.shape[:2]
 
 
-def test_polygons_to_mask():
+def test_shape_to_mask():
     img, data = _get_img_and_data()
     for shape in data['shapes']:
-        polygons = shape['points']
-        mask = labelme.utils.polygons_to_mask(img.shape[:2], polygons)
+        points = shape['points']
+        mask = labelme.utils.shape_to_mask(img.shape[:2], points)
         assert mask.shape == img.shape[:2]
 
 
