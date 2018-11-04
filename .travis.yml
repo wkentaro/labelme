@@ -1,5 +1,8 @@
 language: generic
 
+cache:
+  - pip
+
 sudo: required
 
 dist: trusty
