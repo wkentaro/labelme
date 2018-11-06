@@ -84,7 +84,8 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['polygon', 'rectangle', 'circle', 'line', 'point', 'linestrip']:
+        if value not in ['polygon', 'rectangle', 'circle',
+           'line', 'point', 'linestrip']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
 
