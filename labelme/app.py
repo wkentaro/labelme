@@ -259,7 +259,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             lambda: self.toggleDrawMode(False, createMode='linestrip'),
             shortcuts['create_linestrip'],
             'objects',
-            'Start drawing linestrip',
+            'Start drawing linestrip. Ctrl+LeftClick ends creation.',
             enabled=False,
         )
         editMode = action('Edit Polygons', self.setEditMode,
