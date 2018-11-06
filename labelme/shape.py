@@ -68,7 +68,7 @@ class Shape(object):
     def shape_type(self, value):
         if value is None:
             value = 'polygon'
-        if value not in ['polygon', 'rectangle', 'point', 'line', 'circle']:
+        if value not in ['polygon', 'rectangle', 'point', 'line', 'circle', 'linestrip']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
 
@@ -125,6 +125,11 @@ class Shape(object):
                     rectangle = self.getCircleRectFromLine(self.points)
                     line_path.addEllipse(rectangle)
                 for i in range(len(self.points)):
+                    self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "linestrip":
+                line_path.moveTo(self.points[0])
+                for i, p in enumerate(self.points):
+                    line_path.lineTo(p)
                     self.drawVertex(vrtx_path, i)
             else:
                 line_path.moveTo(self.points[0])
