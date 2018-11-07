@@ -28,7 +28,7 @@ def shape_to_mask(img_shape, points, shape_type=None):
         draw.rectangle(xy, outline=1, fill=1)
     elif shape_type == 'linestrip':
         xy = [tuple(point) for point in points]
-        draw.line(xy=xy, fill=0, width=3)
+        draw.line(xy=xy, fill=1, width=10)
     else:
         xy = [tuple(point) for point in points]
         draw.polygon(xy=xy, outline=1, fill=1)
