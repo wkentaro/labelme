@@ -877,6 +877,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 shapes=shapes,
                 imagePath=imagePath,
                 imageData=imageData,
+                imageSize=self.imageSize,
                 lineColor=self.lineColor.getRgb(),
                 fillColor=self.fillColor.getRgb(),
                 otherData=self.otherData,
@@ -1059,11 +1060,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             # Load image:
             # read data first and store for saving into label file.
             self.imageData = read(filename, None)
+            self.imageSize = None
             if self.imageData is not None:
                 # the filename is image not JSON
                 self.imagePath = filename
                 if QtGui.QImage.fromData(self.imageData).isNull():
                     self.imageData = self.convertImageDataToPng(self.imageData)
+
+
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
         if image.isNull():
@@ -1076,6 +1080,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 .format(filename, ','.join(formats)))
             self.status("Error reading %s" % filename)
             return False
+        self.imageSize = [image.width(), image.height()]
         self.image = image
         self.filename = filename
         if self._config['keep_prev']:
