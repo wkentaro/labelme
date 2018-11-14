@@ -1066,8 +1066,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self.imagePath = filename
                 if QtGui.QImage.fromData(self.imageData).isNull():
                     self.imageData = self.convertImageDataToPng(self.imageData)
-
-
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
         if image.isNull():
