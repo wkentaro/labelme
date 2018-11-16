@@ -877,6 +877,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 shapes=shapes,
                 imagePath=imagePath,
                 imageData=imageData,
+                imageHeight=self.image.height(),
+                imageWidth=self.image.width(),
                 lineColor=self.lineColor.getRgb(),
                 fillColor=self.fillColor.getRgb(),
                 otherData=self.otherData,
