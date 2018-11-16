@@ -3,6 +3,8 @@ import json
 import os.path
 import sys
 
+from . import logger
+from . import utils
 from ._version import __version__
 
 
@@ -33,6 +35,8 @@ class LabelFile(object):
             'fillColor',
             'shapes',  # polygonal annotations
             'flags',   # image level flags
+            'imageHeight',
+            'imageWidth',
         ]
         try:
             with open(filename, 'rb' if PY2 else 'r') as f:
@@ -47,6 +51,11 @@ class LabelFile(object):
                     imageData = f.read()
             flags = data.get('flags')
             imagePath = data['imagePath']
+            self._check_image_height_and_width(
+                base64.b64encode(imageData).decode('utf-8'),
+                data.get('imageHeight'),
+                data.get('imageWidth'),
+            )
             lineColor = data['lineColor']
             fillColor = data['fillColor']
             shapes = (
@@ -77,11 +86,41 @@ class LabelFile(object):
         self.filename = filename
         self.otherData = otherData
 
-    def save(self, filename, shapes, imagePath, imageData=None,
-             lineColor=None, fillColor=None, otherData=None,
-             flags=None):
+    @staticmethod
+    def _check_image_height_and_width(imageData, imageHeight, imageWidth):
+        img_arr = utils.img_b64_to_arr(imageData)
+        if imageHeight is not None and img_arr.shape[0] != imageHeight:
+            logger.error(
+                'imageHeight does not match with imageData or imagePath, '
+                'so getting imageHeight from actual image.'
+            )
+            imageHeight = img_arr.shape[0]
+        if imageWidth is not None and img_arr.shape[1] != imageWidth:
+            logger.error(
+                'imageWidth does not match with imageData or imagePath, '
+                'so getting imageWidth from actual image.'
+            )
+            imageWidth = img_arr.shape[1]
+        return imageHeight, imageWidth
+
+    def save(
+        self,
+        filename,
+        shapes,
+        imagePath,
+        imageHeight,
+        imageWidth,
+        imageData=None,
+        lineColor=None,
+        fillColor=None,
+        otherData=None,
+        flags=None,
+    ):
         if imageData is not None:
             imageData = base64.b64encode(imageData).decode('utf-8')
+            imageHeight, imageWidth = self._check_image_height_and_width(
+                imageData, imageHeight, imageWidth
+            )
         if otherData is None:
             otherData = {}
         if flags is None:
@@ -94,6 +133,8 @@ class LabelFile(object):
             fillColor=fillColor,
             imagePath=imagePath,
             imageData=imageData,
+            imageHeight=imageHeight,
+            imageWidth=imageWidth,
         )
         for key, value in otherData.items():
             data[key] = value
