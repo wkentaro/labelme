@@ -23,6 +23,7 @@ def main():
     )
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument('--output', '-O', '-o', help='output label name')
+    parser.add_argument('--annotations', '-a', type=str, help='annotations directory (defaults to images directory)')
     default_config_file = os.path.join(os.path.expanduser('~'), '.labelmerc')
     parser.add_argument(
         '--config',
@@ -106,6 +107,7 @@ def main():
     reset_config = config_from_args.pop('reset_config')
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
+    annotations = config_from_args.pop('annotations')
     config_file = config_from_args.pop('config_file')
     config = get_config(config_from_args, config_file)
 
@@ -118,7 +120,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon('icon'))
-    win = MainWindow(config=config, filename=filename, output=output)
+    win = MainWindow(config=config, filename=filename, output=output, annotations=annotations)
 
     if reset_config:
         print('Resetting Qt config: %s' % win.settings.fileName())

@@ -46,11 +46,18 @@ shortcuts:
   quit: Ctrl+Q
   save: Ctrl+S
   save_as: Ctrl+Shift+S
+  auto_save: Ctrl+Alt+S
+  save_to: Ctrl+Shift+D
 
-  open_next: D
-  open_prev: A
-
-  zoom_in: Ctrl++
+  open_next: 
+    - D
+    - Ctrl+Alt+D
+  open_prev: 
+    - A
+    - Ctrl+Alt+A
+  zoom_in: 
+    - Ctrl++
+    - Ctrl+=
   zoom_out: Ctrl+-
   zoom_to_original: Ctrl+0
   fit_window: Ctrl+F

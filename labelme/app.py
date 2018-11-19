@@ -67,7 +67,7 @@ class WindowMixin(object):
 class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
-    def __init__(self, config=None, filename=None, output=None):
+    def __init__(self, config=None, filename=None, output=None, annotations=None):
         # see labelme/config/default_config.yaml for valid configuration
         if config is None:
             config = get_config()
@@ -195,16 +195,23 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         opendir = action('&Open Dir', self.openDirDialog,
                          shortcuts['open_dir'], 'open', u'Open Dir')
         openNextImg = action('&Next Image', self.openNextImg,
-                             shortcuts['open_next'], 'next', u'Open Next',
+                             shortcuts['open_next'], 'next', u'Open Next (hold CTL+ALT to Copy Labels)',
                              enabled=False)
         openPrevImg = action('&Prev Image', self.openPrevImg,
-                             shortcuts['open_prev'], 'prev', u'Open Prev',
+                             shortcuts['open_prev'], 'prev', u'Open Prev (hold CTL+ALT to Copy Labels)',
                              enabled=False)
         save = action('&Save', self.saveFile, shortcuts['save'], 'save',
                       'Save labels to file', enabled=False)
         saveAs = action('&Save As', self.saveFileAs, shortcuts['save_as'],
                         'save-as', 'Save labels to a different file',
                         enabled=False)
+
+        changeAnnotationsDir = action('&Change Annotations Dir', self.changeAnnotationsDirDialog,
+                               shortcuts['save_to'], 'open', u'Change where annotations are loaded/saved')
+        autosave = action("Save &Automatically", self.setAutoSave, shortcuts['auto_save'], 
+            checkable=True, enabled=True)
+        autosave.setChecked(self._config['auto_save'])
+
         close = action('&Close', self.closeFile, shortcuts['close'], 'close',
                        'Close current file')
         color1 = action('Polygon &Line Color', self.chooseColor1,
@@ -324,7 +331,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
-        self.zoomMode = self.MANUAL_ZOOM
+        self.zoomMode = self.FIT_WINDOW
+        fitWindow.setChecked(Qt.Checked)
         self.scalers = {
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
@@ -362,6 +370,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # Store actions for further handling.
         self.actions = struct(
+            autosave=autosave,
+            changeAnnotationsDir=changeAnnotationsDir,
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             delete=delete, edit=edit, copy=copy,
@@ -424,9 +434,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             labelList=labelMenu,
         )
 
-        addActions(self.menus.file, (open_, openNextImg, openPrevImg, opendir,
+        addActions(self.menus.file, (open_, openNextImg, openPrevImg, None, 
+                                     opendir,
                                      self.menus.recentFiles,
-                                     save, saveAs, close, None, quit))
+                                     None,
+                                     save, saveAs, None,
+                                     changeAnnotationsDir,
+                                     autosave,
+                                     None,
+                                     close, None, quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
             self.flag_dock.toggleViewAction(),
@@ -498,6 +514,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.zoom_level = 100
         self.fit_window = False
 
+        self.annotationsDir = annotations
         if filename is not None and os.path.isdir(filename):
             self.importDirImages(filename, load=False)
         else:
@@ -539,6 +556,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         self.populateModeActions()
 
+        self.copy_prev_shapes = {}
         # self.firstStart = True
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
@@ -567,8 +585,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
-        if self._config['auto_save']:
-            label_file = os.path.splitext(self.imagePath)[0] + '.json'
+        if self._config['auto_save'] or self.actions.autosave.isChecked():
+            label_file = os.path.join(
+                self.annotationsDir,
+                os.path.basename(os.path.splitext(self.imagePath)[0] + '.json'))
             self.saveLabels(label_file)
             return
         self.dirty = True
@@ -786,7 +806,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
             if filename:
-                self.loadFile(filename)
+                self.loadFile(filename, copy_prev_shapes=self.shouldCopyShapes())
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected=False):
@@ -979,6 +999,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.scrollBars[Qt.Vertical].setValue(
                 self.scrollBars[Qt.Vertical].value() + y_shift)
 
+    def setAutoSave(self, value=True):
+        self.actions.autosave.setChecked(value)
+
     def setFitWindow(self, value=True):
         if value:
             self.actions.fitWidth.setChecked(False)
@@ -1005,15 +1028,27 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             data = imgBytesIO.read()
         return data
 
-    def loadFile(self, filename=None):
+    def loadFile(self, filename=None, copy_prev_shapes=False):
         """Load the specified file, or the last opened file if None."""
-        # changing fileListWidget loads file
+        if filename in self.copy_prev_shapes:
+            copy_prev_shapes = self.copy_prev_shapes.pop(filename)
+        
+        # changing fileListWidget loads files
         if (filename in self.imageList and
                 self.fileListWidget.currentRow() !=
                 self.imageList.index(filename)):
+            if copy_prev_shapes:
+                self.copy_prev_shapes[filename] = True
             self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             self.fileListWidget.repaint()
             return
+        
+        print("loadFile(filename={}, copy_prev_shapes={})".format(filename, copy_prev_shapes))
+
+        copied_from = ''
+        if copy_prev_shapes:
+            prev_shapes = [shape for _, shape in self.labelList.itemsToShapes]
+            copied_from = ' (copied shapes)'
 
         self.resetState()
         self.canvas.setEnabled(False)
@@ -1087,17 +1122,24 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.loadFlags({k: False for k in self._config['flags']})
         if self._config['keep_prev']:
             self.loadShapes(prev_shapes)
-        if self.labelFile:
+        
+        self.setClean()
+        self.canvas.setEnabled(True)
+
+        if copy_prev_shapes and prev_shapes:
+            self.loadShapes(prev_shapes)
+            self.setDirty()
+
+        elif self.labelFile:
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 self.loadFlags(self.labelFile.flags)
-        self.setClean()
-        self.canvas.setEnabled(True)
+  
         self.adjustScale(initial=True)
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
-        self.status("Loaded %s" % os.path.basename(str(filename)))
+        self.status("Loaded {}{}".format(os.path.basename(str(filename)), copied_from))
         return True
 
     def resizeEvent(self, event):
@@ -1147,6 +1189,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
+    def shouldCopyShapes(self):
+        return (QtGui.QGuiApplication.keyboardModifiers() == (QtCore.Qt.ControlModifier | QtCore.Qt.AltModifier))
+
     # User Dialogs #
 
     def loadRecent(self, filename):
@@ -1154,6 +1199,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.loadFile(filename)
 
     def openPrevImg(self, _value=False):
+        # save this eagerly; the 'mayContinue()' dialog will reset it if shown
+        shouldCopyShapes = self.shouldCopyShapes()
+        
         if not self.mayContinue():
             return
 
@@ -1167,12 +1215,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if currIndex - 1 >= 0:
             filename = self.imageList[currIndex - 1]
             if filename:
-                self.loadFile(filename)
-
+                self.loadFile(filename, copy_prev_shapes=shouldCopyShapes)
+    
     def openNextImg(self, _value=False, load=True):
+        # save this eagerly; the 'mayContinue()' dialog will reset it if shown
+        shouldCopyShapes = self.shouldCopyShapes()
+        
         if not self.mayContinue():
             return
-
+        
         if len(self.imageList) <= 0:
             return
 
@@ -1188,7 +1239,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.filename = filename
 
         if self.filename and load:
-            self.loadFile(self.filename)
+            self.loadFile(self.filename, copy_prev_shapes=shouldCopyShapes)
 
     def openFile(self, _value=False):
         if not self.mayContinue():
@@ -1226,14 +1277,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def saveFileDialog(self):
         caption = '%s - Choose File' % __appname__
         filters = 'Label files (*%s)' % LabelFile.suffix
-        dlg = QtWidgets.QFileDialog(self, caption, self.currentPath(), filters)
+        dlg = QtWidgets.QFileDialog(self, caption, self.annotationsDir, filters)
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
         basename = os.path.splitext(self.filename)[0]
         default_labelfile_name = os.path.join(
-            self.currentPath(), basename + LabelFile.suffix)
+            self.annotationsDir, basename + LabelFile.suffix)
         filename = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
             'Label files (*%s)' % LabelFile.suffix)
@@ -1365,6 +1416,27 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             QtWidgets.QFileDialog.DontResolveSymlinks))
         self.importDirImages(targetDirPath)
 
+    def changeAnnotationsDirDialog(self, _value=False):
+        
+        targetDirPath = str(QtWidgets.QFileDialog.getExistingDirectory(
+            self, '%s - Save/Load Annotations in Directory' % __appname__, self.annotationsDir,
+            QtWidgets.QFileDialog.ShowDirsOnly |
+            QtWidgets.QFileDialog.DontResolveSymlinks))
+
+        if targetDirPath is not None and len(targetDirPath) > 1:
+            self.annotationsDir = targetDirPath
+
+        self.statusBar().showMessage('%s . Annotations will be saved/loaded in %s' %
+                                     ('Change Annotations Dir', self.annotationsDir))
+        self.statusBar().show()
+
+        current_filename = self.filename
+        self.importDirImages(self.lastOpenDir, annpath=targetDirPath, load=False)
+        
+        # retain currently selected file
+        self.fileListWidget.setCurrentRow(self.imageList.index(current_filename))
+        self.fileListWidget.repaint()
+
     @property
     def imageList(self):
         lst = []
@@ -1373,20 +1445,27 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             lst.append(item.text())
         return lst
 
-    def importDirImages(self, dirpath, pattern=None, load=True):
+    def importDirImages(self, imgpath, annpath=None, pattern=None, load=True):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not dirpath:
+        if not self.mayContinue() or not imgpath:
             return
 
-        self.lastOpenDir = dirpath
+        if annpath is None:
+            if self.annotationsDir is None:
+                annpath = imgpath
+            else:
+                annpath = self.annotationsDir
+        
+        self.lastOpenDir = imgpath
+        self.annotationsDir = annpath
         self.filename = None
         self.fileListWidget.clear()
-        for filename in self.scanAllImages(dirpath):
+        for filename in self.scanAllImages(imgpath):
             if pattern and pattern not in filename:
                 continue
-            label_file = os.path.splitext(filename)[0] + '.json'
+            label_file = os.path.join(annpath, os.path.basename(os.path.splitext(filename)[0] + '.json'))
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and \
