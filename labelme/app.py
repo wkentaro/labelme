@@ -1043,8 +1043,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.fileListWidget.repaint()
             return
         
-        print("loadFile(filename={}, copy_prev_shapes={})".format(filename, copy_prev_shapes))
-
         copied_from = ''
         if copy_prev_shapes:
             prev_shapes = [shape for _, shape in self.labelList.itemsToShapes]
@@ -1061,7 +1059,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return False
         # assumes same name, but json extension
         self.status("Loading %s..." % os.path.basename(str(filename)))
-        label_file = os.path.splitext(filename)[0] + '.json'
+        label_file = os.path.join(self.annotationsDir, os.path.basename(os.path.splitext(filename)[0] + '.json'))
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.isLabelFile(label_file):
             try:
