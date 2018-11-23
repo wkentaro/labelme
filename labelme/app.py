@@ -324,7 +324,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
-        self.zoomMode = self.MANUAL_ZOOM
+        self.zoomMode = self.FIT_WINDOW
+        fitWindow.setChecked(Qt.Checked)
         self.scalers = {
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
