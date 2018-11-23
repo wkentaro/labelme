@@ -205,6 +205,17 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         saveAs = action('&Save As', self.saveFileAs, shortcuts['save_as'],
                         'save-as', 'Save labels to a different file',
                         enabled=False)
+
+        saveAuto = action(
+            text='Save &Automatically',
+            slot=lambda x: self.actions.saveAuto.setChecked(x),
+            icon='save',
+            tip='Save automatically',
+            checkable=True,
+            enabled=True,
+        )
+        saveAuto.setChecked(self._config['auto_save'])
+
         close = action('&Close', self.closeFile, shortcuts['close'], 'close',
                        'Close current file')
         color1 = action('Polygon &Line Color', self.chooseColor1,
@@ -363,6 +374,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         # Store actions for further handling.
         self.actions = struct(
+            saveAuto=saveAuto,
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             delete=delete, edit=edit, copy=copy,
@@ -427,7 +439,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         addActions(self.menus.file, (open_, openNextImg, openPrevImg, opendir,
                                      self.menus.recentFiles,
-                                     save, saveAs, close, None, quit))
+                                     save, saveAs, saveAuto, close,
+                                     None,
+                                     quit))
         addActions(self.menus.help, (help,))
         addActions(self.menus.view, (
             self.flag_dock.toggleViewAction(),
@@ -568,7 +582,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
-        if self._config['auto_save']:
+        if self._config['auto_save'] or self.actions.saveAuto.isChecked():
             label_file = os.path.splitext(self.imagePath)[0] + '.json'
             self.saveLabels(label_file)
             return
