@@ -47,8 +47,8 @@ shortcuts:
   save: Ctrl+S
   save_as: Ctrl+Shift+S
 
-  open_next: D
-  open_prev: A
+  open_next: [D, Ctrl+Shift+D]
+  open_prev: [A, Ctrl+Shift+A]
 
   zoom_in: [Ctrl++, Ctrl+=]
   zoom_out: Ctrl+-
