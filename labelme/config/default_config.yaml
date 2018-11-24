@@ -46,6 +46,7 @@ shortcuts:
   quit: Ctrl+Q
   save: Ctrl+S
   save_as: Ctrl+Shift+S
+  save_to: null
 
   open_next: [D, Ctrl+Shift+D]
   open_prev: [A, Ctrl+Shift+A]
