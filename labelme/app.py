@@ -1,6 +1,7 @@
 import functools
 import io
-import os.path
+import os
+import os.path as osp
 import re
 import warnings
 import webbrowser
@@ -523,7 +524,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.zoom_level = 100
         self.fit_window = False
 
-        if filename is not None and os.path.isdir(filename):
+        if filename is not None and osp.isdir(filename):
             self.importDirImages(filename, load=False)
         else:
             self.filename = filename
@@ -593,7 +594,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def setDirty(self):
         if self._config['auto_save'] or self.actions.saveAuto.isChecked():
-            label_file = os.path.splitext(self.imagePath)[0] + '.json'
+            label_file = osp.splitext(self.imagePath)[0] + '.json'
             self.saveLabels(label_file)
             return
         self.dirty = True
@@ -742,7 +743,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         current = self.filename
 
         def exists(filename):
-            return os.path.exists(str(filename))
+            return osp.exists(str(filename))
 
         menu = self.menus.recentFiles
         menu.clear()
@@ -894,8 +895,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             flag = item.checkState() == Qt.Checked
             flags[key] = flag
         try:
-            imagePath = os.path.relpath(
-                self.imagePath, os.path.dirname(filename))
+            imagePath = osp.relpath(
+                self.imagePath, osp.dirname(filename))
             imageData = self.imageData if self._config['store_data'] else None
             lf.save(
                 filename=filename,
@@ -1050,8 +1051,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 'Error opening file', 'No such file: <b>%s</b>' % filename)
             return False
         # assumes same name, but json extension
-        self.status("Loading %s..." % os.path.basename(str(filename)))
-        label_file = os.path.splitext(filename)[0] + '.json'
+        self.status("Loading %s..." % osp.basename(str(filename)))
+        label_file = osp.splitext(filename)[0] + '.json'
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.isLabelFile(label_file):
             try:
@@ -1077,8 +1078,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 self.status("Error reading %s" % label_file)
                 return False
             self.imageData = self.labelFile.imageData
-            self.imagePath = os.path.join(os.path.dirname(label_file),
-                                          self.labelFile.imagePath)
+            self.imagePath = osp.join(
+                osp.dirname(label_file),
+                self.labelFile.imagePath,
+            )
             self.lineColor = QtGui.QColor(*self.labelFile.lineColor)
             self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
             self.otherData = self.labelFile.otherData
@@ -1122,7 +1125,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
-        self.status("Loaded %s" % os.path.basename(str(filename)))
+        self.status("Loaded %s" % osp.basename(str(filename)))
         return True
 
     def resizeEvent(self, event):
@@ -1232,7 +1235,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def openFile(self, _value=False):
         if not self.mayContinue():
             return
-        path = os.path.dirname(str(self.filename)) if self.filename else '.'
+        path = osp.dirname(str(self.filename)) if self.filename else '.'
         formats = ['*.{}'.format(fmt.data().decode())
                    for fmt in QtGui.QImageReader.supportedImageFormats()]
         filters = "Image & Label files (%s)" % ' '.join(
@@ -1270,8 +1273,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
-        basename = os.path.splitext(self.filename)[0]
-        default_labelfile_name = os.path.join(
+        basename = osp.splitext(self.filename)[0]
+        default_labelfile_name = osp.join(
             self.currentPath(), basename + LabelFile.suffix)
         filename = dlg.getSaveFileName(
             self, 'Choose File', default_labelfile_name,
@@ -1329,7 +1332,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self, title, '<p><b>%s</b></p>%s' % (title, message))
 
     def currentPath(self):
-        return os.path.dirname(str(self.filename)) if self.filename else '.'
+        return osp.dirname(str(self.filename)) if self.filename else '.'
 
     def chooseColor1(self):
         color = self.colorDialog.getColor(
@@ -1392,10 +1395,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return
 
         defaultOpenDirPath = dirpath if dirpath else '.'
-        if self.lastOpenDir and os.path.exists(self.lastOpenDir):
+        if self.lastOpenDir and osp.exists(self.lastOpenDir):
             defaultOpenDirPath = self.lastOpenDir
         else:
-            defaultOpenDirPath = os.path.dirname(self.filename) \
+            defaultOpenDirPath = osp.dirname(self.filename) \
                 if self.filename else '.'
 
         targetDirPath = str(QtWidgets.QFileDialog.getExistingDirectory(
@@ -1425,7 +1428,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for filename in self.scanAllImages(dirpath):
             if pattern and pattern not in filename:
                 continue
-            label_file = os.path.splitext(filename)[0] + '.json'
+            label_file = osp.splitext(filename)[0] + '.json'
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and \
@@ -1444,7 +1447,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         for root, dirs, files in os.walk(folderPath):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
-                    relativePath = os.path.join(root, file)
+                    relativePath = osp.join(root, file)
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
         return images
