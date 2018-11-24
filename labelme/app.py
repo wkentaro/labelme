@@ -230,6 +230,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         saveAs = action('&Save As', self.saveFileAs, shortcuts['save_as'],
                         'save-as', 'Save labels to a different file',
                         enabled=False)
+        changeOutputDir = action(
+            '&Change Output Dir',
+            slot=self.changeOutputDirDialog,
+            shortcut=shortcuts['save_to'],
+            icon='open',
+            tip=u'Change where annotations are loaded/saved'
+        )
 
         saveAuto = action(
             text='Save &Automatically',
@@ -400,6 +407,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         # Store actions for further handling.
         self.actions = struct(
             saveAuto=saveAuto,
+            changeOutputDir=changeOutputDir,
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             delete=delete, edit=edit, copy=copy,
@@ -464,7 +472,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         addActions(self.menus.file, (open_, openNextImg, openPrevImg, opendir,
                                      self.menus.recentFiles,
-                                     save, saveAs, saveAuto, close,
+                                     save, saveAs, saveAuto, changeOutputDir,
+                                     close,
                                      None,
                                      quit))
         addActions(self.menus.help, (help,))
@@ -1271,6 +1280,40 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         filename = str(filename)
         if filename:
             self.loadFile(filename)
+
+    def changeOutputDirDialog(self, _value=False):
+        default_output_dir = self.output_dir
+        if default_output_dir is None and self.filename:
+            default_output_dir = osp.dirname(self.filename)
+        if default_output_dir is None:
+            default_output_dir = self.currentPath()
+
+        output_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self, '%s - Save/Load Annotations in Directory' % __appname__,
+            default_output_dir,
+            QtWidgets.QFileDialog.ShowDirsOnly |
+            QtWidgets.QFileDialog.DontResolveSymlinks,
+        )
+        output_dir = str(output_dir)
+
+        if not output_dir:
+            return
+
+        self.output_dir = output_dir
+
+        self.statusBar().showMessage(
+            '%s . Annotations will be saved/loaded in %s' %
+            ('Change Annotations Dir', self.output_dir))
+        self.statusBar().show()
+
+        current_filename = self.filename
+        self.importDirImages(self.lastOpenDir, load=False)
+
+        if current_filename in self.imageList:
+            # retain currently selected file
+            self.fileListWidget.setCurrentRow(
+                self.imageList.index(current_filename))
+            self.fileListWidget.repaint()
 
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
