@@ -77,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         output_dir=None,
     ):
         if output is not None:
-            logger.warn(
+            logger.warning(
                 'argument output is deprecated, use output_file instead'
             )
             if output_file is None:
