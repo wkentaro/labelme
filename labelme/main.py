@@ -3,6 +3,8 @@ import codecs
 import os
 import sys
 
+sys.path.append("../")
+
 from qtpy import QtWidgets
 
 from labelme import __appname__
@@ -147,7 +149,6 @@ def main():
     win.show()
     win.raise_()
     sys.exit(app.exec_())
-
 
 if __name__ == '__main__':
     main()

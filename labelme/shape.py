@@ -69,7 +69,7 @@ class Shape(object):
         if value is None:
             value = 'polygon'
         if value not in ['polygon', 'rectangle', 'point',
-           'line', 'circle', 'linestrip']:
+           'line', 'circle', 'linestrip', 'zoomRect']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
 
@@ -120,6 +120,14 @@ class Shape(object):
                     line_path.addRect(rectangle)
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
+            elif self.shape_type == 'zoomRect':
+                assert (len(self.points) == 2)
+                pen = QtGui.QPen(QtGui.QColor(0,0,0))
+                pen.setWidth(max(0.5, int(round(0.5 / self.scale))))
+                pen.setStyle(QtCore.Qt.DashLine)
+                painter.setPen(pen)
+                rectangle = self.getRectFromLine(*self.points)
+                line_path.addRect(rectangle)
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
@@ -206,7 +214,7 @@ class Shape(object):
         return rectangle
 
     def makePath(self):
-        if self.shape_type == 'rectangle':
+        if self.shape_type == 'rectangle' or self.shape_type == 'zoomRect':
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
                 rectangle = self.getRectFromLine(*self.points)

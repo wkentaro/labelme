@@ -182,6 +182,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scrollArea)
+        
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
         for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
@@ -1024,16 +1025,22 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.addZoom(units)
 
         canvas_width_new = self.canvas.width()
+        
+        # pos在屏幕位置不变
         if canvas_width_old != canvas_width_new:
             canvas_scale_factor = canvas_width_new / canvas_width_old
-
-            x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
-            y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
-
-            self.scrollBars[Qt.Horizontal].setValue(
-                self.scrollBars[Qt.Horizontal].value() + x_shift)
-            self.scrollBars[Qt.Vertical].setValue(
-                self.scrollBars[Qt.Vertical].value() + y_shift)
+            # print("********************************************")
+            horScro = self.scrollBars[Qt.Horizontal]
+            verScro = self.scrollBars[Qt.Vertical]
+            
+            if self.canvas.selectOn:
+                x_shift = -(self.centralWidget().width() / 2 + horScro.value() - pos.x() * canvas_scale_factor)
+                y_shift = -(self.centralWidget().height() / 2 + verScro.value() - pos.y() * canvas_scale_factor)
+            else:
+                x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
+                y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
+            horScro.setValue(horScro.value() + x_shift)
+            verScro.setValue(verScro.value() + y_shift)
 
     def setFitWindow(self, value=True):
         if value:
@@ -1167,6 +1174,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         super(MainWindow, self).resizeEvent(event)
 
     def paintCanvas(self):
+    #    ****************************
+        # print(print(self.centralWidget().width()))
         assert not self.image.isNull(), "cannot paint null image"
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
@@ -1186,6 +1195,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         w2 = self.canvas.pixmap.width() - 0.0
         h2 = self.canvas.pixmap.height() - 0.0
         a2 = w2 / h2
+
         return w1 / w2 if a2 >= a1 else h1 / h2
 
     def scaleFitWidth(self):
