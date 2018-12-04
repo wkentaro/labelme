@@ -72,9 +72,10 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
-        self.selectRect = Shape(shape_type = 'zoomRect', line_color=QtGui.QColor(0, 0, 0))
-        self.selectRect.addPoint(QtCore.QPoint(0,0))
-        self.selectRect.addPoint(QtCore.QPoint(0,1))
+        self.selectRect = Shape(shape_type='zoomRect',
+                                line_color=QtGui.QColor(0, 0, 0))
+        self.selectRect.addPoint(QtCore.QPoint(0, 0))
+        self.selectRect.addPoint(QtCore.QPoint(0, 1))
         self.OriginalPoint = QtCore.QPoint()
         self.selectOn = False
 
@@ -91,7 +92,7 @@ class Canvas(QtWidgets.QWidget):
     @createMode.setter
     def createMode(self, value):
         if value not in ['polygon', 'rectangle', 'circle',
-           'line', 'point', 'linestrip']:
+                         'line', 'point', 'linestrip']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
 
@@ -203,7 +204,7 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()
             self.current.highlightClear()
             return
-        
+
         # Polygon copy moving.
         if QtCore.Qt.RightButton & ev.buttons():
             if self.selectedShapeCopy and self.prevPoint:
@@ -271,9 +272,9 @@ class Canvas(QtWidgets.QWidget):
         self.edgeSelected.emit(self.hEdge is not None)
 
     def addPointToEdge(self):
-        if (self.hShape is None and
-                self.hEdge is None and
-                self.prevMovePoint is None):
+        if (self.hShape is None
+                and self.hEdge is None
+                and self.prevMovePoint is None):
             return
         shape = self.hShape
         index = self.hEdge
@@ -295,25 +296,25 @@ class Canvas(QtWidgets.QWidget):
                 self.selectRect.points[1] = pos
                 self.selectOn = True
                 self.OriginalPoint = ev.pos()
-                
             else:
                 if self.drawing():
                     if self.current:
-                        
                         # Add point to existing shape.
                         if self.createMode == 'polygon':
                             self.current.addPoint(self.line[1])
                             self.line[0] = self.current[-1]
                             if self.current.isClosed():
                                 self.finalise()
-                        elif self.createMode in ['rectangle', 'circle', 'line']:
+                        elif self.createMode in ['rectangle', 'circle',
+                                                 'line']:
                             assert len(self.current.points) == 1
                             self.current.points = self.line.points
                             self.finalise()
                         elif self.createMode == 'linestrip':
                             self.current.addPoint(self.line[1])
                             self.line[0] = self.current[-1]
-                            if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
+                            if int(ev.modifiers()) == \
+                                    QtCore.Qt.ControlModifier:
                                 self.finalise()
                     elif not self.outOfPixmap(pos):
                         # Create new shape.
@@ -353,14 +354,18 @@ class Canvas(QtWidgets.QWidget):
             elif self.selectOn:
                 pos = self.transformPos(ev.pos())
                 if pos != self.selectRect.points[0]:
-                    TranformPos = QtCore.QPoint((self.OriginalPoint.x() + ev.pos().x()) / 2,\
-                    (self.OriginalPoint.y() + ev.pos().y()) / 2)
-                    width = abs(self.selectRect.points[0].x() - pos.x()) * self.scale
-                    height = abs(self.selectRect.points[0].y() - pos.y()) * self.scale
+                    TranformPos = QtCore.QPoint((self.OriginalPoint.x() +
+                        ev.pos().x()) / 2, (self.OriginalPoint.y() +
+                                            ev.pos().y()) / 2)
+                    width = abs(
+                        self.selectRect.points[0].x() - pos.x()) * self.scale
+                    height = abs(
+                        self.selectRect.points[0].y() - pos.y()) * self.scale
                     # height = abs(self.selectRect.points[0].y() - ev.pos().y())
-                    heightScale = self.parentWidget().width() / (width+1)
-                    widthScale = self.parentWidget().height() / (height+1)
-                    self.zoomRequest.emit((min(heightScale, widthScale) * self.scale  - self.scale) * 1000, TranformPos)
+                    heightScale = self.parentWidget().width() / (width + 1)
+                    widthScale = self.parentWidget().height() / (height + 1)
+                    self.zoomRequest.emit(
+                        (min(heightScale, widthScale) * self.scale - self.scale) * 1000, TranformPos)
                 self.selectOn = False
                 self.repaint()
 
@@ -530,18 +535,18 @@ class Canvas(QtWidgets.QWidget):
             self.line.paint(p)
         if self.selectedShapeCopy:
             self.selectedShapeCopy.paint(p)
-        
+
         if self.selectOn:
             self.selectRect.paint(p)
 
-        if (self.fillDrawing() and self.createMode == 'polygon' and
-                self.current is not None and len(self.current.points) >= 2):
+        if (self.fillDrawing() and self.createMode == 'polygon'
+                and self.current is not None and len(self.current.points) >= 2):
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
             drawing_shape.fill_color.setAlpha(64)
             drawing_shape.paint(p)
-        
+
         p.end()
 
     def transformPos(self, point):

@@ -122,7 +122,7 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == 'zoomRect':
                 assert (len(self.points) == 2)
-                pen = QtGui.QPen(QtGui.QColor(0,0,0))
+                pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
                 pen.setWidth(max(0.5, int(round(0.5 / self.scale))))
                 pen.setStyle(QtCore.Qt.DashLine)
                 painter.setPen(pen)

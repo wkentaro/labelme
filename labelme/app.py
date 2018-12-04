@@ -182,7 +182,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scrollArea)
-        
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
         for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
@@ -1025,17 +1024,19 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.addZoom(units)
 
         canvas_width_new = self.canvas.width()
-        
+
         # position of pos will not change in the screen
         if canvas_width_old != canvas_width_new:
             canvas_scale_factor = canvas_width_new / canvas_width_old
             # print("********************************************")
             horScro = self.scrollBars[Qt.Horizontal]
             verScro = self.scrollBars[Qt.Vertical]
-            
+
             if self.canvas.selectOn:
-                x_shift = -(self.centralWidget().width() / 2 + horScro.value() - pos.x() * canvas_scale_factor)
-                y_shift = -(self.centralWidget().height() / 2 + verScro.value() - pos.y() * canvas_scale_factor)
+                x_shift = -(self.centralWidget().width() / 2 + horScro.value()\
+                    - pos.x() * canvas_scale_factor)
+                y_shift = -(self.centralWidget().height() / 2 + verScro.value()\
+                    - pos.y() * canvas_scale_factor)
             else:
                 x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
                 y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
@@ -1174,8 +1175,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         super(MainWindow, self).resizeEvent(event)
 
     def paintCanvas(self):
-    #    ****************************
-        # print(print(self.centralWidget().width()))
         assert not self.image.isNull(), "cannot paint null image"
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()

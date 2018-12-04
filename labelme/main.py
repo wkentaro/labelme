@@ -3,8 +3,6 @@ import codecs
 import os
 import sys
 
-sys.path.append("../")
-
 from qtpy import QtWidgets
 
 from labelme import __appname__
@@ -14,6 +12,7 @@ from labelme.config import get_config
 from labelme import logger
 from labelme.utils import newIcon
 
+sys.path.append("../")
 
 def main():
     parser = argparse.ArgumentParser()
