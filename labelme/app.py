@@ -1026,7 +1026,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         canvas_width_new = self.canvas.width()
         
-        # pos在屏幕位置不变
+        # position of pos will not change in the screen
         if canvas_width_old != canvas_width_new:
             canvas_scale_factor = canvas_width_new / canvas_width_old
             # print("********************************************")
