@@ -270,9 +270,9 @@ class Canvas(QtWidgets.QWidget):
         self.edgeSelected.emit(self.hEdge is not None)
 
     def addPointToEdge(self):
-        if (self.hShape is None and
-                self.hEdge is None and
-                self.prevMovePoint is None):
+        if (self.hShape is None
+                and self.hEdge is None
+                and self.prevMovePoint is None):
             return
         shape = self.hShape
         index = self.hEdge
@@ -352,18 +352,17 @@ class Canvas(QtWidgets.QWidget):
             elif self.selectOn:
                 pos = self.transformPos(ev.pos())
                 if pos != self.selectRect.points[0]:
-                    TranformPos = QtCore.QPoint((self.OriginalPoint.x()
-                                + ev.pos().x()) / 2, (self.OriginalPoint.y()
-                                                    + ev.pos().y()) / 2)
+                    TranformPos = QtCore.QPoint(
+                        (self.OriginalPoint.x() + ev.pos().x()) / 2,
+                        (self.OriginalPoint.y() + ev.pos().y()) / 2)
                     width = abs(
                         self.selectRect.points[0].x() - pos.x()) * self.scale
                     height = abs(
                         self.selectRect.points[0].y() - pos.y()) * self.scale
-                    # height = abs(self.selectRect.points[0].y() - ev.pos().y())
                     heightScale = self.parentWidget().width() / (width + 1)
                     widthScale = self.parentWidget().height() / (height + 1)
                     self.zoomRequest.emit(
-                        (min(heightScale, widthScale) * self.scale - self.scale)
+                        ((min(heightScale, widthScale) - 1) * self.scale)
                         * 1000, TranformPos)
                 self.selectOn = False
                 self.repaint()
@@ -464,6 +463,7 @@ class Canvas(QtWidgets.QWidget):
         # a bit "shaky" when nearing the border and allows it to
         # go outside of the shape's area for some reason.
         # self.calculateOffsets(self.selectedShape, pos)
+
         dp = pos - self.prevPoint
         if dp:
             shape.moveBy(dp)
@@ -538,8 +538,9 @@ class Canvas(QtWidgets.QWidget):
         if self.selectOn:
             self.selectRect.paint(p)
 
-        if (self.fillDrawing() and self.createMode == 'polygon' and
-                self.current is not None and len(self.current.points) >= 2):
+        if (self.fillDrawing() and self.createMode == 'polygon'
+                and self.current is not None
+                and len(self.current.points) >= 2):
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
