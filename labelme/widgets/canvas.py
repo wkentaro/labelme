@@ -6,7 +6,6 @@ from labelme import QT5
 from labelme.shape import Shape
 import labelme.utils
 
-
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
 
@@ -19,7 +18,6 @@ CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 
 
 class Canvas(QtWidgets.QWidget):
-
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
@@ -177,7 +175,7 @@ class Canvas(QtWidgets.QWidget):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
                 pos = self.intersectionPoint(self.current[-1], pos)
-            elif len(self.current) > 1 and self.createMode == 'polygon' and\
+            elif len(self.current) > 1 and self.createMode == 'polygon' and \
                     self.closeEnough(pos, self.current[0]):
                 # Attract line to starting point and
                 # colorise to alert the user.
@@ -272,9 +270,9 @@ class Canvas(QtWidgets.QWidget):
         self.edgeSelected.emit(self.hEdge is not None)
 
     def addPointToEdge(self):
-        if (self.hShape is None
-                and self.hEdge is None
-                and self.prevMovePoint is None):
+        if (self.hShape is None and
+                self.hEdge is None and
+                self.prevMovePoint is None):
             return
         shape = self.hShape
         index = self.hEdge
@@ -342,8 +340,8 @@ class Canvas(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.RightButton:
             menu = self.menus[bool(self.selectedShapeCopy)]
             self.restoreCursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos()))\
-               and self.selectedShapeCopy:
+            if not menu.exec_(self.mapToGlobal(ev.pos())) \
+                    and self.selectedShapeCopy:
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapeCopy = None
                 self.repaint()
@@ -354,9 +352,9 @@ class Canvas(QtWidgets.QWidget):
             elif self.selectOn:
                 pos = self.transformPos(ev.pos())
                 if pos != self.selectRect.points[0]:
-                    TranformPos = QtCore.QPoint((self.OriginalPoint.x() +
-                        ev.pos().x()) / 2, (self.OriginalPoint.y() +
-                                            ev.pos().y()) / 2)
+                    TranformPos = QtCore.QPoint((self.OriginalPoint.x()
+                                + ev.pos().x()) / 2, (self.OriginalPoint.y()
+                                                    + ev.pos().y()) / 2)
                     width = abs(
                         self.selectRect.points[0].x() - pos.x()) * self.scale
                     height = abs(
@@ -365,7 +363,8 @@ class Canvas(QtWidgets.QWidget):
                     heightScale = self.parentWidget().width() / (width + 1)
                     widthScale = self.parentWidget().height() / (height + 1)
                     self.zoomRequest.emit(
-                        (min(heightScale, widthScale) * self.scale - self.scale) * 1000, TranformPos)
+                        (min(heightScale, widthScale) * self.scale - self.scale)
+                        * 1000, TranformPos)
                 self.selectOn = False
                 self.repaint()
 
@@ -539,8 +538,8 @@ class Canvas(QtWidgets.QWidget):
         if self.selectOn:
             self.selectRect.paint(p)
 
-        if (self.fillDrawing() and self.createMode == 'polygon'
-                and self.current is not None and len(self.current.points) >= 2):
+        if (self.fillDrawing() and self.createMode == 'polygon' and
+                self.current is not None and len(self.current.points) >= 2):
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True

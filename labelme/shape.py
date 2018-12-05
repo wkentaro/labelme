@@ -69,7 +69,7 @@ class Shape(object):
         if value is None:
             value = 'polygon'
         if value not in ['polygon', 'rectangle', 'point',
-           'line', 'circle', 'linestrip', 'zoomRect']:
+                         'line', 'circle', 'linestrip', 'zoomRect']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
 
