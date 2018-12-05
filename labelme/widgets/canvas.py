@@ -270,9 +270,9 @@ class Canvas(QtWidgets.QWidget):
         self.edgeSelected.emit(self.hEdge is not None)
 
     def addPointToEdge(self):
-        if (self.hShape is None
-                and self.hEdge is None
-                and self.prevMovePoint is None):
+        if (self.hShape is None and
+                self.hEdge is None and
+                self.prevMovePoint is None):
             return
         shape = self.hShape
         index = self.hEdge
@@ -362,8 +362,8 @@ class Canvas(QtWidgets.QWidget):
                     heightScale = self.parentWidget().width() / (width + 1)
                     widthScale = self.parentWidget().height() / (height + 1)
                     self.zoomRequest.emit(
-                        ((min(heightScale, widthScale) - 1) * self.scale)
-                        * 1000, TranformPos)
+                        ((min(heightScale, widthScale) - 1) * self.scale) *
+                        1000, TranformPos)
                 self.selectOn = False
                 self.repaint()
 
@@ -538,9 +538,9 @@ class Canvas(QtWidgets.QWidget):
         if self.selectOn:
             self.selectRect.paint(p)
 
-        if (self.fillDrawing() and self.createMode == 'polygon'
-                and self.current is not None
-                and len(self.current.points) >= 2):
+        if (self.fillDrawing() and self.createMode == 'polygon' and
+                self.current is not None and
+                len(self.current.points) >= 2):
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True

@@ -1033,10 +1033,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             verScro = self.scrollBars[Qt.Vertical]
 
             if self.canvas.selectOn:
-                x_shift = -(self.centralWidget().width() / 2 + horScro.value()
-                            - pos.x() * canvas_scale_factor)
-                y_shift = -(self.centralWidget().height() / 2 + verScro.value()
-                            - pos.y() * canvas_scale_factor)
+                x_shift = pos.x() * canvas_scale_factor -\
+                    self.centralWidget().width() / 2 - horScro.value()
+                y_shift = pos.y() * canvas_scale_factor -\
+                    self.centralWidget().height() / 2 - verScro.value()
             else:
                 x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
                 y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
@@ -1072,9 +1072,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
-        if (filename in self.imageList
-                and self.fileListWidget.currentRow()
-                != self.imageList.index(filename)):
+        if (filename in self.imageList and
+                self.fileListWidget.currentRow() !=
+                self.imageList.index(filename)):
             self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             self.fileListWidget.repaint()
             return
@@ -1300,8 +1300,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self, '%s - Save/Load Annotations in Directory' % __appname__,
             default_output_dir,
-            QtWidgets.QFileDialog.ShowDirsOnly
-            | QtWidgets.QFileDialog.DontResolveSymlinks,
+            QtWidgets.QFileDialog.ShowDirsOnly |
+            QtWidgets.QFileDialog.DontResolveSymlinks,
         )
         output_dir = str(output_dir)
 
@@ -1490,8 +1490,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
         targetDirPath = str(QtWidgets.QFileDialog.getExistingDirectory(
             self, '%s - Open Directory' % __appname__, defaultOpenDirPath,
-            QtWidgets.QFileDialog.ShowDirsOnly
-            | QtWidgets.QFileDialog.DontResolveSymlinks))
+            QtWidgets.QFileDialog.ShowDirsOnly |
+            QtWidgets.QFileDialog.DontResolveSymlinks))
         self.importDirImages(targetDirPath)
 
     @property
