@@ -15,10 +15,20 @@ from labelme.utils import newIcon
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', '-V', action='store_true',
-                        help='show version')
+    parser.add_argument(
+        '--version', '-V', action='store_true', help='show version'
+    )
+    parser.add_argument(
+        '--reset-config', action='store_true', help='reset qt config'
+    )
     parser.add_argument('filename', nargs='?', help='image or label filename')
-    parser.add_argument('--output', '-O', '-o', help='output label name')
+    parser.add_argument(
+        '--output',
+        '-O',
+        '-o',
+        help='output file or directory (if it ends with .json it is '
+             'recognized as file, else as directory)'
+    )
     default_config_file = os.path.join(os.path.expanduser('~'), '.labelmerc')
     parser.add_argument(
         '--config',
@@ -99,6 +109,7 @@ def main():
 
     config_from_args = args.__dict__
     config_from_args.pop('version')
+    reset_config = config_from_args.pop('reset_config')
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
     config_file = config_from_args.pop('config_file')
@@ -110,10 +121,29 @@ def main():
                      '(ex. ~/.labelmerc).')
         sys.exit(1)
 
+    output_file = None
+    output_dir = None
+    if output is not None:
+        if output.endswith('.json'):
+            output_file = output
+        else:
+            output_dir = output
+
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon('icon'))
-    win = MainWindow(config=config, filename=filename, output=output)
+    win = MainWindow(
+        config=config,
+        filename=filename,
+        output_file=output_file,
+        output_dir=output_dir,
+    )
+
+    if reset_config:
+        print('Resetting Qt config: %s' % win.settings.fileName())
+        win.settings.clear()
+        sys.exit(0)
+
     win.show()
     win.raise_()
     sys.exit(app.exec_())

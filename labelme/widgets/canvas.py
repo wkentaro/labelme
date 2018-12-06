@@ -84,7 +84,8 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['polygon', 'rectangle', 'line', 'point']:
+        if value not in ['polygon', 'rectangle', 'circle',
+           'line', 'point', 'linestrip']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
 
@@ -155,6 +156,8 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
+            self.line.shape_type = self.createMode
+
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
                 return
@@ -164,7 +167,7 @@ class Canvas(QtWidgets.QWidget):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
                 pos = self.intersectionPoint(self.current[-1], pos)
-            elif len(self.current) > 1 and \
+            elif len(self.current) > 1 and self.createMode == 'polygon' and\
                     self.closeEnough(pos, self.current[0]):
                 # Attract line to starting point and
                 # colorise to alert the user.
@@ -172,14 +175,15 @@ class Canvas(QtWidgets.QWidget):
                 color = self.current.line_color
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode == 'polygon':
+            if self.createMode in ['polygon', 'linestrip']:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
             elif self.createMode == 'rectangle':
-                self.line.points = list(self.getRectangleFromLine(
-                    (self.current[0], pos)
-                ))
+                self.line.points = [self.current[0], pos]
                 self.line.close()
+            elif self.createMode == 'circle':
+                self.line.points = [self.current[0], pos]
+                self.line.shape_type = "circle"
             elif self.createMode == 'line':
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -271,13 +275,6 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
 
-    def getRectangleFromLine(self, line):
-        pt1 = line[0]
-        pt3 = line[1]
-        pt2 = QtCore.QPoint(pt3.x(), pt1.y())
-        pt4 = QtCore.QPoint(pt1.x(), pt3.y())
-        return pt1, pt2, pt3, pt4
-
     def mousePressEvent(self, ev):
         if QT5:
             pos = self.transformPos(ev.pos())
@@ -292,17 +289,24 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
-                    elif self.createMode in ['rectangle', 'line']:
+                    elif self.createMode in ['rectangle', 'circle', 'line']:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
+                    elif self.createMode == 'linestrip':
+                        self.current.addPoint(self.line[1])
+                        self.line[0] = self.current[-1]
+                        if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
+                            self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
-                    self.current = Shape()
+                    self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
                     if self.createMode == 'point':
                         self.finalise()
                     else:
+                        if self.createMode == 'circle':
+                            self.current.shape_type = 'circle'
                         self.line.points = [pos, pos]
                         self.setHiding()
                         self.drawingPolygon.emit(True)
@@ -646,9 +650,9 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        if self.createMode == 'polygon':
+        if self.createMode in ['polygon', 'linestrip']:
             self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in ['rectangle', 'line']:
+        elif self.createMode in ['rectangle', 'line', 'circle']:
             self.current.points = self.current.points[0:1]
         elif self.createMode == 'point':
             self.current = None

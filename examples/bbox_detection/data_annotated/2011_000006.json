@@ -7,22 +7,15 @@
       "fill_color": null,
       "points": [
         [
-          400,
-          82
+          91,
+          107
         ],
         [
-          447,
-          82
-        ],
-        [
-          447,
-          117
-        ],
-        [
-          400,
-          117
+          240,
+          330
         ]
-      ]
+      ],
+      "shape_type": "rectangle"
     },
     {
       "label": "person",
@@ -30,45 +23,15 @@
       "fill_color": null,
       "points": [
         [
-          95,
-          103
+          178,
+          110
         ],
         [
-          238,
-          103
-        ],
-        [
-          238,
-          330
-        ],
-        [
-          95,
-          330
+          298,
+          282
         ]
-      ]
-    },
-    {
-      "label": "person",
-      "line_color": null,
-      "fill_color": null,
-      "points": [
-        [
-          301,
-          111
-        ],
-        [
-          174,
-          111
-        ],
-        [
-          174,
-          281
-        ],
-        [
-          301,
-          281
-        ]
-      ]
+      ],
+      "shape_type": "rectangle"
     },
     {
       "label": "person",
@@ -77,21 +40,30 @@
       "points": [
         [
           254,
-          290
-        ],
-        [
-          370,
-          290
-        ],
-        [
-          370,
           115
         ],
         [
-          254,
-          115
+          369,
+          292
         ]
-      ]
+      ],
+      "shape_type": "rectangle"
+    },
+    {
+      "label": "person",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          395,
+          81
+        ],
+        [
+          447,
+          117
+        ]
+      ],
+      "shape_type": "rectangle"
     }
   ],
   "lineColor": [

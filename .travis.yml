@@ -1,5 +1,8 @@
 language: generic
 
+cache:
+  - pip
+
 sudo: required
 
 dist: trusty
@@ -13,6 +16,12 @@ env:
     - MPLBACKEND=TkAgg  # for osx
 matrix:
   include:
+    - os: osx
+      env:
+        - PYTEST_QT_API=pyqt5
+        - PYQT_PACKAGE='pyqt=5'
+        - PYTHON_VERSION=3.6
+        - RUN_PYINSTALLER=true
     - os: linux
       dist: trusty
       env:
@@ -46,12 +55,6 @@ matrix:
         - PYQT_PACKAGE='pyqt=5'
         - PYTHON_VERSION=3.6
         - RUN_PYINSTALLER=true
-    - os: osx
-      env:
-        - PYTEST_QT_API=pyqt5
-        - PYQT_PACKAGE='pyqt=5'
-        - PYTHON_VERSION=3.6
-        - RUN_PYINSTALLER=true
 
 install:
   - |
@@ -79,7 +82,9 @@ script:
   - pytest -v tests
   - labelme --help
   - labelme --version
+  - (cd examples/primitives && labelme_json_to_dataset primitives.json && rm -rf primitives_json)
   - (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
+  - (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
   - (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
   - (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
   - (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)

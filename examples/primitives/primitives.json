@@ -1,0 +1,140 @@
+{
+  "version": "3.5.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "rectangle",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          32,
+          35
+        ],
+        [
+          132,
+          135
+        ]
+      ],
+      "shape_type": "rectangle"
+    },
+    {
+      "label": "circle",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          195,
+          84
+        ],
+        [
+          225,
+          125
+        ]
+      ],
+      "shape_type": "circle"
+    },
+    {
+      "label": "rectangle",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          391,
+          33
+        ],
+        [
+          542,
+          135
+        ]
+      ],
+      "shape_type": "rectangle"
+    },
+    {
+      "label": "polygon",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          69,
+          318
+        ],
+        [
+          45,
+          403
+        ],
+        [
+          173,
+          406
+        ],
+        [
+          198,
+          321
+        ]
+      ],
+      "shape_type": "polygon"
+    },
+    {
+      "label": "line",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          188,
+          178
+        ],
+        [
+          160,
+          224
+        ]
+      ],
+      "shape_type": "line"
+    },
+    {
+      "label": "point",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          345,
+          174
+        ]
+      ],
+      "shape_type": "point"
+    },
+    {
+      "label": "line_strip",
+      "line_color": null,
+      "fill_color": null,
+      "points": [
+        [
+          441,
+          181
+        ],
+        [
+          403,
+          274
+        ],
+        [
+          545,
+          275
+        ]
+      ],
+      "shape_type": "linestrip"
+    }
+  ],
+  "lineColor": [
+    0,
+    255,
+    0,
+    128
+  ],
+  "fillColor": [
+    255,
+    0,
+    0,
+    128
+  ],
+  "imagePath": "primitives.jpg",
+  "imageData": null
+}

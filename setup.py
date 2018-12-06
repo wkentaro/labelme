@@ -1,4 +1,3 @@
-import imp
 import os.path
 from setuptools import find_packages
 from setuptools import setup
@@ -13,12 +12,21 @@ assert PY3 or PY2
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-version = imp.load_source(
-    '_version', os.path.join(here, 'labelme', '_version.py')).__version__
+version_file = os.path.join(here, 'labelme', '_version.py')
+if PY3:
+    import importlib
+    version = importlib.machinery.SourceFileLoader(
+        '_version', version_file
+    ).load_module().__version__
+else:
+    assert PY2
+    import imp
+    version = imp.load_source('_version', version_file).__version__
 del here
 
 
 install_requires = [
+    'lxml',
     'matplotlib',
     'numpy',
     'Pillow>=2.8.0',
