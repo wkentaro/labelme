@@ -60,7 +60,7 @@ def main():
             os.mkdir(label_dir)
         out_file = '{}_{}.png'.format(label,str(i).zfill(zpad))
         shape_bbox = np.array((np.min(points,0), np.max(points,0))).flatten()
-        out_img = blank_image.crop(shape_bbox
+        out_img = blank_image.crop(shape_bbox)
         out_img.save(osp.join(label_dir, out_file))
     print('Saved to: %s' % out_dir)
 

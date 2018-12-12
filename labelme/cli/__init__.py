@@ -3,4 +3,5 @@
 from . import draw_json
 from . import draw_label_png
 from . import json_to_dataset
+from . import json_to_label_instances
 from . import on_docker
