@@ -197,7 +197,6 @@ conda create --name labelme python==3.6.0
 conda activate labelme
 
 # Build the standalone executable
-conda install pyqt
 pip install .
 pip install pyinstaller
 pyinstaller labelme.spec
