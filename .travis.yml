@@ -20,6 +20,9 @@ env:
     - SETUP_XVFB=true
     - PIP_DEPENDENCIES='hacking pytest pytest-qt'
 
+    # See https://github.com/brainiak/brainiak/issues/377
+    - KMP_DUPLICATE_LIB_OK=TRUE
+
     - MPLBACKEND=TkAgg  # for osx
 matrix:
   include:
