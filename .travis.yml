@@ -115,8 +115,10 @@ after_script:
 
       # Create ZIP files for release
       cd dist
-      zip labelme-macOS.zip labelme
-      zip -r labelme.app-macOS.zip labelme.app
+      zip labelme-$(uname).zip labelme
+      if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+        zip -r labelme.app-$(uname).zip labelme.app
+      fi
       cd -
     fi
 
