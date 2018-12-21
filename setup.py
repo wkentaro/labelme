@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+import distutils.spawn
 import os.path
 from setuptools import find_packages
 from setuptools import setup
@@ -58,9 +61,11 @@ if QT_BINDING is None:
         QT_BINDING = 'pyqt4'
     except ImportError:
         if PY2:
-            sys.stderr.write(
+            print(
                 'Please install PyQt5, PySide2 or PyQt4 for Python2.\n'
-                'Note that PyQt5 can be installed via pip for Python3.')
+                'Note that PyQt5 can be installed via pip for Python3.',
+                file=sys.stderr,
+            )
             sys.exit(1)
         assert PY3
         # PyQt5 can be installed via pip for Python3
@@ -70,10 +75,18 @@ del QT_BINDING
 
 
 if sys.argv[1] == 'release':
+    if not distutils.spawn.find_executable('twine'):
+        print(
+            'Please install twine:\n\n\tpip install twine\n',
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     commands = [
         'git tag v{:s}'.format(version),
         'git push origin master --tag',
-        'python setup.py sdist upload',
+        'python setup.py sdist',
+        'twine upload dist/*',
     ]
     for cmd in commands:
         subprocess.check_call(shlex.split(cmd))
