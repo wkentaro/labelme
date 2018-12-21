@@ -80,6 +80,7 @@ install:
   - CONDA_DEPENDENCIES=$PYQT_PACKAGE source ci-helpers/travis/setup_conda.sh
   - source activate test && export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
   - pip install .
+  - rm -rf ci-helpers miniconda.sh
 
 before_script:
   - if [ $TRAVIS_OS_NAME = "linux" ]; then (herbstluftwm )& fi
