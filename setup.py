@@ -86,7 +86,7 @@ if sys.argv[1] == 'release':
         'git tag v{:s}'.format(version),
         'git push origin master --tag',
         'python setup.py sdist',
-        'twine upload dist/*',
+        'twine upload dist/*.tar.gz',
     ]
     for cmd in commands:
         subprocess.check_call(shlex.split(cmd))
