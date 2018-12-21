@@ -10,7 +10,7 @@ dist: trusty
 branches:
   only:
     - master
-    - /v\d+\.\d+.\d+[a-z]/
+    - /v\d+\.\d+.\d+/
 
 notifications:
   email: false
