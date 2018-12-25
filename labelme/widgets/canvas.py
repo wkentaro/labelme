@@ -401,8 +401,8 @@ class Canvas(QtWidgets.QWidget):
         rect = shape.boundingRect()
         x1 = rect.x() - point.x()
         y1 = rect.y() - point.y()
-        x2 = (rect.x() + rect.width()) - point.x()
-        y2 = (rect.y() + rect.height()) - point.y()
+        x2 = (rect.x() + rect.width() - 1) - point.x()
+        y2 = (rect.y() + rect.height() - 1) - point.y()
         self.offsets = QtCore.QPoint(x1, y1), QtCore.QPoint(x2, y2)
 
     def boundedMoveVertex(self, pos):
@@ -523,7 +523,7 @@ class Canvas(QtWidgets.QWidget):
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
-        return not (0 <= p.x() <= w and 0 <= p.y() <= h)
+        return not (0 <= p.x() < w and 0 <= p.y() < h)
 
     def finalise(self):
         assert self.current
@@ -547,9 +547,9 @@ class Canvas(QtWidgets.QWidget):
         # http://paulbourke.net/geometry/lineline2d/
         size = self.pixmap.size()
         points = [(0, 0),
-                  (size.width(), 0),
-                  (size.width(), size.height()),
-                  (0, size.height())]
+                  (size.width() - 1, 0),
+                  (size.width() - 1, size.height() - 1),
+                  (0, size.height() - 1)]
         x1, y1 = p1.x(), p1.y()
         x2, y2 = p2.x(), p2.y()
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
