@@ -13,6 +13,7 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 
 from labelme import __appname__
+from labelme import PY2
 from labelme import QT5
 
 from labelme.config import get_config
@@ -907,13 +908,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         lf = LabelFile()
 
         def format_shape(s):
-            return dict(label=str(s.label),
-                        line_color=s.line_color.getRgb()
-                        if s.line_color != self.lineColor else None,
-                        fill_color=s.fill_color.getRgb()
-                        if s.fill_color != self.fillColor else None,
-                        points=[(p.x(), p.y()) for p in s.points],
-                        shape_type=s.shape_type)
+            return dict(
+                label=s.label.encode('utf-8') if PY2 else s.label,
+                line_color=s.line_color.getRgb()
+                    if s.line_color != self.lineColor else None,
+                fill_color=s.fill_color.getRgb()
+                    if s.fill_color != self.fillColor else None,
+                points=[(p.x(), p.y()) for p in s.points],
+                shape_type=s.shape_type,
+            )
 
         shapes = [format_shape(shape) for shape in self.labelList.shapes]
         flags = {}
