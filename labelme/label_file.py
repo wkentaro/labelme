@@ -1,7 +1,6 @@
 import base64
 import json
 import os.path
-import sys
 
 from . import logger
 from . import PY2

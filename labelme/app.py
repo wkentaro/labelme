@@ -911,9 +911,9 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return dict(
                 label=s.label.encode('utf-8') if PY2 else s.label,
                 line_color=s.line_color.getRgb()
-                    if s.line_color != self.lineColor else None,
+                if s.line_color != self.lineColor else None,
                 fill_color=s.fill_color.getRgb()
-                    if s.fill_color != self.fillColor else None,
+                if s.fill_color != self.fillColor else None,
                 points=[(p.x(), p.y()) for p in s.points],
                 shape_type=s.shape_type,
             )
