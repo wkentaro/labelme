@@ -4,11 +4,9 @@ import os.path
 import sys
 
 from . import logger
+from . import PY2
 from . import utils
 from ._version import __version__
-
-
-PY2 = sys.version_info[0] == 2
 
 
 class LabelFileError(Exception):
