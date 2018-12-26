@@ -160,7 +160,7 @@ For more advanced usage, please refer to the examples:
 
 ## Screencast
 
-<img src="https://github.com/wkentaro/labelme/blob/master/.readme/screencast.gif?raw=true" width="70%"/>
+<img src="https://drive.google.com/uc?id=1Ad-pn3mVM17eMDiMPYToVfzKFCaRQMdB" width="70%"/>
 
 
 ## Testing
