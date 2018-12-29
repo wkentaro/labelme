@@ -258,9 +258,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                         shortcuts['edit_fill_color'], 'color',
                         'Choose polygon fill color')
 
-        toggle_keep_prev_mode = action('Keep Previous Annotation', self.toggleKeepPrevMode,
-                        shortcuts['toggle_keep_prev_mode'], None,
-                        'Toggle "keep pevious annotation" mode', checkable=True)
+        toggle_keep_prev_mode = action(
+            'Keep Previous Annotation',
+            self.toggleKeepPrevMode,
+            shortcuts['toggle_keep_prev_mode'], None,
+            'Toggle "keep pevious annotation" mode',
+            checkable=True)
         toggle_keep_prev_mode.setChecked(self._config['keep_prev'])
 
         createMode = action(
@@ -415,7 +418,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             saveAuto=saveAuto,
             changeOutputDir=changeOutputDir,
             save=save, saveAs=saveAs, open=open_, close=close,
-            lineColor=color1, fillColor=color2, toggleKeepPrevMode=toggle_keep_prev_mode,
+            lineColor=color1, fillColor=color2,
+            toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
             addPoint=addPoint,
@@ -1442,7 +1446,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def toggleKeepPrevMode(self):
         self._config['keep_prev'] = not self._config['keep_prev']
-
 
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
