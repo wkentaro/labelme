@@ -70,7 +70,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.labelList.sortItems()
         else:
             self.labelList.setDragDropMode(
-                QtGui.QAbstractItemView.InternalMove)
+                QtWidgets.QAbstractItemView.InternalMove)
         self.labelList.currentItemChanged.connect(self.labelSelected)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
