@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import distutils.spawn
 import os.path
+import re
 from setuptools import find_packages
 from setuptools import setup
 import shlex
@@ -93,12 +94,58 @@ if sys.argv[1] == 'release':
     sys.exit(0)
 
 
+def get_long_description():
+    f = open('README.md')
+
+    lines = []
+    for line in f:
+
+        def repl(match):
+            if not match:
+                return
+
+            url = match.group(1)
+            if url.startswith('http'):
+                return match.group(0)
+
+            url_new = (
+                'https://github.com/wkentaro/labelme/blob/master/{}'
+                .format(url)
+            )
+            if re.match(r'.*[\.jpg|\.png]$', url_new):
+                url_new += '?raw=true'
+
+            start0, end0 = match.regs[0]
+            start, end = match.regs[1]
+            start -= start0
+            end -= start0
+
+            res = match.group(0)
+            res = res[:start] + url_new + res[end:]
+            return res
+
+        patterns = [
+            r'!\[.*?\]\((.*?)\)',
+            r'<img.*?src="(.*?)".*?/>',
+            r'\[.*?\]\((.*?)\)',
+            r'<a.*?href="(.*?)".*?>',
+        ]
+        for pattern in patterns:
+            line = re.sub(pattern, repl, line)
+
+        lines.append(line)
+
+    f.close()
+
+    return ''.join(lines)
+
+
 setup(
     name='labelme',
     version=version,
     packages=find_packages(),
-    description='Image Polygonal Annotation with Python.',
-    long_description=open('README.md').read(),
+    description='Image Polygonal Annotation with Python',
+    long_description=get_long_description(),
     long_description_content_type='text/markdown',
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',

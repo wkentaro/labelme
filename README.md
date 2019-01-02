@@ -1,4 +1,4 @@
-<img src="https://github.com/wkentaro/labelme/blob/master/labelme/icons/icon.png?raw=true" align="right" />
+<img src="labelme/icons/icon.png" align="right" />
 
 # labelme: Image Polygonal Annotation with Python
 
@@ -11,13 +11,13 @@
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
-<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/.readme/annotation.jpg?raw=true" width="80%" />
+<img src="examples/instance_segmentation/.readme/annotation.jpg" width="80%" />
 <i>Fig 1. Annotation example of instance segmentation.</i>
 
-<img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationClassPNG/2011_000006.png?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationObjectPNG/2011_000006.png?raw=true" width="19%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg?raw=true" width="19%" />  
+<img src="examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassPNG/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectPNG/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg" width="19%" />  
 <i>Fig 2. VOC dataset example of instance segmentation.</i>
 
-<img src="https://github.com/wkentaro/labelme/raw/master/examples/semantic_segmentation/.readme/annotation.jpg?raw=true" width="30%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/bbox_detection/.readme/annotation.jpg?raw=true" width="32%" /> <img src="https://github.com/wkentaro/labelme/blob/master/examples/classification/.readme/annotation_cat.jpg?raw=true" width="33%" />  
+<img src="examples/semantic_segmentation/.readme/annotation.jpg" width="30%" /> <img src="examples/bbox_detection/.readme/annotation.jpg" width="32%" /> <img src="examples/classification/.readme/annotation_cat.jpg" width="33%" />  
 <i>Fig 3. Other examples (semantic segmentation, bbox detection, and classification).</i>
 
 <img src="https://user-images.githubusercontent.com/4310419/47907116-85667800-de82-11e8-83d0-b9f4eb33268f.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/4310419/47922172-57972880-deae-11e8-84f8-e4324a7c856a.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/14256482/46932075-92145f00-d080-11e8-8d09-2162070ae57c.png" width="32%" />  
@@ -26,11 +26,11 @@ It is written in Python and uses Qt for its graphical interface.
 
 ## Features
 
-- [x] Image annotation for polygon, rectangle, circle, line and point. ([tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial))
+- [x] Image annotation for polygon, rectangle, circle, line and point. ([tutorial](examples/tutorial))
 - [x] Image flag annotation for classification and cleaning. ([#166](https://github.com/wkentaro/labelme/pull/166))
-- [x] Video annotation. ([video annotation](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation))
+- [x] Video annotation. ([video annotation](examples/video_annotation))
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
-- [x] Exporting VOC-like dataset for semantic/instance segmentation. ([semantic segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation), [instance segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation))
+- [x] Exporting VOC-like dataset for semantic/instance segmentation. ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
 
 
 
@@ -144,18 +144,18 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 For more advanced usage, please refer to the examples:
 
-* [Tutorial (Single Image Example)](https://github.com/wkentaro/labelme/blob/master/examples/tutorial)
-* [Semantic Segmentation Example](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation)
-* [Instance Segmentation Example](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation)
-* [Video Annotation Example](https://github.com/wkentaro/labelme/blob/master/examples/video_annotation)
+* [Tutorial (Single Image Example)](examples/tutorial)
+* [Semantic Segmentation Example](examples/semantic_segmentation)
+* [Instance Segmentation Example](examples/instance_segmentation)
+* [Video Annotation Example](examples/video_annotation)
 
 
 ## FAQ
 
-- **How to convert JSON file to numpy array?** See [examples/tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial#convert-to-dataset).
-- **How to load label PNG file?** See [examples/tutorial](https://github.com/wkentaro/labelme/blob/master/examples/tutorial#how-to-load-label-png-file).
-- **How to get annotations for semantic segmentation?** See [examples/semantic_segmentation](https://github.com/wkentaro/labelme/blob/master/examples/semantic_segmentation).
-- **How to get annotations for instance segmentation?** See [examples/instance_segmentation](https://github.com/wkentaro/labelme/blob/master/examples/instance_segmentation).
+- **How to convert JSON file to numpy array?** See [examples/tutorial](examples/tutorial#convert-to-dataset).
+- **How to load label PNG file?** See [examples/tutorial](examples/tutorial#how-to-load-label-png-file).
+- **How to get annotations for semantic segmentation?** See [examples/semantic_segmentation](examples/semantic_segmentation).
+- **How to get annotations for instance segmentation?** See [examples/instance_segmentation](examples/instance_segmentation).
 
 
 ## Screencast
