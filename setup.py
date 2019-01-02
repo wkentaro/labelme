@@ -98,7 +98,7 @@ if sys.argv[1] == 'release':
 
 with open('README.md') as f:
     long_description = github2pypi.replace_url(
-        slug='wkentaro/imgviz', content=f.read()
+        slug='wkentaro/labelme', content=f.read()
     )
 
 
