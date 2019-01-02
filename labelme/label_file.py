@@ -121,7 +121,7 @@ class LabelFile(object):
         if otherData is None:
             otherData = {}
         if flags is None:
-            flags = []
+            flags = {}
         data = dict(
             version=__version__,
             flags=flags,
