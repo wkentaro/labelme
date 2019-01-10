@@ -3,13 +3,13 @@
 import logging
 import sys
 
-from qtpy import QT_VERSION
+from qtpy import PYQT_VERSION
 
 
 __appname__ = 'labelme'
 
-QT5 = QT_VERSION[0] == '5'
-del QT_VERSION
+QT5 = PYQT_VERSION[0] == '5'
+del PYQT_VERSION
 
 PY2 = sys.version[0] == '2'
 PY3 = sys.version[0] == '3'
