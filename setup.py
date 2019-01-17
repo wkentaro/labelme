@@ -11,11 +11,6 @@ import sys
 import github2pypi
 
 
-if github2pypi.__file__ is None:
-    print('Please update submodule:\n\n\tgit submodule update --init')
-    sys.exit(1)
-
-
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 assert PY3 or PY2
@@ -98,6 +93,11 @@ if sys.argv[1] == 'release':
     for cmd in commands:
         subprocess.check_call(shlex.split(cmd))
     sys.exit(0)
+
+
+if not hasattr(github2pypi, '__file__'):
+    print('Please update submodule:\n\n\tgit submodule update --init')
+    sys.exit(1)
 
 
 with open('README.md') as f:
