@@ -11,6 +11,11 @@ import sys
 import github2pypi
 
 
+if github2pypi.__file__ is None:
+    print('Please update submodule:\n\n\tgit submodule update --init')
+    sys.exit(1)
+
+
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 assert PY3 or PY2
