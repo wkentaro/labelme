@@ -321,6 +321,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         delete = action('Delete Polygon', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
                         'Delete', enabled=False)
+        rotateRight = action('Rotate Right', self.rotateRightImage,
+                        shortcuts['rotate_right'], 'rotate-right',
+                        'Rotate right the image', enabled=False)
+        rotateLeft = action('Rotate Left', self.rotateLeftImage,
+                             shortcuts['rotate_left'], 'rotate-left',
+                             'Rotate left the image', enabled=False)
         copy = action('Duplicate Polygon', self.copySelectedShape,
                       shortcuts['duplicate_polygon'], 'copy',
                       'Create a duplicate of the selected polygon',
@@ -420,7 +426,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             save=save, saveAs=saveAs, open=open_, close=close,
             lineColor=color1, fillColor=color2,
             toggleKeepPrevMode=toggle_keep_prev_mode,
-            delete=delete, edit=edit, copy=copy,
+            delete=delete, rotateRight=rotateRight, rotateLeft=rotateLeft,
+            edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
             addPoint=addPoint,
             createMode=createMode, editMode=editMode,
@@ -436,7 +443,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             openNextImg=openNextImg, openPrevImg=openPrevImg,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
-            editMenu=(edit, copy, delete, None, undo, undoLastPoint,
+            editMenu=(edit, copy, delete, None, rotateRight,rotateLeft, None, undo, undoLastPoint,
                       None, color1, color2, None, toggle_keep_prev_mode),
             # menu shown at right click
             menu=(
@@ -450,6 +457,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 edit,
                 copy,
                 delete,
+                rotateRight,
+                rotateLeft,
                 shapeLineColor,
                 shapeFillColor,
                 undo,
@@ -465,6 +474,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                rotateRight,
+                rotateLeft
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
@@ -1458,6 +1469,14 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             if self.noShapes():
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
+
+    def rotateRightImage(self):
+        PIL.Image.open(self.filename).rotate(-90, expand=True).save(self.filename)
+        self.loadFile(self.filename)
+
+    def rotateLeftImage(self):
+        PIL.Image.open(self.filename).rotate(90, expand=True).save(self.filename)
+        self.loadFile(self.filename)
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(
