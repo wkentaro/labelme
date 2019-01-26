@@ -6,6 +6,7 @@ import re
 import webbrowser
 
 import PIL.Image
+import PIL.ExifTags
 
 from qtpy import QtCore
 from qtpy.QtCore import Qt
@@ -1152,6 +1153,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                     self.imageData = self.convertImageDataToPng(self.imageData)
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
+
+        rotateAngle=getrotateAngle(filename)
+        if rotateAngle:
+            image = image.transformed(QtGui.QTransform().rotate(rotateAngle))
+
         if image.isNull():
             formats = ['*.{}'.format(fmt.data().decode())
                        for fmt in QtGui.QImageReader.supportedImageFormats()]
@@ -1574,3 +1580,21 @@ def read(filename, default=None):
             return f.read()
     except Exception:
         return default
+
+def getrotateAngle(filename):
+    try:
+        img = PIL.Image.open(filename)
+        for orientation in PIL.ExifTags.TAGS.keys():
+            if PIL.ExifTags.TAGS[orientation] == 'Orientation': break
+        exif = dict(img._getexif().items())
+        if exif[orientation] == 3:
+            return 180
+        elif exif[orientation] == 6:
+            return 90
+        elif exif[orientation] == 8:
+            return -90
+
+    except AttributeError:
+        pass
+
+    return False
