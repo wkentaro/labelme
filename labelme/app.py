@@ -5,8 +5,9 @@ import os.path as osp
 import re
 import webbrowser
 
+import PIL.ExifTags
 import PIL.Image
-
+import PIL.ImageOps
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -1131,16 +1132,12 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
             self.otherData = self.labelFile.otherData
         else:
-            # Load image:
-            # read data first and store for saving into label file.
-            self.imageData = read(filename, None)
-            if self.imageData is not None:
-                # the filename is image not JSON
+            self.imageData = self.loadImageFile(filename)
+            if self.imageData:
                 self.imagePath = filename
-                if QtGui.QImage.fromData(self.imageData).isNull():
-                    self.imageData = self.convertImageDataToPng(self.imageData)
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
+
         if image.isNull():
             formats = ['*.{}'.format(fmt.data().decode())
                        for fmt in QtGui.QImageReader.supportedImageFormats()]
@@ -1172,6 +1169,20 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.toggleActions(True)
         self.status("Loaded %s" % osp.basename(str(filename)))
         return True
+
+    def loadImageFile(self, filename):
+        try:
+            image_pil = PIL.Image.open(filename)
+        except IOError:
+            return
+
+        # apply orientation to image according to exif
+        image_pil = apply_exif_orientation(image_pil)
+
+        with io.BytesIO() as f:
+            image_pil.save(f, format='PNG')
+            f.seek(0)
+            return f.read()
 
     def resizeEvent(self, event):
         if self.canvas and not self.image.isNull()\
@@ -1549,9 +1560,40 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         return images
 
 
-def read(filename, default=None):
-    try:
-        with open(filename, 'rb') as f:
-            return f.read()
-    except Exception:
-        return default
+def apply_exif_orientation(image):
+    exif = image._getexif()
+    if exif is None:
+        return image
+
+    exif = {
+        PIL.ExifTags.TAGS[k]: v
+        for k, v in exif.items()
+        if k in PIL.ExifTags.TAGS
+    }
+
+    orientation = exif['Orientation']
+
+    if orientation == 1:
+        # do nothing
+        return image
+    elif orientation == 2:
+        # left-to-right mirror
+        return PIL.ImageOps.mirror(image)
+    elif orientation == 3:
+        # rotate 180
+        return image.transpose(PIL.Image.ROTATE_180)
+    elif orientation == 4:
+        # top-to-bottom mirror
+        return PIL.ImageOps.flip(image)
+    elif orientation == 5:
+        # top-to-left mirror
+        return PIL.ImageOps.mirror(image.transpose(PIL.Image.ROTATE_270))
+    elif orientation == 6:
+        # rotate 270
+        return image.transpose(PIL.Image.ROTATE_270)
+    elif orientation == 7:
+        # top-to-right mirror
+        return PIL.ImageOps.mirror(image.transpose(PIL.Image.ROTATE_90))
+    elif orientation == 8:
+        # rotate 90
+        return image.transpose(PIL.Image.ROTATE_90)
