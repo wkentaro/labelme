@@ -117,7 +117,7 @@ script:
       fi
 
       # Build the standalone executable
-      pip install pyinstaller
+      pip install 'pyinstaller!=3.4'  # 3.4 raises error
       pyinstaller labelme.spec
       dist/labelme --version
 
