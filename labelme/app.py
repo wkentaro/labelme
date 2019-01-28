@@ -1128,8 +1128,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 osp.dirname(label_file),
                 self.labelFile.imagePath,
             )
-            self.lineColor = QtGui.QColor(*self.labelFile.lineColor)
-            self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
+            if self.labelFile.lineColor is not None:
+                self.lineColor = QtGui.QColor(*self.labelFile.lineColor)
+            if self.labelFile.fillColor is not None:
+                self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
             self.otherData = self.labelFile.otherData
         else:
             self.imageData = self.loadImageFile(filename)
