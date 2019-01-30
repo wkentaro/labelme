@@ -1573,7 +1573,7 @@ def apply_exif_orientation(image):
         if k in PIL.ExifTags.TAGS
     }
 
-    orientation = exif['Orientation']
+    orientation = exif.get('Orientation', None)
 
     if orientation == 1:
         # do nothing
@@ -1599,3 +1599,5 @@ def apply_exif_orientation(image):
     elif orientation == 8:
         # rotate 90
         return image.transpose(PIL.Image.ROTATE_90)
+    else:
+        return image
