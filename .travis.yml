@@ -94,15 +94,20 @@ script:
   # Run pytest
   - pytest -v tests
 
-  # Test labelme executable
   - labelme --help
   - labelme --version
+
   - (cd examples/primitives && labelme_json_to_dataset primitives.json && rm -rf primitives_json)
   - (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
-  - (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
-  - (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
-  - (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
-  - (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py labels.txt data_annotated data_dataset_voc && git checkout -- .)
+  - (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+  - (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+  - (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+
+  - pip install lxml  # for bbox_detection/labelme2voc.py
+  - (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+
+  - pip install cython && pip install pycocotools  # for instance_segmentation/labelme2coco.py
+  - (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
 
   # Run pyinstaller
   - |
