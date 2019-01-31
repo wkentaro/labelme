@@ -8,7 +8,7 @@ labelme data_annotated --labels labels.txt --nodata
 
 ![](.readme/annotation.jpg)
 
-## Convert to VOC-like Dataset
+## Convert to VOC-format Dataset
 
 ```bash
 # It generates:
@@ -36,7 +36,7 @@ labelme_draw_label_png data_dataset_voc/SegmentationObjectPNG/2011_000003.png  #
 <img src=".readme/draw_label_png_class.jpg" width="33%" /> <img src=".readme/draw_label_png_object.jpg" width="33%" />
 
 
-## Convert to COCO-like Dataset
+## Convert to COCO-format Dataset
 
 ```bash
 # It generates:

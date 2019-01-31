@@ -10,7 +10,7 @@ labelme data_annotated --labels labels.txt --nodata --autosave
 ![](.readme/annotation.jpg)
 
 
-## Convert to VOC-like Dataset
+## Convert to VOC-format Dataset
 
 ```bash
 # It generates:
