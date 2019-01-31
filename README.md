@@ -31,6 +31,7 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] Video annotation. ([video annotation](examples/video_annotation))
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
 - [x] Exporting VOC-like dataset for semantic/instance segmentation. ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
+- [x] Exporting COCO-like dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
 
 
 

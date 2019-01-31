@@ -34,3 +34,13 @@ labelme_draw_label_png data_dataset_voc/SegmentationObjectPNG/2011_000003.png  #
 ```
 
 <img src=".readme/draw_label_png_class.jpg" width="33%" /> <img src=".readme/draw_label_png_object.jpg" width="33%" />
+
+
+## Convert to COCO-like Dataset
+
+```bash
+# It generates:
+#   - data_dataset_coco/JPEGImages
+#   - data_dataset_coco/annotations.json
+./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt
+```
