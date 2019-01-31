@@ -7,9 +7,14 @@ import glob
 import json
 import os
 import os.path as osp
+import sys
 
-import lxml.builder
-import lxml.etree
+try:
+    import lxml.builder
+    import lxml.etree
+except ImportError:
+    print('Please install lxml:\n\n    pip install lxml\n')
+    sys.exit(1)
 import numpy as np
 import PIL.Image
 
