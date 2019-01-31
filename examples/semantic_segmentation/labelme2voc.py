@@ -7,6 +7,7 @@ import glob
 import json
 import os
 import os.path as osp
+import sys
 
 import numpy as np
 import PIL.Image
