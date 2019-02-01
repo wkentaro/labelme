@@ -1563,7 +1563,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
 
 def apply_exif_orientation(image):
-    exif = image._getexif()
+    try:
+        exif = image._getexif()
+    except AttributeError:
+        exif = None
+
     if exif is None:
         return image
 
