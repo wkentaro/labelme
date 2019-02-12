@@ -10,7 +10,7 @@ import shlex
 import subprocess
 import sys
 
-from labelme import logger
+from labelme.logger import logger
 
 
 def get_ip():

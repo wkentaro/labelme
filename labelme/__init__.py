@@ -15,10 +15,6 @@ PY2 = sys.version[0] == '2'
 PY3 = sys.version[0] == '3'
 del sys
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__appname__)
-del logging
-
 
 from labelme._version import __version__
 

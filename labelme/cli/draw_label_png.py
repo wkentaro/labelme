@@ -1,17 +1,14 @@
 import argparse
-import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 
+from labelme.logger import logger
 from labelme import utils
 
 
 def main():
-    logger = logging.Logger('labelme')
-    logger.setLevel(logging.INFO)
-
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('label_png', help='label PNG file')

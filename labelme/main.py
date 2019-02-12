@@ -9,7 +9,7 @@ from labelme import __appname__
 from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_config
-from labelme import logger
+from labelme.logger import logger
 from labelme.utils import newIcon
 
 

@@ -3,7 +3,7 @@ import os.path as osp
 import numpy as np
 import PIL.Image
 
-from labelme import logger
+from labelme.logger import logger
 from labelme.utils.draw import label_colormap
 
 

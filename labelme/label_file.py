@@ -2,10 +2,10 @@ import base64
 import json
 import os.path
 
-from . import logger
-from . import PY2
-from . import utils
-from ._version import __version__
+from labelme._version import __version__
+from labelme.logger import logger
+from labelme import PY2
+from labelme import utils
 
 
 class LabelFileError(Exception):

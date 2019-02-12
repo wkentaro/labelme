@@ -36,6 +36,7 @@ install_requires = [
     'Pillow>=2.8.0',
     'PyYAML',
     'qtpy',
+    'termcolor',
 ]
 
 # Find python binding for qt with priority:

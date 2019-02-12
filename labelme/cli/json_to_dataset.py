@@ -8,7 +8,7 @@ import warnings
 import PIL.Image
 import yaml
 
-from .. import logger
+from ..logger import logger
 from .. import utils
 
 

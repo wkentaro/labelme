@@ -5,7 +5,7 @@ from qtpy import QtWidgets
 
 QT5 = QT_VERSION[0] == '5'  # NOQA
 
-from labelme import logger
+from labelme.logger import logger
 import labelme.utils
 
 
