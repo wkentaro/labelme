@@ -3,13 +3,12 @@ import base64
 import json
 import os
 import os.path as osp
-import warnings
 
 import PIL.Image
 import yaml
 
-from ..logger import logger
-from .. import utils
+from labelme.logger import logger
+from labelme import utils
 
 
 def main():
