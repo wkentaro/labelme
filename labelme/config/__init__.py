@@ -45,8 +45,14 @@ def get_default_config():
 
 def validate_config_item(key, value):
     if key == 'validate_label' and value not in [None, 'exact', 'instance']:
-        raise ValueError('Unexpected value `{}` for key `{}`'
-                         .format(value, key))
+        raise ValueError(
+            "Unexpected value for config key 'validate_label': {}"
+            .format(value)
+        )
+    if key == 'labels' and value is not None and len(value) != len(set(value)):
+        raise ValueError(
+            "Duplicates are detected for config key 'labels': {}".format(value)
+        )
 
 
 def get_config(config_from_args=None, config_file=None):
