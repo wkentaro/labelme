@@ -817,7 +817,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if not self.canvas.editing():
             return
         item = item if item else self.currentItem()
-        text = self.labelDialog.popUp(item.text())
+        text = self.labelDialog.popUp(item.text() if item else None)
         if text is None:
             return
         if not self.validateLabel(text):
