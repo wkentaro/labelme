@@ -14,6 +14,13 @@ from labelme.utils import newIcon
 
 
 def main():
+    try:
+        _main()
+    except Exception as e:
+        logger.error(e)
+
+
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--version', '-V', action='store_true', help='show version'
@@ -140,14 +147,10 @@ def main():
     )
 
     if reset_config:
-        print('Resetting Qt config: %s' % win.settings.fileName())
+        logger.info('Resetting Qt config: %s' % win.settings.fileName())
         win.settings.clear()
         sys.exit(0)
 
     win.show()
     win.raise_()
     sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
