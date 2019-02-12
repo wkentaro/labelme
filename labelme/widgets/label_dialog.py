@@ -138,7 +138,8 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setSelection(0, len(text))
         items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
         if items:
-            assert len(items) == 1
+            if len(items) != 1:
+                logger.warning("Label list has duplicate '{}'".format(text))
             self.labelList.setCurrentItem(items[0])
             row = self.labelList.row(items[0])
             self.edit.completer().setCurrentRow(row)
