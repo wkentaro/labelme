@@ -8,13 +8,14 @@ import warnings
 import PIL.Image
 import yaml
 
-from labelme import utils
+from .. import logger
+from .. import utils
 
 
 def main():
-    warnings.warn("This script is aimed to demonstrate how to convert the\n"
-                  "JSON file to a single image dataset, and not to handle\n"
-                  "multiple JSON files to generate a real-use dataset.")
+    logger.warning('This script is aimed to demonstrate how to convert the'
+                   'JSON file to a single image dataset, and not to handle'
+                   'multiple JSON files to generate a real-use dataset.')
 
     parser = argparse.ArgumentParser()
     parser.add_argument('json_file')
@@ -65,12 +66,12 @@ def main():
         for lbl_name in label_names:
             f.write(lbl_name + '\n')
 
-    warnings.warn('info.yaml is being replaced by label_names.txt')
+    logger.warning('info.yaml is being replaced by label_names.txt')
     info = dict(label_names=label_names)
     with open(osp.join(out_dir, 'info.yaml'), 'w') as f:
         yaml.safe_dump(info, f, default_flow_style=False)
 
-    print('Saved to: %s' % out_dir)
+    logger.info('Saved to: {}'.format(out_dir))
 
 
 if __name__ == '__main__':
