@@ -649,7 +649,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
-        self.actions.deleteFile.setEnabled(True)
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
         title = __appname__
         if self.filename is not None:
@@ -659,7 +658,6 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.deleteFile.setEnabled(False)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
@@ -670,6 +668,11 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         if self.filename is not None:
             title = '{} - {}'.format(title, self.filename)
         self.setWindowTitle(title)
+
+        if self.hasLabelFile():
+            self.actions.deleteFile.setEnabled(True)
+        else:
+            self.actions.deleteFile.setEnabled(False)
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
@@ -1417,13 +1420,19 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.canvas.setEnabled(False)
         self.actions.saveAs.setEnabled(False)
 
-    def deleteFile(self):
+    def getLabelFile(self):
         if self.filename.lower().endswith('.json'):
-            os.remove(self.filename)
+            label_file = self.filename
         else:
             label_file = osp.splitext(self.filename)[0] + '.json'
-            if osp.exists(label_file):
-                os.remove(label_file)
+
+        return label_file
+
+    def deleteFile(self):
+        label_file = self.getLabelFile()        
+        if osp.exists(label_file):
+            os.remove(label_file)
+            logger.info('%s removed', label_file)
 
         self.importDirImages(self.lastOpenDir)
 
@@ -1435,6 +1444,13 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 'You must label at least one object to save the file.')
             return False
         return True
+
+    def hasLabelFile(self):
+        if self.filename is None:
+            return False
+
+        label_file = self.getLabelFile()
+        return osp.exists(label_file)
 
     def mayContinue(self):
         if not self.dirty:
