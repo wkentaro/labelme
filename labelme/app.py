@@ -1429,12 +1429,17 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         return label_file
 
     def deleteFile(self):
-        label_file = self.getLabelFile()        
-        if osp.exists(label_file):
-            os.remove(label_file)
-            logger.info('%s removed', label_file)
+        mb = QtWidgets.QMessageBox
+        msg = 'You are about to permanently delete this label file, ' \
+              'proceed anyway?'
+        answer = mb.warning(self, 'Attention', msg, mb.Yes | mb.No)
+        if answer == mb.Yes:
+            label_file = self.getLabelFile()
+            if osp.exists(label_file):
+                os.remove(label_file)
+                logger.info('%s removed', label_file)
 
-        self.importDirImages(self.lastOpenDir)
+            self.importDirImages(self.lastOpenDir)
 
     # Message Dialogs. #
     def hasLabels(self):
