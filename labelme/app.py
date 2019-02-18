@@ -232,6 +232,15 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         saveAs = action('&Save As', self.saveFileAs, shortcuts['save_as'],
                         'save-as', 'Save labels to a different file',
                         enabled=False)
+
+        deleteFile = action(
+            '&Delete File',
+            self.deleteFile,
+            shortcuts['delete_file'],
+            'delete',
+            'Delete current label file',
+            enabled=False)
+
         changeOutputDir = action(
             '&Change Output Dir',
             slot=self.changeOutputDirDialog,
@@ -419,6 +428,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             saveAuto=saveAuto,
             changeOutputDir=changeOutputDir,
             save=save, saveAs=saveAs, open=open_, close=close,
+            deleteFile=deleteFile,
             lineColor=color1, fillColor=color2,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete, edit=edit, copy=copy,
@@ -484,7 +494,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         addActions(self.menus.file, (open_, openNextImg, openPrevImg, opendir,
                                      self.menus.recentFiles,
                                      save, saveAs, saveAuto, changeOutputDir,
-                                     close,
+                                     close, deleteFile,
                                      None,
                                      quit))
         addActions(self.menus.help, (help,))
@@ -524,6 +534,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             openNextImg,
             openPrevImg,
             save,
+            deleteFile,
             None,
             createMode,
             editMode,
@@ -638,6 +649,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
+        self.actions.deleteFile.setEnabled(True)
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
         title = __appname__
         if self.filename is not None:
@@ -647,6 +659,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
+        self.actions.deleteFile.setEnabled(False)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
@@ -1403,6 +1416,16 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         self.toggleActions(False)
         self.canvas.setEnabled(False)
         self.actions.saveAs.setEnabled(False)
+
+    def deleteFile(self):
+        if self.filename.lower().endswith('.json'):
+            os.remove(self.filename)
+        else:
+            label_file = osp.splitext(self.filename)[0] + '.json'
+            if osp.exists(label_file):
+                os.remove(label_file)
+
+        self.importDirImages(self.lastOpenDir)
 
     # Message Dialogs. #
     def hasLabels(self):
