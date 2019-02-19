@@ -1439,7 +1439,8 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
                 os.remove(label_file)
                 logger.info('%s removed', label_file)
 
-            self.importDirImages(self.lastOpenDir)
+                item = self.fileListWidget.currentItem()
+                item.setCheckState(Qt.Unchecked)
 
     # Message Dialogs. #
     def hasLabels(self):
