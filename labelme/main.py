@@ -154,3 +154,8 @@ def _main():
     win.show()
     win.raise_()
     sys.exit(app.exec_())
+
+
+# this main block is required to generate executable by pyinstaller
+if __name__ == '__main__':
+    main()
