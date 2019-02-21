@@ -14,14 +14,14 @@ RUN \
   apt-get update -qq && \
   apt-get upgrade -qq -y && \
   apt-get install -qq -y \
+    # requirements
     git \
     python3 \
-    python3-pip
-
-RUN \
-  apt-get install -qq -y \
+    python3-pip \
     python3-matplotlib \
-    python3-pyqt5
+    python3-pyqt5 \
+    # utilities
+    sudo
 
 RUN pip3 install -v git+https://github.com/wkentaro/labelme.git
 
