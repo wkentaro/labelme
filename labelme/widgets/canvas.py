@@ -146,10 +146,13 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
-        if QT5:
-            pos = self.transformPos(ev.pos())
-        else:
-            pos = self.transformPos(ev.posF())
+        try:
+            if QT5:
+                pos = self.transformPos(ev.pos())
+            else:
+                pos = self.transformPos(ev.posF())
+        except AttributeError:
+            return
 
         self.prevMovePoint = pos
         self.restoreCursor()

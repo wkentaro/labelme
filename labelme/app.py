@@ -1444,7 +1444,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
             item = self.fileListWidget.currentItem()
             item.setCheckState(Qt.Unchecked)
 
-            self.labelList.clear()
+            self.resetState()
 
     # Message Dialogs. #
     def hasLabels(self):
