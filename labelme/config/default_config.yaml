@@ -2,6 +2,7 @@ auto_save: false
 display_label_popup: true
 store_data: true
 keep_prev: false
+logger_level: info
 
 flags: null
 labels: null
