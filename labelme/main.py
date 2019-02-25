@@ -1,5 +1,6 @@
 import argparse
 import codecs
+import logging
 import os
 import sys
 
@@ -27,6 +28,12 @@ def _main():
     )
     parser.add_argument(
         '--reset-config', action='store_true', help='reset qt config'
+    )
+    parser.add_argument(
+        '--logger-level',
+        default='info',
+        choices=['debug', 'info', 'warning', 'fatal', 'error'],
+        help='logger level',
     )
     parser.add_argument('filename', nargs='?', help='image or label filename')
     parser.add_argument(
@@ -99,6 +106,8 @@ def _main():
     if args.version:
         print('{0} {1}'.format(__appname__, __version__))
         sys.exit(0)
+
+    logger.setLevel(getattr(logging, args.logger_level.upper()))
 
     if hasattr(args, 'flags'):
         if os.path.isfile(args.flags):
