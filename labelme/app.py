@@ -36,7 +36,8 @@ from labelme.widgets import LabelDialog
 from labelme.widgets import LabelQListWidget
 from labelme.widgets import ToolBar
 from labelme.widgets import ZoomWidget
-
+from skimage import io as skio
+from scipy.misc import bytescale
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -1190,7 +1191,10 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
 
     def loadImageFile(self, filename):
         try:
-            image_pil = PIL.Image.open(filename)
+            image_raw = skio.imread(filename)
+            image_np = bytescale(image_raw)
+            image_pil = PIL.Image.fromarray(image_np)
+            #image_pil = PIL.Image.open(filename)
         except IOError:
             return
 
@@ -1312,6 +1316,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
         path = osp.dirname(str(self.filename)) if self.filename else '.'
         formats = ['*.{}'.format(fmt.data().decode())
                    for fmt in QtGui.QImageReader.supportedImageFormats()]
+        formats.append('*.mim')
         filters = "Image & Label files (%s)" % ' '.join(
             formats + ['*%s' % LabelFile.suffix])
         filename = QtWidgets.QFileDialog.getOpenFileName(
@@ -1600,6 +1605,7 @@ class MainWindow(QtWidgets.QMainWindow, WindowMixin):
     def scanAllImages(self, folderPath):
         extensions = ['.%s' % fmt.data().decode("ascii").lower()
                       for fmt in QtGui.QImageReader.supportedImageFormats()]
+        extensions.append('.mim')
         images = []
 
         for root, dirs, files in os.walk(folderPath):
