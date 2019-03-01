@@ -8,8 +8,6 @@ import shlex
 import subprocess
 import sys
 
-import github2pypi
-
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -95,14 +93,17 @@ if sys.argv[1] == 'release':
     sys.exit(0)
 
 
-if not hasattr(github2pypi, '__file__'):
-    print('Please update submodule:\n\n\tgit submodule update --init')
-    sys.exit(1)
+def get_long_description():
+    with open('README.md') as f:
+        long_description = f.read()
 
+    try:
+        import github2pypi
+    except ImportError:
+        return long_description
 
-with open('README.md') as f:
-    long_description = github2pypi.replace_url(
-        slug='wkentaro/labelme', content=f.read()
+    return github2pypi.replace_url(
+        slug='wkentaro/labelme', content=long_description
     )
 
 
@@ -111,7 +112,7 @@ setup(
     version=version,
     packages=find_packages(),
     description='Image Polygonal Annotation with Python',
-    long_description=long_description,
+    long_description=get_long_description(),
     long_description_content_type='text/markdown',
     author='Kentaro Wada',
     author_email='www.kentaro.wada@gmail.com',
