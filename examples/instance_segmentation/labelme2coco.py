@@ -117,7 +117,8 @@ def main():
 
             segmentation = [item for sublist in points for item in sublist]
 
-            area = labelme.utils.shape_to_mask(img.shape[:2], points, shape_type)
+            area = labelme.utils.shape_to_mask(
+                img.shape[:2], points, shape_type)
             area = np.asfortranarray(area.astype(np.uint8))
             area = pycocotools.mask.encode(area)
             area = float(pycocotools.mask.area(area))
