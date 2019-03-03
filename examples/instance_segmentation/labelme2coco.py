@@ -7,7 +7,6 @@ import json
 import os
 import os.path as osp
 import sys
-import itertools
 
 import numpy as np
 import PIL.Image
@@ -116,7 +115,7 @@ def main():
             label = shape['label']
             shape_type = shape.get('shape_type', None)
 
-            segmentation = list(itertools.chain.from_iterable(points))
+            segmentation = [item for sublist in points for item in sublist]
 
             area = labelme.utils.shape_to_mask(img.shape[:2], points, shape_type)
             area = np.asfortranarray(area.astype(np.uint8))
