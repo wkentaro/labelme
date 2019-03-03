@@ -7,6 +7,7 @@ import json
 import os
 import os.path as osp
 import sys
+import itertools
 
 import numpy as np
 import PIL.Image
@@ -82,6 +83,7 @@ def main():
 
     out_ann_file = osp.join(args.output_dir, 'annotations.json')
     label_files = glob.glob(osp.join(args.input_dir, '*.json'))
+    segmentation_id = 0
     for image_id, label_file in enumerate(label_files):
         print('Generating dataset from:', label_file)
         with open(label_file) as f:
@@ -107,36 +109,40 @@ def main():
             id=image_id,
         ))
 
-        masks = {}
+        segmentations = {}
+        areas = {}
         for shape in label_data['shapes']:
             points = shape['points']
             label = shape['label']
             shape_type = shape.get('shape_type', None)
-            mask = labelme.utils.shape_to_mask(
-                img.shape[:2], points, shape_type
-            )
 
-            mask = np.asfortranarray(mask.astype(np.uint8))
-            if label in masks:
-                masks[label] = masks[label] | mask
-            else:
-                masks[label] = mask
+            segmentation = list(itertools.chain.from_iterable(points))
 
-        for label, mask in masks.items():
+            area = labelme.utils.shape_to_mask(img.shape[:2], points, shape_type)
+            area = np.asfortranarray(area.astype(np.uint8))
+            area = pycocotools.mask.encode(area)
+            area = float(pycocotools.mask.area(area))
+
+            segmentations[label] = segmentation
+            areas[label] = area
+
+        for label, segmentation in segmentations.items():
+
             cls_name = label.split('-')[0]
             if cls_name not in class_name_to_id:
                 continue
             cls_id = class_name_to_id[cls_name]
-            segmentation = pycocotools.mask.encode(mask)
-            segmentation['counts'] = segmentation['counts'].decode()
-            area = float(pycocotools.mask.area(segmentation))
             data['annotations'].append(dict(
-                segmentation=segmentation,
-                area=area,
+                # segmentation=segmentation,
+                segmentation=[segmentation],
+                area=areas[label],
                 iscrowd=None,
                 image_id=image_id,
                 category_id=cls_id,
+                id=segmentation_id,
             ))
+
+            segmentation_id += 1
 
     with open(out_ann_file, 'w') as f:
         json.dump(data, f)
