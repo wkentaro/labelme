@@ -48,7 +48,7 @@ class LabelFile(object):
                     imageData = f.read()
             flags = data.get('flags')
             imagePath = data['imagePath']
-            self._check_image_height_and_width(
+            imageHeight, imageWidth = self._check_image_height_and_width(
                 base64.b64encode(imageData).decode('utf-8'),
                 data.get('imageHeight'),
                 data.get('imageWidth'),
@@ -78,6 +78,8 @@ class LabelFile(object):
         self.shapes = shapes
         self.imagePath = imagePath
         self.imageData = imageData
+        self.imageHeight = imageHeight
+        self.imageWidth = imageWidth
         self.lineColor = lineColor
         self.fillColor = fillColor
         self.filename = filename
