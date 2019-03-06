@@ -16,7 +16,7 @@
 <br/>
 
 <div align="center">
-  <img src="examples/instance_segmentation/.readme/annotation.jpg" width="80%">
+  <img src="examples/instance_segmentation/.readme/annotation.jpg" width="500px">
 </div>
 
 ## Description
