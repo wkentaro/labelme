@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import collections
 import datetime
 import glob
 import json
@@ -107,7 +108,8 @@ def main():
             id=image_id,
         ))
 
-        masks = {}
+        masks = {}                                     # for area
+        segmentations = collections.defaultdict(list)  # for segmentation
         for shape in label_data['shapes']:
             points = shape['points']
             label = shape['label']
@@ -116,22 +118,27 @@ def main():
                 img.shape[:2], points, shape_type
             )
 
-            mask = np.asfortranarray(mask.astype(np.uint8))
             if label in masks:
                 masks[label] = masks[label] | mask
             else:
                 masks[label] = mask
+
+            points = np.asarray(points).flatten().tolist()
+            segmentations[label].append(points)
 
         for label, mask in masks.items():
             cls_name = label.split('-')[0]
             if cls_name not in class_name_to_id:
                 continue
             cls_id = class_name_to_id[cls_name]
-            segmentation = pycocotools.mask.encode(mask)
-            segmentation['counts'] = segmentation['counts'].decode()
-            area = float(pycocotools.mask.area(segmentation))
+
+            mask = np.asfortranarray(mask.astype(np.uint8))
+            mask = pycocotools.mask.encode(mask)
+            area = float(pycocotools.mask.area(mask))
+
             data['annotations'].append(dict(
-                segmentation=segmentation,
+                id=len(data['annotations']),
+                segmentation=segmentations[label],
                 area=area,
                 iscrowd=None,
                 image_id=image_id,
