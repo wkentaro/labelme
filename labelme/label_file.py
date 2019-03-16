@@ -1,7 +1,7 @@
 import base64
 import io
 import json
-import os.path
+import os.path as osp
 
 import PIL.Image
 
@@ -38,7 +38,11 @@ class LabelFile(object):
         image_pil = utils.apply_exif_orientation(image_pil)
 
         with io.BytesIO() as f:
-            image_pil.save(f, format='PNG')
+            ext = osp.splitext(filename)[1].lower()
+            if ext in ['.jpg', '.jpeg']:
+                image_pil.save(f, format='JPEG')
+            else:
+                image_pil.save(f, format='PNG')
             f.seek(0)
             return f.read()
 
@@ -60,9 +64,7 @@ class LabelFile(object):
                 imageData = base64.b64decode(data['imageData'])
             else:
                 # relative path from label file to relative path from cwd
-                imagePath = os.path.join(
-                    os.path.dirname(filename), data['imagePath']
-                )
+                imagePath = osp.join(osp.dirname(filename), data['imagePath'])
                 imageData = self.load_image_file(imagePath)
             flags = data.get('flags')
             imagePath = data['imagePath']
@@ -162,4 +164,4 @@ class LabelFile(object):
 
     @staticmethod
     def is_label_file(filename):
-        return os.path.splitext(filename)[1].lower() == LabelFile.suffix
+        return osp.splitext(filename)[1].lower() == LabelFile.suffix
