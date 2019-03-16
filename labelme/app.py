@@ -17,6 +17,7 @@ from labelme import __appname__
 from labelme import PY2
 from labelme import QT5
 
+from . import utils
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
@@ -24,11 +25,6 @@ from labelme.logger import logger
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
 from labelme.shape import Shape
-from labelme.utils import addActions
-from labelme.utils import fmtShortcut
-from labelme.utils import newAction
-from labelme.utils import newIcon
-from labelme.utils import struct
 from labelme.widgets import Canvas
 from labelme.widgets import ColorDialog
 from labelme.widgets import EscapableQListWidget
@@ -186,7 +182,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
         # Actions
-        action = functools.partial(newAction, self)
+        action = functools.partial(utils.newAction, self)
         shortcuts = self._config['shortcuts']
         quit = action('&Quit', self.close, shortcuts['quit'], 'quit',
                       'Quit application')
@@ -341,11 +337,17 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
-            "Zoom in or out of the image. Also accessible with"
-            " %s and %s from the canvas." %
-            (fmtShortcut('%s,%s' % (shortcuts['zoom_in'],
-                                    shortcuts['zoom_out'])),
-             fmtShortcut("Ctrl+Wheel")))
+            'Zoom in or out of the image. Also accessible with '
+            '{} and {} from the canvas.'
+            .format(
+                utils.fmtShortcut(
+                    '{},{}'.format(
+                        shortcuts['zoom_in'], shortcuts['zoom_out']
+                    )
+                ),
+                utils.fmtShortcut("Ctrl+Wheel"),
+            )
+        )
         self.zoomWidget.setEnabled(False)
 
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 10),
@@ -401,13 +403,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
-        addActions(labelMenu, (edit, delete))
+        utils.addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(
             self.popLabelListMenu)
 
         # Store actions for further handling.
-        self.actions = struct(
+        self.actions = utils.struct(
             saveAuto=saveAuto,
             changeOutputDir=changeOutputDir,
             save=save, saveAs=saveAs, open=open_, close=close,
@@ -465,7 +467,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas.edgeSelected.connect(self.actions.addPoint.setEnabled)
 
-        self.menus = struct(
+        self.menus = utils.struct(
             file=self.menu('&File'),
             edit=self.menu('&Edit'),
             view=self.menu('&View'),
@@ -474,40 +476,59 @@ class MainWindow(QtWidgets.QMainWindow):
             labelList=labelMenu,
         )
 
-        addActions(self.menus.file, (open_, openNextImg, openPrevImg, opendir,
-                                     self.menus.recentFiles,
-                                     save, saveAs, saveAuto, changeOutputDir,
-                                     close, deleteFile,
-                                     None,
-                                     quit))
-        addActions(self.menus.help, (help,))
-        addActions(self.menus.view, (
-            self.flag_dock.toggleViewAction(),
-            self.label_dock.toggleViewAction(),
-            self.shape_dock.toggleViewAction(),
-            self.file_dock.toggleViewAction(),
-            None,
-            fill_drawing,
-            None,
-            hideAll,
-            showAll,
-            None,
-            zoomIn,
-            zoomOut,
-            zoomOrg,
-            None,
-            fitWindow,
-            fitWidth,
-            None,
-        ))
+        utils.addActions(
+            self.menus.file,
+            (
+                open_,
+                openNextImg,
+                openPrevImg,
+                opendir,
+                self.menus.recentFiles,
+                save,
+                saveAs,
+                saveAuto,
+                changeOutputDir,
+                close,
+                deleteFile,
+                None,
+                quit,
+            ),
+        )
+        utils.addActions(self.menus.help, (help,))
+        utils.addActions(
+            self.menus.view,
+            (
+                self.flag_dock.toggleViewAction(),
+                self.label_dock.toggleViewAction(),
+                self.shape_dock.toggleViewAction(),
+                self.file_dock.toggleViewAction(),
+                None,
+                fill_drawing,
+                None,
+                hideAll,
+                showAll,
+                None,
+                zoomIn,
+                zoomOut,
+                zoomOrg,
+                None,
+                fitWindow,
+                fitWidth,
+                None,
+            ),
+        )
 
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        addActions(self.canvas.menus[0], self.actions.menu)
-        addActions(self.canvas.menus[1], (
-            action('&Copy here', self.copyShape),
-            action('&Move here', self.moveShape)))
+        utils.addActions(self.canvas.menus[0], self.actions.menu)
+        utils.addActions(
+            self.canvas.menus[1],
+            (
+                action('&Copy here', self.copyShape),
+                action('&Move here', self.moveShape),
+            ),
+        )
 
         self.tools = self.toolbar('Tools')
         # Menu buttons on Left
@@ -603,7 +624,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
-            addActions(menu, actions)
+            utils.addActions(menu, actions)
         return menu
 
     def toolbar(self, title, actions=None):
@@ -612,7 +633,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # toolbar.setOrientation(Qt.Vertical)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         if actions:
-            addActions(toolbar, actions)
+            utils.addActions(toolbar, actions)
         self.addToolBar(Qt.LeftToolBarArea, toolbar)
         return toolbar
 
@@ -624,9 +645,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def populateModeActions(self):
         tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
-        addActions(self.tools, tool)
+        utils.addActions(self.tools, tool)
         self.canvas.menus[0].clear()
-        addActions(self.canvas.menus[0], menu)
+        utils.addActions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
         actions = (
             self.actions.createMode,
@@ -637,7 +658,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createLineStripMode,
             self.actions.editMode,
         )
-        addActions(self.menus.edit, actions + self.actions.editMenu)
+        utils.addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
         if self._config['auto_save'] or self.actions.saveAuto.isChecked():
@@ -803,7 +824,7 @@ class MainWindow(QtWidgets.QMainWindow):
         menu.clear()
         files = [f for f in self.recentFiles if f != current and exists(f)]
         for i, f in enumerate(files):
-            icon = newIcon('labels')
+            icon = utils.newIcon('labels')
             action = QtWidgets.QAction(
                 icon, '&%d %s' % (i + 1, QtCore.QFileInfo(f).fileName()), self)
             action.triggered.connect(functools.partial(self.loadRecent, f))
@@ -1080,16 +1101,6 @@ class MainWindow(QtWidgets.QMainWindow):
         for item, shape in self.labelList.itemsToShapes:
             item.setCheckState(Qt.Checked if value else Qt.Unchecked)
 
-    def convertImageDataToPng(self, imageData):
-        if imageData is None:
-            return
-        img = PIL.Image.open(io.BytesIO(imageData))
-        with io.BytesIO() as imgBytesIO:
-            img.save(imgBytesIO, "PNG")
-            imgBytesIO.seek(0)
-            data = imgBytesIO.read()
-        return data
-
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
@@ -1123,8 +1134,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 # https://github.com/ContinuumIO/anaconda-issues/issues/131
                 if QtGui.QImage.fromData(self.labelFile.imageData).isNull():
                     # tries to read image with PIL and convert it to PNG
-                    self.labelFile.imageData = self.convertImageDataToPng(
-                        self.labelFile.imageData)
+                    if self.labelFile.imageData is not None:
+                        self.labelFile.imageData = utils.img_data_to_png_data(
+                            self.labelFile.imageData
+                        )
                 if QtGui.QImage.fromData(self.labelFile.imageData).isNull():
                     raise LabelFileError(
                         'Failed loading image data from label file.\n'
