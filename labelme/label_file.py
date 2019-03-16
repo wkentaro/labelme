@@ -8,6 +8,7 @@ import PIL.Image
 from labelme._version import __version__
 from labelme.logger import logger
 from labelme import PY2
+from labelme import QT4
 from labelme import utils
 
 
@@ -32,6 +33,7 @@ class LabelFile(object):
         try:
             image_pil = PIL.Image.open(filename)
         except IOError:
+            logger.error('Failed opening image file: {}'.format(filename))
             return
 
         # apply orientation to image according to exif
@@ -39,10 +41,13 @@ class LabelFile(object):
 
         with io.BytesIO() as f:
             ext = osp.splitext(filename)[1].lower()
-            if ext in ['.jpg', '.jpeg']:
-                image_pil.save(f, format='JPEG')
+            if PY2 and QT4:
+                format = 'PNG'
+            elif ext in ['.jpg', '.jpeg']:
+                format = 'JPEG'
             else:
-                image_pil.save(f, format='PNG')
+                format = 'PNG'
+            image_pil.save(f, format=format)
             f.seek(0)
             return f.read()
 
@@ -62,6 +67,8 @@ class LabelFile(object):
                 data = json.load(f)
             if data['imageData'] is not None:
                 imageData = base64.b64decode(data['imageData'])
+                if PY2 and QT4:
+                    imageData = utils.img_data_to_png_data(imageData)
             else:
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data['imagePath'])

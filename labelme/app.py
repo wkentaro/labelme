@@ -1125,20 +1125,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 LabelFile.is_label_file(label_file):
             try:
                 self.labelFile = LabelFile(label_file)
-                # FIXME: PyQt4 installed via Anaconda fails to load JPEG
-                # and JSON encoded images.
-                # https://github.com/ContinuumIO/anaconda-issues/issues/131
-                if QtGui.QImage.fromData(self.labelFile.imageData).isNull():
-                    # tries to read image with PIL and convert it to PNG
-                    if self.labelFile.imageData is not None:
-                        self.labelFile.imageData = utils.img_data_to_png_data(
-                            self.labelFile.imageData
-                        )
-                if QtGui.QImage.fromData(self.labelFile.imageData).isNull():
-                    raise LabelFileError(
-                        'Failed loading image data from label file.\n'
-                        'Maybe this is a known issue of PyQt4 built on'
-                        ' Anaconda, and may be fixed by installing PyQt5.')
             except LabelFileError as e:
                 self.errorMessage(
                     'Error opening file',
