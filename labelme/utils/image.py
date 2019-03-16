@@ -22,3 +22,14 @@ def img_arr_to_b64(img_arr):
     else:
         img_b64 = base64.encodestring(img_bin)
     return img_b64
+
+
+def img_data_to_png_data(img_data):
+    with io.BytesIO() as f:
+        f.write(img_data)
+        img = PIL.Image.open(f)
+
+        with io.BytesIO() as f:
+            img.save(f, 'PNG')
+            f.seek(0)
+            return f.read()
