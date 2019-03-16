@@ -32,11 +32,14 @@ def test_MainWindow_annotate_jpg(qtbot):
     filename = osp.join(tmp_dir, 'apc2016_obj3.jpg')
     shutil.copy(osp.join(data_dir, 'apc2016_obj3.jpg'),
                 filename)
-    output = osp.join(tmp_dir, 'apc2016_obj3.json')
+    output_file = osp.join(tmp_dir, 'apc2016_obj3.json')
 
     config = labelme.config.get_default_config()
     win = labelme.app.MainWindow(
-        config=config, filename=filename, output=output)
+        config=config,
+        filename=filename,
+        output_file=output_file,
+    )
     qtbot.addWidget(win)
     win.show()
 
@@ -58,4 +61,4 @@ def test_MainWindow_annotate_jpg(qtbot):
     win.loadLabels(shapes)
     win.saveFile()
 
-    labelme.testing.assert_labelfile_sanity(output)
+    labelme.testing.assert_labelfile_sanity(output_file)
