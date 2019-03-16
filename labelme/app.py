@@ -1,13 +1,9 @@
 import functools
-import io
 import os
 import os.path as osp
 import re
 import webbrowser
 
-import PIL.ExifTags
-import PIL.Image
-import PIL.ImageOps
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -1126,7 +1122,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.output_dir:
             label_file = osp.join(self.output_dir, label_file)
         if QtCore.QFile.exists(label_file) and \
-                LabelFile.isLabelFile(label_file):
+                LabelFile.is_label_file(label_file):
             try:
                 self.labelFile = LabelFile(label_file)
                 # FIXME: PyQt4 installed via Anaconda fails to load JPEG
@@ -1162,7 +1158,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
             self.otherData = self.labelFile.otherData
         else:
-            self.imageData = self.loadImageFile(filename)
+            self.imageData = LabelFile.load_image_file(filename)
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None
@@ -1199,20 +1195,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toggleActions(True)
         self.status("Loaded %s" % osp.basename(str(filename)))
         return True
-
-    def loadImageFile(self, filename):
-        try:
-            image_pil = PIL.Image.open(filename)
-        except IOError:
-            return
-
-        # apply orientation to image according to exif
-        image_pil = utils.apply_exif_orientation(image_pil)
-
-        with io.BytesIO() as f:
-            image_pil.save(f, format='PNG')
-            f.seek(0)
-            return f.read()
 
     def resizeEvent(self, event):
         if self.canvas and not self.image.isNull()\
@@ -1602,7 +1584,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and \
-                    LabelFile.isLabelFile(label_file):
+                    LabelFile.is_label_file(label_file):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)

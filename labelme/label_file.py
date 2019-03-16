@@ -1,6 +1,9 @@
 import base64
+import io
 import json
 import os.path
+
+import PIL.Image
 
 from labelme._version import __version__
 from labelme.logger import logger
@@ -24,6 +27,21 @@ class LabelFile(object):
             self.load(filename)
         self.filename = filename
 
+    @staticmethod
+    def load_image_file(filename):
+        try:
+            image_pil = PIL.Image.open(filename)
+        except IOError:
+            return
+
+        # apply orientation to image according to exif
+        image_pil = utils.apply_exif_orientation(image_pil)
+
+        with io.BytesIO() as f:
+            image_pil.save(f, format='PNG')
+            f.seek(0)
+            return f.read()
+
     def load(self, filename):
         keys = [
             'imageData',
@@ -42,10 +60,10 @@ class LabelFile(object):
                 imageData = base64.b64decode(data['imageData'])
             else:
                 # relative path from label file to relative path from cwd
-                imagePath = os.path.join(os.path.dirname(filename),
-                                         data['imagePath'])
-                with open(imagePath, 'rb') as f:
-                    imageData = f.read()
+                imagePath = os.path.join(
+                    os.path.dirname(filename), data['imagePath']
+                )
+                imageData = self.load_image_file(imagePath)
             flags = data.get('flags')
             imagePath = data['imagePath']
             self._check_image_height_and_width(
@@ -143,5 +161,5 @@ class LabelFile(object):
             raise LabelFileError(e)
 
     @staticmethod
-    def isLabelFile(filename):
+    def is_label_file(filename):
         return os.path.splitext(filename)[1].lower() == LabelFile.suffix
