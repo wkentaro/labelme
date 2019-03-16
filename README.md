@@ -169,11 +169,6 @@ For more advanced usage, please refer to the examples:
 - **How to get annotations for instance segmentation?** See [examples/instance_segmentation](examples/instance_segmentation).
 
 
-## Screencast
-
-<img src="https://drive.google.com/uc?id=1Ad-pn3mVM17eMDiMPYToVfzKFCaRQMdB" width="70%"/>
-
-
 ## Testing
 
 ```bash
