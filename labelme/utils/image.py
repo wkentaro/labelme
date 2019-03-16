@@ -2,7 +2,9 @@ import base64
 import io
 
 import numpy as np
+import PIL.ExifTags
 import PIL.Image
+import PIL.ImageOps
 
 
 def img_b64_to_arr(img_b64):
