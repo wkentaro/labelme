@@ -660,7 +660,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._config['auto_save'] or self.actions.saveAuto.isChecked():
             label_file = osp.splitext(self.imagePath)[0] + '.json'
             if self.output_dir:
-                label_file = osp.join(self.output_dir, label_file)
+                label_file_without_path = osp.basename(label_file)
+                label_file = osp.join(self.output_dir, label_file_without_path)
             self.saveLabels(label_file)
             return
         self.dirty = True
@@ -1120,7 +1121,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status("Loading %s..." % osp.basename(str(filename)))
         label_file = osp.splitext(filename)[0] + '.json'
         if self.output_dir:
-            label_file = osp.join(self.output_dir, label_file)
+            label_file_without_path = osp.basename(label_file)
+            label_file = osp.join(self.output_dir, label_file_without_path)
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.is_label_file(label_file):
             try:
@@ -1369,7 +1371,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
-        basename = osp.splitext(self.filename)[0]
+        basename = osp.basename(osp.splitext(self.filename)[0])
         if self.output_dir:
             default_labelfile_name = osp.join(
                 self.output_dir, basename + LabelFile.suffix
@@ -1566,7 +1568,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             label_file = osp.splitext(filename)[0] + '.json'
             if self.output_dir:
-                label_file = osp.join(self.output_dir, label_file)
+                label_file_without_path = osp.basename(label_file)
+                label_file = osp.join(self.output_dir, label_file_without_path)
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and \
