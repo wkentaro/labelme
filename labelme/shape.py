@@ -1,5 +1,6 @@
 import copy
 import math
+import random
 
 from qtpy import QtCore
 from qtpy import QtGui
@@ -11,8 +12,8 @@ import labelme.utils
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
-DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)
+#DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
+#DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)    
 DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)
 DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)
@@ -26,9 +27,9 @@ class Shape(object):
     MOVE_VERTEX, NEAR_VERTEX = 0, 1
 
     # The following class variables influence the drawing of all shape objects.
-    line_color = DEFAULT_LINE_COLOR
+    line_color = QtGui.QColor(random.randint(1,255),  random.randint(1,255),  random.randint(1,255),  random.randint(1,255))
     fill_color = DEFAULT_FILL_COLOR
-    select_line_color = DEFAULT_SELECT_LINE_COLOR
+    select_line_color = QtGui.QColor(random.randint(1,255),  random.randint(1,255),  random.randint(1,255),  random.randint(1,255))
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
