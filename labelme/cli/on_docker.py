@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import argparse
 import distutils.spawn
 import json
@@ -9,8 +11,6 @@ import platform
 import shlex
 import subprocess
 import sys
-
-from labelme.logger import logger
 
 
 def get_ip():
@@ -84,7 +84,7 @@ def main():
     args = parser.parse_args()
 
     if not distutils.spawn.find_executable('docker'):
-        logger.error('Please install docker.')
+        print('Please install docker', file=sys.stderr)
         sys.exit(1)
 
     try:
