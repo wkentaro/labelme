@@ -66,6 +66,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
+        self.quickResizeMode = False
         # Menus:
         self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
         # Set widget options.
@@ -159,44 +160,68 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            self.line.shape_type = self.createMode
+            if not(QtCore.Qt.LeftButton & ev.buttons()):
+                for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
+                    # Look for a nearby vertex to highlight. If that fails,
+                    # check if we happen to be inside a shape.
+                    index = shape.nearestVertex(pos, self.epsilon)
+                    index_edge = shape.nearestEdge(pos, self.epsilon)
+                    if index is not None:
+                        if self.selectedVertex():
+                            self.hShape.highlightClear()
+                        self.hVertex = index
+                        self.hShape = shape
+                        self.hEdge = index_edge
+                        shape.highlightVertex(index, shape.MOVE_VERTEX)
+                        self.overrideCursor(CURSOR_POINT)
+                        self.setToolTip("Click & drag to move point")
+                        self.setStatusTip(self.toolTip())
+                        self.update()
+                        return
+                else:
+                    if self.hShape:
+                        self.hShape.highlightClear()
+                        self.update()
+                    self.hVertex, self.hShape, self.hEdge = None, None, None
+            if not self.quickResizeMode:        
+                self.line.shape_type = self.createMode
 
-            self.overrideCursor(CURSOR_DRAW)
-            if not self.current:
+                self.overrideCursor(CURSOR_DRAW)
+                if not self.current:
+                    return
+
+                color = self.lineColor
+                if self.outOfPixmap(pos):
+                    # Don't allow the user to draw outside the pixmap.
+                    # Project the point to the pixmap's edges.
+                    pos = self.intersectionPoint(self.current[-1], pos)
+                elif len(self.current) > 1 and self.createMode == 'polygon' and\
+                        self.closeEnough(pos, self.current[0]):
+                    # Attract line to starting point and
+                    # colorise to alert the user.
+                    pos = self.current[0]
+                    color = self.current.line_color
+                    self.overrideCursor(CURSOR_POINT)
+                    self.current.highlightVertex(0, Shape.NEAR_VERTEX)
+                if self.createMode in ['polygon', 'linestrip']:
+                    self.line[0] = self.current[-1]
+                    self.line[1] = pos
+                elif self.createMode == 'rectangle':
+                    self.line.points = [self.current[0], pos]
+                    self.line.close()
+                elif self.createMode == 'circle':
+                    self.line.points = [self.current[0], pos]
+                    self.line.shape_type = "circle"
+                elif self.createMode == 'line':
+                    self.line.points = [self.current[0], pos]
+                    self.line.close()
+                elif self.createMode == 'point':
+                    self.line.points = [self.current[0]]
+                    self.line.close()
+                self.line.line_color = color
+                self.repaint()
+                self.current.highlightClear()
                 return
-
-            color = self.lineColor
-            if self.outOfPixmap(pos):
-                # Don't allow the user to draw outside the pixmap.
-                # Project the point to the pixmap's edges.
-                pos = self.intersectionPoint(self.current[-1], pos)
-            elif len(self.current) > 1 and self.createMode == 'polygon' and\
-                    self.closeEnough(pos, self.current[0]):
-                # Attract line to starting point and
-                # colorise to alert the user.
-                pos = self.current[0]
-                color = self.current.line_color
-                self.overrideCursor(CURSOR_POINT)
-                self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ['polygon', 'linestrip']:
-                self.line[0] = self.current[-1]
-                self.line[1] = pos
-            elif self.createMode == 'rectangle':
-                self.line.points = [self.current[0], pos]
-                self.line.close()
-            elif self.createMode == 'circle':
-                self.line.points = [self.current[0], pos]
-                self.line.shape_type = "circle"
-            elif self.createMode == 'line':
-                self.line.points = [self.current[0], pos]
-                self.line.close()
-            elif self.createMode == 'point':
-                self.line.points = [self.current[0]]
-                self.line.close()
-            self.line.line_color = color
-            self.repaint()
-            self.current.highlightClear()
-            return
 
         # Polygon copy moving.
         if QtCore.Qt.RightButton & ev.buttons():
@@ -211,11 +236,13 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon/Vertex moving.
         self.movingShape = False
+        self.quickResizeMode = False
         if QtCore.Qt.LeftButton & ev.buttons():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
                 self.repaint()
                 self.movingShape = True
+                self.quickResizeMode = True
             elif self.selectedShape and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShape(self.selectedShape, pos)
@@ -302,18 +329,32 @@ class Canvas(QtWidgets.QWidget):
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
-                    # Create new shape.
-                    self.current = Shape(shape_type=self.createMode)
-                    self.current.addPoint(pos)
-                    if self.createMode == 'point':
-                        self.finalise()
+                    for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
+                        # Look for a nearby vertex to highlight. If that fails,
+                        # check if we happen to be inside a shape.
+                        index = shape.nearestVertex(pos, self.epsilon)
+                        index_edge = shape.nearestEdge(pos, self.epsilon)
+                        if index is not None:
+                            shape.highlightVertex(index, shape.MOVE_VERTEX)
+                            self.overrideCursor(CURSOR_GRAB)
+                            self.quickResizeMode = True
+                            self.selectShapePoint(pos)
+                            self.prevPoint = pos
+                            self.repaint()
+                            return
                     else:
-                        if self.createMode == 'circle':
-                            self.current.shape_type = 'circle'
-                        self.line.points = [pos, pos]
-                        self.setHiding()
-                        self.drawingPolygon.emit(True)
-                        self.update()
+                        # Create new shape.
+                        self.current = Shape(shape_type=self.createMode)
+                        self.current.addPoint(pos)
+                        if self.createMode == 'point':
+                            self.finalise()
+                        else:
+                            if self.createMode == 'circle':
+                                self.current.shape_type = 'circle'
+                            self.line.points = [pos, pos]
+                            self.setHiding()
+                            self.drawingPolygon.emit(True)
+                            self.update()
             else:
                 self.selectShapePoint(pos)
                 self.prevPoint = pos
@@ -335,6 +376,7 @@ class Canvas(QtWidgets.QWidget):
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShape:
             self.overrideCursor(CURSOR_GRAB)
         if self.movingShape:
+            self.quickResizeMode = False
             self.storeShapes()
             self.shapeMoved.emit()
 
