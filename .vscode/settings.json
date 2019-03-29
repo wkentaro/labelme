@@ -1,0 +1,15 @@
+{
+    "python.pythonPath": "/home/minato/miniconda3/envs/labelme/bin/python",
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=PyQt5",
+        "--class-naming-style=<PascalCase>",
+        "--method-naming-style=<camelCase>"
+    ],
+    "python.jediEnabled": false,
+    "python.linting.pylintPath": "/home/minato/miniconda3/envs/labelme/bin/pylint",
+    "python.linting.pylintEnabled": true,
+    "python.linting.pep8Enabled": true,
+    "python.linting.enabled": true,
+    "editor.tabSize": 2,
+    "python.formatting.provider": "autopep8"
+}
