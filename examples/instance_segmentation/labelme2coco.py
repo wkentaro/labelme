@@ -136,13 +136,21 @@ def main():
             mask = pycocotools.mask.encode(mask)
             area = float(pycocotools.mask.area(mask))
 
+            bbox = []
+            for points in segmentations[label]:
+                bbox.extend(points)
+            bbox = np.asarray(bbox).reshape((-1, 2))
+            xmin, ymin = np.amin(bbox, axis=0).tolist();
+            xmax, ymax = np.amax(bbox, axis=0).tolist();
+
             data['annotations'].append(dict(
                 id=len(data['annotations']),
-                segmentation=segmentations[label],
-                area=area,
-                iscrowd=None,
                 image_id=image_id,
                 category_id=cls_id,
+                segmentation=segmentations[label],
+                area=area,
+                bbox=[xmin, ymin, xmax - xmin, ymax - ymin],
+                iscrowd=None,
             ))
 
     with open(out_ann_file, 'w') as f:
