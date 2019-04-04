@@ -96,15 +96,13 @@ if sys.argv[1] == 'release':
 def get_long_description():
     with open('README.md') as f:
         long_description = f.read()
-
     try:
         import github2pypi
-    except ImportError:
+        return github2pypi.replace_url(
+            slug='wkentaro/labelme', content=long_description
+        )
+    except Exception:
         return long_description
-
-    return github2pypi.replace_url(
-        slug='wkentaro/labelme', content=long_description
-    )
 
 
 setup(
