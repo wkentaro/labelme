@@ -1,0 +1,8 @@
+version: '2.1'
+
+services:
+  labelme:
+    image: labelme
+    build:
+      context: .
+      dockerfile: Dockerfile
