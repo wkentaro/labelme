@@ -12,8 +12,8 @@ import labelme.utils
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-#DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
-#DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)    
+DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
+DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)    
 DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)
 DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)
