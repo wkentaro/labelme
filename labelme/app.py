@@ -1034,7 +1034,15 @@ class MainWindow(QtWidgets.QMainWindow):
         if items:
             text = items[0].text()
         if self._config['display_label_popup'] or not text:
+            # instance label auto increment
+            if self._config['instance_label_auto_increment']:
+                previous_label = self.labelDialog.edit.text()
+                split = previous_label.split('-')
+                if len(split) > 1 and split[-1].isdigit():
+                    split[-1] = str(int(split[-1]) + 1)
+                    text = '-'.join(split)
             text = self.labelDialog.popUp(text)
+
         if text is not None and not self.validateLabel(text):
             self.errorMessage('Invalid label',
                               "Invalid label '{}' with validation type '{}'"
