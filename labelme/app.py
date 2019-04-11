@@ -920,10 +920,10 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.labelList.get_item_from_shape(shape)
         self.labelList.takeItem(self.labelList.row(item))
 
-    def loadShapes(self, shapes):
+    def loadShapes(self, shapes, replace=True):
         for shape in shapes:
             self.addLabel(shape)
-        self.canvas.loadShapes(shapes)
+        self.canvas.loadShapes(shapes, replace=replace)
 
     def loadLabels(self, shapes):
         s = []
@@ -1177,12 +1177,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         if self._config['flags']:
             self.loadFlags({k: False for k in self._config['flags']})
-        if self._config['keep_prev']:
-            self.loadShapes(prev_shapes)
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 self.loadFlags(self.labelFile.flags)
+        if self._config['keep_prev']:
+            self.loadShapes(prev_shapes, replace=False)
         self.setClean()
         self.canvas.setEnabled(True)
         self.adjustScale(initial=True)
