@@ -346,10 +346,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.zoomWidget.setEnabled(False)
 
-        zoomIn = action('Zoom &In', functools.partial(self.addZoom, 10),
+        zoomIn = action('Zoom &In', functools.partial(self.addZoom, 1.1),
                         shortcuts['zoom_in'], 'zoom-in',
                         'Increase zoom level', enabled=False)
-        zoomOut = action('&Zoom Out', functools.partial(self.addZoom, -10),
+        zoomOut = action('&Zoom Out', functools.partial(self.addZoom, 0.9),
                          shortcuts['zoom_out'], 'zoom-out',
                          'Decrease zoom level', enabled=False)
         zoomOrg = action('&Original size',
@@ -1069,13 +1069,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomMode = self.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
 
-    def addZoom(self, increment=10):
-        self.setZoom(self.zoomWidget.value() + increment)
+    def addZoom(self, increment=1.1):
+        self.setZoom(self.zoomWidget.value() * increment)
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
-
-        units = delta * 0.1
+        units = 1.1
+        if delta < 0:
+            units = 0.9
         self.addZoom(units)
 
         canvas_width_new = self.canvas.width()

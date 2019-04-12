@@ -36,7 +36,7 @@ class Canvas(QtWidgets.QWidget):
     _fill_drawing = False
 
     def __init__(self, *args, **kwargs):
-        self.epsilon = kwargs.pop('epsilon', 11.0)
+        self.epsilon = kwargs.pop('epsilon', 10.0)
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -542,7 +542,8 @@ class Canvas(QtWidgets.QWidget):
         # d = distance(p1 - p2)
         # m = (p1-p2).manhattanLength()
         # print "d %.2f, m %d, %.2f" % (d, m, d - m)
-        return labelme.utils.distance(p1 - p2) < self.epsilon
+        # divide by scale to allow more precision when zoomed in
+        return labelme.utils.distance(p1 - p2) < (self.epsilon / self.scale)
 
     def intersectionPoint(self, p1, p2):
         # Cycle through each image edge in clockwise fashion,
