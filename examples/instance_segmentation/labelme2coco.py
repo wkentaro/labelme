@@ -72,8 +72,6 @@ def main():
         if class_id == -1:
             assert class_name == '__ignore__'
             continue
-        elif class_id == 0:
-            assert class_name == '_background_'
         class_name_to_id[class_name] = class_id
         data['categories'].append(dict(
             supercategory=None,
