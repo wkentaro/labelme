@@ -1182,7 +1182,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 self.loadFlags(self.labelFile.flags)
-        if self._config['keep_prev']:
+        if self._config['keep_prev'] and not self.labelList.shapes:
             self.loadShapes(prev_shapes, replace=False)
         self.setClean()
         self.canvas.setEnabled(True)
