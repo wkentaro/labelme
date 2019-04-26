@@ -3,7 +3,6 @@ import os.path as osp
 import numpy as np
 import PIL.Image
 
-from labelme.logger import logger
 from labelme.utils.draw import label_colormap
 
 
@@ -18,7 +17,7 @@ def lblsave(filename, lbl):
         lbl_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
         lbl_pil.save(filename)
     else:
-        logger.warn(
-            '[%s] Cannot save the pixel-wise class label as PNG, '
-            'so please use the npy file.' % filename
+        raise ValueError(
+            '[%s] Cannot save the pixel-wise class label as PNG. '
+            'Please consider using the .npy format.' % filename
         )
