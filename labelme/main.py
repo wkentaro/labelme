@@ -15,10 +15,11 @@ from labelme.utils import newIcon
 
 
 def main():
-    try:
-        _main()
-    except Exception as e:
-        logger.error(e)
+    _main()
+    # try:
+    #     _main()
+    # except Exception as e:
+    #     logger.error(e)
 
 
 def _main():
@@ -78,6 +79,12 @@ def _main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
+        '--labelflags',
+        dest='label_flags',
+        help='comma separated list of label specific flags OR file containing flags',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         '--labels',
         help='comma separated list of labels OR file containing labels',
         default=argparse.SUPPRESS,
@@ -115,6 +122,13 @@ def _main():
                 args.flags = [l.strip() for l in f if l.strip()]
         else:
             args.flags = [l for l in args.flags.split(',') if l]
+            
+    if hasattr(args, 'label_flags'):
+        if os.path.isfile(args.label_flags):
+            with codecs.open(args.label_flags, 'r', encoding='utf-8') as f:
+                args.label_flags = [l.strip() for l in f if l.strip()]
+        else:
+            args.label_flags = [l for l in args.label_flags.split(',') if l]
 
     if hasattr(args, 'labels'):
         if os.path.isfile(args.labels):

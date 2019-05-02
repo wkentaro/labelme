@@ -95,6 +95,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
+        self.label_flag_dock = self.label_flag_widget = None
+        self.label_flag_dock = QtWidgets.QDockWidget('Label Flags', self)
+        self.label_flag_dock.setObjectName('Label Flags')
+        self.label_flag_widget = QtWidgets.QListWidget()
+        if config['label_flags']:
+            self.loadLabelFlags({k: False for k in config['label_flags']})
+        self.label_flag_dock.setWidget(self.label_flag_widget)
+        self.label_flag_widget.itemChanged.connect(self.labelFlagChanged)
+
         self.labelList.itemActivated.connect(self.labelSelectionChanged)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
@@ -161,7 +170,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
+        for dock in ['flag_dock', 'label_flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
             if self._config[dock]['closable']:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]['floatable']:
@@ -173,6 +182,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 getattr(self, dock).setVisible(False)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.label_flag_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
@@ -494,6 +504,7 @@ class MainWindow(QtWidgets.QMainWindow):
         utils.addActions(
             self.menus.view,
             (
+                self.label_flag_dock.toggleViewAction(),
                 self.flag_dock.toggleViewAction(),
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
@@ -904,6 +915,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.shapeFillColor.setEnabled(selected)
 
     def addLabel(self, shape):
+        if not shape.flags:
+            shape.flags =  {k: False for k in self._config['label_flags']}
         item = QtWidgets.QListWidgetItem(shape.label)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
@@ -924,10 +937,12 @@ class MainWindow(QtWidgets.QMainWindow):
         for shape in shapes:
             self.addLabel(shape)
         self.canvas.loadShapes(shapes, replace=replace)
+        if self._config['label_flags']:
+            self.loadLabelFlags({k: False for k in self._config['label_flags']})
 
     def loadLabels(self, shapes):
         s = []
-        for label, points, line_color, fill_color, shape_type in shapes:
+        for label, points, line_color, fill_color, shape_type, flags in shapes:
             shape = Shape(label=label, shape_type=shape_type)
             for x, y in points:
                 shape.addPoint(QtCore.QPoint(x, y))
@@ -937,6 +952,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape.line_color = QtGui.QColor(*line_color)
             if fill_color:
                 shape.fill_color = QtGui.QColor(*fill_color)
+            shape.flags = flags
         self.loadShapes(s)
 
     def loadFlags(self, flags):
@@ -946,6 +962,14 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             self.flag_widget.addItem(item)
+
+    def loadLabelFlags(self, flags):
+        self.label_flag_widget.clear()
+        for key, flag in flags.items():
+            item = QtWidgets.QListWidgetItem(key)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
+            self.label_flag_widget.addItem(item)
 
     def saveLabels(self, filename):
         lf = LabelFile()
@@ -959,6 +983,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if s.fill_color != self.fillColor else None,
                 points=[(p.x(), p.y()) for p in s.points],
                 shape_type=s.shape_type,
+                flags=s.flags
             )
 
         shapes = [format_shape(shape) for shape in self.labelList.shapes]
@@ -1008,10 +1033,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def labelSelectionChanged(self):
         item = self.currentItem()
-        if item and self.canvas.editing():
-            self._noSelectionSlot = True
+        if item:
             shape = self.labelList.get_shape_from_item(item)
-            self.canvas.selectShape(shape)
+            self.loadLabelFlags(shape.flags)
+            if self.canvas.editing():
+                self._noSelectionSlot = True
+                self.canvas.selectShape(shape)
 
     def labelItemChanged(self, item):
         shape = self.labelList.get_shape_from_item(item)
@@ -1021,6 +1048,21 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setDirty()
         else:  # User probably changed item visibility
             self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+
+    def labelFlagChanged(self):
+        item = self.currentItem()
+        if item:
+            index = 0
+            flags = {}
+            for key in self._config["label_flags"]:
+                checkBox = self.label_flag_widget.item(index)
+                index = index + 1
+                value = True if checkBox.checkState() else False
+                flags[key] = value
+            shape = self.labelList.get_shape_from_item(item)
+            if shape.flags != flags:
+                shape.flags = flags
+                self.setDirty()
 
     # Callback functions:
 
@@ -1509,6 +1551,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.remLabel(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
+                if self._config['shape_flags']:
+                    self.loadLabelFlags({k: False for k in self._config['shape_flags']})
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
 

@@ -6,6 +6,7 @@ keep_prev: false
 logger_level: info
 
 flags: null
+label_flags: null
 labels: null
 file_search: null
 sort_labels: true
@@ -13,6 +14,11 @@ validate_label: null
 
 # main
 flag_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+label_flag_dock:
   show: true
   closable: true
   movable: true
