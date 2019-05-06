@@ -81,6 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
             show_text_field=self._config['show_label_text_field'],
             completion=self._config['label_completion'],
             fit_to_content=self._config['fit_to_content'],
+            flags=self._config['label_flags']
         )
 
         self.labelList = LabelQListWidget()
@@ -861,7 +862,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.canvas.editing():
             return
         item = item if item else self.currentItem()
-        text = self.labelDialog.popUp(item.text() if item else None)
+        shape = self.labelList.get_shape_from_item(item)
+        text, flags = self.labelDialog.popUp(item.text() if item else None, flags=(shape.flags if item else None))
         if text is None:
             return
         if not self.validateLabel(text):
@@ -869,6 +871,8 @@ class MainWindow(QtWidgets.QMainWindow):
                               "Invalid label '{}' with validation type '{}'"
                               .format(text, self._config['validate_label']))
             return
+        shape.flags = flags
+        self.loadLabelFlags(flags)
         item.setText(text)
         self.setDirty()
         if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
@@ -1083,7 +1087,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if len(split) > 1 and split[-1].isdigit():
                     split[-1] = str(int(split[-1]) + 1)
                     text = '-'.join(split)
-            text = self.labelDialog.popUp(text)
+            text, flags = self.labelDialog.popUp(text)
 
         if text is not None and not self.validateLabel(text):
             self.errorMessage('Invalid label',
@@ -1094,7 +1098,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.undoLastLine()
             self.canvas.shapesBackups.pop()
         else:
-            self.addLabel(self.canvas.setLastLabel(text))
+            shape = self.canvas.setLastLabel(text)
+            shape.flags = flags
+            self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)

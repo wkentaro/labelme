@@ -29,7 +29,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def __init__(self, text="Enter object label", parent=None, labels=None,
                  sort_labels=True, show_text_field=True,
-                 completion='startswith', fit_to_content=None):
+                 completion='startswith', fit_to_content=None, flags=[]):
         if fit_to_content is None:
             fit_to_content = {'row': False, 'column': True}
         self._fit_to_content = fit_to_content
@@ -74,6 +74,14 @@ class LabelDialog(QtWidgets.QDialog):
         self.labelList.currentItemChanged.connect(self.labelSelected)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
+        # label_flags
+        self.flags = flags
+        self.label_flags = None
+        if flags:
+            self.label_flags = QtWidgets.QVBoxLayout()
+            for flag in flags:
+                self.label_flags.addWidget(QtWidgets.QCheckBox(flag, self))
+            layout.addItem(self.label_flags)
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
@@ -122,7 +130,24 @@ class LabelDialog(QtWidgets.QDialog):
             text = text.trimmed()
         self.edit.setText(text)
 
-    def popUp(self, text=None, move=True):
+    def resetFlags(self):
+        for i in range(self.label_flags.count()):
+            item = self.label_flags.itemAt(i).widget()
+            item.setChecked(False)
+
+    def setFlags(self, flags):
+        for i in range(self.label_flags.count()):
+            item = self.label_flags.itemAt(i).widget()
+            item.setChecked(flags[item.text()])
+
+    def getFlags(self):
+        flags = {}
+        for i in range(self.label_flags.count()):
+            item = self.label_flags.itemAt(i).widget()
+            flags[item.text()] = True if item.isChecked() else False
+        return flags
+
+    def popUp(self, text=None, move=True, flags=None):
         if self._fit_to_content['row']:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
@@ -134,6 +159,10 @@ class LabelDialog(QtWidgets.QDialog):
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
+        if flags:
+            self.setFlags(flags)
+        else:
+            self.resetFlags()
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
@@ -146,4 +175,4 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setFocus(QtCore.Qt.PopupFocusReason)
         if move:
             self.move(QtGui.QCursor.pos())
-        return self.edit.text() if self.exec_() else None
+        return (self.edit.text(), self.getFlags()) if self.exec_() else None
