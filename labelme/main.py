@@ -16,11 +16,10 @@ from labelme.utils import newIcon
 
 
 def main():
-    _main()
-    # try:
-    #     _main()
-    # except Exception as e:
-    #     logger.error(e)
+    try:
+        _main()
+    except Exception as e:
+        logger.error(e)
 
 
 def _main():
