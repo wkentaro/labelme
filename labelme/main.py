@@ -3,6 +3,7 @@ import codecs
 import logging
 import os
 import sys
+import yaml
 
 from qtpy import QtWidgets
 
@@ -81,7 +82,7 @@ def _main():
     parser.add_argument(
         '--labelflags',
         dest='label_flags',
-        help='comma separated list of label specific flags OR file containing flags',
+        help='yaml string of label specific flags OR file containing json string of label specific flags (ex. {human:[male,female],dog:[big],__all__:[occluded]} )',
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -122,13 +123,6 @@ def _main():
                 args.flags = [l.strip() for l in f if l.strip()]
         else:
             args.flags = [l for l in args.flags.split(',') if l]
-            
-    if hasattr(args, 'label_flags'):
-        if os.path.isfile(args.label_flags):
-            with codecs.open(args.label_flags, 'r', encoding='utf-8') as f:
-                args.label_flags = [l.strip() for l in f if l.strip()]
-        else:
-            args.label_flags = [l for l in args.label_flags.split(',') if l]
 
     if hasattr(args, 'labels'):
         if os.path.isfile(args.labels):
@@ -136,6 +130,20 @@ def _main():
                 args.labels = [l.strip() for l in f if l.strip()]
         else:
             args.labels = [l for l in args.labels.split(',') if l]
+
+    if hasattr(args, 'label_flags'):
+        if os.path.isfile(args.label_flags):
+            with codecs.open(args.label_flags, 'r', encoding='utf-8') as f:
+                args.label_flags = yaml.load(f)
+        else:
+            args.label_flags = yaml.load(args.label_flags)
+
+        # Add not overlapping labels from label flags
+        if not hasattr(args, 'labels'):
+            args.labels = []
+        for label in args.label_flags.keys():
+            if label != "__all__" and label not in args.labels:
+                args.labels.append(label)
 
     config_from_args = args.__dict__
     config_from_args.pop('version')

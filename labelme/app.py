@@ -100,8 +100,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_flag_dock = QtWidgets.QDockWidget('Label Flags', self)
         self.label_flag_dock.setObjectName('Label Flags')
         self.label_flag_widget = QtWidgets.QListWidget()
-        if config['label_flags']:
-            self.loadLabelFlags({k: False for k in config['label_flags']})
         self.label_flag_dock.setWidget(self.label_flag_widget)
         self.label_flag_widget.itemChanged.connect(self.labelFlagChanged)
 
@@ -863,7 +861,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         item = item if item else self.currentItem()
         shape = self.labelList.get_shape_from_item(item)
-        text, flags = self.labelDialog.popUp(item.text() if item else None, flags=(shape.flags if item else None))
+        text, flags = self.labelDialog.popUp(item.text() if item else None, flags=(shape.flags if shape else None))
         if text is None:
             return
         if not self.validateLabel(text):
@@ -872,7 +870,9 @@ class MainWindow(QtWidgets.QMainWindow):
                               .format(text, self._config['validate_label']))
             return
         shape.flags = flags
-        self.loadLabelFlags(flags)
+        shape.label = text
+        if self._config['label_flags']:
+            self.loadLabelFlags(flags, shape.label)
         item.setText(text)
         self.setDirty()
         if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
@@ -920,7 +920,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def addLabel(self, shape):
         if not shape.flags:
-            shape.flags =  {k: False for k in self._config['label_flags']}
+            shape.flags = {}
+            if self._config['label_flags']:
+                for label in ["__all__", shape.label]:
+                    if label in self._config['label_flags']:
+                        for key in self._config['label_flags'][label]:
+                            shape.flags[key] = False
         item = QtWidgets.QListWidgetItem(shape.label)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
@@ -941,8 +946,6 @@ class MainWindow(QtWidgets.QMainWindow):
         for shape in shapes:
             self.addLabel(shape)
         self.canvas.loadShapes(shapes, replace=replace)
-        if self._config['label_flags']:
-            self.loadLabelFlags({k: False for k in self._config['label_flags']})
 
     def loadLabels(self, shapes):
         s = []
@@ -967,13 +970,16 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             self.flag_widget.addItem(item)
 
-    def loadLabelFlags(self, flags):
+    def loadLabelFlags(self, flags=None, label=''):
         self.label_flag_widget.clear()
-        for key, flag in flags.items():
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.label_flag_widget.addItem(item)
+        if flags:
+            for label in ["__all__", label]:
+                if label in self._config['label_flags']:
+                    for key in self._config['label_flags'][label]:
+                        item = QtWidgets.QListWidgetItem(key)
+                        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                        item.setCheckState(Qt.Checked if (key in flags and flags[key]) else Qt.Unchecked)
+                        self.label_flag_widget.addItem(item)
 
     def saveLabels(self, filename):
         lf = LabelFile()
@@ -1039,7 +1045,8 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.currentItem()
         if item:
             shape = self.labelList.get_shape_from_item(item)
-            self.loadLabelFlags(shape.flags)
+            if self._config['label_flags']:
+                self.loadLabelFlags(shape.flags, shape.label)
             if self.canvas.editing():
                 self._noSelectionSlot = True
                 self.canvas.selectShape(shape)
@@ -1056,14 +1063,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def labelFlagChanged(self):
         item = self.currentItem()
         if item:
+            shape = self.labelList.get_shape_from_item(item)
             index = 0
             flags = {}
-            for key in self._config["label_flags"]:
-                checkBox = self.label_flag_widget.item(index)
-                index = index + 1
-                value = True if checkBox.checkState() else False
-                flags[key] = value
-            shape = self.labelList.get_shape_from_item(item)
+            for label in ["__all__", shape.label]:
+                if label in self._config['label_flags']:
+                    for key in self._config['label_flags'][label]:
+                        checkBox = self.label_flag_widget.item(index)
+                        index = index + 1
+                        value = True if checkBox.checkState() else False
+                        flags[key] = value
             if shape.flags != flags:
                 shape.flags = flags
                 self.setDirty()
@@ -1226,6 +1235,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         if self._config['flags']:
             self.loadFlags({k: False for k in self._config['flags']})
+        if self._config['label_flags']:
+            self.loadLabelFlags()
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
@@ -1557,8 +1568,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.remLabel(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
-                if self._config['shape_flags']:
-                    self.loadLabelFlags({k: False for k in self._config['shape_flags']})
+                if self._config['label_flags']:
+                    self.loadLabelFlags()
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
 
