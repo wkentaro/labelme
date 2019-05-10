@@ -18,11 +18,6 @@ flag_dock:
   closable: true
   movable: true
   floatable: true
-label_flag_dock:
-  show: true
-  closable: true
-  movable: true
-  floatable: true
 label_dock:
   show: true
   closable: true
