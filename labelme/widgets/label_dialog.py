@@ -212,7 +212,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setFocus(QtCore.Qt.PopupFocusReason)
         if move:
             self.move(QtGui.QCursor.pos())
-        if self._exec():
+        if self.exec_():
             return self.edit.text(), self.getFlags() if self.flags else None
         else:
             return None, None
