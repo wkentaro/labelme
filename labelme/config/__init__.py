@@ -30,7 +30,7 @@ def update_dict(target_dict, new_dict, validate_item=None):
 def get_default_config():
     config_file = osp.join(here, 'default_config.yaml')
     with open(config_file) as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     # save default config to ~/.labelmerc
     user_config_file = osp.join(osp.expanduser('~'), '.labelmerc')
@@ -68,7 +68,7 @@ def get_config(config_from_args=None, config_file=None):
     # 2. config from yaml file
     if config_file is not None and osp.exists(config_file):
         with open(config_file) as f:
-            user_config = yaml.load(f) or {}
+            user_config = yaml.safe_load(f) or {}
         update_dict(config, user_config, validate_item=validate_config_item)
 
     # 3. command line argument
