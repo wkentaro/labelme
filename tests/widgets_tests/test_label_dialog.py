@@ -59,8 +59,9 @@ def test_LabelDialog_popUp(qtbot):
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
-    text = widget.popUp('cat')
-    assert text == 'person'
+    label, flags = widget.popUp('cat')
+    assert label == 'person'
+    assert flags == {}
 
     # popUp()
 
@@ -69,8 +70,9 @@ def test_LabelDialog_popUp(qtbot):
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
-    text = widget.popUp()
-    assert text == 'person'
+    label, flags = widget.popUp()
+    assert label == 'person'
+    assert flags == {}
 
     # popUp() + key_Up
 
@@ -80,5 +82,6 @@ def test_LabelDialog_popUp(qtbot):
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
-    text = widget.popUp()
-    assert text == 'dog'
+    label, flags = widget.popUp()
+    assert label == 'dog'
+    assert flags == {}
