@@ -81,7 +81,9 @@ def _main():
     parser.add_argument(
         '--labelflags',
         dest='label_flags',
-        help='yaml string of label specific flags OR file containing json string of label specific flags (ex. {human:[male,female],dog:[big],__all__:[occluded]} )',
+        help='yaml string of label specific flags OR file containing json '
+             'string of label specific flags (ex. {person: [male, tall], '
+             'dog: [big, black, brown, white], __all__: [occluded]})',
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -137,11 +139,11 @@ def _main():
         else:
             args.label_flags = yaml.load(args.label_flags)
 
-        # Add not overlapping labels from label flags
+        # add not overlapping labels from label flags
         if not hasattr(args, 'labels'):
             args.labels = []
         for label in args.label_flags.keys():
-            if label != "__all__" and label not in args.labels:
+            if label != '__all__' and label not in args.labels:
                 args.labels.append(label)
 
     config_from_args = args.__dict__
