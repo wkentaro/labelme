@@ -77,12 +77,13 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         # label_flags
-        self.flags = flags
-        self.label_flags = None
-        if flags:
-            self.label_flags = QtWidgets.QVBoxLayout()
-            self.resetFlags()
-            layout.addItem(self.label_flags)
+        if flags is None:
+            flags = {}
+        self._flags = flags
+        self.flagsLayout = QtWidgets.QVBoxLayout()
+        self.resetFlags()
+        layout.addItem(self.flagsLayout)
+        self.edit.textChanged.connect(self.updateFlags)
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
@@ -114,15 +115,6 @@ class LabelDialog(QtWidgets.QDialog):
     def labelSelected(self, item):
         self.edit.setText(item.text())
 
-    def updateFlags(self, text):
-        flags = self.getFlags()
-        newFlags = {}
-        for label in ["__all__", text]:
-            if label in self.flags:
-                for key in self.flags[label]:
-                    newFlags[key] = False if key not in flags else flags[key]
-        self.setFlags(newFlags)
-
     def validate(self):
         text = self.edit.text()
         if hasattr(text, 'strip'):
@@ -140,47 +132,41 @@ class LabelDialog(QtWidgets.QDialog):
             text = text.trimmed()
         self.edit.setText(text)
 
+    def updateFlags(self, label_new):
+        # keep state of shared flags
+        flags_old = self.getFlags()
+
+        flags_new = {}
+        for label in ['__all__', label_new]:
+            for key in self._flags.get(label, []):
+                flags_new[key] = flags_old.get(key, False)
+        self.setFlags(flags_new)
+
     def deleteFlags(self):
-        for i in reversed(range(self.label_flags.count())):
-            item = self.label_flags.itemAt(i).widget()
-            self.label_flags.removeWidget(item)
+        for i in reversed(range(self.flagsLayout.count())):
+            item = self.flagsLayout.itemAt(i).widget()
+            self.flagsLayout.removeWidget(item)
             item.setParent(None)
 
-    def resetFlags(self, text=''):
+    def resetFlags(self, label=None):
+        flags = {k: False for k in self._flags.get('__all__', [])}
+        if label:
+            flags.update({k: False for k in self._flags.get(label, [])})
+        self.setFlags(flags)
+
+    def setFlags(self, flags):
         self.deleteFlags()
-
-        # Add all flags
-        for label in ["__all__", text]:
-            if label in self.flags:
-                for key in self.flags[label]:
-                    item = QtWidgets.QCheckBox(key, self)
-                    self.label_flags.addWidget(item)
-                    item.show()
-
-    def setFlags(self, flags, text=''):
-        self.deleteFlags()
-
-        # Add flags not set
-        for label in ["__all__", text]:
-            if label in self.flags:
-                for key in self.flags[label]:
-                    if key not in flags:
-                        item = QtWidgets.QCheckBox(key, self)
-                        self.label_flags.addWidget(item)
-                        item.show()
-
-        # Add set flags
         for key in flags:
             item = QtWidgets.QCheckBox(key, self)
             item.setChecked(flags[key])
-            self.label_flags.addWidget(item)
+            self.flagsLayout.addWidget(item)
             item.show()
 
     def getFlags(self):
         flags = {}
-        for i in range(self.label_flags.count()):
-            item = self.label_flags.itemAt(i).widget()
-            flags[item.text()] = True if item.isChecked() else False
+        for i in range(self.flagsLayout.count()):
+            item = self.flagsLayout.itemAt(i).widget()
+            flags[item.text()] = item.isChecked()
         return flags
 
     def popUp(self, text=None, move=True, flags=None):
@@ -195,11 +181,10 @@ class LabelDialog(QtWidgets.QDialog):
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
-        if self.label_flags:
-            if flags:
-                self.setFlags(flags)
-            else:
-                self.resetFlags(text)
+        if flags:
+            self.setFlags(flags)
+        else:
+            self.resetFlags(text)
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
@@ -213,6 +198,6 @@ class LabelDialog(QtWidgets.QDialog):
         if move:
             self.move(QtGui.QCursor.pos())
         if self.exec_():
-            return self.edit.text(), self.getFlags() if self.flags else None
+            return self.edit.text(), self.getFlags()
         else:
             return None, None
