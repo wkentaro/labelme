@@ -847,12 +847,20 @@ class MainWindow(QtWidgets.QMainWindow):
                     return True
         return False
 
-    def editLabel(self, item=None):
+    def editLabel(self, item=False):
+        if item and not isinstance(item, QtWidgets.QListWidgetItem):
+            raise TypeError('unsupported type of item: {}'.format(type(item)))
+
         if not self.canvas.editing():
             return
-        item = item if item else self.currentItem()
+        if not item:
+            item = self.currentItem()
+        if item is None:
+            return
         shape = self.labelList.get_shape_from_item(item)
-        text, flags = self.labelDialog.popUp(item.text() if item else None, flags=(shape.flags if shape else None))
+        if shape is None:
+            return
+        text, flags = self.labelDialog.popUp(shape.label, flags=shape.flags)
         if text is None:
             return
         if not self.validateLabel(text):
@@ -860,8 +868,8 @@ class MainWindow(QtWidgets.QMainWindow):
                               "Invalid label '{}' with validation type '{}'"
                               .format(text, self._config['validate_label']))
             return
-        shape.flags = flags
         shape.label = text
+        shape.flags = flags
         item.setText(text)
         self.setDirty()
         if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
@@ -908,13 +916,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.shapeFillColor.setEnabled(selected)
 
     def addLabel(self, shape):
-        if not shape.flags:
-            shape.flags = {}
-            if self._config['label_flags']:
-                for label in ["__all__", shape.label]:
-                    if label in self._config['label_flags']:
-                        for key in self._config['label_flags'][label]:
-                            shape.flags[key] = False
         item = QtWidgets.QListWidgetItem(shape.label)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
@@ -943,12 +944,22 @@ class MainWindow(QtWidgets.QMainWindow):
             for x, y in points:
                 shape.addPoint(QtCore.QPoint(x, y))
             shape.close()
-            s.append(shape)
+
             if line_color:
                 shape.line_color = QtGui.QColor(*line_color)
+
             if fill_color:
                 shape.fill_color = QtGui.QColor(*fill_color)
-            shape.flags = flags
+
+            default_flags = {}
+            if self._config['label_flags']:
+                for l in ['__all__', label]:
+                    for k in self._config['label_flags'].get(l, []):
+                        default_flags[k] = False
+            shape.flags = default_flags
+            shape.flags.update(flags)
+
+            s.append(shape)
         self.loadShapes(s)
 
     def loadFlags(self, flags):
@@ -1021,11 +1032,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def labelSelectionChanged(self):
         item = self.currentItem()
-        if item:
+        if item and self.canvas.editing():
+            self._noSelectionSlot = True
             shape = self.labelList.get_shape_from_item(item)
-            if self.canvas.editing():
-                self._noSelectionSlot = True
-                self.canvas.selectShape(shape)
+            self.canvas.selectShape(shape)
 
     def labelItemChanged(self, item):
         shape = self.labelList.get_shape_from_item(item)
@@ -1045,6 +1055,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         items = self.uniqLabelList.selectedItems()
         text = None
+        flags = None
         if items:
             text = items[0].text()
         if self._config['display_label_popup'] or not text:
@@ -1066,9 +1077,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.undoLastLine()
             self.canvas.shapesBackups.pop()
         else:
-            shape = self.canvas.setLastLabel(text)
-            shape.flags = flags
-            self.addLabel(shape)
+            self.addLabel(self.canvas.setLastLabel(text, flags))
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
