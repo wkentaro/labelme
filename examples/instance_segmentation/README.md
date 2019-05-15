@@ -4,6 +4,7 @@
 
 ```bash
 labelme data_annotated --labels labels.txt --nodata
+labelme data_annotated --labels labels.txt --nodata --labelflags '{.*: [occluded, truncated], person-\d+: [male]}'
 ```
 
 ![](.readme/annotation.jpg)
