@@ -23,7 +23,7 @@ class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
-    selectionChanged = QtCore.Signal(bool)
+    selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
     edgeSelected = QtCore.Signal(bool)
@@ -43,8 +43,8 @@ class Canvas(QtWidgets.QWidget):
         self.shapes = []
         self.shapesBackups = []
         self.current = None
-        self.selectedShape = None  # save the selected shape here
-        self.selectedShapeCopy = None
+        self.selectedShapes = []  # save the selected shapes here
+        self.selectedShapesCopy = []
         self.lineColor = QtGui.QColor(0, 0, 255)
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
@@ -67,7 +67,7 @@ class Canvas(QtWidgets.QWidget):
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
-        self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
+        self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu(), QtWidgets.QMenu())
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
@@ -109,6 +109,9 @@ class Canvas(QtWidgets.QWidget):
         self.shapesBackups.pop()  # latest
         shapesBackup = self.shapesBackups.pop()
         self.shapes = shapesBackup
+        self.selectedShapes = []
+        for shape in self.shapes:
+            shape.selected = False
         self.storeShapes()
         self.repaint()
 
@@ -200,12 +203,12 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon copy moving.
         if QtCore.Qt.RightButton & ev.buttons():
-            if self.selectedShapeCopy and self.prevPoint:
+            if self.selectedShapesCopy and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
-                self.boundedMoveShape(self.selectedShapeCopy, pos)
+                self.boundedMoveShapes(self.selectedShapesCopy, pos)
                 self.repaint()
-            elif self.selectedShape:
-                self.selectedShapeCopy = self.selectedShape.copy()
+            elif self.selectedShapes:
+                self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
                 self.repaint()
             return
 
@@ -216,9 +219,9 @@ class Canvas(QtWidgets.QWidget):
                 self.boundedMoveVertex(pos)
                 self.repaint()
                 self.movingShape = True
-            elif self.selectedShape and self.prevPoint:
+            elif self.selectedShapes and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
-                self.boundedMoveShape(self.selectedShape, pos)
+                self.boundedMoveShapes(self.selectedShapes, pos)
                 self.repaint()
                 self.movingShape = True
             return
@@ -315,49 +318,49 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             else:
-                self.selectShapePoint(pos)
+                self.selectShapePoint(pos, multiple_selection_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier))
                 self.prevPoint = pos
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
-            self.selectShapePoint(pos)
+            self.selectShapePoint(pos, multiple_selection_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier))
             self.prevPoint = pos
             self.repaint()
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
-            menu = self.menus[bool(self.selectedShapeCopy)]
+            menu = self.menus[min(len(self.selectedShapesCopy), 2)]
             self.restoreCursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos()))\
-               and self.selectedShapeCopy:
+            if not menu.exec_(self.mapToGlobal(ev.pos())) and self.selectedShapesCopy:
                 # Cancel the move by deleting the shadow copy.
-                self.selectedShapeCopy = None
+                self.selectedShapesCopy = []
                 self.repaint()
-        elif ev.button() == QtCore.Qt.LeftButton and self.selectedShape:
+        elif ev.button() == QtCore.Qt.LeftButton and self.selectedShapes:
             self.overrideCursor(CURSOR_GRAB)
         if self.movingShape:
             self.storeShapes()
             self.shapeMoved.emit()
 
-    def endMove(self, copy=False):
-        assert self.selectedShape and self.selectedShapeCopy
-        shape = self.selectedShapeCopy
+    def endMove(self, copy):
+        assert self.selectedShapes and self.selectedShapesCopy
+        assert len(self.selectedShapesCopy) == len(self.selectedShapes)
         # del shape.fill_color
         # del shape.line_color
         if copy:
-            self.shapes.append(shape)
-            self.selectedShape.selected = False
-            self.selectedShape = shape
-            self.repaint()
+            for i, shape in enumerate(self.selectedShapesCopy):
+                self.shapes.append(shape)
+                self.selectedShapes[i].selected = False
+                self.selectedShapes[i] = shape
         else:
-            shape.label = self.selectedShape.label
-            self.deleteSelected()
-            self.shapes.append(shape)
+            for i, shape in enumerate(self.selectedShapesCopy):
+                self.selectedShapes[i].points = shape.points
+        self.selectedShapesCopy = []
+        self.repaint()
         self.storeShapes()
-        self.selectedShapeCopy = None
+        return True
 
     def hideBackroundShapes(self, value):
         self.hideBackround = value
-        if self.selectedShape:
+        if self.selectedShapes:
             # Only hide other shapes if there is a current selection.
             # Otherwise the user will not be able to select a shape.
             self.setHiding(True)
@@ -376,29 +379,28 @@ class Canvas(QtWidgets.QWidget):
             self.current.popPoint()
             self.finalise()
 
-    def selectShape(self, shape):
-        self.deSelectShape()
-        shape.selected = True
-        self.selectedShape = shape
+    def selectShapes(self, shapes):
         self.setHiding()
-        self.selectionChanged.emit(True)
+        self.selectionChanged.emit(shapes)
         self.update()
 
-    def selectShapePoint(self, point):
+    def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
-        self.deSelectShape()
         if self.selectedVertex():  # A vertex is marked for selection.
             index, shape = self.hVertex, self.hShape
             shape.highlightVertex(index, shape.MOVE_VERTEX)
-            return
-        for shape in reversed(self.shapes):
-            if self.isVisible(shape) and shape.containsPoint(point):
-                shape.selected = True
-                self.selectedShape = shape
-                self.calculateOffsets(shape, point)
-                self.setHiding()
-                self.selectionChanged.emit(True)
-                return
+        else:
+            for shape in reversed(self.shapes):
+                if self.isVisible(shape) and shape.containsPoint(point):
+                    self.calculateOffsets(shape, point)
+                    self.setHiding()
+                    if multiple_selection_mode:
+                        if shape not in self.selectedShapes:
+                            self.selectionChanged.emit(self.selectedShapes + [shape])
+                    else:
+                        self.selectionChanged.emit([shape])
+                    return
+        self.deSelectShape()
 
     def calculateOffsets(self, shape, point):
         rect = shape.boundingRect()
@@ -415,7 +417,7 @@ class Canvas(QtWidgets.QWidget):
             pos = self.intersectionPoint(point, pos)
         shape.moveVertexBy(index, pos - point)
 
-    def boundedMoveShape(self, shape, pos):
+    def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
             return False  # No need to move
         o1 = pos + self.offsets[0]
@@ -429,51 +431,48 @@ class Canvas(QtWidgets.QWidget):
         # relative to the shape, but also results in making it
         # a bit "shaky" when nearing the border and allows it to
         # go outside of the shape's area for some reason.
-        # self.calculateOffsets(self.selectedShape, pos)
+        # self.calculateOffsets(self.selectedShapes, pos)
         dp = pos - self.prevPoint
         if dp:
-            shape.moveBy(dp)
+            for shape in shapes:
+                shape.moveBy(dp)
             self.prevPoint = pos
             return True
         return False
 
     def deSelectShape(self):
-        if self.selectedShape:
-            self.selectedShape.selected = False
-            self.selectedShape = None
+        if self.selectedShapes:
             self.setHiding(False)
-            self.selectionChanged.emit(False)
+            self.selectionChanged.emit([])
             self.update()
 
     def deleteSelected(self):
-        if self.selectedShape:
-            shape = self.selectedShape
-            self.shapes.remove(self.selectedShape)
+        deleted_shapes = []
+        if self.selectedShapes:
+            for shape in self.selectedShapes:
+                self.shapes.remove(shape)
+                deleted_shapes.append(shape)
             self.storeShapes()
-            self.selectedShape = None
+            self.selectedShapes = []
             self.update()
-            return shape
+        return deleted_shapes
 
-    def copySelectedShape(self):
-        if self.selectedShape:
-            shape = self.selectedShape.copy()
-            self.deSelectShape()
-            self.shapes.append(shape)
-            self.storeShapes()
-            shape.selected = True
-            self.selectedShape = shape
-            self.boundedShiftShape(shape)
-            return shape
+    def copySelectedShapes(self):
+        if self.selectedShapes:
+            self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
+            self.boundedShiftShapes(self.selectedShapesCopy)
+            self.endMove(copy=True)
+        return self.selectedShapes
 
-    def boundedShiftShape(self, shape):
+    def boundedShiftShapes(self, shapes):
         # Try to move in one direction, and if it fails in another.
         # Give up if both fail.
-        point = shape[0]
+        point = shapes[0][0]
         offset = QtCore.QPoint(2.0, 2.0)
-        self.calculateOffsets(shape, point)
+        self.offsets = QtCore.QPoint(), QtCore.QPoint()
         self.prevPoint = point
-        if not self.boundedMoveShape(shape, point - offset):
-            self.boundedMoveShape(shape, point + offset)
+        if not self.boundedMoveShapes(shapes, point - offset):
+            self.boundedMoveShapes(shapes, point + offset)
 
     def paintEvent(self, event):
         if not self.pixmap:
@@ -498,8 +497,9 @@ class Canvas(QtWidgets.QWidget):
         if self.current:
             self.current.paint(p)
             self.line.paint(p)
-        if self.selectedShapeCopy:
-            self.selectedShapeCopy.paint(p)
+        if self.selectedShapesCopy:
+            for s in self.selectedShapesCopy:
+                s.paint(p)
 
         if (self.fillDrawing() and self.createMode == 'polygon' and
                 self.current is not None and len(self.current.points) >= 2):
