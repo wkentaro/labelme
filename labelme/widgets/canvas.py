@@ -280,7 +280,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mousePressEvent(self, ev):
         if QT5:
-            pos = self.transformPos(ev.pos())
+            pos = self.transformPos(ev.localPos())
         else:
             pos = self.transformPos(ev.posF())
         if ev.button() == QtCore.Qt.LeftButton:
