@@ -1,3 +1,5 @@
+import re
+
 from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
@@ -137,9 +139,10 @@ class LabelDialog(QtWidgets.QDialog):
         flags_old = self.getFlags()
 
         flags_new = {}
-        for label in ['__all__', label_new]:
-            for key in self._flags.get(label, []):
-                flags_new[key] = flags_old.get(key, False)
+        for pattern, keys in self._flags.items():
+            if re.match(pattern, label_new):
+                for key in keys:
+                    flags_new[key] = flags_old.get(key, False)
         self.setFlags(flags_new)
 
     def deleteFlags(self):
@@ -148,10 +151,12 @@ class LabelDialog(QtWidgets.QDialog):
             self.flagsLayout.removeWidget(item)
             item.setParent(None)
 
-    def resetFlags(self, label=None):
-        flags = {k: False for k in self._flags.get('__all__', [])}
-        if label:
-            flags.update({k: False for k in self._flags.get(label, [])})
+    def resetFlags(self, label=''):
+        flags = {}
+        for pattern, keys in self._flags.items():
+            if re.match(pattern, label):
+                for key in keys:
+                    flags[key] = False
         self.setFlags(flags)
 
     def setFlags(self, flags):

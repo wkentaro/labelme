@@ -16,13 +16,6 @@ from labelme.utils import newIcon
 
 
 def main():
-    try:
-        _main()
-    except Exception as e:
-        logger.error(e)
-
-
-def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--version', '-V', action='store_true', help='show version'
@@ -82,8 +75,8 @@ def _main():
         '--labelflags',
         dest='label_flags',
         help='yaml string of label specific flags OR file containing json '
-             'string of label specific flags (ex. {person: [male, tall], '
-             'dog: [big, black, brown, white], __all__: [occluded]})',
+             'string of label specific flags (ex. {person-\d+: [male, tall], '
+             'dog-\d+: [black, brown, white], .*: [occluded]})',
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -138,13 +131,6 @@ def _main():
                 args.label_flags = yaml.load(f)
         else:
             args.label_flags = yaml.load(args.label_flags)
-
-        # add not overlapping labels from label flags
-        if not hasattr(args, 'labels'):
-            args.labels = []
-        for label in args.label_flags.keys():
-            if label != '__all__' and label not in args.labels:
-                args.labels.append(label)
 
     config_from_args = args.__dict__
     config_from_args.pop('version')
