@@ -953,9 +953,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             default_flags = {}
             if self._config['label_flags']:
-                for l in ['__all__', label]:
-                    for k in self._config['label_flags'].get(l, []):
-                        default_flags[k] = False
+                for pattern, keys in self._config['label_flags'].items():
+                    if re.match(pattern, label):
+                        for key in keys:
+                            default_flags[key] = False
             shape.flags = default_flags
             shape.flags.update(flags)
 
