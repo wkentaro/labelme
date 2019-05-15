@@ -942,7 +942,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for label, points, line_color, fill_color, shape_type, flags in shapes:
             shape = Shape(label=label, shape_type=shape_type)
             for x, y in points:
-                shape.addPoint(QtCore.QPoint(x, y))
+                shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
 
             if line_color:
