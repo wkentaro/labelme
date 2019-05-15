@@ -33,6 +33,18 @@ file_dock:
   movable: true
   floatable: true
 
+#directory config
+directory_config: false
+#default config
+default_directory_config:
+  relative_paths: false
+  label_directory: null
+  label_file_prefix: null
+  label_file_postfix: null
+  image_directory: null
+  output_directory: null
+  
+
 # label_dialog
 show_label_text_field: true
 label_completion: startswith

@@ -15,6 +15,7 @@ from labelme import QT5
 
 from . import utils
 from labelme.config import get_config
+from labelme.config import get_directory_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
@@ -658,10 +659,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setDirty(self):
         if self._config['auto_save'] or self.actions.saveAuto.isChecked():
-            label_file = osp.splitext(self.imagePath)[0] + '.json'
-            if self.output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self.output_dir, label_file_without_path)
+            label_file = self.getLabelFile(self.filename)
             self.saveLabels(label_file)
             return
         self.dirty = True
@@ -1126,12 +1124,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.errorMessage(
                 'Error opening file', 'No such file: <b>%s</b>' % filename)
             return False
-        # assumes same name, but json extension
         self.status("Loading %s..." % osp.basename(str(filename)))
-        label_file = osp.splitext(filename)[0] + '.json'
-        if self.output_dir:
-            label_file_without_path = osp.basename(label_file)
-            label_file = osp.join(self.output_dir, label_file_without_path)
+        label_file = self.getLabelFile(filename)
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.is_label_file(label_file):
             try:
@@ -1357,6 +1351,8 @@ class MainWindow(QtWidgets.QMainWindow):
             elif self.output_file:
                 self._saveFile(self.output_file)
                 self.close()
+            elif self.output_dir:
+                self._saveFile(self.getLabelFile(self.filename))
             else:
                 self._saveFile(self.saveFileDialog())
 
@@ -1411,11 +1407,52 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.setEnabled(False)
         self.actions.saveAs.setEnabled(False)
 
-    def getLabelFile(self):
-        if self.filename.lower().endswith('.json'):
-            label_file = self.filename
+    def getLabelFile(self, filename):
+        if filename.lower().endswith('.json'):
+            label_file = filename
         else:
-            label_file = osp.splitext(self.filename)[0] + '.json'
+            if self._config['directory_config'] and \
+               hasattr(self, 'directoryConfig'):
+                if self.directoryConfig['image_directory']:
+                    imagepath = osp.join(
+                        self.lastOpenDir,
+                        self.directoryConfig['image_directory']
+                    )
+
+                image_path, image_filename = osp.split(filename)
+                label_filename = osp.splitext(image_filename)[0]
+                image_relpath = osp.relpath(image_path, imagepath)
+
+                if self.output_dir:
+                    label_path = self.output_dir
+                else:
+                    label_path = image_path
+
+                if self.directoryConfig['label_directory']:
+                    label_path = osp.join(
+                        label_path,
+                        self.directoryConfig['label_directory']
+                    )
+                if self.directoryConfig['relative_paths']:
+                    label_path = osp.join(label_path, image_relpath)
+                if self.directoryConfig['label_file_prefix']:
+                    label_filename = \
+                        self.directoryConfig['label_file_prefix'] + \
+                        label_filename
+                if self.directoryConfig['label_file_postfix']:
+                    label_filename = \
+                        label_filename + \
+                        self.directoryConfig['label_file_postfix']
+
+                label_file = osp.join(label_path, label_filename + '.json')
+            else:
+                label_file = osp.splitext(filename)[0] + '.json'
+                if self.output_dir:
+                    label_file_without_path = osp.basename(label_file)
+                    label_file = osp.join(
+                        self.output_dir,
+                        label_file_without_path
+                    )
 
         return label_file
 
@@ -1427,7 +1464,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if answer != mb.Yes:
             return
 
-        label_file = self.getLabelFile()
+        label_file = self.getLabelFile(self.filename)
         if osp.exists(label_file):
             os.remove(label_file)
             logger.info('Label file is removed: {}'.format(label_file))
@@ -1450,7 +1487,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.filename is None:
             return False
 
-        label_file = self.getLabelFile()
+        label_file = self.getLabelFile(self.filename)
         return osp.exists(label_file)
 
     def mayContinue(self):
@@ -1552,6 +1589,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self, '%s - Open Directory' % __appname__, defaultOpenDirPath,
             QtWidgets.QFileDialog.ShowDirsOnly |
             QtWidgets.QFileDialog.DontResolveSymlinks))
+
+        if self._config['directory_config']:
+            directoryConfigPath = osp.join(targetDirPath, 'config.yaml')
+            self.directoryConfig = get_directory_config(
+                self._config,
+                directoryConfigPath
+            )
+
+            self.output_dir = targetDirPath
+            if self.directoryConfig['output_directory']:
+                targetDirPath = self.config['output_directory']
+                self.output_dir = targetDirPath
+
+        else:
+            self.directoryConfig = get_directory_config(self._config)
+
         self.importDirImages(targetDirPath)
 
     @property
@@ -1570,15 +1623,23 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.lastOpenDir = dirpath
+
+        imagepath = dirpath
+        if self._config['directory_config'] and \
+           self.directoryConfig['image_directory']:
+            imagepath = osp.join(
+                dirpath,
+                self.directoryConfig['image_directory']
+            )
+
         self.filename = None
         self.fileListWidget.clear()
-        for filename in self.scanAllImages(dirpath):
+        for filename in self.scanAllImages(imagepath):
             if pattern and pattern not in filename:
                 continue
-            label_file = osp.splitext(filename)[0] + '.json'
-            if self.output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self.output_dir, label_file_without_path)
+
+            label_file = self.getLabelFile(filename)
+
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and \

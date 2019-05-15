@@ -77,3 +77,32 @@ def get_config(config_from_args=None, config_file=None):
                     validate_item=validate_config_item)
 
     return config
+
+
+def get_default_directory_config(config):
+    return config['default_directory_config']
+
+
+def get_directory_config(config, config_file=None):
+    # Configuration load order:
+    #
+    #   1. default config
+    #   2. config file from input directory
+
+    # 1. default config
+    directory_config = get_default_directory_config(config)
+
+    # 2. config from yaml file
+    if config_file is not None:
+        if osp.exists(config_file):
+            with open(config_file) as f:
+                user_config = yaml.load(f) or {}
+            update_dict(
+                directory_config, user_config,
+                validate_item=validate_config_item
+            )
+        else:
+            with open(config_file, 'w') as f:
+                yaml.safe_dump(config, f, default_flow_style=False)
+
+    return directory_config
