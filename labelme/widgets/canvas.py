@@ -148,7 +148,7 @@ class Canvas(QtWidgets.QWidget):
         """Update line with last point and current coordinates."""
         try:
             if QT5:
-                pos = self.transformPos(ev.pos())
+                pos = self.transformPos(ev.localPos())
             else:
                 pos = self.transformPos(ev.posF())
         except AttributeError:
