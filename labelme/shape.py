@@ -241,14 +241,7 @@ class Shape(object):
         self._highlightIndex = None
 
     def copy(self):
-        shape = Shape(label=self.label, shape_type=self.shape_type)
-        shape.points = [copy.deepcopy(p) for p in self.points]
-        shape.fill = self.fill
-        shape.selected = self.selected
-        shape._closed = self._closed
-        shape.line_color = copy.deepcopy(self.line_color)
-        shape.fill_color = copy.deepcopy(self.fill_color)
-        return shape
+        return copy.deepcopy(self)
 
     def __len__(self):
         return len(self.points)
