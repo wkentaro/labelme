@@ -7,6 +7,7 @@ class LabelQListWidget(QtWidgets.QListWidget):
         super(LabelQListWidget, self).__init__(*args, **kwargs)
         self.canvas = None
         self.itemsToShapes = []
+        self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
 
     def get_shape_from_item(self, item):
         for index, (item_, shape) in enumerate(self.itemsToShapes):
