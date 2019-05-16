@@ -67,7 +67,8 @@ class Canvas(QtWidgets.QWidget):
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
-        self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu(), QtWidgets.QMenu())
+        # 0: right-click, 1: ctrl+right-click
+        self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
@@ -330,7 +331,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
-            menu = self.menus[min(len(self.selectedShapesCopy), 2)]
+            menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
             if not menu.exec_(self.mapToGlobal(ev.pos())) \
                     and self.selectedShapesCopy:

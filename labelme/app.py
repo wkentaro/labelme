@@ -526,13 +526,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 action('&Move here', self.moveShape),
             ),
         )
-        utils.addActions(
-            self.canvas.menus[2],
-            (
-                action('&Copy here', self.copyShape),
-                action('&Move here', self.moveShape),
-            ),
-        )
 
         self.tools = self.toolbar('Tools')
         # Menu buttons on Left
