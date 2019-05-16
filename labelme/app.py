@@ -302,14 +302,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         editMode = action('Edit Polygons', self.setEditMode,
                           shortcuts['edit_polygon'], 'edit',
-                          'Move and edit polygons', enabled=False)
+                          'Move and edit the selected polygons', enabled=False)
 
-        delete = action('Delete Polygon(s)', self.deleteSelectedShape,
+        delete = action('Delete Polygons', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
-                        'Delete', enabled=False)
-        copy = action('Duplicate Polygon(s)', self.copySelectedShape,
+                        'Delete the selected polygons', enabled=False)
+        copy = action('Duplicate Polygons', self.copySelectedShape,
                       shortcuts['duplicate_polygon'], 'copy',
-                      'Create a duplicate of the selected polygon',
+                      'Create a duplicate of the selected polygons',
                       enabled=False)
         undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
                                shortcuts['undo_last_point'], 'undo',
@@ -917,12 +917,12 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.labelList.get_item_from_shape(shape)
             item.setSelected(True)
         self._noSelectionSlot = False
-        selected = len(selected_shapes)
-        self.actions.delete.setEnabled(selected)
-        self.actions.copy.setEnabled(selected)
-        self.actions.edit.setEnabled(selected == 1)
-        self.actions.shapeLineColor.setEnabled(selected)
-        self.actions.shapeFillColor.setEnabled(selected)
+        n_selected = len(selected_shapes)
+        self.actions.delete.setEnabled(n_selected)
+        self.actions.copy.setEnabled(n_selected)
+        self.actions.edit.setEnabled(n_selected == 1)
+        self.actions.shapeLineColor.setEnabled(n_selected)
+        self.actions.shapeFillColor.setEnabled(n_selected)
 
     def addLabel(self, shape):
         item = QtWidgets.QListWidgetItem(shape.label)
@@ -937,8 +937,8 @@ class MainWindow(QtWidgets.QMainWindow):
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
-    def remLabels(self, removed_shapes):
-        for shape in removed_shapes:
+    def remLabels(self, shapes):
+        for shape in shapes:
             item = self.labelList.get_item_from_shape(shape)
             self.labelList.takeItem(self.labelList.row(item))
 
@@ -1548,12 +1548,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-        if len(self.canvas.selectedShapes) > 1:
-            msg = 'You are about to permanently delete {} polygons, ' \
-                  'proceed anyway?'.format(len(self.canvas.selectedShapes))
-        else:
-            msg = 'You are about to permanently delete this polygon, ' \
-                  'proceed anyway?'
+        msg = 'You are about to permanently delete {} polygons, ' \
+              'proceed anyway?'.format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(self, 'Attention', msg,
                                                 yes | no):
             self.remLabels(self.canvas.deleteSelected())
