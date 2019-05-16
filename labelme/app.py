@@ -1055,8 +1055,8 @@ class MainWindow(QtWidgets.QMainWindow):
         position MUST be in global coordinates.
         """
         items = self.uniqLabelList.selectedItems()
-        text = None
-        flags = None
+        text = ''
+        flags = {}
         if items:
             text = items[0].text()
         if self._config['display_label_popup'] or not text:
@@ -1069,20 +1069,20 @@ class MainWindow(QtWidgets.QMainWindow):
                     text = '-'.join(split)
             text, flags = self.labelDialog.popUp(text)
 
-        if text is not None and not self.validateLabel(text):
+        if text and not self.validateLabel(text):
             self.errorMessage('Invalid label',
                               "Invalid label '{}' with validation type '{}'"
                               .format(text, self._config['validate_label']))
-            text = None
-        if text is None:
-            self.canvas.undoLastLine()
-            self.canvas.shapesBackups.pop()
-        else:
+            text = ''
+        if text:
             self.addLabel(self.canvas.setLastLabel(text, flags))
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()
+        else:
+            self.canvas.undoLastLine()
+            self.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta, orientation):
         units = - delta * 0.1  # natural scroll
