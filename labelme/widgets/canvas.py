@@ -109,7 +109,8 @@ class Canvas(QtWidgets.QWidget):
         self.shapesBackups.pop()  # latest
         shapesBackup = self.shapesBackups.pop()
         self.shapes = shapesBackup
-        self.storeShapes()
+        # no need self.storeShapes() here to store latest state,
+        # it will be called from canvas.loadShapes later
         self.repaint()
 
     def enterEvent(self, ev):
