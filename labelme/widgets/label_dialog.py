@@ -34,6 +34,8 @@ class LabelDialog(QtWidgets.QDialog):
                  completion='startswith', fit_to_content=None, flags=None):
         if fit_to_content is None:
             fit_to_content = {'row': False, 'column': True}
+        if flags is None:
+            flags = {}
         self._fit_to_content = fit_to_content
 
         super(LabelDialog, self).__init__(parent)
@@ -79,8 +81,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         # label_flags
-        if flags is None:
-            flags = {}
         self._flags = flags
         self.flagsLayout = QtWidgets.QVBoxLayout()
         self.resetFlags()
@@ -175,6 +175,8 @@ class LabelDialog(QtWidgets.QDialog):
         return flags
 
     def popUp(self, text=None, move=True, flags=None):
+        if flags is None:
+            flags = {}
         if self._fit_to_content['row']:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2

@@ -38,6 +38,8 @@ class Shape(object):
 
     def __init__(self, label=None, line_color=None, shape_type=None,
                  flags=None):
+        if flags is None:
+            flags = {}
         self.label = label
         self.points = []
         self.fill = False

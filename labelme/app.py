@@ -958,6 +958,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         for key in keys:
                             default_flags[key] = False
             shape.flags = default_flags
+            if flags is None:  # it was possible in some JSON files
+                flags = {}
             shape.flags.update(flags)
 
             s.append(shape)
@@ -1056,7 +1058,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         items = self.uniqLabelList.selectedItems()
         text = None
-        flags = None
+        flags = {}
         if items:
             text = items[0].text()
         if self._config['display_label_popup'] or not text:
