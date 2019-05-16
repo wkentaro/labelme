@@ -208,7 +208,8 @@ class Canvas(QtWidgets.QWidget):
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
                 self.repaint()
             elif self.selectedShapes:
-                self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
+                self.selectedShapesCopy = \
+                    [s.copy() for s in self.selectedShapes]
                 self.repaint()
             return
 
@@ -318,11 +319,13 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             else:
-                self.selectShapePoint(pos, multiple_selection_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier))
+                group_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier)
+                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
-            self.selectShapePoint(pos, multiple_selection_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier))
+            group_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier)
+            self.selectShapePoint(pos, multiple_selection_mode=group_mode)
             self.prevPoint = pos
             self.repaint()
 
@@ -330,7 +333,8 @@ class Canvas(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.RightButton:
             menu = self.menus[min(len(self.selectedShapesCopy), 2)]
             self.restoreCursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos())) and self.selectedShapesCopy:
+            if not menu.exec_(self.mapToGlobal(ev.pos())) \
+                    and self.selectedShapesCopy:
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
@@ -396,7 +400,8 @@ class Canvas(QtWidgets.QWidget):
                     self.setHiding()
                     if multiple_selection_mode:
                         if shape not in self.selectedShapes:
-                            self.selectionChanged.emit(self.selectedShapes + [shape])
+                            self.selectionChanged.emit(
+                                self.selectedShapes + [shape])
                     else:
                         self.selectionChanged.emit([shape])
                     return
