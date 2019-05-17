@@ -67,7 +67,8 @@ class Canvas(QtWidgets.QWidget):
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
-        # 0: right-click, 1: ctrl+right-click
+        # 0: right-click without selection and dragging of shapes
+        # 1: right-click with selection and dragging of shapes
         self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
         # Set widget options.
         self.setMouseTracking(True)
