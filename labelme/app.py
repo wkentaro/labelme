@@ -1067,7 +1067,7 @@ class MainWindow(QtWidgets.QMainWindow):
         position MUST be in global coordinates.
         """
         items = self.uniqLabelList.selectedItems()
-        text = ''
+        text = None
         flags = {}
         if items:
             text = items[0].text()
@@ -1078,7 +1078,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 split = previous_label.split('-')
                 if len(split) > 1 and split[-1].isdigit():
                     split[-1] = str(int(split[-1]) + 1)
-                    text = '-'.join(split)
+                    instance_text = '-'.join(split)
+                else:
+                    instance_text = previous_label
+                if instance_text != '':
+                    text = instance_text
             text, flags = self.labelDialog.popUp(text)
 
         if text and not self.validateLabel(text):
