@@ -1084,6 +1084,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 if instance_text != '':
                     text = instance_text
             text, flags = self.labelDialog.popUp(text)
+            if text is None:
+                self.labelDialog.edit.setText(previous_label)
 
         if text and not self.validateLabel(text):
             self.errorMessage('Invalid label',
