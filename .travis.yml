@@ -139,16 +139,17 @@ before_deploy:
   - git config --local user.name 'Kentaro Wada'
   - git config --local user.email 'www.kentaro.wada@gmail.com'
 
-deploy:
-  provider: releases
-  api_key:
-    secure: S42xawauDsZqLpdRy5d3nAo5Enh6tcJR6IAKwRp4T5+P/ZgXmoSJ81HQrmiUXLJTdvMMjRRr2H/2GuX+WoNHiFLlGY43bWu8GkK1qRslJxC+Fh8+VdIrhVcOFf7xhvhuV26KZxu4uh2lp95p10Crpj4Y3GkxguHjbF+F9c0vEVlEmmgyVsj6c2tFzIXVa4LPuFFDf9yWPl5Sp1n60Y8fDaEOoVbK63vh8pngFE8t2anQl5oNOcLf29t8IciPyo70p1p0UdKZ5a6YsPgu+/x2rPG1uroUksD9s9kY33vL/2D77frGv1eZFNk7TH31LV1TlG3JWklC8tqVG7Qklm4+Hnk+OEo/1uyWeDLJX8IOwy25hbg5VMFkQTZYWhCYg3IihdHbRJL4FAyTasYbEUrkmxniRnLCD8EL6gFHV1zZuv7ACCcdJHZz70sp/eiKZ5TwGRM+qnSNjd9Y4IyRv25vRsZo/8EPKShcKD1ik5OQNc2hw3uM6KLnV6lRCmZ1WSVz08bkLn5X+lzAyw1Bop2ZNdlS9N8qSfRMn2f30ORCVmNP/EKFFIDbt4wkd1XkAG/bF4LFD9VeSTp6RXcie/C/SfwBjgn0hqhdQ/n6Ptcba77OXWnKAc35GkWPs3+axBrYMZno68ne8DlcWIdT2RAeuMVzQMHT52ddvx3oQ6cUXs4=
-  file_glob: true
-  file: dist/*.zip
-  skip_cleanup: true
-  on:
-    tags: true
-    repo: wkentaro/labelme
+# FIXME: binary built by pyinstaller won't generalize well to a new platform
+# deploy:
+#   provider: releases
+#   api_key:
+#     secure: S42xawauDsZqLpdRy5d3nAo5Enh6tcJR6IAKwRp4T5+P/ZgXmoSJ81HQrmiUXLJTdvMMjRRr2H/2GuX+WoNHiFLlGY43bWu8GkK1qRslJxC+Fh8+VdIrhVcOFf7xhvhuV26KZxu4uh2lp95p10Crpj4Y3GkxguHjbF+F9c0vEVlEmmgyVsj6c2tFzIXVa4LPuFFDf9yWPl5Sp1n60Y8fDaEOoVbK63vh8pngFE8t2anQl5oNOcLf29t8IciPyo70p1p0UdKZ5a6YsPgu+/x2rPG1uroUksD9s9kY33vL/2D77frGv1eZFNk7TH31LV1TlG3JWklC8tqVG7Qklm4+Hnk+OEo/1uyWeDLJX8IOwy25hbg5VMFkQTZYWhCYg3IihdHbRJL4FAyTasYbEUrkmxniRnLCD8EL6gFHV1zZuv7ACCcdJHZz70sp/eiKZ5TwGRM+qnSNjd9Y4IyRv25vRsZo/8EPKShcKD1ik5OQNc2hw3uM6KLnV6lRCmZ1WSVz08bkLn5X+lzAyw1Bop2ZNdlS9N8qSfRMn2f30ORCVmNP/EKFFIDbt4wkd1XkAG/bF4LFD9VeSTp6RXcie/C/SfwBjgn0hqhdQ/n6Ptcba77OXWnKAc35GkWPs3+axBrYMZno68ne8DlcWIdT2RAeuMVzQMHT52ddvx3oQ6cUXs4=
+#   file_glob: true
+#   file: dist/*.zip
+#   skip_cleanup: true
+#   on:
+#     tags: true
+#     repo: wkentaro/labelme
 
 after_script:
   - true  # noop
