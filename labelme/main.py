@@ -5,7 +5,7 @@ import os
 import sys
 import yaml
 
-from qtpy import QtWidgets
+from qtpy import QtWidgets, QtCore
 
 from labelme import __appname__
 from labelme import __version__
@@ -154,9 +154,12 @@ def main():
         else:
             output_dir = output
 
+    translator = QtCore.QTranslator()
+    translator.load(QtCore.QLocale.system().name(), 'translate')
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon('icon'))
+    app.installTranslator(translator)
     win = MainWindow(
         config=config,
         filename=filename,
