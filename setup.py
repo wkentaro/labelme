@@ -138,4 +138,5 @@ setup(
             'labelme_on_docker=labelme.cli.on_docker:main',
         ],
     },
+    data_files=[('share/man/man1', ['docs/man/labelme.1'])],
 )
