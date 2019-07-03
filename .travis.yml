@@ -97,6 +97,12 @@ script:
   - labelme --help
   - labelme --version
 
+  # Run help2man
+  - conda install -y help2man
+  - test "$(help2man labelme | egrep -v '^\.TH' | egrep -v '^\.\\"')" = "$(cat docs/man/labelme.1 | egrep -v '^\.TH' | egrep -v '^\.\\"')"
+
+
+  # Run examples
   - (cd examples/primitives && labelme_json_to_dataset primitives.json && rm -rf primitives_json)
   - (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
   - (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
