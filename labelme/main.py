@@ -5,7 +5,8 @@ import os
 import sys
 import yaml
 
-from qtpy import QtWidgets, QtCore
+from qtpy import QtCore
+from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
