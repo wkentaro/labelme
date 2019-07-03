@@ -116,6 +116,7 @@ brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
 
 # or install standalone executable / app
+# NOTE: this only installs the `labelme` command
 brew install wkentaro/labelme/labelme
 brew cask install wkentaro/labelme/labelme
 ```
