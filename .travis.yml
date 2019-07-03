@@ -99,8 +99,8 @@ script:
 
   # Run help2man
   - conda install -y help2man
-  - test "$(help2man labelme | egrep -v '^\.TH' | egrep -v '^\.\\"')" = "$(cat docs/man/labelme.1 | egrep -v '^\.TH' | egrep -v '^\.\\"')"
-
+  - help2man labelme > /tmp/labelme.1
+  - diff docs/man/labelme.1 /tmp/labelme.1 -I '^\.TH' -I '^\.\\"' -I '^config file'
 
   # Run examples
   - (cd examples/primitives && labelme_json_to_dataset primitives.json && rm -rf primitives_json)
