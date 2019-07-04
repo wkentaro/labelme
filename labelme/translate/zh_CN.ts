@@ -15,7 +15,7 @@
     <message>
         <location filename="../widgets/canvas.py" line="259"/>
         <source>Click &amp; drag to move shape &apos;%s&apos;</source>
-        <translation>点击并拖拽以移动形状</translation>
+        <translation>点击并拖拽以移动形状&apos;%s&apos;</translation>
     </message>
 </context>
 <context>
@@ -32,8 +32,8 @@
     </message>
     <message>
         <location filename="../app.py" line="112"/>
-        <source>选择标签类型并开始以其标注。按&apos;Esc&apos;取消选择。</source>
-        <translation></translation>
+        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
+        <translation>选择标签类型并开始以其标注。按&apos;Esc&apos;取消选择。</translation>
     </message>
     <message>
         <location filename="../app.py" line="118"/>
@@ -515,7 +515,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="1217"/>
         <source>Error reading %s</source>
-        <translation>打开文件发生错误</translation>
+        <translation>打开文件发生错误 %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="1212"/>
