@@ -2,10 +2,10 @@ import argparse
 import codecs
 import logging
 import os
+from os.path import abspath
+from os.path import dirname
 import sys
 import yaml
-from os.path import dirname
-from os.path import abspath
 
 from qtpy import QtCore
 from qtpy import QtWidgets
