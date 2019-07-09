@@ -4,6 +4,8 @@ import logging
 import os
 import sys
 import yaml
+from os.path import dirname
+from os.path import abspath
 
 from qtpy import QtCore
 from qtpy import QtWidgets
@@ -156,7 +158,10 @@ def main():
             output_dir = output
 
     translator = QtCore.QTranslator()
-    translator.load(QtCore.QLocale.system().name(), 'translate')
+    translator.load(
+        QtCore.QLocale.system().name(),
+        dirname(abspath(__file__)) + '/translate'
+    )
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon('icon'))
