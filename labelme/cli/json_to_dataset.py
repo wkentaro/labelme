@@ -32,10 +32,9 @@ def main():
         os.mkdir(out_dir)
 
     data = json.load(open(json_file))
+    imageData = data.get('imageData')
 
-    if data['imageData']:
-        imageData = data['imageData']
-    else:
+    if not imageData:
         imagePath = os.path.join(os.path.dirname(json_file), data['imagePath'])
         with open(imagePath, 'rb') as f:
             imageData = f.read()
