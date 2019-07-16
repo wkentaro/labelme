@@ -108,6 +108,8 @@ def main():
 
         masks = {}                                     # for area
         segmentations = collections.defaultdict(list)  # for segmentation
+        labels_indices = {}
+
         for shape in label_data['shapes']:
             points = shape['points']
             label = shape['label']
@@ -117,12 +119,13 @@ def main():
             )
 
             if label in masks:
-                masks[label] = masks[label] | mask
+                labels_indices[label] += 1
+                label=label+"-"+str(labels_indices[label])
+                
             else:
-                masks[label] = mask
+                labels_indices[label]=0
 
-            points = np.asarray(points).flatten().tolist()
-            segmentations[label].append(points)
+            masks[label] = mask
 
         for label, mask in masks.items():
             cls_name = label.split('-')[0]
