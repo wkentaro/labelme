@@ -125,7 +125,13 @@ def main():
             else:
                 labels_indices[label]=0
 
+
             masks[label] = mask
+
+            points = np.asarray(points).flatten().tolist()
+            segmentations[label].append(points)
+
+
 
         for label, mask in masks.items():
             cls_name = label.split('-')[0]
