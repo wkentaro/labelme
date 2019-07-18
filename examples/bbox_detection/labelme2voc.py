@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 
@@ -37,6 +37,8 @@ def main():
     os.makedirs(osp.join(args.output_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.output_dir, 'Annotations'))
     os.makedirs(osp.join(args.output_dir, 'AnnotationsVisualization'))
+    os.makedirs(osp.join(args.output_dir, 'ImageSets'))
+    os.makedirs(osp.join(args.output_dir, 'ImageSets\Main'))
     print('Creating dataset:', args.output_dir)
 
     class_names = []
@@ -58,6 +60,8 @@ def main():
         f.writelines('\n'.join(class_names))
     print('Saved class_names:', out_class_names_file)
 
+    filename = []
+    
     for label_file in glob.glob(osp.join(args.input_dir, '*.json')):
         print('Generating dataset from:', label_file)
         with open(label_file) as f:
@@ -69,8 +73,9 @@ def main():
             args.output_dir, 'Annotations', base + '.xml')
         out_viz_file = osp.join(
             args.output_dir, 'AnnotationsVisualization', base + '.jpg')
-
-        img_file = osp.join(osp.dirname(label_file), data['imagePath'])
+        
+        filename.append(data['imagePath'][:-4])
+        img_file = osp.join(osp.dirname(label_file), data['imagePath'][:-4]+".jpg")
         img = np.asarray(PIL.Image.open(img_file))
         PIL.Image.fromarray(img).save(out_img_file)
 
@@ -101,7 +106,19 @@ def main():
             class_id = class_names.index(class_name)
 
             (xmin, ymin), (xmax, ymax) = shape['points']
-            bboxes.append([xmin, ymin, xmax, ymax])
+            
+            # swap if min is larger than max.
+            if xmin > xmax:
+                tmp = xmin
+                xmin = xmax
+                xmax = tmp
+            if ymin > ymax:
+                tmp = ymin
+                ymin = ymax
+                ymax = tmp
+            
+            # need to write as int
+            bboxes.append([int(xmin), int(ymin), int(xmax), int(ymax)])
             labels.append(class_id)
 
             xml.append(
@@ -111,10 +128,11 @@ def main():
                     maker.truncated(),
                     maker.difficult(),
                     maker.bndbox(
-                        maker.xmin(str(xmin)),
-                        maker.ymin(str(ymin)),
-                        maker.xmax(str(xmax)),
-                        maker.ymax(str(ymax)),
+                        # need to write as int
+                        maker.xmin(str(int(xmin))),
+                        maker.ymin(str(int(ymin))),
+                        maker.xmax(str(int(xmax))),
+                        maker.ymax(str(int(ymax))),
                     ),
                 )
             )
@@ -127,7 +145,14 @@ def main():
 
         with open(out_xml_file, 'wb') as f:
             f.write(lxml.etree.tostring(xml, pretty_print=True))
-
+    
+    # write out trainfile.
+    out_train_file = osp.join(
+            args.output_dir, 'ImageSets/Main/trainval.txt')
+    with open(out_train_file, 'w') as f:
+        for file in filename:
+            f.write(file+"\n")
+        
 
 if __name__ == '__main__':
     main()
