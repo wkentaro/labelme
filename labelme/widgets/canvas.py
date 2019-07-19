@@ -562,6 +562,10 @@ class Canvas(QtWidgets.QWidget):
                   (0, size.height() - 1)]
         x1, y1 = p1.x(), p1.y()
         x2, y2 = p2.x(), p2.y()
+        
+        x1 = min(max(x1, 0.0), size.width() - 1.)
+        y1 = min(max(y1, 0.0), size.height() - 1.)
+        
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
         x4, y4 = points[(i + 1) % 4]
