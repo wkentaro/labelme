@@ -38,7 +38,7 @@ def main():
     os.makedirs(osp.join(args.output_dir, 'Annotations'))
     os.makedirs(osp.join(args.output_dir, 'AnnotationsVisualization'))
     os.makedirs(osp.join(args.output_dir, 'ImageSets'))
-    os.makedirs(osp.join(args.output_dir, 'ImageSets\Main'))
+    os.makedirs(osp.join(args.output_dir, 'ImageSets', 'Main'))
     print('Creating dataset:', args.output_dir)
 
     class_names = []
