@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 
 from __future__ import print_function
 
@@ -74,8 +74,7 @@ def main():
         out_viz_file = osp.join(
             args.output_dir, 'AnnotationsVisualization', base + '.jpg')
         
-        filename.append(data['imagePath'][:-4])
-        img_file = osp.join(osp.dirname(label_file), data['imagePath'][:-4]+".jpg")
+        img_file = osp.join(osp.dirname(label_file), data['imagePath'])
         img = np.asarray(PIL.Image.open(img_file))
         PIL.Image.fromarray(img).save(out_img_file)
 
@@ -108,17 +107,10 @@ def main():
             (xmin, ymin), (xmax, ymax) = shape['points']
             
             # swap if min is larger than max.
-            if xmin > xmax:
-                tmp = xmin
-                xmin = xmax
-                xmax = tmp
-            if ymin > ymax:
-                tmp = ymin
-                ymin = ymax
-                ymax = tmp
+            xmin, xmax = sorted([xmin, xmax])
+            ymin, ymax = sorted([ymin, ymax])
             
-            # need to write as int
-            bboxes.append([int(xmin), int(ymin), int(xmax), int(ymax)])
+            bboxes.append([xmin, ymin, xmax, ymax])
             labels.append(class_id)
 
             xml.append(
@@ -128,11 +120,10 @@ def main():
                     maker.truncated(),
                     maker.difficult(),
                     maker.bndbox(
-                        # need to write as int
-                        maker.xmin(str(int(xmin))),
-                        maker.ymin(str(int(ymin))),
-                        maker.xmax(str(int(xmax))),
-                        maker.ymax(str(int(ymax))),
+                        maker.xmin(str(xmin)),
+                        maker.ymin(str(ymin)),
+                        maker.xmax(str(xmax)),
+                        maker.ymax(str(ymax)),
                     ),
                 )
             )
