@@ -61,7 +61,6 @@ def main():
     print('Saved class_names:', out_class_names_file)
 
     filename = []
-    
     for label_file in glob.glob(osp.join(args.input_dir, '*.json')):
         print('Generating dataset from:', label_file)
         with open(label_file) as f:
@@ -72,8 +71,8 @@ def main():
         out_xml_file = osp.join(
             args.output_dir, 'Annotations', base + '.xml')
         out_viz_file = osp.join(
-            args.output_dir, 'AnnotationsVisualization', base + '.jpg')
-        
+            args.output_dir, 'AnnotationsVisualization', base + '.jpg')    
+        filename.append(data['imagePath'][:-4]) # filename without .jpg
         img_file = osp.join(osp.dirname(label_file), data['imagePath'])
         img = np.asarray(PIL.Image.open(img_file))
         PIL.Image.fromarray(img).save(out_img_file)
@@ -104,12 +103,11 @@ def main():
             class_name = shape['label']
             class_id = class_names.index(class_name)
 
-            (xmin, ymin), (xmax, ymax) = shape['points']
-            
+            (xmin, ymin), (xmax, ymax) = shape['points']            
             # swap if min is larger than max.
             xmin, xmax = sorted([xmin, xmax])
             ymin, ymax = sorted([ymin, ymax])
-            
+            # append boxes and labels
             bboxes.append([xmin, ymin, xmax, ymax])
             labels.append(class_id)
 
@@ -135,15 +133,13 @@ def main():
         PIL.Image.fromarray(viz).save(out_viz_file)
 
         with open(out_xml_file, 'wb') as f:
-            f.write(lxml.etree.tostring(xml, pretty_print=True))
-    
+            f.write(lxml.etree.tostring(xml, pretty_print=True))    
     # write out trainfile.
     out_train_file = osp.join(
             args.output_dir, 'ImageSets/Main/trainval.txt')
     with open(out_train_file, 'w') as f:
         for file in filename:
-            f.write(file+"\n")
-        
-
+            f.write(file+'\n')
 if __name__ == '__main__':
     main()
+    
