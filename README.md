@@ -108,6 +108,12 @@ sudo apt-get install python3-pyqt5  # PyQt5
 sudo pip3 install labelme
 ```
 
+### Ubuntu 19.10+ / Debian (sid)
+
+```bash
+sudo apt-get install labelme
+```
+
 ### macOS
 
 ```bash
