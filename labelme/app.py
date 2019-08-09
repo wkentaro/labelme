@@ -52,7 +52,7 @@ class MainWindow(QtWidgets.QMainWindow):
         output=None,
         output_file=None,
         output_dir=None,
-    ):
+        ):
         if output is not None:
             logger.warning(
                 'argument output is deprecated, use output_file instead'
@@ -341,6 +341,10 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
 
+        removePoint = action('Remove Selected Point', self.canvas.removeSelectedPoint,
+                             None, 'edit', 'Remove selected point from polygon',
+                             enabled=False)
+
         undo = action(self.tr('Undo'), self.undoShapeEdit,
                       shortcuts['undo'], 'undo',
                       self.tr('Undo last add and edit of shape'),
@@ -452,7 +456,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
-            addPointToEdge=addPointToEdge,
+            addPointToEdge=addPointToEdge, removePoint=removePoint,
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
@@ -499,6 +503,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undo,
                 undoLastPoint,
                 addPointToEdge,
+                removePoint,
             ),
             onLoadActive=(
                 close,
@@ -514,6 +519,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.canvas.edgeSelected.connect(self.canvasShapeEdgeSelected)
+        self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
 
         self.menus = utils.struct(
             file=self.menu(self.tr('&File')),
@@ -795,6 +801,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def tutorial(self):
         url = 'https://github.com/wkentaro/labelme/tree/master/examples/tutorial'  # NOQA
         webbrowser.open(url)
+
+    def toggleRemovePointEnabled(self, enabled):
+        self.actions.removePoint.setEnabled(enabled)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
