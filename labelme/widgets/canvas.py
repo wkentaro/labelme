@@ -27,6 +27,7 @@ class Canvas(QtWidgets.QWidget):
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
     edgeSelected = QtCore.Signal(bool, object)
+    vertexSelected = QtCore.Signal(bool)
 
     CREATE, EDIT = 0, 1
 
@@ -268,6 +269,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
             self.hVertex, self.hShape, self.hEdge = None, None, None
         self.edgeSelected.emit(self.hEdge is not None, self.hShape)
+        self.vertexSelected.emit(self.hVertex is not None)
 
     def addPointToEdge(self):
         if (self.hShape is None and
@@ -282,6 +284,21 @@ class Canvas(QtWidgets.QWidget):
         self.hShape = shape
         self.hVertex = index
         self.hEdge = None
+        self.movingShape = True
+
+    def removeSelectedPoint(self):
+        if (self.hShape is None and
+                self.prevMovePoint is None):
+            return
+        shape = self.hShape
+        point = self.prevMovePoint
+        index = shape.nearestVertex(point, self.epsilon)
+        shape.removePoint(index)
+        # shape.highlightVertex(index, shape.MOVE_VERTEX)
+        self.hShape = shape
+        self.hVertex = None
+        self.hEdge = None
+        self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
         if QT5:
@@ -342,8 +359,11 @@ class Canvas(QtWidgets.QWidget):
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShapes:
             self.overrideCursor(CURSOR_GRAB)
         if self.movingShape:
-            self.storeShapes()
-            self.shapeMoved.emit()
+            # Only save if changes have actually been made
+            currentShapeIndex = self.shapes.index(self.hShape)
+            if not self.shapesBackups[-1][currentShapeIndex].points == self.shapes[currentShapeIndex].points:
+                self.storeShapes()
+                self.shapeMoved.emit()
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy

@@ -95,6 +95,9 @@ class Shape(object):
     def insertPoint(self, i, point):
         self.points.insert(i, point)
 
+    def removePoint(self, i):
+        self.points.pop(i)
+
     def isClosed(self):
         return self._closed
 
