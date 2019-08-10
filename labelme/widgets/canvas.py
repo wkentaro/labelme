@@ -26,7 +26,7 @@ class Canvas(QtWidgets.QWidget):
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
-    edgeSelected = QtCore.Signal(bool)
+    possibleToAddPoint = QtCore.Signal(bool)
 
     CREATE, EDIT = 0, 1
 
@@ -267,7 +267,7 @@ class Canvas(QtWidgets.QWidget):
                 self.hShape.highlightClear()
                 self.update()
             self.hVertex, self.hShape, self.hEdge = None, None, None
-        self.edgeSelected.emit(self.hEdge is not None)
+        self.possibleToAddPoint.emit(self.hEdge is not None and self.hShape is not None and self.hShape.canAddPoint())
 
     def addPointToEdge(self):
         if (self.hShape is None and

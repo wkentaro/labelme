@@ -84,6 +84,9 @@ class Shape(object):
         else:
             self.points.append(point)
 
+    def canAddPoint(self):
+        return self.shape_type in ['polygon', 'linestrip']
+
     def popPoint(self):
         if self.points:
             return self.points.pop()

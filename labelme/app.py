@@ -481,9 +481,7 @@ class MainWindow(QtWidgets.QMainWindow):
             onShapesPresent=(saveAs, hideAll, showAll),
         )
 
-        self.canvas.edgeSelected.connect(
-            self.actions.addPointToEdge.setEnabled
-        )
+        self.canvas.possibleToAddPoint.connect(self.actions.addPointToEdge.setEnabled)
 
         self.menus = utils.struct(
             file=self.menu('&File'),
