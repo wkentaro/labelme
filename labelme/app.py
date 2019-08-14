@@ -314,9 +314,14 @@ class MainWindow(QtWidgets.QMainWindow):
         undoLastPoint = action('Undo last point', self.canvas.undoLastPoint,
                                shortcuts['undo_last_point'], 'undo',
                                'Undo last drawn point', enabled=False)
-        addPoint = action('Add Point to Edge', self.canvas.addPointToEdge,
-                          None, 'edit', 'Add point to the nearest edge',
-                          enabled=False)
+        addPointToEdge = action(
+            'Add Point to Edge',
+            self.canvas.addPointToEdge,
+            shortcuts['add_point_to_edge'],
+            'edit',
+            'Add point to the nearest edge',
+            enabled=False,
+        )
 
         undo = action('Undo', self.undoShapeEdit, shortcuts['undo'], 'undo',
                       'Undo last add and edit of shape', enabled=False)
@@ -415,7 +420,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
-            addPoint=addPoint,
+            addPointToEdge=addPointToEdge,
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
@@ -429,8 +434,22 @@ class MainWindow(QtWidgets.QMainWindow):
             openNextImg=openNextImg, openPrevImg=openPrevImg,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
-            editMenu=(edit, copy, delete, None, undo, undoLastPoint,
-                      None, color1, color2, None, toggle_keep_prev_mode),
+            # XXX: need to add some actions here to activate the shortcut
+            editMenu=(
+                edit,
+                copy,
+                delete,
+                None,
+                undo,
+                undoLastPoint,
+                None,
+                addPointToEdge,
+                None,
+                color1,
+                color2,
+                None,
+                toggle_keep_prev_mode,
+            ),
             # menu shown at right click
             menu=(
                 createMode,
@@ -447,7 +466,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 shapeFillColor,
                 undo,
                 undoLastPoint,
-                addPoint,
+                addPointToEdge,
             ),
             onLoadActive=(
                 close,
@@ -462,7 +481,9 @@ class MainWindow(QtWidgets.QMainWindow):
             onShapesPresent=(saveAs, hideAll, showAll),
         )
 
-        self.canvas.edgeSelected.connect(self.actions.addPoint.setEnabled)
+        self.canvas.edgeSelected.connect(
+            self.actions.addPointToEdge.setEnabled
+        )
 
         self.menus = utils.struct(
             file=self.menu('&File'),
@@ -738,9 +759,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def tutorial(self):
         url = 'https://github.com/wkentaro/labelme/tree/master/examples/tutorial'  # NOQA
         webbrowser.open(url)
-
-    def toggleAddPointEnabled(self, enabled):
-        self.actions.addPoint.setEnabled(enabled)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
