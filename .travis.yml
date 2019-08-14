@@ -41,7 +41,7 @@ matrix:
       env:
         - PYTEST_QT_API=pyside2
         - CONDA_CHANNELS='conda-forge'
-        - PYQT_PACKAGE='pyside2'
+        - PYQT_PACKAGE='pyside2!=5.12.4'
         - PYTHON_VERSION=2.7
     - os: linux
       dist: trusty
