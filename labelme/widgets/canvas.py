@@ -560,8 +560,12 @@ class Canvas(QtWidgets.QWidget):
                   (size.width() - 1, 0),
                   (size.width() - 1, size.height() - 1),
                   (0, size.height() - 1)]
-        x1, y1 = p1.x(), p1.y()
-        x2, y2 = p2.x(), p2.y()
+        # FIXME: below clipping is unnecessary on Linux and Mac,
+        # but required on Windows to avoid error in intersectingEdges
+        x1 = min(max(p1.x(), 0), size.width() - 1)
+        x2 = min(max(p2.x(), 0), size.width() - 1)
+        y1 = min(max(p1.y(), 0), size.height() - 1)
+        y2 = min(max(p2.y(), 0), size.height() - 1)
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
         x4, y4 = points[(i + 1) % 4]
