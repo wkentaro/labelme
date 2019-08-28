@@ -563,6 +563,7 @@ class Canvas(QtWidgets.QWidget):
         # x1, y1 should be in the pixmap, x2, y2 should be out of the pixmap
         x1 = min(max(p1.x(), 0), size.width() - 1)
         y1 = min(max(p1.y(), 0), size.height() - 1)
+        x2, y2 = p2.x(), p2.y()
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
         x4, y4 = points[(i + 1) % 4]
