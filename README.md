@@ -78,8 +78,10 @@ conda create --name=labelme python=3.6
 source activate labelme
 # conda install -c conda-forge pyside2
 # conda install pyqt
-pip install pyqt5  # pyqt5 can be installed via pip on python3
+# pip install pyqt5  # pyqt5 can be installed via pip on python3
 pip install labelme
+# or you can install everything by conda command
+# conda install labelme -c conda-forge
 ```
 
 ### Docker
