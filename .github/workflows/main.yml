@@ -1,0 +1,149 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-latest, ubuntu-latest]
+        PYTEST_QT_API: [pyqt5, pyqt4v2, pyside2]
+        PYTHON_VERSION: ['2.7', '3.6']
+        exclude:
+          - os: macOS-latest
+            PYTEST_QT_API: pyqt4v2
+          - os: macOS-latest
+            PYTEST_QT_API: pyside2
+          - PYTHON_VERSION: '3.6'
+            PYTEST_QT_API:  pyqt4v2
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Update submodules
+      run: |
+        git submodule update --init --recursive
+
+    - name: Install system dependencies
+      run: |
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          sudo apt-get install -y coreutils
+          sudo apt-get install -y xvfb herbstluftwm
+        else
+          brew install coreutils
+          brew cask install xquartz
+        fi
+
+    - name: Set up Miniconda
+      run: |
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          curl -L -o miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        else
+          curl -L -o miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+        fi
+        bash miniconda.sh -b -p $HOME/miniconda
+        rm -f miniconda.sh
+        export PATH="$HOME/miniconda/bin:$PATH"
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda info -a
+
+    - name: Set up Python
+      env:
+        PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
+      run: |
+        export PATH="$HOME/miniconda/bin:$PATH"
+        conda install -y python=$PYTHON_VERSION
+        which python
+        python --version
+        pip --version
+
+    - name: Install dependencies
+      run: |
+        export PATH="$HOME/miniconda/bin:$PATH"
+        if [ "${{ matrix.PYTEST_QT_API }}" = "pyside2" ]; then
+          if [ "${{ matrix.PYTHON_VERSION }}" = "2.7" ]; then
+            conda install -y 'pyside2!=5.12.4' -c conda-forge
+          else
+            conda install -y pyside2 -c conda-forge
+          fi
+        elif [ "${{ matrix.PYTEST_QT_API }}" = "pyqt4v2" ]; then
+          conda install -y pyqt=4 -c conda-forge
+        else  # pyqt5
+          conda install -y pyqt=5
+        fi
+        conda install -y help2man
+        pip install flake8 pytest pytest-qt
+
+    - name: Install main
+      run: |
+        export PATH="$HOME/miniconda/bin:$PATH"
+        pip install .
+
+    - name: Lint with flake8
+      run: |
+        export PATH="$HOME/miniconda/bin:$PATH"
+        flake8 .
+
+    - name: Test with pytest
+      env:
+        PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
+      run: |
+        # open virtual display
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          export DISPLAY=:99.0
+          /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX +render -noreset
+          (herbstluftwm )&
+        else
+          (sudo Xvfb :99 -ac -screen 0 1024x768x8 )&
+        fi
+        # run test
+        export PATH="$HOME/miniconda/bin:$PATH"
+        MPLBACKEND='agg' pytest tests -m 'not gpu'
+
+    - name: Run examples
+      env:
+        MPLBACKEND: agg
+      run: |
+        export PATH="$HOME/miniconda/bin:$PATH"
+
+        labelme --help
+        labelme --version
+        (cd examples/primitives && labelme_json_to_dataset primitives.json && rm -rf primitives_json)
+        (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
+        (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+        (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+        (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+
+        pip install lxml  # for bbox_detection/labelme2voc.py
+        (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+
+        pip install cython && pip install pycocotools  # for instance_segmentation/labelme2coco.py
+        (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
+
+    - name: Run pyinstaller
+      run: |
+        if [ "${{ matrix.PYTEST_QT_API }}" = "pyqt5" -a "${{ matrix.PYTHON_VERSION }}" = "3.6" ]; then
+          export PATH="$HOME/miniconda/bin:$PATH"
+
+          # # Cleanup
+          # pip uninstall -y $PIP_DEPENDENCIES
+
+          # # https://github.com/wkentaro/labelme/issues/183
+          # if [ $TRAVIS_OS_NAME = "osx" ]; then
+          #   pip uninstall -y Pillow
+          #   conda install -y Pillow
+          # fi
+
+          # Build the standalone executable
+          pip install 'pyinstaller!=3.4'  # 3.4 raises error
+
+          # # numpy 1.17 raises error
+          # # See https://github.com/wkentaro/labelme/issues/465
+          # pip install 'numpy<1.17'
+
+          pyinstaller labelme.spec
+          dist/labelme --version
+        fi
