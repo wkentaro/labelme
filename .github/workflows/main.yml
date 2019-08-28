@@ -127,23 +127,8 @@ jobs:
       run: |
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyqt5" -a "${{ matrix.PYTHON_VERSION }}" = "3.6" ]; then
           export PATH="$HOME/miniconda/bin:$PATH"
-
-          # # Cleanup
-          # pip uninstall -y $PIP_DEPENDENCIES
-
-          # # https://github.com/wkentaro/labelme/issues/183
-          # if [ $TRAVIS_OS_NAME = "osx" ]; then
-          #   pip uninstall -y Pillow
-          #   conda install -y Pillow
-          # fi
-
           # Build the standalone executable
           pip install 'pyinstaller!=3.4'  # 3.4 raises error
-
-          # # numpy 1.17 raises error
-          # # See https://github.com/wkentaro/labelme/issues/465
-          # pip install 'numpy<1.17'
-
           pyinstaller labelme.spec
           dist/labelme --version
         fi
