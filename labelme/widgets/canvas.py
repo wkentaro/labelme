@@ -360,10 +360,11 @@ class Canvas(QtWidgets.QWidget):
             self.overrideCursor(CURSOR_GRAB)
         if self.movingShape:
             # Only save if changes have actually been made
-            currentShapeIndex = self.shapes.index(self.hShape)
-            if not self.shapesBackups[-1][currentShapeIndex].points == self.shapes[currentShapeIndex].points:
-                self.storeShapes()
-                self.shapeMoved.emit()
+            if self.hShape is not None:
+                currentShapeIndex = self.shapes.index(self.hShape)
+                if not self.shapesBackups[-1][currentShapeIndex].points == self.shapes[currentShapeIndex].points:
+                    self.storeShapes()
+                    self.shapeMoved.emit()
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
