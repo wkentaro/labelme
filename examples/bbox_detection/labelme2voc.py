@@ -101,6 +101,10 @@ def main():
             class_id = class_names.index(class_name)
 
             (xmin, ymin), (xmax, ymax) = shape['points']
+            # swap if min is larger than max.
+            xmin, xmax = sorted([xmin, xmax])
+            ymin, ymax = sorted([ymin, ymax])
+
             bboxes.append([xmin, ymin, xmax, ymax])
             labels.append(class_id)
 
