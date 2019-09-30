@@ -1,7 +1,7 @@
 auto_save: false
 display_label_popup: true
 instance_label_auto_increment: true
-store_data: true
+store_data: false
 keep_prev: false
 logger_level: info
 
