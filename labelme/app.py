@@ -401,6 +401,10 @@ class MainWindow(QtWidgets.QMainWindow):
                           shortcuts['fit_width'], 'fit-width',
                           self.tr('Zoom follows window width'),
                           checkable=True, enabled=False)
+        brightness = action('Brightness\nContrast', self.adjustBrightnessContrast,
+                          None, None,
+                          'Adjust the brightness and contrast of the current image',
+                          enabled=False)
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
@@ -455,6 +459,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
+            adjustBrightnessContrast=brightness,
             zoomActions=zoomActions,
             openNextImg=openNextImg, openPrevImg=openPrevImg,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
@@ -498,6 +503,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                brightness,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
@@ -554,6 +560,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWindow,
                 fitWidth,
                 None,
+                brightness,
             ),
         )
 
@@ -590,6 +597,8 @@ class MainWindow(QtWidgets.QMainWindow):
             zoomOut,
             fitWindow,
             fitWidth,
+            None,
+            brightness,
         )
 
         self.statusBar().showMessage(self.tr('%s started.') % __appname__)
@@ -1237,6 +1246,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
+
+    def adjustBrightnessContrast(self, value):
+        from labelme.widgets.adjust_brightness_widget import AdjustBrightnessContrastWidget
+        def onNewBrightnessContrast(qimage):
+            self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage))
+        dlg = AdjustBrightnessContrastWidget(self.filename, onNewBrightnessContrast, parent=self)
+        val = dlg.exec()
+
 
     def togglePolygons(self, value):
         for item in self.labelList:
