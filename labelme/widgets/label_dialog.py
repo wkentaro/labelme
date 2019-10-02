@@ -76,6 +76,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.labelList.setDragDropMode(
                 QtWidgets.QAbstractItemView.InternalMove)
         self.labelList.currentItemChanged.connect(self.labelSelected)
+        self.labelList.itemDoubleClicked.connect(self.labelDoubleClicked)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         # label_flags
@@ -125,6 +126,9 @@ class LabelDialog(QtWidgets.QDialog):
             text = text.trimmed()
         if text:
             self.accept()
+
+    def labelDoubleClicked(self, item):
+        self.validate()
 
     def postProcess(self):
         text = self.edit.text()
