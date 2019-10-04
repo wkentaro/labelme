@@ -94,6 +94,9 @@ def main():
         img_file = osp.join(
             osp.dirname(label_file), label_data['imagePath']
         )
+        if not os.path.exists(img_file):
+            continue
+
         img = np.asarray(PIL.Image.open(img_file))
         PIL.Image.fromarray(img).save(out_img_file)
         data['images'].append(dict(
