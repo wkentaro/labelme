@@ -323,6 +323,18 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
 
+        deletePoint = action(
+            'Delete Point',
+            self.canvas.deletePoint,
+            shortcuts['delete_point'],
+            'cancel',
+            'Delete nearest point',
+            enabled=False,
+        )
+
+        #new action with following parameters is created:
+        #self, parent, text, slot=None, shortcut=None, icon=None, tip=None, checkable=False, enabled=True
+
         undo = action('Undo', self.undoShapeEdit, shortcuts['undo'], 'undo',
                       'Undo last add and edit of shape', enabled=False)
 
@@ -421,6 +433,7 @@ class MainWindow(QtWidgets.QMainWindow):
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
             addPointToEdge=addPointToEdge,
+            deletePoint=deletePoint,
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
@@ -467,6 +480,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undo,
                 undoLastPoint,
                 addPointToEdge,
+                deletePoint,
             ),
             onLoadActive=(
                 close,
@@ -482,7 +496,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.canvas.edgeSelected.connect(
-            self.actions.addPointToEdge.setEnabled
+            self.actions.addPointToEdge.setEnabled,
+            #self.actions.deletePoint.setEnabled
+        )
+
+        self.canvas.edgeSelected.connect(
+            self.actions.deletePoint.setEnabled,
         )
 
         self.menus = utils.struct(

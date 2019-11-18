@@ -92,6 +92,10 @@ class Shape(object):
     def insertPoint(self, i, point):
         self.points.insert(i, point)
 
+    def deleteHighlightedPoint(self):
+        delete_index = self._highlightIndex
+        self.points.remove(self.points[delete_index])
+
     def isClosed(self):
         return self._closed
 

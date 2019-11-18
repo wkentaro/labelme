@@ -283,6 +283,20 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
 
+    def deletePoint(self):
+        if (self.hShape is None and
+                self.hEdge is None and
+                self.prevMovePoint is None):
+            return
+        shape = self.hShape
+        index = self.hEdge
+        point = self.prevMovePoint
+        shape.deleteHighlightedPoint()
+        shape.highlightVertex(index, shape.MOVE_VERTEX)
+        self.hShape = shape
+        self.hVertex = index
+        self.hEdge = None
+
     def mousePressEvent(self, ev):
         if QT5:
             pos = self.transformPos(ev.localPos())
