@@ -243,7 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         saveAuto.setChecked(self._config['auto_save'])
 
-        def onSaveWithImageDataClick(x:bool):
+        def onSaveWithImageDataClick(x: bool):
             self._config['store_data'] = x
             self.actions.saveWithImageData.setChecked(x)
 
@@ -254,7 +254,6 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
         )
         saveWithImageData.setChecked(self._config['store_data'])
-
 
         close = action('&Close', self.closeFile, shortcuts['close'], 'close',
                        'Close current file')
