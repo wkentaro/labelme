@@ -243,13 +243,25 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         saveAuto.setChecked(self._config['auto_save'])
 
-        close = action(self.tr('&Close'), self.closeFile,
-                       shortcuts['close'], 'close',
-                       self.tr('Close current file'))
-        color1 = action(self.tr('Polygon &Line Color'), self.chooseColor1,
+        def onSaveWithImageDataClick(x:bool):
+            self._config['store_data'] = x
+            self.actions.saveWithImageData.setChecked(x)
+
+        saveWithImageData = action(
+            text='Save With Image Data',
+            slot=onSaveWithImageDataClick,
+            tip='Save image data in label file',
+            checkable=True,
+        )
+        saveWithImageData.setChecked(self._config['store_data'])
+
+
+        close = action('&Close', self.closeFile, shortcuts['close'], 'close',
+                       'Close current file')
+        color1 = action('Polygon &Line Color', self.chooseColor1,
                         shortcuts['edit_line_color'], 'color-line',
-                        self.tr('Choose polygon line color'))
-        color2 = action(self.tr('Polygon &Fill Color'), self.chooseColor2,
+                        'Choose polygon line color')
+        color2 = action('Polygon &Fill Color', self.chooseColor2,
                         shortcuts['edit_fill_color'], 'color',
                         self.tr('Choose polygon fill color'))
 
@@ -437,6 +449,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Store actions for further handling.
         self.actions = utils.struct(
             saveAuto=saveAuto,
+            saveWithImageData=saveWithImageData,
             changeOutputDir=changeOutputDir,
             save=save, saveAs=saveAs, open=open_, close=close,
             deleteFile=deleteFile,
@@ -528,6 +541,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 saveAs,
                 saveAuto,
                 changeOutputDir,
+                saveWithImageData,
                 close,
                 deleteFile,
                 None,
