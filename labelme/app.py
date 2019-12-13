@@ -243,7 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         saveAuto.setChecked(self._config['auto_save'])
 
-        def onSaveWithImageDataClick(x: bool):
+        def onSaveWithImageDataClick(x):
             self._config['store_data'] = x
             self.actions.saveWithImageData.setChecked(x)
 
