@@ -14,7 +14,7 @@ def lblsave(filename, lbl):
     if lbl.min() >= -1 and lbl.max() < 255:
         lbl_pil = PIL.Image.fromarray(lbl.astype(np.uint8), mode='P')
         colormap = imgviz.label_colormap()
-        lbl_pil.putpalette((colormap * 255).astype(np.uint8).flatten())
+        lbl_pil.putpalette(colormap.flatten())
         lbl_pil.save(filename)
     else:
         raise ValueError(
