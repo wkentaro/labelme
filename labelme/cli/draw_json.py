@@ -6,6 +6,7 @@ import json
 import os
 import sys
 
+import imgviz
 import matplotlib.pyplot as plt
 
 from labelme import utils
@@ -45,7 +46,13 @@ def main():
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
-    lbl_viz = utils.draw_label(lbl, img, label_names)
+    lbl_viz = imgviz.label2rgb(
+        label=lbl,
+        img=imgviz.rgb2gray(img),
+        label_names=label_names,
+        font_size=30,
+        loc='rb',
+    )
 
     plt.subplot(121)
     plt.imshow(img)

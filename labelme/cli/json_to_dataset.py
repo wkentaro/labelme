@@ -4,6 +4,7 @@ import json
 import os
 import os.path as osp
 
+import imgviz
 import PIL.Image
 import yaml
 
@@ -54,7 +55,9 @@ def main():
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
-    lbl_viz = utils.draw_label(lbl, img, label_names)
+    lbl_viz = imgviz.label2rgb(
+        label=lbl, img=img, label_names=label_names, loc='rb'
+    )
 
     PIL.Image.fromarray(img).save(osp.join(out_dir, 'img.png'))
     utils.lblsave(osp.join(out_dir, 'label.png'), lbl)

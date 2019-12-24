@@ -9,6 +9,7 @@ import os
 import os.path as osp
 import sys
 
+import imgviz
 try:
     import lxml.builder
     import lxml.etree
@@ -17,8 +18,6 @@ except ImportError:
     sys.exit(1)
 import numpy as np
 import PIL.Image
-
-import labelme
 
 
 def main():
@@ -110,7 +109,7 @@ def main():
             xmin, xmax = sorted([xmin, xmax])
             ymin, ymax = sorted([ymin, ymax])
 
-            bboxes.append([xmin, ymin, xmax, ymax])
+            bboxes.append([ymin, xmin, ymax, xmax])
             labels.append(class_id)
 
             xml.append(
@@ -130,10 +129,14 @@ def main():
 
         if not args.noviz:
             captions = [class_names[l] for l in labels]
-            viz = labelme.utils.draw_instances(
-                img, bboxes, labels, captions=captions
+            viz = imgviz.instances2rgb(
+                image=img,
+                labels=labels,
+                bboxes=bboxes,
+                captions=captions,
+                font_size=15,
             )
-            PIL.Image.fromarray(viz).save(out_viz_file)
+            imgviz.io.imsave(out_viz_file, viz)
 
         with open(out_xml_file, 'wb') as f:
             f.write(lxml.etree.tostring(xml, pretty_print=True))

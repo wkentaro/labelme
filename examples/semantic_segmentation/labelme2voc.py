@@ -9,6 +9,7 @@ import os
 import os.path as osp
 import sys
 
+import imgviz
 import numpy as np
 import PIL.Image
 
@@ -59,8 +60,6 @@ def main():
         f.writelines('\n'.join(class_names))
     print('Saved class_names:', out_class_names_file)
 
-    colormap = labelme.utils.label_colormap(255)
-
     for label_file in glob.glob(osp.join(args.input_dir, '*.json')):
         print('Generating dataset from:', label_file)
         with open(label_file) as f:
@@ -94,9 +93,14 @@ def main():
             np.save(out_lbl_file, lbl)
 
             if not args.noviz:
-                viz = labelme.utils.draw_label(
-                    lbl, img, class_names, colormap=colormap)
-                PIL.Image.fromarray(viz).save(out_viz_file)
+                viz = imgviz.label2rgb(
+                    label=lbl,
+                    img=imgviz.rgb2gray(img),
+                    font_size=15,
+                    label_names=class_names,
+                    loc='rb',
+                )
+                imgviz.io.imsave(out_viz_file, viz)
 
 
 if __name__ == '__main__':
