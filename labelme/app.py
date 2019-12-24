@@ -481,7 +481,7 @@ class MainWindow(QtWidgets.QMainWindow):
             onShapesPresent=(saveAs, hideAll, showAll),
         )
 
-        self.canvas.possibleToAddPoint.connect(self.actions.addPointToEdge.setEnabled)
+        self.canvas.edgeSelected.connect(self.canvasShapeEdgeSelected)
 
         self.menus = utils.struct(
             file=self.menu('&File'),
@@ -717,6 +717,11 @@ class MainWindow(QtWidgets.QMainWindow):
             z.setEnabled(value)
         for action in self.actions.onLoadActive:
             action.setEnabled(value)
+
+    def canvasShapeEdgeSelected(self, selected, shape):
+        self.actions.addPointToEdge.setEnabled(
+            selected and shape and shape.canAddPoint()
+        )
 
     def queueEvent(self, function):
         QtCore.QTimer.singleShot(0, function)
