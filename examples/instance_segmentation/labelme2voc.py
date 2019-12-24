@@ -22,6 +22,9 @@ def main():
     parser.add_argument('input_dir', help='input annotated directory')
     parser.add_argument('output_dir', help='output dataset directory')
     parser.add_argument('--labels', help='labels file', required=True)
+    parser.add_argument(
+        '--noviz', help='no visualization', action='store_true'
+    )
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -31,10 +34,16 @@ def main():
     os.makedirs(osp.join(args.output_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.output_dir, 'SegmentationClass'))
     os.makedirs(osp.join(args.output_dir, 'SegmentationClassPNG'))
-    os.makedirs(osp.join(args.output_dir, 'SegmentationClassVisualization'))
+    if not args.noviz:
+        os.makedirs(
+            osp.join(args.output_dir, 'SegmentationClassVisualization')
+        )
     os.makedirs(osp.join(args.output_dir, 'SegmentationObject'))
     os.makedirs(osp.join(args.output_dir, 'SegmentationObjectPNG'))
-    os.makedirs(osp.join(args.output_dir, 'SegmentationObjectVisualization'))
+    if not args.noviz:
+        os.makedirs(
+            osp.join(args.output_dir, 'SegmentationObjectVisualization')
+        )
     print('Creating dataset:', args.output_dir)
 
     class_names = []
@@ -68,20 +77,22 @@ def main():
                 args.output_dir, 'SegmentationClass', base + '.npy')
             out_clsp_file = osp.join(
                 args.output_dir, 'SegmentationClassPNG', base + '.png')
-            out_clsv_file = osp.join(
-                args.output_dir,
-                'SegmentationClassVisualization',
-                base + '.jpg',
-            )
+            if not args.noviz:
+                out_clsv_file = osp.join(
+                    args.output_dir,
+                    'SegmentationClassVisualization',
+                    base + '.jpg',
+                )
             out_ins_file = osp.join(
                 args.output_dir, 'SegmentationObject', base + '.npy')
             out_insp_file = osp.join(
                 args.output_dir, 'SegmentationObjectPNG', base + '.png')
-            out_insv_file = osp.join(
-                args.output_dir,
-                'SegmentationObjectVisualization',
-                base + '.jpg',
-            )
+            if not args.noviz:
+                out_insv_file = osp.join(
+                    args.output_dir,
+                    'SegmentationObjectVisualization',
+                    base + '.jpg',
+                )
 
             data = json.load(f)
 
@@ -100,17 +111,20 @@ def main():
             # class label
             labelme.utils.lblsave(out_clsp_file, cls)
             np.save(out_cls_file, cls)
-            clsv = labelme.utils.draw_label(
-                cls, img, class_names, colormap=colormap)
-            PIL.Image.fromarray(clsv).save(out_clsv_file)
+            if not args.noviz:
+                clsv = labelme.utils.draw_label(
+                    cls, img, class_names, colormap=colormap
+                )
+                PIL.Image.fromarray(clsv).save(out_clsv_file)
 
             # instance label
             labelme.utils.lblsave(out_insp_file, ins)
             np.save(out_ins_file, ins)
-            instance_ids = np.unique(ins)
-            instance_names = [str(i) for i in range(max(instance_ids) + 1)]
-            insv = labelme.utils.draw_label(ins, img, instance_names)
-            PIL.Image.fromarray(insv).save(out_insv_file)
+            if not args.noviz:
+                instance_ids = np.unique(ins)
+                instance_names = [str(i) for i in range(max(instance_ids) + 1)]
+                insv = labelme.utils.draw_label(ins, img, instance_names)
+                PIL.Image.fromarray(insv).save(out_insv_file)
 
 
 if __name__ == '__main__':
