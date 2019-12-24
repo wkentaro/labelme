@@ -28,6 +28,9 @@ def main():
     parser.add_argument('input_dir', help='input annotated directory')
     parser.add_argument('output_dir', help='output dataset directory')
     parser.add_argument('--labels', help='labels file', required=True)
+    parser.add_argument(
+        '--noviz', help='no visualization', action='store_true'
+    )
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -36,7 +39,8 @@ def main():
     os.makedirs(args.output_dir)
     os.makedirs(osp.join(args.output_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.output_dir, 'Annotations'))
-    os.makedirs(osp.join(args.output_dir, 'AnnotationsVisualization'))
+    if not args.noviz:
+        os.makedirs(osp.join(args.output_dir, 'AnnotationsVisualization'))
     print('Creating dataset:', args.output_dir)
 
     class_names = []
@@ -67,8 +71,9 @@ def main():
             args.output_dir, 'JPEGImages', base + '.jpg')
         out_xml_file = osp.join(
             args.output_dir, 'Annotations', base + '.xml')
-        out_viz_file = osp.join(
-            args.output_dir, 'AnnotationsVisualization', base + '.jpg')
+        if not args.noviz:
+            out_viz_file = osp.join(
+                args.output_dir, 'AnnotationsVisualization', base + '.jpg')
 
         img_file = osp.join(osp.dirname(label_file), data['imagePath'])
         img = np.asarray(PIL.Image.open(img_file))
@@ -123,11 +128,12 @@ def main():
                 )
             )
 
-        captions = [class_names[l] for l in labels]
-        viz = labelme.utils.draw_instances(
-            img, bboxes, labels, captions=captions
-        )
-        PIL.Image.fromarray(viz).save(out_viz_file)
+        if not args.noviz:
+            captions = [class_names[l] for l in labels]
+            viz = labelme.utils.draw_instances(
+                img, bboxes, labels, captions=captions
+            )
+            PIL.Image.fromarray(viz).save(out_viz_file)
 
         with open(out_xml_file, 'wb') as f:
             f.write(lxml.etree.tostring(xml, pretty_print=True))

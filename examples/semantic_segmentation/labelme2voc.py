@@ -22,8 +22,9 @@ def main():
     parser.add_argument('input_dir', help='input annotated directory')
     parser.add_argument('output_dir', help='output dataset directory')
     parser.add_argument('--labels', help='labels file', required=True)
-    parser.add_argument('--no-vis', help='no visualization results to be created', action='store_false')
-
+    parser.add_argument(
+        '--noviz', help='no visualization', action='store_true'
+    )
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -33,8 +34,10 @@ def main():
     os.makedirs(osp.join(args.output_dir, 'JPEGImages'))
     os.makedirs(osp.join(args.output_dir, 'SegmentationClass'))
     os.makedirs(osp.join(args.output_dir, 'SegmentationClassPNG'))
-    if not args.no_vis:
-        os.makedirs(osp.join(args.output_dir, 'SegmentationClassVisualization'))
+    if not args.noviz:
+        os.makedirs(
+            osp.join(args.output_dir, 'SegmentationClassVisualization')
+        )
     print('Creating dataset:', args.output_dir)
 
     class_names = []
@@ -68,7 +71,7 @@ def main():
                 args.output_dir, 'SegmentationClass', base + '.npy')
             out_png_file = osp.join(
                 args.output_dir, 'SegmentationClassPNG', base + '.png')
-            if not args.no_vis:
+            if not args.noviz:
                 out_viz_file = osp.join(
                     args.output_dir,
                     'SegmentationClassVisualization',
@@ -90,7 +93,7 @@ def main():
 
             np.save(out_lbl_file, lbl)
 
-            if not args.no_vis:
+            if not args.noviz:
                 viz = labelme.utils.draw_label(
                     lbl, img, class_names, colormap=colormap)
                 PIL.Image.fromarray(viz).save(out_viz_file)
