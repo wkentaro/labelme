@@ -9,6 +9,7 @@ import os
 import os.path as osp
 import sys
 
+import imgviz
 import numpy as np
 import PIL.Image
 
@@ -65,8 +66,6 @@ def main():
         f.writelines('\n'.join(class_names))
     print('Saved class_names:', out_class_names_file)
 
-    colormap = labelme.utils.label_colormap(255)
-
     for label_file in glob.glob(osp.join(args.input_dir, '*.json')):
         print('Generating dataset from:', label_file)
         with open(label_file) as f:
@@ -112,10 +111,14 @@ def main():
             labelme.utils.lblsave(out_clsp_file, cls)
             np.save(out_cls_file, cls)
             if not args.noviz:
-                clsv = labelme.utils.draw_label(
-                    cls, img, class_names, colormap=colormap
+                clsv = imgviz.label2rgb(
+                    label=cls,
+                    img=imgviz.rgb2gray(img),
+                    label_names=class_names,
+                    font_size=15,
+                    loc='rb',
                 )
-                PIL.Image.fromarray(clsv).save(out_clsv_file)
+                imgviz.io.imsave(out_clsv_file, clsv)
 
             # instance label
             labelme.utils.lblsave(out_insp_file, ins)
@@ -123,8 +126,14 @@ def main():
             if not args.noviz:
                 instance_ids = np.unique(ins)
                 instance_names = [str(i) for i in range(max(instance_ids) + 1)]
-                insv = labelme.utils.draw_label(ins, img, instance_names)
-                PIL.Image.fromarray(insv).save(out_insv_file)
+                insv = imgviz.label2rgb(
+                    label=ins,
+                    img=imgviz.rgb2gray(img),
+                    label_names=instance_names,
+                    font_size=15,
+                    loc='rb',
+                )
+                imgviz.io.imsave(out_insv_file, insv)
 
 
 if __name__ == '__main__':
