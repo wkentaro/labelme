@@ -2,8 +2,7 @@ import argparse
 import codecs
 import logging
 import os
-from os.path import abspath
-from os.path import dirname
+import os.path as osp
 import sys
 import yaml
 
@@ -160,7 +159,7 @@ def main():
     translator = QtCore.QTranslator()
     translator.load(
         QtCore.QLocale.system().name(),
-        dirname(abspath(__file__)) + '/translate'
+        osp.dirname(osp.abspath(__file__)) + '/translate'
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
