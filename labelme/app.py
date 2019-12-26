@@ -247,7 +247,7 @@ class MainWindow(QtWidgets.QMainWindow):
                        shortcuts['close'], 'close',
                        self.tr('Close current file'))
         color1 = action(self.tr('Polygon &Line Color'), self.chooseColor1,
-                        shortcuts['edit_line_color'], 'color_line',
+                        shortcuts['edit_line_color'], 'color-line',
                         self.tr('Choose polygon line color'))
         color2 = action(self.tr('Polygon &Fill Color'), self.chooseColor2,
                         shortcuts['edit_fill_color'], 'color',
