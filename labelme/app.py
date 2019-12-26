@@ -52,7 +52,7 @@ class MainWindow(QtWidgets.QMainWindow):
         output=None,
         output_file=None,
         output_dir=None,
-        ):
+    ):
         if output is not None:
             logger.warning(
                 'argument output is deprecated, use output_file instead'
@@ -340,10 +340,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr('Add point to the nearest edge'),
             enabled=False,
         )
-
-        removePoint = action('Remove Selected Point', self.canvas.removeSelectedPoint,
-                             None, 'edit', 'Remove selected point from polygon',
-                             enabled=False)
+        removePoint = action(
+            text='Remove Selected Point',
+            slot=self.canvas.removeSelectedPoint,
+            icon='edit',
+            tip='Remove selected point from polygon',
+            enabled=False,
+        )
 
         undo = action(self.tr('Undo'), self.undoShapeEdit,
                       shortcuts['undo'], 'undo',
@@ -801,9 +804,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def tutorial(self):
         url = 'https://github.com/wkentaro/labelme/tree/master/examples/tutorial'  # NOQA
         webbrowser.open(url)
-
-    def toggleRemovePointEnabled(self, enabled):
-        self.actions.removePoint.setEnabled(enabled)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
