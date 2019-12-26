@@ -23,7 +23,9 @@ RUN \
     # utilities
     sudo
 
-RUN pip3 install -v git+https://github.com/wkentaro/labelme.git
+RUN python3 -m pip install -U pip setuptools wheel
+
+RUN python3 -m pip install -v git+https://github.com/wkentaro/labelme.git
 
 USER developer
 ENV HOME /home/developer
