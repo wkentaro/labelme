@@ -1,6 +1,7 @@
 # -*- mode: python -*-
 # vim: ft=python
 
+
 block_cipher = None
 
 
@@ -32,7 +33,7 @@ exe = EXE(
     strip=False,
     upx=True,
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     icon='labelme/icons/icon.ico',
 )
 app = BUNDLE(
