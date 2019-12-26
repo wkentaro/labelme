@@ -26,7 +26,7 @@ def newButton(text, icon=None, slot=None):
 
 
 def newAction(parent, text, slot=None, shortcut=None, icon=None,
-              tip=None, checkable=False, enabled=True):
+              tip=None, checkable=False, enabled=True, checked=False):
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QtWidgets.QAction(text, parent)
     if icon is not None:
@@ -45,6 +45,7 @@ def newAction(parent, text, slot=None, shortcut=None, icon=None,
     if checkable:
         a.setCheckable(True)
     a.setEnabled(enabled)
+    a.setChecked(checked)
     return a
 
 

@@ -243,17 +243,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         saveAuto.setChecked(self._config['auto_save'])
 
-        def onSaveWithImageDataClick(x):
-            self._config['store_data'] = x
-            self.actions.saveWithImageData.setChecked(x)
-
         saveWithImageData = action(
             text='Save With Image Data',
-            slot=onSaveWithImageDataClick,
+            slot=self.enableSaveImageWithData,
             tip='Save image data in label file',
             checkable=True,
+            checked=self._config['store_data'],
         )
-        saveWithImageData.setChecked(self._config['store_data'])
 
         close = action('&Close', self.closeFile, shortcuts['close'], 'close',
                        'Close current file')
@@ -1343,6 +1339,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # The epsilon does not seem to work too well here.
         w = self.centralWidget().width() - 2.0
         return w / self.canvas.pixmap.width()
+
+    def enableSaveImageWithData(self, enabled):
+        self._config['store_data'] = enabled
+        self.actions.saveWithImageData.setChecked(enabled)
 
     def closeEvent(self, event):
         if not self.mayContinue():
