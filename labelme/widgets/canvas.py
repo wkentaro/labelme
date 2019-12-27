@@ -228,7 +228,7 @@ class Canvas(QtWidgets.QWidget):
                 self.movingShape = True
             return
 
-        # Just hovering over the canvas, 2 posibilities:
+        # Just hovering over the canvas, 2 possibilities:
         # - Highlight shapes
         # - Highlight vertex
         # Update shape/vertex fill and tooltip value accordingly.
