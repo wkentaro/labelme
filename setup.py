@@ -29,7 +29,7 @@ del here
 
 
 install_requires = [
-    'imgviz',
+    'imgviz>=0.10.2',
     'matplotlib',
     'numpy',
     'Pillow>=2.8.0',
