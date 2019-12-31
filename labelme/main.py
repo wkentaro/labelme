@@ -130,9 +130,9 @@ def main():
     if hasattr(args, 'label_flags'):
         if os.path.isfile(args.label_flags):
             with codecs.open(args.label_flags, 'r', encoding='utf-8') as f:
-                args.label_flags = yaml.load(f)
+                args.label_flags = yaml.safe_load(f)
         else:
-            args.label_flags = yaml.load(args.label_flags)
+            args.label_flags = yaml.safe_load(args.label_flags)
 
     config_from_args = args.__dict__
     config_from_args.pop('version')
