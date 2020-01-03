@@ -11,6 +11,7 @@ labels: null
 file_search: null
 sort_labels: true
 validate_label: null
+max_image_pixels: null
 
 # main
 flag_dock:
