@@ -105,6 +105,13 @@ def main():
         help='epsilon to find nearest vertex on canvas',
         default=argparse.SUPPRESS,
     )
+    parser.add_argument(
+        '--max-image-pixels',
+        type=int,
+        help='for large images, raise PIL\'s default maximum pixel count using this option',
+        dest='max_image_pixels',
+        default=None
+    )
     args = parser.parse_args()
 
     if args.version:
@@ -133,6 +140,9 @@ def main():
                 args.label_flags = yaml.safe_load(f)
         else:
             args.label_flags = yaml.safe_load(args.label_flags)
+
+    if not hasattr(args, 'max_image_pixels'): #add more
+        args.max_image_pixels = None
 
     config_from_args = args.__dict__
     config_from_args.pop('version')
