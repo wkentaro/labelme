@@ -73,7 +73,8 @@ class LabelFile(object):
             else:
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data['imagePath'])
-                imageData = self.load_image_file(imagePath, self.max_image_pixels)
+                imageData = self.load_image_file(
+                    imagePath, self.max_image_pixels)
             flags = data.get('flags') or {}
             imagePath = data['imagePath']
             self._check_image_height_and_width(
