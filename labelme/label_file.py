@@ -20,17 +20,18 @@ class LabelFile(object):
 
     suffix = '.json'
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, maxImagePixels=None):
         self.shapes = ()
         self.imagePath = None
         self.imageData = None
         if filename is not None:
             self.load(filename)
-        self.filename = filename
-
+        self.maxImagePixels = maxImagePixels
     @staticmethod
-    def load_image_file(filename):
+    def load_image_file(filename, max_image_pixels=None):
         try:
+            if max_image_pixels is not None:
+                PIL.Image.MAX_IMAGE_PIXELS = max_image_pixels
             image_pil = PIL.Image.open(filename)
         except IOError:
             logger.error('Failed opening image file: {}'.format(filename))
@@ -72,7 +73,7 @@ class LabelFile(object):
             else:
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data['imagePath'])
-                imageData = self.load_image_file(imagePath)
+                imageData = self.load_image_file(imagePath, self.max_image_pixels)
             flags = data.get('flags') or {}
             imagePath = data['imagePath']
             self._check_image_height_and_width(
