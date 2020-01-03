@@ -141,9 +141,6 @@ def main():
         else:
             args.label_flags = yaml.safe_load(args.label_flags)
 
-    if not hasattr(args, 'max_image_pixels'):
-        args.max_image_pixels = None
-
     config_from_args = args.__dict__
     config_from_args.pop('version')
     reset_config = config_from_args.pop('reset_config')
