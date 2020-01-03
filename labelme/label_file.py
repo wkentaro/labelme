@@ -27,6 +27,7 @@ class LabelFile(object):
         if filename is not None:
             self.load(filename)
         self.maxImagePixels = maxImagePixels
+
     @staticmethod
     def load_image_file(filename, max_image_pixels=None):
         try:

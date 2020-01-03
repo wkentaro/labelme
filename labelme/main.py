@@ -108,7 +108,7 @@ def main():
     parser.add_argument(
         '--max-image-pixels',
         type=int,
-        help='for large images, raise PIL\'s default maximum pixel count using this option',
+        help='raise PIL\'s max pixels limit',
         dest='max_image_pixels',
         default=None
     )
@@ -141,7 +141,7 @@ def main():
         else:
             args.label_flags = yaml.safe_load(args.label_flags)
 
-    if not hasattr(args, 'max_image_pixels'): #add more
+    if not hasattr(args, 'max_image_pixels'):
         args.max_image_pixels = None
 
     config_from_args = args.__dict__
