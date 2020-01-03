@@ -1254,7 +1254,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.is_label_file(label_file):
             try:
-                self.labelFile = LabelFile(label_file)
+                self.labelFile = LabelFile(label_file, self._config["max_image_pixels"])
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr('Error opening file'),
@@ -1276,7 +1276,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
             self.otherData = self.labelFile.otherData
         else:
-            self.imageData = LabelFile.load_image_file(filename)
+            self.imageData = LabelFile.load_image_file(filename, self._config["max_image_pixels"])
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None
