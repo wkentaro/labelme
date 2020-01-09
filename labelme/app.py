@@ -1011,7 +1011,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def loadLabels(self, shapes):
         s = []
-        for label, points, line_color, fill_color, shape_type, flags in shapes:
+        for shape in shapes:
+            label = shape['label']
+            points = shape['points']
+            line_color = shape['line_color']
+            fill_color = shape['fill_color']
+            shape_type = shape['shape_type']
+            flags = shape['flags']
+
             shape = Shape(label=label, shape_type=shape_type)
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
