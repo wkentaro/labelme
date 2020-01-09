@@ -55,25 +55,13 @@ def validate_config_item(key, value):
         )
 
 
-def get_config(config_from_args=None, config_file=None):
-    # Configuration load order:
-    #
-    #   1. default config (lowest priority)
-    #   2. config file passed by command line argument or ~/.labelmerc
-    #   3. command line argument (highest priority)
-
+def get_config(config_specified=None):
     # 1. default config
     config = get_default_config()
 
-    # 2. config from yaml file
-    if config_file is not None and osp.exists(config_file):
-        with open(config_file) as f:
-            user_config = yaml.safe_load(f) or {}
-        update_dict(config, user_config, validate_item=validate_config_item)
-
-    # 3. command line argument
-    if config_from_args is not None:
-        update_dict(config, config_from_args,
+    # 2. command line argument or specified config file
+    if config_specified is not None:
+        update_dict(config, config_specified,
                     validate_item=validate_config_item)
 
     return config

@@ -20,7 +20,7 @@ with open(man_file) as f:
 
 patterns_exclude = [
     r'^\.TH .*',
-    r'^config file.*',
+    r'^.*/\.labelmerc\)$',
     r'^\.\\.*',
 ]
 
