@@ -145,6 +145,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config['epsilon'],
+            double_click=self._config['canvas']['double_click'],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
