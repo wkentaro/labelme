@@ -4,14 +4,12 @@ from __future__ import print_function
 
 import argparse
 import glob
-import json
 import os
 import os.path as osp
 import sys
 
 import imgviz
 import numpy as np
-import PIL.Image
 
 import labelme
 
@@ -60,47 +58,47 @@ def main():
         f.writelines('\n'.join(class_names))
     print('Saved class_names:', out_class_names_file)
 
-    for label_file in glob.glob(osp.join(args.input_dir, '*.json')):
-        print('Generating dataset from:', label_file)
-        with open(label_file) as f:
-            base = osp.splitext(osp.basename(label_file))[0]
-            out_img_file = osp.join(
-                args.output_dir, 'JPEGImages', base + '.jpg')
-            out_lbl_file = osp.join(
-                args.output_dir, 'SegmentationClass', base + '.npy')
-            out_png_file = osp.join(
-                args.output_dir, 'SegmentationClassPNG', base + '.png')
-            if not args.noviz:
-                out_viz_file = osp.join(
-                    args.output_dir,
-                    'SegmentationClassVisualization',
-                    base + '.jpg',
-                )
+    for filename in glob.glob(osp.join(args.input_dir, '*.json')):
+        print('Generating dataset from:', filename)
 
-            data = json.load(f)
+        label_file = labelme.LabelFile(filename=filename)
 
-            img_file = osp.join(osp.dirname(label_file), data['imagePath'])
-            img = np.asarray(PIL.Image.open(img_file))
-            PIL.Image.fromarray(img).save(out_img_file)
-
-            lbl = labelme.utils.shapes_to_label(
-                img_shape=img.shape,
-                shapes=data['shapes'],
-                label_name_to_value=class_name_to_id,
+        base = osp.splitext(osp.basename(filename))[0]
+        out_img_file = osp.join(
+            args.output_dir, 'JPEGImages', base + '.jpg')
+        out_lbl_file = osp.join(
+            args.output_dir, 'SegmentationClass', base + '.npy')
+        out_png_file = osp.join(
+            args.output_dir, 'SegmentationClassPNG', base + '.png')
+        if not args.noviz:
+            out_viz_file = osp.join(
+                args.output_dir,
+                'SegmentationClassVisualization',
+                base + '.jpg',
             )
-            labelme.utils.lblsave(out_png_file, lbl)
 
-            np.save(out_lbl_file, lbl)
+        with open(out_img_file, 'wb') as f:
+            f.write(label_file.imageData)
+        img = labelme.utils.img_data_to_arr(label_file.imageData)
 
-            if not args.noviz:
-                viz = imgviz.label2rgb(
-                    label=lbl,
-                    img=imgviz.rgb2gray(img),
-                    font_size=15,
-                    label_names=class_names,
-                    loc='rb',
-                )
-                imgviz.io.imsave(out_viz_file, viz)
+        lbl = labelme.utils.shapes_to_label(
+            img_shape=img.shape,
+            shapes=label_file.shapes,
+            label_name_to_value=class_name_to_id,
+        )
+        labelme.utils.lblsave(out_png_file, lbl)
+
+        np.save(out_lbl_file, lbl)
+
+        if not args.noviz:
+            viz = imgviz.label2rgb(
+                label=lbl,
+                img=imgviz.rgb2gray(img),
+                font_size=15,
+                label_names=class_names,
+                loc='rb',
+            )
+            imgviz.io.imsave(out_viz_file, viz)
 
 
 if __name__ == '__main__':

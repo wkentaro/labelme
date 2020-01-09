@@ -19,5 +19,6 @@ del sys
 
 from labelme._version import __version__
 
+from labelme.label_file import LabelFile
 from labelme import testing
 from labelme import utils
