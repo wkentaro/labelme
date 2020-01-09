@@ -42,8 +42,10 @@ def main():
     default_config_file = os.path.join(os.path.expanduser('~'), '.labelmerc')
     parser.add_argument(
         '--config',
-        dest='config_file',
-        help='config file (default: %s)' % default_config_file,
+        dest='config',
+        help='config file or yaml-format string (default: {})'.format(
+            default_config_file
+        ),
         default=default_config_file,
     )
     # config for the gui
@@ -139,8 +141,14 @@ def main():
     reset_config = config_from_args.pop('reset_config')
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
-    config_file = config_from_args.pop('config_file')
-    config = get_config(config_from_args, config_file)
+    config_file_or_yaml = config_from_args.pop('config')
+    config = yaml.safe_load(config_file_or_yaml)
+    if not isinstance(config, dict):
+        logger.info('Loading config file from: {}'.format(config))
+        with open(config) as f:
+            config = yaml.safe_load(f)
+    config.update(config_from_args)  # prioritize config_from_args
+    config = get_config(config)
 
     if not config['labels'] and config['validate_label']:
         logger.error('--labels must be specified with --validatelabel or '
