@@ -38,6 +38,12 @@ class Canvas(QtWidgets.QWidget):
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop('epsilon', 10.0)
+        self.double_click = kwargs.pop('double_click', 'close')
+        if self.double_click not in [None, 'close']:
+            raise ValueError(
+                'Unexpected value for double_click event: {}'
+                .format(self.double_click)
+            )
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -400,7 +406,8 @@ class Canvas(QtWidgets.QWidget):
     def mouseDoubleClickEvent(self, ev):
         # We need at least 4 points here, since the mousePress handler
         # adds an extra one before this handler is called.
-        if self.canCloseShape() and len(self.current) > 3:
+        if (self.double_click == 'close' and self.canCloseShape() and
+                len(self.current) > 3):
             self.current.popPoint()
             self.finalise()
 

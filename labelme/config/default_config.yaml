@@ -41,7 +41,12 @@ fit_to_content:
   column: true
   row: false
 
+# canvas
 epsilon: 10.0
+canvas:
+  # None: do nothing
+  # close: close polygon
+  double_click: close
 
 shortcuts:
   close: Ctrl+W
