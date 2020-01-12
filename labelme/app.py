@@ -634,7 +634,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
-        self.zoom_values = {}  # key=filename, value=zoom_value
+        self.zoom_values = {}  # key=filename, value=(zoom_mode, zoom_value)
         self.scroll_values = {
             Qt.Horizontal: {},
             Qt.Vertical: {},
@@ -1203,7 +1203,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = value
+        self.zoom_values[self.filename] = (self.zoomMode, value)
 
     def addZoom(self, increment=1.1):
         self.setZoom(self.zoomWidget.value() * increment)
@@ -1334,7 +1334,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.setEnabled(True)
         # set zoom values
         if self.filename in self.zoom_values:
-            self.setZoom(self.zoom_values[self.filename])
+            self.zoomMode = self.zoom_values[self.filename][0]
+            self.setZoom(self.zoom_values[self.filename][1])
         else:
             self.adjustScale(initial=True)
         # set scroll values
@@ -1363,7 +1364,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def adjustScale(self, initial=False):
         value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
-        self.zoomWidget.setValue(int(100 * value))
+        value = int(100 * value)
+        self.zoomWidget.setValue(value)
+        self.zoom_values[self.filename] = (self.zoomMode, value)
 
     def scaleFitWindow(self):
         """Figure out the size of the pixmap to fit the main widget."""
