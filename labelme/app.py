@@ -634,6 +634,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
+        self.zoom_values = {}  # key=filename, value=zoom_value
 
         if filename is not None and osp.isdir(filename):
             self.importDirImages(filename, load=False)
@@ -1193,6 +1194,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
+        self.zoom_values[self.filename] = value
 
     def addZoom(self, increment=1.1):
         self.setZoom(self.zoomWidget.value() * increment)
@@ -1317,7 +1319,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadShapes(prev_shapes, replace=False)
         self.setClean()
         self.canvas.setEnabled(True)
-        self.adjustScale(initial=True)
+        if self.filename in self.zoom_values:
+            self.setZoom(self.zoom_values[self.filename])
+        else:
+            self.adjustScale(initial=True)
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
