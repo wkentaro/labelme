@@ -12,6 +12,9 @@ from labelme import QT4
 from labelme import utils
 
 
+PIL.Image.MAX_IMAGE_PIXELS = None
+
+
 class LabelFileError(Exception):
     pass
 
