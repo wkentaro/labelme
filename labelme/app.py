@@ -635,6 +635,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_level = 100
         self.fit_window = False
         self.zoom_values = {}  # key=filename, value=zoom_value
+        self.scroll_values = {
+            Qt.Horizontal: {},
+            Qt.Vertical: {},
+        }  # key=filename, value=scroll_value
 
         if filename is not None and osp.isdir(filename):
             self.importDirImages(filename, load=False)
@@ -1187,7 +1191,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def scrollRequest(self, delta, orientation):
         units = - delta * 0.1  # natural scroll
         bar = self.scrollBars[orientation]
-        bar.setValue(bar.value() + bar.singleStep() * units)
+        value = bar.value() + bar.singleStep() * units
+        self.setScroll(orientation, value)
+
+    def setScroll(self, orientation, value):
+        self.scrollBars[orientation].setValue(value)
+        self.scroll_values[orientation][self.filename] = value
 
     def setZoom(self, value):
         self.actions.fitWidth.setChecked(False)
@@ -1213,10 +1222,14 @@ class MainWindow(QtWidgets.QMainWindow):
             x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
             y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
 
-            self.scrollBars[Qt.Horizontal].setValue(
-                self.scrollBars[Qt.Horizontal].value() + x_shift)
-            self.scrollBars[Qt.Vertical].setValue(
-                self.scrollBars[Qt.Vertical].value() + y_shift)
+            self.setScroll(
+                Qt.Horizontal,
+                self.scrollBars[Qt.Horizontal].value() + x_shift,
+            )
+            self.setScroll(
+                Qt.Vertical,
+                self.scrollBars[Qt.Vertical].value() + y_shift,
+            )
 
     def setFitWindow(self, value=True):
         if value:
@@ -1319,10 +1332,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadShapes(prev_shapes, replace=False)
         self.setClean()
         self.canvas.setEnabled(True)
+        # set zoom values
         if self.filename in self.zoom_values:
             self.setZoom(self.zoom_values[self.filename])
         else:
             self.adjustScale(initial=True)
+        # set scroll values
+        for orientation in self.scroll_values:
+            if self.filename in self.scroll_values[orientation]:
+                self.setScroll(
+                    orientation, self.scroll_values[orientation][self.filename]
+                )
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
