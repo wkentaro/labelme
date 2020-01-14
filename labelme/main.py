@@ -142,13 +142,7 @@ def main():
     filename = config_from_args.pop('filename')
     output = config_from_args.pop('output')
     config_file_or_yaml = config_from_args.pop('config')
-    config = yaml.safe_load(config_file_or_yaml)
-    if not isinstance(config, dict):
-        logger.info('Loading config file from: {}'.format(config))
-        with open(config) as f:
-            config = yaml.safe_load(f)
-    config.update(config_from_args)  # prioritize config_from_args
-    config = get_config(config)
+    config = get_config(config_file_or_yaml, config_from_args)
 
     if not config['labels'] and config['validate_label']:
         logger.error('--labels must be specified with --validatelabel or '
