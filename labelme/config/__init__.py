@@ -55,13 +55,25 @@ def validate_config_item(key, value):
         )
 
 
-def get_config(config_specified=None):
+def get_config(config_file_or_yaml=None, config_from_args=None):
     # 1. default config
     config = get_default_config()
 
-    # 2. command line argument or specified config file
-    if config_specified is not None:
-        update_dict(config, config_specified,
+    # 2. specified as file or yaml
+    if config_file_or_yaml is not None:
+        config_from_yaml = yaml.safe_load(config_file_or_yaml)
+        if not isinstance(config_from_yaml, dict):
+            with open(config_from_yaml) as f:
+                logger.info(
+                    'Loading config file from: {}'.format(config_from_yaml)
+                )
+                config_from_yaml = yaml.safe_load(f)
+        update_dict(config, config_from_yaml,
+                    validate_item=validate_config_item)
+
+    # 3. command line argument or specified config file
+    if config_from_args is not None:
+        update_dict(config, config_from_args,
                     validate_item=validate_config_item)
 
     return config
