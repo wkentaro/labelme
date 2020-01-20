@@ -222,7 +222,6 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon/Vertex moving.
-        self.movingShape = False
         if QtCore.Qt.LeftButton & ev.buttons():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
@@ -364,12 +363,15 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShapes:
             self.overrideCursor(CURSOR_GRAB)
+
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
             if (self.shapesBackups[-1][index].points !=
                     self.shapes[index].points):
                 self.storeShapes()
                 self.shapeMoved.emit()
+
+            self.movingShape = False
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
