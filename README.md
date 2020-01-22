@@ -237,7 +237,7 @@ If you use this project in your research or wish to refer to the baseline result
 
 ```bash
 @misc{labelme2016,
-  author =       {Ketaro Wada},
+  author =       {Kentaro Wada},
   title =        {{labelme: Image Polygonal Annotation with Python}},
   howpublished = {\url{https://github.com/wkentaro/labelme}},
   year =         {2016}
