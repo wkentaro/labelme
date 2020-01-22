@@ -981,6 +981,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.selected = True
             item = self.labelList.get_item_from_shape(shape)
             item.setSelected(True)
+            self.labelList.scrollToItem(item)
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
