@@ -18,7 +18,6 @@ from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
-from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import Shape
 from labelme.widgets import Canvas
 from labelme.widgets import ColorDialog
@@ -253,9 +252,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         close = action('&Close', self.closeFile, shortcuts['close'], 'close',
                        'Close current file')
-        color2 = action('Polygon &Fill Color', self.chooseColor2,
-                        shortcuts['edit_fill_color'], 'color',
-                        self.tr('Choose polygon fill color'))
 
         toggle_keep_prev_mode = action(
             self.tr('Keep Previous Annotation'),
@@ -416,11 +412,6 @@ class MainWindow(QtWidgets.QMainWindow):
                       self.tr('Modify the label of the selected polygon'),
                       enabled=False)
 
-        shapeFillColor = action(
-            self.tr('Shape &Fill Color'), self.chshapeFillColor, icon='color',
-            tip=self.tr('Change the fill color for this specific shape'),
-            enabled=False
-        )
         fill_drawing = action(
             self.tr('Fill Drawing Polygon'),
             self.canvas.setFillDrawing,
@@ -446,7 +437,6 @@ class MainWindow(QtWidgets.QMainWindow):
             changeOutputDir=changeOutputDir,
             save=save, saveAs=saveAs, open=open_, close=close,
             deleteFile=deleteFile,
-            fillColor=color2,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
@@ -457,7 +447,6 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineMode=createLineMode,
             createPointMode=createPointMode,
             createLineStripMode=createLineStripMode,
-            shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
@@ -475,8 +464,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 addPointToEdge,
                 None,
-                color2,
-                None,
                 toggle_keep_prev_mode,
             ),
             # menu shown at right click
@@ -491,7 +478,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 edit,
                 copy,
                 delete,
-                shapeFillColor,
                 undo,
                 undoLastPoint,
                 addPointToEdge,
@@ -617,7 +603,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imagePath = None
         self.recentFiles = []
         self.maxRecent = 7
-        self.fillColor = None
         self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
@@ -649,9 +634,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.restoreGeometry(settings['window/geometry']
         self.restoreState(
             self.settings.value('window/state', QtCore.QByteArray()))
-        self.fillColor = QtGui.QColor(
-            self.settings.value('fill/color', Shape.fill_color))
-        Shape.fill_color = self.fillColor
 
         # Populate the File menu dynamically.
         self.updateFileMenu()
@@ -971,7 +953,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.delete.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
-        self.actions.shapeFillColor.setEnabled(n_selected)
 
     def addLabel(self, shape):
         item = QtWidgets.QListWidgetItem(shape.label)
@@ -1004,7 +985,6 @@ class MainWindow(QtWidgets.QMainWindow):
         for shape in shapes:
             label = shape['label']
             points = shape['points']
-            fill_color = shape['fill_color']
             shape_type = shape['shape_type']
             flags = shape['flags']
 
@@ -1012,9 +992,6 @@ class MainWindow(QtWidgets.QMainWindow):
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
-
-            if fill_color:
-                shape.fill_color = QtGui.QColor(*fill_color)
 
             default_flags = {}
             if self._config['label_flags']:
@@ -1042,8 +1019,6 @@ class MainWindow(QtWidgets.QMainWindow):
         def format_shape(s):
             return dict(
                 label=s.label.encode('utf-8') if PY2 else s.label,
-                fill_color=s.fill_color.getRgb()
-                if s.fill_color != self.fillColor else None,
                 points=[(p.x(), p.y()) for p in s.points],
                 shape_type=s.shape_type,
                 flags=s.flags
@@ -1069,7 +1044,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 imageData=imageData,
                 imageHeight=self.image.height(),
                 imageWidth=self.image.width(),
-                fillColor=self.fillColor.getRgb(),
                 otherData=self.otherData,
                 flags=flags,
             )
@@ -1267,8 +1241,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 osp.dirname(label_file),
                 self.labelFile.imagePath,
             )
-            if self.labelFile.fillColor is not None:
-                self.fillColor = QtGui.QColor(*self.labelFile.fillColor)
             self.otherData = self.labelFile.otherData
         else:
             self.imageData = LabelFile.load_image_file(filename)
@@ -1370,7 +1342,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.setValue('window/size', self.size())
         self.settings.setValue('window/position', self.pos())
         self.settings.setValue('window/state', self.saveState())
-        self.settings.setValue('fill/color', self.fillColor)
         self.settings.setValue('recentFiles', self.recentFiles)
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
@@ -1615,18 +1586,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def currentPath(self):
         return osp.dirname(str(self.filename)) if self.filename else '.'
 
-    def chooseColor2(self):
-        color = self.colorDialog.getColor(
-            self.fillColor,
-            self.tr('Choose fill color'),
-            default=DEFAULT_FILL_COLOR
-        )
-        if color:
-            self.fillColor = color
-            Shape.fill_color = self.fillColor
-            self.canvas.update()
-            self.setDirty()
-
     def toggleKeepPrevMode(self):
         self._config['keep_prev'] = not self._config['keep_prev']
 
@@ -1644,18 +1603,6 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.noShapes():
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
-
-    def chshapeFillColor(self):
-        color = self.colorDialog.getColor(
-            self.fillColor,
-            self.tr('Choose fill color'),
-            default=DEFAULT_FILL_COLOR
-        )
-        if color:
-            for shape in self.canvas.selectedShapes:
-                shape.fill_color = color
-            self.canvas.update()
-            self.setDirty()
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
