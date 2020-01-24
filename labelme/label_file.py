@@ -59,7 +59,6 @@ class LabelFile(object):
             'version',
             'imageData',
             'imagePath',
-            'lineColor',
             'fillColor',
             'shapes',  # polygonal annotations
             'flags',   # image level flags
@@ -84,13 +83,11 @@ class LabelFile(object):
                 data.get('imageHeight'),
                 data.get('imageWidth'),
             )
-            lineColor = data['lineColor']
             fillColor = data['fillColor']
             shapes = [
                 dict(
                     label=s['label'],
                     points=s['points'],
-                    line_color=s['line_color'],
                     fill_color=s['fill_color'],
                     shape_type=s.get('shape_type', 'polygon'),
                     flags=s.get('flags', {}),
@@ -110,7 +107,6 @@ class LabelFile(object):
         self.shapes = shapes
         self.imagePath = imagePath
         self.imageData = imageData
-        self.lineColor = lineColor
         self.fillColor = fillColor
         self.filename = filename
         self.otherData = otherData
@@ -140,7 +136,6 @@ class LabelFile(object):
         imageHeight,
         imageWidth,
         imageData=None,
-        lineColor=None,
         fillColor=None,
         otherData=None,
         flags=None,
@@ -158,7 +153,6 @@ class LabelFile(object):
             version=__version__,
             flags=flags,
             shapes=shapes,
-            lineColor=lineColor,
             fillColor=fillColor,
             imagePath=imagePath,
             imageData=imageData,
