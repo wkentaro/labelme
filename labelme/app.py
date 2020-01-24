@@ -433,14 +433,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing = action(
             self.tr('Fill Drawing Polygon'),
-            lambda x: self.canvas.setFillDrawing(x),
+            self.canvas.setFillDrawing,
             None,
             'color',
             self.tr('Fill polygon while drawing'),
             checkable=True,
             enabled=True,
         )
-        fill_drawing.setChecked(True)
+        fill_drawing.trigger()
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
