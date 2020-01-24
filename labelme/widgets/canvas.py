@@ -52,13 +52,12 @@ class Canvas(QtWidgets.QWidget):
         self.current = None
         self.selectedShapes = []  # save the selected shapes here
         self.selectedShapesCopy = []
-        self.lineColor = QtGui.QColor(0, 0, 255)
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
         #   - createMode == 'rectangle': diagonal line of the rectangle
         #   - createMode == 'line': the line
         #   - createMode == 'point': the point
-        self.line = Shape(line_color=self.lineColor)
+        self.line = Shape()
         self.prevPoint = QtCore.QPoint()
         self.prevMovePoint = QtCore.QPoint()
         self.offsets = QtCore.QPoint(), QtCore.QPoint()
@@ -178,7 +177,6 @@ class Canvas(QtWidgets.QWidget):
             if not self.current:
                 return
 
-            color = self.lineColor
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
@@ -188,7 +186,6 @@ class Canvas(QtWidgets.QWidget):
                 # Attract line to starting point and
                 # colorise to alert the user.
                 pos = self.current[0]
-                color = self.current.line_color
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
             if self.createMode in ['polygon', 'linestrip']:
@@ -206,7 +203,6 @@ class Canvas(QtWidgets.QWidget):
             elif self.createMode == 'point':
                 self.line.points = [self.current[0]]
                 self.line.close()
-            self.line.line_color = color
             self.repaint()
             self.current.highlightClear()
             return
@@ -375,8 +371,6 @@ class Canvas(QtWidgets.QWidget):
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
         assert len(self.selectedShapesCopy) == len(self.selectedShapes)
-        # del shape.fill_color
-        # del shape.line_color
         if copy:
             for i, shape in enumerate(self.selectedShapesCopy):
                 self.shapes.append(shape)
