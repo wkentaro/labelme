@@ -46,6 +46,7 @@ class Shape(object):
         self.selected = False
         self.shape_type = shape_type
         self.flags = flags
+        self.other_data = {}
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX

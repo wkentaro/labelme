@@ -1039,7 +1039,8 @@ class MainWindow(QtWidgets.QMainWindow):
             points = shape['points']
             shape_type = shape['shape_type']
             flags = shape['flags']
-            group_id = shape.get('group_id')
+            group_id = shape['group_id']
+            other_data = shape['other_data']
 
             shape = Shape(
                 label=label,
@@ -1058,6 +1059,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             default_flags[key] = False
             shape.flags = default_flags
             shape.flags.update(flags)
+            shape.other_data = other_data
 
             s.append(shape)
         self.loadShapes(s)
@@ -1074,13 +1076,15 @@ class MainWindow(QtWidgets.QMainWindow):
         lf = LabelFile()
 
         def format_shape(s):
-            return dict(
+            data = s.other_data.copy()
+            data.update(dict(
                 label=s.label.encode('utf-8') if PY2 else s.label,
                 points=[(p.x(), p.y()) for p in s.points],
                 group_id=s.group_id,
                 shape_type=s.shape_type,
-                flags=s.flags
-            )
+                flags=s.flags,
+            ))
+            return data
 
         shapes = [format_shape(shape) for shape in self.labelList.shapes]
         flags = {}
