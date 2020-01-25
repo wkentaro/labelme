@@ -3,7 +3,7 @@
 ## Annotation
 
 ```bash
-labelme data_annotated --labels labels.txt --nodata
+labelme data_annotated --labels labels.txt --nodata --validatelabel exact
 ```
 
 ![](.readme/annotation.jpg)
