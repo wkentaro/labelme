@@ -65,6 +65,14 @@ class LabelFile(object):
             'imageHeight',
             'imageWidth',
         ]
+        shape_keys = [
+            'label',
+            'points',
+            'line_color',
+            'fill_color',
+            'shape_type',
+            'flags',
+        ]
         try:
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
@@ -93,6 +101,10 @@ class LabelFile(object):
                     fill_color=s['fill_color'],
                     shape_type=s.get('shape_type', 'polygon'),
                     flags=s.get('flags', {}),
+                    other_data={
+                        key: value
+                        for key, value in s.items()
+                        if key not in shape_keys}
                 )
                 for s in data['shapes']
             ]

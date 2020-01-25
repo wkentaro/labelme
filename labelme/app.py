@@ -1036,6 +1036,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fill_color = shape['fill_color']
             shape_type = shape['shape_type']
             flags = shape['flags']
+            other_data = shape['other_data']
 
             shape = Shape(label=label, shape_type=shape_type)
             for x, y in points:
@@ -1056,6 +1057,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             default_flags[key] = False
             shape.flags = default_flags
             shape.flags.update(flags)
+            shape.other_data = other_data
 
             s.append(shape)
         self.loadShapes(s)
@@ -1072,7 +1074,7 @@ class MainWindow(QtWidgets.QMainWindow):
         lf = LabelFile()
 
         def format_shape(s):
-            return dict(
+            data = dict(
                 label=s.label.encode('utf-8') if PY2 else s.label,
                 line_color=s.line_color.getRgb()
                 if s.line_color != self.lineColor else None,
@@ -1082,6 +1084,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape_type=s.shape_type,
                 flags=s.flags
             )
+            if s.other_data:
+                data.update(s.other_data)
+            return data
 
         shapes = [format_shape(shape) for shape in self.labelList.shapes]
         flags = {}
