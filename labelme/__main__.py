@@ -84,6 +84,15 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
+        '--labelcolors',
+        dest='label_colors',
+        help='yaml string of label specific colors OR file containing json '
+             'string of label specific colors (ex. {dog: {line_color: '
+             '[255, 0, 0, 128], fill_color: None}, cat: {line_color: '
+             '[255, 0, 255, 128], fill_color: [255, 255, 0, 128]}})',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         '--labels',
         help='comma separated list of labels OR file containing labels',
         default=argparse.SUPPRESS,
@@ -135,6 +144,13 @@ def main():
                 args.label_flags = yaml.safe_load(f)
         else:
             args.label_flags = yaml.safe_load(args.label_flags)
+
+    if hasattr(args, 'label_colors'):
+        if os.path.isfile(args.label_colors):
+            with codecs.open(args.label_colors, 'r', encoding='utf-8') as f:
+                args.label_colors = yaml.safe_load(f)
+        else:
+            args.label_colors = yaml.safe_load(args.label_colors)
 
     config_from_args = args.__dict__
     config_from_args.pop('version')

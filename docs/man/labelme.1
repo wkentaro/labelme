@@ -8,8 +8,9 @@ usage: labelme [\-h] [\-\-version] [\-\-reset\-config]
 [\-\-logger\-level {debug,info,warning,fatal,error}]
 [\-\-output OUTPUT] [\-\-config CONFIG] [\-\-nodata] [\-\-autosave]
 [\-\-nosortlabels] [\-\-flags FLAGS] [\-\-labelflags LABEL_FLAGS]
-[\-\-labels LABELS] [\-\-validatelabel {exact,instance}]
-[\-\-keep\-prev] [\-\-epsilon EPSILON]
+[\-\-labelcolors LABEL_COLORS] [\-\-labels LABELS]
+[\-\-validatelabel {exact,instance}] [\-\-keep\-prev]
+[\-\-epsilon EPSILON]
 [filename]
 .SS "positional arguments:"
 .TP
@@ -54,6 +55,13 @@ yaml string of label specific flags OR file containing
 json string of label specific flags (ex. {person\-\ed+:
 [male, tall], dog\-\ed+: [black, brown, white], .*:
 [occluded]})
+.TP
+\fB\-\-labelcolors\fR LABEL_COLORS
+yaml string of label specific colors OR file
+containing json string of label specific colors (ex.
+{dog: {line_color: [255, 0, 0, 128], fill_color:
+None}, cat: {line_color: [255, 0, 255, 128],
+fill_color: [255, 255, 0, 128]}})
 .TP
 \fB\-\-labels\fR LABELS
 comma separated list of labels OR file containing

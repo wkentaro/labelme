@@ -8,6 +8,7 @@ logger_level: info
 
 flags: null
 label_flags: null
+label_colors: null
 labels: null
 file_search: null
 sort_labels: true

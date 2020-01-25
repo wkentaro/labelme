@@ -64,6 +64,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if config is None:
             config = get_config()
         self._config = config
+        if self._config['label_colors'] is None:
+            self._config['label_colors'] = {}
 
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
@@ -799,6 +801,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.recentFiles.pop()
         self.recentFiles.insert(0, filename)
 
+    def updateShapeColor(self, shape):
+        shape_color = self._config['label_colors'].get(shape.label)
+        if shape_color:
+            if 'line_color' in shape_color and shape_color['line_color']:
+                shape.line_color = QtGui.QColor(*shape_color['line_color'])
+            if 'fill_color' in shape_color and shape_color['fill_color']:
+                shape.fill_color = QtGui.QColor(*shape_color['fill_color'])
+
     # Callbacks
 
     def undoShapeEdit(self):
@@ -942,6 +952,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         shape.label = text
         shape.flags = flags
+        self.updateShapeColor(shape)
         item.setText(text)
         self.setDirty()
         if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
@@ -1137,7 +1148,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shape = self.labelList.get_shape_from_item(item)
         label = str(item.text())
         if label != shape.label:
-            shape.label = str(item.text())
+            shape.label = label
+            self.updateShapeColor(shape)
             self.setDirty()
         else:  # User probably changed item visibility
             self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
@@ -1180,7 +1192,8 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ''
         if text:
             self.labelList.clearSelection()
-            self.addLabel(self.canvas.setLastLabel(text, flags))
+            self.addLabel(
+                self.canvas.setLastLabel(text, flags, self.updateShapeColor))
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
