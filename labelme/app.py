@@ -1132,6 +1132,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 selected_shapes.append(shape)
             if selected_shapes:
                 self.canvas.selectShapes(selected_shapes)
+            else:
+                self.canvas.deSelectShape()
 
     def labelItemChanged(self, item):
         shape = self.labelList.get_shape_from_item(item)
