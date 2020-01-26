@@ -6,7 +6,6 @@ import os.path as osp
 
 import imgviz
 import PIL.Image
-import yaml
 
 from labelme.logger import logger
 from labelme import utils
@@ -68,11 +67,6 @@ def main():
     with open(osp.join(out_dir, 'label_names.txt'), 'w') as f:
         for lbl_name in label_names:
             f.write(lbl_name + '\n')
-
-    logger.warning('info.yaml is being replaced by label_names.txt')
-    info = dict(label_names=label_names)
-    with open(osp.join(out_dir, 'info.yaml'), 'w') as f:
-        yaml.safe_dump(info, f, default_flow_style=False)
 
     logger.info('Saved to: {}'.format(out_dir))
 
