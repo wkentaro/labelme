@@ -1137,12 +1137,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def labelItemChanged(self, item):
         shape = self.labelList.get_shape_from_item(item)
-        label = str(item.text())
-        if label != shape.label:
-            shape.label = str(item.text())
-            self.setDirty()
-        else:  # User probably changed item visibility
-            self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+        self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
 
     # Callback functions:
 
