@@ -40,7 +40,7 @@ from labelme.widgets import ZoomWidget
 # - Zoom is too "steppy".
 
 
-LABEL_COLORMAP = imgviz.label_colormap()
+LABEL_COLORMAP = imgviz.label_colormap(value=200)
 
 
 class MainWindow(QtWidgets.QMainWindow):
