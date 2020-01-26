@@ -44,7 +44,7 @@ def get_default_config():
 
 
 def validate_config_item(key, value):
-    if key == 'validate_label' and value not in [None, 'exact', 'instance']:
+    if key == 'validate_label' and value not in [None, 'exact']:
         raise ValueError(
             "Unexpected value for config key 'validate_label': {}"
             .format(value)
