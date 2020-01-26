@@ -37,8 +37,9 @@ class Shape(object):
     scale = 1.0
 
     def __init__(self, label=None, line_color=None, shape_type=None,
-                 flags=None):
+                 flags=None, group_id=None):
         self.label = label
+        self.group_id = group_id
         self.points = []
         self.fill = False
         self.selected = False

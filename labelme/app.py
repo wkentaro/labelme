@@ -895,7 +895,9 @@ class MainWindow(QtWidgets.QMainWindow):
         shape = self.labelList.get_shape_from_item(item)
         if shape is None:
             return
-        text, flags = self.labelDialog.popUp(shape.label, flags=shape.flags)
+        text, flags, group_id = self.labelDialog.popUp(
+            text=shape.label, flags=shape.flags, group_id=shape.group_id,
+        )
         if text is None:
             return
         if not self.validateLabel(text):
@@ -908,10 +910,14 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         shape.label = text
         shape.flags = flags
-        item.setText(text)
+        shape.group_id = group_id
+        if shape.group_id is None:
+            item.setText(shape.label)
+        else:
+            item.setText('{} ({})'.format(shape.label, shape.group_id))
         self.setDirty()
-        if not self.uniqLabelList.findItems(text, Qt.MatchExactly):
-            self.uniqLabelList.addItem(text)
+        if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
+            self.uniqLabelList.addItem(shape.label)
             self.uniqLabelList.sortItems()
 
     def fileSearchChanged(self):
@@ -955,7 +961,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.edit.setEnabled(n_selected == 1)
 
     def addLabel(self, shape):
-        item = QtWidgets.QListWidgetItem(shape.label)
+        if shape.group_id is None:
+            text = shape.label
+        else:
+            text = '{} ({})'.format(shape.label, shape.group_id)
+        item = QtWidgets.QListWidgetItem(text)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
         self.labelList.itemsToShapes.append((item, shape))
@@ -963,7 +973,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
             self.uniqLabelList.addItem(shape.label)
             self.uniqLabelList.sortItems()
-        self.labelDialog.addLabelHistory(item.text())
+        self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
@@ -987,8 +997,11 @@ class MainWindow(QtWidgets.QMainWindow):
             points = shape['points']
             shape_type = shape['shape_type']
             flags = shape['flags']
+            group_id = shape.get('group_id')
 
-            shape = Shape(label=label, shape_type=shape_type)
+            shape = Shape(
+                label=label, shape_type=shape_type, group_id=group_id
+            )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
@@ -1020,6 +1033,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return dict(
                 label=s.label.encode('utf-8') if PY2 else s.label,
                 points=[(p.x(), p.y()) for p in s.points],
+                group_id=s.group_id,
                 shape_type=s.shape_type,
                 flags=s.flags
             )
@@ -1127,7 +1141,8 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ''
         if text:
             self.labelList.clearSelection()
-            self.addLabel(self.canvas.setLastLabel(text, flags))
+            shape = self.canvas.setLastLabel(text, flags)
+            self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)

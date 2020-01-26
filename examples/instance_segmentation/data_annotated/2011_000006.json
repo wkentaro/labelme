@@ -1,8 +1,9 @@
 {
-  "imagePath": "2011_000006.jpg",
+  "version": "3.22.0",
+  "flags": {},
   "shapes": [
     {
-      "line_color": null,
+      "label": "person",
       "points": [
         [
           204.936170212766,
@@ -105,11 +106,12 @@
           112.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "person-1"
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "person",
       "points": [
         [
           271.936170212766,
@@ -188,11 +190,12 @@
           148.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "person-2"
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "person",
       "points": [
         [
           308.936170212766,
@@ -259,11 +262,12 @@
           115.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "person-3"
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "chair",
       "points": [
         [
           308.936170212766,
@@ -326,11 +330,12 @@
           241.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "chair"
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "person",
       "points": [
         [
           425.936170212766,
@@ -357,11 +362,12 @@
           91.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "person-4"
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "__ignore__",
       "points": [
         [
           457.936170212766,
@@ -380,11 +386,12 @@
           87.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "__ignore__"
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "sofa",
       "points": [
         [
           183.936170212766,
@@ -423,11 +430,12 @@
           203.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "sofa"
+      "group_id": 0,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "sofa",
       "points": [
         [
           103.93617021276599,
@@ -442,11 +450,12 @@
           311.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "sofa"
+      "group_id": 0,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "sofa",
       "points": [
         [
           348.936170212766,
@@ -485,11 +494,12 @@
           164.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "sofa"
+      "group_id": 0,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "line_color": null,
+      "label": "sofa",
       "points": [
         [
           246.936170212766,
@@ -508,11 +518,15 @@
           256.56382978723406
         ]
       ],
-      "fill_color": null,
-      "label": "sofa"
+      "group_id": 0,
+      "shape_type": "polygon",
+      "flags": {}
     }
   ],
+  "imagePath": "2011_000006.jpg",
   "imageData": null,
+  "imageHeight": 375,
+  "imageWidth": 500,
   "lineColor": [
     0,
     255,
