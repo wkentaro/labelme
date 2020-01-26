@@ -974,11 +974,20 @@ class MainWindow(QtWidgets.QMainWindow):
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
-        r, g, b = self._get_rgb_by_label(shape.label)
+        if self._config['shape_color'] == 'auto':
+            r, g, b = self._get_rgb_by_label(shape.label)
+        elif (self._config['shape_color'] == 'manual' and
+              self._config['label_colors'] and
+              shape.label in self._config['label_colors']):
+            r, g, b = self._config['label_colors'][shape.label]
+        elif self._config['default_shape_color']:
+            r, g, b = self._config['default_shape_color']
+        else:
+            return
         shape.line_color = QtGui.QColor(r, g, b)
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-        shape.fill_color = QtGui.QColor(r, g, b, 127)
+        shape.fill_color = QtGui.QColor(r, g, b, 128)
         shape.select_line_color = QtGui.QColor(255, 255, 255)
         shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
