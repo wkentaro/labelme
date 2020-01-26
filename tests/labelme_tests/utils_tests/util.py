@@ -31,7 +31,7 @@ def get_img_and_lbl():
     for label_name, label_value in label_name_to_value.items():
         label_names[label_value] = label_name
 
-    lbl = shape_module.shapes_to_label(
+    lbl, _ = shape_module.shapes_to_label(
         img.shape, data['shapes'], label_name_to_value
     )
     return img, lbl, label_names

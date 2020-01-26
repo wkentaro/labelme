@@ -103,7 +103,6 @@ def main():
                 img_shape=img.shape,
                 shapes=data['shapes'],
                 label_name_to_value=class_name_to_id,
-                type='instance',
             )
             ins[cls == -1] = 0  # ignore it.
 
