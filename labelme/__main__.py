@@ -91,7 +91,7 @@ def main():
     parser.add_argument(
         '--validatelabel',
         dest='validate_label',
-        choices=['exact', 'instance'],
+        choices=['exact'],
         help='label validation types',
         default=argparse.SUPPRESS,
     )

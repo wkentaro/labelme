@@ -876,12 +876,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for i in range(self.uniqLabelList.count()):
             label_i = self.uniqLabelList.item(i).text()
-            if self._config['validate_label'] in ['exact', 'instance']:
+            if self._config['validate_label'] in ['exact']:
                 if label_i == label:
-                    return True
-            if self._config['validate_label'] == 'instance':
-                m = re.match(r'^{}-[0-9]*$'.format(label_i), label)
-                if m:
                     return True
         return False
 
