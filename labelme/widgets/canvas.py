@@ -127,6 +127,7 @@ class Canvas(QtWidgets.QWidget):
         self.overrideCursor(self._cursor)
 
     def leaveEvent(self, ev):
+        self.unHighlight()
         self.restoreCursor()
 
     def focusOutEvent(self, ev):
@@ -150,7 +151,8 @@ class Canvas(QtWidgets.QWidget):
     def unHighlight(self):
         if self.hShape:
             self.hShape.highlightClear()
-        self.hVertex = self.hShape = None
+            self.update()
+        self.hVertex, self.hShape, self.hEdge = None, None, None
 
     def selectedVertex(self):
         return self.hVertex is not None
@@ -269,10 +271,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
         else:  # Nothing found, clear highlights, reset state.
-            if self.hShape:
-                self.hShape.highlightClear()
-                self.update()
-            self.hVertex, self.hShape, self.hEdge = None, None, None
+            self.unHighlight()
         self.edgeSelected.emit(self.hEdge is not None, self.hShape)
         self.vertexSelected.emit(self.hVertex is not None)
 
