@@ -11,12 +11,12 @@ import labelme.utils
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
-DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)
-DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)
-DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)
-DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)
-DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 0, 0)
+DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)           # before hovering
+DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)           # hovering
+DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)     # selected
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)  # selected
+DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)    # hovering
+DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 0, 0, 255)   # hovering
 
 
 class Shape(object):
@@ -156,7 +156,7 @@ class Shape(object):
 
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
-            painter.fillPath(vrtx_path, self.vertex_fill_color)
+            painter.fillPath(vrtx_path, self._vertex_fill_color)
             if self.fill:
                 color = self.select_fill_color \
                     if self.selected else self.fill_color
@@ -170,9 +170,9 @@ class Shape(object):
             size, shape = self._highlightSettings[self._highlightMode]
             d *= size
         if self._highlightIndex is not None:
-            self.vertex_fill_color = self.hvertex_fill_color
+            self._vertex_fill_color = self.hvertex_fill_color
         else:
-            self.vertex_fill_color = Shape.vertex_fill_color
+            self._vertex_fill_color = self.vertex_fill_color
         if shape == self.P_SQUARE:
             path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
         elif shape == self.P_ROUND:

@@ -4,6 +4,7 @@ import os.path as osp
 import re
 import webbrowser
 
+import imgviz
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -37,6 +38,9 @@ from labelme.widgets import ZoomWidget
 # - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
+
+
+LABEL_COLORMAP = imgviz.label_colormap()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -115,7 +119,6 @@ class MainWindow(QtWidgets.QMainWindow):
             "Press 'Esc' to deselect."))
         if self._config['labels']:
             self.uniqLabelList.addItems(self._config['labels'])
-            self.uniqLabelList.sortItems()
         self.label_dock = QtWidgets.QDockWidget(self.tr(u'Label List'), self)
         self.label_dock.setObjectName(u'Label List')
         self.label_dock.setWidget(self.uniqLabelList)
@@ -918,7 +921,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
         if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
             self.uniqLabelList.addItem(shape.label)
-            self.uniqLabelList.sortItems()
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -972,10 +974,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.addItem(item)
         if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
             self.uniqLabelList.addItem(shape.label)
-            self.uniqLabelList.sortItems()
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
+
+        r, g, b = self._get_rgb_by_label(shape.label)
+        shape.line_color = QtGui.QColor(r, g, b)
+        shape.vertex_fill_color = QtGui.QColor(r, g, b)
+        shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
+        shape.fill_color = QtGui.QColor(r, g, b, 127)
+        shape.select_line_color = QtGui.QColor(255, 255, 255)
+        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+
+    def _get_rgb_by_label(self, label):
+        item = self.uniqLabelList.findItems(label, Qt.MatchExactly)[0]
+        label_id = self.uniqLabelList.indexFromItem(item).row() - 1
+        return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
 
     def remLabels(self, shapes):
         for shape in shapes:
@@ -1000,7 +1014,9 @@ class MainWindow(QtWidgets.QMainWindow):
             group_id = shape.get('group_id')
 
             shape = Shape(
-                label=label, shape_type=shape_type, group_id=group_id
+                label=label,
+                shape_type=shape_type,
+                group_id=group_id,
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1113,6 +1129,7 @@ class MainWindow(QtWidgets.QMainWindow):
         items = self.uniqLabelList.selectedItems()
         text = None
         flags = {}
+        group_id = None
         if items:
             text = items[0].text()
         if self._config['display_label_popup'] or not text:
@@ -1127,7 +1144,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     instance_text = previous_label
                 if instance_text != '':
                     text = instance_text
-            text, flags = self.labelDialog.popUp(text)
+            text, flags, group_id = self.labelDialog.popUp(text)
             if text is None:
                 self.labelDialog.edit.setText(previous_label)
 
@@ -1142,6 +1159,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if text:
             self.labelList.clearSelection()
             shape = self.canvas.setLastLabel(text, flags)
+            shape.group_id = group_id
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
