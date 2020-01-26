@@ -723,6 +723,8 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.current = None
         self.hShape = None
+        self.hVertex = None
+        self.hEdge = None
         self.repaint()
 
     def setShapeVisible(self, shape, value):
