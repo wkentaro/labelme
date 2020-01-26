@@ -49,6 +49,11 @@ def validate_config_item(key, value):
             "Unexpected value for config key 'validate_label': {}"
             .format(value)
         )
+    if key == 'shape_color' and value not in [None, 'auto', 'manual']:
+        raise ValueError(
+            "Unexpected value for config key 'shape_color': {}"
+            .format(value)
+        )
     if key == 'labels' and value is not None and len(value) != len(set(value)):
         raise ValueError(
             "Duplicates are detected for config key 'labels': {}".format(value)

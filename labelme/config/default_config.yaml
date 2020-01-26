@@ -13,6 +13,10 @@ file_search: null
 sort_labels: true
 validate_label: null
 
+default_shape_color: null
+shape_color: auto   # null, 'auto', 'manual'
+label_colors: null
+
 # main
 flag_dock:
   show: true
