@@ -81,7 +81,7 @@ def main():
             f.write(label_file.imageData)
         img = labelme.utils.img_data_to_arr(label_file.imageData)
 
-        lbl = labelme.utils.shapes_to_label(
+        lbl, _ = labelme.utils.shapes_to_label(
             img_shape=img.shape,
             shapes=label_file.shapes,
             label_name_to_value=class_name_to_id,

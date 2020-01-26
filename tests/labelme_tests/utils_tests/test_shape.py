@@ -10,7 +10,7 @@ def test_shapes_to_label():
         label_name = shape['label']
         label_value = len(label_name_to_value)
         label_name_to_value[label_name] = label_value
-    cls = shape_module.shapes_to_label(
+    cls, _ = shape_module.shapes_to_label(
         img.shape, data['shapes'], label_name_to_value)
     assert cls.shape == img.shape[:2]
 

@@ -1,4 +1,5 @@
 import math
+import uuid
 
 import numpy as np
 import PIL.Image
@@ -46,33 +47,31 @@ def shape_to_mask(img_shape, points, shape_type=None,
     return mask
 
 
-def shapes_to_label(img_shape, shapes, label_name_to_value, type='class'):
-    assert type in ['class', 'instance']
-
+def shapes_to_label(img_shape, shapes, label_name_to_value):
     cls = np.zeros(img_shape[:2], dtype=np.int32)
-    if type == 'instance':
-        ins = np.zeros(img_shape[:2], dtype=np.int32)
-        instance_names = ['_background_']
+    ins = np.zeros_like(cls)
+    instances = []
     for shape in shapes:
         points = shape['points']
         label = shape['label']
+        group_id = shape.get('group_id')
+        if group_id is None:
+            group_id = uuid.uuid1()
         shape_type = shape.get('shape_type', None)
-        if type == 'class':
-            cls_name = label
-        elif type == 'instance':
-            cls_name = label.split('-')[0]
-            if label not in instance_names:
-                instance_names.append(label)
-            ins_id = instance_names.index(label)
+
+        cls_name = label
+        instance = (cls_name, group_id)
+
+        if instance not in instances:
+            instances.append(instance)
+        ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
+
         mask = shape_to_mask(img_shape[:2], points, shape_type)
         cls[mask] = cls_id
-        if type == 'instance':
-            ins[mask] = ins_id
+        ins[mask] = ins_id
 
-    if type == 'instance':
-        return cls, ins
-    return cls
+    return cls, ins
 
 
 def labelme_shapes_to_label(img_shape, shapes):
@@ -88,7 +87,7 @@ def labelme_shapes_to_label(img_shape, shapes):
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
 
-    lbl = shapes_to_label(img_shape, shapes, label_name_to_value)
+    lbl, _ = shapes_to_label(img_shape, shapes, label_name_to_value)
     return lbl, label_name_to_value
 
 
