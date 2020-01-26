@@ -56,6 +56,7 @@ class LabelFile(object):
 
     def load(self, filename):
         keys = [
+            'version',
             'imageData',
             'imagePath',
             'lineColor',
@@ -165,6 +166,7 @@ class LabelFile(object):
             imageWidth=imageWidth,
         )
         for key, value in otherData.items():
+            assert key not in data
             data[key] = value
         try:
             with open(filename, 'wb' if PY2 else 'w') as f:
