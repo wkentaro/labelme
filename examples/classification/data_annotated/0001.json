@@ -1,22 +1,13 @@
 {
+  "version": "4.0.0",
   "flags": {
     "__ignore__": false,
     "cat": true,
     "dog": false
   },
   "shapes": [],
-  "lineColor": [
-    0,
-    255,
-    0,
-    128
-  ],
-  "fillColor": [
-    255,
-    0,
-    0,
-    128
-  ],
   "imagePath": "0001.jpg",
-  "imageData": null
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
 }
