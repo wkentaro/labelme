@@ -1,9 +1,9 @@
 {
+  "version": "3.22.0",
+  "flags": {},
   "shapes": [
     {
       "label": "person",
-      "line_color": null,
-      "fill_color": null,
       "points": [
         [
           250.8142292490119,
@@ -169,12 +169,13 @@
           270.81422924901193,
           121.33596837944665
         ]
-      ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
       "label": "person",
-      "line_color": null,
-      "fill_color": null,
       "points": [
         [
           482.81422924901193,
@@ -340,12 +341,37 @@
           499.81422924901193,
           90.33596837944665
         ]
-      ]
+      ],
+      "group_id": 0,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "person",
+      "points": [
+        [
+          370.81422924901193,
+          170.33596837944665
+        ],
+        [
+          366.81422924901193,
+          173.33596837944665
+        ],
+        [
+          365.81422924901193,
+          182.33596837944665
+        ],
+        [
+          368.81422924901193,
+          185.33596837944665
+        ]
+      ],
+      "group_id": 0,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
       "label": "bottle",
-      "line_color": null,
-      "fill_color": null,
       "points": [
         [
           374.81422924901193,
@@ -383,35 +409,13 @@
           382.81422924901193,
           159.33596837944665
         ]
-      ]
-    },
-    {
-      "label": "person",
-      "line_color": null,
-      "fill_color": null,
-      "points": [
-        [
-          370.81422924901193,
-          170.33596837944665
-        ],
-        [
-          366.81422924901193,
-          173.33596837944665
-        ],
-        [
-          365.81422924901193,
-          182.33596837944665
-        ],
-        [
-          368.81422924901193,
-          185.33596837944665
-        ]
-      ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
       "label": "__ignore__",
-      "line_color": null,
-      "fill_color": null,
       "points": [
         [
           338.81422924901193,
@@ -461,9 +465,16 @@
           370.81422924901193,
           270.3359683794467
         ]
-      ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     }
   ],
+  "imagePath": "2011_000003.jpg",
+  "imageData": null,
+  "imageHeight": 338,
+  "imageWidth": 500,
   "lineColor": [
     0,
     255,
@@ -475,7 +486,5 @@
     0,
     0,
     128
-  ],
-  "imagePath": "2011_000003.jpg",
-  "imageData": null
+  ]
 }
