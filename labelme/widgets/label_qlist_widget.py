@@ -1,7 +1,9 @@
 from qtpy import QtWidgets
 
+from .escapable_qlist_widget import EscapableQListWidget
 
-class LabelQListWidget(QtWidgets.QListWidget):
+
+class LabelQListWidget(EscapableQListWidget):
 
     def __init__(self, *args, **kwargs):
         super(LabelQListWidget, self).__init__(*args, **kwargs)
