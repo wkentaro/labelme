@@ -994,6 +994,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _get_rgb_by_label(self, label):
         item = self.uniqLabelList.findItems(label, Qt.MatchExactly)[0]
         label_id = self.uniqLabelList.indexFromItem(item).row() - 1
+        label_id += self._config['shift_auto_shape_color']
         return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
 
     def remLabels(self, shapes):

@@ -15,6 +15,7 @@ validate_label: null
 
 default_shape_color: null
 shape_color: auto   # null, 'auto', 'manual'
+shift_auto_shape_color: 0
 label_colors: null
 
 # main
