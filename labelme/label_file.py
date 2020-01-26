@@ -67,6 +67,21 @@ class LabelFile(object):
         try:
             with open(filename, 'rb' if PY2 else 'r') as f:
                 data = json.load(f)
+            version = data.get('version')
+            if version is None:
+                logger.warn(
+                    'Loading JSON file ({}) of unknown version'
+                    .format(filename)
+                )
+            elif version.split('.')[0] != __version__.split('.')[0]:
+                logger.warn(
+                    'This JSON file ({}) may be incompatible with '
+                    'current labelme. version in file: {}, '
+                    'current version: {}'.format(
+                        filename, version, __version__
+                    )
+                )
+
             if data['imageData'] is not None:
                 imageData = base64.b64decode(data['imageData'])
                 if PY2 and QT4:
