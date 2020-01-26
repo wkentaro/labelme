@@ -1,10 +1,9 @@
 {
-  "imageData": null,
+  "version": "3.22.0",
+  "flags": {},
   "shapes": [
     {
-      "fill_color": null,
-      "line_color": null,
-      "label": "bus-1",
+      "label": "bus",
       "points": [
         [
           260.936170212766,
@@ -114,12 +113,13 @@
           338.936170212766,
           25.563829787234056
         ]
-      ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "fill_color": null,
-      "line_color": null,
-      "label": "bus-2",
+      "label": "bus",
       "points": [
         [
           88.93617021276599,
@@ -165,11 +165,12 @@
           81.93617021276599,
           151.56382978723406
         ]
-      ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     },
     {
-      "fill_color": null,
-      "line_color": null,
       "label": "car",
       "points": [
         [
@@ -196,9 +197,16 @@
           408.936170212766,
           218.56382978723406
         ]
-      ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
     }
   ],
+  "imagePath": "2011_000025.jpg",
+  "imageData": null,
+  "imageHeight": 375,
+  "imageWidth": 500,
   "fillColor": [
     255,
     0,
@@ -210,6 +218,5 @@
     255,
     0,
     128
-  ],
-  "imagePath": "2011_000025.jpg"
+  ]
 }
