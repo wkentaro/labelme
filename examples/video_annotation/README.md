@@ -4,7 +4,7 @@
 ## Annotation
 
 ```bash
-labelme data_annotated --labels labels.txt --nodata --keep-prev
+labelme data_annotated --labels labels.txt --nodata --keep-prev --config '{shift_auto_shape_color: -2}'
 ```
 
 <img src=".readme/00000100.jpg" width="49%" /> <img src=".readme/00000101.jpg" width="49%" />
