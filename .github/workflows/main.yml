@@ -132,7 +132,8 @@ jobs:
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyqt5" -a "${{ matrix.PYTHON_VERSION }}" = "3.6" ]; then
           export PATH="$HOME/miniconda/bin:$PATH"
           # Build the standalone executable
-          pip install 'pyinstaller!=3.4'  # 3.4 raises error
+          pip install 'pyinstaller!=3.4'
+          pip install 'setuptools<45.0.0'
           pyinstaller labelme.spec
           dist/labelme --version
         fi
