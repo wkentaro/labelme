@@ -89,12 +89,13 @@ pip install labelme
 You need install [docker](https://www.docker.com), then run below:
 
 ```bash
-wget https://raw.githubusercontent.com/wkentaro/labelme/master/labelme/cli/on_docker.py -O labelme_on_docker
-chmod u+x labelme_on_docker
+# on macOS
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=docker.for.mac.host.internal:0 -v $(pwd):/root/workdir wkentaro/labelme
 
-# Maybe you need http://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/ on macOS
-./labelme_on_docker examples/tutorial/apc2016_obj3.jpg -O examples/tutorial/apc2016_obj3.json
-./labelme_on_docker examples/semantic_segmentation/data_annotated
+# on Linux
+xhost +
+docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=:0 -v $(pwd):/root/workdir wkentaro/labelme
 ```
 
 ### Ubuntu
