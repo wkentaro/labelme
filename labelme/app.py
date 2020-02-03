@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import functools
 import os
 import os.path as osp
@@ -963,11 +965,16 @@ class MainWindow(QtWidgets.QMainWindow):
             text = shape.label
         else:
             text = '{} ({})'.format(shape.label, shape.group_id)
-        item = QtWidgets.QListWidgetItem(text)
+        item = QtWidgets.QListWidgetItem()
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
         self.labelList.itemsToShapes.append((item, shape))
         self.labelList.addItem(item)
+        qlabel = QtWidgets.QLabel()
+        qlabel.setText(text)
+        qlabel.setAlignment(QtCore.Qt.AlignBottom)
+        item.setSizeHint(qlabel.sizeHint())
+        self.labelList.setItemWidget(item, qlabel)
         if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
             self.uniqLabelList.addItem(shape.label)
         self.labelDialog.addLabelHistory(shape.label)
@@ -984,6 +991,10 @@ class MainWindow(QtWidgets.QMainWindow):
             r, g, b = self._config['default_shape_color']
         else:
             return
+        qlabel.setText(
+            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'
+            .format(text, r, g, b)
+        )
         shape.line_color = QtGui.QColor(r, g, b)
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
