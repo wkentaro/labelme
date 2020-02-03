@@ -1313,7 +1313,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.loadFlags(self.labelFile.flags)
         if self._config['keep_prev'] and not self.labelList.shapes:
             self.loadShapes(prev_shapes, replace=False)
-        self.setClean()
+            self.setDirty()
+        else:
+            self.setClean()
         self.canvas.setEnabled(True)
         # set zoom values
         is_initial_load = not self.zoom_values
