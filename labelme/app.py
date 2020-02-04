@@ -24,10 +24,10 @@ from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import Canvas
 from labelme.widgets import ColorDialog
-from labelme.widgets import EscapableQListWidget
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelQListWidget
 from labelme.widgets import ToolBar
+from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
 
@@ -115,12 +115,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.shape_dock.setObjectName('Labels')
         self.shape_dock.setWidget(self.labelList)
 
-        self.uniqLabelList = EscapableQListWidget()
+        self.uniqLabelList = UniqueLabelQListWidget()
         self.uniqLabelList.setToolTip(self.tr(
             "Select label to start annotating for it. "
             "Press 'Esc' to deselect."))
         if self._config['labels']:
-            self.uniqLabelList.addItems(self._config['labels'])
+            for label in self._config['labels']:
+                item = self.uniqLabelList.createItemFromLabel(label)
+                self.uniqLabelList.addItem(item)
+                rgb = self._get_rgb_by_label(label)
+                self.uniqLabelList.setItemLabel(item, label, rgb)
         self.label_dock = QtWidgets.QDockWidget(self.tr(u'Label List'), self)
         self.label_dock.setObjectName(u'Label List')
         self.label_dock.setWidget(self.uniqLabelList)
@@ -877,7 +881,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
 
         for i in range(self.uniqLabelList.count()):
-            label_i = self.uniqLabelList.item(i).text()
+            label_i = self.uniqLabelList.item(i).data(Qt.UserRole)
             if self._config['validate_label'] in ['exact']:
                 if label_i == label:
                     return True
@@ -917,8 +921,10 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             item.setText('{} ({})'.format(shape.label, shape.group_id))
         self.setDirty()
-        if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
-            self.uniqLabelList.addItem(shape.label)
+        if not self.uniqLabelList.findItemsByLabel(shape.label):
+            item = QtWidgets.QListWidgetItem()
+            item.setData(role=Qt.UserRole, value=shape.label)
+            self.uniqLabelList.addItem(item)
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -975,38 +981,42 @@ class MainWindow(QtWidgets.QMainWindow):
         qlabel.setAlignment(QtCore.Qt.AlignBottom)
         item.setSizeHint(qlabel.sizeHint())
         self.labelList.setItemWidget(item, qlabel)
-        if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
-            self.uniqLabelList.addItem(shape.label)
+        if not self.uniqLabelList.findItemsByLabel(shape.label):
+            item = self.uniqLabelList.createItemFromLabel(shape.label)
+            self.uniqLabelList.addItem(item)
+            rgb = self._get_rgb_by_label(shape.label)
+            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
-        if self._config['shape_color'] == 'auto':
-            r, g, b = self._get_rgb_by_label(shape.label)
-        elif (self._config['shape_color'] == 'manual' and
-              self._config['label_colors'] and
-              shape.label in self._config['label_colors']):
-            r, g, b = self._config['label_colors'][shape.label]
-        elif self._config['default_shape_color']:
-            r, g, b = self._config['default_shape_color']
-        else:
+        rgb = self._get_rgb_by_label(shape.label)
+        if rgb is None:
             return
+
         qlabel.setText(
             '{} <font color="#{:02x}{:02x}{:02x}">●</font>'
-            .format(text, r, g, b)
+            .format(text, *rgb)
         )
-        shape.line_color = QtGui.QColor(r, g, b)
-        shape.vertex_fill_color = QtGui.QColor(r, g, b)
+        shape.line_color = QtGui.QColor(*rgb)
+        shape.vertex_fill_color = QtGui.QColor(*rgb)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-        shape.fill_color = QtGui.QColor(r, g, b, 128)
+        shape.fill_color = QtGui.QColor(*rgb, 128)
         shape.select_line_color = QtGui.QColor(255, 255, 255)
-        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+        shape.select_fill_color = QtGui.QColor(*rgb, 155)
 
     def _get_rgb_by_label(self, label):
-        item = self.uniqLabelList.findItems(label, Qt.MatchExactly)[0]
-        label_id = self.uniqLabelList.indexFromItem(item).row() + 1
-        label_id += self._config['shift_auto_shape_color']
-        return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
+        if self._config['shape_color'] == 'auto':
+            item = self.uniqLabelList.findItemsByLabel(label)[0]
+            label_id = self.uniqLabelList.indexFromItem(item).row() + 1
+            label_id += self._config['shift_auto_shape_color']
+            return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
+        elif (self._config['shape_color'] == 'manual' and
+              self._config['label_colors'] and
+              label in self._config['label_colors']):
+            return self._config['label_colors'][label]
+        elif self._config['default_shape_color']:
+            return self._config['default_shape_color']
 
     def remLabels(self, shapes):
         for shape in shapes:
@@ -1145,25 +1155,15 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         items = self.uniqLabelList.selectedItems()
         text = None
+        if items:
+            text = items[0].data(Qt.UserRole)
         flags = {}
         group_id = None
-        if items:
-            text = items[0].text()
         if self._config['display_label_popup'] or not text:
-            # instance label auto increment
-            if self._config['instance_label_auto_increment']:
-                previous_label = self.labelDialog.edit.text()
-                split = previous_label.split('-')
-                if len(split) > 1 and split[-1].isdigit():
-                    split[-1] = str(int(split[-1]) + 1)
-                    instance_text = '-'.join(split)
-                else:
-                    instance_text = previous_label
-                if instance_text != '':
-                    text = instance_text
+            previous_text = self.labelDialog.edit.text()
             text, flags, group_id = self.labelDialog.popUp(text)
-            if text is None:
-                self.labelDialog.edit.setText(previous_label)
+            if not text:
+                self.labelDialog.edit.setText(previous_text)
 
         if text and not self.validateLabel(text):
             self.errorMessage(
