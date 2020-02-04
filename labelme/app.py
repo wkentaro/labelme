@@ -994,16 +994,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if rgb is None:
             return
 
+        r, g, b = rgb
         qlabel.setText(
             '{} <font color="#{:02x}{:02x}{:02x}">●</font>'
-            .format(text, *rgb)
+            .format(text, r, g, b)
         )
-        shape.line_color = QtGui.QColor(*rgb)
-        shape.vertex_fill_color = QtGui.QColor(*rgb)
+        shape.line_color = QtGui.QColor(r, g, b)
+        shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-        shape.fill_color = QtGui.QColor(*rgb, 128)
+        shape.fill_color = QtGui.QColor(r, g, b, 128)
         shape.select_line_color = QtGui.QColor(255, 255, 255)
-        shape.select_fill_color = QtGui.QColor(*rgb, 155)
+        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
     def _get_rgb_by_label(self, label):
         if self._config['shape_color'] == 'auto':
