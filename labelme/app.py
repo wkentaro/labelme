@@ -1407,7 +1407,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openPrevImg(self, _value=False):
         keep_prev = self._config['keep_prev']
-        if QtGui.QGuiApplication.keyboardModifiers() == \
+        if QtGui.Qt.keyboardModifiers() == \
                 (QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier):
             self._config['keep_prev'] = True
 
