@@ -112,7 +112,7 @@ def main():
     setup(
         name='labelme',
         version=version,
-        packages=find_packages(),
+        packages=find_packages(exclude=['github2pypi']),
         description='Image Polygonal Annotation with Python',
         long_description=get_long_description(),
         long_description_content_type='text/markdown',
