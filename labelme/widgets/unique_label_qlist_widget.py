@@ -19,12 +19,15 @@ class UniqueLabelQListWidget(EscapableQListWidget):
         item.setData(Qt.UserRole, label)
         return item
 
-    def setItemLabel(self, item, label, color):
+    def setItemLabel(self, item, label, color=None):
         qlabel = QtWidgets.QLabel()
-        qlabel.setText(
-            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'
-            .format(label, *color)
-        )
+        if color is None:
+            qlabel.setText('{}'.format(label))
+        else:
+            qlabel.setText(
+                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'
+                .format(label, *color)
+            )
         qlabel.setAlignment(Qt.AlignBottom)
 
         item.setSizeHint(qlabel.sizeHint())
