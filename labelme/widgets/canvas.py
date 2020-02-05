@@ -152,7 +152,6 @@ class Canvas(QtWidgets.QWidget):
         if self.hShape:
             self.hShape.highlightClear()
             self.update()
-        self.hVertex, self.hShape, self.hEdge = None, None, None
 
     def selectedVertex(self):
         return self.hVertex is not None
@@ -276,13 +275,11 @@ class Canvas(QtWidgets.QWidget):
         self.vertexSelected.emit(self.hVertex is not None)
 
     def addPointToEdge(self):
-        if (self.hShape is None and
-                self.hEdge is None and
-                self.prevMovePoint is None):
-            return
         shape = self.hShape
         index = self.hEdge
         point = self.prevMovePoint
+        if shape is None or index is None or point is None:
+            return
         shape.insertPoint(index, point)
         shape.highlightVertex(index, shape.MOVE_VERTEX)
         self.hShape = shape
