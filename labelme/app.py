@@ -1552,9 +1552,8 @@ class MainWindow(QtWidgets.QMainWindow):
         filename = dlg.getSaveFileName(
             self, self.tr('Choose File'), default_labelfile_name,
             self.tr('Label files (*%s)') % LabelFile.suffix)
-        if QT5:
+        if isinstance(filename, tuple):
             filename, _ = filename
-        filename = str(filename)
         return filename
 
     def _saveFile(self, filename):
