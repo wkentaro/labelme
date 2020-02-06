@@ -1,6 +1,7 @@
 import json
 import os.path as osp
 
+import imgviz
 import labelme.utils
 
 
@@ -12,10 +13,17 @@ def assert_labelfile_sanity(filename):
     assert 'imagePath' in data
     imageData = data.get('imageData', None)
     if imageData is None:
-        assert osp.exists(data['imagePath'])
-    img = labelme.utils.img_b64_to_arr(imageData)
+        parent_dir = osp.dirname(filename)
+        img_file = osp.join(parent_dir, data['imagePath'])
+        assert osp.exists(img_file)
+        img = imgviz.io.imread(img_file)
+    else:
+        img = labelme.utils.img_b64_to_arr(imageData)
 
     H, W = img.shape[:2]
+    assert H == data['imageHeight']
+    assert W == data['imageWidth']
+
     assert 'shapes' in data
     for shape in data['shapes']:
         assert 'label' in shape
