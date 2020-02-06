@@ -150,17 +150,5 @@
   "imagePath": "00000104.jpg",
   "imageData": null,
   "imageHeight": 563,
-  "imageWidth": 1000,
-  "lineColor": [
-    0,
-    255,
-    0,
-    128
-  ],
-  "fillColor": [
-    255,
-    0,
-    0,
-    128
-  ]
+  "imageWidth": 1000
 }

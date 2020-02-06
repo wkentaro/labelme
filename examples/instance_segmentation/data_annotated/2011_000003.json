@@ -474,17 +474,5 @@
   "imagePath": "2011_000003.jpg",
   "imageData": null,
   "imageHeight": 338,
-  "imageWidth": 500,
-  "lineColor": [
-    0,
-    255,
-    0,
-    128
-  ],
-  "fillColor": [
-    255,
-    0,
-    0,
-    128
-  ]
+  "imageWidth": 500
 }

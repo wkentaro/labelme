@@ -126,17 +126,5 @@
   "imagePath": "primitives.jpg",
   "imageData": null,
   "imageHeight": 450,
-  "imageWidth": 560,
-  "lineColor": [
-    0,
-    255,
-    0,
-    128
-  ],
-  "fillColor": [
-    255,
-    0,
-    0,
-    128
-  ]
+  "imageWidth": 560
 }
