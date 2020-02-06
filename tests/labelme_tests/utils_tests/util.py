@@ -10,7 +10,7 @@ data_dir = osp.join(here, '../data')
 
 
 def get_img_and_data():
-    json_file = osp.join(data_dir, 'apc2016_obj3.json')
+    json_file = osp.join(data_dir, 'annotated_with_data/apc2016_obj3.json')
     data = json.load(open(json_file))
     img_b64 = data['imageData']
     img = image_module.img_b64_to_arr(img_b64)
