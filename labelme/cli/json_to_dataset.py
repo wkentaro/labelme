@@ -56,8 +56,9 @@ def main():
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
+
     lbl_viz = imgviz.label2rgb(
-        label=lbl, img=imgviz.rgb2gray(img), label_names=label_names, loc='rb'
+        label=lbl, img=imgviz.asgray(img), label_names=label_names, loc='rb'
     )
 
     PIL.Image.fromarray(img).save(osp.join(out_dir, 'img.png'))
