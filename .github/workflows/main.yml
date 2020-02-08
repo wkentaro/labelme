@@ -130,12 +130,10 @@ jobs:
 
     - name: Run pyinstaller
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.7'
       run: |
-        if [ "${{ matrix.PYTEST_QT_API }}" = "pyqt5" -a "${{ matrix.PYTHON_VERSION }}" = "3.6" ]; then
-          # Build the standalone executable
-          pip install 'pyinstaller!=3.4'
-          pip install 'setuptools<45.0.0'
-          pyinstaller labelme.spec
-          dist/labelme --version
-        fi
+        # Build the standalone executable
+        pip install 'pyinstaller!=3.4'
+        pip install 'setuptools<45.0.0'
+        pyinstaller labelme.spec
+        dist/labelme --version
