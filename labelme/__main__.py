@@ -80,7 +80,7 @@ def main():
         dest='label_flags',
         help='yaml string of label specific flags OR file containing json '
              'string of label specific flags (ex. {person-\d+: [male, tall], '
-             'dog-\d+: [black, brown, white], .*: [occluded]})',
+             'dog-\d+: [black, brown, white], .*: [occluded]})',  # NOQA
         default=argparse.SUPPRESS,
     )
     parser.add_argument(

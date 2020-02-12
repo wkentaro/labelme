@@ -1,0 +1,3 @@
+[flake8]
+exclude = .anaconda3/*
+ignore = W504
