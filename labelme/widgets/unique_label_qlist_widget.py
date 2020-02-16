@@ -6,6 +6,11 @@ from .escapable_qlist_widget import EscapableQListWidget
 
 class UniqueLabelQListWidget(EscapableQListWidget):
 
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        if not self.indexAt(event.pos()).isValid():
+            self.clearSelection()
+
     def findItemsByLabel(self, label):
         items = []
         for row in range(self.count()):
