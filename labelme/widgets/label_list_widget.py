@@ -159,9 +159,7 @@ class LabelListWidget(QtWidgets.QListView):
 
     def selectItem(self, item):
         index = self.model().indexFromItem(item)
-        self.selectionModel().select(
-            index, QtCore.QItemSelectionModel.SelectionFlag.Select
-        )
+        self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
 
     def findItemByShape(self, shape):
         for row in range(self.model().rowCount()):
