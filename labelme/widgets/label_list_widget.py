@@ -157,6 +157,10 @@ class LabelListWidget(QtWidgets.QListView):
         self.model().setItem(self.model().rowCount(), 0, item)
         item.setSizeHint(self.itemDelegate().sizeHint(None, None))
 
+    def removeItem(self, item):
+        index = self.model().indexFromItem(item)
+        self.model().removeRows(index.row(), 1)
+
     def selectItem(self, item):
         index = self.model().indexFromItem(item)
         self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
