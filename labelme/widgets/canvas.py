@@ -67,8 +67,11 @@ class Canvas(QtWidgets.QWidget):
         self._hideBackround = False
         self.hideBackround = False
         self.hShape = None
+        self.prevhShape = None
         self.hVertex = None
+        self.prevhVertex = None
         self.hEdge = None
+        self.prevhEdge = None
         self.movingShape = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
@@ -151,6 +154,10 @@ class Canvas(QtWidgets.QWidget):
         if self.hShape:
             self.hShape.highlightClear()
             self.update()
+        self.prevhShape = self.hShape
+        self.prevhVertex = self.hVertex
+        self.prevhEdge = self.hEdge
+        self.hShape = self.hVertex = self.hEdge = None
 
     def selectedVertex(self):
         return self.hVertex is not None
@@ -267,13 +274,12 @@ class Canvas(QtWidgets.QWidget):
                 break
         else:  # Nothing found, clear highlights, reset state.
             self.unHighlight()
-            self.hVertex, self.hShape, self.hEdge = None, None, None
         self.edgeSelected.emit(self.hEdge is not None, self.hShape)
         self.vertexSelected.emit(self.hVertex is not None)
 
     def addPointToEdge(self):
-        shape = self.hShape
-        index = self.hEdge
+        shape = self.prevhShape
+        index = self.prevhEdge
         point = self.prevMovePoint
         if shape is None or index is None or point is None:
             return
@@ -285,11 +291,10 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True
 
     def removeSelectedPoint(self):
-        if (self.hShape is None and
-                self.prevMovePoint is None):
-            return
-        shape = self.hShape
+        shape = self.prevhShape
         point = self.prevMovePoint
+        if shape is None or point is None:
+            return
         index = shape.nearestVertex(point, self.epsilon)
         shape.removePoint(index)
         # shape.highlightVertex(index, shape.MOVE_VERTEX)
