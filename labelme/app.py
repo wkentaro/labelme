@@ -23,7 +23,6 @@ from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import Canvas
-from labelme.widgets import ColorDialog
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
@@ -145,7 +144,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setWidget(fileListWidget)
 
         self.zoomWidget = ZoomWidget()
-        self.colorDialog = ColorDialog(parent=self)
 
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config['epsilon'],
