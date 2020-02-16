@@ -7,7 +7,7 @@ from .escapable_qlist_widget import EscapableQListWidget
 class UniqueLabelQListWidget(EscapableQListWidget):
 
     def mousePressEvent(self, event):
-        super().mousePressEvent(event)
+        super(UniqueLabelQListWidget, self).mousePressEvent(event)
         if not self.indexAt(event.pos()).isValid():
             self.clearSelection()
 
