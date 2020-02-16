@@ -267,6 +267,7 @@ class Canvas(QtWidgets.QWidget):
                 break
         else:  # Nothing found, clear highlights, reset state.
             self.unHighlight()
+            self.hVertex, self.hShape, self.hEdge = None, None, None
         self.edgeSelected.emit(self.hEdge is not None, self.hShape)
         self.vertexSelected.emit(self.hVertex is not None)
 
