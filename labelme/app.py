@@ -1009,7 +1009,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def remLabels(self, shapes):
         for shape in shapes:
             item = self.labelList.findItemByShape(shape)
-            self.labelList.takeItem(self.labelList.row(item))
+            self.labelList.removeItem(item)
 
     def loadShapes(self, shapes, replace=True):
         self._noSelectionSlot = True
