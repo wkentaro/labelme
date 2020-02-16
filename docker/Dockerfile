@@ -1,9 +1,10 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 LABEL maintainer "Kentaro Wada <www.kentaro.wada@gmail.com>"
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
   apt-get update -qq && \
-  apt-get upgrade -qq -y && \
   apt-get install -qq -y \
     git \
     python3 \
