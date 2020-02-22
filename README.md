@@ -13,6 +13,14 @@
   <a href="https://hub.docker.com/r/wkentaro/labelme"><img src="https://img.shields.io/docker/build/wkentaro/labelme.svg"></a>
 </div>
 
+<div align="center">
+  <a href="#installation"><b>Installation</b></a> |
+  <a href="#usage"><b>Usage</b></a> |
+  <a href="https://github.com/wkentaro/labelme/tree/master/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
+  <a href="https://github.com/wkentaro/labelme/tree/master/examples"><b>Examples</b></a> |
+  <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
+</div>
+
 <br/>
 
 <div align="center">
