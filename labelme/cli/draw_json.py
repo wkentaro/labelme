@@ -48,6 +48,8 @@ def main():
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
+    if len(img.shape) < 3:
+        img = imgviz.gray2rgb(img)
     lbl_viz = imgviz.label2rgb(
         label=lbl,
         img=imgviz.rgb2gray(img),
