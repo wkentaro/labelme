@@ -42,7 +42,8 @@ from labelme.widgets import ZoomWidget
 
 
 LABEL_COLORMAP = imgviz.label_colormap(value=200)
-
+EXTENSIONS = ['.%s' % fmt.data().decode("ascii").lower()
+              for fmt in QtGui.QImageReader.supportedImageFormats()]
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -1395,12 +1396,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
-            event.accept()
+            items = [i.toLocalFile() for i in event.mimeData().urls()]
+            if any([i.lower().endswith(tuple(EXTENSIONS)) for i in items]):
+                event.accept()
         else:
             event.ignore()
 
     def dropEvent(self, event):
         if not self.mayContinue():
+            event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
         self.importDraggedImages(items)
@@ -1700,11 +1704,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def importDraggedImages(self, imagePaths):
         self.filename = None
-        extensions = ['.%s' % fmt.data().decode("ascii").lower()
-                      for fmt in QtGui.QImageReader.supportedImageFormats()]
-
         for _file in imagePaths:
-            if _file in self.imageList or not _file.lower().endswith(tuple(extensions)):
+            if (_file in self.imageList or
+            not _file.lower().endswith(tuple(EXTENSIONS))):
                 continue
             label_file = osp.splitext(_file)[0] + '.json'
             if self.output_dir:
@@ -1753,13 +1755,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):
-        extensions = ['.%s' % fmt.data().decode("ascii").lower()
-                      for fmt in QtGui.QImageReader.supportedImageFormats()]
         images = []
-
         for root, dirs, files in os.walk(folderPath):
             for file in files:
-                if file.lower().endswith(tuple(extensions)):
+                if file.lower().endswith(tuple(EXTENSIONS)):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
