@@ -45,6 +45,7 @@ LABEL_COLORMAP = imgviz.label_colormap(value=200)
 EXTENSIONS = ['.%s' % fmt.data().decode("ascii").lower()
               for fmt in QtGui.QImageReader.supportedImageFormats()]
 
+
 class MainWindow(QtWidgets.QMainWindow):
 
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
@@ -1706,7 +1707,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.filename = None
         for _file in imagePaths:
             if (_file in self.imageList or
-            not _file.lower().endswith(tuple(EXTENSIONS))):
+                    not _file.lower().endswith(tuple(EXTENSIONS))):
                 continue
             label_file = osp.splitext(_file)[0] + '.json'
             if self.output_dir:
