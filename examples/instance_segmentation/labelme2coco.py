@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import collections
 import datetime
@@ -6,6 +8,7 @@ import json
 import os
 import os.path as osp
 import sys
+import uuid
 
 import numpy as np
 import PIL.Image
@@ -109,21 +112,28 @@ def main():
         for shape in label_data['shapes']:
             points = shape['points']
             label = shape['label']
-            shape_type = shape.get('shape_type', None)
+            group_id = shape.get('group_id')
+            shape_type = shape.get('shape_type')
             mask = labelme.utils.shape_to_mask(
                 img.shape[:2], points, shape_type
             )
 
-            if label in masks:
-                masks[label] = masks[label] | mask
+            if group_id is None:
+                group_id = uuid.uuid1()
+
+            instance = (label, group_id)
+
+            if instance in masks:
+                masks[instance] = masks[instance] | mask
             else:
-                masks[label] = mask
+                masks[instance] = mask
 
             points = np.asarray(points).flatten().tolist()
-            segmentations[label].append(points)
+            segmentations[instance].append(points)
+        segmentations = dict(segmentations)
 
-        for label, mask in masks.items():
-            cls_name = label.split('-')[0]
+        for instance, mask in masks.items():
+            cls_name, group_id = instance
             if cls_name not in class_name_to_id:
                 continue
             cls_id = class_name_to_id[cls_name]
@@ -137,7 +147,7 @@ def main():
                 id=len(data['annotations']),
                 image_id=image_id,
                 category_id=cls_id,
-                segmentation=segmentations[label],
+                segmentation=segmentations[instance],
                 area=area,
                 bbox=bbox,
                 iscrowd=0,
