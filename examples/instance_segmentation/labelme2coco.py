@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import argparse
 import collections
 import datetime
@@ -8,7 +6,6 @@ import json
 import os
 import os.path as osp
 import sys
-import uuid
 
 import numpy as np
 import PIL.Image
@@ -95,7 +92,7 @@ def main():
         img_file = osp.join(
             osp.dirname(label_file), label_data['imagePath']
         )
-        img = np.asarray(PIL.Image.open(img_file))
+        img = np.asarray(PIL.Image.open(img_file).convert('RGB'))
         PIL.Image.fromarray(img).save(out_img_file)
         data['images'].append(dict(
             license=0,
@@ -112,28 +109,21 @@ def main():
         for shape in label_data['shapes']:
             points = shape['points']
             label = shape['label']
-            group_id = shape.get('group_id')
-            shape_type = shape.get('shape_type')
+            shape_type = shape.get('shape_type', None)
             mask = labelme.utils.shape_to_mask(
                 img.shape[:2], points, shape_type
             )
 
-            if group_id is None:
-                group_id = uuid.uuid1()
-
-            instance = (label, group_id)
-
-            if instance in masks:
-                masks[instance] = masks[instance] | mask
+            if label in masks:
+                masks[label] = masks[label] | mask
             else:
-                masks[instance] = mask
+                masks[label] = mask
 
             points = np.asarray(points).flatten().tolist()
-            segmentations[instance].append(points)
-        segmentations = dict(segmentations)
+            segmentations[label].append(points)
 
-        for instance, mask in masks.items():
-            cls_name, group_id = instance
+        for label, mask in masks.items():
+            cls_name = label.split('-')[0]
             if cls_name not in class_name_to_id:
                 continue
             cls_id = class_name_to_id[cls_name]
@@ -147,7 +137,7 @@ def main():
                 id=len(data['annotations']),
                 image_id=image_id,
                 category_id=cls_id,
-                segmentation=segmentations[instance],
+                segmentation=segmentations[label],
                 area=area,
                 bbox=bbox,
                 iscrowd=0,
