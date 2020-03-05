@@ -50,7 +50,7 @@ def main():
         label_names[value] = name
     lbl_viz = imgviz.label2rgb(
         label=lbl,
-        img=imgviz.rgb2gray(img),
+        img=imgviz.asgray(img),
         label_names=label_names,
         font_size=30,
         loc='rb',
