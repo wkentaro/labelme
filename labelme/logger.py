@@ -32,7 +32,7 @@ class ColoredFormatter(logging.Formatter):
                     attrs={'bold': True},
                 )
 
-            record.levelname2 = colored('{:<8}'.format(record.levelname))
+            record.levelname2 = colored('{:<7}'.format(record.levelname))
             record.message2 = colored(record.msg)
 
             asctime2 = datetime.datetime.fromtimestamp(record.created)
@@ -47,8 +47,7 @@ class ColoredFormatter(logging.Formatter):
 class ColoredLogger(logging.Logger):
 
     FORMAT = (
-        '%(asctime2)s | %(levelname2)s | '
-        '%(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s'
+        '[%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s'
     )
 
     def __init__(self, name):
