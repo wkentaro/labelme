@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import termcolor
@@ -16,24 +17,39 @@ COLORS = {
 
 class ColoredFormatter(logging.Formatter):
 
-    def __init__(self, msg, use_color=True):
-        logging.Formatter.__init__(self, msg)
+    def __init__(self, fmt, use_color=True):
+        logging.Formatter.__init__(self, fmt)
         self.use_color = use_color
 
     def format(self, record):
         levelname = record.levelname
         if self.use_color and levelname in COLORS:
-            colored_levelname = termcolor.colored(
-                '[{}]'.format(levelname), color=COLORS[levelname]
-            )
-            record.levelname = colored_levelname
+
+            def colored(text):
+                return termcolor.colored(
+                    text,
+                    color=COLORS[levelname],
+                    attrs={'bold': True},
+                )
+
+            record.levelname2 = colored('{:<8}'.format(record.levelname))
+            record.message2 = colored(record.msg)
+
+            asctime2 = datetime.datetime.fromtimestamp(record.created)
+            record.asctime2 = termcolor.colored(asctime2, color='green')
+
+            record.module2 = termcolor.colored(record.module, color='cyan')
+            record.funcName2 = termcolor.colored(record.funcName, color='cyan')
+            record.lineno2 = termcolor.colored(record.lineno, color='cyan')
         return logging.Formatter.format(self, record)
 
 
 class ColoredLogger(logging.Logger):
 
-    fmt_filename = termcolor.colored('%(filename)s', attrs={'bold': True})
-    FORMAT = '%(levelname)s %(message)s ({}:%(lineno)d)'.format(fmt_filename)
+    FORMAT = (
+        '%(asctime2)s | %(levelname2)s | '
+        '%(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s'
+    )
 
     def __init__(self, name):
         logging.Logger.__init__(self, name, logging.INFO)
