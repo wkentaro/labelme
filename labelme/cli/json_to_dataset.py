@@ -12,9 +12,10 @@ from labelme import utils
 
 
 def main():
-    logger.warning('This script is aimed to demonstrate how to convert the'
-                   'JSON file to a single image dataset, and not to handle'
-                   'multiple JSON files to generate a real-use dataset.')
+    logger.warning('This script is aimed to demonstrate how to convert the '
+                   'JSON file to a single image dataset.')
+    logger.warning("It won't handle multiple JSON files to generate a "
+                   "real-use dataset.")
 
     parser = argparse.ArgumentParser()
     parser.add_argument('json_file')
