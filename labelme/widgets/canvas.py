@@ -251,9 +251,9 @@ class Canvas(QtWidgets.QWidget):
             if index is not None:
                 if self.selectedVertex():
                     self.hShape.highlightClear()
-                self.hVertex = index
-                self.hShape = shape
-                self.hEdge = index_edge
+                self.prevhVertex = self.hVertex = index
+                self.prevhShape = self.hShape = shape
+                self.prevhEdge = self.hEdge = index_edge
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
                 self.setToolTip(self.tr("Click & drag to move point"))
@@ -263,9 +263,10 @@ class Canvas(QtWidgets.QWidget):
             elif shape.containsPoint(pos):
                 if self.selectedVertex():
                     self.hShape.highlightClear()
+                self.prevhVertex = self.hVertex
                 self.hVertex = None
-                self.hShape = shape
-                self.hEdge = index_edge
+                self.prevhShape = self.hShape = shape
+                self.prevhEdge = self.hEdge = index_edge
                 self.setToolTip(
                     self.tr("Click & drag to move shape '%s'") % shape.label)
                 self.setStatusTip(self.toolTip())
