@@ -330,11 +330,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                shortcuts['undo_last_point'], 'undo',
                                self.tr('Undo last drawn point'), enabled=False)
         addPointToEdge = action(
-            self.tr('Add Point to Edge'),
-            self.canvas.addPointToEdge,
-            None,
-            'edit',
-            self.tr('Add point to the nearest edge'),
+            text=self.tr('Add Point to Edge'),
+            slot=self.canvas.addPointToEdge,
+            shortcut=shortcuts['add_point_to_edge'],
+            icon='edit',
+            tip=self.tr('Add point to the nearest edge'),
             enabled=False,
         )
         removePoint = action(
