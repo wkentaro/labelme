@@ -140,12 +140,13 @@ brew cask install wkentaro/labelme/labelme
 
 ### Windows
 
-Firstly, follow instruction in [Anaconda](#anaconda).
+Install [Anaconda](https://www.continuum.io/downloads), then in an Anaconda Prompt run:
 
 ```bash
-# Pillow 5 causes dll load error on Windows.
-# https://github.com/wkentaro/labelme/pull/174
-conda install pillow=4.0.0
+# python3
+conda create --name=labelme python=3.6
+conda activate labelme
+pip install labelme
 ```
 
 
