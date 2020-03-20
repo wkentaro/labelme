@@ -918,7 +918,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
         if not self.uniqLabelList.findItemsByLabel(shape.label):
             item = QtWidgets.QListWidgetItem()
-            item.setData(role=Qt.UserRole, value=shape.label)
+            item.setData(Qt.UserRole, shape.label)
             self.uniqLabelList.addItem(item)
 
     def fileSearchChanged(self):
