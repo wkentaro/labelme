@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Labelme
+Comment=Image Polygonal Annotation with Python
+Exec=labelme
+Icon=labelme
+Terminal=false
+Type=Application
+Categories=Graphics;RasterGraphics;
