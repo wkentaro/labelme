@@ -45,7 +45,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
         textRect = style.subElementRect(
             QStyle.SE_ItemViewItemText, options, None
-            )
+        )
 
         if index.column() != 0:
             textRect.adjust(5, 0, 0, 0)
