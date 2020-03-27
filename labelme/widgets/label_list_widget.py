@@ -43,7 +43,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
                 option.palette.color(QPalette.Active, QPalette.Text),
             )
 
-        textRect = style.subElementRect(QStyle.SE_ItemViewItemText, options, NULL)
+        textRect = style.subElementRect(QStyle.SE_ItemViewItemText, options, None)
 
         if index.column() != 0:
             textRect.adjust(5, 0, 0, 0)
