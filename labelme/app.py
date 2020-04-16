@@ -1641,7 +1641,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ).format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
                 self, self.tr('Attention'), msg,
-                yes | no):
+                yes | no, yes):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
