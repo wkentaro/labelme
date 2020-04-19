@@ -1,11 +1,11 @@
 import argparse
 
+import imgviz
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
 
 from labelme.logger import logger
-from labelme import utils
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
     logger.info('label shape: {}'.format(lbl.shape))
     logger.info('unique label values: {}'.format(np.unique(lbl)))
 
-    lbl_viz = utils.draw_label(lbl)
+    lbl_viz = imgviz.label2rgb(lbl)
     plt.imshow(lbl_viz)
     plt.show()
 
