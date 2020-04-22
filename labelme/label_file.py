@@ -34,7 +34,7 @@ class LabelFile(object):
     @staticmethod
     def load_image_file(filename):
         try:
-            image_pil = PIL.Image.open(filename)
+            image_pil = PIL.Image.open(filename).convert('RGB')
         except IOError:
             logger.error('Failed opening image file: {}'.format(filename))
             return
