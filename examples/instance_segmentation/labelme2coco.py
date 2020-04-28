@@ -129,6 +129,11 @@ def main():
                 masks[instance] = mask
 
             points = np.asarray(points).flatten().tolist()
+            
+            if shape['shape_type'] == 'rectangle':
+                x_1, y_1, x_2, y_2 = points
+                points = [x_1, y_1, x_2, y_1, x_2, y_2, x_1, y_2]
+            
             segmentations[instance].append(points)
         segmentations = dict(segmentations)
 
