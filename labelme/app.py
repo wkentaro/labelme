@@ -1408,7 +1408,7 @@ class MainWindow(QtWidgets.QMainWindow):
             event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
-        self.importDraggedImages(items)
+        self.importDroppedImageFiles(items)
 
     # User Dialogs #
 
@@ -1703,17 +1703,17 @@ class MainWindow(QtWidgets.QMainWindow):
             lst.append(item.text())
         return lst
 
-    def importDraggedImages(self, imagePaths):
+    def importDroppedImageFiles(self, imageFiles):
         self.filename = None
-        for _file in imagePaths:
-            if (_file in self.imageList or
-                    not _file.lower().endswith(tuple(EXTENSIONS))):
+        for file in imageFiles:
+            if (file in self.imageList or
+                    not file.lower().endswith(tuple(EXTENSIONS))):
                 continue
-            label_file = osp.splitext(_file)[0] + '.json'
+            label_file = osp.splitext(file)[0] + '.json'
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self.output_dir, label_file_without_path)
-            item = QtWidgets.QListWidgetItem(_file)
+            item = QtWidgets.QListWidgetItem(file)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and \
                     LabelFile.is_label_file(label_file):
