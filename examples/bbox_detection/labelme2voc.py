@@ -128,7 +128,7 @@ def main():
             )
 
         if not args.noviz:
-            captions = [class_names[l] for l in labels]
+            captions = [class_names[label] for label in labels]
             viz = imgviz.instances2rgb(
                 image=img,
                 labels=labels,
