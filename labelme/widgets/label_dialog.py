@@ -5,10 +5,11 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-QT5 = QT_VERSION[0] == '5'  # NOQA
-
 from labelme.logger import logger
 import labelme.utils
+
+
+QT5 = QT_VERSION[0] == '5'
 
 
 # TODO(unknown):

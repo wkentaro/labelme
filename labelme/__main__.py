@@ -78,9 +78,9 @@ def main():
     parser.add_argument(
         '--labelflags',
         dest='label_flags',
-        help='yaml string of label specific flags OR file containing json '
-             'string of label specific flags (ex. {person-\d+: [male, tall], '
-             'dog-\d+: [black, brown, white], .*: [occluded]})',  # NOQA
+        help=r'yaml string of label specific flags OR file containing json '
+             r'string of label specific flags (ex. {person-\d+: [male, tall], '
+             r'dog-\d+: [black, brown, white], .*: [occluded]})',  # NOQA
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -118,16 +118,16 @@ def main():
     if hasattr(args, 'flags'):
         if os.path.isfile(args.flags):
             with codecs.open(args.flags, 'r', encoding='utf-8') as f:
-                args.flags = [l.strip() for l in f if l.strip()]
+                args.flags = [line.strip() for line in f if line.strip()]
         else:
-            args.flags = [l for l in args.flags.split(',') if l]
+            args.flags = [line for line in args.flags.split(',') if line]
 
     if hasattr(args, 'labels'):
         if os.path.isfile(args.labels):
             with codecs.open(args.labels, 'r', encoding='utf-8') as f:
-                args.labels = [l.strip() for l in f if l.strip()]
+                args.labels = [line.strip() for line in f if line.strip()]
         else:
-            args.labels = [l for l in args.labels.split(',') if l]
+            args.labels = [line for line in args.labels.split(',') if line]
 
     if hasattr(args, 'label_flags'):
         if os.path.isfile(args.label_flags):
