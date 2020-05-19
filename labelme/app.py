@@ -37,12 +37,13 @@ from labelme.widgets import ZoomWidget
 # TODO(unknown):
 # - [high] Add polygon movement with arrow keys
 # - [high] Deselect shape when clicking and already selected(?)
-# - [low,maybe] Open images with drag & drop.
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
 
 LABEL_COLORMAP = imgviz.label_colormap(value=200)
+EXTENSIONS = ['.%s' % fmt.data().decode("ascii").lower()
+              for fmt in QtGui.QImageReader.supportedImageFormats()]
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -144,6 +145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setWidget(fileListWidget)
 
         self.zoomWidget = ZoomWidget()
+        self.setAcceptDrops(True)
 
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config['epsilon'],
@@ -1393,6 +1395,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            items = [i.toLocalFile() for i in event.mimeData().urls()]
+            if any([i.lower().endswith(tuple(EXTENSIONS)) for i in items]):
+                event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if not self.mayContinue():
+            event.ignore()
+            return
+        items = [i.toLocalFile() for i in event.mimeData().urls()]
+        self.importDroppedImageFiles(items)
+
     # User Dialogs #
 
     def loadRecent(self, filename):
@@ -1686,6 +1703,31 @@ class MainWindow(QtWidgets.QMainWindow):
             lst.append(item.text())
         return lst
 
+    def importDroppedImageFiles(self, imageFiles):
+        self.filename = None
+        for file in imageFiles:
+            if (file in self.imageList or
+                    not file.lower().endswith(tuple(EXTENSIONS))):
+                continue
+            label_file = osp.splitext(file)[0] + '.json'
+            if self.output_dir:
+                label_file_without_path = osp.basename(label_file)
+                label_file = osp.join(self.output_dir, label_file_without_path)
+            item = QtWidgets.QListWidgetItem(file)
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+            if QtCore.QFile.exists(label_file) and \
+                    LabelFile.is_label_file(label_file):
+                item.setCheckState(Qt.Checked)
+            else:
+                item.setCheckState(Qt.Unchecked)
+            self.fileListWidget.addItem(item)
+
+        if len(self.imageList) > 1:
+            self.actions.openNextImg.setEnabled(True)
+            self.actions.openPrevImg.setEnabled(True)
+
+        self.openNextImg()
+
     def importDirImages(self, dirpath, pattern=None, load=True):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
@@ -1714,13 +1756,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):
-        extensions = ['.%s' % fmt.data().decode("ascii").lower()
-                      for fmt in QtGui.QImageReader.supportedImageFormats()]
         images = []
-
         for root, dirs, files in os.walk(folderPath):
             for file in files:
-                if file.lower().endswith(tuple(extensions)):
+                if file.lower().endswith(tuple(EXTENSIONS)):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
