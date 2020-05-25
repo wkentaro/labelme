@@ -82,20 +82,17 @@ def main():
 
     out_ann_file = osp.join(args.output_dir, 'annotations.json')
     label_files = glob.glob(osp.join(args.input_dir, '*.json'))
-    for image_id, label_file in enumerate(label_files):
-        print('Generating dataset from:', label_file)
-        with open(label_file) as f:
-            label_data = json.load(f)
+    for image_id, filename in enumerate(label_files):
+        print('Generating dataset from:', filename)
 
-        base = osp.splitext(osp.basename(label_file))[0]
+        label_file = labelme.LabelFile(filename=filename)
+
+        base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(
             args.output_dir, 'JPEGImages', base + '.jpg'
         )
 
-        img_file = osp.join(
-            osp.dirname(label_file), label_data['imagePath']
-        )
-        img = np.asarray(PIL.Image.open(img_file).convert('RGB'))
+        img = labelme.utils.img_data_to_arr(label_file.imageData)
         PIL.Image.fromarray(img).save(out_img_file)
         data['images'].append(dict(
             license=0,
@@ -109,7 +106,7 @@ def main():
 
         masks = {}                                     # for area
         segmentations = collections.defaultdict(list)  # for segmentation
-        for shape in label_data['shapes']:
+        for shape in label_file.shapes:
             points = shape['points']
             label = shape['label']
             group_id = shape.get('group_id')
