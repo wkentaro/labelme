@@ -14,7 +14,6 @@ import numpy as np
 import PIL.Image
 
 import labelme
-from labelme import utils
 
 def main():
     parser = argparse.ArgumentParser(
@@ -97,7 +96,7 @@ def main():
 
             img_file = osp.join(osp.dirname(label_file), data['imagePath'])
             image_pil = PIL.Image.open(img_file)
-            image_pil = utils.apply_exif_orientation(image_pil)
+            image_pil = labelme.utils.apply_exif_orientation(image_pil)
             img = np.asarray(image_pil)
             PIL.Image.fromarray(img).save(out_img_file)
 
