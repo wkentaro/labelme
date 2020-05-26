@@ -19,7 +19,7 @@ def main():
     args = parser.parse_args()
 
     label_file = LabelFile(args.json_file)
-    img = utils.img_b64_to_arr(label_file.imageData)
+    img = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {'_background_': 0}
     for shape in sorted(label_file.shapes, key=lambda x: x['label']):
