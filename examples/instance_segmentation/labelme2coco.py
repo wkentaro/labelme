@@ -113,7 +113,7 @@ def main():
             points = shape['points']
             label = shape['label']
             group_id = shape.get('group_id')
-            shape_type = shape.get('shape_type')
+            shape_type = shape.get('shape_type', 'polygon')
             mask = labelme.utils.shape_to_mask(
                 img.shape[:2], points, shape_type
             )
@@ -128,12 +128,14 @@ def main():
             else:
                 masks[instance] = mask
 
-            points = np.asarray(points).flatten().tolist()
-            
-            if shape['shape_type'] == 'rectangle':
-                x_1, y_1, x_2, y_2 = points
-                points = [x_1, y_1, x_2, y_1, x_2, y_2, x_1, y_2]
-            
+            if shape_type == 'rectangle':
+                (x1, y1), (x2, y2) = points
+                x1, x2 = sorted([x1, x2])
+                y1, y2 = sorted([y1, y2])
+                points = [x1, y1, x2, y1, x2, y2, x1, y2]
+            else:
+                points = np.asarray(points).flatten().tolist()
+
             segmentations[instance].append(points)
         segmentations = dict(segmentations)
 
