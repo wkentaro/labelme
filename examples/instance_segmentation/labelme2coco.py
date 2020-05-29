@@ -93,7 +93,7 @@ def main():
         )
 
         img = labelme.utils.img_data_to_arr(label_file.imageData)
-        PIL.Image.fromarray(img).save(out_img_file)
+        PIL.Image.fromarray(img).convert("RGB").save(out_img_file)
         data['images'].append(dict(
             license=0,
             url=None,
