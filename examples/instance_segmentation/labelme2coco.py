@@ -90,7 +90,8 @@ def main():
     for image_id, filename in enumerate(label_files):
         print('Generating dataset from:', filename)
 
-        label_file = labelme.LabelFile(filename=filename, encoding=args.label_encoding)
+        label_file = labelme.LabelFile(filename=filename, 
+                     encoding=args.label_encoding)
 
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(
