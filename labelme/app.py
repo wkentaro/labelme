@@ -1062,7 +1062,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.flag_widget.addItem(item)
 
     def saveLabels(self, filename):
-        lf = LabelFile()
+        lf = LabelFile(encoding=self._config.label_encoding)
 
         def format_shape(s):
             data = s.other_data.copy()

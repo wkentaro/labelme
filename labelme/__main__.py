@@ -89,6 +89,12 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
+        '--label_encoding',
+        default='utf-8'
+        help='file encoding of label files',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         '--validatelabel',
         dest='validate_label',
         choices=['exact'],

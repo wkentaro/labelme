@@ -23,10 +23,11 @@ class LabelFile(object):
 
     suffix = '.json'
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, encoding='utf-8'):
         self.shapes = []
         self.imagePath = None
         self.imageData = None
+        self.encoding = encoding
         if filename is not None:
             self.load(filename)
         self.filename = filename
@@ -72,7 +73,7 @@ class LabelFile(object):
             'flags',
         ]
         try:
-            with open(filename, 'rb' if PY2 else 'r') as f:
+            with open(filename, 'r', encoding=self.encoding) as f:
                 data = json.load(f)
             version = data.get('version')
             if version is None:
@@ -183,7 +184,7 @@ class LabelFile(object):
             assert key not in data
             data[key] = value
         try:
-            with open(filename, 'wb' if PY2 else 'w') as f:
+            with open(filename, 'w', encoding=self.encoding) as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
         except Exception as e:
