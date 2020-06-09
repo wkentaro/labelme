@@ -67,8 +67,8 @@ def main():
     for filename in glob.glob(osp.join(args.input_dir, '*.json')):
         print('Generating dataset from:', filename)
 
-        label_file = labelme.LabelFile(filename=filename, 
-                      encoding=args.label_encoding)
+        label_file = labelme.LabelFile(filename=filename,
+                                       encoding=args.label_encoding)
 
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(

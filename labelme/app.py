@@ -1272,8 +1272,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if QtCore.QFile.exists(label_file) and \
                 LabelFile.is_label_file(label_file):
             try:
-                self.labelFile = LabelFile(label_file, 
-                                 encoding=self._config['label_encoding'])
+                e = self._config['label_encoding']
+                self.labelFile = LabelFile(label_file,
+                                           encoding=e)
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr('Error opening file'),
