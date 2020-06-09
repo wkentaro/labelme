@@ -16,9 +16,14 @@ PY2 = sys.version_info[0] == 2
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('json_file')
+    parser.add_argument(
+        '--label_encoding',
+        default='utf-8',
+        help='file encoding of label files',
+    )
     args = parser.parse_args()
 
-    label_file = LabelFile(args.json_file)
+    label_file = LabelFile(args.json_file, encoding=args.label_encoding)
     img = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {'_background_': 0}

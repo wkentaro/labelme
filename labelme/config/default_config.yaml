@@ -8,6 +8,7 @@ logger_level: info
 flags: null
 label_flags: null
 labels: null
+label_encoding: utf-8
 file_search: null
 sort_labels: true
 validate_label: null

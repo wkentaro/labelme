@@ -24,6 +24,11 @@ def main():
     parser.add_argument(
         '--noviz', help='no visualization', action='store_true'
     )
+    parser.add_argument(
+        '--label_encoding',
+        default='utf-8',
+        help='file encoding of label files',
+    )
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -61,7 +66,7 @@ def main():
     for filename in glob.glob(osp.join(args.input_dir, '*.json')):
         print('Generating dataset from:', filename)
 
-        label_file = labelme.LabelFile(filename=filename)
+        label_file = labelme.LabelFile(filename=filename, encoding=args.label_encoding)
 
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(

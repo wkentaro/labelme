@@ -29,6 +29,11 @@ def main():
     parser.add_argument('input_dir', help='input annotated directory')
     parser.add_argument('output_dir', help='output dataset directory')
     parser.add_argument('--labels', help='labels file', required=True)
+    parser.add_argument(
+        '--label_encoding',
+        default='utf-8',
+        help='file encoding of label files',
+    )
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -85,7 +90,7 @@ def main():
     for image_id, filename in enumerate(label_files):
         print('Generating dataset from:', filename)
 
-        label_file = labelme.LabelFile(filename=filename)
+        label_file = labelme.LabelFile(filename=filename, encoding=args.label_encoding)
 
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(
