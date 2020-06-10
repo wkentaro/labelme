@@ -17,7 +17,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('json_file')
     parser.add_argument(
-        '--label_encoding',
+        '--label-encoding',
         default='utf-8',
         help='file encoding of label files',
     )

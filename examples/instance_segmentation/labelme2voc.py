@@ -25,7 +25,7 @@ def main():
         '--noviz', help='no visualization', action='store_true'
     )
     parser.add_argument(
-        '--label_encoding',
+        '--label-encoding',
         default='utf-8',
         help='file encoding of label files',
     )

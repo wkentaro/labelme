@@ -89,8 +89,8 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        '--label_encoding',
         default='utf-8',
+        '--label-encoding',
         help='file encoding of label files',
     )
     parser.add_argument(

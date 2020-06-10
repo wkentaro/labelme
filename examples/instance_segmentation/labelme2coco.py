@@ -30,7 +30,7 @@ def main():
     parser.add_argument('output_dir', help='output dataset directory')
     parser.add_argument('--labels', help='labels file', required=True)
     parser.add_argument(
-        '--label_encoding',
+        '--label-encoding',
         default='utf-8',
         help='file encoding of label files',
     )
