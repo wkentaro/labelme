@@ -89,9 +89,10 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        default='utf-8',
         '--label-encoding',
+        choices=["utf-8", "gb2312"],  # utf-8: mac, linux, gb2312: windows
         help='file encoding of label files',
+        default=argparse.SUPPRESS,
     )
     parser.add_argument(
         '--validatelabel',
