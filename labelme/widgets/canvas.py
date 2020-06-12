@@ -708,9 +708,10 @@ class Canvas(QtWidgets.QWidget):
             self.drawingPolygon.emit(False)
         self.repaint()
 
-    def loadPixmap(self, pixmap):
+    def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
-        self.shapes = []
+        if clear_shapes:
+            self.shapes = []
         self.repaint()
 
     def loadShapes(self, shapes, replace=True):
