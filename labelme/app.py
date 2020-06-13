@@ -1256,7 +1256,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         dialog = BrightnessContrastDialog(
             self.filename, onNewBrightnessContrast, parent=self)
-        dialog.exec()
+        dialog.exec_()
 
     def togglePolygons(self, value):
         for item in self.labelList:
