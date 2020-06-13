@@ -56,7 +56,7 @@ jobs:
       env:
         PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
       run: |
-        conda install -y python=$PYTHON_VERSION
+        conda install -q -y python=$PYTHON_VERSION
         which python
         python --version
         pip --version
@@ -66,17 +66,17 @@ jobs:
       run: |
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyside2" ]; then
           if [ "${{ matrix.PYTHON_VERSION }}" = "2.7" ]; then
-            conda install -y 'pyside2!=5.12.4' -c conda-forge
+            conda install -q -y 'pyside2!=5.12.4' -c conda-forge
           else
-            conda install -y pyside2 -c conda-forge
+            conda install -q -y pyside2 -c conda-forge
           fi
         elif [ "${{ matrix.PYTEST_QT_API }}" = "pyqt4v2" ]; then
-          conda install -y pyqt=4 -c conda-forge
+          conda install -q -y pyqt=4 -c conda-forge
         else  # pyqt5
-          conda install -y pyqt=5
+          conda install -q -y pyqt=5
         fi
         if [ "${{ matrix.os }}" != "windows-latest" ]; then
-          conda install -y help2man
+          conda install -q -y help2man
         fi
         pip install hacking pytest pytest-qt
 
@@ -90,6 +90,13 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         flake8 .
+
+    - name: Black
+      shell: bash -l {0}
+      if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
+      run: |
+        pip install black
+        black --check .
 
     - name: Test with pytest
       shell: bash -l {0}

@@ -32,17 +32,18 @@ class Canvas(QtWidgets.QWidget):
     CREATE, EDIT = 0, 1
 
     # polygon, rectangle, line, or point
-    _createMode = 'polygon'
+    _createMode = "polygon"
 
     _fill_drawing = False
 
     def __init__(self, *args, **kwargs):
-        self.epsilon = kwargs.pop('epsilon', 10.0)
-        self.double_click = kwargs.pop('double_click', 'close')
-        if self.double_click not in [None, 'close']:
+        self.epsilon = kwargs.pop("epsilon", 10.0)
+        self.double_click = kwargs.pop("double_click", "close")
+        if self.double_click not in [None, "close"]:
             raise ValueError(
-                'Unexpected value for double_click event: {}'
-                .format(self.double_click)
+                "Unexpected value for double_click event: {}".format(
+                    self.double_click
+                )
             )
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
@@ -95,9 +96,15 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['polygon', 'rectangle', 'circle',
-           'line', 'point', 'linestrip']:
-            raise ValueError('Unsupported createMode: %s' % value)
+        if value not in [
+            "polygon",
+            "rectangle",
+            "circle",
+            "line",
+            "point",
+            "linestrip",
+        ]:
+            raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
 
     def storeShapes(self):
@@ -187,26 +194,29 @@ class Canvas(QtWidgets.QWidget):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
                 pos = self.intersectionPoint(self.current[-1], pos)
-            elif len(self.current) > 1 and self.createMode == 'polygon' and\
-                    self.closeEnough(pos, self.current[0]):
+            elif (
+                len(self.current) > 1
+                and self.createMode == "polygon"
+                and self.closeEnough(pos, self.current[0])
+            ):
                 # Attract line to starting point and
                 # colorise to alert the user.
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ['polygon', 'linestrip']:
+            if self.createMode in ["polygon", "linestrip"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
-            elif self.createMode == 'rectangle':
+            elif self.createMode == "rectangle":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
-            elif self.createMode == 'circle':
+            elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
                 self.line.shape_type = "circle"
-            elif self.createMode == 'line':
+            elif self.createMode == "line":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
-            elif self.createMode == 'point':
+            elif self.createMode == "point":
                 self.line.points = [self.current[0]]
                 self.line.close()
             self.repaint()
@@ -220,8 +230,9 @@ class Canvas(QtWidgets.QWidget):
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
                 self.repaint()
             elif self.selectedShapes:
-                self.selectedShapesCopy = \
-                    [s.copy() for s in self.selectedShapes]
+                self.selectedShapesCopy = [
+                    s.copy() for s in self.selectedShapes
+                ]
                 self.repaint()
             return
 
@@ -268,7 +279,8 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge = index_edge
                 self.setToolTip(
-                    self.tr("Click & drag to move shape '%s'") % shape.label)
+                    self.tr("Click & drag to move shape '%s'") % shape.label
+                )
                 self.setStatusTip(self.toolTip())
                 self.overrideCursor(CURSOR_GRAB)
                 self.update()
@@ -313,16 +325,16 @@ class Canvas(QtWidgets.QWidget):
             if self.drawing():
                 if self.current:
                     # Add point to existing shape.
-                    if self.createMode == 'polygon':
+                    if self.createMode == "polygon":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
-                    elif self.createMode in ['rectangle', 'circle', 'line']:
+                    elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
-                    elif self.createMode == 'linestrip':
+                    elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
@@ -331,22 +343,22 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
-                    if self.createMode == 'point':
+                    if self.createMode == "point":
                         self.finalise()
                     else:
-                        if self.createMode == 'circle':
-                            self.current.shape_type = 'circle'
+                        if self.createMode == "circle":
+                            self.current.shape_type = "circle"
                         self.line.points = [pos, pos]
                         self.setHiding()
                         self.drawingPolygon.emit(True)
                         self.update()
             else:
-                group_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier)
+                group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
-            group_mode = (int(ev.modifiers()) == QtCore.Qt.ControlModifier)
+            group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             self.selectShapePoint(pos, multiple_selection_mode=group_mode)
             self.prevPoint = pos
             self.repaint()
@@ -355,8 +367,10 @@ class Canvas(QtWidgets.QWidget):
         if ev.button() == QtCore.Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos())) \
-                    and self.selectedShapesCopy:
+            if (
+                not menu.exec_(self.mapToGlobal(ev.pos()))
+                and self.selectedShapesCopy
+            ):
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
@@ -365,8 +379,10 @@ class Canvas(QtWidgets.QWidget):
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
-            if (self.shapesBackups[-1][index].points !=
-                    self.shapes[index].points):
+            if (
+                self.shapesBackups[-1][index].points
+                != self.shapes[index].points
+            ):
                 self.storeShapes()
                 self.shapeMoved.emit()
 
@@ -405,8 +421,11 @@ class Canvas(QtWidgets.QWidget):
     def mouseDoubleClickEvent(self, ev):
         # We need at least 4 points here, since the mousePress handler
         # adds an extra one before this handler is called.
-        if (self.double_click == 'close' and self.canCloseShape() and
-                len(self.current) > 3):
+        if (
+            self.double_click == "close"
+            and self.canCloseShape()
+            and len(self.current) > 3
+        ):
             self.current.popPoint()
             self.finalise()
 
@@ -428,7 +447,8 @@ class Canvas(QtWidgets.QWidget):
                     if multiple_selection_mode:
                         if shape not in self.selectedShapes:
                             self.selectionChanged.emit(
-                                self.selectedShapes + [shape])
+                                self.selectedShapes + [shape]
+                            )
                     else:
                         self.selectionChanged.emit([shape])
                     return
@@ -457,8 +477,10 @@ class Canvas(QtWidgets.QWidget):
             pos -= QtCore.QPoint(min(0, o1.x()), min(0, o1.y()))
         o2 = pos + self.offsets[1]
         if self.outOfPixmap(o2):
-            pos += QtCore.QPoint(min(0, self.pixmap.width() - o2.x()),
-                                 min(0, self.pixmap.height() - o2.y()))
+            pos += QtCore.QPoint(
+                min(0, self.pixmap.width() - o2.x()),
+                min(0, self.pixmap.height() - o2.y()),
+            )
         # XXX: The next line tracks the new position of the cursor
         # relative to the shape, but also results in making it
         # a bit "shaky" when nearing the border and allows it to
@@ -522,8 +544,9 @@ class Canvas(QtWidgets.QWidget):
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
         for shape in self.shapes:
-            if (shape.selected or not self._hideBackround) and \
-                    self.isVisible(shape):
+            if (shape.selected or not self._hideBackround) and self.isVisible(
+                shape
+            ):
                 shape.fill = shape.selected or shape == self.hShape
                 shape.paint(p)
         if self.current:
@@ -533,8 +556,12 @@ class Canvas(QtWidgets.QWidget):
             for s in self.selectedShapesCopy:
                 s.paint(p)
 
-        if (self.fillDrawing() and self.createMode == 'polygon' and
-                self.current is not None and len(self.current.points) >= 2):
+        if (
+            self.fillDrawing()
+            and self.createMode == "polygon"
+            and self.current is not None
+            and len(self.current.points) >= 2
+        ):
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
@@ -582,10 +609,12 @@ class Canvas(QtWidgets.QWidget):
         # and find the one intersecting the current line segment.
         # http://paulbourke.net/geometry/lineline2d/
         size = self.pixmap.size()
-        points = [(0, 0),
-                  (size.width() - 1, 0),
-                  (size.width() - 1, size.height() - 1),
-                  (0, size.height() - 1)]
+        points = [
+            (0, 0),
+            (size.width() - 1, 0),
+            (size.width() - 1, size.height() - 1),
+            (0, size.height() - 1),
+        ]
         # x1, y1 should be in the pixmap, x2, y2 should be out of the pixmap
         x1 = min(max(p1.x(), 0), size.width() - 1)
         y1 = min(max(p1.y(), 0), size.height() - 1)
@@ -663,7 +692,8 @@ class Canvas(QtWidgets.QWidget):
                         ev.delta(),
                         QtCore.Qt.Horizontal
                         if (QtCore.Qt.ShiftModifier == int(mods))
-                        else QtCore.Qt.Vertical)
+                        else QtCore.Qt.Vertical,
+                    )
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
@@ -689,11 +719,11 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        if self.createMode in ['polygon', 'linestrip']:
+        if self.createMode in ["polygon", "linestrip"]:
             self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in ['rectangle', 'line', 'circle']:
+        elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]
-        elif self.createMode == 'point':
+        elif self.createMode == "point":
             self.current = None
         self.drawingPolygon.emit(True)
 

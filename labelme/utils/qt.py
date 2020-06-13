@@ -12,8 +12,8 @@ here = osp.dirname(osp.abspath(__file__))
 
 
 def newIcon(icon):
-    icons_dir = osp.join(here, '../icons')
-    return QtGui.QIcon(osp.join(':/', icons_dir, '%s.png' % icon))
+    icons_dir = osp.join(here, "../icons")
+    return QtGui.QIcon(osp.join(":/", icons_dir, "%s.png" % icon))
 
 
 def newButton(text, icon=None, slot=None):
@@ -25,12 +25,21 @@ def newButton(text, icon=None, slot=None):
     return b
 
 
-def newAction(parent, text, slot=None, shortcut=None, icon=None,
-              tip=None, checkable=False, enabled=True, checked=False):
+def newAction(
+    parent,
+    text,
+    slot=None,
+    shortcut=None,
+    icon=None,
+    tip=None,
+    checkable=False,
+    enabled=True,
+    checked=False,
+):
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QtWidgets.QAction(text, parent)
     if icon is not None:
-        a.setIconText(text.replace(' ', '\n'))
+        a.setIconText(text.replace(" ", "\n"))
         a.setIcon(newIcon(icon))
     if shortcut is not None:
         if isinstance(shortcut, (list, tuple)):
@@ -60,7 +69,7 @@ def addActions(widget, actions):
 
 
 def labelValidator():
-    return QtGui.QRegExpValidator(QtCore.QRegExp(r'^[^ \t].+'), None)
+    return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
 class struct(object):
@@ -85,5 +94,5 @@ def distancetoline(point, line):
 
 
 def fmtShortcut(text):
-    mod, key = text.split('+', 1)
-    return '<b>%s</b>+<b>%s</b>' % (mod, key)
+    mod, key = text.split("+", 1)
+    return "<b>%s</b>+<b>%s</b>" % (mod, key)
