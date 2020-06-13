@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from qtpy.QtCore import Qt
 from qtpy import QtWidgets
 
