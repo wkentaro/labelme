@@ -9,7 +9,7 @@ from labelme.logger import logger
 import labelme.utils
 
 
-QT5 = QT_VERSION[0] == '5'
+QT5 = QT_VERSION[0] == "5"
 
 
 # TODO(unknown):
@@ -17,7 +17,6 @@ QT5 = QT_VERSION[0] == '5'
 
 
 class LabelQLineEdit(QtWidgets.QLineEdit):
-
     def setListWidget(self, list_widget):
         self.list_widget = list_widget
 
@@ -29,12 +28,19 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
 
 
 class LabelDialog(QtWidgets.QDialog):
-
-    def __init__(self, text="Enter object label", parent=None, labels=None,
-                 sort_labels=True, show_text_field=True,
-                 completion='startswith', fit_to_content=None, flags=None):
+    def __init__(
+        self,
+        text="Enter object label",
+        parent=None,
+        labels=None,
+        sort_labels=True,
+        show_text_field=True,
+        completion="startswith",
+        fit_to_content=None,
+        flags=None,
+    ):
         if fit_to_content is None:
-            fit_to_content = {'row': False, 'column': True}
+            fit_to_content = {"row": False, "column": True}
         self._fit_to_content = fit_to_content
 
         super(LabelDialog, self).__init__(parent)
@@ -45,9 +51,9 @@ class LabelDialog(QtWidgets.QDialog):
         if flags:
             self.edit.textChanged.connect(self.updateFlags)
         self.edit_group_id = QtWidgets.QLineEdit()
-        self.edit_group_id.setPlaceholderText('Group ID')
+        self.edit_group_id.setPlaceholderText("Group ID")
         self.edit_group_id.setValidator(
-            QtGui.QRegExpValidator(QtCore.QRegExp(r'\d*'), None)
+            QtGui.QRegExpValidator(QtCore.QRegExp(r"\d*"), None)
         )
         layout = QtWidgets.QVBoxLayout()
         if show_text_field:
@@ -61,18 +67,18 @@ class LabelDialog(QtWidgets.QDialog):
             QtCore.Qt.Horizontal,
             self,
         )
-        bb.button(bb.Ok).setIcon(labelme.utils.newIcon('done'))
-        bb.button(bb.Cancel).setIcon(labelme.utils.newIcon('undo'))
+        bb.button(bb.Ok).setIcon(labelme.utils.newIcon("done"))
+        bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
         # label_list
         self.labelList = QtWidgets.QListWidget()
-        if self._fit_to_content['row']:
+        if self._fit_to_content["row"]:
             self.labelList.setHorizontalScrollBarPolicy(
                 QtCore.Qt.ScrollBarAlwaysOff
             )
-        if self._fit_to_content['column']:
+        if self._fit_to_content["column"]:
             self.labelList.setVerticalScrollBarPolicy(
                 QtCore.Qt.ScrollBarAlwaysOff
             )
@@ -83,7 +89,8 @@ class LabelDialog(QtWidgets.QDialog):
             self.labelList.sortItems()
         else:
             self.labelList.setDragDropMode(
-                QtWidgets.QAbstractItemView.InternalMove)
+                QtWidgets.QAbstractItemView.InternalMove
+            )
         self.labelList.currentItemChanged.connect(self.labelSelected)
         self.labelList.itemDoubleClicked.connect(self.labelDoubleClicked)
         self.edit.setListWidget(self.labelList)
@@ -99,21 +106,21 @@ class LabelDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
-        if not QT5 and completion != 'startswith':
+        if not QT5 and completion != "startswith":
             logger.warn(
                 "completion other than 'startswith' is only "
                 "supported with Qt5. Using 'startswith'"
             )
-            completion = 'startswith'
-        if completion == 'startswith':
+            completion = "startswith"
+        if completion == "startswith":
             completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
             # Default settings.
             # completer.setFilterMode(QtCore.Qt.MatchStartsWith)
-        elif completion == 'contains':
+        elif completion == "contains":
             completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
             completer.setFilterMode(QtCore.Qt.MatchContains)
         else:
-            raise ValueError('Unsupported completion: {}'.format(completion))
+            raise ValueError("Unsupported completion: {}".format(completion))
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 
@@ -129,7 +136,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def validate(self):
         text = self.edit.text()
-        if hasattr(text, 'strip'):
+        if hasattr(text, "strip"):
             text = text.strip()
         else:
             text = text.trimmed()
@@ -141,7 +148,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def postProcess(self):
         text = self.edit.text()
-        if hasattr(text, 'strip'):
+        if hasattr(text, "strip"):
             text = text.strip()
         else:
             text = text.trimmed()
@@ -164,7 +171,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.flagsLayout.removeWidget(item)
             item.setParent(None)
 
-    def resetFlags(self, label=''):
+    def resetFlags(self, label=""):
         flags = {}
         for pattern, keys in self._flags.items():
             if re.match(pattern, label):
@@ -194,11 +201,11 @@ class LabelDialog(QtWidgets.QDialog):
         return None
 
     def popUp(self, text=None, move=True, flags=None, group_id=None):
-        if self._fit_to_content['row']:
+        if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
             )
-        if self._fit_to_content['column']:
+        if self._fit_to_content["column"]:
             self.labelList.setMinimumWidth(
                 self.labelList.sizeHintForColumn(0) + 2
             )

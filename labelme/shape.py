@@ -12,11 +12,11 @@ import labelme.utils
 
 
 R, G, B = SHAPE_COLOR = 0, 255, 0  # green
-DEFAULT_LINE_COLOR = QtGui.QColor(R, G, B, 128)                # bf hovering
-DEFAULT_FILL_COLOR = QtGui.QColor(R, G, B, 128)                # hovering
-DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)        # selected
-DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(R, G, B, 155)         # selected
-DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(R, G, B, 255)         # hovering
+DEFAULT_LINE_COLOR = QtGui.QColor(R, G, B, 128)  # bf hovering
+DEFAULT_FILL_COLOR = QtGui.QColor(R, G, B, 128)  # hovering
+DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(R, G, B, 155)  # selected
+DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(R, G, B, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
 
@@ -37,8 +37,14 @@ class Shape(object):
     point_size = 8
     scale = 1.0
 
-    def __init__(self, label=None, line_color=None, shape_type=None,
-                 flags=None, group_id=None):
+    def __init__(
+        self,
+        label=None,
+        line_color=None,
+        shape_type=None,
+        flags=None,
+        group_id=None,
+    ):
         self.label = label
         self.group_id = group_id
         self.points = []
@@ -72,10 +78,16 @@ class Shape(object):
     @shape_type.setter
     def shape_type(self, value):
         if value is None:
-            value = 'polygon'
-        if value not in ['polygon', 'rectangle', 'point',
-           'line', 'circle', 'linestrip']:
-            raise ValueError('Unexpected shape_type: {}'.format(value))
+            value = "polygon"
+        if value not in [
+            "polygon",
+            "rectangle",
+            "point",
+            "line",
+            "circle",
+            "linestrip",
+        ]:
+            raise ValueError("Unexpected shape_type: {}".format(value))
         self._shape_type = value
 
     def close(self):
@@ -88,7 +100,7 @@ class Shape(object):
             self.points.append(point)
 
     def canAddPoint(self):
-        return self.shape_type in ['polygon', 'linestrip']
+        return self.shape_type in ["polygon", "linestrip"]
 
     def popPoint(self):
         if self.points:
@@ -114,8 +126,9 @@ class Shape(object):
 
     def paint(self, painter):
         if self.points:
-            color = self.select_line_color \
-                if self.selected else self.line_color
+            color = (
+                self.select_line_color if self.selected else self.line_color
+            )
             pen = QtGui.QPen(color)
             # Try using integer sizes for smoother drawing(?)
             pen.setWidth(max(1, int(round(2.0 / self.scale))))
@@ -124,7 +137,7 @@ class Shape(object):
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
 
-            if self.shape_type == 'rectangle':
+            if self.shape_type == "rectangle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
                     rectangle = self.getRectFromLine(*self.points)
@@ -160,8 +173,11 @@ class Shape(object):
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self._vertex_fill_color)
             if self.fill:
-                color = self.select_fill_color \
-                    if self.selected else self.fill_color
+                color = (
+                    self.select_fill_color
+                    if self.selected
+                    else self.fill_color
+                )
                 painter.fillPath(line_path, color)
 
     def drawVertex(self, path, i):
@@ -183,7 +199,7 @@ class Shape(object):
             assert False, "unsupported vertex shape"
 
     def nearestVertex(self, point, epsilon):
-        min_distance = float('inf')
+        min_distance = float("inf")
         min_i = None
         for i, p in enumerate(self.points):
             dist = labelme.utils.distance(p - point)
@@ -193,7 +209,7 @@ class Shape(object):
         return min_i
 
     def nearestEdge(self, point, epsilon):
-        min_distance = float('inf')
+        min_distance = float("inf")
         post_i = None
         for i in range(len(self.points)):
             line = [self.points[i - 1], self.points[i]]
@@ -217,7 +233,7 @@ class Shape(object):
         return rectangle
 
     def makePath(self):
-        if self.shape_type == 'rectangle':
+        if self.shape_type == "rectangle":
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
                 rectangle = self.getRectFromLine(*self.points)

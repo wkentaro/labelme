@@ -3,7 +3,6 @@ from qtpy import QtWidgets
 
 
 class ToolBar(QtWidgets.QToolBar):
-
     def __init__(self, title):
         super(ToolBar, self).__init__(title)
         layout = self.layout()

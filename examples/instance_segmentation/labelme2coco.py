@@ -18,7 +18,7 @@ import labelme
 try:
     import pycocotools.mask
 except ImportError:
-    print('Please install pycocotools:\n\n    pip install pycocotools\n')
+    print("Please install pycocotools:\n\n    pip install pycocotools\n")
     sys.exit(1)
 
 
@@ -26,17 +26,17 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument('input_dir', help='input annotated directory')
-    parser.add_argument('output_dir', help='output dataset directory')
-    parser.add_argument('--labels', help='labels file', required=True)
+    parser.add_argument("input_dir", help="input annotated directory")
+    parser.add_argument("output_dir", help="output dataset directory")
+    parser.add_argument("--labels", help="labels file", required=True)
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
-        print('Output directory already exists:', args.output_dir)
+        print("Output directory already exists:", args.output_dir)
         sys.exit(1)
     os.makedirs(args.output_dir)
-    os.makedirs(osp.join(args.output_dir, 'JPEGImages'))
-    print('Creating dataset:', args.output_dir)
+    os.makedirs(osp.join(args.output_dir, "JPEGImages"))
+    print("Creating dataset:", args.output_dir)
 
     now = datetime.datetime.now()
 
@@ -47,17 +47,13 @@ def main():
             version=None,
             year=now.year,
             contributor=None,
-            date_created=now.strftime('%Y-%m-%d %H:%M:%S.%f'),
+            date_created=now.strftime("%Y-%m-%d %H:%M:%S.%f"),
         ),
-        licenses=[dict(
-            url=None,
-            id=0,
-            name=None,
-        )],
+        licenses=[dict(url=None, id=0, name=None,)],
         images=[
             # license, url, file_name, height, width, date_captured, id
         ],
-        type='instances',
+        type="instances",
         annotations=[
             # segmentation, area, iscrowd, image_id, bbox, category_id, id
         ],
@@ -71,46 +67,44 @@ def main():
         class_id = i - 1  # starts with -1
         class_name = line.strip()
         if class_id == -1:
-            assert class_name == '__ignore__'
+            assert class_name == "__ignore__"
             continue
         class_name_to_id[class_name] = class_id
-        data['categories'].append(dict(
-            supercategory=None,
-            id=class_id,
-            name=class_name,
-        ))
+        data["categories"].append(
+            dict(supercategory=None, id=class_id, name=class_name,)
+        )
 
-    out_ann_file = osp.join(args.output_dir, 'annotations.json')
-    label_files = glob.glob(osp.join(args.input_dir, '*.json'))
+    out_ann_file = osp.join(args.output_dir, "annotations.json")
+    label_files = glob.glob(osp.join(args.input_dir, "*.json"))
     for image_id, filename in enumerate(label_files):
-        print('Generating dataset from:', filename)
+        print("Generating dataset from:", filename)
 
         label_file = labelme.LabelFile(filename=filename)
 
         base = osp.splitext(osp.basename(filename))[0]
-        out_img_file = osp.join(
-            args.output_dir, 'JPEGImages', base + '.jpg'
-        )
+        out_img_file = osp.join(args.output_dir, "JPEGImages", base + ".jpg")
 
         img = labelme.utils.img_data_to_arr(label_file.imageData)
         PIL.Image.fromarray(img).convert("RGB").save(out_img_file)
-        data['images'].append(dict(
-            license=0,
-            url=None,
-            file_name=osp.relpath(out_img_file, osp.dirname(out_ann_file)),
-            height=img.shape[0],
-            width=img.shape[1],
-            date_captured=None,
-            id=image_id,
-        ))
+        data["images"].append(
+            dict(
+                license=0,
+                url=None,
+                file_name=osp.relpath(out_img_file, osp.dirname(out_ann_file)),
+                height=img.shape[0],
+                width=img.shape[1],
+                date_captured=None,
+                id=image_id,
+            )
+        )
 
-        masks = {}                                     # for area
+        masks = {}  # for area
         segmentations = collections.defaultdict(list)  # for segmentation
         for shape in label_file.shapes:
-            points = shape['points']
-            label = shape['label']
-            group_id = shape.get('group_id')
-            shape_type = shape.get('shape_type', 'polygon')
+            points = shape["points"]
+            label = shape["label"]
+            group_id = shape.get("group_id")
+            shape_type = shape.get("shape_type", "polygon")
             mask = labelme.utils.shape_to_mask(
                 img.shape[:2], points, shape_type
             )
@@ -125,7 +119,7 @@ def main():
             else:
                 masks[instance] = mask
 
-            if shape_type == 'rectangle':
+            if shape_type == "rectangle":
                 (x1, y1), (x2, y2) = points
                 x1, x2 = sorted([x1, x2])
                 y1, y2 = sorted([y1, y2])
@@ -147,19 +141,21 @@ def main():
             area = float(pycocotools.mask.area(mask))
             bbox = pycocotools.mask.toBbox(mask).flatten().tolist()
 
-            data['annotations'].append(dict(
-                id=len(data['annotations']),
-                image_id=image_id,
-                category_id=cls_id,
-                segmentation=segmentations[instance],
-                area=area,
-                bbox=bbox,
-                iscrowd=0,
-            ))
+            data["annotations"].append(
+                dict(
+                    id=len(data["annotations"]),
+                    image_id=image_id,
+                    category_id=cls_id,
+                    segmentation=segmentations[instance],
+                    area=area,
+                    bbox=bbox,
+                    iscrowd=0,
+                )
+            )
 
-    with open(out_ann_file, 'w') as f:
+    with open(out_ann_file, "w") as f:
         json.dump(data, f)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
