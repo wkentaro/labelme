@@ -22,6 +22,7 @@ from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
+from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
@@ -401,6 +402,11 @@ class MainWindow(QtWidgets.QMainWindow):
                           shortcuts['fit_width'], 'fit-width',
                           self.tr('Zoom follows window width'),
                           checkable=True, enabled=False)
+        brightnessContrast = action('&Brightness Contrast',
+                                    self.brightnessContrast,
+                                    None, 'color',
+                                    'Adjust brightness and contrast',
+                                    enabled=False)
         # Group zoom controls into a list for easier toggling.
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
@@ -455,6 +461,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
+            brightnessContrast=brightnessContrast,
             zoomActions=zoomActions,
             openNextImg=openNextImg, openPrevImg=openPrevImg,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
@@ -498,6 +505,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                brightnessContrast,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
@@ -554,6 +562,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWindow,
                 fitWidth,
                 None,
+                brightnessContrast,
             ),
         )
 
@@ -584,6 +593,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copy,
             delete,
             undo,
+            brightnessContrast,
             None,
             zoomIn,
             zoom,
@@ -1237,6 +1247,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
+
+    def brightnessContrast(self, value):
+
+        def onNewBrightnessContrast(qimage):
+            self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage),
+                                   clear_shapes=False)
+
+        dialog = BrightnessContrastDialog(
+            self.filename, onNewBrightnessContrast, parent=self)
+        dialog.exec_()
 
     def togglePolygons(self, value):
         for item in self.labelList:

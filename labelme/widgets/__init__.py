@@ -1,5 +1,7 @@
 # flake8: noqa
 
+from .brightness_contrast_dialog import BrightnessContrastDialog
+
 from .canvas import Canvas
 
 from .color_dialog import ColorDialog
