@@ -731,6 +731,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_level = 100
         self.fit_window = False
         self.zoom_values = {}  # key=filename, value=(zoom_mode, zoom_value)
+        self.brightnessContrast_values = {}
         self.scroll_values = {
             Qt.Horizontal: {},
             Qt.Vertical: {},
@@ -1356,16 +1357,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
 
-    def brightnessContrast(self, value):
-        def onNewBrightnessContrast(qimage):
-            self.canvas.loadPixmap(
-                QtGui.QPixmap.fromImage(qimage), clear_shapes=False
-            )
-
-        dialog = BrightnessContrastDialog(
-            self.filename, onNewBrightnessContrast, parent=self
+    def onNewBrightnessContrast(self, qimage):
+        self.canvas.loadPixmap(
+            QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
+
+    def brightnessContrast(self, value):
+        dialog = BrightnessContrastDialog(
+            self.filename, self.onNewBrightnessContrast, parent=self
+        )
+        if self.filename in self.brightnessContrast_values:
+            brightness, contrast = self.brightnessContrast_values[
+                self.filename
+            ]
+            dialog.slider_brightness.setValue(brightness)
+            dialog.slider_brightness.setValue(contrast)
         dialog.exec_()
+
+        brightness = dialog.slider_brightness.value()
+        contrast = dialog.slider_brightness.value()
+        self.brightnessContrast_values[self.filename] = (brightness, contrast)
 
     def togglePolygons(self, value):
         for item in self.labelList:
@@ -1470,6 +1481,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.setScroll(
                     orientation, self.scroll_values[orientation][self.filename]
                 )
+        # set brightness constrast values
+        if self.filename in self.brightnessContrast_values:
+            brightness, contrast = self.brightnessContrast_values[
+                self.filename
+            ]
+            dialog = BrightnessContrastDialog(
+                self.filename, self.onNewBrightnessContrast, parent=self
+            )
+            dialog.slider_brightness.setValue(brightness)
+            dialog.slider_brightness.setValue(contrast)
+            dialog.onNewValue(None)
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
