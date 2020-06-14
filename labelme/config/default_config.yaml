@@ -3,6 +3,8 @@ display_label_popup: true
 store_data: true
 keep_prev: false
 keep_prev_scale: false
+keep_prev_brightness: false
+keep_prev_contrast: false
 logger_level: info
 
 flags: null
