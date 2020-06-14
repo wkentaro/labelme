@@ -1366,11 +1366,12 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = BrightnessContrastDialog(
             self.filename, self.onNewBrightnessContrast, parent=self
         )
-        if self.filename in self.brightnessContrast_values:
-            brightness, contrast = self.brightnessContrast_values[
-                self.filename
-            ]
+        brightness, contrast = self.brightnessContrast_values.get(
+            self.filename, (None, None)
+        )
+        if brightness is not None:
             dialog.slider_brightness.setValue(brightness)
+        if contrast is not None:
             dialog.slider_brightness.setValue(contrast)
         dialog.exec_()
 
@@ -1482,15 +1483,26 @@ class MainWindow(QtWidgets.QMainWindow):
                     orientation, self.scroll_values[orientation][self.filename]
                 )
         # set brightness constrast values
-        if self.filename in self.brightnessContrast_values:
-            brightness, contrast = self.brightnessContrast_values[
-                self.filename
-            ]
-            dialog = BrightnessContrastDialog(
-                self.filename, self.onNewBrightnessContrast, parent=self
+        dialog = BrightnessContrastDialog(
+            self.filename, self.onNewBrightnessContrast, parent=self
+        )
+        brightness, contrast = self.brightnessContrast_values.get(
+            self.filename, (None, None)
+        )
+        if self._config["keep_prev_brightness"] and self.recentFiles:
+            brightness, _ = self.brightnessContrast_values.get(
+                self.recentFiles[0], (None, None)
             )
+        if self._config["keep_prev_contrast"] and self.recentFiles:
+            _, contrast = self.brightnessContrast_values.get(
+                self.recentFiles[0], (None, None)
+            )
+        if brightness is not None:
             dialog.slider_brightness.setValue(brightness)
+        if contrast is not None:
             dialog.slider_brightness.setValue(contrast)
+        self.brightnessContrast_values[self.filename] = (brightness, contrast)
+        if brightness is not None or contrast is not None:
             dialog.onNewValue(None)
         self.paintCanvas()
         self.addRecentFile(self.filename)
