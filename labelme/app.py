@@ -706,10 +706,7 @@ class MainWindow(QtWidgets.QMainWindow):
             undo,
             brightnessContrast,
             None,
-            zoomIn,
             zoom,
-            zoomOut,
-            fitWindow,
             fitWidth,
         )
 
