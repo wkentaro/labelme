@@ -91,12 +91,12 @@ jobs:
       run: |
         flake8 .
 
-    - name: Black
-      shell: bash -l {0}
-      if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
-      run: |
-        pip install black
-        black --check .
+    # - name: Black
+    #   shell: bash -l {0}
+    #   if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
+    #   run: |
+    #     pip install black
+    #     black --check .
 
     - name: Test with pytest
       shell: bash -l {0}
