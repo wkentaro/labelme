@@ -5,14 +5,8 @@ import re
 from setuptools import find_packages
 from setuptools import setup
 import shlex
-import site
 import subprocess
 import sys
-
-
-# XXX: with pyproject.toml and without --no-use-pep517,
-# sitepackages are not inserted to sys.path by default.
-sys.path.extend(site.getsitepackages())
 
 
 def get_version():
