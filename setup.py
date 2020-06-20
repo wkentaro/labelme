@@ -22,10 +22,6 @@ def get_version():
 
 
 def get_install_requires():
-    PY3 = sys.version_info[0] == 3
-    PY2 = sys.version_info[0] == 2
-    assert PY3 or PY2
-
     install_requires = [
         "imgviz>=0.11.0",
         "matplotlib",
@@ -62,14 +58,6 @@ def get_install_requires():
 
             QT_BINDING = "pyqt4"
         except ImportError:
-            if PY2:
-                print(
-                    "Please install PyQt5, PySide2 or PyQt4 for Python2.\n"
-                    "Note that PyQt5 can be installed via pip for Python3.",
-                    file=sys.stderr,
-                )
-                sys.exit(1)
-            assert PY3
             # PyQt5 can be installed via pip for Python3
             install_requires.append("PyQt5")
             QT_BINDING = "pyqt5"
@@ -116,6 +104,7 @@ def main():
     setup(
         name="labelme",
         version=version,
+        python_version=">=3.5",
         packages=find_packages(exclude=["github2pypi"]),
         description="Image Polygonal Annotation with Python",
         long_description=get_long_description(),
@@ -131,7 +120,6 @@ def main():
             "Intended Audience :: Developers",
             "Natural Language :: English",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3.5",
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",

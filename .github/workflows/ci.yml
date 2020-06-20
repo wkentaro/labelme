@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.7', '2.7']
+        python-version: ['3.7']
         PYTEST_QT_API: [pyqt5, pyqt4v2, pyside2]
         exclude:
           - os: macos-latest
@@ -93,7 +93,7 @@ jobs:
 
     # - name: Black
     #   shell: bash -l {0}
-    #   if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
+    #   if: matrix.os != 'windows-latest'
     #   run: |
     #     pip install black
     #     black --check .
