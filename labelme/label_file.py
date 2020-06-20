@@ -1,4 +1,5 @@
 import base64
+import contextlib
 import io
 import json
 import os.path as osp
@@ -13,6 +14,18 @@ from labelme import utils
 
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
+
+@contextlib.contextmanager
+def open(name, mode):
+    assert mode in ["r", "w"]
+    if PY2:
+        mode += "b"
+        encoding = None
+    else:
+        encoding = "utf-8"
+    yield io.open(name, mode, encoding=encoding)
+    return
 
 
 class LabelFileError(Exception):
@@ -72,7 +85,7 @@ class LabelFile(object):
             "flags",
         ]
         try:
-            with open(filename, "rb" if PY2 else "r") as f:
+            with open(filename, "r") as f:
                 data = json.load(f)
             version = data.get("version")
             if version is None:
@@ -184,7 +197,7 @@ class LabelFile(object):
             assert key not in data
             data[key] = value
         try:
-            with open(filename, "wb" if PY2 else "w") as f:
+            with open(filename, "w") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
         except Exception as e:
