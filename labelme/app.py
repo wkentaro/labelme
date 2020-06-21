@@ -73,6 +73,22 @@ class MainWindow(QtWidgets.QMainWindow):
             config = get_config()
         self._config = config
 
+        # set default shape colors
+        Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
+        Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
+        Shape.select_line_color = QtGui.QColor(
+            *self._config["shape"]["select_line_color"]
+        )
+        Shape.select_fill_color = QtGui.QColor(
+            *self._config["shape"]["select_fill_color"]
+        )
+        Shape.vertex_fill_color = QtGui.QColor(
+            *self._config["shape"]["vertex_fill_color"]
+        )
+        Shape.hvertex_fill_color = QtGui.QColor(
+            *self._config["shape"]["hvertex_fill_color"]
+        )
+
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -1099,8 +1115,6 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         rgb = self._get_rgb_by_label(shape.label)
-        if rgb is None:
-            return
 
         r, g, b = rgb
         label_list_item.setText(
