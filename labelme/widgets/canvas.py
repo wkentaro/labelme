@@ -565,7 +565,6 @@ class Canvas(QtWidgets.QWidget):
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
-            drawing_shape.fill_color.setAlpha(64)
             drawing_shape.paint(p)
 
         p.end()

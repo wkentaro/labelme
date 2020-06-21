@@ -14,10 +14,20 @@ file_search: null
 sort_labels: true
 validate_label: null
 
-default_shape_color: null
-shape_color: auto   # null, 'auto', 'manual'
+default_shape_color: [0, 255, 0]
+shape_color: auto  # null, 'auto', 'manual'
 shift_auto_shape_color: 0
 label_colors: null
+
+shape:
+  # drawing
+  line_color: [0, 255, 0, 128]
+  fill_color: [0, 255, 0, 64]
+  vertex_fill_color: [0, 255, 0, 255]
+  # selecting / hovering
+  select_line_color: [255, 255, 255, 255]
+  select_fill_color: [0, 255, 0, 155]
+  hvertex_fill_color: [255, 255, 255, 255]
 
 # main
 flag_dock:

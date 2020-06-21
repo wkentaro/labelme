@@ -11,12 +11,11 @@ import labelme.utils
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-R, G, B = SHAPE_COLOR = 0, 255, 0  # green
-DEFAULT_LINE_COLOR = QtGui.QColor(R, G, B, 128)  # bf hovering
-DEFAULT_FILL_COLOR = QtGui.QColor(R, G, B, 128)  # hovering
+DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)  # bf hovering
+DEFAULT_FILL_COLOR = QtGui.QColor(0, 255, 0, 128)  # hovering
 DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
-DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(R, G, B, 155)  # selected
-DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(R, G, B, 255)  # hovering
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 155)  # selected
+DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
 
