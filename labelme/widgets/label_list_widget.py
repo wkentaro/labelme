@@ -94,18 +94,27 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         return '{}("{}")'.format(self.__class__.__name__, self.text())
 
 
+class StandardItemModel(QtGui.QStandardItemModel):
+
+    itemDropped = QtCore.Signal()
+
+    def removeRows(self, *args, **kwargs):
+        ret = super().removeRows(*args, **kwargs)
+        self.itemDropped.emit()
+        return ret
+
+
 class LabelListWidget(QtWidgets.QListView):
 
     itemDoubleClicked = QtCore.Signal(LabelListWidgetItem)
     itemSelectionChanged = QtCore.Signal(list, list)
-    itemDropped = QtCore.Signal()
 
     def __init__(self):
         super(LabelListWidget, self).__init__()
         self._selectedItems = []
 
         self.setWindowFlags(Qt.Window)
-        self.setModel(QtGui.QStandardItemModel())
+        self.setModel(StandardItemModel())
         self.model().setItemPrototype(LabelListWidgetItem())
         self.setItemDelegate(HTMLDelegate())
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -127,9 +136,9 @@ class LabelListWidget(QtWidgets.QListView):
         for i in range(len(self)):
             yield self[i]
 
-    def dropEvent(self, event):
-        super(LabelListWidget, self).dropEvent(event)
-        self.itemDropped.emit()
+    @property
+    def itemDropped(self):
+        return self.model().itemDropped
 
     @property
     def itemChanged(self):
