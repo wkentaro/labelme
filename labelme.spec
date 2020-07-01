@@ -32,7 +32,7 @@ exe = EXE(
 )
 app = BUNDLE(
     exe,
-    name='labelme.app',
+    name='Labelme.app',
     icon='labelme/icons/icon.icns',
     bundle_identifier=None,
     info_plist={'NSHighResolutionCapable': 'True'},
