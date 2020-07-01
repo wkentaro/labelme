@@ -117,6 +117,9 @@ sudo pip install labelme
 # Python3
 sudo apt-get install python3-pyqt5  # PyQt5
 sudo pip3 install labelme
+
+# or install standalone executable from:
+# https://github.com/wkentaro/labelme/releases
 ```
 
 ### Ubuntu 19.10+ / Debian (sid)
@@ -132,10 +135,8 @@ sudo apt-get install labelme
 brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
 
-# or install standalone executable / app
-# NOTE: this only installs the `labelme` command
-brew install wkentaro/labelme/labelme
-brew cask install wkentaro/labelme/labelme
+# or install standalone executable/app from:
+# https://github.com/wkentaro/labelme/releases
 ```
 
 ### Windows
