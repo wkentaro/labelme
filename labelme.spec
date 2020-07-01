@@ -2,9 +2,6 @@
 # vim: ft=python
 
 
-block_cipher = None
-
-
 a = Analysis(
     ['labelme/__main__.py'],
     pathex=['labelme'],
@@ -17,11 +14,8 @@ a = Analysis(
     hookspath=[],
     runtime_hooks=[],
     excludes=['matplotlib'],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
-    cipher=block_cipher,
 )
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(a.pure, a.zipped_data)
 exe = EXE(
     pyz,
     a.scripts,
