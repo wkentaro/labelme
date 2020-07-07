@@ -376,6 +376,19 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShapes:
             self.overrideCursor(CURSOR_GRAB)
+            if (
+                self.editing()
+                and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+            ):
+                # Add point to line if: left-click + SHIFT on a line segment
+                self.addPointToEdge()
+        elif ev.button() == QtCore.Qt.LeftButton and self.selectedVertex():
+            if (
+                self.editing()
+                and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+            ):
+                # Delete point if: left-click + SHIFT on a point
+                self.removeSelectedPoint()
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
