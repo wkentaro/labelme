@@ -10,8 +10,8 @@ import os.path as osp
 import sys
 import uuid
 
+import imgviz
 import numpy as np
-import PIL.Image
 
 import labelme
 
@@ -29,6 +29,9 @@ def main():
     parser.add_argument("input_dir", help="input annotated directory")
     parser.add_argument("output_dir", help="output dataset directory")
     parser.add_argument("--labels", help="labels file", required=True)
+    parser.add_argument(
+        "--noviz", help="no visualization", action="store_true"
+    )
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -36,6 +39,8 @@ def main():
         sys.exit(1)
     os.makedirs(args.output_dir)
     os.makedirs(osp.join(args.output_dir, "JPEGImages"))
+    if not args.noviz:
+        os.makedirs(osp.join(args.output_dir, "Visualization"))
     print("Creating dataset:", args.output_dir)
 
     now = datetime.datetime.now()
@@ -85,7 +90,7 @@ def main():
         out_img_file = osp.join(args.output_dir, "JPEGImages", base + ".jpg")
 
         img = labelme.utils.img_data_to_arr(label_file.imageData)
-        PIL.Image.fromarray(img).convert("RGB").save(out_img_file)
+        imgviz.io.imsave(out_img_file, img)
         data["images"].append(
             dict(
                 license=0,
@@ -152,6 +157,27 @@ def main():
                     iscrowd=0,
                 )
             )
+
+        if not args.noviz:
+            labels, captions, masks = zip(
+                *[
+                    (class_name_to_id[cnm], cnm, msk)
+                    for (cnm, gid), msk in masks.items()
+                    if cnm in class_name_to_id
+                ]
+            )
+            viz = imgviz.instances2rgb(
+                image=img,
+                labels=labels,
+                masks=masks,
+                captions=captions,
+                font_size=15,
+                line_width=2,
+            )
+            out_viz_file = osp.join(
+                args.output_dir, "Visualization", base + ".jpg"
+            )
+            imgviz.io.imsave(out_viz_file, viz)
 
     with open(out_ann_file, "w") as f:
         json.dump(data, f)
