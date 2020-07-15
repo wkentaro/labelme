@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - master
+    - master
   pull_request:
 
 jobs:
@@ -28,17 +28,14 @@ jobs:
             PYTEST_QT_API: pyqt4v2
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
         python-version: ${{ matrix.python-version }}
-
-    - name: Update submodules
-      shell: bash -l {0}
-      run: |
-        git submodule update --init --recursive
 
     - name: Install system dependencies
       shell: bash -l {0}
