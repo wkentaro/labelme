@@ -1,0 +1,55 @@
+name: release
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+      submodules: true
+
+    - uses: goanpeca/setup-miniconda@v1
+      with:
+        auto-update-conda: true
+        python-version: '3.7'
+
+    - name: Install main
+      shell: bash -l {0}
+      run: |
+        pip install .
+
+    - name: Run pyinstaller
+      shell: bash -l {0}
+      run: |
+        pip install pyinstaller
+        pyinstaller labelme.spec
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/labelme
+          asset_name: labelme-${{ github.ref }}-${{ runner.os }}
+          asset_content_type: application/octet-stream
