@@ -1,12 +1,14 @@
 from __future__ import print_function
 
 import distutils.spawn
+import os
 import re
-from setuptools import find_packages
-from setuptools import setup
 import shlex
 import subprocess
 import sys
+
+from setuptools import find_packages
+from setuptools import setup
 
 
 def get_version():
@@ -74,6 +76,9 @@ def get_install_requires():
             install_requires.append("PyQt5")
             QT_BINDING = "pyqt5"
     del QT_BINDING
+
+    if os.name == "nt":  # Windows
+        install_requires.append("colorama")
 
     return install_requires
 
