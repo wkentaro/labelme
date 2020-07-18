@@ -36,6 +36,7 @@ def get_install_requires():
         "PyYAML",
         "qtpy",
         "termcolor",
+        "colorama ; platform_system=='Windows'",
     ]
 
     # Find python binding for qt with priority:
@@ -76,10 +77,6 @@ def get_install_requires():
             install_requires.append("PyQt5")
             QT_BINDING = "pyqt5"
     del QT_BINDING
-
-    if os.name == "nt":  # Windows
-        install_requires.append("colorama")
-
     return install_requires
 
 
