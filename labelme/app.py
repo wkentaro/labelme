@@ -1331,7 +1331,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_values[self.filename] = (self.zoomMode, value)
 
     def addZoom(self, increment=1.1):
-        self.setZoom(self.zoomWidget.value() * increment)
+        difference_value = self.zoomWidget.value() * (1 - increment)
+        if abs(difference_value) < 1.0:
+            if difference_value > 0:
+                difference_value = 1
+            else:
+                difference_value = -1
+        self.setZoom(self.zoomWidget.value() + difference_value)
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
