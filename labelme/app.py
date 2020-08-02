@@ -1196,12 +1196,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def format_shape(s):
             data = s.other_data.copy()
+            shape_type = s.shape_type
+            if shape_type == 'rectangle':
+                xs = [p.x() for p in s.points][:2]
+                ys = [p.y() for p in s.points][:2]
+                points = [(min(xs), min(ys)), (max(xs), max(ys))]
+            else:
+                points=[(p.x(), p.y()) for p in s.points]
             data.update(
                 dict(
                     label=s.label.encode("utf-8") if PY2 else s.label,
-                    points=[(p.x(), p.y()) for p in s.points],
+                    points=points,
                     group_id=s.group_id,
-                    shape_type=s.shape_type,
+                    shape_type=shape_type,
                     flags=s.flags,
                 )
             )
