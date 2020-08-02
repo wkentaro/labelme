@@ -1202,7 +1202,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 ys = [p.y() for p in s.points][:2]
                 points = [(min(xs), min(ys)), (max(xs), max(ys))]
             else:
-                points=[(p.x(), p.y()) for p in s.points]
+                points = [(p.x(), p.y()) for p in s.points]
             data.update(
                 dict(
                     label=s.label.encode("utf-8") if PY2 else s.label,
