@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import functools
+import math
 import os
 import os.path as osp
 import re
@@ -1331,7 +1332,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_values[self.filename] = (self.zoomMode, value)
 
     def addZoom(self, increment=1.1):
-        self.setZoom(self.zoomWidget.value() * increment)
+        zoom_value = self.zoomWidget.value() * increment
+        if increment > 1:
+            zoom_value = math.ceil(zoom_value)
+        else:
+            zoom_value = math.floor(zoom_value)
+        self.setZoom(zoom_value)
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
