@@ -86,6 +86,9 @@ class MainWindow(QtWidgets.QMainWindow):
             *self._config["shape"]["hvertex_fill_color"]
         )
 
+        # Set point size from config file
+        Shape.point_size = self._config["shape"]["point_size"]
+
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
