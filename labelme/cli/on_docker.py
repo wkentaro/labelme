@@ -55,7 +55,11 @@ def labelme_on_docker(in_file, out_file):
     )
     in_file_a = osp.abspath(in_file)
     in_file_b = osp.join("/home/developer", osp.basename(in_file))
-    cmd = cmd.format(ip, in_file_a, in_file_b,)
+    cmd = cmd.format(
+        ip,
+        in_file_a,
+        in_file_b,
+    )
     if out_file:
         out_file_a = osp.abspath(out_file)
         out_file_b = osp.join("/home/developer", osp.basename(out_file))
