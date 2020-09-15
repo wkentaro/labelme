@@ -58,8 +58,7 @@ jobs:
     - name: Run pyinstaller
       shell: bash -l {0}
       run: |
-        pip install 'pyinstaller!=3.4'
-        pip install 'setuptools<45.0.0'
+        pip install pyinstaller
         pyinstaller labelme.spec
 
     - name: Load release url file from release job
