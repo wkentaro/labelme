@@ -32,7 +32,9 @@ class ColoredFormatter(logging.Formatter):
 
             def colored(text):
                 return termcolor.colored(
-                    text, color=COLORS[levelname], attrs={"bold": True},
+                    text,
+                    color=COLORS[levelname],
+                    attrs={"bold": True},
                 )
 
             record.levelname2 = colored("{:<7}".format(record.levelname))
