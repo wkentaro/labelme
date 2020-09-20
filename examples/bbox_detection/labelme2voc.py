@@ -120,7 +120,7 @@ def main():
             if class_name == "__ignore__":
                 continue
             if shape["shape_type"] != "rectangle":
-                print("Be careful, {shape_type} was conterted rectangle".format(**shape))
+                print("Be careful, {shape_type}(other than rectangle) was conterted to bounding box!".format(**shape))
             class_id = class_names.index(class_name)            
             
             bboxes.append([ymin, xmin, ymax, xmax])
