@@ -117,6 +117,7 @@ def main():
                 ymin, ymax = min(ys), max(ys)
             
             class_name = shape["label"]
+            print(class_name)
             class_id = class_names.index(class_name)            
             
             bboxes.append([ymin, xmin, ymax, xmax])
