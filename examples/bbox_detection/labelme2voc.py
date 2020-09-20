@@ -18,7 +18,6 @@ except ImportError:
     print("Please install lxml:\n\n    pip install lxml\n")
     sys.exit(1)
 
-
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -53,6 +52,7 @@ def main():
         elif class_id == 0:
             assert class_name == "_background_"
         class_names.append(class_name)
+
     class_names = tuple(class_names)
     print("class_names:", class_names)
     out_class_names_file = osp.join(args.output_dir, "class_names.txt")
@@ -117,7 +117,10 @@ def main():
                 ymin, ymax = min(ys), max(ys)
             
             class_name = shape["label"]
-            print(class_name)
+            if class_name == "__ignore__":
+                continue
+            if shape["shape_type"] != "rectangle":
+                print("Be careful, {shape_type} was conterted rectangle".format(**shape))
             class_id = class_names.index(class_name)            
             
             bboxes.append([ymin, xmin, ymax, xmax])
