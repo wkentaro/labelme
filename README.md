@@ -98,13 +98,14 @@ pip install labelme
 You need install [docker](https://www.docker.com), then run below:
 
 ```bash
-# on macOS
-socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
-docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=docker.for.mac.host.internal:0 -v $(pwd):/root/workdir wkentaro/labelme
+# build the container:
+make -f Makefile-docker build
 
-# on Linux
-xhost +
-docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=:0 -v $(pwd):/root/workdir wkentaro/labelme
+# Then to run it, if on Linux:
+make -f Makefile-docker run-linux
+
+# and if on OSX:
+make -f Makefile-docker run-osx
 ```
 
 ### Ubuntu
