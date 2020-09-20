@@ -1,0 +1,61 @@
+# configuration ----------------------------------------------------------------
+define announce
+	@echo "===================================================================="
+	@echo $(1)
+	@echo "===================================================================="
+endef
+
+THIS_FILE:=$(lastword $(MAKEFILE_LIST))
+THIS_DIR:=$(dir $(abspath ${THIS_FILE}))
+USERNAME:=user
+HOME_DIR:=/home/${USERNAME}
+DOCKER_NAME:=labelme
+
+# targets ----------------------------------------------------------------------
+
+.PHONY: build
+build:
+	$(call announce,"Building container")
+	docker build ${THIS_DIR} \
+			--build-arg USERNAME=${USERNAME} \
+			--build-arg UID=$(shell id -u) \
+			--build-arg GID=$(shell id -g) \
+			-t ${DOCKER_NAME}
+
+.PHONY: run-linux
+run-linux: build
+	$(call announce,"Starting the container...")
+	-docker rm -f ${DOCKER_NAME}
+	docker run \
+		--volume "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+		--volume "${THIS_DIR}:${HOME_DIR}/labelme" \
+		--network host \
+		--env "DISPLAY" \
+		--ipc=host \
+		--privileged \
+		-it --name ${DOCKER_NAME} ${DOCKER_NAME}
+
+.PHONY: run-osx
+run-osx: build
+	$(call announce,"Starting the container...")
+	-docker rm -f ${DOCKER_NAME}
+	socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" && \
+	docker run \
+		--volume "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+		--volume "${THIS_DIR}:${HOME_DIR}/labelme" \
+		--network host \
+		--env "DISPLAY" \
+		--env DISPLAY=docker.for.mac.host.internal:0
+		--ipc=host \
+		--privileged \
+		-it --name ${DOCKER_NAME} ${DOCKER_NAME}
+
+.PHONY: clean
+clean:
+	-docker stop ${DOCKER_NAME}
+	-docker container rm ${DOCKER_NAME}
+
+.PHONY: purge
+purge: clean
+	-docker rmi -f ${DOCKER_NAME}
+
