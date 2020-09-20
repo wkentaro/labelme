@@ -36,6 +36,10 @@ def shape_to_mask(
         draw.line(xy=xy, fill=1, width=line_width)
     elif shape_type == "linestrip":
         draw.line(xy=xy, fill=1, width=line_width)
+        # fill notches at the turning point
+        r = line_width / 2
+        for (cx, cy) in xy:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
     elif shape_type == "point":
         assert len(xy) == 1, "Shape of shape_type=point must have 1 points"
         cx, cy = xy[0]
