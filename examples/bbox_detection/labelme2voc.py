@@ -94,21 +94,31 @@ def main():
         bboxes = []
         labels = []
         for shape in label_file.shapes:
-            if shape["shape_type"] != "rectangle":
+            # cannot define bbox
+            if shape["shape_type"] == "point":
                 print(
                     "Skipping shape: label={label}, "
                     "shape_type={shape_type}".format(**shape)
                 )
                 continue
-
+            elif shape["shape_type"] == "circle":
+                center = shape["points"][0]
+                outside = shape["points"][1]
+                radius = ((center[0] - outside[0])**2.0 +
+                          (center[1] - outside[1])**2.0) ** 0.5
+                xmin, xmax = center[0] - radius, center[0] + radius
+                ymin, ymax = center[1] - radius, center[1] + radius
+            else:
+                xs, ys = [], []
+                for point in shape["points"]:
+                    xs.append(point[0])
+                    ys.append(point[1])
+                xmin, xmax = min(xs), max(xs)
+                ymin, ymax = min(ys), max(ys)
+            
             class_name = shape["label"]
-            class_id = class_names.index(class_name)
-
-            (xmin, ymin), (xmax, ymax) = shape["points"]
-            # swap if min is larger than max.
-            xmin, xmax = sorted([xmin, xmax])
-            ymin, ymax = sorted([ymin, ymax])
-
+            class_id = class_names.index(class_name)            
+            
             bboxes.append([ymin, xmin, ymax, xmax])
             labels.append(class_id)
 
