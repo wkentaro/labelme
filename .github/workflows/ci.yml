@@ -68,7 +68,11 @@ jobs:
         elif [ "${{ matrix.PYTEST_QT_API }}" = "pyqt4v2" ]; then
           conda install -q -y pyqt=4 -c conda-forge
         else  # pyqt5
-          conda install -q -y pyqt=5
+          if [ "${{ matrix.os }}" = "macos-latest" -a "${{ matrix.python-version }}" = "3.7" ]; then
+            pip install pyqt5
+          else
+            conda install -q -y pyqt=5
+          fi
         fi
         if [ "${{ matrix.os }}" != "windows-latest" ]; then
           conda install -q -y help2man
