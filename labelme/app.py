@@ -402,6 +402,7 @@ class MainWindow(QtWidgets.QMainWindow):
         removePoint = action(
             text="Remove Selected Point",
             slot=self.removeSelectedPoint,
+            shortcut=shortcuts["remove_selected_point"],
             icon="edit",
             tip="Remove selected point from polygon",
             enabled=False,
@@ -603,6 +604,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undo,
                 undoLastPoint,
                 None,
+                removePoint,
                 toggle_keep_prev_mode,
             ),
             # menu shown at right click
