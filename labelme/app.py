@@ -605,6 +605,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undoLastPoint,
                 None,
                 removePoint,
+                None,
                 toggle_keep_prev_mode,
             ),
             # menu shown at right click
