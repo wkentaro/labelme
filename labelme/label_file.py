@@ -36,17 +36,18 @@ class LabelFile(object):
 
     suffix = ".json"
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, image_path=None):
         self.shapes = []
         self.imagePath = None
         self.imageData = None
         if filename is not None:
-            self.load(filename)
+            self.load(filename, image_path=image_path)
         self.filename = filename
 
     @staticmethod
     def load_image_file(filename):
         try:
+            logger.info('opening image file: ', filename)
             image_pil = PIL.Image.open(filename)
         except IOError:
             logger.error("Failed opening image file: {}".format(filename))
@@ -67,7 +68,7 @@ class LabelFile(object):
             f.seek(0)
             return f.read()
 
-    def load(self, filename):
+    def load(self, filename, image_path=None):
         keys = [
             "version",
             "imageData",
@@ -110,7 +111,11 @@ class LabelFile(object):
             else:
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
+                if osp.isfile(imagePath):
+                    imageData = self.load_image_file(imagePath)
+                else:
+                    imageData = self.load_image_file(image_path)
+                    imagePath = image_path
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
             self._check_image_height_and_width(

@@ -1439,7 +1439,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file
         ):
             try:
-                self.labelFile = LabelFile(label_file)
+                self.labelFile = LabelFile(label_file, image_path=filename)
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
