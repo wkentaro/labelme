@@ -30,6 +30,7 @@ class Shape(object):
     fill_color = DEFAULT_FILL_COLOR
     select_line_color = DEFAULT_SELECT_LINE_COLOR
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
+    select_line_width = 1
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
     point_type = P_ROUND
@@ -131,6 +132,10 @@ class Shape(object):
             pen = QtGui.QPen(color)
             # Try using integer sizes for smoother drawing(?)
             pen.setWidth(max(1, int(round(2.0 / self.scale))))
+
+            if self.selected:
+                pen.setWidth(max(4, int(round(2.0 / self.scale))))
+
             painter.setPen(pen)
 
             line_path = QtGui.QPainterPath()

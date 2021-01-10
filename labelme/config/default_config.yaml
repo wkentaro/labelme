@@ -1,5 +1,5 @@
 auto_save: false
-display_label_popup: true
+display_label_popup: false
 store_data: true
 keep_prev: false
 keep_prev_scale: false
@@ -9,10 +9,11 @@ logger_level: info
 
 flags: null
 label_flags: null
-labels: null
+labels: [TLU, TLD, TRD, TRU, BL, BD, BR, BU, TLC, TRC]
+max_number_of_objects: 50
 file_search: null
 sort_labels: true
-validate_label: null
+validate_label: exact
 
 default_shape_color: [0, 255, 0]
 shape_color: auto  # null, 'auto', 'manual'
@@ -28,6 +29,7 @@ shape:
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 155]
   hvertex_fill_color: [255, 255, 255, 255]
+  select_line_width: 4
 
 # main
 flag_dock:
@@ -68,6 +70,7 @@ canvas:
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O
+  open_video: null
   open_dir: Ctrl+U
   quit: Ctrl+Q
   save: Ctrl+S

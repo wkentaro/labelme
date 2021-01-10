@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import functools
+import json
 import math
 import os
 import os.path as osp
 import re
 import webbrowser
+import imageio
+import tqdm
 
 import imgviz
 from qtpy import QtCore
@@ -32,7 +35,6 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
-
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
@@ -47,16 +49,15 @@ LABEL_COLORMAP = imgviz.label_colormap(value=200)
 
 
 class MainWindow(QtWidgets.QMainWindow):
-
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
     def __init__(
-        self,
-        config=None,
-        filename=None,
-        output=None,
-        output_file=None,
-        output_dir=None,
+            self,
+            config=None,
+            filename=None,
+            output=None,
+            output_file=None,
+            output_dir=None,
     ):
         if output is not None:
             logger.warning(
@@ -85,6 +86,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
         )
+        Shape.select_line_width = self._config["shape"]["select_line_width"]
 
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
@@ -134,15 +136,33 @@ class MainWindow(QtWidgets.QMainWindow):
                 "Press 'Esc' to deselect."
             )
         )
+        self.objectList = UniqueLabelQListWidget()
+        self.objectList.itemSelectionChanged.connect(self.objectSelectionChanged)
+        self.objectList.setToolTip(
+            self.tr(
+                "Select object to start annotating for it. "
+            )
+        )
+        self.lbl2idx = {}
         if self._config["labels"]:
-            for label in self._config["labels"]:
+            for idx, label in enumerate(self._config["labels"]):
                 item = self.uniqLabelList.createItemFromLabel(label)
                 self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+                self.uniqLabelList.setItemLabel(item, label)
+                self.lbl2idx[label] = idx + 1
         self.label_dock = QtWidgets.QDockWidget(self.tr(u"Label List"), self)
         self.label_dock.setObjectName(u"Label List")
         self.label_dock.setWidget(self.uniqLabelList)
+
+        if self._config["max_number_of_objects"]:
+            for number in [str(nu) for nu in range(1, self._config["max_number_of_objects"] + 1)]:
+                item = self.objectList.createItemFromLabel(number)
+                self.objectList.addItem(item)
+                rgb = self._get_rgb_by_object(number)
+                self.objectList.setItemLabel(item, number, rgb)
+        self.object_dock = QtWidgets.QDockWidget(self.tr(u"Object List"), self)
+        self.object_dock.setObjectName(u"Object List")
+        self.object_dock.setWidget(self.objectList)
 
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
@@ -201,6 +221,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.object_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
@@ -227,6 +248,13 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcuts["open_dir"],
             "open",
             self.tr(u"Open Dir"),
+        )
+        openJsonConfigFile = action(
+            self.tr("&Open JSON config file"),
+            self.openJSONConfig,
+            None,
+            "open",
+            self.tr("Open JSON config file"),
         )
         openNextImg = action(
             self.tr("&Next Image"),
@@ -653,6 +681,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 openNextImg,
                 openPrevImg,
                 opendir,
+                openJsonConfigFile,
                 self.menus.recentFiles,
                 save,
                 saveAs,
@@ -671,6 +700,7 @@ class MainWindow(QtWidgets.QMainWindow):
             (
                 self.flag_dock.toggleViewAction(),
                 self.label_dock.toggleViewAction(),
+                self.object_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
                 None,
@@ -712,7 +742,7 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             None,
-            createMode,
+            createPointMode,
             editMode,
             copy,
             delete,
@@ -1103,7 +1133,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if shape.group_id is None:
             text = shape.label
         else:
-            text = "{} ({})".format(shape.label, shape.group_id)
+            text = "{}-{}".format(shape.group_id, shape.label)
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
         if not self.uniqLabelList.findItemsByLabel(shape.label):
@@ -1114,8 +1144,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
-
-        rgb = self._get_rgb_by_label(shape.label)
+        rgb = self._get_rgb_by_object(shape.group_id) if shape.group_id is not None else self._get_rgb_by_label(
+            shape.label)
 
         r, g, b = rgb
         label_list_item.setText(
@@ -1137,9 +1167,24 @@ class MainWindow(QtWidgets.QMainWindow):
             label_id += self._config["shift_auto_shape_color"]
             return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
         elif (
-            self._config["shape_color"] == "manual"
-            and self._config["label_colors"]
-            and label in self._config["label_colors"]
+                self._config["shape_color"] == "manual"
+                and self._config["label_colors"]
+                and label in self._config["label_colors"]
+        ):
+            return self._config["label_colors"][label]
+        elif self._config["default_shape_color"]:
+            return self._config["default_shape_color"]
+
+    def _get_rgb_by_object(self, label):
+        if self._config["shape_color"] == "auto":
+            item = self.objectList.findItemsByLabel(label)[0]
+            label_id = self.objectList.indexFromItem(item).row() + 1
+            label_id += self._config["shift_auto_shape_color"]
+            return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
+        elif (
+                self._config["shape_color"] == "manual"
+                and self._config["label_colors"]
+                and label in self._config["label_colors"]
         ):
             return self._config["label_colors"][label]
         elif self._config["default_shape_color"]:
@@ -1198,6 +1243,22 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             self.flag_widget.addItem(item)
 
+    def get_object_info(self):
+        dict_obj = {}
+        for item in self.labelList:
+            cur_shape = item.shape()
+            obj_idx = cur_shape.group_id
+            label = cur_shape.label
+            lineColor = cur_shape.lineColor if "lineColor" in cur_shape.__dict__.keys() else None
+            if obj_idx not in dict_obj.keys():
+                dict_obj[obj_idx] = {"labels": [], "objectId": int(obj_idx), "pointNum": 0, "points": []}
+            dict_obj[obj_idx]["labels"].append(self.lbl2idx[label])
+            dict_obj[obj_idx]["pointNum"] += 1
+            dict_obj[obj_idx]["points"].append([cur_shape.points[0].x(), cur_shape.points[0].y()])
+            if lineColor is not None:
+                dict_obj[obj_idx]["lineColor"] = lineColor
+        return len(dict_obj.keys()), list(dict_obj.values())
+
     def saveLabels(self, filename):
         lf = LabelFile()
 
@@ -1213,7 +1274,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             )
             return data
-
+        objectNum, objectInfo = self.get_object_info()
         shapes = [format_shape(item.shape()) for item in self.labelList]
         flags = {}
         for i in range(self.flag_widget.count()):
@@ -1235,6 +1296,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 imageWidth=self.image.width(),
                 otherData=self.otherData,
                 flags=flags,
+                objectNum=objectNum,
+                objectInfo=objectInfo
             )
             self.labelFile = lf
             items = self.fileListWidget.findItems(
@@ -1272,6 +1335,21 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 self.canvas.deSelectShape()
 
+    def objectSelectionChanged(self):
+        if self._noSelectionSlot:
+            return
+        groups = self.objectList.selectedItems()
+        if self.canvas.editing() and groups:
+            selected_object_number = groups[0].data(Qt.UserRole)
+            selected_shapes = []
+            for item in self.labelList:
+                if str(item.shape().group_id) == selected_object_number:
+                    selected_shapes.append(item.shape())
+            if selected_shapes:
+                self.canvas.selectShapes(selected_shapes)
+            else:
+                self.canvas.deSelectShape()
+
     def labelItemChanged(self, item):
         shape = item.shape()
         self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
@@ -1288,14 +1366,15 @@ class MainWindow(QtWidgets.QMainWindow):
         position MUST be in global coordinates.
         """
         items = self.uniqLabelList.selectedItems()
+        groups = self.objectList.selectedItems()
         text = None
         if items:
             text = items[0].data(Qt.UserRole)
         flags = {}
-        group_id = None
+        group_id = groups[0].data(Qt.UserRole) if groups else None
         if self._config["display_label_popup"] or not text:
             previous_text = self.labelDialog.edit.text()
-            text, flags, group_id = self.labelDialog.popUp(text)
+            text, flags, group_id = self.labelDialog.popUp(text, group_id=group_id)
             if not text:
                 self.labelDialog.edit.setText(previous_text)
 
@@ -1412,7 +1491,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
         if filename in self.imageList and (
-            self.fileListWidget.currentRow() != self.imageList.index(filename)
+                self.fileListWidget.currentRow() != self.imageList.index(filename)
         ):
             self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             self.fileListWidget.repaint()
@@ -1436,7 +1515,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file_without_path = osp.basename(label_file)
             label_file = osp.join(self.output_dir, label_file_without_path)
         if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
-            label_file
+                label_file
         ):
             try:
                 self.labelFile = LabelFile(label_file)
@@ -1540,9 +1619,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def resizeEvent(self, event):
         if (
-            self.canvas
-            and not self.image.isNull()
-            and self.zoomMode != self.MANUAL_ZOOM
+                self.canvas
+                and not self.image.isNull()
+                and self.zoomMode != self.MANUAL_ZOOM
         ):
             self.adjustScale()
         super(MainWindow, self).resizeEvent(event)
@@ -1667,6 +1746,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._config["keep_prev"] = keep_prev
 
+    def loadVideo(self, filename, rate=None):
+        out_dir = osp.splitext(osp.basename(filename))[0]
+        created_dir = osp.join(osp.dirname(filename), out_dir)
+        if not osp.exists(created_dir):
+            os.mkdir(created_dir)
+
+        reader = imageio.get_reader(filename)
+        meta_data = reader.get_meta_data()
+        fps = meta_data['fps']
+        n_frames = meta_data['nframes']
+
+        for i, img in tqdm.tqdm(enumerate(reader), total=n_frames):
+            if rate is None or i % int(round(fps / rate)) == 0:
+                imageio.imsave(osp.join(created_dir, '%08d.jpg' % i), img)
+        self.importDirImages(created_dir)
+
     def openFile(self, _value=False):
         if not self.mayContinue():
             return
@@ -1675,12 +1770,14 @@ class MainWindow(QtWidgets.QMainWindow):
             "*.{}".format(fmt.data().decode())
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
+        video_exts = ["mp4"]
+        formats.extend(["*." + ext for ext in video_exts])
         filters = self.tr("Image & Label files (%s)") % " ".join(
             formats + ["*%s" % LabelFile.suffix]
         )
         filename = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("%s - Choose Image or Label file") % __appname__,
+            self.tr("%s - Choose Image or Label or Video file") % __appname__,
             path,
             filters,
         )
@@ -1688,7 +1785,42 @@ class MainWindow(QtWidgets.QMainWindow):
             filename, _ = filename
         filename = str(filename)
         if filename:
-            self.loadFile(filename)
+            if filename.split(".")[-1] in video_exts:
+                self.loadVideo(filename)
+            else:
+                self.loadFile(filename)
+
+    def loadJsonConfigFile(self, filename):
+        data = json.load(open(filename, "r", encoding="utf-8"))
+        if "PointList" in data.keys():
+            self.uniqLabelList.clear()
+            for idx, label in enumerate(data["PointList"]):
+                item = self.uniqLabelList.createItemFromLabel(label)
+                self.uniqLabelList.addItem(item)
+                self.uniqLabelList.setItemLabel(item, label)
+                self.lbl2idx[label] = idx + 1
+
+    def openJSONConfig(self):
+        if not self.mayContinue():
+            return
+        path = osp.dirname(str(self.filename)) if self.filename else "."
+        formats = [
+            "*.json"
+        ]
+        filters = self.tr("JSON files (%s)") % " ".join(
+            formats + ["*%s" % LabelFile.suffix]
+        )
+        filename = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr("%s - Choose JSON config file") % __appname__,
+            path,
+            filters,
+        )
+        if QT5:
+            filename, _ = filename
+        filename = str(filename)
+        if filename:
+            self.loadJsonConfigFile(filename)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
@@ -1875,7 +2007,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "proceed anyway?"
         ).format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes
+                self, self.tr("Attention"), msg, yes | no, yes
         ):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
@@ -1934,7 +2066,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.filename = None
         for file in imageFiles:
             if file in self.imageList or not file.lower().endswith(
-                tuple(extensions)
+                    tuple(extensions)
             ):
                 continue
             label_file = osp.splitext(file)[0] + ".json"
@@ -1944,7 +2076,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem(file)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
-                label_file
+                    label_file
             ):
                 item.setCheckState(Qt.Checked)
             else:
@@ -1977,7 +2109,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
-                label_file
+                    label_file
             ):
                 item.setCheckState(Qt.Checked)
             else:

@@ -171,6 +171,8 @@ class LabelFile(object):
         imagePath,
         imageHeight,
         imageWidth,
+        objectNum,
+        objectInfo,
         imageData=None,
         otherData=None,
         flags=None,
@@ -192,6 +194,8 @@ class LabelFile(object):
             imageData=imageData,
             imageHeight=imageHeight,
             imageWidth=imageWidth,
+            objectNum=objectNum,
+            objectInfo=objectInfo
         )
         for key, value in otherData.items():
             assert key not in data
