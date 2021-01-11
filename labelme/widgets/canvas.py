@@ -339,6 +339,7 @@ class Canvas(QtWidgets.QWidget):
                             self.finalise()
                     elif self.createMode == "trace":
                         self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                        self.tracingActive = False
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
