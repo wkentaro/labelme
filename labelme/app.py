@@ -322,6 +322,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing polygons"),
             enabled=False,
         )
+        createTraceMode = action(
+            self.tr("Trace Outline"),
+            lambda: self.toggleDrawMode(False, createMode="trace"),
+            shortcuts["create_trace"],
+            "trace",
+            self.tr("Start tracing objects (ctrl+t)"),
+            enabled=False,
+        )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
             lambda: self.toggleDrawMode(False, createMode="rectangle"),
@@ -573,6 +581,7 @@ class MainWindow(QtWidgets.QMainWindow):
             removePoint=removePoint,
             createMode=createMode,
             editMode=editMode,
+            createTraceMode=createTraceMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
@@ -606,6 +615,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # menu shown at right click
             menu=(
                 createMode,
+                createTraceMode,
                 createRectangleMode,
                 createCircleMode,
                 createLineMode,
@@ -623,6 +633,7 @@ class MainWindow(QtWidgets.QMainWindow):
             onLoadActive=(
                 close,
                 createMode,
+                createTraceMode,
                 createRectangleMode,
                 createCircleMode,
                 createLineMode,
@@ -713,6 +724,7 @@ class MainWindow(QtWidgets.QMainWindow):
             deleteFile,
             None,
             createMode,
+            createTraceMode,
             editMode,
             copy,
             delete,
@@ -929,58 +941,26 @@ class MainWindow(QtWidgets.QMainWindow):
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
+
+        action_dict = {'polygon': [True, self.actions.createMode],
+                       'trace': [True, self.actions.createTraceMode],
+                       'rectangle': [True, self.actions.createRectangleMode],
+                       'line': [True, self.actions.createLineMode],
+                       'point': [True, self.actions.createPointMode],
+                       'circle': [True, self.actions.createCircleMode],
+                       'linestrip': [True, self.actions.createLineStripMode]}
+
         if edit:
-            self.actions.createMode.setEnabled(True)
-            self.actions.createRectangleMode.setEnabled(True)
-            self.actions.createCircleMode.setEnabled(True)
-            self.actions.createLineMode.setEnabled(True)
-            self.actions.createPointMode.setEnabled(True)
-            self.actions.createLineStripMode.setEnabled(True)
+            for key in action_dict.keys():
+                action_dict[key][1].setEnabled(action_dict[key][0])
         else:
-            if createMode == "polygon":
-                self.actions.createMode.setEnabled(False)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "rectangle":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(False)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "line":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(False)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "point":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(False)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "circle":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(False)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "linestrip":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(False)
-            else:
-                raise ValueError("Unsupported createMode: %s" % createMode)
+            try:
+                action_dict[createMode][0] = False
+            except KeyError as e:
+                raise KeyError("Unsupported createMode: %s" % createMode)
+            for key in action_dict.keys():
+                action_dict[key][1].setEnabled(action_dict[key][0])
+
         self.actions.editMode.setEnabled(not edit)
 
     def setEditMode(self):

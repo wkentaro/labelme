@@ -74,6 +74,7 @@ class Canvas(QtWidgets.QWidget):
         self.hEdge = None
         self.prevhEdge = None
         self.movingShape = False
+        self.tracingActive = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
@@ -98,6 +99,7 @@ class Canvas(QtWidgets.QWidget):
     def createMode(self, value):
         if value not in [
             "polygon",
+            "trace",
             "rectangle",
             "circle",
             "line",
@@ -204,9 +206,14 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip"]:
+            if self.createMode in ["polygon", "linestrip", "trace"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
+            if self.createMode == "trace":
+                length = QtCore.QLineF(self.line[1], self.line[0]).length()
+                if length > 1:
+                    self.current.addPoint(self.line[1])
+                    self.line[0] = self.current[-1]
             elif self.createMode == "rectangle":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -330,6 +337,8 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
+                    elif self.createMode == "trace":
+                        self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -343,6 +352,8 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
+                    if self.createMode == "trace":
+                        self.tracingActive = True
                     if self.createMode == "point":
                         self.finalise()
                     else:

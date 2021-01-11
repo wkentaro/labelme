@@ -80,6 +80,7 @@ class Shape(object):
             value = "polygon"
         if value not in [
             "polygon",
+            "trace",
             "rectangle",
             "point",
             "line",
