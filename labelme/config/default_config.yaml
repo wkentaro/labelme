@@ -86,6 +86,7 @@ shortcuts:
 
   create_polygon: Ctrl+N
   create_trace: Ctrl+T
+  reset_trace: null
   create_rectangle: Ctrl+R
   create_circle: null
   create_line: null

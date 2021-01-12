@@ -48,11 +48,11 @@ class Canvas(QtWidgets.QWidget):
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
-        self.shapes = []
+        self.shapes = []  # type: list[Shape]
         self.shapesBackups = []
         self.current = None  # type: Shape
         self.selectedShapes = []  # save the selected shapes here
-        self.selectedShapesCopy = []
+        self.selectedShapesCopy = []  # type: list[Shape]
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
         #   - createMode == 'rectangle': diagonal line of the rectangle
@@ -67,8 +67,8 @@ class Canvas(QtWidgets.QWidget):
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
-        self.hShape = None
-        self.prevhShape = None
+        self.hShape = None  # type: Shape
+        self.prevhShape = None  # type: Shape
         self.hVertex = None
         self.prevhVertex = None
         self.hEdge = None

@@ -330,6 +330,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start tracing objects (ctrl+t)"),
             enabled=False,
         )
+        resetTrace = action(
+            self.tr("Reset Trace"),
+            lambda: QtWidgets.QApplication.postEvent(self.canvas, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Escape, Qt.NoModifier)),
+            shortcuts["reset_trace"],
+            "eraser",
+            self.tr("Clear current trace (ESC)"),
+            enabled=True,
+        )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
             lambda: self.toggleDrawMode(False, createMode="rectangle"),
@@ -582,6 +590,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createMode=createMode,
             editMode=editMode,
             createTraceMode=createTraceMode,
+            resetTrace=resetTrace,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
@@ -823,6 +832,23 @@ class MainWindow(QtWidgets.QMainWindow):
     def noShapes(self):
         return not len(self.labelList)
 
+    def setTraceReset(self, setAsReset):
+        """
+        Function to toggle the trace button to reset so that on touchscreens the 'escape' button can be pressed.
+        :param setAsReset: whether or no the reset functionality should be showing
+        """
+        tools_as_list = list(self.actions.tool)
+        for i in range(len(tools_as_list)):
+            if tools_as_list[i] == self.actions.createTraceMode and setAsReset:
+                tools_as_list[i] = self.actions.resetTrace
+                break
+            if tools_as_list[i] == self.actions.resetTrace:
+                tools_as_list[i] = self.actions.createTraceMode
+                break
+        self.actions.tool = tuple(tools_as_list)
+        self.tools.clear()
+        utils.addActions(self.tools, tools_as_list)
+
     def populateModeActions(self):
         tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
@@ -832,6 +858,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.edit.clear()
         actions = (
             self.actions.createMode,
+            self.actions.createTraceMode,
             self.actions.createRectangleMode,
             self.actions.createCircleMode,
             self.actions.createLineMode,
@@ -861,6 +888,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dirty = False
         self.actions.save.setEnabled(False)
         self.actions.createMode.setEnabled(True)
+        self.actions.createTraceMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
         self.actions.createLineMode.setEnabled(True)
@@ -960,6 +988,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 raise KeyError("Unsupported createMode: %s" % createMode)
             for key in action_dict.keys():
                 action_dict[key][1].setEnabled(action_dict[key][0])
+
+        if createMode == 'trace':
+            self.setTraceReset(True)
+        else:
+            self.setTraceReset(False)
+
 
         self.actions.editMode.setEnabled(not edit)
 
