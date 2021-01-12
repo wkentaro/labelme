@@ -31,6 +31,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from labelme.widgets import GenerateSegmentedData
 
 
 # FIXME
@@ -69,7 +70,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if config is None:
             config = get_config()
         self._config = config
-
+        self.generate_segmented_data = GenerateSegmentedData()
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
         Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
@@ -458,7 +459,11 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="help",
             tip=self.tr("Show tutorial page"),
         )
-
+        generate_data = action(
+            self.tr('Create Segmented Images'),
+            lambda: self.generate_segmented_data.show(),
+            tip=self.tr("Run macros to convert json data to training data.")
+        )
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -662,6 +667,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
+            macros=self.menu(self.tr("&Macros")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
             labelList=labelMenu,
@@ -687,6 +693,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         utils.addActions(self.menus.help, (help,))
+        utils.addActions(self.menus.macros, (generate_data,))
         utils.addActions(
             self.menus.view,
             (
