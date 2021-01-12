@@ -375,10 +375,9 @@ class Canvas(QtWidgets.QWidget):
             self.selectShapePoint(pos, multiple_selection_mode=group_mode)
             self.prevPoint = pos
             self.repaint()
-        ev.accept()
 
     def mouseReleaseEvent(self, ev: QtGui.QMouseEvent) -> None:
-        if ev.button() == QtCore.Qt.LeftButton and self.current:
+        if ev.button() == QtCore.Qt.LeftButton and self.current and self.tracingActive:
             if len(self.current.points) > 1:
                 self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
                 self.tracingActive = False
