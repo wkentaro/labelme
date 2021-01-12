@@ -1,5 +1,3 @@
-from qtpy.QtCore import *
-from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 import glob
 import labelme
@@ -28,7 +26,7 @@ class GenerateSegmentedData(QWidget):
         button_widget = QWidget()
         button_widget.setLayout(button_layout)
         voc_semantic_seg_btn = QPushButton('VOC Semantic\nSegmentation')
-        voc_semantic_seg_btn.pressed.connect(self.do_semantic_segmentation)
+        voc_semantic_seg_btn.pressed.connect(self.do_semantic_segmentation_voc)
         button_layout.addWidget(voc_semantic_seg_btn)
         voc_instance_seg_btn = QPushButton('VOC Instance\nSegmentation')
         voc_instance_seg_btn.pressed.connect(self.do_instance_segmentation_voc)
@@ -239,6 +237,7 @@ class GenerateSegmentedData(QWidget):
                     loc="rb",
                 )
                 imgviz.io.imsave(out_insv_file, insv)
+        self.hide()
     
     def do_instance_segmentation_coco(self):
         try:
@@ -416,6 +415,8 @@ class GenerateSegmentedData(QWidget):
 
         with open(out_ann_file, "w") as f:
             json.dump(data, f)
+        self.hide()
+
 
 class LineEntry(QWidget):
     def __init__(self, label, dialogue_type):
