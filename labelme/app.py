@@ -85,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
         )
+        Shape.point_size = self._config["shape"]["point_size"]
 
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
@@ -991,9 +992,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if createMode == 'trace':
             self.setTraceReset(True)
+            Shape.point_size = self._config["shape"]["trace_point_size"]
         else:
             self.setTraceReset(False)
-
+            Shape.point_size = self._config["shape"]["point_size"]
 
         self.actions.editMode.setEnabled(not edit)
 
