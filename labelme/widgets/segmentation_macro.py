@@ -31,7 +31,7 @@ class GenerateSegmentedData(QWidget):
         voc_instance_seg_btn = QPushButton('VOC Instance\nSegmentation')
         voc_instance_seg_btn.pressed.connect(self.do_instance_segmentation_voc)
         button_layout.addWidget(voc_instance_seg_btn)
-        coco_instance_seg_btn = QPushButton('VOC Instance\nSegmentation')
+        coco_instance_seg_btn = QPushButton('COCO Instance\nSegmentation')
         coco_instance_seg_btn.pressed.connect(self.do_instance_segmentation_coco)
         button_layout.addWidget(coco_instance_seg_btn)
 
