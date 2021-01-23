@@ -117,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
+        self.labelList.clicked.connect(self.labelItemClicked)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         self.labelList.itemChanged.connect(self.labelItemChanged)
@@ -1259,6 +1260,9 @@ class MainWindow(QtWidgets.QMainWindow):
         for shape in added_shapes:
             self.addLabel(shape)
         self.setDirty()
+
+    def labelItemClicked(self, item):
+        self.setEditMode()
 
     def labelSelectionChanged(self):
         if self._noSelectionSlot:
