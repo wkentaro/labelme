@@ -1061,6 +1061,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.uniqLabelList.addItem(item)
 
     def fileSearchChanged(self):
+        if not self.mayContinue():
+             return
         self.importDirImages(
             self.lastOpenDir,
             pattern=self.fileSearch.text(),
@@ -1722,7 +1724,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self.importDirImages(self.lastOpenDir, load=False)
+        if self.mayContinue():
+            self.importDirImages(self.lastOpenDir, load=False)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -1966,7 +1969,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not dirpath:
+        if not dirpath:
             return
 
         self.lastOpenDir = dirpath
