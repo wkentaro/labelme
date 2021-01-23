@@ -1814,7 +1814,8 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.info("Label file is removed: {}".format(label_file))
 
             item = self.fileListWidget.currentItem()
-            item.setCheckState(Qt.Unchecked)
+            if item:
+                item.setCheckState(Qt.Unchecked)
 
             self.resetState()
 
