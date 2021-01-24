@@ -1535,6 +1535,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
+        self.canvas.setFocus()
         self.status(self.tr("Loaded %s") % osp.basename(str(filename)))
         return True
 
