@@ -14,16 +14,12 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ['3.7', '2.7']
-        PYTEST_QT_API: [pyqt5, pyqt4v2, pyside2]
+        PYTEST_QT_API: [pyqt5, pyqt4v2]
         exclude:
           - os: macos-latest
             PYTEST_QT_API: pyqt4v2
-          - os: macos-latest
-            PYTEST_QT_API: pyside2
           - os: windows-latest
             PYTEST_QT_API: pyqt4v2
-          - os: windows-latest
-            PYTEST_QT_API: pyside2
           - python-version: '3.7'
             PYTEST_QT_API: pyqt4v2
 
