@@ -883,9 +883,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
 
-    def resetState(self):
+    def resetState(self, reset_filename=True):
         self.labelList.clear()
-        self.filename = None
+        if reset_filename:
+            self.filename = None
         self.imagePath = None
         self.imageData = None
         self.labelFile = None
@@ -1824,7 +1825,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if item:
                 item.setCheckState(Qt.Unchecked)
 
-            self.resetState()
+            self.resetState(reset_filename=False)
             self.canvas.setEnabled(False)
 
     # Message Dialogs. #
