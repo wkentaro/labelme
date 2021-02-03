@@ -1825,6 +1825,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Unchecked)
 
             self.resetState()
+            self.canvas.setEnabled(False)
 
     # Message Dialogs. #
     def hasLabels(self):
