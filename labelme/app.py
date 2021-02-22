@@ -82,6 +82,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Shape.vertex_fill_color = QtGui.QColor(
             *self._config["shape"]["vertex_fill_color"]
         )
+        Shape.show_labels = self._config["shape"]["show_labels"]
         Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
         )

@@ -17,6 +17,7 @@ DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
 DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 155)  # selected
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
+DEFAULT_SHOW_LABELS = False
 
 
 class Shape(object):
@@ -32,6 +33,7 @@ class Shape(object):
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
+    show_labels = DEFAULT_SHOW_LABELS
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -167,6 +169,16 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
                 if self.isClosed():
                     line_path.lineTo(self.points[0])
+
+            if self.show_labels:
+                painter.setFont(QtGui.QFont("Arial", 25))
+                label_x, label_y = self.points[0].x(), self.points[0].y()
+                for p in self.points:
+                    if p.x() < label_x:
+                        label_x = p.x()
+                        label_y = p.y()
+                shift_y = 20 * (2 if len(self.label) > 2 else 1)
+                painter.drawText(label_x - 15, label_y - shift_y, self.label)
 
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)

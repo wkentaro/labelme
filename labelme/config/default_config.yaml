@@ -24,6 +24,7 @@ shape:
   line_color: [0, 255, 0, 128]
   fill_color: [0, 255, 0, 0]  # transparent
   vertex_fill_color: [0, 255, 0, 255]
+  show_labels: false
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 155]
