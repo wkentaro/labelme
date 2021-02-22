@@ -705,6 +705,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.tools = self.toolbar("Tools")
         # Menu buttons on Left
+        defaultCreateMode = createMode
+        if self._config["default_create_mode"] == "rectangle":
+            defaultCreateMode = createRectangleMode
+        elif self._config["default_create_mode"] == "circle":
+            defaultCreateMode = createCircleMode
+        elif self._config["default_create_mode"] == "line":
+            defaultCreateMode = createLineMode
+        elif self._config["default_create_mode"] == "point":
+            defaultCreateMode = createPointMode
+        elif self._config["default_create_mode"] == "linestrip":
+            defaultCreateMode = createLineStripMode
         self.actions.tool = (
             open_,
             opendir,
@@ -713,7 +724,7 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             None,
-            createMode,
+            defaultCreateMode,
             editMode,
             copy,
             delete,

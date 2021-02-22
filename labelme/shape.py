@@ -170,7 +170,7 @@ class Shape(object):
                 if self.isClosed():
                     line_path.lineTo(self.points[0])
 
-            if self.show_labels:
+            if self.label and self.show_labels:
                 painter.setFont(QtGui.QFont("Arial", 25))
                 label_x, label_y = self.points[0].x(), self.points[0].y()
                 for p in self.points:
