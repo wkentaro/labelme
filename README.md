@@ -10,7 +10,7 @@
   <a href="https://pypi.python.org/pypi/labelme"><img src="https://img.shields.io/pypi/v/labelme.svg"></a>
   <a href="https://pypi.org/project/labelme"><img src="https://img.shields.io/pypi/pyversions/labelme.svg"></a>
   <a href="https://github.com/wkentaro/labelme/actions"><img src="https://github.com/wkentaro/labelme/workflows/ci/badge.svg?branch=master&event=push"></a>
-  <a href="https://hub.docker.com/r/wkentaro/labelme"><img src="https://img.shields.io/docker/build/wkentaro/labelme.svg"></a>
+  <a href="https://hub.docker.com/r/wkentaro/labelme"><img src="https://img.shields.io/docker/cloud/build/wkentaro/labelme"></a>
 </div>
 
 <div align="center">
