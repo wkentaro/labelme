@@ -64,7 +64,7 @@ It is written in Python and uses Qt for its graphical interface.
 
 There are options:
 
-- Platform agonistic installation: [Anaconda](#anaconda), [Docker](#docker)
+- Platform agnostic installation: [Anaconda](#anaconda), [Docker](#docker)
 - Platform specific installation: [Ubuntu](#ubuntu), [macOS](#macos), [Windows](#windows)
 - Pre-build binaries from [the release section](https://github.com/wkentaro/labelme/releases)
 
