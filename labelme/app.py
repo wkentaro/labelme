@@ -405,7 +405,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         removePoint = action(
             text="Remove Selected Point",
-            slot=self.canvas.removeSelectedPoint,
+            slot=self.removeSelectedPoint,
             icon="edit",
             tip="Remove selected point from polygon",
             enabled=False,
@@ -1168,6 +1168,10 @@ class MainWindow(QtWidgets.QMainWindow):
             group_id = shape["group_id"]
             other_data = shape["other_data"]
 
+            if not points:
+                # skip point-empty shape
+                continue
+
             shape = Shape(
                 label=label,
                 shape_type=shape_type,
@@ -1868,6 +1872,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleKeepPrevMode(self):
         self._config["keep_prev"] = not self._config["keep_prev"]
+
+    def removeSelectedPoint(self):
+        self.canvas.removeSelectedPoint()
+        if not self.canvas.hShape.points:
+            self.canvas.deleteShape(self.canvas.hShape)
+            self.remLabels([self.canvas.hShape])
+            self.setDirty()
+            if self.noShapes():
+                for action in self.actions.onShapesPresent:
+                    action.setEnabled(False)
 
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
