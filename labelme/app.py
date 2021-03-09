@@ -2050,6 +2050,8 @@ class MainWindow(QtWidgets.QMainWindow):
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
 
+        extensions += [".json"]
+
         images = []
         for root, dirs, files in os.walk(folderPath):
             for file in files:
