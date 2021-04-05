@@ -30,6 +30,7 @@ class Canvas(QtWidgets.QWidget):
     vertexSelected = QtCore.Signal(bool)
 
     CREATE, EDIT = 0, 1
+    CREATE, EDIT = 0, 1
 
     # polygon, rectangle, line, or point
     _createMode = "polygon"
@@ -45,6 +46,7 @@ class Canvas(QtWidgets.QWidget):
                     self.double_click
                 )
             )
+        self.num_backups = kwargs.pop("num_backups", 10)
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -111,26 +113,35 @@ class Canvas(QtWidgets.QWidget):
         shapesBackup = []
         for shape in self.shapes:
             shapesBackup.append(shape.copy())
-        if len(self.shapesBackups) >= 10:
-            self.shapesBackups = self.shapesBackups[-9:]
+        if len(self.shapesBackups) > self.num_backups:
+            self.shapesBackups = self.shapesBackups[-self.num_backups - 1 :]
         self.shapesBackups.append(shapesBackup)
 
     @property
     def isShapeRestorable(self):
+        # We save the state AFTER each edit (not before) so for an
+        # edit to be undoable, we expect the CURRENT and the PREVIOUS state
+        # to be in the undo stack.
         if len(self.shapesBackups) < 2:
             return False
         return True
 
     def restoreShape(self):
+        # This does _part_ of the job of restoring shapes.
+        # The complete process is also done in app.py::undoShapeEdit
+        # and app.py::loadShapes and our own Canvas::loadShapes function.
         if not self.isShapeRestorable:
             return
         self.shapesBackups.pop()  # latest
+
+        # The application will eventually call Canvas.loadShapes which will
+        # push this right back onto the stack.
         shapesBackup = self.shapesBackups.pop()
         self.shapes = shapesBackup
         self.selectedShapes = []
         for shape in self.shapes:
             shape.selected = False
-        self.repaint()
+        self.update()
 
     def enterEvent(self, ev):
         self.overrideCursor(self._cursor)
@@ -423,7 +434,7 @@ class Canvas(QtWidgets.QWidget):
             # Only hide other shapes if there is a current selection.
             # Otherwise the user will not be able to select a shape.
             self.setHiding(True)
-            self.repaint()
+            self.update()
 
     def setHiding(self, enable=True):
         self._hideBackround = self.hideBackround if enable else False
@@ -756,13 +767,13 @@ class Canvas(QtWidgets.QWidget):
         else:
             self.current = None
             self.drawingPolygon.emit(False)
-        self.repaint()
+        self.update()
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
         if clear_shapes:
             self.shapes = []
-        self.repaint()
+        self.update()
 
     def loadShapes(self, shapes, replace=True):
         if replace:
@@ -774,11 +785,11 @@ class Canvas(QtWidgets.QWidget):
         self.hShape = None
         self.hVertex = None
         self.hEdge = None
-        self.repaint()
+        self.update()
 
     def setShapeVisible(self, shape, value):
         self.visible[shape] = value
-        self.repaint()
+        self.update()
 
     def overrideCursor(self, cursor):
         self.restoreCursor()
