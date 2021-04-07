@@ -235,6 +235,20 @@ dist/labelme --version
 ```
 
 
+## How to contribute
+
+Make sure below test passes on your environment.  
+See `.github/workflows/ci.yml` for more detail.
+
+```bash
+pip install black hacking pytest pytest-qt
+
+flake8 .
+black --line-length 79 --check labelme/
+MPLBACKEND='agg' pytest tests/ -m 'not gpu'
+```
+
+
 ## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme),
