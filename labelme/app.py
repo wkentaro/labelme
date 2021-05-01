@@ -1077,7 +1077,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         r, g, b = self._update_shape_color(shape)
         if shape.group_id is None:
-            item.setText('{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(shape.label, r, g, b))
+            item.setText(
+                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                    shape.label, r, g, b
+                )
+            )
         else:
             item.setText("{} ({})".format(shape.label, shape.group_id))
         self.setDirty()
