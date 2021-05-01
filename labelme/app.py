@@ -1074,8 +1074,10 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.label = text
         shape.flags = flags
         shape.group_id = group_id
+
+        r, g, b = self._update_shape_color(shape)
         if shape.group_id is None:
-            item.setText(shape.label)
+            item.setText('{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(shape.label, r, g, b))
         else:
             item.setText("{} ({})".format(shape.label, shape.group_id))
         self.setDirty()
@@ -1141,20 +1143,25 @@ class MainWindow(QtWidgets.QMainWindow):
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
 
-        rgb = self._get_rgb_by_label(shape.label)
-
-        r, g, b = rgb
+        r, g, b = self._update_shape_color(shape)
         label_list_item.setText(
             '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
                 text, r, g, b
             )
         )
+
+    def _update_shape_color(self, shape):
+        rgb = self._get_rgb_by_label(shape.label)
+        r, g, b = rgb
+
         shape.line_color = QtGui.QColor(r, g, b)
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
         shape.fill_color = QtGui.QColor(r, g, b, 128)
         shape.select_line_color = QtGui.QColor(255, 255, 255)
         shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+
+        return r, g, b
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
