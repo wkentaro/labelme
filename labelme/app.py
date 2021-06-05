@@ -2026,8 +2026,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lastOpenDir = dirpath
         self.filename = None
         self.fileListWidget.clear()
-        labels = self.scanAllLabels(dirpath)
-        for filename in self.scanAllImages(dirpath):
+        labels, images = self.scanAllLabelsAndImages(dirpath)
+        for filename in images:
             if pattern and pattern not in filename:
                 continue
             label_file = osp.splitext(filename)[0] + ".json"
@@ -2045,32 +2045,27 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
 
-    def scanAllImages(self, folderPath):
+    # speed up image import by finding all labels beforehand
+    def scanAllLabelsAndImages(self, folderPath):
         extensions = [
             ".%s" % fmt.data().decode().lower()
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
 
         images = []
+        labels = set()
         for root, dirs, files in os.walk(folderPath):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
-        images.sort(key=lambda x: x.lower())
-        return images
-
-    # speed up image import by finding all labels beforehand
-    def scanAllLabels(self, folderPath):
-        labels = set()
-        if self.output_dir: # all labels are directly under output_dir
+                if file.lower().endswith(".json"):
+                    relativePath = osp.join(root, file)
+                    labels.add(relativePath)
+        if self.output_dir:
+            labels.clear()
             for file in os.scandir(self.output_dir):
                 if file.is_file() and file.path.lower().endswith(".json"):
                     labels.add(file.path)
-        else:
-            for root, dirs, files in os.walk(folderPath):
-                for file in files:
-                    if file.lower().endswith(".json"):
-                        relativePath = osp.join(root, file)
-                        labels.add(relativePath)
-        return labels
+        images.sort(key=lambda x: x.lower())
+        return labels,images
