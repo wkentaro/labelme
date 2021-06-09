@@ -73,7 +73,7 @@ jobs:
         if [ "${{ matrix.os }}" != "windows-latest" ]; then
           conda install -q -y help2man
         fi
-        pip install hacking pytest pytest-qt
+        pip install hacking pytest 'pytest-qt<4'
 
     - name: Install main
       shell: bash -l {0}
