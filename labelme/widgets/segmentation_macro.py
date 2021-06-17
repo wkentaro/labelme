@@ -393,25 +393,28 @@ class GenerateSegmentedData(QWidget):
                 )
 
             if not noviz:
-                labels, captions, masks = zip(
-                    *[
-                        (class_name_to_id[cnm], cnm, msk)
-                        for (cnm, gid), msk in masks.items()
-                        if cnm in class_name_to_id
-                    ]
-                )
-                viz = imgviz.instances2rgb(
-                    image=img,
-                    labels=labels,
-                    masks=masks,
-                    captions=captions,
-                    font_size=15,
-                    line_width=2,
-                )
-                out_viz_file = osp.join(
-                    output_dir, "Visualization", base + ".jpg"
-                )
-                imgviz.io.imsave(out_viz_file, viz)
+                try:
+                    labels, captions, masks = zip(
+                        *[
+                            (class_name_to_id[cnm], cnm, msk)
+                            for (cnm, gid), msk in masks.items()
+                            if cnm in class_name_to_id
+                        ]
+                    )
+                    viz = imgviz.instances2rgb(
+                        image=img,
+                        labels=labels,
+                        masks=masks,
+                        captions=captions,
+                        font_size=15,
+                        line_width=2,
+                    )
+                    out_viz_file = osp.join(
+                        output_dir, "Visualization", base + ".jpg"
+                    )
+                    imgviz.io.imsave(out_viz_file, viz)
+                except ValueError as e:
+                    print(f'Failed to create visualization for {base}.jpg')
 
         with open(out_ann_file, "w") as f:
             json.dump(data, f)
