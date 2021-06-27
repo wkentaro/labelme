@@ -115,6 +115,7 @@ def main():
             "twine upload dist/labelme-{:s}.tar.gz".format(version),
         ]
         for cmd in commands:
+            print("+ {:s}".format(cmd))
             subprocess.check_call(shlex.split(cmd))
         sys.exit(0)
 
