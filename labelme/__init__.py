@@ -12,7 +12,7 @@ __appname__ = "labelme"
 # 1. MAJOR version when you make incompatible API changes;
 # 2. MINOR version when you add functionality in a backwards-compatible manner;
 # 3. PATCH version when you make backwards-compatible bug fixes.
-__version__ = "4.5.7"
+__version__ = "4.5.8"
 
 QT4 = QT_VERSION[0] == "4"
 QT5 = QT_VERSION[0] == "5"
