@@ -73,7 +73,8 @@ def get_install_requires():
                 sys.exit(1)
             assert PY3
             # PyQt5 can be installed via pip for Python3
-            install_requires.append("PyQt5")
+            # 5.15.3, 5.15.4 won't work with PyInstaller
+            install_requires.append("PyQt5!=5.15.3,!=5.15.4")
             QT_BINDING = "pyqt5"
     del QT_BINDING
 
