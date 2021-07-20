@@ -5,6 +5,9 @@ import numpy as np
 import PIL.Image
 import PIL.ImageDraw
 
+from shapely.geometry import Polygon
+
+from labelme.shape import Shape
 from labelme.logger import logger
 
 
@@ -110,3 +113,29 @@ def masks_to_bboxes(masks):
         bboxes.append((y1, x1, y2, x2))
     bboxes = np.asarray(bboxes, dtype=np.float32)
     return bboxes
+
+
+def convert_qtPoint_to_shapely(shape: Shape) -> Polygon:
+    """convert qpointf to shapely Polygon object"""
+    points = [[point.x(), point.y()] for point in shape.points]
+    return Polygon(points)
+    
+    
+def check_intersections(current_shape: Shape, shapes: list) -> list:
+    """Returns list with shapes that if the boundary or interior of 
+    the shape intersect in any way with those of the other.
+
+    Args:
+        current_shape (Shape): shape to be checked for intersections with others 
+        shapes (list): list with shapes for intersection check
+
+    Returns:
+        list: shapes that intersected with current
+    """
+    current_shape_shpl = convert_qtPoint_to_shapely(current_shape)
+    intersected_shapes = list()
+    for shape in shapes:
+        shape_shpl = convert_qtPoint_to_shapely(shape)
+        if (current_shape_shpl.intersects(shape_shpl)):
+            intersected_shapes.append(shape)
+    return intersected_shapes

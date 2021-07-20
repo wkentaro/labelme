@@ -323,6 +323,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing polygons"),
             enabled=False,
         )
+        deleteSelectedMode = action(
+            self.tr("Delete selected Polygons"),
+            lambda: self.toggleDrawMode(False, createMode="polygon_d"),
+            shortcuts["delete_selected_polygon"],
+            "cancel",
+            self.tr("Delete the selected polygons"),
+            enabled=True,
+        )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
             lambda: self.toggleDrawMode(False, createMode="rectangle"),
@@ -548,7 +556,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
-        utils.addActions(labelMenu, (edit, delete))
+        utils.addActions(labelMenu, (edit, delete, deleteSelectedMode))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(
             self.popLabelListMenu
@@ -566,6 +574,7 @@ class MainWindow(QtWidgets.QMainWindow):
             deleteFile=deleteFile,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
+            deleteSelectedMode=deleteSelectedMode,
             edit=edit,
             copy=copy,
             undoLastPoint=undoLastPoint,
@@ -596,6 +605,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 edit,
                 copy,
                 delete,
+                deleteSelectedMode,
                 None,
                 undo,
                 undoLastPoint,
@@ -620,6 +630,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undoLastPoint,
                 addPointToEdge,
                 removePoint,
+                deleteSelectedMode,
             ),
             onLoadActive=(
                 close,
@@ -631,6 +642,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 editMode,
                 brightnessContrast,
+                deleteSelectedMode,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
@@ -717,6 +729,7 @@ class MainWindow(QtWidgets.QMainWindow):
             editMode,
             copy,
             delete,
+            deleteSelectedMode,
             undo,
             brightnessContrast,
             None,
@@ -928,6 +941,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undoLastPoint.setEnabled(drawing)
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
+        self.actions.deleteSelectedMode.setEnabled(not drawing)
 
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
@@ -942,6 +956,15 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
+                self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            if createMode == "polygon_d":
+                self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -949,6 +972,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "rectangle":
                 self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -956,6 +980,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "line":
                 self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
@@ -963,6 +988,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "point":
                 self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -970,6 +996,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createLineMode.setEnabled(True)
@@ -977,6 +1004,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -1099,39 +1127,49 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
+        self.actions.deleteSelectedMode.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
     def addLabel(self, shape):
-        if shape.group_id is None:
-            text = shape.label
-        else:
-            text = "{} ({})".format(shape.label, shape.group_id)
-        label_list_item = LabelListWidgetItem(text, shape)
-        self.labelList.addItem(label_list_item)
-        if not self.uniqLabelList.findItemsByLabel(shape.label):
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
+        if len(self.canvas.intersected_shapes):
+            print(len(self.canvas.intersected_shapes))
+            self.remLabels(self.canvas.intersected_shapes)
+            self.setDirty()
+            if self.noShapes():
+                for action in self.actions.onShapesPresent:
+                    action.setEnabled(False)
+            self.canvas.intersected_shapes = []
+        else:    
+            if shape.group_id is None:
+                text = shape.label
+            else:
+                text = "{} ({})".format(shape.label, shape.group_id)
+            label_list_item = LabelListWidgetItem(text, shape)
+            self.labelList.addItem(label_list_item)
+            if not self.uniqLabelList.findItemsByLabel(shape.label):
+                item = self.uniqLabelList.createItemFromLabel(shape.label)
+                self.uniqLabelList.addItem(item)
+                rgb = self._get_rgb_by_label(shape.label)
+                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            self.labelDialog.addLabelHistory(shape.label)
+            for action in self.actions.onShapesPresent:
+                action.setEnabled(True)
+
             rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
-        self.labelDialog.addLabelHistory(shape.label)
-        for action in self.actions.onShapesPresent:
-            action.setEnabled(True)
 
-        rgb = self._get_rgb_by_label(shape.label)
-
-        r, g, b = rgb
-        label_list_item.setText(
-            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                text, r, g, b
+            r, g, b = rgb
+            label_list_item.setText(
+                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                    text, r, g, b
+                )
             )
-        )
-        shape.line_color = QtGui.QColor(r, g, b)
-        shape.vertex_fill_color = QtGui.QColor(r, g, b)
-        shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-        shape.fill_color = QtGui.QColor(r, g, b, 128)
-        shape.select_line_color = QtGui.QColor(255, 255, 255)
-        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+            shape.line_color = QtGui.QColor(r, g, b)
+            shape.vertex_fill_color = QtGui.QColor(r, g, b)
+            shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
+            shape.fill_color = QtGui.QColor(r, g, b, 128)
+            shape.select_line_color = QtGui.QColor(255, 255, 255)
+            shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
@@ -1294,38 +1332,47 @@ class MainWindow(QtWidgets.QMainWindow):
 
         position MUST be in global coordinates.
         """
-        items = self.uniqLabelList.selectedItems()
-        text = None
-        if items:
-            text = items[0].data(Qt.UserRole)
-        flags = {}
-        group_id = None
-        if self._config["display_label_popup"] or not text:
-            previous_text = self.labelDialog.edit.text()
-            text, flags, group_id = self.labelDialog.popUp(text)
-            if not text:
-                self.labelDialog.edit.setText(previous_text)
-
-        if text and not self.validateLabel(text):
-            self.errorMessage(
-                self.tr("Invalid label"),
-                self.tr("Invalid label '{}' with validation type '{}'").format(
-                    text, self._config["validate_label"]
-                ),
-            )
-            text = ""
-        if text:
-            self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text, flags)
-            shape.group_id = group_id
-            self.addLabel(shape)
-            self.actions.editMode.setEnabled(True)
-            self.actions.undoLastPoint.setEnabled(False)
-            self.actions.undo.setEnabled(True)
+        if len(self.canvas.intersected_shapes):
+            print(len(self.canvas.intersected_shapes))
+            self.remLabels(self.canvas.intersected_shapes)
             self.setDirty()
+            if self.noShapes():
+                for action in self.actions.onShapesPresent:
+                    action.setEnabled(False)
+            self.canvas.intersected_shapes = []
         else:
-            self.canvas.undoLastLine()
-            self.canvas.shapesBackups.pop()
+            items = self.uniqLabelList.selectedItems()
+            text = None
+            if items:
+                text = items[0].data(Qt.UserRole)
+            flags = {}
+            group_id = None
+            if self._config["display_label_popup"] or not text:
+                previous_text = self.labelDialog.edit.text()
+                text, flags, group_id = self.labelDialog.popUp(text)
+                if not text:
+                    self.labelDialog.edit.setText(previous_text)
+
+            if text and not self.validateLabel(text):
+                self.errorMessage(
+                    self.tr("Invalid label"),
+                    self.tr("Invalid label '{}' with validation type '{}'").format(
+                        text, self._config["validate_label"]
+                    ),
+                )
+                text = ""
+            if text:
+                self.labelList.clearSelection()
+                shape = self.canvas.setLastLabel(text, flags)
+                shape.group_id = group_id
+                self.addLabel(shape)
+                self.actions.editMode.setEnabled(True)
+                self.actions.undoLastPoint.setEnabled(False)
+                self.actions.undo.setEnabled(True)
+                self.setDirty()
+            else:
+                self.canvas.undoLastLine()
+                self.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta, orientation):
         units = -delta * 0.1  # natural scroll
