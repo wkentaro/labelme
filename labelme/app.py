@@ -182,6 +182,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
         self.canvas.newShape.connect(self.newShape)
+        self.canvas.deleteSelectedShapes.connect(self.deleteSelected)
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
@@ -1131,45 +1132,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
-    def addLabel(self, shape):
-        if len(self.canvas.intersected_shapes):
-            print(len(self.canvas.intersected_shapes))
-            self.remLabels(self.canvas.intersected_shapes)
-            self.setDirty()
-            if self.noShapes():
-                for action in self.actions.onShapesPresent:
-                    action.setEnabled(False)
-            self.canvas.intersected_shapes = []
-        else:    
-            if shape.group_id is None:
-                text = shape.label
-            else:
-                text = "{} ({})".format(shape.label, shape.group_id)
-            label_list_item = LabelListWidgetItem(text, shape)
-            self.labelList.addItem(label_list_item)
-            if not self.uniqLabelList.findItemsByLabel(shape.label):
-                item = self.uniqLabelList.createItemFromLabel(shape.label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(shape.label)
-                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
-            self.labelDialog.addLabelHistory(shape.label)
-            for action in self.actions.onShapesPresent:
-                action.setEnabled(True)
-
+    def addLabel(self, shape):    
+        if shape.group_id is None:
+            text = shape.label
+        else:
+            text = "{} ({})".format(shape.label, shape.group_id)
+        label_list_item = LabelListWidgetItem(text, shape)
+        self.labelList.addItem(label_list_item)
+        if not self.uniqLabelList.findItemsByLabel(shape.label):
+            item = self.uniqLabelList.createItemFromLabel(shape.label)
+            self.uniqLabelList.addItem(item)
             rgb = self._get_rgb_by_label(shape.label)
+            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+        self.labelDialog.addLabelHistory(shape.label)
+        for action in self.actions.onShapesPresent:
+            action.setEnabled(True)
 
-            r, g, b = rgb
-            label_list_item.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    text, r, g, b
-                )
+        rgb = self._get_rgb_by_label(shape.label)
+
+        r, g, b = rgb
+        label_list_item.setText(
+            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                text, r, g, b
             )
-            shape.line_color = QtGui.QColor(r, g, b)
-            shape.vertex_fill_color = QtGui.QColor(r, g, b)
-            shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-            shape.fill_color = QtGui.QColor(r, g, b, 128)
-            shape.select_line_color = QtGui.QColor(255, 255, 255)
-            shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+        )
+        shape.line_color = QtGui.QColor(r, g, b)
+        shape.vertex_fill_color = QtGui.QColor(r, g, b)
+        shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
+        shape.fill_color = QtGui.QColor(r, g, b, 128)
+        shape.select_line_color = QtGui.QColor(255, 255, 255)
+        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
@@ -1327,11 +1319,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Callback functions:
 
-    def newShape(self):
-        """Pop-up and give focus to the label editor.
-
-        position MUST be in global coordinates.
-        """
+    def deleteSelected(self):
         if len(self.canvas.intersected_shapes):
             print(len(self.canvas.intersected_shapes))
             self.remLabels(self.canvas.intersected_shapes)
@@ -1340,39 +1328,44 @@ class MainWindow(QtWidgets.QMainWindow):
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
             self.canvas.intersected_shapes = []
-        else:
-            items = self.uniqLabelList.selectedItems()
-            text = None
-            if items:
-                text = items[0].data(Qt.UserRole)
-            flags = {}
-            group_id = None
-            if self._config["display_label_popup"] or not text:
-                previous_text = self.labelDialog.edit.text()
-                text, flags, group_id = self.labelDialog.popUp(text)
-                if not text:
-                    self.labelDialog.edit.setText(previous_text)
+            
+    def newShape(self):
+        """Pop-up and give focus to the label editor.
 
-            if text and not self.validateLabel(text):
-                self.errorMessage(
-                    self.tr("Invalid label"),
-                    self.tr("Invalid label '{}' with validation type '{}'").format(
-                        text, self._config["validate_label"]
-                    ),
-                )
-                text = ""
-            if text:
-                self.labelList.clearSelection()
-                shape = self.canvas.setLastLabel(text, flags)
-                shape.group_id = group_id
-                self.addLabel(shape)
-                self.actions.editMode.setEnabled(True)
-                self.actions.undoLastPoint.setEnabled(False)
-                self.actions.undo.setEnabled(True)
-                self.setDirty()
-            else:
-                self.canvas.undoLastLine()
-                self.canvas.shapesBackups.pop()
+        position MUST be in global coordinates.
+        """
+        items = self.uniqLabelList.selectedItems()
+        text = None
+        if items:
+            text = items[0].data(Qt.UserRole)
+        flags = {}
+        group_id = None
+        if self._config["display_label_popup"] or not text:
+            previous_text = self.labelDialog.edit.text()
+            text, flags, group_id = self.labelDialog.popUp(text)
+            if not text:
+                self.labelDialog.edit.setText(previous_text)
+
+        if text and not self.validateLabel(text):
+            self.errorMessage(
+                self.tr("Invalid label"),
+                self.tr("Invalid label '{}' with validation type '{}'").format(
+                    text, self._config["validate_label"]
+                ),
+            )
+            text = ""
+        if text:
+            self.labelList.clearSelection()
+            shape = self.canvas.setLastLabel(text, flags)
+            shape.group_id = group_id
+            self.addLabel(shape)
+            self.actions.editMode.setEnabled(True)
+            self.actions.undoLastPoint.setEnabled(False)
+            self.actions.undo.setEnabled(True)
+            self.setDirty()
+        else:
+            self.canvas.undoLastLine()
+            self.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta, orientation):
         units = -delta * 0.1  # natural scroll

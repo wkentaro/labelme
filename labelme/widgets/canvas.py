@@ -23,6 +23,7 @@ class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
+    deleteSelectedShapes = QtCore.Signal()
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
@@ -644,7 +645,7 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.current = None
         self.setHiding(False)
-        self.newShape.emit()
+        self.deleteSelectedShapes.emit()
         self.update()
         
     def closeEnough(self, p1, p2):
