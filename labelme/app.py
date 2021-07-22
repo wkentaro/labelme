@@ -568,6 +568,27 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing.trigger()
 
+        fill_first_vertex = action(
+            self.tr("Fill First Vertex"),
+            lambda value: setattr(Shape,'fill_first_vertex',value),
+            None,
+            "color",
+            self.tr("Fill first vertex of the polygon"),
+            checkable=True,
+            enabled=True
+        )
+        fill_first_vertex.toggle()
+        
+        show_label = action(
+            self.tr("Show Polygon Label"),
+            lambda value: setattr(Shape,'show_label',value),
+            None,
+            "eye",
+            self.tr("Show label beside first vertex"),
+            checkable=True,
+            enabled=True,
+        )
+
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
         utils.addActions(labelMenu, (edit, delete))
@@ -700,9 +721,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.file_dock.toggleViewAction(),
                 None,
                 fill_drawing,
+                fill_first_vertex,
                 None,
                 hideAll,
                 showAll,
+                show_label,
                 None,
                 zoomIn,
                 zoomOut,

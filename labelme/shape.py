@@ -1,5 +1,6 @@
 import copy
 import math
+from PyQt5.QtGui import QFont
 
 from qtpy import QtCore
 from qtpy import QtGui
@@ -43,6 +44,8 @@ class Shape(object):
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
+    show_label = False
+    fill_first_vertex = True
 
     def __init__(
         self,
@@ -165,10 +168,15 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
             else:
                 line_path.moveTo(self.points[0])
+                if self.show_label:
+                    size = max(7, int(round(2.0 / self.scale * 7)))
+                    painter.setFont(QFont("Arial", size, QFont.Bold))
+                    painter.drawText(self.points[0].x()+pen.width()*3, self.points[0].y()-pen.width()*3,self.label)
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
                 # may be desirable.
-                # self.drawVertex(vrtx_path, 0)
+                if not self.fill_first_vertex:
+                    self.drawVertex(vrtx_path, 0)
 
                 for i, p in enumerate(self.points):
                     line_path.lineTo(p)
