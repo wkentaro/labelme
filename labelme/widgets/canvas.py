@@ -24,6 +24,7 @@ class Canvas(QtWidgets.QWidget):
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
     deleteSelectedShapes = QtCore.Signal()
+    changeLabels = QtCore.Signal()
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
@@ -103,6 +104,7 @@ class Canvas(QtWidgets.QWidget):
         if value not in [
             "polygon",
             "polygon_d",
+            "polygon_cls_edit",
             "rectangle",
             "circle",
             "line",
@@ -210,7 +212,7 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.intersectionPoint(self.current[-1], pos)
             elif (
                 len(self.current) > 1
-                and self.createMode in ["polygon", "polygon_d"]
+                and self.createMode in ["polygon", "polygon_d", "polygon_cls_edit"]
                 and self.closeEnough(pos, self.current[0])
             ):
                 # Attract line to starting point and
@@ -218,7 +220,7 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip", "polygon_d"]:
+            if self.createMode in ["polygon", "linestrip", "polygon_d", "polygon_cls_edit"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
             elif self.createMode == "rectangle":
@@ -349,6 +351,11 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finaliseForDelete()
+                    elif self.createMode == "polygon_cls_edit":
+                        self.current.addPoint(self.line[1])
+                        self.line[0] = self.current[-1]
+                        if self.current.isClosed():
+                            self.finaliseForChangeLabels()
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -647,6 +654,16 @@ class Canvas(QtWidgets.QWidget):
         self.setHiding(False)
         self.deleteSelectedShapes.emit()
         self.update()
+    
+    def finaliseForChangeLabels(self):
+        assert self.current
+        self.current.close()
+        self.intersected_shapes = labelme.utils.check_intersections(self.current, self.shapes)
+        self.storeShapes()
+        self.current = None
+        self.setHiding(False)
+        self.changeLabels.emit()
+        self.update()
         
     def closeEnough(self, p1, p2):
         # d = distance(p1 - p2)
@@ -770,7 +787,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        if self.createMode in ["polygon", "linestrip", "polygon_d"]:
+        if self.createMode in ["polygon", "linestrip", "polygon_d", "polygon_cls_edit"]:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]

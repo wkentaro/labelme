@@ -183,6 +183,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas.newShape.connect(self.newShape)
         self.canvas.deleteSelectedShapes.connect(self.deleteSelected)
+        self.canvas.changeLabels.connect(self.changeLabels)
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
@@ -332,6 +333,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Delete the selected polygons"),
             enabled=True,
         )
+        editLabelsMode = action(
+            self.tr("Edit Labels for selected Polygons"),
+            lambda: self.toggleDrawMode(False, createMode="polygon_cls_edit"),
+            shortcuts["polygon_cls_edit"],
+            "edit",
+            self.tr("Edit Labels for selected Polygons"),
+            enabled=True,
+        )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
             lambda: self.toggleDrawMode(False, createMode="rectangle"),
@@ -380,7 +389,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Move and edit the selected polygons"),
             enabled=False,
         )
-
         delete = action(
             self.tr("Delete Polygons"),
             self.deleteSelectedShape,
@@ -576,6 +584,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             deleteSelectedMode=deleteSelectedMode,
+            editLabelsMode=editLabelsMode,
             edit=edit,
             copy=copy,
             undoLastPoint=undoLastPoint,
@@ -607,6 +616,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 copy,
                 delete,
                 deleteSelectedMode,
+                editLabelsMode,
                 None,
                 undo,
                 undoLastPoint,
@@ -632,6 +642,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 addPointToEdge,
                 removePoint,
                 deleteSelectedMode,
+                editLabelsMode,
             ),
             onLoadActive=(
                 close,
@@ -644,6 +655,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 brightnessContrast,
                 deleteSelectedMode,
+                editLabelsMode,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
         )
@@ -731,6 +743,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copy,
             delete,
             deleteSelectedMode,
+            editLabelsMode,
             undo,
             brightnessContrast,
             None,
@@ -943,6 +956,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
         self.actions.deleteSelectedMode.setEnabled(not drawing)
+        self.actions.editLabelsMode.setEnabled(not drawing)
 
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
@@ -958,14 +972,25 @@ class MainWindow(QtWidgets.QMainWindow):
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
                 self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
-            if createMode == "polygon_d":
+            elif createMode == "polygon_d":
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(False)
+                self.actions.editLabelsMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == "polygon_cls_edit":
+                self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -974,6 +999,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "rectangle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -982,6 +1008,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "line":
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
@@ -990,6 +1017,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "point":
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -998,6 +1026,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createLineMode.setEnabled(True)
@@ -1006,6 +1035,7 @@ class MainWindow(QtWidgets.QMainWindow):
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -1129,6 +1159,7 @@ class MainWindow(QtWidgets.QMainWindow):
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
         self.actions.deleteSelectedMode.setEnabled(n_selected)
+        self.actions.editLabelsMode.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
@@ -1328,7 +1359,66 @@ class MainWindow(QtWidgets.QMainWindow):
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
             self.canvas.intersected_shapes = []
-            
+    
+    def changeLabels(self):
+        if len(self.canvas.intersected_shapes):
+            text, flags, group_id = self.labelDialog.popUp(
+                text=self.canvas.intersected_shapes[0].label,
+                flags=self.canvas.intersected_shapes[0].flags,
+                group_id=self.canvas.intersected_shapes[0].group_id,
+            )
+            if text is None:
+                return
+            if not self.validateLabel(text):
+                self.errorMessage(
+                    self.tr("Invalid label"),
+                    self.tr("Invalid label '{}' with validation type '{}'").format(
+                        text, self._config["validate_label"]
+                    ),
+                )
+                return
+            for shape in self.canvas.intersected_shapes:
+                item = self.labelList.findItemByShape(shape)
+                shape = item.shape()
+                if shape is None:
+                    return
+                if text is None:
+                    return
+                if not self.validateLabel(text):
+                    self.errorMessage(
+                        self.tr("Invalid label"),
+                        self.tr("Invalid label '{}' with validation type '{}'").format(
+                            text, self._config["validate_label"]
+                        ),
+                    )
+                    return
+                shape.label = text
+                shape.flags = flags
+                shape.group_id = group_id
+                if shape.group_id is None:
+                    item.setText(shape.label)
+                else:
+                    item.setText("{} ({})".format(shape.label, shape.group_id))
+                
+                item = self.uniqLabelList.findItemsByLabel(shape.label)
+                rgb = self._get_rgb_by_label(shape.label)
+                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+    
+                r, g, b = rgb
+                item.setText(
+                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                        text, r, g, b
+                    )
+                )
+                shape.line_color = QtGui.QColor(r, g, b)
+                shape.vertex_fill_color = QtGui.QColor(r, g, b)
+                shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
+                shape.fill_color = QtGui.QColor(r, g, b, 128)
+                shape.select_line_color = QtGui.QColor(255, 255, 255)
+                shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+                    
+                self.setDirty()
+    
     def newShape(self):
         """Pop-up and give focus to the label editor.
 
