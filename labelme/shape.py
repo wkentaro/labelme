@@ -90,6 +90,7 @@ class Shape(object):
             "polygon",
             "polygon_d",
             "polygon_cls_edit",
+            "polygon_hide",
             "rectangle",
             "point",
             "line",
@@ -109,7 +110,7 @@ class Shape(object):
             self.points.append(point)
 
     def canAddPoint(self):
-        return self.shape_type in ["polygon", "linestrip", "polygon_d", "polygon_cls_edit",]
+        return self.shape_type in ["polygon", "linestrip", "polygon_d", "polygon_cls_edit", "polygon_hide"]
 
     def popPoint(self):
         if self.points:

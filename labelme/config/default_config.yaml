@@ -96,6 +96,7 @@ shortcuts:
   delete_polygon: Delete
   delete_selected_polygon: Ctrl+L
   polygon_cls_edit: Ctrl+A
+  polygon_hide: Ctrl+H
   duplicate_polygon: Ctrl+D
   undo: Ctrl+Z
   undo_last_point: [Ctrl+Z, Backspace]

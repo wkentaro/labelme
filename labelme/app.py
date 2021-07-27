@@ -334,11 +334,19 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )
         editLabelsMode = action(
-            self.tr("Edit Labels for selected Polygons"),
+            self.tr("Edit classes"),
             lambda: self.toggleDrawMode(False, createMode="polygon_cls_edit"),
             shortcuts["polygon_cls_edit"],
             "edit",
-            self.tr("Edit Labels for selected Polygons"),
+            self.tr("Edit classes"),
+            enabled=True,
+        )
+        hideShapesMode = action(
+            self.tr("Hide shapes"),
+            lambda: self.toggleDrawMode(False, createMode="polygon_hide"),
+            shortcuts["polygon_hide"],
+            "edit",
+            self.tr("Hide shapes"),
             enabled=True,
         )
         createRectangleMode = action(
@@ -584,6 +592,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             deleteSelectedMode=deleteSelectedMode,
+            hideShapesMode=hideShapesMode,
             editLabelsMode=editLabelsMode,
             edit=edit,
             copy=copy,
@@ -616,6 +625,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 copy,
                 delete,
                 deleteSelectedMode,
+                hideShapesMode,
                 editLabelsMode,
                 None,
                 undo,
@@ -642,6 +652,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 addPointToEdge,
                 removePoint,
                 deleteSelectedMode,
+                hideShapesMode,
                 editLabelsMode,
             ),
             onLoadActive=(
@@ -655,6 +666,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 brightnessContrast,
                 deleteSelectedMode,
+                hideShapesMode,
                 editLabelsMode,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
@@ -743,6 +755,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copy,
             delete,
             deleteSelectedMode,
+            hideShapesMode,
             editLabelsMode,
             undo,
             brightnessContrast,
@@ -956,6 +969,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
         self.actions.deleteSelectedMode.setEnabled(not drawing)
+        self.actions.hideShapesMode.setEnabled(not drawing)
         self.actions.editLabelsMode.setEnabled(not drawing)
 
     def toggleDrawMode(self, edit=True, createMode="polygon"):
@@ -973,6 +987,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(False)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -982,6 +997,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(False)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -991,6 +1007,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(False)
+                self.actions.hideShapesMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == "polygon_hide":
+                self.actions.createMode.setEnabled(True)
+                self.actions.deleteSelectedMode.setEnabled(True)
+                self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -1000,6 +1027,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -1009,6 +1037,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
@@ -1018,6 +1047,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -1027,6 +1057,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createLineMode.setEnabled(True)
@@ -1036,6 +1067,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createMode.setEnabled(True)
                 self.actions.deleteSelectedMode.setEnabled(True)
                 self.actions.editLabelsMode.setEnabled(True)
+                self.actions.hideShapesMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -1159,6 +1191,7 @@ class MainWindow(QtWidgets.QMainWindow):
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
         self.actions.deleteSelectedMode.setEnabled(n_selected)
+        self.actions.hideShapesMode.setEnabled(n_selected)
         self.actions.editLabelsMode.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
