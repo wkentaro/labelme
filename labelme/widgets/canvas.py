@@ -659,7 +659,11 @@ class Canvas(QtWidgets.QWidget):
         self.current.close()
         self.intersected_shapes = labelme.utils.check_intersections(self.current, self.shapes)
         for shape in self.intersected_shapes:
-            self.deleteShape(shape)
+            if shape in self.selectedShapes:
+                self.selectedShapes.remove(shape)
+            if shape in self.shapes:
+                self.shapes.remove(shape)
+                
         self.storeShapes()
         self.current = None
         self.setHiding(False)
