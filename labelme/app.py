@@ -1152,7 +1152,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem()
             item.setData(Qt.UserRole, shape.label)
             self.uniqLabelList.addItem(item)
-
+            
     def fileSearchChanged(self):
         self.importDirImages(
             self.lastOpenDir,
@@ -1415,16 +1415,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape = item.shape()
                 if shape is None:
                     return
-                if text is None:
-                    return
-                if not self.validateLabel(text):
-                    self.errorMessage(
-                        self.tr("Invalid label"),
-                        self.tr("Invalid label '{}' with validation type '{}'").format(
-                            text, self._config["validate_label"]
-                        ),
-                    )
-                    return
+        
                 shape.label = text
                 shape.flags = flags
                 shape.group_id = group_id
@@ -1433,22 +1424,27 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:
                     item.setText("{} ({})".format(shape.label, shape.group_id))
                 
-                item = self.uniqLabelList.findItemsByLabel(shape.label)
-                rgb = self._get_rgb_by_label(shape.label)
-                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+                if not self.uniqLabelList.findItemsByLabel(shape.label):
+                    item = self.uniqLabelList.createItemFromLabel(shape.label)
+                    self.uniqLabelList.addItem(item)
+                    rgb = self._get_rgb_by_label(shape.label)
+                    self.uniqLabelList.setItemLabel(item, shape.label, rgb)
     
-                r, g, b = rgb
-                item.setText(
-                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                        text, r, g, b
+                    r, g, b = rgb
+                    item.setText(
+                        '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                            text, r, g, b
+                        )
                     )
-                )
-                shape.line_color = QtGui.QColor(r, g, b)
-                shape.vertex_fill_color = QtGui.QColor(r, g, b)
-                shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-                shape.fill_color = QtGui.QColor(r, g, b, 128)
-                shape.select_line_color = QtGui.QColor(255, 255, 255)
-                shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+                    
+                    shape.line_color = QtGui.QColor(r, g, b)
+                    shape.vertex_fill_color = QtGui.QColor(r, g, b)
+                    shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
+                    shape.fill_color = QtGui.QColor(r, g, b, 128)
+                    shape.select_line_color = QtGui.QColor(255, 255, 255)
+                    shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+                    
+                    self.labelDialog.addLabelHistory(shape.label)
                     
                 self.setDirty()
     
