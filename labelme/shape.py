@@ -21,17 +21,9 @@ DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
 class Shape(object):
 
-    # Render handles as squares
-    P_SQUARE = 0
+    P_SQUARE, P_ROUND = 0, 1
 
-    # Render handles as circles
-    P_ROUND = 1
-
-    # Flag for the handles we would move if dragging
-    MOVE_VERTEX = 0
-
-    # Flag for all other handles on the curent shape
-    NEAR_VERTEX = 1
+    MOVE_VERTEX, NEAR_VERTEX = 0, 1
 
     # The following class variables influence the drawing of all shape objects.
     line_color = DEFAULT_LINE_COLOR
@@ -51,9 +43,11 @@ class Shape(object):
         shape_type=None,
         flags=None,
         group_id=None,
+        visi=2,
     ):
         self.label = label
         self.group_id = group_id
+        self.visi = visi
         self.points = []
         self.fill = False
         self.selected = False
@@ -266,18 +260,10 @@ class Shape(object):
         self.points[i] = self.points[i] + offset
 
     def highlightVertex(self, i, action):
-        """Highlight a vertex appropriately based on the current action
-
-        Args:
-            i (int): The vertex index
-            action (int): The action
-            (see Shape.NEAR_VERTEX and Shape.MOVE_VERTEX)
-        """
         self._highlightIndex = i
         self._highlightMode = action
 
     def highlightClear(self):
-        """Clear the highlighted point"""
         self._highlightIndex = None
 
     def copy(self):

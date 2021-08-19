@@ -168,7 +168,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
-            num_backups=self._config["canvas"]["num_backups"],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -831,9 +830,6 @@ class MainWindow(QtWidgets.QMainWindow):
         utils.addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
-        # Even if we autosave the file, we keep the ability to undo
-        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
-
         if self._config["auto_save"] or self.actions.saveAuto.isChecked():
             label_file = osp.splitext(self.imagePath)[0] + ".json"
             if self.output_dir:
@@ -843,6 +839,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
+        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
         title = __appname__
         if self.filename is not None:
             title = "{} - {}*".format(title, self.filename)
@@ -1034,10 +1031,11 @@ class MainWindow(QtWidgets.QMainWindow):
         shape = item.shape()
         if shape is None:
             return
-        text, flags, group_id = self.labelDialog.popUp(
+        text, flags, group_id, visi = self.labelDialog.popUp(
             text=shape.label,
             flags=shape.flags,
             group_id=shape.group_id,
+            visi=shape.visi,
         )
         if text is None:
             return
@@ -1052,10 +1050,12 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.label = text
         shape.flags = flags
         shape.group_id = group_id
+        shape.visi = visi
         if shape.group_id is None:
-            item.setText(shape.label)
+            item.setText("{} ({})".format(shape.label, shape.visi))
         else:
-            item.setText("{} ({})".format(shape.label, shape.group_id))
+            item.setText("{} ({})({})".format(shape.label, shape.visi, shape.group_id))
+
         self.setDirty()
         if not self.uniqLabelList.findItemsByLabel(shape.label):
             item = QtWidgets.QListWidgetItem()
@@ -1105,8 +1105,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def addLabel(self, shape):
         if shape.group_id is None:
             text = shape.label
+            text = "{} ({})".format(shape.label, shape.visi)
         else:
-            text = "{} ({})".format(shape.label, shape.group_id)
+            text = "{} ({})({})".format(shape.label, shape.visi, shape.group_id)
+
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
         if not self.uniqLabelList.findItemsByLabel(shape.label):
@@ -1169,16 +1171,16 @@ class MainWindow(QtWidgets.QMainWindow):
             shape_type = shape["shape_type"]
             flags = shape["flags"]
             group_id = shape["group_id"]
+            visi = shape["visi"]
             other_data = shape["other_data"]
-
             if not points:
                 # skip point-empty shape
                 continue
-
             shape = Shape(
                 label=label,
                 shape_type=shape_type,
                 group_id=group_id,
+                visi=visi,
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1215,6 +1217,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     label=s.label.encode("utf-8") if PY2 else s.label,
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
+                    visi=s.visi,
                     shape_type=s.shape_type,
                     flags=s.flags,
                 )
@@ -1300,9 +1303,10 @@ class MainWindow(QtWidgets.QMainWindow):
             text = items[0].data(Qt.UserRole)
         flags = {}
         group_id = None
+        visi = None
         if self._config["display_label_popup"] or not text:
             previous_text = self.labelDialog.edit.text()
-            text, flags, group_id = self.labelDialog.popUp(text)
+            text, flags, group_id, visi = self.labelDialog.popUp(text)
             if not text:
                 self.labelDialog.edit.setText(previous_text)
 
@@ -1318,6 +1322,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.labelList.clearSelection()
             shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
+            shape.visi = visi
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
