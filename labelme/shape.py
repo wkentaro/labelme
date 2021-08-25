@@ -4,7 +4,12 @@ import math
 from qtpy import QtCore
 from qtpy import QtGui
 
+import numpy as np
+from skimage.measure import EllipseModel
+from matplotlib import patches
+
 import labelme.utils
+from labelme.logger import logger
 
 
 # TODO(unknown):
@@ -92,6 +97,7 @@ class Shape(object):
             "point",
             "line",
             "circle",
+            "ellipse",
             "linestrip",
         ]:
             raise ValueError("Unexpected shape_type: {}".format(value))
@@ -158,6 +164,26 @@ class Shape(object):
                     line_path.addEllipse(rectangle)
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "ellipse":
+                if len(self.points) >= 4:
+                    a, b, theta, xc, yc = self.fitEllipse(self.points)
+                    if a != None:
+                        rectangle = QtCore.QRectF(-a, -b, 2*a, 2*b)
+                        line_path.addEllipse(rectangle)
+                        painter.translate(xc, yc)
+                        painter.rotate(theta)
+                        painter.drawPath(line_path)
+                        if self.fill:
+                            color = (
+                                self.select_fill_color
+                                if self.selected
+                                else self.fill_color
+                            )
+                            painter.fillPath(line_path, color)
+                        painter.rotate(-theta)
+                        painter.translate(-xc, -yc)
+                for i in range(len(self.points)):
+                    self.drawVertex(vrtx_path, i)
             elif self.shape_type == "linestrip":
                 line_path.moveTo(self.points[0])
                 for i, p in enumerate(self.points):
@@ -176,16 +202,23 @@ class Shape(object):
                 if self.isClosed():
                     line_path.lineTo(self.points[0])
 
-            painter.drawPath(line_path)
+            # For ellipses this step was performed in advance
+            if self.shape_type != "ellipse":
+                painter.drawPath(line_path)
+            
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self._vertex_fill_color)
-            if self.fill:
-                color = (
-                    self.select_fill_color
-                    if self.selected
-                    else self.fill_color
-                )
-                painter.fillPath(line_path, color)
+            
+            # For ellipses this step was performed in advance
+            if self.shape_type != "ellipse":
+                if self.fill:
+                    color = (
+                        self.select_fill_color
+                        if self.selected
+                        else self.fill_color
+                    )
+                    painter.fillPath(line_path, color)
+
 
     def drawVertex(self, path, i):
         d = self.point_size / self.scale
@@ -227,7 +260,12 @@ class Shape(object):
         return post_i
 
     def containsPoint(self, point):
-        return self.makePath().contains(point)
+        if self.shape_type == "ellipse":
+            a, b, theta, xc, yc = self.fitEllipse(self.points)
+            ellipse = patches.Ellipse(xy=(xc, yc), width=2*a, height=2*b, angle=theta)
+            return ellipse.contains_point([point.x(), point.y()])
+        else:
+            return self.makePath().contains(point)
 
     def getCircleRectFromLine(self, line):
         """Computes parameters to draw with `QPainterPath::addEllipse`"""
@@ -238,6 +276,21 @@ class Shape(object):
         d = math.sqrt(math.pow(r.x(), 2) + math.pow(r.y(), 2))
         rectangle = QtCore.QRectF(c.x() - d, c.y() - d, 2 * d, 2 * d)
         return rectangle
+
+    def fitEllipse(self, points):
+
+        points_list = [(p.x(), p.y()) for p in points]
+        points_array = np.array(points_list)
+
+        ell = EllipseModel()
+        ell.estimate(points_array)
+
+        if ell.params:
+            xc, yc, a, b, theta = ell.params
+            return a, b, theta*180/math.pi, xc, yc
+        else:
+            return None, None, None, None, None
+
 
     def makePath(self):
         if self.shape_type == "rectangle":
@@ -257,6 +310,10 @@ class Shape(object):
         return path
 
     def boundingRect(self):
+        # TODO
+        logger.error(
+            "The 'boundingRect' function is not supported for ellipses"
+        )
         return self.makePath().boundingRect()
 
     def moveBy(self, offset):

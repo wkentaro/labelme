@@ -221,6 +221,16 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../app.py" line="271"/>
+        <source>Create Ellipse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="271"/>
+        <source>Start drawing ellipses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../app.py" line="279"/>
         <source>Create Line</source>
         <translation type="unfinished"></translation>

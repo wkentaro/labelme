@@ -28,6 +28,11 @@ def shape_to_mask(
         (cx, cy), (px, py) = xy
         d = math.sqrt((cx - px) ** 2 + (cy - py) ** 2)
         draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
+    elif shape_type == "ellipse":
+        # TODO
+        logger.error(
+            "The 'shape_to_mask' function is not supported for ellipses"
+        )
     elif shape_type == "rectangle":
         assert len(xy) == 2, "Shape of shape_type=rectangle must have 2 points"
         draw.rectangle(xy, outline=1, fill=1)
