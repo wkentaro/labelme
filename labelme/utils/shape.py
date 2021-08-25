@@ -29,7 +29,7 @@ def shape_to_mask(
         d = math.sqrt((cx - px) ** 2 + (cy - py) ** 2)
         draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
     elif shape_type == "ellipse":
-        # TODO
+        # TODO(ellipse)
         logger.error(
             "The 'shape_to_mask' function is not supported for ellipses"
         )

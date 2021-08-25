@@ -4,12 +4,12 @@ import math
 from qtpy import QtCore
 from qtpy import QtGui
 
+from matplotlib import patches
 import numpy as np
 from skimage.measure import EllipseModel
-from matplotlib import patches
 
-import labelme.utils
 from labelme.logger import logger
+import labelme.utils
 
 
 # TODO(unknown):
@@ -167,8 +167,8 @@ class Shape(object):
             elif self.shape_type == "ellipse":
                 if len(self.points) >= 4:
                     a, b, theta, xc, yc = self.fitEllipse(self.points)
-                    if a != None:
-                        rectangle = QtCore.QRectF(-a, -b, 2*a, 2*b)
+                    if a is not None:
+                        rectangle = QtCore.QRectF(-a, -b, 2 * a, 2 * b)
                         line_path.addEllipse(rectangle)
                         painter.translate(xc, yc)
                         painter.rotate(theta)
@@ -205,10 +205,10 @@ class Shape(object):
             # For ellipses this step was performed in advance
             if self.shape_type != "ellipse":
                 painter.drawPath(line_path)
-            
+
             painter.drawPath(vrtx_path)
             painter.fillPath(vrtx_path, self._vertex_fill_color)
-            
+
             # For ellipses this step was performed in advance
             if self.shape_type != "ellipse":
                 if self.fill:
@@ -218,7 +218,6 @@ class Shape(object):
                         else self.fill_color
                     )
                     painter.fillPath(line_path, color)
-
 
     def drawVertex(self, path, i):
         d = self.point_size / self.scale
@@ -262,7 +261,12 @@ class Shape(object):
     def containsPoint(self, point):
         if self.shape_type == "ellipse":
             a, b, theta, xc, yc = self.fitEllipse(self.points)
-            ellipse = patches.Ellipse(xy=(xc, yc), width=2*a, height=2*b, angle=theta)
+            ellipse = patches.Ellipse(
+                xy=(xc, yc),
+                width=2 * a,
+                height=2 * b,
+                angle=theta
+            )
             return ellipse.contains_point([point.x(), point.y()])
         else:
             return self.makePath().contains(point)
@@ -287,10 +291,9 @@ class Shape(object):
 
         if ell.params:
             xc, yc, a, b, theta = ell.params
-            return a, b, theta*180/math.pi, xc, yc
+            return a, b, theta * 180 / math.pi, xc, yc
         else:
             return None, None, None, None, None
-
 
     def makePath(self):
         if self.shape_type == "rectangle":
@@ -310,7 +313,7 @@ class Shape(object):
         return path
 
     def boundingRect(self):
-        # TODO
+        # TODO(ellipse)
         logger.error(
             "The 'boundingRect' function is not supported for ellipses"
         )

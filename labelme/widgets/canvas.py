@@ -782,7 +782,7 @@ class Canvas(QtWidgets.QWidget):
         elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]
         elif self.createMode == "ellipse":
-            # TODO
+            # TODO(ellipse)
             logger.error(
                 "The 'undoLastLine' function is not supported for ellipses"
             )
