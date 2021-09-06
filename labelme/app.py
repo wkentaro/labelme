@@ -2071,7 +2071,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.clear()
         for filename in self.scanAllImages(dirpath):
             if pattern and pattern not in filename:
-                continue
+                try:
+                    if not re.search(pattern, filename):
+                        continue
+                except re.error:
+                    pass
             label_file = osp.splitext(filename)[0] + ".json"
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
