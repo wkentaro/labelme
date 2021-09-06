@@ -2017,7 +2017,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for root, dirs, files in os.walk(folderPath):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
-                    relativePath = osp.join(root, file)
+                    relativePath = os.path.normpath(osp.join(root, file))
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
         return images
