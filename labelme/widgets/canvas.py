@@ -1,3 +1,5 @@
+import time
+
 import gdown
 from qtpy import QtCore
 from qtpy import QtGui
@@ -40,7 +42,7 @@ class Canvas(QtWidgets.QWidget):
 
     _fill_drawing = False
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, edit_label_method, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
         self.double_click = kwargs.pop("double_click", "close")
         if self.double_click not in [None, "close"]:
@@ -95,6 +97,8 @@ class Canvas(QtWidgets.QWidget):
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
+        self._lastMouseReleaseTime = 0
+        self._editLabelMethod = edit_label_method
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -235,10 +239,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
-            if QT5:
-                pos = self.transformPos(ev.localPos())
-            else:
-                pos = self.transformPos(ev.posF())
+            pos = self.getMousePos(ev)
         except AttributeError:
             return
 
@@ -409,13 +410,9 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        if QT5:
-            pos = self.transformPos(ev.localPos())
-        else:
-            pos = self.transformPos(ev.posF())
+        pos = self.getMousePos(ev)
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
-
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
@@ -500,7 +497,14 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
             self.prevPoint = pos
 
+    def getMousePos(self, ev):
+        return self.transformPos(ev.localPos() if QT5 else ev.posF())
+
     def mouseReleaseEvent(self, ev):
+        tm = time.time()
+        is_double_click = (tm - self._lastMouseReleaseTime) < .4
+        self._lastMouseReleaseTime = tm
+
         if ev.button() == QtCore.Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
@@ -532,6 +536,10 @@ class Canvas(QtWidgets.QWidget):
                 self.shapeMoved.emit()
 
             self.movingShape = False
+
+        if is_double_click:
+            if ev.button() == QtCore.Qt.LeftButton and self.editing() and len(self.selectedShapes or []) == 1:
+                self._editLabelMethod()
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
