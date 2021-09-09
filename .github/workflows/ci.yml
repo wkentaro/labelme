@@ -135,6 +135,7 @@ jobs:
       if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.7'
       run: |
         # Build the standalone executable
+        pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
         pip install pyinstaller
         pyinstaller labelme.spec
         dist/labelme --version
