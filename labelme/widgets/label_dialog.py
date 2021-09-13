@@ -42,7 +42,7 @@ class LabelDialog(QtWidgets.QDialog):
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
         self._fit_to_content = fit_to_content
-
+        
         super(LabelDialog, self).__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
@@ -103,7 +103,13 @@ class LabelDialog(QtWidgets.QDialog):
         self.resetFlags()
         layout.addItem(self.flagsLayout)
         self.edit.textChanged.connect(self.updateFlags)
+        #text edit
+        self.textEdit = QtWidgets.QTextEdit()
+        self.textEdit.setPlaceholderText('Label content')
+        layout.addWidget(self.textEdit)
+        self.resize(300,200)
         self.setLayout(layout)
+
         # completion
         completer = QtWidgets.QCompleter()
         if not QT5 and completion != "startswith":
@@ -199,8 +205,17 @@ class LabelDialog(QtWidgets.QDialog):
         if group_id:
             return int(group_id)
         return None
+        
+    def getContent(self):
+        content = self.textEdit.toPlainText()
+        if content:
+            return content
+        return None
+        
+    def setContent(self, content):
+        self.textEdit.setPlainText(content)
 
-    def popUp(self, text=None, move=True, flags=None, group_id=None):
+    def popUp(self, text=None, move=True, flags=None, group_id=None, content=None):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
@@ -212,6 +227,10 @@ class LabelDialog(QtWidgets.QDialog):
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
+        # if content is None, make the self.textEdit empty
+        if content is None:
+            content=""
+        self.setContent(content)
         if flags:
             self.setFlags(flags)
         else:
@@ -233,6 +252,6 @@ class LabelDialog(QtWidgets.QDialog):
         if move:
             self.move(QtGui.QCursor.pos())
         if self.exec_():
-            return self.edit.text(), self.getFlags(), self.getGroupId()
+            return self.edit.text(), self.getFlags(), self.getGroupId(), self.getContent()
         else:
-            return None, None, None
+            return None, None, None, None
