@@ -2081,10 +2081,10 @@ class MainWindow(QtWidgets.QMainWindow):
         for filename in self.imageList:
             images.append(filename)
         pd = self.startOperationDialog()
-        threading.Thread(target=self.detectBarcodesOfOneAndSaveLabelFile, args=((images,pd))).start()
+        threading.Thread(target=self.detectBarcodesOfAllAndSaveLabelFile, args=((images,pd))).start()
        
             
-    def detectBarcodesOfOneAndSaveLabelFile(self,images,pd):
+    def detectBarcodesOfAllAndSaveLabelFile(self,images,pd):
         index = 0
         total = len(images)
         for filename in images:
