@@ -31,7 +31,10 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from barcode_reader.dynamsoft import DynamsoftBarcodeReader
 
+import time
+import threading
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -42,7 +45,7 @@ from labelme.widgets import ZoomWidget
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
-
+reader = DynamsoftBarcodeReader()
 LABEL_COLORMAP = imgviz.label_colormap(value=200)
 
 
@@ -69,7 +72,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if config is None:
             config = get_config()
         self._config = config
-
+        self.decodingCanceled = False
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
         Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
@@ -545,7 +548,24 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )
         fill_drawing.trigger()
-
+        #intelligence actions
+        detect_barcodes = action(
+            self.tr("Detect Barcodes for the Current File"),
+            self.detectBarcodesOfOne,
+            None,
+            None,
+            self.tr("Detect Barcodes for the Current File")
+        )
+        
+        detect_barcodes_all = action(
+            self.tr("Detect Barcodes for All Files"),
+            self.detectBarcodesOfAll,
+            None,
+            None,
+            self.tr("Detect Barcodes for All Files")
+        )
+        
+        
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
         utils.addActions(labelMenu, (edit, delete))
@@ -642,6 +662,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
+            intelligence=self.menu(self.tr("&Intelligence")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
             labelList=labelMenu,
@@ -667,6 +688,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         utils.addActions(self.menus.help, (help,))
+        utils.addActions(self.menus.intelligence, (detect_barcodes,detect_barcodes_all))
         utils.addActions(
             self.menus.view,
             (
@@ -2023,3 +2045,121 @@ class MainWindow(QtWidgets.QMainWindow):
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
         return images
+        
+    def detectBarcodesOfOne(self):
+        if os.path.exists(self.filename):
+            self.labelList.clearSelection()
+            s = self.getBarcodeShapesFromOfOne(self.filename)
+            self.loadShapes(s)
+            self.actions.editMode.setEnabled(True)
+            self.actions.undoLastPoint.setEnabled(False)
+            self.actions.undo.setEnabled(True)
+            self.setDirty()
+            
+    def getBarcodeShapesFromOfOne(self,filename):
+        results = reader.decode_file(filename)["results"]
+        s = []
+        for result in results:
+            shape = Shape()
+
+            shape.label = result["barcodeFormat"]
+            shape.content = result["barcodeText"]
+            shape.shape_type="polygon"
+            shape.flags = {}
+            shape.other_data = {}
+            for i in range(1,5):
+                x = result["x"+str(i)]
+                y = result["y"+str(i)]
+                shape.addPoint(QtCore.QPointF(x, y))
+            shape.close()
+            s.append(shape)
+            #self.addLabel(shape)
+        return s
+        
+    def detectBarcodesOfAll(self):
+        images=[]
+        for filename in self.imageList:
+            images.append(filename)
+        pd = self.startOperationDialog()
+        threading.Thread(target=self.detectBarcodesOfOneAndSaveLabelFile, args=((images,pd))).start()
+       
+            
+    def detectBarcodesOfOneAndSaveLabelFile(self,images,pd):
+        index = 0
+        total = len(images)
+        for filename in images:
+            if self.isVisible==False:
+                return
+            if self.operationCanceled==True:
+                return
+            index = index + 1
+            json_name = osp.splitext(filename)[0] + ".json"
+            if os.path.exists(json_name):
+                continue
+            time.sleep(0.05)
+            progress = int(index/total*100)
+            pd.setValue(progress)
+            try:
+                print("Decoding "+filename)
+                s = self.getBarcodeShapesFromOfOne(filename)
+                self.saveLabelFile(filename, s)
+            except Exception as e:
+                print(e)
+    
+            
+    def startOperationDialog(self):
+        self.operationCanceled = False
+        pd1 =  QtWidgets.QProgressDialog('Progress','Cancel',0,100,self)
+        pd1.setLabelText('Progress')
+        pd1.setCancelButtonText('Cancel')
+        pd1.setRange(0, 100)
+        pd1.setValue(0)
+        pd1.setMinimumDuration(0)
+        pd1.show()
+        pd1.canceled.connect(self.onProgressDialogCanceled)
+        return pd1
+        
+    def onProgressDialogCanceled(self):
+        self.operationCanceled = True
+        if self.lastOpenDir and osp.exists(self.lastOpenDir):
+            self.importDirImages(self.lastOpenDir)
+        else:
+            self.loadFile(self.filename)
+        
+    def saveLabelFile(self, filename, detectedShapes):
+        lf = LabelFile()
+        
+        def format_shape(s):
+            data = s.other_data.copy()
+            data.update(
+                dict(
+                    label=s.label.encode("utf-8") if PY2 else s.label,
+                    points=[(p.x(), p.y()) for p in s.points],
+                    group_id=s.group_id,
+                    content=s.content,
+                    shape_type=s.shape_type,
+                    flags=s.flags,
+                )
+            )
+            return data
+
+        shapes = [format_shape(item) for item in detectedShapes]
+        
+        imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
+        imageData = LabelFile.load_image_file(filename)
+        image = QtGui.QImage.fromData(self.imageData)
+        if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
+            os.makedirs(osp.dirname(filename))
+        json_name = osp.splitext(filename)[0] + ".json"
+        lf.save(
+            filename=json_name,
+            shapes=shapes,
+            imagePath=imagePath,
+            imageData=imageData,
+            imageHeight=image.height(),
+            imageWidth=image.width(),
+            otherData={},
+            flags={},
+        )
+
+
