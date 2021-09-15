@@ -76,6 +76,8 @@ class Intelligence():
         progress = int(completed/total*100)
         self.pd.setLabelText(str(completed) +"/"+ str(total))
         self.pd.setValue(progress)
+        if completed==total:
+            self.onProgressDialogCanceledOrCompleted()
             
     def startOperationDialog(self):
         self.operationCanceled = False
@@ -86,10 +88,10 @@ class Intelligence():
         pd1.setValue(0)
         pd1.setMinimumDuration(0)
         pd1.show()
-        pd1.canceled.connect(self.onProgressDialogCanceled)
+        pd1.canceled.connect(self.onProgressDialogCanceledOrCompleted)
         return pd1
         
-    def onProgressDialogCanceled(self):
+    def onProgressDialogCanceledOrCompleted(self):
         self.operationCanceled = True
         if self.parent.lastOpenDir and osp.exists(self.parent.lastOpenDir):
             self.parent.importDirImages(self.parent.lastOpenDir)
