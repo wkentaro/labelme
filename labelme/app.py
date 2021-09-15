@@ -33,7 +33,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
-from barcode_reader.dynamsoft import DynamsoftBarcodeReader
+from .intelligence import Intelligence
 
 import time
 import threading
@@ -47,18 +47,7 @@ import threading
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
-reader = DynamsoftBarcodeReader()
 LABEL_COLORMAP = imgviz.label_colormap(value=200)
-
-class IntelligenceWorker(QThread):
-    sinOut = pyqtSignal(int,int)
-    def __init__(self, parent, images):
-        super(IntelligenceWorker, self).__init__(parent)
-        self.parent = parent
-        self.images = images
-
-    def run(self):
-        self.parent.detectBarcodesOfAllAndSaveLabelFile(self.images,self)
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -101,6 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         super(MainWindow, self).__init__()
+        self.intelligenceHelper = Intelligence(self)
         self.setWindowTitle(__appname__)
 
         # Whether we need to save or not.
@@ -2060,122 +2050,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def detectBarcodesOfOne(self):
         if os.path.exists(self.filename):
             self.labelList.clearSelection()
-            s = self.getBarcodeShapesFromOfOne(self.filename)
+            s = self.intelligenceHelper.getBarcodeShapesOfOne(self.filename)
             self.loadShapes(s)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()
-            
-    def getBarcodeShapesFromOfOne(self,filename):
-        results = reader.decode_file(filename)["results"]
-        s = []
-        for result in results:
-            shape = Shape()
 
-            shape.label = result["barcodeFormat"]
-            shape.content = result["barcodeText"]
-            shape.shape_type="polygon"
-            shape.flags = {}
-            shape.other_data = {}
-            for i in range(1,5):
-                x = result["x"+str(i)]
-                y = result["y"+str(i)]
-                shape.addPoint(QtCore.QPointF(x, y))
-            shape.close()
-            s.append(shape)
-            #self.addLabel(shape)
-        return s
-        
     def detectBarcodesOfAll(self):
         images=[]
         for filename in self.imageList:
             images.append(filename)
-        self.pd = self.startOperationDialog()
-        self.thread = IntelligenceWorker(self,images)
-        self.thread.sinOut.connect(self.updateDialog)
-        self.thread.start()
-    
-    def updateDialog(self, completed, total):
-        progress = int(completed/total*100)
-        self.pd.setLabelText(str(completed) +"/"+ str(total))
-        self.pd.setValue(progress)
-            
-    def detectBarcodesOfAllAndSaveLabelFile(self,images,thread):
-        index = 0
-        total = len(images)
-        for filename in images:
-            if self.isVisible==False:
-                return
-            if self.operationCanceled==True:
-                return
-            index = index + 1
-            json_name = osp.splitext(filename)[0] + ".json"
-            if os.path.exists(json_name):
-                continue
-            time.sleep(0.05)
-            thread.sinOut.emit(index,total)
-            try:
-                print("Decoding "+filename)
-                s = self.getBarcodeShapesFromOfOne(filename)
-                self.saveLabelFile(filename, s)
-            except Exception as e:
-                print(e)
-    
-            
-    def startOperationDialog(self):
-        self.operationCanceled = False
-        pd1 =  QtWidgets.QProgressDialog('Progress','Cancel',0,100,self)
-        pd1.setLabelText('Progress')
-        pd1.setCancelButtonText('Cancel')
-        pd1.setRange(0, 100)
-        pd1.setValue(0)
-        pd1.setMinimumDuration(0)
-        pd1.show()
-        pd1.canceled.connect(self.onProgressDialogCanceled)
-        return pd1
-        
-    def onProgressDialogCanceled(self):
-        self.operationCanceled = True
-        if self.lastOpenDir and osp.exists(self.lastOpenDir):
-            self.importDirImages(self.lastOpenDir)
-        else:
-            self.loadFile(self.filename)
-        
-    def saveLabelFile(self, filename, detectedShapes):
-        lf = LabelFile()
-        
-        def format_shape(s):
-            data = s.other_data.copy()
-            data.update(
-                dict(
-                    label=s.label.encode("utf-8") if PY2 else s.label,
-                    points=[(p.x(), p.y()) for p in s.points],
-                    group_id=s.group_id,
-                    content=s.content,
-                    shape_type=s.shape_type,
-                    flags=s.flags,
-                )
-            )
-            return data
-
-        shapes = [format_shape(item) for item in detectedShapes]
-        
-        imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
-        imageData = LabelFile.load_image_file(filename)
-        image = QtGui.QImage.fromData(self.imageData)
-        if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
-            os.makedirs(osp.dirname(filename))
-        json_name = osp.splitext(filename)[0] + ".json"
-        lf.save(
-            filename=json_name,
-            shapes=shapes,
-            imagePath=imagePath,
-            imageData=imageData,
-            imageHeight=image.height(),
-            imageWidth=image.width(),
-            otherData={},
-            flags={},
-        )
-
+        self.intelligenceHelper.detectBarcodesOfAll(images)
 
