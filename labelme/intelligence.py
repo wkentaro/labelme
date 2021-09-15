@@ -1,4 +1,4 @@
-from barcode_reader.dynamsoft import DynamsoftBarcodeReader
+from labelme.barcode_reader.dynamsoft import DynamsoftBarcodeReader
 from labelme.label_file import LabelFile
 from labelme.shape import Shape
 from labelme import PY2
