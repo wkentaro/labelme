@@ -10,6 +10,8 @@ import webbrowser
 import imgviz
 from qtpy import QtCore
 from qtpy.QtCore import Qt
+from qtpy.QtCore import QThread
+from qtpy.QtCore import Signal as pyqtSignal
 from qtpy import QtGui
 from qtpy import QtWidgets
 
@@ -48,6 +50,15 @@ import threading
 reader = DynamsoftBarcodeReader()
 LABEL_COLORMAP = imgviz.label_colormap(value=200)
 
+class IntelligenceWorker(QThread):
+    sinOut = pyqtSignal(int,int)
+    def __init__(self, parent, images):
+        super(IntelligenceWorker, self).__init__(parent)
+        self.parent = parent
+        self.images = images
+
+    def run(self):
+        self.parent.detectBarcodesOfAllAndSaveLabelFile(self.images,self)
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -2080,11 +2091,17 @@ class MainWindow(QtWidgets.QMainWindow):
         images=[]
         for filename in self.imageList:
             images.append(filename)
-        pd = self.startOperationDialog()
-        threading.Thread(target=self.detectBarcodesOfAllAndSaveLabelFile, args=((images,pd))).start()
-       
+        self.pd = self.startOperationDialog()
+        self.thread = IntelligenceWorker(self,images)
+        self.thread.sinOut.connect(self.updateDialog)
+        self.thread.start()
+    
+    def updateDialog(self, completed, total):
+        progress = int(completed/total*100)
+        self.pd.setLabelText(str(completed) +"/"+ str(total))
+        self.pd.setValue(progress)
             
-    def detectBarcodesOfAllAndSaveLabelFile(self,images,pd):
+    def detectBarcodesOfAllAndSaveLabelFile(self,images,thread):
         index = 0
         total = len(images)
         for filename in images:
@@ -2097,8 +2114,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if os.path.exists(json_name):
                 continue
             time.sleep(0.05)
-            progress = int(index/total*100)
-            pd.setValue(progress)
+            thread.sinOut.emit(index,total)
             try:
                 print("Decoding "+filename)
                 s = self.getBarcodeShapesFromOfOne(filename)
