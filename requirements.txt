@@ -1,0 +1,9 @@
+matplotlib==3.2.2
+dbr==8.6
+colorama==0.4.4
+numpy==1.19.3
+QtPy==1.9.0
+termcolor==1.1.0
+imgviz==1.2.6
+Pillow==8.3.2
+PyYAML==5.4.1

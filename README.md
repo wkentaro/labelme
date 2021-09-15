@@ -1,4 +1,4 @@
-This is a intelligent barcode annotation tool forked from labelme.
+This is an intelligent barcode annotation tool forked from labelme.
 
 Run:
 
