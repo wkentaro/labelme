@@ -6,7 +6,7 @@ import base64
 class DynamsoftBarcodeReader():
     def __init__(self,use_intermediate_detection_results=False):
         self.dbr = BarcodeReader()
-        self.dbr.init_license("t0068MgAAABeuHByyqJjhYkoe1ba+47moKW3OoHLWb2JwHGHvuwTDhUr5QclbY42fuYaTgcDjE25ULirxbM+8YfdROdGTJYs=")
+        self.dbr.init_license("t0068MgAAABaPdihgo0ura46bBvXa/K+sCfupbVhYdDSY3AlEooBX/7ZSvLQVJmCnYzaJ8Xblhwt1G3hrI9hrklQDGgzvFp0=")
         if use_intermediate_detection_results:
             settings = self.dbr.get_runtime_settings()
             settings.intermediate_result_types = EnumIntermediateResultType.IRT_TYPED_BARCODE_ZONE

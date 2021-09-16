@@ -292,6 +292,8 @@ class Canvas(QtWidgets.QWidget):
                 self.setToolTip(
                     self.tr("Click & drag to move shape '%s'") % shape.label
                 )
+                if shape.content!="":
+                    self.setToolTip(self.tr(shape.content))
                 self.setStatusTip(self.toolTip())
                 self.overrideCursor(CURSOR_GRAB)
                 self.update()
