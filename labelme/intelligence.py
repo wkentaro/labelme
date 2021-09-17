@@ -30,15 +30,14 @@ class IntelligenceWorker(QThread):
                 return
             index = index + 1
             json_name = osp.splitext(filename)[0] + ".json"
-            if os.path.exists(json_name):
-                continue
+            if os.path.exists(json_name)==False:
+                try:
+                    print("Decoding "+filename)
+                    s = self.source.getBarcodeShapesOfOne(filename)
+                    self.source.saveLabelFile(filename, s)
+                except Exception as e:
+                    print(e)
             self.sinOut.emit(index,total)
-            try:
-                print("Decoding "+filename)
-                s = self.source.getBarcodeShapesOfOne(filename)
-                self.source.saveLabelFile(filename, s)
-            except Exception as e:
-                print(e)
 
 class Intelligence():
     def __init__(self,parent):
