@@ -29,7 +29,7 @@ def get_install_requires():
     assert PY3 or PY2
 
     install_requires = [
-        "imgviz>=0.11,<1.3",
+        "imgviz>=0.11",
         "matplotlib<3.3",  # for PyInstaller
         "numpy",
         "Pillow>=2.8",
