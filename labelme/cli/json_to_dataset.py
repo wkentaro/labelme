@@ -63,7 +63,7 @@ def main():
         label_names[value] = name
 
     lbl_viz = imgviz.label2rgb(
-        label=lbl, img=imgviz.asgray(img), label_names=label_names, loc="rb"
+        lbl, imgviz.asgray(img), label_names=label_names, loc="rb"
     )
 
     PIL.Image.fromarray(img).save(osp.join(out_dir, "img.png"))

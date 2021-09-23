@@ -93,8 +93,8 @@ def main():
 
         if not args.noviz:
             viz = imgviz.label2rgb(
-                label=lbl,
-                img=imgviz.rgb2gray(img),
+                lbl,
+                imgviz.rgb2gray(img),
                 font_size=15,
                 label_names=class_names,
                 loc="rb",
