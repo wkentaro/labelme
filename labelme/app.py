@@ -1147,6 +1147,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return self._config["label_colors"][label]
         elif self._config["default_shape_color"]:
             return self._config["default_shape_color"]
+        return (0, 255, 0)
 
     def remLabels(self, shapes):
         for shape in shapes:
