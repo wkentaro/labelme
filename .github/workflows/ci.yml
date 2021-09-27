@@ -95,7 +95,7 @@ jobs:
 
     - name: Test with pytest
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.os != 'windows-latest' && matrix.PYTEST_QT_API != 'pyqt4v2'
       env:
         PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
       run: |
@@ -112,7 +112,7 @@ jobs:
 
     - name: Run examples
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.os != 'windows-latest' && matrix.PYTEST_QT_API != 'pyqt4v2'
       env:
         MPLBACKEND: agg
       run: |
