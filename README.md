@@ -132,9 +132,11 @@ sudo apt-get install labelme
 ### macOS
 
 ```bash
-# macOS Sierra
 brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
+
+brew install wkentaro/labelme/labelme  # command line interface
+# brew install --cask wkentaro/labelme/labelme  # app
 
 # or install standalone executable/app from:
 # https://github.com/wkentaro/labelme/releases
