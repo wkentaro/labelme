@@ -43,6 +43,7 @@ class LabelDialog(QtWidgets.QDialog):
             fit_to_content = {"row": False, "column": True}
         self._fit_to_content = fit_to_content
 
+        self.groupIdIndex = 1
         super(LabelDialog, self).__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
@@ -50,16 +51,14 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.editingFinished.connect(self.postProcess)
         if flags:
             self.edit.textChanged.connect(self.updateFlags)
-        self.edit_group_id = QtWidgets.QLineEdit()
-        self.edit_group_id.setPlaceholderText("Group ID")
-        self.edit_group_id.setValidator(
-            QtGui.QRegExpValidator(QtCore.QRegExp(r"\d*"), None)
-        )
+        self.edit_group_id = QtWidgets.QComboBox()
+        self.edit_group_id.addItems(["1", "2", "3"])
+        self.edit_group_id.currentIndexChanged.connect(self.setGroupId)
         layout = QtWidgets.QVBoxLayout()
         if show_text_field:
             layout_edit = QtWidgets.QHBoxLayout()
             layout_edit.addWidget(self.edit, 6)
-            layout_edit.addWidget(self.edit_group_id, 2)
+            layout_edit.addWidget(self.edit_group_id)
             layout.addLayout(layout_edit)
         # buttons
         self.buttonBox = bb = QtWidgets.QDialogButtonBox(
@@ -179,6 +178,9 @@ class LabelDialog(QtWidgets.QDialog):
                     flags[key] = False
         self.setFlags(flags)
 
+    def setGroupId(self, i):
+        self.groupIdIndex = i
+        
     def setFlags(self, flags):
         self.deleteFlags()
         for key in flags:
@@ -195,7 +197,7 @@ class LabelDialog(QtWidgets.QDialog):
         return flags
 
     def getGroupId(self):
-        group_id = self.edit_group_id.text()
+        group_id = self.edit_group_id.itemText(self.groupIdIndex)
         if group_id:
             return int(group_id)
         return None
@@ -218,10 +220,6 @@ class LabelDialog(QtWidgets.QDialog):
             self.resetFlags(text)
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
-        if group_id is None:
-            self.edit_group_id.clear()
-        else:
-            self.edit_group_id.setText(str(group_id))
         items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
         if items:
             if len(items) != 1:
