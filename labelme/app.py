@@ -399,14 +399,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Undo last drawn point"),
             enabled=False,
         )
-        addPointToEdge = action(
-            text=self.tr("Add Point to Edge"),
-            slot=self.canvas.addPointToEdge,
-            shortcut=shortcuts["add_point_to_edge"],
-            icon="edit",
-            tip=self.tr("Add point to the nearest edge"),
-            enabled=False,
-        )
         removePoint = action(
             text="Remove Selected Point",
             slot=self.removeSelectedPoint,
@@ -573,7 +565,6 @@ class MainWindow(QtWidgets.QMainWindow):
             copy=copy,
             undoLastPoint=undoLastPoint,
             undo=undo,
-            addPointToEdge=addPointToEdge,
             removePoint=removePoint,
             createMode=createMode,
             editMode=editMode,
@@ -603,8 +594,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 undo,
                 undoLastPoint,
                 None,
-                addPointToEdge,
-                None,
                 toggle_keep_prev_mode,
             ),
             # menu shown at right click
@@ -621,7 +610,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 delete,
                 undo,
                 undoLastPoint,
-                addPointToEdge,
                 removePoint,
             ),
             onLoadActive=(
@@ -638,7 +626,6 @@ class MainWindow(QtWidgets.QMainWindow):
             onShapesPresent=(saveAs, hideAll, showAll),
         )
 
-        self.canvas.edgeSelected.connect(self.canvasShapeEdgeSelected)
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
 
         self.menus = utils.struct(
@@ -876,11 +863,6 @@ class MainWindow(QtWidgets.QMainWindow):
             z.setEnabled(value)
         for action in self.actions.onLoadActive:
             action.setEnabled(value)
-
-    def canvasShapeEdgeSelected(self, selected, shape):
-        self.actions.addPointToEdge.setEnabled(
-            selected and shape and shape.canAddPoint()
-        )
 
     def queueEvent(self, function):
         QtCore.QTimer.singleShot(0, function)
