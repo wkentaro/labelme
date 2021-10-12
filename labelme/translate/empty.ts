@@ -333,6 +333,17 @@ Polygons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../app.py" line="329"/>
+        <source>&amp;Toggle
+Polygons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="329"/>
+        <source>Toggle all polygons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../app.py" line="331"/>
         <source>&amp;Tutorial</source>
         <translation type="unfinished"></translation>

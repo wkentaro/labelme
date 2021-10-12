@@ -425,6 +425,7 @@ class MainWindow(QtWidgets.QMainWindow):
         hideAll = action(
             self.tr("&Hide\nPolygons"),
             functools.partial(self.togglePolygons, False),
+            shortcuts["hide_all_polygons"],
             icon="eye",
             tip=self.tr("Hide all polygons"),
             enabled=False,
@@ -432,8 +433,17 @@ class MainWindow(QtWidgets.QMainWindow):
         showAll = action(
             self.tr("&Show\nPolygons"),
             functools.partial(self.togglePolygons, True),
+            shortcuts["show_all_polygons"],
             icon="eye",
             tip=self.tr("Show all polygons"),
+            enabled=False,
+        )
+        toggleAll = action(
+            self.tr("&Toggle\nPolygons"),
+            functools.partial(self.togglePolygons, None),
+            shortcuts["toggle_all_polygons"],
+            icon="eye",
+            tip=self.tr("Toggle all polygons"),
             enabled=False,
         )
 
@@ -633,7 +643,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 brightnessContrast,
             ),
-            onShapesPresent=(saveAs, hideAll, showAll),
+            onShapesPresent=(saveAs, hideAll, showAll, toggleAll),
         )
 
         self.canvas.edgeSelected.connect(self.canvasShapeEdgeSelected)
@@ -680,6 +690,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 hideAll,
                 showAll,
+                toggleAll,
                 None,
                 zoomIn,
                 zoomOut,
@@ -1413,8 +1424,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
 
     def togglePolygons(self, value):
+        flag = value
         for item in self.labelList:
-            item.setCheckState(Qt.Checked if value else Qt.Unchecked)
+            if value is None:
+                flag = (item.checkState() == Qt.Unchecked)
+            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""

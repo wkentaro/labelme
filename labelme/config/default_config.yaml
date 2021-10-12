@@ -100,3 +100,7 @@ shortcuts:
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
+
+  show_all_polygons: G
+  hide_all_polygons: H
+  toggle_all_polygons: T
