@@ -37,8 +37,8 @@ def main():
     for name, value in label_name_to_value.items():
         label_names[value] = name
     lbl_viz = imgviz.label2rgb(
-        label=lbl,
-        img=imgviz.asgray(img),
+        lbl,
+        imgviz.asgray(img),
         label_names=label_names,
         font_size=30,
         loc="rb",

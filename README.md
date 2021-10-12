@@ -9,15 +9,15 @@
 <div align="center">
   <a href="https://pypi.python.org/pypi/labelme"><img src="https://img.shields.io/pypi/v/labelme.svg"></a>
   <a href="https://pypi.org/project/labelme"><img src="https://img.shields.io/pypi/pyversions/labelme.svg"></a>
-  <a href="https://github.com/wkentaro/labelme/actions"><img src="https://github.com/wkentaro/labelme/workflows/ci/badge.svg?branch=master&event=push"></a>
+  <a href="https://github.com/wkentaro/labelme/actions"><img src="https://github.com/wkentaro/labelme/workflows/ci/badge.svg?branch=main&event=push"></a>
   <a href="https://hub.docker.com/r/wkentaro/labelme"><img src="https://img.shields.io/docker/cloud/build/wkentaro/labelme"></a>
 </div>
 
 <div align="center">
   <a href="#installation"><b>Installation</b></a> |
   <a href="#usage"><b>Usage</b></a> |
-  <a href="https://github.com/wkentaro/labelme/tree/master/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
-  <a href="https://github.com/wkentaro/labelme/tree/master/examples"><b>Examples</b></a> |
+  <a href="https://github.com/wkentaro/labelme/tree/main/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
+  <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a> |
   <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
 </div>
 
@@ -132,9 +132,11 @@ sudo apt-get install labelme
 ### macOS
 
 ```bash
-# macOS Sierra
 brew install pyqt  # maybe pyqt5
 pip install labelme  # both python2/3 should work
+
+brew install wkentaro/labelme/labelme  # command line interface
+# brew install --cask wkentaro/labelme/labelme  # app
 
 # or install standalone executable/app from:
 # https://github.com/wkentaro/labelme/releases
@@ -212,7 +214,7 @@ git clone https://github.com/wkentaro/labelme.git
 cd labelme
 
 # Install anaconda3 and labelme
-curl -L https://github.com/wkentaro/dotfiles/raw/master/local/bin/install_anaconda3.sh | bash -s .
+curl -L https://github.com/wkentaro/dotfiles/raw/main/local/bin/install_anaconda3.sh | bash -s .
 source .anaconda3/bin/activate
 pip install -e .
 ```

@@ -78,6 +78,7 @@ class Canvas(QtWidgets.QWidget):
         self.hEdge = None
         self.prevhEdge = None
         self.movingShape = False
+        self.snapping = True
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         self._lastMouseReleaseTime = 0
@@ -207,7 +208,8 @@ class Canvas(QtWidgets.QWidget):
                 # Project the point to the pixmap's edges.
                 pos = self.intersectionPoint(self.current[-1], pos)
             elif (
-                len(self.current) > 1
+                self.snapping
+                and len(self.current) > 1
                 and self.createMode == "polygon"
                 and self.closeEnough(pos, self.current[0])
             ):
@@ -739,6 +741,7 @@ class Canvas(QtWidgets.QWidget):
         ev.accept()
 
     def keyPressEvent(self, ev):
+        modifiers = ev.modifiers()
         key = ev.key()
         if key == QtCore.Qt.Key_Escape and self.current:
             self.current = None
@@ -746,6 +749,13 @@ class Canvas(QtWidgets.QWidget):
             self.update()
         elif key == QtCore.Qt.Key_Return and self.canCloseShape():
             self.finalise()
+        elif modifiers == QtCore.Qt.AltModifier:
+            self.snapping = False
+
+    def keyReleaseEvent(self, ev):
+        modifiers = ev.modifiers()
+        if int(modifiers) == 0:
+            self.snapping = True
 
     def setLastLabel(self, text, flags):
         assert text

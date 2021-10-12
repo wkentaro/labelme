@@ -86,6 +86,9 @@ class MainWindow(QtWidgets.QMainWindow):
             *self._config["shape"]["hvertex_fill_color"]
         )
 
+        # Set point size from config file
+        Shape.point_size = self._config["shape"]["point_size"]
+
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
@@ -928,7 +931,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
     def tutorial(self):
-        url = "https://github.com/wkentaro/labelme/tree/master/examples/tutorial"  # NOQA
+        url = "https://github.com/wkentaro/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
     def toggleDrawingSensitive(self, drawing=True):
@@ -1159,6 +1162,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return self._config["label_colors"][label]
         elif self._config["default_shape_color"]:
             return self._config["default_shape_color"]
+        return (0, 255, 0)
 
     def remLabels(self, shapes):
         for shape in shapes:

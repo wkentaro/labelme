@@ -95,7 +95,7 @@ jobs:
 
     - name: Test with pytest
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.os != 'windows-latest' && matrix.PYTEST_QT_API != 'pyqt4v2'
       env:
         PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
       run: |
@@ -112,7 +112,7 @@ jobs:
 
     - name: Run examples
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.os != 'windows-latest' && matrix.PYTEST_QT_API != 'pyqt4v2'
       env:
         MPLBACKEND: agg
       run: |
@@ -135,6 +135,7 @@ jobs:
       if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.7'
       run: |
         # Build the standalone executable
+        pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
         pip install pyinstaller
         pyinstaller labelme.spec
         dist/labelme --version

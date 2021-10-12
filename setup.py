@@ -29,10 +29,10 @@ def get_install_requires():
     assert PY3 or PY2
 
     install_requires = [
-        "imgviz>=0.11.0",
+        "imgviz>=0.11",
         "matplotlib<3.3",  # for PyInstaller
         "numpy",
-        "Pillow>=2.8.0",
+        "Pillow>=2.8",
         "PyYAML",
         "qtpy",
         "termcolor",
@@ -110,8 +110,9 @@ def main():
 
         commands = [
             "python tests/docs_tests/man_tests/test_labelme_1.py",
+            "git push origin main",
             "git tag v{:s}".format(version),
-            "git push origin master --tag",
+            "git push origin --tags",
             "python setup.py sdist",
             "twine upload dist/labelme-{:s}.tar.gz".format(version),
         ]
