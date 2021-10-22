@@ -97,8 +97,8 @@ shortcuts:
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
   undo: Ctrl+Z
-  undo_last_point: [Ctrl+Z, Backspace]
+  undo_last_point: Ctrl+Z
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
-  remove_selected_point: Ctrl+Shift+L
+  remove_selected_point: [Meta+H, Backspace]
