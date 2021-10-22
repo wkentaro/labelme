@@ -477,6 +477,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Zoom to original size"),
             enabled=False,
         )
+        keepPrevScale = action(
+            self.tr("&Keep Previous Scale"),
+            self.enableKeepPrevScale,
+            tip=self.tr("Keep previous zoom scale"),
+            checkable=True,
+            checked=self._config["keep_prev_scale"],
+            enabled=True,
+        )
         fitWindow = action(
             self.tr("&Fit Window"),
             self.setFitWindow,
@@ -577,6 +585,7 @@ class MainWindow(QtWidgets.QMainWindow):
             zoomIn=zoomIn,
             zoomOut=zoomOut,
             zoomOrg=zoomOrg,
+            keepPrevScale=keepPrevScale,
             fitWindow=fitWindow,
             fitWidth=fitWidth,
             brightnessContrast=brightnessContrast,
@@ -673,6 +682,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 zoomIn,
                 zoomOut,
                 zoomOrg,
+                keepPrevScale,
                 None,
                 fitWindow,
                 fitWidth,
@@ -1372,6 +1382,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
+
+    def enableKeepPrevScale(self, enabled):
+        self._config["keep_prev_scale"] = enabled
+        self.actions.keepPrevScale.setChecked(enabled)
 
     def onNewBrightnessContrast(self, qimage):
         self.canvas.loadPixmap(
