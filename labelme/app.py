@@ -490,7 +490,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.enableKeepPrevScale,
             tip=self.tr("Keep previous zoom scale"),
             checkable=True,
-            checked=self._config['keep_prev_scale'],
+            checked=self._config["keep_prev_scale"],
             enabled=True,
         )
         fitWindow = action(
