@@ -402,6 +402,7 @@ class MainWindow(QtWidgets.QMainWindow):
         removePoint = action(
             text="Remove Selected Point",
             slot=self.removeSelectedPoint,
+            shortcut=shortcuts["remove_selected_point"],
             icon="edit",
             tip="Remove selected point from polygon",
             enabled=False,
@@ -602,6 +603,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 undo,
                 undoLastPoint,
+                None,
+                removePoint,
                 None,
                 toggle_keep_prev_mode,
             ),
@@ -1878,6 +1881,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def removeSelectedPoint(self):
         self.canvas.removeSelectedPoint()
+        self.canvas.update()
         if not self.canvas.hShape.points:
             self.canvas.deleteShape(self.canvas.hShape)
             self.remLabels([self.canvas.hShape])

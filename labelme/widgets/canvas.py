@@ -333,15 +333,13 @@ class Canvas(QtWidgets.QWidget):
 
     def removeSelectedPoint(self):
         shape = self.prevhShape
-        point = self.prevMovePoint
-        if shape is None or point is None:
+        index = self.prevhVertex
+        if shape is None or index is None:
             return
-        index = shape.nearestVertex(point, self.epsilon)
         shape.removePoint(index)
-        # shape.highlightVertex(index, shape.MOVE_VERTEX)
+        shape.highlightClear()
         self.hShape = shape
-        self.hVertex = None
-        self.hEdge = None
+        self.prevhVertex = None
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
