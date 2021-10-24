@@ -120,6 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
+        self.labelList.clicked.connect(self.labelItemClicked)
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         self.labelList.itemChanged.connect(self.labelItemChanged)
@@ -883,9 +884,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
 
-    def resetState(self):
+    def resetState(self, reset_filename=True):
         self.labelList.clear()
-        self.filename = None
+        if reset_filename:
+            self.filename = None
         self.imagePath = None
         self.imageData = None
         self.labelFile = None
@@ -1061,6 +1063,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.uniqLabelList.addItem(item)
 
     def fileSearchChanged(self):
+        if not self.mayContinue():
+             return
         self.importDirImages(
             self.lastOpenDir,
             pattern=self.fileSearch.text(),
@@ -1265,6 +1269,9 @@ class MainWindow(QtWidgets.QMainWindow):
         for shape in added_shapes:
             self.addLabel(shape)
         self.setDirty()
+
+    def labelItemClicked(self, item):
+        self.setEditMode()
 
     def labelSelectionChanged(self):
         if self._noSelectionSlot:
@@ -1729,7 +1736,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self.importDirImages(self.lastOpenDir, load=False)
+        if self.mayContinue():
+            self.importDirImages(self.lastOpenDir, load=False)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -1825,9 +1833,11 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.info("Label file is removed: {}".format(label_file))
 
             item = self.fileListWidget.currentItem()
-            item.setCheckState(Qt.Unchecked)
+            if item:
+                item.setCheckState(Qt.Unchecked)
 
-            self.resetState()
+            self.resetState(reset_filename=False)
+            self.canvas.setEnabled(False)
 
     # Message Dialogs. #
     def hasLabels(self):
@@ -1983,7 +1993,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not dirpath:
+        if not dirpath:
             return
 
         self.lastOpenDir = dirpath

@@ -52,9 +52,6 @@ class LabelDialog(QtWidgets.QDialog):
             self.edit.textChanged.connect(self.updateFlags)
         self.edit_group_id = QtWidgets.QLineEdit()
         self.edit_group_id.setPlaceholderText("Group ID")
-        self.edit_group_id.setValidator(
-            QtGui.QRegExpValidator(QtCore.QRegExp(r"\d*"), None)
-        )
         layout = QtWidgets.QVBoxLayout()
         if show_text_field:
             layout_edit = QtWidgets.QHBoxLayout()
@@ -197,7 +194,7 @@ class LabelDialog(QtWidgets.QDialog):
     def getGroupId(self):
         group_id = self.edit_group_id.text()
         if group_id:
-            return int(group_id)
+            return group_id
         return None
 
     def popUp(self, text=None, move=True, flags=None, group_id=None):
