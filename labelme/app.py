@@ -385,9 +385,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Delete the selected polygons"),
             enabled=False,
         )
-        copy = action(
+        duplicate = action(
             self.tr("Duplicate Polygons"),
-            self.copySelectedShape,
+            self.duplicateSelectedShape,
             shortcuts["duplicate_polygon"],
             "copy",
             self.tr("Create a duplicate of the selected polygons"),
@@ -589,7 +589,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             edit=edit,
-            copy=copy,
+            duplicate=duplicate,
             copyClipboard=copyClipboard,
             paste=paste,
             undoLastPoint=undoLastPoint,
@@ -618,7 +618,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # XXX: need to add some actions here to activate the shortcut
             editMenu=(
                 edit,
-                copy,
+                duplicate,
                 delete,
                 None,
                 undo,
@@ -638,7 +638,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 editMode,
                 edit,
-                copy,
+                duplicate,
                 copyClipboard,
                 paste,
                 delete,
@@ -740,7 +740,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             createMode,
             editMode,
-            copy,
+            duplicate,
             copyClipboard,
             paste,
             delete,
@@ -1121,7 +1121,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
-        self.actions.copy.setEnabled(n_selected)
+        self.actions.duplicate.setEnabled(n_selected)
         self.actions.copyClipboard.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
@@ -1284,8 +1284,8 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
 
-    def copySelectedShape(self):
-        added_shapes = self.canvas.copySelectedShapes()
+    def duplicateSelectedShape(self):
+        added_shapes = self.canvas.duplicateSelectedShapes()
         self.labelList.clearSelection()
         for shape in added_shapes:
             self.addLabel(shape)
