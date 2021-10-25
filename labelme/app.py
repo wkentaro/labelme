@@ -1664,7 +1664,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openPrevImg(self, _value=False):
         keep_prev = self._config["keep_prev"]
-        if Qt.KeyboardModifiers() == (Qt.ControlModifier | Qt.ShiftModifier):
+        if QtWidgets.QApplication.keyboardModifiers() == (
+            Qt.ControlModifier | Qt.ShiftModifier
+        ):
             self._config["keep_prev"] = True
 
         if not self.mayContinue():
@@ -1686,7 +1688,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openNextImg(self, _value=False, load=True):
         keep_prev = self._config["keep_prev"]
-        if Qt.KeyboardModifiers() == (Qt.ControlModifier | Qt.ShiftModifier):
+        if QtWidgets.QApplication.keyboardModifiers() == (
+            Qt.ControlModifier | Qt.ShiftModifier
+        ):
             self._config["keep_prev"] = True
 
         if not self.mayContinue():
