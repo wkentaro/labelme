@@ -96,6 +96,8 @@ shortcuts:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
+  copy_polygon: Ctrl+C
+  paste_polygon: Ctrl+V
   undo: Ctrl+Z
   undo_last_point: Ctrl+Z
   add_point_to_edge: Ctrl+Shift+P
