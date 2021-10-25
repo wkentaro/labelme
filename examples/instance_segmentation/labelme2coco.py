@@ -9,7 +9,6 @@ import os
 import os.path as osp
 import sys
 import uuid
-import math
 
 import imgviz
 import numpy as np
@@ -132,12 +131,12 @@ def main():
                 points = [x1, y1, x2, y1, x2, y2, x1, y2]
             if shape_type == "circle":
                 (x1, y1), (x2, y2) = points
-                r = ((x1-x2)**2 + (y1-y2)**2)**(1/2)                
-                circlePoints = []
-                for i in range(12):
-                    circlePoints.append(x1 + math.sin(math.pi/6*i)*r)
-                    circlePoints.append(y1 + math.cos(math.pi/6*i)*r)
-                points = circlePoints
+                r = np.linalg.norm([x2 - x1, y2 - y1])
+                n_points_circle = 12
+                i = np.arange(n_points_circle)
+                x = x1 + r * np.sin(2 * np.pi / n_points_circle * i)
+                y = y1 + r * np.cos(2 * np.pi / n_points_circle * i)
+                points = np.stack((x, y), axis=1).flatten().tolist()
             else:
                 points = np.asarray(points).flatten().tolist()
 
