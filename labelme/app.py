@@ -97,7 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._noSelectionSlot = False
 
-        self.clipboard_shapes = None
+        self._copied_shapes = None
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
@@ -393,9 +393,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create a duplicate of the selected polygons"),
             enabled=False,
         )
-        copyClipboard = action(
+        copy = action(
             self.tr("Copy Polygons"),
-            self.copyClipboardSelectedShape,
+            self.copySelectedShape,
             shortcuts["copy_polygon"],
             "copy_clipboard",
             self.tr("Copy selected polygons to clipboard"),
@@ -590,7 +590,7 @@ class MainWindow(QtWidgets.QMainWindow):
             delete=delete,
             edit=edit,
             duplicate=duplicate,
-            copyClipboard=copyClipboard,
+            copy=copy,
             paste=paste,
             undoLastPoint=undoLastPoint,
             undo=undo,
@@ -639,7 +639,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 edit,
                 duplicate,
-                copyClipboard,
+                copy,
                 paste,
                 delete,
                 undo,
@@ -741,7 +741,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createMode,
             editMode,
             duplicate,
-            copyClipboard,
+            copy,
             paste,
             delete,
             undo,
@@ -1122,7 +1122,7 @@ class MainWindow(QtWidgets.QMainWindow):
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
         self.actions.duplicate.setEnabled(n_selected)
-        self.actions.copyClipboard.setEnabled(n_selected)
+        self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
     def addLabel(self, shape):
@@ -1292,13 +1292,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
 
     def pasteSelectedShape(self):
-        self.loadShapes(self.clipboard_shapes, replace=False)
+        self.loadShapes(self._copied_shapes, replace=False)
         self.setDirty()
 
-    def copyClipboardSelectedShape(self):
-        self.clipboard_shapes = [s.copy() for s in self.canvas.selectedShapes]
-        n_clipboard_shapes = len(self.clipboard_shapes)
-        self.actions.paste.setEnabled(n_clipboard_shapes)
+    def copySelectedShape(self):
+        self._copied_shapes = [s.copy() for s in self.canvas.selectedShapes]
+        self.actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
     def labelSelectionChanged(self):
         if self._noSelectionSlot:
