@@ -262,10 +262,7 @@ class Shape(object):
         if self.shape_type == "ellipse":
             a, b, theta, xc, yc = self.fitEllipse(self.points)
             ellipse = patches.Ellipse(
-                xy=(xc, yc),
-                width=2 * a,
-                height=2 * b,
-                angle=theta
+                xy=(xc, yc), width=2 * a, height=2 * b, angle=theta
             )
             return ellipse.contains_point([point.x(), point.y()])
         else:
