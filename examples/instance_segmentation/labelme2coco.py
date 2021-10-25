@@ -129,6 +129,14 @@ def main():
                 x1, x2 = sorted([x1, x2])
                 y1, y2 = sorted([y1, y2])
                 points = [x1, y1, x2, y1, x2, y2, x1, y2]
+            if shape_type == "circle":
+                (x1, y1), (x2, y2) = points
+                r = np.linalg.norm([x2 - x1, y2 - y1])
+                n_points_circle = 12
+                i = np.arange(n_points_circle)
+                x = x1 + r * np.sin(2 * np.pi / n_points_circle * i)
+                y = y1 + r * np.cos(2 * np.pi / n_points_circle * i)
+                points = np.stack((x, y), axis=1).flatten().tolist()
             else:
                 points = np.asarray(points).flatten().tolist()
 
