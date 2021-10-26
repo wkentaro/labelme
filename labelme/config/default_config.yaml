@@ -28,6 +28,7 @@ shape:
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 155]
   hvertex_fill_color: [255, 255, 255, 255]
+  point_size: 8
 
 # main
 flag_dock:
@@ -95,8 +96,11 @@ shortcuts:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
+  copy_polygon: Ctrl+C
+  paste_polygon: Ctrl+V
   undo: Ctrl+Z
-  undo_last_point: [Ctrl+Z, Backspace]
+  undo_last_point: Ctrl+Z
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
+  remove_selected_point: [Meta+H, Backspace]

@@ -111,8 +111,8 @@ def main():
         np.save(out_cls_file, cls)
         if not args.noviz:
             clsv = imgviz.label2rgb(
-                label=cls,
-                img=imgviz.rgb2gray(img),
+                cls,
+                imgviz.rgb2gray(img),
                 label_names=class_names,
                 font_size=15,
                 loc="rb",
@@ -126,8 +126,8 @@ def main():
             instance_ids = np.unique(ins)
             instance_names = [str(i) for i in range(max(instance_ids) + 1)]
             insv = imgviz.label2rgb(
-                label=ins,
-                img=imgviz.rgb2gray(img),
+                ins,
+                imgviz.rgb2gray(img),
                 label_names=instance_names,
                 font_size=15,
                 loc="rb",

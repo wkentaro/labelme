@@ -129,6 +129,14 @@ def main():
                 x1, x2 = sorted([x1, x2])
                 y1, y2 = sorted([y1, y2])
                 points = [x1, y1, x2, y1, x2, y2, x1, y2]
+            if shape_type == "circle":
+                (x1, y1), (x2, y2) = points
+                r = np.linalg.norm([x2 - x1, y2 - y1])
+                n_points_circle = 12
+                i = np.arange(n_points_circle)
+                x = x1 + r * np.sin(2 * np.pi / n_points_circle * i)
+                y = y1 + r * np.cos(2 * np.pi / n_points_circle * i)
+                points = np.stack((x, y), axis=1).flatten().tolist()
             else:
                 points = np.asarray(points).flatten().tolist()
 
@@ -159,21 +167,23 @@ def main():
             )
 
         if not args.noviz:
-            labels, captions, masks = zip(
-                *[
-                    (class_name_to_id[cnm], cnm, msk)
-                    for (cnm, gid), msk in masks.items()
-                    if cnm in class_name_to_id
-                ]
-            )
-            viz = imgviz.instances2rgb(
-                image=img,
-                labels=labels,
-                masks=masks,
-                captions=captions,
-                font_size=15,
-                line_width=2,
-            )
+            viz = img
+            if masks:
+                labels, captions, masks = zip(
+                    *[
+                        (class_name_to_id[cnm], cnm, msk)
+                        for (cnm, gid), msk in masks.items()
+                        if cnm in class_name_to_id
+                    ]
+                )
+                viz = imgviz.instances2rgb(
+                    image=img,
+                    labels=labels,
+                    masks=masks,
+                    captions=captions,
+                    font_size=15,
+                    line_width=2,
+                )
             out_viz_file = osp.join(
                 args.output_dir, "Visualization", base + ".jpg"
             )
