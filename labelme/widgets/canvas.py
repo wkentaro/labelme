@@ -478,7 +478,7 @@ class Canvas(QtWidgets.QWidget):
         else:
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
-                    self.calculateOffsets(shape, point)
+                    self.calculateOffsets(self.selectedShapes, point)
                     self.setHiding()
                     if multiple_selection_mode:
                         if shape not in self.selectedShapes:
