@@ -38,7 +38,6 @@ from labelme.widgets import ZoomWidget
 
 # TODO(unknown):
 # - [high] Add polygon movement with arrow keys
-# - [high] Deselect shape when clicking and already selected(?)
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
