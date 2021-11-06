@@ -132,7 +132,9 @@ def main():
             if shape_type == "circle":
                 (x1, y1), (x2, y2) = points
                 r = np.linalg.norm([x2 - x1, y2 - y1])
-                n_points_circle = 12
+                # r(1-cos(a/2))<x, a=2*pi/N => N>pi/arccos(1-x/r)
+                # x: difference (pixels) between the arc and the line segment
+                n_points_circle = max(int(np.pi/np.arccos(1-1/r)), 12)
                 i = np.arange(n_points_circle)
                 x = x1 + r * np.sin(2 * np.pi / n_points_circle * i)
                 y = y1 + r * np.cos(2 * np.pi / n_points_circle * i)
