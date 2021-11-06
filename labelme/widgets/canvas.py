@@ -397,7 +397,7 @@ class Canvas(QtWidgets.QWidget):
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             if (
                 not self.selectedShapes
-                or self.hShape not in self.selectedShapes
+                or (self.hShape != None and self.hShape not in self.selectedShapes)
             ):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
