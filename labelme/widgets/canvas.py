@@ -496,7 +496,7 @@ class Canvas(QtWidgets.QWidget):
                         self.wasSelected = False
                     else:
                         self.wasSelected = True
-                    self.calculateOffsets(self.selectedShapes, point)
+                    self.calculateOffsets(shape, point)
                     return
         self.deSelectShape()
 
