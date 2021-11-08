@@ -478,7 +478,7 @@ class Canvas(QtWidgets.QWidget):
         else:
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
-                    self.calculateOffsets(self.selectedShapes, point)
+                    self.calculateOffsets(shape, point)
                     self.setHiding()
                     if multiple_selection_mode:
                         if shape not in self.selectedShapes:
@@ -490,17 +490,23 @@ class Canvas(QtWidgets.QWidget):
                     return
         self.deSelectShape()
 
-    def calculateOffsets(self, shapes, point):
-        left, right, top, bottom = None, None, None, None
-        for shape in shapes:
-            rect = shape.boundingRect()
-            if left is None or rect.left() < left:
+    def calculateOffsets(self, shape, point):
+        rect = shape.boundingRect()
+        left, right, top, bottom = (
+            rect.left(),
+            rect.right(),
+            rect.top(),
+            rect.bottom(),
+        )
+        for s in self.selectedShapes:
+            rect = s.boundingRect()
+            if rect.left() < left:
                 left = rect.left()
-            if right is None or rect.right() > right:
+            if rect.right() > right:
                 right = rect.right()
-            if top is None or rect.top() < top:
+            if rect.top() < top:
                 top = rect.top()
-            if bottom is None or rect.bottom() > bottom:
+            if rect.bottom() > bottom:
                 bottom = rect.bottom()
 
         x1 = left - point.x()
