@@ -416,7 +416,11 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton:
             if self.editing():
-                if self.wasSelected and not self.movingShape:
+                if (
+                    self.hShape is not None
+                    and self.wasSelected
+                    and not self.movingShape
+                ):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
@@ -486,8 +490,9 @@ class Canvas(QtWidgets.QWidget):
         else:
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
+                    self.calculateOffsets(shape, point)
+                    self.setHiding()
                     if shape not in self.selectedShapes:
-                        self.setHiding()
                         if multiple_selection_mode:
                             self.selectionChanged.emit(
                                 self.selectedShapes + [shape]
@@ -497,7 +502,6 @@ class Canvas(QtWidgets.QWidget):
                         self.wasSelected = False
                     else:
                         self.wasSelected = True
-                    self.calculateOffsets(shape, point)
                     return
         self.deSelectShape()
 
@@ -545,6 +549,7 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
+            self.wasSelected = False
             self.update()
 
     def deleteSelected(self):
