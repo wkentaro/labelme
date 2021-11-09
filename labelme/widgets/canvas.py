@@ -381,12 +381,6 @@ class Canvas(QtWidgets.QWidget):
             elif self.editing():
                 if self.selectedEdge():
                     self.addPointToEdge()
-                elif (
-                    self.selectedVertex()
-                    and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
-                ):
-                    # Delete point if: left-click + SHIFT on a point
-                    self.removeSelectedPoint()
 
                 group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
@@ -394,13 +388,9 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
-            if not self.selectedShapes or (
-                self.hShape is not None
-                and self.hShape not in self.selectedShapes
-            ):
-                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
-                self.repaint()
+            self.selectShapePoint(pos, multiple_selection_mode=group_mode)
             self.prevPoint = pos
+            self.repaint()
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
@@ -413,6 +403,13 @@ class Canvas(QtWidgets.QWidget):
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
+        elif ev.button() == QtCore.Qt.LeftButton and self.selectedVertex():
+            if (
+                self.editing()
+                and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+            ):
+                # Delete point if: left-click + SHIFT on a point
+                self.removeSelectedPoint()
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -481,21 +478,13 @@ class Canvas(QtWidgets.QWidget):
                 if self.isVisible(shape) and shape.containsPoint(point):
                     self.calculateOffsets(shape, point)
                     self.setHiding()
-                    if shape not in self.selectedShapes:
-                        if multiple_selection_mode:
+                    if multiple_selection_mode:
+                        if shape not in self.selectedShapes:
                             self.selectionChanged.emit(
                                 self.selectedShapes + [shape]
                             )
-                        else:
-                            self.selectionChanged.emit([shape])
                     else:
-                        self.selectionChanged.emit(
-                            [
-                                x
-                                for x in self.selectedShapes
-                                if x != self.hShape
-                            ]
-                        )
+                        self.selectionChanged.emit([shape])
                     return
         self.deSelectShape()
 
