@@ -76,6 +76,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevhEdge = None
         self.movingShape = False
         self.snapping = True
+        self.wasSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
@@ -413,6 +414,16 @@ class Canvas(QtWidgets.QWidget):
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
+        elif ev.button() == QtCore.Qt.LeftButton:
+            if self.editing():
+                if (
+                    self.hShape is not None
+                    and self.wasSelected
+                    and not self.movingShape
+                ):
+                    self.selectionChanged.emit(
+                        [x for x in self.selectedShapes if x != self.hShape]
+                    )
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -488,14 +499,9 @@ class Canvas(QtWidgets.QWidget):
                             )
                         else:
                             self.selectionChanged.emit([shape])
+                        self.wasSelected = False
                     else:
-                        self.selectionChanged.emit(
-                            [
-                                x
-                                for x in self.selectedShapes
-                                if x != self.hShape
-                            ]
-                        )
+                        self.wasSelected = True
                     return
         self.deSelectShape()
 
@@ -543,6 +549,7 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
+            self.wasSelected = False
             self.update()
 
     def deleteSelected(self):
