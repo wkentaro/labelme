@@ -37,7 +37,6 @@ from labelme.widgets import ZoomWidget
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
 # TODO(unknown):
-# - [high] Add polygon movement with arrow keys
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
