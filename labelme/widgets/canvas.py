@@ -76,6 +76,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevhEdge = None
         self.movingShape = False
         self.snapping = True
+        self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
@@ -381,6 +382,12 @@ class Canvas(QtWidgets.QWidget):
             elif self.editing():
                 if self.selectedEdge():
                     self.addPointToEdge()
+                elif (
+                    self.selectedVertex()
+                    and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+                ):
+                    # Delete point if: left-click + SHIFT on a point
+                    self.removeSelectedPoint()
 
                 group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
@@ -388,9 +395,13 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
-            self.selectShapePoint(pos, multiple_selection_mode=group_mode)
+            if not self.selectedShapes or (
+                self.hShape is not None
+                and self.hShape not in self.selectedShapes
+            ):
+                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
+                self.repaint()
             self.prevPoint = pos
-            self.repaint()
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
@@ -403,13 +414,16 @@ class Canvas(QtWidgets.QWidget):
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
-        elif ev.button() == QtCore.Qt.LeftButton and self.selectedVertex():
-            if (
-                self.editing()
-                and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
-            ):
-                # Delete point if: left-click + SHIFT on a point
-                self.removeSelectedPoint()
+        elif ev.button() == QtCore.Qt.LeftButton:
+            if self.editing():
+                if (
+                    self.hShape is not None
+                    and self.hShapeIsSelected
+                    and not self.movingShape
+                ):
+                    self.selectionChanged.emit(
+                        [x for x in self.selectedShapes if x != self.hShape]
+                    )
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -478,13 +492,16 @@ class Canvas(QtWidgets.QWidget):
                 if self.isVisible(shape) and shape.containsPoint(point):
                     self.calculateOffsets(shape, point)
                     self.setHiding()
-                    if multiple_selection_mode:
-                        if shape not in self.selectedShapes:
+                    if shape not in self.selectedShapes:
+                        if multiple_selection_mode:
                             self.selectionChanged.emit(
                                 self.selectedShapes + [shape]
                             )
+                        else:
+                            self.selectionChanged.emit([shape])
+                        self.hShapeIsSelected = False
                     else:
-                        self.selectionChanged.emit([shape])
+                        self.hShapeIsSelected = True
                     return
         self.deSelectShape()
 
@@ -532,6 +549,7 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
+            self.hShapeIsSelected = False
             self.update()
 
     def deleteSelected(self):
