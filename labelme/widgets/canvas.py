@@ -76,7 +76,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevhEdge = None
         self.movingShape = False
         self.snapping = True
-        self.wasSelected = False
+        self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
@@ -418,7 +418,7 @@ class Canvas(QtWidgets.QWidget):
             if self.editing():
                 if (
                     self.hShape is not None
-                    and self.wasSelected
+                    and self.hShapeIsSelected
                     and not self.movingShape
                 ):
                     self.selectionChanged.emit(
@@ -499,9 +499,9 @@ class Canvas(QtWidgets.QWidget):
                             )
                         else:
                             self.selectionChanged.emit([shape])
-                        self.wasSelected = False
+                        self.hShapeIsSelected = False
                     else:
-                        self.wasSelected = True
+                        self.hShapeIsSelected = True
                     return
         self.deSelectShape()
 
@@ -549,7 +549,7 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
-            self.wasSelected = False
+            self.hShapeIsSelected = False
             self.update()
 
     def deleteSelected(self):
