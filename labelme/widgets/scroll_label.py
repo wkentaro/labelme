@@ -1,18 +1,18 @@
-from qtpy.QtWidgets import QScrollArea, QVBoxLayout, QLabel, QWidget
+from qtpy import QtWidgets
 
 
-class ScrollLabel(QScrollArea):
+class ScrollLabel(QtWidgets.QScrollArea):
     def __init__(self, *args, **kwargs):
-        QScrollArea.__init__(self, *args, **kwargs)
+        QtWidgets.QScrollArea.__init__(self, *args, **kwargs)
 
         self.setWidgetResizable(True)
 
-        content = QWidget(self)
+        content = QtWidgets.QWidget(self)
         self.setWidget(content)
 
-        lay = QVBoxLayout(content)
+        lay = QtWidgets.QVBoxLayout(content)
 
-        self.label = QLabel(content)
+        self.label = QtWidgets.QLabel(content)
         self.label.setWordWrap(True)
 
         lay.addWidget(self.label)

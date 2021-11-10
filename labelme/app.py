@@ -24,13 +24,13 @@ from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
+from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
-from labelme.widgets import FileDialogPreview
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window

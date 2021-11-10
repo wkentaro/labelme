@@ -1,22 +1,22 @@
-from qtpy.QtWidgets import QFileDialog, QVBoxLayout
 from qtpy import QtCore
 from qtpy import QtGui
+from qtpy import QtWidgets
 
 from .scroll_label import ScrollLabel
 
 import json
 
 
-class FileDialogPreview(QFileDialog):
+class FileDialogPreview(QtWidgets.QFileDialog):
     def __init__(self, *args, **kwargs):
-        QFileDialog.__init__(self, *args, **kwargs)
-        self.setOption(QFileDialog.DontUseNativeDialog, True)
+        QtWidgets.QFileDialog.__init__(self, *args, **kwargs)
+        self.setOption(self.DontUseNativeDialog, True)
 
         self.labelPreview = ScrollLabel(self)
         self.labelPreview.setFixedSize(300, 300)
         self.labelPreview.setHidden(True)
 
-        box = QVBoxLayout()
+        box = QtWidgets.QVBoxLayout()
         box.addWidget(self.labelPreview)
         box.addStretch()
 
