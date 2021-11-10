@@ -2,17 +2,41 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-from .scroll_label import ScrollLabel
-
 import json
+
+
+class ScrollAreaPreview(QtWidgets.QScrollArea):
+    def __init__(self, *args, **kwargs):
+        super(ScrollAreaPreview, self).__init__(*args, **kwargs)
+
+        self.setWidgetResizable(True)
+
+        content = QtWidgets.QWidget(self)
+        self.setWidget(content)
+
+        lay = QtWidgets.QVBoxLayout(content)
+
+        self.label = QtWidgets.QLabel(content)
+        self.label.setWordWrap(True)
+
+        lay.addWidget(self.label)
+
+    def setText(self, text):
+        self.label.setText(text)
+
+    def setPixmap(self, pixmap):
+        self.label.setPixmap(pixmap)
+
+    def clear(self):
+        self.label.clear()
 
 
 class FileDialogPreview(QtWidgets.QFileDialog):
     def __init__(self, *args, **kwargs):
-        QtWidgets.QFileDialog.__init__(self, *args, **kwargs)
+        super(FileDialogPreview, self).__init__(*args, **kwargs)
         self.setOption(self.DontUseNativeDialog, True)
 
-        self.labelPreview = ScrollLabel(self)
+        self.labelPreview = ScrollAreaPreview(self)
         self.labelPreview.setFixedSize(300, 300)
         self.labelPreview.setHidden(True)
 
