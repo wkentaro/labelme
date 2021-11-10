@@ -37,7 +37,6 @@ from labelme.widgets import ZoomWidget
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
 # TODO(unknown):
-# - [high] Deselect shape when clicking and already selected(?)
 # - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
@@ -1950,9 +1949,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
-        self.labelList.clearSelection()
         for shape in self.canvas.selectedShapes:
             self.addLabel(shape)
+        self.labelList.clearSelection()
         self.setDirty()
 
     def moveShape(self):
