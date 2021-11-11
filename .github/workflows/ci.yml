@@ -48,8 +48,10 @@ jobs:
       shell: bash -l {0}
       run: |
         conda install -q -y python=${{ matrix.python-version }}
+        pip install -U pip setuptools
         which python
         python --version
+        which pip
         pip --version
 
     - name: Install dependencies
