@@ -91,7 +91,7 @@ jobs:
       if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
       run: |
         pip install black
-        black --line-length 79 --check --diff labelme
+        black --check --diff .
 
     - name: Test with pytest
       shell: bash -l {0}

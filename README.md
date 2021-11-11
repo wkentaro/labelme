@@ -246,7 +246,7 @@ See `.github/workflows/ci.yml` for more detail.
 pip install black hacking pytest pytest-qt
 
 flake8 .
-black --line-length 79 --check labelme/
+black --check .
 MPLBACKEND='agg' pytest tests/ -m 'not gpu'
 ```
 
