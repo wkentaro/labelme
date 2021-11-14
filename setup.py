@@ -34,7 +34,7 @@ def get_install_requires():
         "numpy",
         "Pillow>=2.8",
         "PyYAML",
-        "qtpy",
+        "qtpy!=1.11.2",
         "termcolor",
     ]
 
