@@ -15,7 +15,6 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import PY2
-from labelme import QT5
 
 from . import utils
 from labelme.config import get_config
@@ -25,6 +24,7 @@ from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
+from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
@@ -32,12 +32,10 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
-
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
 # TODO(unknown):
-# - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
 
@@ -1746,17 +1744,18 @@ class MainWindow(QtWidgets.QMainWindow):
         filters = self.tr("Image & Label files (%s)") % " ".join(
             formats + ["*%s" % LabelFile.suffix]
         )
-        filename = QtWidgets.QFileDialog.getOpenFileName(
-            self,
+        fileDialog = FileDialogPreview(self)
+        fileDialog.setFileMode(FileDialogPreview.ExistingFile)
+        fileDialog.setNameFilter(filters)
+        fileDialog.setWindowTitle(
             self.tr("%s - Choose Image or Label file") % __appname__,
-            path,
-            filters,
         )
-        if QT5:
-            filename, _ = filename
-        filename = str(filename)
-        if filename:
-            self.loadFile(filename)
+        fileDialog.setWindowFilePath(path)
+        fileDialog.setViewMode(FileDialogPreview.Detail)
+        if fileDialog.exec_():
+            fileName = fileDialog.selectedFiles()[0]
+            if fileName:
+                self.loadFile(fileName)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
