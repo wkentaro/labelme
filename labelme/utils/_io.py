@@ -1,3 +1,5 @@
+import re
+
 import os.path as osp
 
 import numpy as np
@@ -21,3 +23,10 @@ def lblsave(filename, lbl):
             "[%s] Cannot save the pixel-wise class label as PNG. "
             "Please consider using the .npy format." % filename
         )
+
+
+def strnum_to_num(text):
+    out = []
+    for w in re.split(r"(\d+)", text):
+        out.append(int(w) if w.isdigit() else w)
+    return out

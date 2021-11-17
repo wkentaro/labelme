@@ -1,6 +1,7 @@
 # flake8: noqa
 
 from ._io import lblsave
+from ._io import strnum_to_num
 
 from .image import apply_exif_orientation
 from .image import img_arr_to_b64
