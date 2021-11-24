@@ -54,7 +54,13 @@ def main():
             contributor=None,
             date_created=now.strftime("%Y-%m-%d %H:%M:%S.%f"),
         ),
-        licenses=[dict(url=None, id=0, name=None,)],
+        licenses=[
+            dict(
+                url=None,
+                id=0,
+                name=None,
+            )
+        ],
         images=[
             # license, url, file_name, height, width, date_captured, id
         ],
@@ -76,7 +82,11 @@ def main():
             continue
         class_name_to_id[class_name] = class_id
         data["categories"].append(
-            dict(supercategory=None, id=class_id, name=class_name,)
+            dict(
+                supercategory=None,
+                id=class_id,
+                name=class_name,
+            )
         )
 
     out_ann_file = osp.join(args.output_dir, "annotations.json")
