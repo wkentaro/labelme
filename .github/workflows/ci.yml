@@ -78,6 +78,7 @@ jobs:
     - name: Install main
       shell: bash -l {0}
       run: |
+        rm -f pyproject.toml
         pip install .
 
     - name: Lint with flake8
