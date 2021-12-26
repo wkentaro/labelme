@@ -5,7 +5,8 @@ import os
 import os.path as osp
 import sys
 import yaml
-
+import sys
+sys.path.insert(1, 'C:\\Users\\joshu\\OneDrive\\Dokumente\\gitprojects\\labelme')
 from qtpy import QtCore
 from qtpy import QtWidgets
 
