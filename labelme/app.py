@@ -6,6 +6,8 @@ import os
 import os.path as osp
 import re
 import webbrowser
+import sys
+sys.path.insert(1, 'C:\\Users\\joshu\\OneDrive\\Dokumente\\gitprojects\\labelme')
 
 import imgviz
 from qtpy import QtCore
@@ -16,7 +18,7 @@ from qtpy import QtWidgets
 from labelme import __appname__
 from labelme import PY2
 
-from . import utils
+from labelme import utils
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
