@@ -51,11 +51,11 @@ class Canvas(QtWidgets.QWidget):
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
-        self.shapes = []
+        self.shapes = []  # type: list[Shape]
         self.shapesBackups = []
-        self.current = None
+        self.current = None  # type: Shape
         self.selectedShapes = []  # save the selected shapes here
-        self.selectedShapesCopy = []
+        self.selectedShapesCopy = []  # type: list[Shape]
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
         #   - createMode == 'rectangle': diagonal line of the rectangle
@@ -70,13 +70,15 @@ class Canvas(QtWidgets.QWidget):
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
-        self.hShape = None
-        self.prevhShape = None
+        self.hShape = None  # type: Shape
+        self.prevhShape = None  # type: Shape
         self.hVertex = None
         self.prevhVertex = None
         self.hEdge = None
         self.prevhEdge = None
         self.movingShape = False
+        self.tracingActive = False
+        self.pause_tracing = False
         self.snapping = True
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
@@ -103,6 +105,7 @@ class Canvas(QtWidgets.QWidget):
     def createMode(self, value):
         if value not in [
             "polygon",
+            "trace",
             "rectangle",
             "circle",
             "line",
@@ -222,9 +225,14 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip"]:
+            if self.createMode in ["polygon", "linestrip", "trace"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
+            if self.createMode == "trace":
+                length = QtCore.QLineF(self.line[1], self.line[0]).length()
+                if length > 1 and not self.pause_tracing:
+                    self.current.addPoint(self.line[1])
+                    self.line[0] = self.current[-1]
             elif self.createMode == "rectangle":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -359,6 +367,9 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
+                    elif self.createMode == "trace":
+                        self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                        self.tracingActive = False
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -372,6 +383,8 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
+                    if self.createMode == "trace":
+                        self.tracingActive = True
                     if self.createMode == "point":
                         self.finalise()
                     else:
@@ -405,7 +418,12 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
             self.prevPoint = pos
 
-    def mouseReleaseEvent(self, ev):
+    def mouseReleaseEvent(self, ev: QtGui.QMouseEvent) -> None:
+        if ev.button() == QtCore.Qt.LeftButton and self.current and self.tracingActive:
+            if len(self.current.points) > 1:
+                self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                self.tracingActive = False
+
         if ev.button() == QtCore.Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
@@ -784,41 +802,21 @@ class Canvas(QtWidgets.QWidget):
     def keyPressEvent(self, ev):
         modifiers = ev.modifiers()
         key = ev.key()
-        if self.drawing():
-            if key == QtCore.Qt.Key_Escape and self.current:
-                self.current = None
-                self.drawingPolygon.emit(False)
-                self.update()
-            elif key == QtCore.Qt.Key_Return and self.canCloseShape():
-                self.finalise()
-            elif modifiers == QtCore.Qt.AltModifier:
-                self.snapping = False
-        elif self.editing():
-            if key == QtCore.Qt.Key_Up:
-                self.moveByKeyboard(QtCore.QPoint(0.0, -MOVE_SPEED))
-            elif key == QtCore.Qt.Key_Down:
-                self.moveByKeyboard(QtCore.QPoint(0.0, MOVE_SPEED))
-            elif key == QtCore.Qt.Key_Left:
-                self.moveByKeyboard(QtCore.QPoint(-MOVE_SPEED, 0.0))
-            elif key == QtCore.Qt.Key_Right:
-                self.moveByKeyboard(QtCore.QPoint(MOVE_SPEED, 0.0))
+        if key == QtCore.Qt.Key_Escape and self.current:
+            self.current = None
+            self.drawingPolygon.emit(False)
+            self.update()
+        elif key == QtCore.Qt.Key_Return and self.canCloseShape():
+            self.finalise()
+        elif key == QtCore.Qt.Key_F:
+            # Hold down F key to avoid the cursor attracting to
+            # the initial polygon point
+            self.pause_tracing = True
 
     def keyReleaseEvent(self, ev):
-        modifiers = ev.modifiers()
-        if self.drawing():
-            if int(modifiers) == 0:
-                self.snapping = True
-        elif self.editing():
-            if self.movingShape and self.selectedShapes:
-                index = self.shapes.index(self.selectedShapes[0])
-                if (
-                    self.shapesBackups[-1][index].points
-                    != self.shapes[index].points
-                ):
-                    self.storeShapes()
-                    self.shapeMoved.emit()
-
-                self.movingShape = False
+        key = ev.key()
+        if key == QtCore.Qt.Key_F:
+            self.pause_tracing = False
 
     def setLastLabel(self, text, flags):
         assert text

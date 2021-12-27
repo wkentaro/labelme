@@ -24,6 +24,8 @@ shape:
   line_color: [0, 255, 0, 128]
   fill_color: [0, 255, 0, 0]  # transparent
   vertex_fill_color: [0, 255, 0, 255]
+  point_size: 8
+  trace_point_size: 2
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 155]
@@ -88,6 +90,8 @@ shortcuts:
   fit_width: Ctrl+Shift+F
 
   create_polygon: Ctrl+N
+  create_trace: Ctrl+T
+  reset_trace: null
   create_rectangle: Ctrl+R
   create_circle: null
   create_line: null
