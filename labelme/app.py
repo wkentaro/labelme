@@ -1107,7 +1107,13 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.flags = flags
         shape.group_id = group_id
 
-        self._update_shape_color(shape)
+        if not self.uniqLabelList.findItemsByLabel(shape.label):
+                    item = QtWidgets.QListWidgetItem()
+                    item.setData(Qt.UserRole, shape.label)
+                    self.addLabel(shape)
+                    self.deleteSelectedShape()
+        #self._update_shape_color(shape)
+        
         if shape.group_id is None:
             item.setText(
                 '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
@@ -1116,11 +1122,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         else:
             item.setText("{} ({})".format(shape.label, shape.group_id))
+
+        
         self.setDirty()
-        if not self.uniqLabelList.findItemsByLabel(shape.label):
-            item = QtWidgets.QListWidgetItem()
-            item.setData(Qt.UserRole, shape.label)
-            self.uniqLabelList.addItem(item)
+        
 
     def fileSearchChanged(self):
         self.importDirImages(

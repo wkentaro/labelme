@@ -63,7 +63,7 @@ fit_to_content:
   row: false
 
 # canvas
-epsilon: 10.0
+epsilon: 20.0 # set the snapping distance for editing and deleting points
 canvas:
   # None: do nothing
   # close: close polygon
