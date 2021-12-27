@@ -34,6 +34,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from labelme.widgets import GenerateSegmentedData
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -68,7 +69,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if config is None:
             config = get_config()
         self._config = config
-
+        self.generate_segmented_data = GenerateSegmentedData()
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
         Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
@@ -84,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
         )
+        Shape.point_size = self._config["shape"]["point_size"]
 
         # Set point size from config file
         Shape.point_size = self._config["shape"]["point_size"]
@@ -327,6 +329,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing polygons"),
             enabled=False,
         )
+        createTraceMode = action(
+            self.tr("Trace Outline"),
+            lambda: self.toggleDrawMode(False, createMode="trace"),
+            shortcuts["create_trace"],
+            "trace",
+            self.tr("Start tracing objects (ctrl+t)"),
+            enabled=False,
+        )
+        resetTrace = action(
+            self.tr("Reset Trace"),
+            lambda: QtWidgets.QApplication.postEvent(self.canvas, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Escape, Qt.NoModifier)),
+            shortcuts["reset_trace"],
+            "eraser",
+            self.tr("Clear current trace (ESC)"),
+            enabled=True,
+        )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
             lambda: self.toggleDrawMode(False, createMode="rectangle"),
@@ -455,7 +473,11 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="help",
             tip=self.tr("Show tutorial page"),
         )
-
+        generate_data = action(
+            self.tr('Create Segmented Images'),
+            lambda: self.generate_segmented_data.show(),
+            tip=self.tr("Run macros to convert json data to training data.")
+        )
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -598,6 +620,8 @@ class MainWindow(QtWidgets.QMainWindow):
             removePoint=removePoint,
             createMode=createMode,
             editMode=editMode,
+            createTraceMode=createTraceMode,
+            resetTrace=resetTrace,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
@@ -632,6 +656,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # menu shown at right click
             menu=(
                 createMode,
+                createTraceMode,
                 createRectangleMode,
                 createCircleMode,
                 createLineMode,
@@ -650,6 +675,7 @@ class MainWindow(QtWidgets.QMainWindow):
             onLoadActive=(
                 close,
                 createMode,
+                createTraceMode,
                 createRectangleMode,
                 createCircleMode,
                 createLineMode,
@@ -667,6 +693,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
+            macros=self.menu(self.tr("&Macros")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
             labelList=labelMenu,
@@ -692,6 +719,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         utils.addActions(self.menus.help, (help,))
+        utils.addActions(self.menus.macros, (generate_data,))
         utils.addActions(
             self.menus.view,
             (
@@ -740,6 +768,7 @@ class MainWindow(QtWidgets.QMainWindow):
             deleteFile,
             None,
             createMode,
+            createTraceMode,
             editMode,
             duplicate,
             copy,
@@ -847,6 +876,23 @@ class MainWindow(QtWidgets.QMainWindow):
     def noShapes(self):
         return not len(self.labelList)
 
+    def setTraceReset(self, setAsReset):
+        """
+        Function to toggle the trace button to reset so that on touchscreens the 'escape' button can be pressed.
+        :param setAsReset: whether or no the reset functionality should be showing
+        """
+        tools_as_list = list(self.actions.tool)
+        for i in range(len(tools_as_list)):
+            if tools_as_list[i] == self.actions.createTraceMode and setAsReset:
+                tools_as_list[i] = self.actions.resetTrace
+                break
+            if tools_as_list[i] == self.actions.resetTrace:
+                tools_as_list[i] = self.actions.createTraceMode
+                break
+        self.actions.tool = tuple(tools_as_list)
+        self.tools.clear()
+        utils.addActions(self.tools, tools_as_list)
+
     def populateModeActions(self):
         tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
@@ -856,6 +902,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.edit.clear()
         actions = (
             self.actions.createMode,
+            self.actions.createTraceMode,
             self.actions.createRectangleMode,
             self.actions.createCircleMode,
             self.actions.createLineMode,
@@ -887,6 +934,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dirty = False
         self.actions.save.setEnabled(False)
         self.actions.createMode.setEnabled(True)
+        self.actions.createTraceMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
         self.actions.createLineMode.setEnabled(True)
@@ -962,58 +1010,33 @@ class MainWindow(QtWidgets.QMainWindow):
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
+
+        action_dict = {'polygon': [True, self.actions.createMode],
+                       'trace': [True, self.actions.createTraceMode],
+                       'rectangle': [True, self.actions.createRectangleMode],
+                       'line': [True, self.actions.createLineMode],
+                       'point': [True, self.actions.createPointMode],
+                       'circle': [True, self.actions.createCircleMode],
+                       'linestrip': [True, self.actions.createLineStripMode]}
+
         if edit:
-            self.actions.createMode.setEnabled(True)
-            self.actions.createRectangleMode.setEnabled(True)
-            self.actions.createCircleMode.setEnabled(True)
-            self.actions.createLineMode.setEnabled(True)
-            self.actions.createPointMode.setEnabled(True)
-            self.actions.createLineStripMode.setEnabled(True)
+            for key in action_dict.keys():
+                action_dict[key][1].setEnabled(action_dict[key][0])
         else:
-            if createMode == "polygon":
-                self.actions.createMode.setEnabled(False)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "rectangle":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(False)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "line":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(False)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "point":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(False)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "circle":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(False)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
-            elif createMode == "linestrip":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(False)
-            else:
-                raise ValueError("Unsupported createMode: %s" % createMode)
+            try:
+                action_dict[createMode][0] = False
+            except KeyError as e:
+                raise KeyError("Unsupported createMode: %s" % createMode)
+            for key in action_dict.keys():
+                action_dict[key][1].setEnabled(action_dict[key][0])
+
+        if createMode == 'trace':
+            self.setTraceReset(True)
+            Shape.point_size = self._config["shape"]["trace_point_size"]
+        else:
+            self.setTraceReset(False)
+            Shape.point_size = self._config["shape"]["point_size"]
+
         self.actions.editMode.setEnabled(not edit)
 
     def setEditMode(self):
