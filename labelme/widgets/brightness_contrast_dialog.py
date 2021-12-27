@@ -5,7 +5,7 @@ from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
 import numpy as np
-import cv2 
+from cv2 import normalize, NORM_MINMAX,CV_32F
 from .. import utils
 
 
@@ -46,7 +46,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
     def normalize_image(self):
         img = self.brightness_contrast_transform()
         np_img = np.array(img)
-        np_img = cv2.normalize(np_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)*255
+        np_img = normalize(np_img, None, alpha=0, beta=1, norm_type=NORM_MINMAX, dtype=CV_32F)*255
         img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
         self._apply_change(img_t)
     @staticmethod

@@ -15,7 +15,7 @@ a = Analysis(
         ('labelme/config/default_config.yaml', 'labelme/config'),
         ('labelme/icons/*', 'labelme/icons'),
     ],
-    hiddenimports=['yaml','termcolor','colorama'],
+    hiddenimports=['yaml','termcolor','colorama','cv2'],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],

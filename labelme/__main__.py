@@ -1,12 +1,13 @@
 import argparse
-import codecs
+from codecs import open as codecs_open
 import logging
 import os
 import os.path as osp
 import sys
-import yaml
+from yaml import safe_load
 import sys
-sys.path.insert(1, 'C:\\Users\\joshu\\OneDrive\\Dokumente\\gitprojects\\labelme')
+dev_path = os.getcwd()
+sys.path.insert(1, dev_path)
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -118,24 +119,24 @@ def main():
 
     if hasattr(args, "flags"):
         if os.path.isfile(args.flags):
-            with codecs.open(args.flags, "r", encoding="utf-8") as f:
+            with codecs_open(args.flags, "r", encoding="utf-8") as f:
                 args.flags = [line.strip() for line in f if line.strip()]
         else:
             args.flags = [line for line in args.flags.split(",") if line]
 
     if hasattr(args, "labels"):
         if os.path.isfile(args.labels):
-            with codecs.open(args.labels, "r", encoding="utf-8") as f:
+            with codecs_open(args.labels, "r", encoding="utf-8") as f:
                 args.labels = [line.strip() for line in f if line.strip()]
         else:
             args.labels = [line for line in args.labels.split(",") if line]
 
     if hasattr(args, "label_flags"):
         if os.path.isfile(args.label_flags):
-            with codecs.open(args.label_flags, "r", encoding="utf-8") as f:
-                args.label_flags = yaml.safe_load(f)
+            with codecs_open(args.label_flags, "r", encoding="utf-8") as f:
+                args.label_flags = safe_load(f)
         else:
-            args.label_flags = yaml.safe_load(args.label_flags)
+            args.label_flags = safe_load(args.label_flags)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")
@@ -174,15 +175,15 @@ def main():
         config=config,
         filename=filename,
         output_file=output_file,
-        output_dir=output_dir,
+        output_dir=output_dir
     )
 
     if reset_config:
         logger.info("Resetting Qt config: %s" % win.settings.fileName())
         win.settings.clear()
         sys.exit(0)
-
-    win.show()
+    win.showMaximized()
+    #win.show()
     win.raise_()
     sys.exit(app.exec_())
 

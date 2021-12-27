@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import functools
-import math
+from math import ceil,floor
 import os
 import os.path as osp
 import re
-import webbrowser
+from webbrowser import open as wb_open
 import sys
-sys.path.insert(1, 'C:\\Users\\joshu\\OneDrive\\Dokumente\\gitprojects\\labelme')
+dev_path = os.getcwd()
+sys.path.insert(1, dev_path)
 
-import imgviz
+from imgviz import label_colormap
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -41,7 +42,7 @@ from labelme.widgets import ZoomWidget
 # - Zoom is too "steppy".
 
 
-LABEL_COLORMAP = imgviz.label_colormap()
+LABEL_COLORMAP = label_colormap()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -946,7 +947,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def tutorial(self):
         url = "https://github.com/wkentaro/labelme/tree/main/examples/tutorial"  # NOQA
-        webbrowser.open(url)
+        wb_open(url)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
@@ -1397,9 +1398,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def addZoom(self, increment=1.1):
         zoom_value = self.zoomWidget.value() * increment
         if increment > 1:
-            zoom_value = math.ceil(zoom_value)
+            zoom_value = ceil(zoom_value)
         else:
-            zoom_value = math.floor(zoom_value)
+            zoom_value = floor(zoom_value)
         self.setZoom(zoom_value)
 
     def zoomRequest(self, delta, pos):
