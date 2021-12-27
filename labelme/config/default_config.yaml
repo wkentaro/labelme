@@ -26,11 +26,12 @@ shape:
   vertex_fill_color: [0, 255, 0, 255]
   point_size: 8
   trace_point_size: 2
+  trace_smothness: 5
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 155]
   hvertex_fill_color: [255, 255, 255, 255]
-  point_size: 8
+  point_size: 12
 
 # main
 flag_dock:

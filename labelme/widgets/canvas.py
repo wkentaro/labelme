@@ -48,6 +48,7 @@ class Canvas(QtWidgets.QWidget):
                 )
             )
         self.num_backups = kwargs.pop("num_backups", 10)
+        self.trace_smothness = kwargs.pop("trace_smothness",3)  # lower value means finer contours and smaller distances between points
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -230,7 +231,7 @@ class Canvas(QtWidgets.QWidget):
                 self.line[1] = pos
             if self.createMode == "trace":
                 length = QtCore.QLineF(self.line[1], self.line[0]).length()
-                if length > 1 and not self.pause_tracing:
+                if length > self.trace_smothness and not self.pause_tracing:
                     self.current.addPoint(self.line[1])
                     self.line[0] = self.current[-1]
             elif self.createMode == "rectangle":

@@ -172,9 +172,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setAcceptDrops(True)
 
         self.canvas = self.labelList.canvas = Canvas(
+            trace_smothness = self._config["shape"]["trace_smothness"],
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
-            num_backups=self._config["canvas"]["num_backups"],
+            num_backups=self._config["canvas"]["num_backups"]
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
