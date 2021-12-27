@@ -9,3 +9,9 @@
 
 .DS_Store
 .idea/
+.vscode/tasks.json
+sampleImages/boat1.json
+sampleImages/boat1.png
+sampleImages/boat2.json
+sampleImages/test.png
+sampleImages/th_barbara.png
