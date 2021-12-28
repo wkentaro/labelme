@@ -1996,9 +1996,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
-            # if self.noShapes():
-            #     for action in self.actions.onShapesPresent:
-            #         action.setEnabled(False)
         
 
     def copyShape(self):

@@ -55,6 +55,11 @@ def img_data_to_png_data(img_data):
             f.seek(0)
             return f.read()
 
+def normalize_image(img):
+    np_img = np.array(img)
+    np_img = (np_img - np.min(np_img)) / (np.max(np_img) - np.min(np_img))*255
+    img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
+    return img_t
 
 def apply_exif_orientation(image):
     try:

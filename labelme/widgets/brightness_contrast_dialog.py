@@ -4,8 +4,8 @@ from PIL import ImageFilter
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
-import numpy as np
-from cv2 import normalize, NORM_MINMAX,CV_32F
+#import numpy as np
+#from cv2 import normalize, NORM_MINMAX,CV_32F
 from .. import utils
 
 
@@ -19,7 +19,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.slider_contrast = self._create_slider()
         self.apply_gauss_filter_checkbox = self._create_checkbox(self.connect_gauss_filter_Checkbox,"Gauss")
         self.apply_sobel_filter_checkbox = self._create_checkbox(self.connect_sobel_filter_Checkbox,"Sobel")
-        self.normalize_pushButton = self._create_pushButton(self.normalize_image,"normalize")
+        self.normalize_pushButton = self._create_pushButton(self.call_normalize,"normalize")
 
         formLayout = QtWidgets.QFormLayout()
         formLayout.addRow(self.tr("Brightness"), self.slider_brightness)
@@ -43,12 +43,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
         return img
 
-    def normalize_image(self):
+    def call_normalize(self):
         img = self.brightness_contrast_transform()
-        np_img = np.array(img)
-        np_img = normalize(np_img, None, alpha=0, beta=1, norm_type=NORM_MINMAX, dtype=CV_32F)*255
-        img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
+        img_t = utils.image.normalize_image(img)
         self._apply_change(img_t)
+
     @staticmethod
     def _create_pushButton(callback,buttonText):
         button = QtWidgets.QPushButton(buttonText)
