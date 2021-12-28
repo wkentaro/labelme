@@ -9,10 +9,10 @@ logger_level: info
 
 flags: null
 label_flags: null
-labels: null
+labels: ["house","boat","water","tower","person"]
 file_search: null
 sort_labels: true
-validate_label: null
+validate_label: "exact"
 
 default_shape_color: [0, 255, 0]
 shape_color: auto  # null, 'auto', 'manual'
@@ -35,12 +35,12 @@ shape:
 
 # main
 flag_dock:
-  show: true
+  show: false
   closable: true
   movable: true
   floatable: true
 label_dock:
-  show: true
+  show: false
   closable: true
   movable: true
   floatable: true

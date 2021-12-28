@@ -205,7 +205,10 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            self.line.shape_type = self.createMode
+            if self.createMode in ["polygon","trace"]:
+                self.line.shape_type = "polygon"
+            else:
+                self.line.shape_type = self.createMode
 
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:

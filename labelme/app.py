@@ -1111,7 +1111,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     item = QtWidgets.QListWidgetItem()
                     item.setData(Qt.UserRole, shape.label)
                     self.addLabel(shape)
-                    self.deleteSelectedShape()
+                    self.deleteSelectedShape(omitmsg=True)
         #self._update_shape_color(shape)
         
         if shape.group_id is None:
@@ -1978,20 +1978,28 @@ class MainWindow(QtWidgets.QMainWindow):
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
 
-    def deleteSelectedShape(self):
-        yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-        msg = self.tr(
-            "You are about to permanently delete {} polygons, "
-            "proceed anyway?"
-        ).format(len(self.canvas.selectedShapes))
-        if yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes
-        ):
+    def deleteSelectedShape(self,omitmsg=False):
+        if not omitmsg:
+            yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
+            msg = self.tr(
+                "You are about to permanently delete {} polygons, "
+                "proceed anyway?"
+            ).format(len(self.canvas.selectedShapes))
+            if (yes == QtWidgets.QMessageBox.warning(
+            self, self.tr("Attention"), msg, yes | no, yes)
+            ):
+                self.remLabels(self.canvas.deleteSelected())
+                self.setDirty()
+                if self.noShapes():
+                    for action in self.actions.onShapesPresent:
+                        action.setEnabled(False)
+        else:
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
-            if self.noShapes():
-                for action in self.actions.onShapesPresent:
-                    action.setEnabled(False)
+            # if self.noShapes():
+            #     for action in self.actions.onShapesPresent:
+            #         action.setEnabled(False)
+        
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
