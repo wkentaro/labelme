@@ -62,7 +62,11 @@ class LabelFile(object):
             elif ext in [".jpg", ".jpeg"]:
                 format = "JPEG"
             else:
-                format = "PNG"
+                if image_pil.decodermaxblock>255:
+                    format = "TIFF"
+                else:
+                    format = "PNG"
+            
             image_pil.save(f, format=format)
             f.seek(0)
             return f.read()

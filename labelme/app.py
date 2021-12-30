@@ -694,7 +694,8 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
-            macros=self.menu(self.tr("&Macros")),
+            #macros=self.menu(self.tr("&Macros")),
+            settings = self.menu(self.tr("&Settings")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
             labelList=labelMenu,
@@ -720,7 +721,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         utils.addActions(self.menus.help, (help,))
-        utils.addActions(self.menus.macros, (generate_data,))
+        #utils.addActions(self.menus.macros, (generate_data,))
         utils.addActions(
             self.menus.view,
             (

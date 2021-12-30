@@ -39,6 +39,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         contrast = self.slider_contrast.value() / 50.0
 
         img = self.img
+        if img.mode != "L":
+            img = img.convert("L")
         img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
         img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
         return img
