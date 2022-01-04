@@ -1,13 +1,15 @@
 import PIL.Image
 import PIL.ImageEnhance
 from PIL import ImageFilter
+from PyQt5.QtGui import QImage
+from PyQt5.QtWidgets import QSpinBox, QWidget
+from numpy import array
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
-#import numpy as np
-#from cv2 import normalize, NORM_MINMAX,CV_32F
+import numpy as np
+import cv2
 from .. import utils
-
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
     def __init__(self, img, callback, parent=None):
@@ -21,6 +23,10 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.apply_sobel_filter_checkbox = self._create_checkbox(self.connect_sobel_filter_Checkbox,"Sobel")
         self.normalize_pushButton = self._create_pushButton(self.call_normalize,"normalize")
         self.reset_pushButton = self._create_pushButton(self.reset,"reset processing")
+        self.kernelSize = self._create_spinBox(min_val=3,max_val=7,step=2)
+        self.kernelSize.valueChanged.connect (self.apply_sobel_filter)
+        self.derivative = self._create_spinBox(min_val=1,max_val=3)
+        self.derivative.valueChanged.connect (self.apply_sobel_filter)
         self.HasReset = True 
 
         formLayout = QtWidgets.QFormLayout()
@@ -28,6 +34,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         formLayout.addRow(self.tr("Contrast"), self.slider_contrast)
         formLayout.addRow(self.tr("Filter Options"),self.apply_gauss_filter_checkbox)
         formLayout.addRow(self.tr(""),self.apply_sobel_filter_checkbox)
+        formLayout.addRow(self.tr("kernel size"),self.kernelSize)
+        formLayout.addRow(self.tr("derivative size"),self.derivative)
         formLayout.addRow(self.tr(""), self.normalize_pushButton)
         formLayout.addRow(self.tr(""), self.reset_pushButton)
 
@@ -38,14 +46,18 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.callback = callback
 
     def brightness_contrast_transform(self):
-        brightness = self.slider_brightness.value() / 50.0
-        contrast = self.slider_contrast.value() / 50.0
-
-        img = self.img
-        if img.mode != "L":
-            img = img.convert("L")
-        img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
-        img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
+        brightness = self.slider_brightness.value() - 50
+        contrast = self.slider_contrast.value() / 50
+        img_np = np.array(self.img)
+        #img = self.img
+        #if img.mode != "L":
+        #    img = img.convert("L")
+        #img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
+        #img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
+        if brightness < 0:
+            img_np = cv2.subtract(img_np,-1*brightness)
+        img = cv2.convertScaleAbs(img_np,alpha=contrast,beta= max(0,brightness))
+        
         self.HasReset = False
         return img
 
@@ -68,11 +80,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         button.clicked.connect(callback)
         return button
 
-
+    
     def onNewValue(self):
         img = self.brightness_contrast_transform()
         self._apply_change(img)
-        
+    
     def apply_gauss_filter(self):
         img = self.brightness_contrast_transform()
         img = img.filter(ImageFilter.GaussianBlur)
@@ -93,7 +105,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
 
     def apply_sobel_filter(self):
         img = self.brightness_contrast_transform()
-        img = img.filter(ImageFilter.FIND_EDGES)
+        img = cv2.Sobel(img,cv2.CV_8U,dx=self.derivative.value(),dy=self.derivative.value(),ksize=self.kernelSize.value())
         self._apply_change(img)
 
     def get_unprocessed_image(self):
@@ -113,8 +125,19 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         checkbox.stateChanged.connect(stateCallback)
         return checkbox
 
+    def _create_spinBox(self,min_val,max_val,step=1):
+        spinBox = QSpinBox()
+        spinBox.setMaximum(max_val)
+        spinBox.setMinimum(min_val)
+        spinBox.setSingleStep(step)
+        return spinBox
+
+
     def _apply_change(self,img):
-        img_data = utils.img_pil_to_data(img)
-        qimage = QtGui.QImage.fromData(img_data)
+        if isinstance(img,PIL.Image.Image):
+            img_data = utils.img_pil_to_data(img)
+            qimage = QtGui.QImage.fromData(img_data)
+        elif isinstance(img,np.ndarray):    
+            qimage = QtGui.QImage(img.data, img.shape[1], img.shape[0],QImage.Format_Indexed8)
         self.callback(qimage)
     
