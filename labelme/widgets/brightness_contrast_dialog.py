@@ -20,13 +20,16 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.apply_gauss_filter_checkbox = self._create_checkbox(self.connect_gauss_filter_Checkbox,"Gauss")
         self.apply_sobel_filter_checkbox = self._create_checkbox(self.connect_sobel_filter_Checkbox,"Sobel")
         self.normalize_pushButton = self._create_pushButton(self.call_normalize,"normalize")
+        self.reset_pushButton = self._create_pushButton(self.reset,"reset processing")
+        self.HasReset = True 
 
         formLayout = QtWidgets.QFormLayout()
         formLayout.addRow(self.tr("Brightness"), self.slider_brightness)
         formLayout.addRow(self.tr("Contrast"), self.slider_contrast)
-        formLayout.addRow(self.tr(""), self.normalize_pushButton)
         formLayout.addRow(self.tr("Filter Options"),self.apply_gauss_filter_checkbox)
         formLayout.addRow(self.tr(""),self.apply_sobel_filter_checkbox)
+        formLayout.addRow(self.tr(""), self.normalize_pushButton)
+        formLayout.addRow(self.tr(""), self.reset_pushButton)
 
         self.setLayout(formLayout)
 
@@ -43,12 +46,21 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             img = img.convert("L")
         img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
         img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
+        self.HasReset = False
         return img
 
     def call_normalize(self):
         img = self.brightness_contrast_transform()
         img_t = utils.image.normalize_image(img)
+        self.HasReset=False
         self._apply_change(img_t)
+        
+    
+    def reset(self):
+        self.slider_brightness.setValue(50)
+        self.slider_contrast.setValue(50)
+        self.HasReset = True
+        self._apply_change(self.img)
 
     @staticmethod
     def _create_pushButton(callback,buttonText):

@@ -1674,8 +1674,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if contrast is not None:
             dialog.slider_contrast.setValue(contrast)
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
-        if brightness is not None or contrast is not None:
-            dialog.onNewValue(None)
+        if (brightness is not None or contrast is not None) and not dialog.HasReset:
+            dialog.onNewValue()
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)

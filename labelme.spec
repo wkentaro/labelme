@@ -15,10 +15,10 @@ a = Analysis(
         ('labelme/config/default_config.yaml', 'labelme/config'),
         ('labelme/icons/*', 'labelme/icons'),
     ],
-    hiddenimports=['yaml','termcolor','colorama','cv2'],
+    hiddenimports=['yaml','termcolor','colorama'],
     hookspath=[],
     runtime_hooks=[],
-    excludes=[],
+    excludes=['cv2'],
 )
 pyz = PYZ(a.pure, a.zipped_data)
 exe = EXE(
