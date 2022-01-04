@@ -7,7 +7,7 @@ keep_prev_brightness: false
 keep_prev_contrast: false
 logger_level: info
 
-flags: null
+flags: ["a","b","c"]
 label_flags: null
 labels: ["house","boat","water","tower","person"]
 file_search: null
