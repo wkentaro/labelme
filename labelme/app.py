@@ -7,6 +7,7 @@ import os.path as osp
 import re
 from webbrowser import open as wb_open
 import sys
+from PyQt5.QtGui import QFont
 dev_path = os.getcwd()
 sys.path.insert(1, dev_path)
 
@@ -25,7 +26,7 @@ from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
-from labelme.widgets import BrightnessContrastDialog
+from labelme.widgets import BrightnessContrastDialog, canvas
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
@@ -35,6 +36,7 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 from labelme.widgets import GenerateSegmentedData
+from labelme.widgets import set_snapping
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -149,6 +151,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_dock = QtWidgets.QDockWidget(self.tr(u"Label List"), self)
         self.label_dock.setObjectName(u"Label List")
         self.label_dock.setWidget(self.uniqLabelList)
+        
 
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
@@ -335,7 +338,7 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.toggleDrawMode(False, createMode="trace"),
             shortcuts["create_trace"],
             "trace",
-            self.tr("Start tracing objects (ctrl+t)"),
+            self.tr("Start tracing objects (ctrl+t) pause trace by keep pressing 'F'"),
             enabled=False,
         )
         resetTrace = action(
@@ -554,6 +557,20 @@ class MainWindow(QtWidgets.QMainWindow):
             "Adjust brightness and contrast",
             enabled=False,
         )
+
+        setSnappingDistance = action(
+            "& Snapping Distance",
+            self.setSnappingDistance,
+            self.tr("set distance to interact with points"),
+            enabled = True
+        )
+
+        setTraceSmoothness = action(
+            "& Trace Smoothness",
+            self.setTraceSmoothness,
+            self.tr("set smoothness of trace-polygon"),
+            enabled = True,
+        )
         # Group zoom controls into a list for easier toggling.
         zoomActions = (
             self.zoomWidget,
@@ -644,7 +661,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # XXX: need to add some actions here to activate the shortcut
             editMenu=(
                 edit,
-                duplicate,
+                #duplicate,
                 delete,
                 None,
                 undo,
@@ -658,14 +675,14 @@ class MainWindow(QtWidgets.QMainWindow):
             menu=(
                 createMode,
                 createTraceMode,
-                createRectangleMode,
-                createCircleMode,
-                createLineMode,
-                createPointMode,
-                createLineStripMode,
+                #createRectangleMode,
+                #createCircleMode,
+                #createLineMode,
+                #createPointMode,
+                #createLineStripMode,
                 editMode,
                 edit,
-                duplicate,
+                #duplicate,
                 copy,
                 paste,
                 delete,
@@ -713,7 +730,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 saveAs,
                 saveAuto,
                 changeOutputDir,
-                saveWithImageData,
                 close,
                 deleteFile,
                 None,
@@ -748,7 +764,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
-
+        utils.addActions(
+            self.menus.settings,
+            (
+                saveWithImageData,
+                setSnappingDistance,
+                setTraceSmoothness,
+            ),
+        )
         # Custom context menu for the canvas widget:
         utils.addActions(self.canvas.menus[0], self.actions.menu)
         utils.addActions(
@@ -1165,7 +1188,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
-        self.actions.duplicate.setEnabled(n_selected)
+        #self.actions.duplicate.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
@@ -1175,7 +1198,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
-        self.labelList.addItem(label_list_item)
+        
         if not self.uniqLabelList.findItemsByLabel(shape.label):
             item = self.uniqLabelList.createItemFromLabel(shape.label)
             self.uniqLabelList.addItem(item)
@@ -1186,11 +1209,8 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
-        label_list_item.setText(
-            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                text, *shape.fill_color.getRgb()[:3]
-            )
-        )
+        self.labelList.addItem(label_list_item,text,shape.fill_color.getRgb()[:3])
+
 
     def _update_shape_color(self, shape):
         r, g, b = self._get_rgb_by_label(shape.label)
@@ -1495,6 +1515,36 @@ class MainWindow(QtWidgets.QMainWindow):
         brightness = dialog.slider_brightness.value()
         contrast = dialog.slider_contrast.value()
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
+
+    def setSnappingDistance(self):
+        dialog = set_snapping.editSingleVariableDialog(self,
+                                                defaultValue = self.canvas.epsilon,
+                                                minValue = 5,
+                                                maxValue = 30,
+                                                lowValueText= "less tolerance",
+                                                highValueText= "more tolerance",
+                                                WindowTitle= "set snapping distance",
+                                                helpText= "this slider sets the distance (in pixels) for your courser to still be able to select the closest point nearby",
+                                                WindowWidth = 400,
+                                                WindowHeight = 150 
+                                                )
+        dialog.exec_()
+        self.canvas.epsilon = dialog.value
+    
+    def setTraceSmoothness(self):
+        dialog = set_snapping.editSingleVariableDialog(self,
+                                                defaultValue = self.canvas.trace_smothness,
+                                                minValue = 1,
+                                                maxValue = 15,
+                                                lowValueText= "smaller distance \n between points",
+                                                highValueText= "greater distance \n between points",
+                                                WindowTitle= "set trace point-distance",
+                                                helpText= "this slider controls how often points are drawn when trace mode is used, i.e. how smooth the polygon should be",
+                                                WindowWidth = 400,
+                                                WindowHeight = 150 
+                                                )
+        dialog.exec_()
+        self.canvas.trace_smothness = dialog.value
 
     def togglePolygons(self, value):
         for item in self.labelList:

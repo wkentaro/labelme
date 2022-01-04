@@ -4,9 +4,14 @@ from qtpy.QtCore import Qt
 from qtpy import QtWidgets
 
 from .escapable_qlist_widget import EscapableQListWidget
-
+from .label_list_widget import HTMLDelegate
 
 class UniqueLabelQListWidget(EscapableQListWidget):
+    
+    def __init__(self) -> None:
+        super(EscapableQListWidget,self).__init__(),
+        self.setItemDelegate(HTMLDelegate())
+    
     def mousePressEvent(self, event):
         super(UniqueLabelQListWidget, self).mousePressEvent(event)
         if not self.indexAt(event.pos()).isValid():

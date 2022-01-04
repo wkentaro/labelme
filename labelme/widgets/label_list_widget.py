@@ -48,7 +48,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         if index.column() != 0:
             textRect.adjust(5, 0, 0, 0)
 
-        thefuckyourshitup_constant = 4
+        thefuckyourshitup_constant = 0
         margin = (option.rect.height() - options.fontMetrics.height()) // 2
         margin = margin - thefuckyourshitup_constant
         textRect.setTop(textRect.top() + margin)
@@ -60,7 +60,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         painter.restore()
 
     def sizeHint(self, option, index):
-        thefuckyourshitup_constant = 4
+        thefuckyourshitup_constant = 0
         return QtCore.QSize(
             self.doc.idealWidth(),
             self.doc.size().height() - thefuckyourshitup_constant,
@@ -160,12 +160,15 @@ class LabelListWidget(QtWidgets.QListView):
     def scrollToItem(self, item):
         self.scrollTo(self.model().indexFromItem(item))
 
-    def addItem(self, item):
+    def addItem(self, item, label=None, color=None):
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
         self.model().setItem(self.model().rowCount(), 0, item)
-        item.setSizeHint(self.itemDelegate().sizeHint(None, None))
-
+        item.setText(
+                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                    label, *color)
+                )
+    
     def removeItem(self, item):
         index = self.model().indexFromItem(item)
         self.model().removeRows(index.row(), 1)
