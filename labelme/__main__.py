@@ -144,7 +144,7 @@ def main():
     filename = config_from_args.pop("filename")
     output = config_from_args.pop("output")
     config_file_or_yaml = config_from_args.pop("config")
-    config = get_config(config_file_or_yaml, config_from_args)
+    config,from_file = get_config(config_file_or_yaml, config_from_args)
 
     if not config["labels"] and config["validate_label"]:
         logger.error(
@@ -175,7 +175,8 @@ def main():
         config=config,
         filename=filename,
         output_file=output_file,
-        output_dir=output_dir
+        output_dir=output_dir,
+        config_path = config_file_or_yaml if from_file else None
     )
 
     if reset_config:

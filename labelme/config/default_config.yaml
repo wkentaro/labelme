@@ -6,34 +6,34 @@ keep_prev_scale: true
 keep_prev_brightness: true
 keep_prev_contrast: true
 logger_level: info
-
-flags: ["a","b","c"]
-label_flags: null
-labels: ["house","boat","water","tower","person"]
-file_search: null
+flags: [a, b, c]
+label_flags:
+labels: [house, boat, water, tower, person]
+file_search: example
 sort_labels: true
-validate_label: "exact"
-
+validate_label: exact
 default_shape_color: [0, 255, 0]
-shape_color: auto  # null, 'auto', 'manual'
+shape_color: auto
 shift_auto_shape_color: 0
-label_colors: null
-
+label_colors:
 shape:
   # drawing
-  line_color: [0, 255, 0, 128]
-  fill_color: [0, 255, 0, 0]  # transparent
-  vertex_fill_color: [0, 255, 0, 255]
-  point_size: 8
-  trace_point_size: 2
-  trace_smothness: 5
-  # selecting / hovering
-  select_line_color: [255, 255, 255, 255]
-  select_fill_color: [0, 255, 0, 155]
-  hvertex_fill_color: [255, 255, 255, 255]
-  point_size: 12
-
-# main
+  drawing:
+    line_color: [0, 255, 0, 128]
+    fill_color: [0, 255, 0, 0]  # transparent
+    vertex_fill_color: [0, 255, 0, 255]
+    point_size: 8
+  trace:
+    # smoothness sets the intervalls at which points are drawn
+    point_size: 2
+    smothness: 11
+  select:
+    # epsilon sets the snapping distance for editing and deleting point
+    line_color: [255, 255, 255, 255]
+    fill_color: [0, 255, 0, 155]
+    vertex_fill_color: [255, 255, 255, 255]
+    epsilon: 15
+    point_size: 12
 flag_dock:
   show: false
   closable: true
@@ -54,23 +54,16 @@ file_dock:
   closable: true
   movable: true
   floatable: true
-
-# label_dialog
 show_label_text_field: true
-label_completion: startswith
+label_completion: startswith #refers to label dialog
 fit_to_content:
   column: true
   row: false
-
-# canvas
-epsilon: 20.0 # set the snapping distance for editing and deleting points
 canvas:
   # None: do nothing
   # close: close polygon
   double_click: close
-  # The max number of edits we can undo
   num_backups: 10
-
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O
@@ -78,29 +71,26 @@ shortcuts:
   quit: Ctrl+Q
   save: Ctrl+S
   save_as: Ctrl+Shift+S
-  save_to: null
+  save_to:
   delete_file: Ctrl+Delete
-
   open_next: [D, Ctrl+RIGHT]
   open_prev: [A, Ctrl+LEFT]
-
   zoom_in: [Ctrl++, Ctrl+=]
   zoom_out: Ctrl+-
   zoom_to_original: Ctrl+0
   fit_window: Ctrl+F
   fit_width: Ctrl+Shift+F
-
   create_polygon: Ctrl+N
   create_trace: Ctrl+T
-  reset_trace: null
+  reset_trace:
   create_rectangle: Ctrl+R
-  create_circle: null
-  create_line: null
-  create_point: null
-  create_linestrip: null
+  create_circle:
+  create_line:
+  create_point:
+  create_linestrip:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
-  duplicate_polygon: null
+  duplicate_polygon:
   copy_polygon: Ctrl+C
   paste_polygon: Ctrl+V
   undo: Ctrl+Z

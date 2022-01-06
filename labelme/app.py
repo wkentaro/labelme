@@ -8,6 +8,7 @@ import re
 from webbrowser import open as wb_open
 import sys
 from PyQt5.QtGui import QFont
+from ruamel import yaml
 dev_path = os.getcwd()
 sys.path.insert(1, dev_path)
 
@@ -59,6 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
         output=None,
         output_file=None,
         output_dir=None,
+        config_path = None
     ):
         if output is not None:
             logger.warning(
@@ -73,24 +75,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config = config
         self.generate_segmented_data = GenerateSegmentedData()
         # set default shape colors
-        Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
-        Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
+        Shape.line_color = QtGui.QColor(*self._config["shape"]["drawing"]["line_color"])
+        Shape.fill_color = QtGui.QColor(*self._config["shape"]["drawing"]["fill_color"])
         Shape.select_line_color = QtGui.QColor(
-            *self._config["shape"]["select_line_color"]
+            *self._config["shape"]["select"]["line_color"]
         )
         Shape.select_fill_color = QtGui.QColor(
-            *self._config["shape"]["select_fill_color"]
+            *self._config["shape"]["select"]["fill_color"]
         )
         Shape.vertex_fill_color = QtGui.QColor(
-            *self._config["shape"]["vertex_fill_color"]
+            *self._config["shape"]["drawing"]["vertex_fill_color"]
         )
         Shape.hvertex_fill_color = QtGui.QColor(
-            *self._config["shape"]["hvertex_fill_color"]
+            *self._config["shape"]["select"]["vertex_fill_color"]
         )
-        Shape.point_size = self._config["shape"]["point_size"]
-
         # Set point size from config file
-        Shape.point_size = self._config["shape"]["point_size"]
+        Shape.point_size = self._config["shape"]["drawing"]["point_size"]
 
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
@@ -101,6 +101,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
 
         self._copied_shapes = None
+
+        self.config_path = config_path
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
@@ -175,8 +177,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setAcceptDrops(True)
 
         self.canvas = self.labelList.canvas = Canvas(
-            trace_smothness = self._config["shape"]["trace_smothness"],
-            epsilon=self._config["epsilon"],
+            trace_smothness = self._config["shape"]["trace"]["smothness"],
+            epsilon=self._config["shape"]["select"]["epsilon"],
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"]
         )
@@ -1057,10 +1059,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if createMode == 'trace':
             self.setTraceReset(True)
-            Shape.point_size = self._config["shape"]["trace_point_size"]
+            Shape.point_size = self._config["shape"]["trace"]["point_size"]
         else:
             self.setTraceReset(False)
-            Shape.point_size = self._config["shape"]["point_size"]
+            Shape.point_size = self._config["shape"]["drawing"]["point_size"]
 
         self.actions.editMode.setEnabled(not edit)
 
@@ -1344,6 +1346,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if len(items) != 1:
                     raise RuntimeError("There are duplicate files.")
                 items[0].setCheckState(Qt.Checked)
+            self.save_config_modifications()
             # disable allows next and previous image to proceed
             # self.filename = filename
             return True
@@ -1352,6 +1355,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("Error saving label data"), self.tr("<b>%s</b>") % e
             )
             return False
+
+    def save_config_modifications(self):
+        with open (self.config_path,"w") as f:
+            yaml.dump(self._config,f, Dumper=yaml.RoundTripDumper)
+
+
 
     def duplicateSelectedShape(self):
         added_shapes = self.canvas.duplicateSelectedShapes()
@@ -1530,6 +1539,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 )
         dialog.exec_()
         self.canvas.epsilon = dialog.value
+        self._config["shape"]["select"]["epsilon"] = dialog.value
     
     def setTraceSmoothness(self):
         dialog = set_snapping.editSingleVariableDialog(self,
@@ -1545,6 +1555,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 )
         dialog.exec_()
         self.canvas.trace_smothness = dialog.value
+        self._config["shape"]["trace"]["smothness"] = dialog.value
 
     def togglePolygons(self, value):
         for item in self.labelList:
@@ -1737,6 +1748,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.setValue("recentFiles", self.recentFiles)
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
+        self.save_config_modifications()
 
     def dragEnterEvent(self, event):
         extensions = [

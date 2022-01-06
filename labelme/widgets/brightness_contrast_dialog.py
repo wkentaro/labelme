@@ -1,3 +1,6 @@
+from os import error
+import re
+from webbrowser import Error
 import PIL.Image
 import PIL.ImageEnhance
 from PIL import ImageFilter
@@ -9,6 +12,8 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 import numpy as np
 import cv2
+
+from labelme.utils.image import normalize_image
 from .. import utils
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
@@ -23,7 +28,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.apply_sobel_filter_checkbox = self._create_checkbox(self.connect_sobel_filter_Checkbox,"Sobel")
         self.normalize_pushButton = self._create_pushButton(self.call_normalize,"normalize")
         self.reset_pushButton = self._create_pushButton(self.reset,"reset processing")
-        self.kernelSize = self._create_spinBox(min_val=3,max_val=7,step=2)
+        self.kernelSize = self._create_spinBox(min_val=3,max_val=11,step=2)
         self.kernelSize.valueChanged.connect (self.apply_sobel_filter)
         self.derivative = self._create_spinBox(min_val=1,max_val=3)
         self.derivative.valueChanged.connect (self.apply_sobel_filter)
@@ -83,11 +88,13 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
     
     def onNewValue(self):
         img = self.brightness_contrast_transform()
+        self.apply_sobel_filter_checkbox.setChecked(False)
+        self.apply_gauss_filter_checkbox.setChecked(False)
         self._apply_change(img)
     
     def apply_gauss_filter(self):
         img = self.brightness_contrast_transform()
-        img = img.filter(ImageFilter.GaussianBlur)
+        img = cv2.GaussianBlur(img,(5,5),sigmaX=3,sigmaY=3)
         self._apply_change(img)
 
     def connect_gauss_filter_Checkbox(self,checked):
@@ -104,9 +111,26 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             self.get_unprocessed_image()
 
     def apply_sobel_filter(self):
+        if not self.apply_sobel_filter_checkbox.isChecked():
+            return 0
         img = self.brightness_contrast_transform()
-        img = cv2.Sobel(img,cv2.CV_8U,dx=self.derivative.value(),dy=self.derivative.value(),ksize=self.kernelSize.value())
+        try:
+            img = cv2.Sobel(img,cv2.CV_64F,dx=self.derivative.value(),dy=self.derivative.value(),ksize=self.kernelSize.value())
+        except cv2.error:
+            if self.kernelSize.value() %2 ==0:
+                self.errorMessage("image processing error", f"kernel size of value {self.kernelSize.value()} is not valid, number must be uneven")
+            else:
+                self.errorMessage("image processing error", f"derivative of order {self.derivative.value()} can't be calculated with kernel size {self.kernelSize.value()}\n please change either parameter")
+            return 0
+        set_absolute = False
+        if set_absolute:
+            img = np.absolute(img)
+        else:
+            img = img  - img.min()
+        img = (img * 255/ img.max()).astype(np.int8)
+        #img = utils.image.normalize_image(img)
         self._apply_change(img)
+        return 1
 
     def get_unprocessed_image(self):
         img = self.brightness_contrast_transform()
@@ -140,4 +164,9 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         elif isinstance(img,np.ndarray):    
             qimage = QtGui.QImage(img.data, img.shape[1], img.shape[0],QImage.Format_Indexed8)
         self.callback(qimage)
+
+    def errorMessage(self, title, message):
+        return QtWidgets.QMessageBox.critical(
+            self, title, "<p><b>%s</b></p>%s" % (title, message)
+        )
     

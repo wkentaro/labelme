@@ -1,11 +1,12 @@
 import base64
 import io
+from cv2 import imencode
 
 import numpy as np
 import PIL.ExifTags
 import PIL.Image
 import PIL.ImageOps
-
+import cv2
 
 def img_data_to_pil(img_data):
     f = io.BytesIO()
@@ -29,8 +30,7 @@ def img_b64_to_arr(img_b64):
 def img_pil_to_data(img_pil):
     f = io.BytesIO()
     img_pil.save(f, format="PNG")
-    img_data = f.getvalue()
-    return img_data
+    return f.getvalue()
 
 
 def img_arr_to_b64(img_arr):
@@ -56,10 +56,13 @@ def img_data_to_png_data(img_data):
             return f.read()
 
 def normalize_image(img):
-    np_img = np.array(img)
-    np_img = (np_img - np.min(np_img)) / (np.max(np_img) - np.min(np_img))*255
-    img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
-    return img_t
+    if not isinstance(img,np.ndarray):
+        np_img = np.array(img)
+    else:
+        np_img=img
+    np_img = (cv2.normalize(np_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)*255).astype(np.uint8)
+    #img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
+    return np_img
 
 def apply_exif_orientation(image):
     try:
