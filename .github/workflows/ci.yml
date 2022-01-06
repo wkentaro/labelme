@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest,ubuntu-latest]
         python-version: ['3.7']
         PYTEST_QT_API: [pyqt5, pyqt4v2]
         exclude:
