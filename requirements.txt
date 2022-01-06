@@ -3,7 +3,7 @@
 "numpy",
 "Pillow>=8.3.2",
 "PyYAML",
-"ruamel",
+"ruamel.yaml",
 "qtpy",
 "termcolor",
 "opencv-python"

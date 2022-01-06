@@ -34,7 +34,7 @@ def get_install_requires():
         "numpy",
         "Pillow>=>=8.3.2",
         "PyYAML",
-        "ruamel",
+        "ruamel.yaml",
         "qtpy!=1.11.2",
         "termcolor",
         "opencv-python"
