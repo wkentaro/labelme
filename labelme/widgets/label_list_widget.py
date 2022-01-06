@@ -165,9 +165,9 @@ class LabelListWidget(QtWidgets.QListView):
             raise TypeError("item must be LabelListWidgetItem")
         self.model().setItem(self.model().rowCount(), 0, item)
         item.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    label, *color)
-                )
+                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                        label, *color)
+                    )
     
     def removeItem(self, item):
         index = self.model().indexFromItem(item)

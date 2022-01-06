@@ -7,7 +7,8 @@ import os.path as osp
 import re
 from webbrowser import open as wb_open
 import sys
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QSize
+from PyQt5.QtWidgets import QLayout, QPushButton, QWidget
 from ruamel import yaml
 dev_path = os.getcwd()
 sys.path.insert(1, dev_path)
@@ -38,6 +39,7 @@ from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 from labelme.widgets import GenerateSegmentedData
 from labelme.widgets import set_snapping
+from labelme.widgets import add_flag_dialog
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -122,9 +124,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
         self.flag_dock.setObjectName("Flags")
         self.flag_widget = QtWidgets.QListWidget()
+        self.container = QWidget()
+        add_flag_icon = utils.newIcon("add_flag")
+        layout = QtWidgets.QFormLayout()
+        self.flag_add_button = QPushButton("  Add Flag")
+        self.flag_add_button.setIcon(add_flag_icon)
+        self.flag_add_button.setIconSize(QSize(20,20))
+        self.flag_add_button.clicked.connect(self.addFlag)
+        self.flag_add_button.setStyleSheet("Text-align:left")
         if config["flags"]:
             self.loadFlags({k: False for k in config["flags"]})
-        self.flag_dock.setWidget(self.flag_widget)
+        layout.addRow(self.tr(""),self.flag_add_button)
+        layout.addRow(self.tr(""),self.flag_widget)
+        self.container.setLayout(layout)
+        self.flag_dock.setWidget(self.container)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -479,6 +492,14 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="help",
             tip=self.tr("Show tutorial page"),
         )
+
+        addFlag = action(
+            self.tr("&add new Flag"),
+            self.addFlag,
+            icon = "add_flag",
+            enabled = False,
+        )
+
         generate_data = action(
             self.tr('Create Segmented Images'),
             lambda: self.generate_segmented_data.show(),
@@ -1358,7 +1379,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def save_config_modifications(self):
         with open (self.config_path,"w") as f:
-            yaml.dump(self._config,f, Dumper=yaml.RoundTripDumper)
+            yaml.dump(self._config,f, Dumper=yaml.RoundTripDumper,default_flow_style=True)
 
 
 
@@ -1506,6 +1527,22 @@ class MainWindow(QtWidgets.QMainWindow):
             QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
 
+    def addFlag(self):
+        dialog = add_flag_dialog.FlagDialog()
+        dialog.exec_()
+        self.saveNewFlag(dialog.text)
+
+    def saveNewFlag(self,FlagText):
+        flagList = self._config["flags"]
+        flagList.append(FlagText)
+        flags = {k: False for k in flagList}
+        if self.filename:
+            flags.update(self.labelFile.flags)
+        self._config["flags"] = list(flags.keys())
+        self.save_config_modifications()
+        self.loadFlags(flags)
+
+
     def brightnessContrast(self, value):
         dialog = BrightnessContrastDialog(
             utils.img_data_to_pil(self.imageData),
@@ -1639,6 +1676,10 @@ class MainWindow(QtWidgets.QMainWindow):
             prev_shapes = self.canvas.shapes
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
+        for flag in list(self.labelFile.flags.keys()):
+            if not flag in self._config["flags"]:
+                self.saveNewFlag(flag)
+
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
@@ -2167,7 +2208,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ".%s" % fmt.data().decode().lower()
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-
+        extensions.append(".json")
         images = []
         for root, dirs, files in os.walk(folderPath):
             for file in files:
@@ -2175,4 +2216,5 @@ class MainWindow(QtWidgets.QMainWindow):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
+        images = [img.replace("/","\\") for img in images]
         return images

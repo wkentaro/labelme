@@ -2,7 +2,10 @@ import argparse
 from codecs import open as codecs_open
 from qtpy import QtCore
 from qtpy import QtWidgets
-
+import sys
+import os
+dev_path = os.getcwd()
+sys.path.insert(1, dev_path)
 from labelme import __appname__
 from labelme import __version__
 from labelme.app import MainWindow
@@ -11,13 +14,12 @@ from labelme.logger import logger
 from labelme.utils import newIcon
 
 import logging
-import os
+
 import os.path as osp
-import sys
+
 from yaml import safe_load
 
-dev_path = os.getcwd()
-sys.path.insert(1, dev_path)
+
 
 
 
