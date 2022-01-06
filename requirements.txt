@@ -1,8 +1,9 @@
 "imgviz==0.12",
 "matplotlib==3.2",  # for PyInstaller
 "numpy",
-"Pillow==2.8",
+"Pillow>=8.3.2",
 "PyYAML",
+"ruamel",
 "qtpy",
 "termcolor",
 "opencv-python"

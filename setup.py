@@ -32,7 +32,7 @@ def get_install_requires():
         "imgviz>=0.11",
         "matplotlib<3.3",  # for PyInstaller
         "numpy",
-        "Pillow>=2.8",
+        "Pillow>=>=8.3.2",
         "PyYAML",
         "ruamel",
         "qtpy!=1.11.2",
