@@ -1,13 +1,5 @@
 import argparse
 from codecs import open as codecs_open
-import logging
-import os
-import os.path as osp
-import sys
-from yaml import safe_load
-import sys
-dev_path = os.getcwd()
-sys.path.insert(1, dev_path)
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -17,6 +9,16 @@ from labelme.app import MainWindow
 from labelme.config import get_config
 from labelme.logger import logger
 from labelme.utils import newIcon
+
+import logging
+import os
+import os.path as osp
+import sys
+from yaml import safe_load
+
+dev_path = os.getcwd()
+sys.path.insert(1, dev_path)
+
 
 
 def main():
@@ -184,7 +186,7 @@ def main():
         win.settings.clear()
         sys.exit(0)
     win.showMaximized()
-    #win.show()
+    # win.show()
     win.raise_()
     sys.exit(app.exec_())
 

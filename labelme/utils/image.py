@@ -49,20 +49,21 @@ def img_data_to_png_data(img_data):
     with io.BytesIO() as f:
         f.write(img_data)
         img = PIL.Image.open(f)
-
         with io.BytesIO() as f:
             img.save(f, "PNG")
             f.seek(0)
             return f.read()
 
+
 def normalize_image(img):
-    if not isinstance(img,np.ndarray):
+    if not isinstance(img, np.ndarray):
         np_img = np.array(img)
     else:
-        np_img=img
-    np_img = (cv2.normalize(np_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)*255).astype(np.uint8)
+        np_img = img
+    np_img = (cv2.normalize(np_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255).astype(np.uint8)
     #img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
     return np_img
+
 
 def apply_exif_orientation(image):
     try:

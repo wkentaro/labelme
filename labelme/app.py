@@ -2059,7 +2059,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
-        
 
     def copyShape(self):
         self.canvas.endMove(copy=True)

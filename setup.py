@@ -34,8 +34,10 @@ def get_install_requires():
         "numpy",
         "Pillow>=2.8",
         "PyYAML",
+        "ruamel",
         "qtpy!=1.11.2",
         "termcolor",
+        "opencv-python"
     ]
 
     # Find python binding for qt with priority:
