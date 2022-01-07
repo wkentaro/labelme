@@ -17,7 +17,7 @@ import logging
 
 import os.path as osp
 
-from yaml import safe_load
+from ruamel.yaml import safe_load
 
 
 

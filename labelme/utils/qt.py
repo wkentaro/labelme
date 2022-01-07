@@ -1,8 +1,7 @@
-from math import sqrt
 import os.path as osp
 
 import numpy as np
-
+from numpy.linalg import norm
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -78,21 +77,24 @@ class struct(object):
 
 
 def distance(p):
-    return sqrt(p.x() * p.x() + p.y() * p.y())
+    return norm(np.array([p.x(),p.y()]).astype(np.uint16))
 
 
 def distancetoline(point, line):
     p1, p2 = line
-    p1 = np.array([p1.x(), p1.y()])
-    p2 = np.array([p2.x(), p2.y()])
+    if not isinstance(line,np.ndarray):
+        p1 = np.array([p1.x(), p1.y()])
+        p2 = np.array([p2.x(), p2.y()])
+    
     p3 = np.array([point.x(), point.y()])
+    
     if np.dot((p3 - p1), (p2 - p1)) < 0:
         return np.linalg.norm(p3 - p1)
     if np.dot((p3 - p2), (p1 - p2)) < 0:
         return np.linalg.norm(p3 - p2)
     if np.linalg.norm(p2 - p1) == 0:
         return 0
-    return np.linalg.norm(np.cross(p2 - p1, p1 - p3)) / np.linalg.norm(p2 - p1)
+    return np.linalg.norm(np.cross(np.subtract(p2, p1),np.subtract( p1, p3))) / np.linalg.norm(p2 - p1)
 
 
 def fmtShortcut(text):

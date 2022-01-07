@@ -3,7 +3,8 @@ import math
 
 from qtpy import QtCore
 from qtpy import QtGui
-
+import numpy as np
+from ruamel.yaml.events import NodeEvent
 import labelme.utils
 
 
@@ -59,13 +60,14 @@ class Shape(object):
         self.selected = False
         self.shape_type = shape_type
         self.flags = flags
+        self.poly = None
         self.other_data = {}
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
         self._highlightSettings = {
-            self.NEAR_VERTEX: (4, self.P_ROUND),
-            self.MOVE_VERTEX: (1.5, self.P_SQUARE),
+            self.NEAR_VERTEX: (8, self.P_ROUND),
+            self.MOVE_VERTEX: (3, self.P_SQUARE),
         }
 
         self._closed = False
@@ -112,11 +114,13 @@ class Shape(object):
 
     def popPoint(self):
         if self.points:
+            self.poly_array = self.poly_array[:-1]
             return self.points.pop()
         return None
 
     def insertPoint(self, i, point):
         self.points.insert(i, point)
+        np.insert(self.poly_array,i,np.array([point.x(),point.y()]))
 
     def removePoint(self, i):
         self.points.pop(i)
@@ -166,6 +170,8 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
             else:
                 line_path.moveTo(self.points[0])
+                #self.poly = QtGui.QPolygonF(self.points)
+                self.poly_array = np.array( [[p.x(), p.y()] for p in self.points])
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
                 # may be desirable.
@@ -209,16 +215,69 @@ class Shape(object):
     def nearestVertex(self, point, epsilon):
         min_distance = float("inf")
         min_i = None
-        for i, p in enumerate(self.points):
-            dist = labelme.utils.distance(p - point)
+        dist = np.sum((self.poly_array - np.array([point.x(),point.y()]))**2, axis=1)
+        if np.sqrt(np.min(dist)) < epsilon:
+            return np.argmin(dist) , None
+        else:
+            return None, np.argmin(dist)
+
+    def nearestEdge(self, point, epsilon,minDistIndex=None):
+        
+        
+        # if minDistIndex == len(self.poly_array)-1:
+        #     compArray = np.array([self.poly_array[-2],
+        #                         self.poly_array[-1],
+        #                         self.poly_array[0],
+        #                         ])
+        # else:
+        #     compArray = np.array([self.poly_array[minDistIndex-1],
+        #                     self.poly_array[minDistIndex],
+        #                     self.poly_array[minDistIndex+1],
+        #                     ])
+        
+        self.x_span = np.max(self.poly_array[:,0]) - np.min(self.poly_array[:,0])
+        self.y_span = np.max(self.poly_array[:,1]) - np.min(self.poly_array[:,1])
+        component_dist = np.abs(self.poly_array - np.array([point.x(),point.y()]))
+        dist = np.sum((self.poly_array - np.array([point.x(),point.y()]))**2, axis=1)
+        min_distance = 999
+        if component_dist[:,0].min() > self.x_span/2 and component_dist[:,1].min() > self.y_span/2:
+            return None
+        lenght = len (self.poly_array)
+        for i,j in zip(range(minDistIndex,minDistIndex+int(lenght/2)),range(minDistIndex,minDistIndex-int(lenght/2),-1)):
+            
+            if i == 0:
+                line_pos = np.array([self.poly_array[-1],self.poly_array[0]])
+            elif i == lenght:
+                line_pos = np.array([self.poly_array[-1],self.poly_array[0]])
+            else:    
+                i = i % lenght
+                line_pos = self.poly_array[i-1:i+1]
+            if j>0 or j<-1:
+                line_neg = self.poly_array[j-1:j+1]
+            elif j == 0:
+                line_neg = np.array([self.poly_array[-1],self.poly_array[0]])
+            elif j == -1:
+                line_neg = self.poly_array[:2]
+            
+            try:
+                dist_i, dist_j = [labelme.utils.distancetoline(point, line) for line in [line_pos,line_neg]]
+            except ValueError:
+                continue
+            if dist_i <= epsilon and dist_i < min_distance:
+                min_distance = dist_i
+                return i
+            elif dist_j <= epsilon and dist_i < min_distance:
+                min_distance = dist_j
+                return j
+                
+        return None
+        
+        for i in range(len(self.points)):
+            line = [self.points[i - 1], self.points[i]]
+            dist = labelme.utils.distancetoline(point, line)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
-                min_i = i
-        return min_i
-
-    def nearestEdge(self, point, epsilon):
-        min_distance = float("inf")
-        post_i = None
+                post_i = i
         for i in range(len(self.points)):
             line = [self.points[i - 1], self.points[i]]
             dist = labelme.utils.distancetoline(point, line)
@@ -262,9 +321,11 @@ class Shape(object):
 
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
+        self.poly_array = self.poly_array + np.array([offset.x(),offset.y()])
 
     def moveVertexBy(self, i, offset):
         self.points[i] = self.points[i] + offset
+        self.poly_array[i] = self.poly_array[i] + np.array([offset.x(),offset.y()])
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action

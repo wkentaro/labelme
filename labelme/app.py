@@ -1465,7 +1465,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setScroll(orientation, value)
 
     def setScroll(self, orientation, value):
-        self.scrollBars[orientation].setValue(value)
+        self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
 
     def setZoom(self, value):
@@ -1535,9 +1535,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveNewFlag(self,FlagText):
         flagList = self._config["flags"]
         flagList.append(FlagText)
-        flags = {k: False for k in flagList}
         if self.filename:
-            flags.update(self.labelFile.flags)
+            if hasattr(self.labelFile,"flags"):
+                flags = self.labelFile.flags #prioritize the file flags higher than the config ones
+                for k in flagList:
+                    if not k in self.labelFile.flags.keys():
+                        flags.update({k: False})
+                
+            else:
+                flags = {k: False for k in flagList}
+        else:
+           flags = {k: False for k in flagList}
         self._config["flags"] = list(flags.keys())
         self.save_config_modifications()
         self.loadFlags(flags)
@@ -1676,10 +1684,12 @@ class MainWindow(QtWidgets.QMainWindow):
             prev_shapes = self.canvas.shapes
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
-        for flag in list(self.labelFile.flags.keys()):
-            if not flag in self._config["flags"]:
-                self.saveNewFlag(flag)
-
+        try:
+            for flag in list(self.labelFile.flags.keys()):
+                if not flag in self._config["flags"]:
+                    self.saveNewFlag(flag)
+        except AttributeError:
+            pass
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
