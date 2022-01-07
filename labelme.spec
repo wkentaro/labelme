@@ -18,7 +18,7 @@ a = Analysis(
     hiddenimports=['yaml','termcolor','colorama'],
     hookspath=[],
     runtime_hooks=[],
-    excludes=['cv2'],
+    excludes=[],
 )
 pyz = PYZ(a.pure, a.zipped_data)
 exe = EXE(
