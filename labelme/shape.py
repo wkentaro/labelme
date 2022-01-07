@@ -1,4 +1,5 @@
 import copy
+from labelme.logger import logger
 import math
 
 from qtpy import QtCore
@@ -6,7 +7,7 @@ from qtpy import QtGui
 import numpy as np
 from ruamel.yaml.events import NodeEvent
 import labelme.utils
-
+import time
 
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
@@ -52,6 +53,7 @@ class Shape(object):
         shape_type=None,
         flags=None,
         group_id=None,
+        vertex_epsilon=None
     ):
         self.label = label
         self.group_id = group_id
@@ -62,12 +64,14 @@ class Shape(object):
         self.flags = flags
         self.poly = None
         self.other_data = {}
+        self.vertex_epsilon = vertex_epsilon
+        self.prev_val = None
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
         self._highlightSettings = {
-            self.NEAR_VERTEX: (8, self.P_ROUND),
-            self.MOVE_VERTEX: (3, self.P_SQUARE),
+            self.NEAR_VERTEX: (self.vertex_epsilon, self.P_ROUND),
+            self.MOVE_VERTEX: (4, self.P_SQUARE),
         }
 
         self._closed = False
@@ -121,6 +125,7 @@ class Shape(object):
     def insertPoint(self, i, point):
         self.points.insert(i, point)
         np.insert(self.poly_array,i,np.array([point.x(),point.y()]))
+        self.onPolygonChange()
 
     def removePoint(self, i):
         self.points.pop(i)
@@ -172,6 +177,9 @@ class Shape(object):
                 line_path.moveTo(self.points[0])
                 #self.poly = QtGui.QPolygonF(self.points)
                 self.poly_array = np.array( [[p.x(), p.y()] for p in self.points])
+                self.x_span = np.max(self.poly_array[:,0]) - np.min(self.poly_array[:,0])
+                self.y_span = np.max(self.poly_array[:,1]) - np.min(self.poly_array[:,1])
+                self.onPolygonChange()
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
                 # may be desirable.
@@ -200,7 +208,11 @@ class Shape(object):
         point = self.points[i]
         if i == self._highlightIndex:
             size, shape = self._highlightSettings[self._highlightMode]
-            d *= size
+            try:
+                d *= size
+            except TypeError:
+                logger.info("highlighting the vertecies, wasnt able to keep up with cursor")
+                pass
         if self._highlightIndex is not None:
             self._vertex_fill_color = self.hvertex_fill_color
         else:
@@ -213,34 +225,21 @@ class Shape(object):
             assert False, "unsupported vertex shape"
 
     def nearestVertex(self, point, epsilon):
-        min_distance = float("inf")
-        min_i = None
-        dist = np.sum((self.poly_array - np.array([point.x(),point.y()]))**2, axis=1)
+        self.component_dist = self.poly_array - np.array([point.x(),point.y()])
+        dist = np.sum((self.component_dist)**2, axis=1)
         if np.sqrt(np.min(dist)) < epsilon:
             return np.argmin(dist) , None
         else:
             return None, np.argmin(dist)
 
     def nearestEdge(self, point, epsilon,minDistIndex=None):
+    
+        #TODO further optimize the algorightm, maybe preselect those which are closer than y_span/2 or x_span/2
+        self.t = time.time()
+        if (np.abs(self.t - np.round(self.t)) <= 0.005) and not self.prev_val is None:
+            return self.prev_val
         
-        
-        # if minDistIndex == len(self.poly_array)-1:
-        #     compArray = np.array([self.poly_array[-2],
-        #                         self.poly_array[-1],
-        #                         self.poly_array[0],
-        #                         ])
-        # else:
-        #     compArray = np.array([self.poly_array[minDistIndex-1],
-        #                     self.poly_array[minDistIndex],
-        #                     self.poly_array[minDistIndex+1],
-        #                     ])
-        
-        self.x_span = np.max(self.poly_array[:,0]) - np.min(self.poly_array[:,0])
-        self.y_span = np.max(self.poly_array[:,1]) - np.min(self.poly_array[:,1])
-        component_dist = np.abs(self.poly_array - np.array([point.x(),point.y()]))
-        dist = np.sum((self.poly_array - np.array([point.x(),point.y()]))**2, axis=1)
-        min_distance = 999
-        if component_dist[:,0].min() > self.x_span/2 and component_dist[:,1].min() > self.y_span/2:
+        if self.component_dist[:,0].min() > self.x_span/2 and self.component_dist[:,1].min() > self.y_span/2:
             return None
         lenght = len (self.poly_array)
         for i,j in zip(range(minDistIndex,minDistIndex+int(lenght/2)),range(minDistIndex,minDistIndex-int(lenght/2),-1)):
@@ -259,32 +258,15 @@ class Shape(object):
             elif j == -1:
                 line_neg = self.poly_array[:2]
             
-            try:
-                dist_i, dist_j = [labelme.utils.distancetoline(point, line) for line in [line_pos,line_neg]]
-            except ValueError:
-                continue
-            if dist_i <= epsilon and dist_i < min_distance:
-                min_distance = dist_i
+            dist_i, dist_j = [labelme.utils.distancetoline(point, line) for line in [line_pos,line_neg]]
+            if dist_i <= epsilon:
+                self.prev_val = i
                 return i
-            elif dist_j <= epsilon and dist_i < min_distance:
-                min_distance = dist_j
+            elif dist_j <= epsilon:
+                self.prev_val = i
                 return j
                 
         return None
-        
-        for i in range(len(self.points)):
-            line = [self.points[i - 1], self.points[i]]
-            dist = labelme.utils.distancetoline(point, line)
-            if dist <= epsilon and dist < min_distance:
-                min_distance = dist
-                post_i = i
-        for i in range(len(self.points)):
-            line = [self.points[i - 1], self.points[i]]
-            dist = labelme.utils.distancetoline(point, line)
-            if dist <= epsilon and dist < min_distance:
-                min_distance = dist
-                post_i = i
-        return post_i
 
     def containsPoint(self, point):
         return self.makePath().contains(point)
@@ -322,10 +304,16 @@ class Shape(object):
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
         self.poly_array = self.poly_array + np.array([offset.x(),offset.y()])
+        self.onPolygonChange()
 
     def moveVertexBy(self, i, offset):
         self.points[i] = self.points[i] + offset
         self.poly_array[i] = self.poly_array[i] + np.array([offset.x(),offset.y()])
+        self.onPolygonChange()
+
+    def onPolygonChange(self):
+        self.x_span = np.max(self.poly_array[:,0]) - np.min(self.poly_array[:,0])
+        self.y_span = np.max(self.poly_array[:,1]) - np.min(self.poly_array[:,1])
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action

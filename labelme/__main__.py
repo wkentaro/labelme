@@ -195,4 +195,19 @@ def main():
 
 # this main block is required to generate executable by pyinstaller
 if __name__ == "__main__":
+    # uncomment for profiling
+    # import cProfile
+    # import pstats
+    # from pstats import SortKey
+
+    # cProfile.run("main()","output.dat")
+
+    # with open("output_time.txt","w") as f:
+    #     p = pstats.Stats("output.dat",stream=f)
+    #     p.sort_stats("time").print_stats()
+    
+    # with open("outpufile_calls.txt","w") as f:
+    #     p = pstats.Stats("output.dat",stream=f)
+    #     p.sort_stats("calls").print_stats().print_stats()
+    
     main()

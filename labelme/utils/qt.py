@@ -80,13 +80,10 @@ def distance(p):
     return norm(np.array([p.x(),p.y()]).astype(np.uint16))
 
 
-def distancetoline(point, line):
+def distancetoline(point, line:np.ndarray):
     p1, p2 = line
-    if not isinstance(line,np.ndarray):
-        p1 = np.array([p1.x(), p1.y()])
-        p2 = np.array([p2.x(), p2.y()])
     
-    p3 = np.array([point.x(), point.y()])
+    p3 = np.array([[point.x(), point.y()]])
     
     if np.dot((p3 - p1), (p2 - p1)) < 0:
         return np.linalg.norm(p3 - p1)
