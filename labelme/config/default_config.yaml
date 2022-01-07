@@ -55,7 +55,7 @@ file_dock:
   movable: true
   floatable: true
 show_label_text_field: true
-label_completion: startswith #refers to label dialog
+label_completion: startswith
 fit_to_content:
   column: true
   row: false
