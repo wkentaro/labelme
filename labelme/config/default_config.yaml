@@ -1,5 +1,5 @@
 auto_save: false
-locked_fps: 30
+dark_mode: true
 display_label_popup: true
 store_data: true
 keep_prev: false
@@ -7,7 +7,8 @@ keep_prev_scale: true
 keep_prev_brightness: true
 keep_prev_contrast: true
 logger_level: info
-flags: [a, b, c]
+flags: [a, b, c, das ist doof, "noch d\xFCmmer", extrem, test, wea, wasd, dants, neu,
+  selber, erst]
 label_flags:
 labels: [house, boat, water, tower, person]
 file_search: example

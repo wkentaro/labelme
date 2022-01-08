@@ -2,6 +2,7 @@ import argparse
 from codecs import open as codecs_open
 from qtpy import QtCore
 from qtpy import QtWidgets
+from qtpy.QtGui import QPalette, QColor
 import sys
 import os
 dev_path = os.getcwd()
@@ -175,6 +176,31 @@ def main():
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("icon"))
     app.installTranslator(translator)
+    
+    if config["dark_mode"]:
+    
+        app.setStyle("Fusion")
+
+    # Now use a palette to switch to dark colors:
+        palette = QPalette()
+        palette.setColor(QPalette.Window, QColor(53, 53, 53))
+        palette.setColor(QPalette.WindowText, QtCore.Qt.white)
+        palette.setColor(QPalette.Base, QColor(25, 25, 25))
+        palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+        palette.setColor(QPalette.ToolTipBase, QtCore.Qt.black)
+        palette.setColor(QPalette.ToolTipText, QtCore.Qt.white)
+        palette.setColor(QPalette.Text, QtCore.Qt.white)
+        palette.setColor(QPalette.Button, QColor(53, 53, 53))
+        palette.setColor(QPalette.ButtonText, QtCore.Qt.white)
+        palette.setColor(QPalette.BrightText, QtCore.Qt.red)
+        palette.setColor(QPalette.Link, QColor(42, 130, 218))
+        palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        palette.setColor(QPalette.HighlightedText, QtCore.Qt.black)
+        app.setStyleSheet(" :disabled { color: " +  "#5c5b5b"
+                            + "; background-color: " + "#b3b3b3 }")
+
+        app.setPalette(palette)
+
     win = MainWindow(
         config=config,
         filename=filename,
