@@ -1,70 +1,10 @@
+from PyQt5.QtGui import QColor, QFont, qRgb
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy.QtGui import QPalette
 from qtpy import QtWidgets
 from qtpy.QtWidgets import QStyle
-
-
-# https://stackoverflow.com/a/2039745/4158863
-class HTMLDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, parent=None):
-        super(HTMLDelegate, self).__init__()
-        self.doc = QtGui.QTextDocument(self)
-
-    def paint(self, painter, option, index):
-        painter.save()
-
-        options = QtWidgets.QStyleOptionViewItem(option)
-
-        self.initStyleOption(options, index)
-        self.doc.setHtml(options.text)
-        options.text = ""
-
-        style = (
-            QtWidgets.QApplication.style()
-            if options.widget is None
-            else options.widget.style()
-        )
-        style.drawControl(QStyle.CE_ItemViewItem, options, painter)
-
-        ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
-
-        if option.state & QStyle.State_Selected:
-            ctx.palette.setColor(
-                QPalette.Text,
-                option.palette.color(
-                    QPalette.Active, QPalette.HighlightedText
-                ),
-            )
-        else:
-            ctx.palette.setColor(
-                QPalette.Text,
-                option.palette.color(QPalette.Active, QPalette.Text),
-            )
-
-        textRect = style.subElementRect(QStyle.SE_ItemViewItemText, options)
-
-        if index.column() != 0:
-            textRect.adjust(5, 0, 0, 0)
-
-        thefuckyourshitup_constant = 0
-        margin = (option.rect.height() - options.fontMetrics.height()) // 2
-        margin = margin - thefuckyourshitup_constant
-        textRect.setTop(textRect.top() + margin)
-
-        painter.translate(textRect.topLeft())
-        painter.setClipRect(textRect.translated(-textRect.topLeft()))
-        self.doc.documentLayout().draw(painter, ctx)
-
-        painter.restore()
-
-    def sizeHint(self, option, index):
-        thefuckyourshitup_constant = 0
-        return QtCore.QSize(
-            int(self.doc.idealWidth()),
-            int(self.doc.size().height() - thefuckyourshitup_constant),
-        )
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
@@ -77,6 +17,8 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         self.setCheckState(Qt.Checked)
         self.setEditable(False)
         self.setTextAlignment(Qt.AlignBottom)
+        self.setFont(QFont("Arial",12))
+        
 
     def clone(self):
         return LabelListWidgetItem(self.text(), self.shape())
@@ -92,6 +34,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def __repr__(self):
         return '{}("{}")'.format(self.__class__.__name__, self.text())
+
 
 
 class StandardItemModel(QtGui.QStandardItemModel):
@@ -116,8 +59,9 @@ class LabelListWidget(QtWidgets.QListView):
         self.setWindowFlags(Qt.Window)
         self.setModel(StandardItemModel())
         self.model().setItemPrototype(LabelListWidgetItem())
-        self.setItemDelegate(HTMLDelegate())
+        #self.setItemDelegate(HTMLDelegate())
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        #self.selectionModel.current()
         self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.setDefaultDropAction(Qt.MoveAction)
 
@@ -125,7 +69,9 @@ class LabelListWidget(QtWidgets.QListView):
         self.selectionModel().selectionChanged.connect(
             self.itemSelectionChangedEvent
         )
-
+        self.setStyleSheet("""QListView::item:selected {
+                            background: #8B8F99;
+                            }""")
     def __len__(self):
         return self.model().rowCount()
 
@@ -164,10 +110,8 @@ class LabelListWidget(QtWidgets.QListView):
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
         self.model().setItem(self.model().rowCount(), 0, item)
-        item.setText(
-                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                        label, *color)
-                    )
+        item.setText(label)
+        item.setBackground(QColor(qRgb(*[c for c in color])))
     
     def removeItem(self, item):
         index = self.model().indexFromItem(item)

@@ -1,16 +1,16 @@
 # -*- encoding: utf-8 -*-
 
+from PyQt5 import QtCore
+from PyQt5.QtGui import QColor, QFont, QPalette, qRgb
 from qtpy.QtCore import Qt
 from qtpy import QtWidgets
 
 from .escapable_qlist_widget import EscapableQListWidget
-from .label_list_widget import HTMLDelegate
 
 class UniqueLabelQListWidget(EscapableQListWidget):
     
     def __init__(self) -> None:
         super(EscapableQListWidget,self).__init__(),
-        self.setItemDelegate(HTMLDelegate())
     
     def mousePressEvent(self, event):
         super(UniqueLabelQListWidget, self).mousePressEvent(event)
@@ -35,13 +35,16 @@ class UniqueLabelQListWidget(EscapableQListWidget):
         if color is None:
             qlabel.setText("{}".format(label))
         else:
-            qlabel.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    label, *color
-                )
-            )
+            qlabel.setText(" " + label)
+        qlabel.setFont(QFont("Arial",12))
+        palette = QPalette()
+
+        palette.setColor(QPalette.Text,QColor(qRgb(*[c for c in color])))
+        
+        qlabel.setMargin(3)
+        qlabel.setPalette(palette)    
         qlabel.setAlignment(Qt.AlignBottom)
 
         item.setSizeHint(qlabel.sizeHint())
-
+        #item.setBackground(QColor(qRgb(*[c for c in color])))
         self.setItemWidget(item, qlabel)
