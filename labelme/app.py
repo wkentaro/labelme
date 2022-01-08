@@ -7,8 +7,9 @@ import os.path as osp
 import re
 from webbrowser import open as wb_open
 import sys
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QLayout, QPushButton, QWidget
+from PyQt5.QtCore import QRect, QSize
+from PyQt5.QtGui import QColor, QFont, qRgb
+from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget
 from ruamel import yaml
 import pathlib as pl
 dev_path = os.getcwd()
@@ -29,6 +30,7 @@ from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
+from labelme.widgets import dock_title
 from labelme.widgets import BrightnessContrastDialog, canvas
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
@@ -127,6 +129,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
         self.flag_dock.setObjectName("Flags")
         self.flag_widget = QtWidgets.QListWidget()
+        self.flag_widget.setFont(QFont("Arial",12))
+        flag_palette = QtGui.QPalette()
+        gray_bright = 200
+        flag_palette.setColor(QtGui.QPalette.Text, QColor(qRgb(gray_bright, gray_bright, gray_bright)))
+        self.flag_widget.setPalette(flag_palette)
+
         self.container = QWidget()
         add_flag_icon = utils.newIcon("add_flag")
         layout = QtWidgets.QFormLayout()
@@ -140,6 +148,11 @@ class MainWindow(QtWidgets.QMainWindow):
         layout.addRow(self.tr(""),self.flag_add_button)
         layout.addRow(self.tr(""),self.flag_widget)
         self.container.setLayout(layout)
+        
+        self.flag_dock_title = dock_title.DockTitle("Flags")
+        self.flag_dock.setTitleBarWidget(self.flag_dock_title)
+
+
         self.flag_dock.setWidget(self.container)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
@@ -151,6 +164,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Polygon Labels"), self
         )
         self.shape_dock.setObjectName("Labels")
+        #self.shape_dock.setTitleBarWidget()
+
+        self.shape_dock_title = dock_title.DockTitle("Polygon Labels")
+        self.shape_dock.setTitleBarWidget(self.shape_dock_title)
+
         self.shape_dock.setWidget(self.labelList)
 
         self.uniqLabelList = UniqueLabelQListWidget()
@@ -168,6 +186,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.uniqLabelList.setItemLabel(item, label, rgb)
         self.label_dock = QtWidgets.QDockWidget(self.tr(u"Label List"), self)
         self.label_dock.setObjectName(u"Label List")
+        self.label_dock_title = dock_title.DockTitle("Label List")
+        self.label_dock.setTitleBarWidget(self.label_dock_title)
         self.label_dock.setWidget(self.uniqLabelList)
         
 
@@ -175,6 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
         self.fileSearch.textChanged.connect(self.fileSearchChanged)
         self.fileListWidget = QtWidgets.QListWidget()
+        self.fileListWidget.setFont(QFont("Arial",10))
         self.fileListWidget.itemSelectionChanged.connect(
             self.fileSelectionChanged
         )
@@ -187,6 +208,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setObjectName(u"Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
+        
+        
+        self.file_dock_title = dock_title.DockTitle("File List")
+
+        self.file_dock.setTitleBarWidget(self.file_dock_title)
         self.file_dock.setWidget(fileListWidget)
 
         self.zoomWidget = ZoomWidget()
