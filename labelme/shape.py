@@ -70,7 +70,7 @@ class Shape(object):
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
         self._highlightSettings = {
-            self.NEAR_VERTEX: (self.vertex_epsilon, self.P_ROUND),
+            self.NEAR_VERTEX: (5, self.P_ROUND),
             self.MOVE_VERTEX: (4, self.P_SQUARE),
         }
 
@@ -203,7 +203,7 @@ class Shape(object):
                 painter.fillPath(line_path, color)
 
     def drawVertex(self, path, i):
-        d = self.point_size / self.scale
+        d = self.point_size / (self.scale*2)
         shape = self.point_type
         point = self.points[i]
         if i == self._highlightIndex:
@@ -220,7 +220,7 @@ class Shape(object):
         if shape == self.P_SQUARE:
             path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
         elif shape == self.P_ROUND:
-            path.addEllipse(point, d / 2.0, d / 2.0)
+            path.addEllipse(point, d , d )
         else:
             assert False, "unsupported vertex shape"
 
