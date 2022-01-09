@@ -18,4 +18,3 @@ sampleImages/test.json
 sampleImages/th_barbara_16.json
 sampleImages/th_barbara_16.png
 labelme/utils/timeit_test.py
-dist/labelme.exe
