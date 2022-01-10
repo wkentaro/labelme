@@ -137,23 +137,32 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.container = QWidget()
         add_flag_icon = utils.newIcon("add_flag")
-        layout = QtWidgets.QFormLayout()
-        self.flag_add_button = QPushButton("  Add Flag")
+        
+        self.flag_add_button = QPushButton("Add Flag")
         self.flag_add_button.setIcon(add_flag_icon)
         self.flag_add_button.setIconSize(QSize(20,20))
         self.flag_add_button.clicked.connect(self.addFlag)
         self.flag_add_button.setStyleSheet("Text-align:left")
+             
         if config["flags"]:
             self.loadFlags({k: False for k in config["flags"]})
-        layout.addRow(self.tr(""),self.flag_add_button)
-        layout.addRow(self.tr(""),self.flag_widget)
-        self.container.setLayout(layout)
-        
+
+        add_flag_button_in_widget = False
+        #optionally add a add_flag button above the flag_dock        
+        if add_flag_button_in_widget:
+            layout = QtWidgets.QFormLayout()
+            layout.addRow(self.tr(""),self.flag_add_button)
+            layout.addRow(self.tr(""),self.flag_widget)
+            self.container.setLayout(layout)
+            self.flag_dock.setWidget(self.container)
+        else:
+            self.flag_dock.setWidget(self.flag_widget)
+
         self.flag_dock_title = dock_title.DockTitle("Flags")
         self.flag_dock.setTitleBarWidget(self.flag_dock_title)
 
 
-        self.flag_dock.setWidget(self.container)
+        
         self.flag_widget.itemChanged.connect(self.setDirty)
 
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -271,14 +280,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Quit application"),
         )
         open_ = action(
-            self.tr("&Open"),
+            self.tr("&Open Image"),
             self.openFile,
             shortcuts["open"],
             "open",
             self.tr("Open image or label file"),
         )
         opendir = action(
-            self.tr("&Open Dir"),
+            self.tr("&Open Folder"),
             self.openDirDialog,
             shortcuts["open_dir"],
             "open",
@@ -301,7 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         save = action(
-            self.tr("&Save"),
+            self.tr("&Save Annotation"),
             self.saveFile,
             shortcuts["save"],
             "save",
@@ -327,11 +336,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         changeOutputDir = action(
-            self.tr("&Change Output Dir"),
+            self.tr("Set Output-Folder"),
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="open",
-            tip=self.tr(u"Change where annotations are loaded/saved"),
+            tip=self.tr(u"Change where annotations are saved"),
         )
 
         saveAuto = action(
@@ -493,7 +502,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         undo = action(
-            self.tr("Undo"),
+            self.tr("Undo Changes"),
             self.undoShapeEdit,
             shortcuts["undo"],
             "undo",
@@ -524,10 +533,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         addFlag = action(
-            self.tr("&add new Flag"),
+            self.tr("&add Flag"),
             self.addFlag,
             icon = "add_flag",
-            enabled = False,
+            enabled = True,
+            tip= self.tr("add new flag to list")
         )
 
         generate_data = action(
@@ -840,22 +850,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.tool = (
             open_,
             opendir,
-            openNextImg,
+            changeOutputDir,
             openPrevImg,
+            openNextImg,
             save,
-            deleteFile,
+            #deleteFile,
+            None,
+            addFlag,
             None,
             createMode,
             createTraceMode,
             editMode,
-            duplicate,
-            copy,
-            paste,
+            #duplicate,
+            #copy,
+            #paste,
             delete,
             undo,
             brightnessContrast,
             None,
-            zoom,
+            #zoom,
             fitWidth,
         )
 
@@ -1787,6 +1800,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
         self.canvas.update()
+        self.status(f"current Zoom Level {self.zoomWidget.value()} %")
 
     def adjustScale(self, initial=False):
         value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
@@ -2212,7 +2226,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_file = self.output_dir.joinpath(file.name).with_suffix(LabelFile.suffix)
                 # label_file_without_path = osp.basename(label_file)
                 # label_file = osp.join(self.output_dir, label_file_without_path)
-            item = QtWidgets.QListWidgetItem(file)
+            else:
+                label_file= None
+            item = QtWidgets.QListWidgetItem(str(file))
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
                 label_file
