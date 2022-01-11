@@ -7,6 +7,7 @@ import os.path as osp
 import re
 from webbrowser import open as wb_open
 import sys
+import cv2
 from PyQt5.QtCore import QRect, QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
 from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget
@@ -1667,7 +1668,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file = self.output_dir.joinpath(filename.name).with_suffix(LabelFile.suffix)
         if QtCore.QFile.exists(str(label_file)) and LabelFile.is_label_file(str(label_file)):
             try:
-                self.labelFile = LabelFile(label_file)
+                self.labelFile = LabelFile(str(label_file))
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -1688,10 +1689,16 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.imageData = LabelFile.load_image_file(filename)
             if self.imageData:
-                self.imagePath = filename
+                self.imagePath = str(filename)
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
-
+         
+        if image.isNull():
+            image = cv2.imread(str(filename), cv2.IMREAD_ANYDEPTH)
+            if image.dtype== "uint8":
+                image = QtGui.QImage(image.data, image.shape[1], image.shape[0],QtGui.QImage.Format_Indexed8)
+            elif image.dtype =="uint16":
+                image = QtGui.QImage(image.data, image.shape[1], image.shape[0],QtGui.QImage.Format_Grayscale16)
         if image.isNull():
             formats = [
                 "*.{}".format(fmt.data().decode())
@@ -1870,7 +1877,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.filename is None:
             return
 
-        currIndex = self.imageList.index(self.filename)
+        currIndex = self.imageList.index(str(self.filename))
         if currIndex - 1 >= 0:
             filename = self.imageList[currIndex - 1]
             if filename:
@@ -1895,7 +1902,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.filename is None:
             filename = self.imageList[0]
         else:
-            currIndex = self.imageList.index(self.filename)
+            currIndex = self.imageList.index(str(self.filename))
             if currIndex + 1 < len(self.imageList):
                 filename = self.imageList[currIndex + 1]
             else:
@@ -2212,7 +2219,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_file = self.output_dir.joinpath(file.name).with_suffix(LabelFile.suffix)
                 # label_file_without_path = osp.basename(label_file)
                 # label_file = osp.join(self.output_dir, label_file_without_path)
-            item = QtWidgets.QListWidgetItem(file)
+            else:
+                label_file = None
+            item = QtWidgets.QListWidgetItem(str(file))
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
                 label_file
