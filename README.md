@@ -198,6 +198,15 @@ For more advanced usage, please refer to the examples:
 
 ## Testing
 
+On macOS use the following commands to install the **help2man** (1.48.5) and overwrite the `labelme.1` file in **$(pwd)/docs/man/labelme.1** before testing the labelme.
+
+```bash
+## macOS testing 
+# brew install help2man 
+# help2man labelme > $(pwd)/docs/man/labelme.1
+```
+
+Testing labelme.
 ```bash
 pip install hacking pytest pytest-qt
 flake8 .
