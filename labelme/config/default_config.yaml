@@ -7,11 +7,10 @@ keep_prev_scale: true
 keep_prev_brightness: true
 keep_prev_contrast: true
 logger_level: info
-flags: [a, b, c, das ist doof, "noch d\xFCmmer", extrem, test, wea, wasd, dants, neu,
-  selber, erst]
+flags: [a, b, c]
 label_flags:
 labels: [house, boat, water, tower, person]
-file_search: example
+file_search:
 sort_labels: true
 validate_label: exact
 default_shape_color: [0, 255, 0]
