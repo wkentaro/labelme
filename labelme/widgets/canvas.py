@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -91,6 +93,7 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+        self.ZeroImg = None
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -334,6 +337,22 @@ class Canvas(QtWidgets.QWidget):
             self.unHighlight()
         self.vertexSelected.emit(self.hVertex is not None)
 
+    def getDistMapUpdate(self):
+        if not self.ZeroImg:
+            self.ZeroImg = np.zeros([self.pixmap.height(),self.pixmap.width()])
+        #binImg = self.ZeroImg
+        array_list = []
+        for s in self.shapes: 
+            if not self.isVisible(s):
+                continue
+            shape2draw = [[x[0] % self.ZeroImg.shape[1], x[1]] for x in s.poly_array]
+            array_list.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
+        #contours.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
+        binImg = self.ZeroImg
+        binImg = cv2.drawContours(self.ZeroImg,np.array(array_list, dtype=np.int32).reshape(-1, 1, 2),1,1,-1)
+        distMap = cv2.distanceTransform(cv2.bitwise_not((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
+        distMap = np.clip(distMap,0,255).astype(np.uint8)
+
     def addPointToEdge(self):
         shape = self.prevhShape
         index = self.prevhEdge
@@ -346,6 +365,7 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
         self.movingShape = True
+        self.getDistMapUpdate()
 
     def removeSelectedPoint(self):
         shape = self.prevhShape
@@ -775,9 +795,11 @@ class Canvas(QtWidgets.QWidget):
                 # with Ctrl/Command key
                 # zoom
                 self.zoomRequest.emit(delta.y(), ev.pos())
+            elif QtCore.Qt.ShiftModifier == int(mods):
+                self.scrollRequest.emit(int(delta.y()/4), QtCore.Qt.Horizontal)
             else:
                 # scroll
-                self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
+                self.scrollRequest.emit(int(delta.x()/4), QtCore.Qt.Horizontal)
                 self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
         else:
             if ev.orientation() == QtCore.Qt.Vertical:
