@@ -816,12 +816,15 @@ class Canvas(QtWidgets.QWidget):
         elif key == QtCore.Qt.Key_F:
             # Hold down F key to avoid the cursor attracting to
             # the initial polygon point
-            self.pause_tracing = True
+            pass
+            # self.pause_tracing = True
 
     def keyReleaseEvent(self, ev):
         key = ev.key()
-        if key == QtCore.Qt.Key_F:
+        if key == QtCore.Qt.Key_F and self.pause_tracing:
             self.pause_tracing = False
+        elif key == QtCore.Qt.Key_F and not self.pause_tracing:
+            self.pause_tracing = True
 
     def setLastLabel(self, text, flags):
         assert text
