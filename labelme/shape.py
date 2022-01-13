@@ -239,8 +239,6 @@ class Shape(object):
         if (np.abs(self.t - np.round(self.t)) <= 0.005) and not self.prev_val is None:
             return self.prev_val
         
-        if self.component_dist[:,0].min() > self.x_span/2 and self.component_dist[:,1].min() > self.y_span/2:
-            return None
         lenght = len (self.poly_array)
         for i,j in zip(range(minDistIndex,minDistIndex+int(lenght/2)),range(minDistIndex,minDistIndex-int(lenght/2),-1)):
             

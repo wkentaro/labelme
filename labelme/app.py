@@ -102,6 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
+        self.image = None
         # Whether we need to save or not.
         self.dirty = False
 
@@ -232,9 +233,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas = self.labelList.canvas = Canvas(
             trace_smothness = self._config["shape"]["trace"]["smothness"],
             epsilon=self._config["shape"]["select"]["epsilon"],
-            double_click=self._config["canvas"]["double_click"],
-            num_backups=self._config["canvas"]["num_backups"]
-            #locked_fps = self._config["locked_fps"]
+            double_click = self._config["canvas"]["double_click"],
+            num_backups = self._config["canvas"]["num_backups"]
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -1315,6 +1315,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.clearSelection()
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
+        self.canvas.init_poly_array()
+        self.canvas.getDistMapUpdate()
 
     def loadLabels(self, shapes):
         s = []
@@ -1733,6 +1735,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.status(self.tr("Error reading %s") % filename)
             return False
         self.image = image
+        self.canvas.imgDim = [image.height(), image.width()]
         self.filename = filename
         if self._config["keep_prev"]:
             prev_shapes = self.canvas.shapes
