@@ -158,6 +158,7 @@ class Canvas(QtWidgets.QWidget):
         for shape in self.shapes:
             shape.selected = False
         self.update()
+        self.getDistMapUpdate()
 
     def enterEvent(self, ev):
         self.overrideCursor(self._cursor)
@@ -294,59 +295,61 @@ class Canvas(QtWidgets.QWidget):
         # Update shape/vertex fill and tooltip value accordingly.
         self.setToolTip(self.tr("Image"))
         if not self.pixmap.isNull() and ((pos.x()>0 and pos.x()<self.imgDim[1]) and (pos.y()>0 and pos.y()<self.imgDim[0])):
-            if self.distMap_crit[int(pos.y()),int(pos.x())]:
-                for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
-                    # Look for a nearby vertex to highlight. If that fails,
-                    # check if we happen to be inside a shape.
-                    index, closest_vertex = shape.nearestVertex(pos, self.epsilon / self.scale)
-                    if index is None:
-                        index_edge = shape.nearestEdge(pos, self.epsilon / self.scale,minDistIndex=closest_vertex)
-                    if index is not None:
-                        if self.selectedVertex():
-                            self.hShape.highlightClear()
-                        self.prevhVertex = self.hVertex = index
-                        self.prevhShape = self.hShape = shape
-                        self.prevhEdge = self.hEdge
-                        self.hEdge = None
-                        shape.highlightVertex(index, shape.MOVE_VERTEX)
-                        self.overrideCursor(CURSOR_POINT)
-                        self.setToolTip(self.tr("Click & drag to move point"))
-                        self.setStatusTip(self.toolTip())
-                        self.update()
-                        break
-                    elif index_edge is not None and shape.canAddPoint():
-                        if self.selectedVertex():
-                            self.hShape.highlightClear()
-                        self.prevhVertex = self.hVertex
-                        self.hVertex = None
-                        self.prevhShape = self.hShape = shape
-                        self.prevhEdge = self.hEdge = index_edge
-                        self.overrideCursor(CURSOR_POINT)
-                        self.setToolTip(self.tr("Click to create point"))
-                        self.setStatusTip(self.toolTip())
-                        self.update()
-                        break
-                    elif shape.containsPoint(pos):
-                        if self.selectedVertex():
-                            self.hShape.highlightClear()
-                        self.prevhVertex = self.hVertex
-                        self.hVertex = None
-                        self.prevhShape = self.hShape = shape
-                        self.prevhEdge = self.hEdge
-                        self.hEdge = None
-                        self.setToolTip(
-                            self.tr("Click & drag to move shape '%s'") % shape.label
-                        )
-                        self.setStatusTip(self.toolTip())
-                        self.overrideCursor(CURSOR_GRAB)
-                        self.update()
-                        break
-                else:  # Nothing found, clear highlights, reset state.
-                    self.unHighlight()
-                self.vertexSelected.emit(self.hVertex is not None)
+            for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
+                # Look for a nearby vertex to highlight. If that fails,
+                # check if we happen to be inside a shape.
+                
+                index, closest_vertex = shape.nearestVertex(pos, self.epsilon / self.scale)
+                if index is None and self.distMap_crit[int(pos.y()),int(pos.x())]:
+                    index_edge = shape.nearestEdge(pos, self.epsilon / self.scale,minDistIndex=closest_vertex)
+                else:
+                    index_edge = None
+                if index is not None:
+                    if self.selectedVertex():
+                        self.hShape.highlightClear()
+                    self.prevhVertex = self.hVertex = index
+                    self.prevhShape = self.hShape = shape
+                    self.prevhEdge = self.hEdge
+                    self.hEdge = None
+                    shape.highlightVertex(index, shape.MOVE_VERTEX)
+                    self.overrideCursor(CURSOR_POINT)
+                    self.setToolTip(self.tr("Click & drag to move point"))
+                    self.setStatusTip(self.toolTip())
+                    self.update()
+                    break
+                elif index_edge is not None and shape.canAddPoint():
+                    if self.selectedVertex():
+                        self.hShape.highlightClear()
+                    self.prevhVertex = self.hVertex
+                    self.hVertex = None
+                    self.prevhShape = self.hShape = shape
+                    self.prevhEdge = self.hEdge = index_edge
+                    self.overrideCursor(CURSOR_POINT)
+                    self.setToolTip(self.tr("Click to create point"))
+                    self.setStatusTip(self.toolTip())
+                    self.update()
+                    break
+                elif shape.containsPoint(pos):
+                    if self.selectedVertex():
+                        self.hShape.highlightClear()
+                    self.prevhVertex = self.hVertex
+                    self.hVertex = None
+                    self.prevhShape = self.hShape = shape
+                    self.prevhEdge = self.hEdge
+                    self.hEdge = None
+                    self.setToolTip(
+                        self.tr("Click & drag to move shape '%s'") % shape.label
+                    )
+                    self.setStatusTip(self.toolTip())
+                    self.overrideCursor(CURSOR_GRAB)
+                    self.update()
+                    break
+            else:  # Nothing found, clear highlights, reset state.
+                self.unHighlight()
+            self.vertexSelected.emit(self.hVertex is not None)
 
     def getDistMapUpdate(self):
-        if not self.ZeroImg:
+        if self.ZeroImg is None:
             self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1]])
         #binImg = self.ZeroImg
         array_list = []
@@ -359,8 +362,12 @@ class Canvas(QtWidgets.QWidget):
         binImg = self.ZeroImg
         binImg = cv2.drawContours(self.ZeroImg,array_list,-1,1,-1)
         distMap = cv2.distanceTransform(cv2.bitwise_not((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
+        InvDistMap = cv2.distanceTransform(((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
+        InvDistMap = np.clip(InvDistMap,0,255).astype(np.uint8)
+        # cv2.imwrite(r"C:\Users\joshu\OneDrive\Bilder\InvDist.png",InvDistMap)
+        cv2.imwrite(r"C:\Users\joshu\OneDrive\Bilder\Comb.png",np.add(distMap,InvDistMap))
         distMap = np.clip(distMap,0,255).astype(np.uint8)
-        self.distMap_crit= (distMap <= (self.epsilon + 3)).astype(np.bool)
+        self.distMap_crit = (np.add(distMap,InvDistMap) <= (self.epsilon + 7)).astype(np.bool)
 
     def addPointToEdge(self):
         shape = self.prevhShape
@@ -386,6 +393,7 @@ class Canvas(QtWidgets.QWidget):
         self.hShape = shape
         self.prevhVertex = None
         self.movingShape = True  # Save changes
+        #self.getDistMapUpdate()
 
     def mousePressEvent(self, ev):
         if QT5:
@@ -480,6 +488,7 @@ class Canvas(QtWidgets.QWidget):
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
 
+
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
             if (
@@ -488,6 +497,7 @@ class Canvas(QtWidgets.QWidget):
             ):
                 self.storeShapes()
                 self.shapeMoved.emit()
+                self.getDistMapUpdate()
 
             self.movingShape = False
 
@@ -505,6 +515,7 @@ class Canvas(QtWidgets.QWidget):
         self.selectedShapesCopy = []
         self.repaint()
         self.storeShapes()
+        #self.getDistMapUpdate()
         return True
 
     def hideBackroundShapes(self, value):
@@ -628,6 +639,7 @@ class Canvas(QtWidgets.QWidget):
                 self.shapes.remove(shape)
                 deleted_shapes.append(shape)
             self.storeShapes()
+            self.getDistMapUpdate()
             self.selectedShapes = []
             self.update()
         return deleted_shapes
@@ -637,6 +649,7 @@ class Canvas(QtWidgets.QWidget):
             self.selectedShapes.remove(shape)
         if shape in self.shapes:
             self.shapes.remove(shape)
+        self.getDistMapUpdate()
         self.storeShapes()
         self.update()
 
