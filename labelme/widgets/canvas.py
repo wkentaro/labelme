@@ -362,12 +362,10 @@ class Canvas(QtWidgets.QWidget):
         binImg = self.ZeroImg
         binImg = cv2.drawContours(self.ZeroImg,array_list,-1,1,-1)
         distMap = cv2.distanceTransform(cv2.bitwise_not((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
-        InvDistMap = cv2.distanceTransform(((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
-        InvDistMap = np.clip(InvDistMap,0,255).astype(np.uint8)
-        # cv2.imwrite(r"C:\Users\joshu\OneDrive\Bilder\InvDist.png",InvDistMap)
-        cv2.imwrite(r"C:\Users\joshu\OneDrive\Bilder\Comb.png",np.add(distMap,InvDistMap))
+        #InvDistMap = cv2.distanceTransform(((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
+        #InvDistMap = np.clip(InvDistMap,0,255).astype(np.uint8)
         distMap = np.clip(distMap,0,255).astype(np.uint8)
-        self.distMap_crit = (np.add(distMap,InvDistMap) <= (self.epsilon + 7)).astype(np.bool)
+        self.distMap_crit = (distMap <= (self.epsilon + 7)).astype(np.bool)
 
     def addPointToEdge(self):
         shape = self.prevhShape
