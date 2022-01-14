@@ -11,7 +11,7 @@ import cv2
 from glob import glob
 from PyQt5.QtCore import QRect, QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
-from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget
+from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget, QWhatsThis
 from ruamel import yaml
 import pathlib as pl
 dev_path = os.getcwd()
@@ -114,6 +114,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.output_dir = None
 
+        assert self._config["init_zoom_mode"] in ["FIT_WINDOW","FIT_WIDTH","MANUAL_ZOOM", None], "specify ZoomMode as 'FIT_WINDOW','FIT_WIDTH' or 'MANUAL_ZOOM'"
+
+        if self._config["init_zoom_mode"] == "FIT_WINDOW":
+            self.initZoomMode = self.FIT_WINDOW
+        elif self._config["init_zoom_mode"] == "FIT_WIDTH":
+            self.initZoomMode = self.FIT_WIDTH
+        elif self._config["init_zoom_mode"] == "MANUAL_ZOOM":
+            self.initZoomValue = self._config["init_zoom_value"]
+            self.initZoomMode = self.MANUAL_ZOOM
+        else:
+            self.initZoomMode = self.FIT_WINDOW #fallback to fit window
+            logger.info(" initial zoom Mode not specified, using 'fit window', changing possible in config")
+         
+        
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
             parent=self,
@@ -651,7 +665,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
             # Set to one to scale to 100% when loading files.
-            self.MANUAL_ZOOM: lambda: 1,
+            self.MANUAL_ZOOM: lambda: self.initZoomValue/100,
         }
 
         edit = action(
@@ -1823,7 +1837,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status(f"current Zoom Level {self.zoomWidget.value()} %")
 
     def adjustScale(self, initial=False):
-        value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
+        #TODO set the default zoom setting in config instead
+        value = self.scalers[self.initZoomMode if initial else self.zoomMode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
