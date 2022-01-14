@@ -18,7 +18,7 @@ a = Analysis(
     hiddenimports=['yaml','termcolor','colorama'],
     hookspath=[],
     runtime_hooks=[],
-    excludes=[],
+    excludes=["tflite-runtime","PyOpenGL","PyQt6"],
 )
 pyz = PYZ(a.pure, a.zipped_data)
 exe = EXE(
