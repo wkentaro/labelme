@@ -20,3 +20,6 @@ sampleImages/th_barbara_16.png
 labelme/utils/timeit_test.py
 labelme/utils/readAWR_bmp.py
 labelme/utils/test.ipynb
+dist/labelme_with_tflite.exe
+dist/labelme.exe
+dist/main/*
