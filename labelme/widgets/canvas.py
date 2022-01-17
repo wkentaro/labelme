@@ -362,10 +362,11 @@ class Canvas(QtWidgets.QWidget):
     def getDistMapUpdate(self, index = None):
         if self.ZeroImg is None:
             self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
-        elif index > self.distMap_crit.shape[-1]:
-            self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
+        if index is not None:
+            if index > self.distMap_crit.shape[-1]:
+                self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
         #FIXME change to elif statement and dstack to distMap_crit
-        if index is None or index > self.distMap_crit.shape[-1]:
+        if index is None or index >= self.distMap_crit.shape[-1]:
             self.distMap_crit = self.ZeroImg.astype(np.bool)
             for i,s in enumerate(self.shapes): 
                 if not self.isVisible(s):
@@ -652,8 +653,10 @@ class Canvas(QtWidgets.QWidget):
         deleted_shapes = []
         if self.selectedShapes:
             for shape in self.selectedShapes:
-                self.shapes.remove(shape)
                 deleted_shapes.append(shape)
+                index = self.shapes.index(shape)
+                self.shapes.remove(shape)
+                self.distMap_crit = np.delete(self.distMap_crit,index,2)
             self.storeShapes()
             self.getDistMapUpdate()
             self.selectedShapes = []
@@ -665,6 +668,7 @@ class Canvas(QtWidgets.QWidget):
             self.selectedShapes.remove(shape)
         if shape in self.shapes:
             self.shapes.remove(shape)
+        
         self.getDistMapUpdate()
         self.storeShapes()
         self.update()
