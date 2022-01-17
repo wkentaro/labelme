@@ -356,6 +356,10 @@ class Canvas(QtWidgets.QWidget):
         for s in self.shapes: 
             if not self.isVisible(s):
                 continue
+            try:
+                _ = s.poly_array
+            except AttributeError:
+                s.poly_array = np.array( [[p.x(), p.y()] for p in s.points])
             shape2draw = [[x[0] % self.ZeroImg.shape[1], x[1]] for x in s.poly_array]
             array_list.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
         #contours.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))

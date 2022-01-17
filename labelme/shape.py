@@ -128,7 +128,11 @@ class Shape(object):
         self.onPolygonChange()
 
     def removePoint(self, i):
-        self.points.pop(i)
+        try:
+            self.points.pop(i)
+        except IndexError:
+            logger.warn(f"Index Error with point {i}")
+            pass
 
     def isClosed(self):
         return self._closed
