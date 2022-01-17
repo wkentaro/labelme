@@ -114,6 +114,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.output_dir = None
 
+        self.initZoomValue = 100
+
         assert self._config["init_zoom_mode"] in ["FIT_WINDOW","FIT_WIDTH","MANUAL_ZOOM", None], "specify ZoomMode as 'FIT_WINDOW','FIT_WIDTH' or 'MANUAL_ZOOM'"
 
         if self._config["init_zoom_mode"] == "FIT_WINDOW":

@@ -295,50 +295,52 @@ class Canvas(QtWidgets.QWidget):
         # Update shape/vertex fill and tooltip value accordingly.
         self.setToolTip(self.tr("Image"))
         if not self.pixmap.isNull() and ((pos.x()>0 and pos.x()<self.imgDim[1]) and (pos.y()>0 and pos.y()<self.imgDim[0])):
-            for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
+            for i in range(len(self.shapes)):
                 # Look for a nearby vertex to highlight. If that fails,
                 # check if we happen to be inside a shape.
-                
-                index, closest_vertex = shape.nearestVertex(pos, self.epsilon / self.scale)
-                if index is None and self.distMap_crit[int(pos.y()),int(pos.x())]:
-                    index_edge = shape.nearestEdge(pos, self.epsilon / self.scale,minDistIndex=closest_vertex)
+                if not self.distMap_crit[int(pos.y()),int(pos.x()),i]:
+                    continue
+                index, closest_vertex = self.shapes[i].nearestVertex(pos, self.epsilon / self.scale)
+                if index is None:
+                    index_edge = self.shapes[i].nearestEdge(pos, self.epsilon / self.scale,minDistIndex=closest_vertex)
                 else:
                     index_edge = None
+
                 if index is not None:
                     if self.selectedVertex():
                         self.hShape.highlightClear()
                     self.prevhVertex = self.hVertex = index
-                    self.prevhShape = self.hShape = shape
+                    self.prevhShape = self.hShape = self.shapes[i]
                     self.prevhEdge = self.hEdge
                     self.hEdge = None
-                    shape.highlightVertex(index, shape.MOVE_VERTEX)
+                    self.shapes[i].highlightVertex(index, self.shapes[i].MOVE_VERTEX)
                     self.overrideCursor(CURSOR_POINT)
                     self.setToolTip(self.tr("Click & drag to move point"))
                     self.setStatusTip(self.toolTip())
                     self.update()
                     break
-                elif index_edge is not None and shape.canAddPoint():
+                elif index_edge is not None and self.shapes[i].canAddPoint():
                     if self.selectedVertex():
                         self.hShape.highlightClear()
                     self.prevhVertex = self.hVertex
                     self.hVertex = None
-                    self.prevhShape = self.hShape = shape
+                    self.prevhShape = self.hShape = self.shapes[i]
                     self.prevhEdge = self.hEdge = index_edge
                     self.overrideCursor(CURSOR_POINT)
                     self.setToolTip(self.tr("Click to create point"))
                     self.setStatusTip(self.toolTip())
                     self.update()
                     break
-                elif shape.containsPoint(pos):
+                elif self.shapes[i].containsPoint(pos):
                     if self.selectedVertex():
                         self.hShape.highlightClear()
                     self.prevhVertex = self.hVertex
                     self.hVertex = None
-                    self.prevhShape = self.hShape = shape
+                    self.prevhShape = self.hShape = self.shapes[i]
                     self.prevhEdge = self.hEdge
                     self.hEdge = None
                     self.setToolTip(
-                        self.tr("Click & drag to move shape '%s'") % shape.label
+                        self.tr("Click & drag to move shape '%s'") % self.shapes[i].label
                     )
                     self.setStatusTip(self.toolTip())
                     self.overrideCursor(CURSOR_GRAB)
@@ -348,28 +350,37 @@ class Canvas(QtWidgets.QWidget):
                 self.unHighlight()
             self.vertexSelected.emit(self.hVertex is not None)
 
-    def getDistMapUpdate(self):
-        if self.ZeroImg is None:
-            self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1]])
-        #binImg = self.ZeroImg
-        array_list = []
-        for s in self.shapes: 
-            if not self.isVisible(s):
-                continue
-            try:
-                _ = s.poly_array
-            except AttributeError:
-                s.poly_array = np.array( [[p.x(), p.y()] for p in s.points])
-            shape2draw = [[x[0] % self.ZeroImg.shape[1], x[1]] for x in s.poly_array]
-            array_list.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
-        #contours.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
-        binImg = self.ZeroImg
-        binImg = cv2.drawContours(self.ZeroImg,array_list,-1,1,-1)
+    def apply_distTrans(self,shape,index):
+        shape2draw = [[x[0] % self.ZeroImg.shape[1], x[1]] for x in shape.poly_array]
+        array_list = (np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
+        binImg = cv2.drawContours(np.zeros([self.ZeroImg.shape[0],self.ZeroImg.shape[1],3]),[array_list],-1,1,-1)[:,:,0]
         distMap = cv2.distanceTransform(cv2.bitwise_not((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
+        distMap = np.clip(distMap,0,255).astype(np.uint8)
+        self.distMap_crit[:,:,index] = (distMap <= (self.epsilon + 7)).astype(np.bool)
+
+
+    def getDistMapUpdate(self, index = None):
+        if self.ZeroImg is None:
+            self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
+        
+        if index is None:
+            self.distMap_crit = self.ZeroImg.astype(np.bool)
+            for i,s in enumerate(self.shapes): 
+                if not self.isVisible(s):
+                    continue
+                if not hasattr(s,"poly_array"):
+                    s.poly_array = np.array( [[p.x(), p.y()] for p in s.points])
+
+                self.apply_distTrans(s,i)     
+        else:
+            assert isinstance(index,int), f"Index must be of Type int not {type(index)}"
+            self.apply_distTrans(self.shapes[index],index)
+        
+        #contours.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
+        
         #InvDistMap = cv2.distanceTransform(((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
         #InvDistMap = np.clip(InvDistMap,0,255).astype(np.uint8)
-        distMap = np.clip(distMap,0,255).astype(np.uint8)
-        self.distMap_crit = (distMap <= (self.epsilon + 7)).astype(np.bool)
+        
 
     def addPointToEdge(self):
         shape = self.prevhShape
@@ -395,6 +406,7 @@ class Canvas(QtWidgets.QWidget):
         self.hShape = shape
         self.prevhVertex = None
         self.movingShape = True  # Save changes
+        #index = self.shapes.index(shape)
         #self.getDistMapUpdate()
 
     def mousePressEvent(self, ev):
@@ -499,7 +511,7 @@ class Canvas(QtWidgets.QWidget):
             ):
                 self.storeShapes()
                 self.shapeMoved.emit()
-                self.getDistMapUpdate()
+                self.getDistMapUpdate(index = index)
 
             self.movingShape = False
 
@@ -739,7 +751,8 @@ class Canvas(QtWidgets.QWidget):
         self.setHiding(False)
         self.newShape.emit()
         self.update()
-        self.getDistMapUpdate()
+        index = len(self.shapes)
+        self.getDistMapUpdate(index)
 
     def closeEnough(self, p1, p2):
         # d = distance(p1 - p2)
