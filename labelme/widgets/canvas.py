@@ -355,15 +355,17 @@ class Canvas(QtWidgets.QWidget):
         array_list = (np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
         binImg = cv2.drawContours(np.zeros([self.ZeroImg.shape[0],self.ZeroImg.shape[1],3]),[array_list],-1,1,-1)[:,:,0]
         distMap = cv2.distanceTransform(cv2.bitwise_not((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
-        distMap = np.clip(distMap,0,255).astype(np.uint8)
+        distMap = np.clip(distMap,0,255).astype(np.uint8) 
         self.distMap_crit[:,:,index] = (distMap <= (self.epsilon + 7)).astype(np.bool)
 
 
     def getDistMapUpdate(self, index = None):
         if self.ZeroImg is None:
             self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
-        
-        if index is None:
+        elif index > self.distMap_crit.shape[-1]:
+            self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
+        #FIXME change to elif statement and dstack to distMap_crit
+        if index is None or index > self.distMap_crit.shape[-1]:
             self.distMap_crit = self.ZeroImg.astype(np.bool)
             for i,s in enumerate(self.shapes): 
                 if not self.isVisible(s):
