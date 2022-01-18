@@ -1885,9 +1885,12 @@ class MainWindow(QtWidgets.QMainWindow):
             ".%s" % fmt.data().decode().lower()
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
+        extensions.append(".json")
         if event.mimeData().hasUrls():
             items = [i.toLocalFile() for i in event.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
+                event.accept()
+            elif len(items)==1 and os.path.isdir(items[0]):
                 event.accept()
         else:
             event.ignore()
@@ -1897,7 +1900,10 @@ class MainWindow(QtWidgets.QMainWindow):
             event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
-        self.importDroppedImageFiles(items)
+        if len(items)==1 and os.path.isdir(items[0]):
+            self.importDirImages(items[0])
+        else:
+            self.importDroppedImageFiles(items)
 
     # User Dialogs #
 
@@ -2252,7 +2258,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ".%s" % fmt.data().decode().lower()
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-
+        extensions.append(".json")
         self.filename = None
         for file in imageFiles:
             if file in self.imageList or not file.lower().endswith(
