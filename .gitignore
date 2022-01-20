@@ -22,3 +22,6 @@ outpufile_calls.txt
 dist/labelme_with_tflite.exe
 labelme/utils/readAWR_bmp.py
 labelme/utils/test.ipynb
+dist/labelme_with_tflite.exe
+dist/labelme.exe
+dist/main/*

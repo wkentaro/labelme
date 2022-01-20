@@ -1,6 +1,5 @@
 import base64
 import io
-from cv2 import imencode
 
 import numpy as np
 import PIL.ExifTags

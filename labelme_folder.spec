@@ -19,13 +19,12 @@ a = Analysis(
     hookspath=[],
     runtime_hooks=[],
     excludes=["tflite-runtime","PyOpenGL","PyQt6"],
+    noarchive = True
 )
 pyz = PYZ(a.pure, a.zipped_data)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
     a.datas,
     name='labelme',
     debug=False,
@@ -35,10 +34,9 @@ exe = EXE(
     console=False,
     icon='labelme/icons/icon.ico',
 )
-app = BUNDLE(
-    exe,
-    name='Labelme.app',
-    icon='labelme/icons/icon.icns',
-    bundle_identifier=None,
-    info_plist={'NSHighResolutionCapable': 'True'},
-)
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               strip=False,
+               upx=True,
+               name='main')

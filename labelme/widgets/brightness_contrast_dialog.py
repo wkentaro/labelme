@@ -73,8 +73,16 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         #img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
         #img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
         if brightness < 0:
-            img_np = np.clip(cv2.subtract(img_np,-1*brightness),0,2**15-1)
-        img = (contrast * img_np + max(0,brightness)).astype(np.uint16)
+            if img_np.dtype == "uint8":
+                img_np = np.clip(cv2.subtract(img_np,-1*brightness),0,255)
+            else:
+                img_np = np.clip(cv2.subtract(img_np,-1*brightness),0,2**15-1)
+        
+        if img_np.dtype=="uint8":
+            img = (contrast * img_np + max(0,brightness)).astype(np.uint16)
+            img = np.clip(img,0,255).astype(np.uint8)
+        else:
+            img = (contrast * img_np + max(0,brightness)).astype(np.uint16)
         #img = cv2.convertScaleAbs(img_np,alpha=contrast,beta= max(0,brightness))
         
         self.HasReset = False

@@ -7,6 +7,8 @@ keep_prev_scale: true
 keep_prev_brightness: true
 keep_prev_contrast: true
 logger_level: info
+init_zoom_mode: "FIT_WIDTH" #choose between 'FIT_WINDOW', 'FIT_WIDTH', 'MANUAL_ZOOM'
+init_zoom_value:  # leave blank if zoom mode is not set on "MANUAL_ZOOM" otherwise choose an integer value between 1-1000
 flags: [a, b, c]
 label_flags:
 labels: [house, boat, water, tower, person]

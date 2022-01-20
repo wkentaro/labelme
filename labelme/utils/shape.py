@@ -1,6 +1,4 @@
-import math
 import uuid
-
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
@@ -26,7 +24,7 @@ def shape_to_mask(
     if shape_type == "circle":
         assert len(xy) == 2, "Shape of shape_type=circle must have 2 points"
         (cx, cy), (px, py) = xy
-        d = math.sqrt((cx - px) ** 2 + (cy - py) ** 2)
+        d = np.sqrt((cx - px) ** 2 + (cy - py) ** 2)
         draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
     elif shape_type == "rectangle":
         assert len(xy) == 2, "Shape of shape_type=rectangle must have 2 points"

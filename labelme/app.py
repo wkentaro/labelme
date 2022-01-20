@@ -8,9 +8,10 @@ import re
 from webbrowser import open as wb_open
 import sys
 import cv2
+from glob import glob
 from PyQt5.QtCore import QRect, QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
-from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget
+from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget, QWhatsThis
 from ruamel import yaml
 import pathlib as pl
 dev_path = os.getcwd()
@@ -101,6 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
         self.setWindowTitle(__appname__)
 
+        self.image = None
         # Whether we need to save or not.
         self.dirty = False
 
@@ -112,6 +114,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.output_dir = None
 
+        self.initZoomValue = 100
+
+        assert self._config["init_zoom_mode"] in ["FIT_WINDOW","FIT_WIDTH","MANUAL_ZOOM", None], "specify ZoomMode as 'FIT_WINDOW','FIT_WIDTH' or 'MANUAL_ZOOM'"
+
+        if self._config["init_zoom_mode"] == "FIT_WINDOW":
+            self.initZoomMode = self.FIT_WINDOW
+        elif self._config["init_zoom_mode"] == "FIT_WIDTH":
+            self.initZoomMode = self.FIT_WIDTH
+        elif self._config["init_zoom_mode"] == "MANUAL_ZOOM":
+            self.initZoomValue = self._config["init_zoom_value"]
+            self.initZoomMode = self.MANUAL_ZOOM
+        else:
+            self.initZoomMode = self.FIT_WINDOW #fallback to fit window
+            logger.info(" initial zoom Mode not specified, using 'fit window', changing possible in config")
+         
+        
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
             parent=self,
@@ -231,9 +249,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas = self.labelList.canvas = Canvas(
             trace_smothness = self._config["shape"]["trace"]["smothness"],
             epsilon=self._config["shape"]["select"]["epsilon"],
-            double_click=self._config["canvas"]["double_click"],
-            num_backups=self._config["canvas"]["num_backups"]
-            #locked_fps = self._config["locked_fps"]
+            double_click = self._config["canvas"]["double_click"],
+            num_backups = self._config["canvas"]["num_backups"]
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -650,7 +667,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
             # Set to one to scale to 100% when loading files.
-            self.MANUAL_ZOOM: lambda: 1,
+            self.MANUAL_ZOOM: lambda: self.initZoomValue/100,
         }
 
         edit = action(
@@ -1314,6 +1331,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.clearSelection()
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
+        self.canvas.init_poly_array()
+        self.canvas.getDistMapUpdate()
 
     def loadLabels(self, shapes):
         s = []
@@ -1576,7 +1595,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.saveNewFlag(dialog.text)
 
     def saveNewFlag(self,FlagText):
-        flagList = self._config["flags"]
+        flagList = self._config["flags"] if not self._config["flags"] is None else []
         flagList.append(FlagText)
         if self.filename:
             if hasattr(self.labelFile,"flags"):
@@ -1678,7 +1697,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.output_dir:
             # label_file_without_path = osp.basename(label_file)
             # label_file = osp.join(self.output_dir, label_file_without_path)
-            label_file = self.output_dir.joinpath(filename.name).with_suffix(LabelFile.suffix)
+            label_file = self.getRelOutputpath(filename)
+            #label_file = self.output_dir.joinpath(filename.name).with_suffix(LabelFile.suffix)
         if QtCore.QFile.exists(str(label_file)) and LabelFile.is_label_file(str(label_file)):
             try:
                 self.labelFile = LabelFile(str(label_file))
@@ -1700,7 +1720,11 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self.otherData = self.labelFile.otherData
         else:
-            self.imageData = LabelFile.load_image_file(filename)
+            self.imageData = LabelFile.load_image_file(str(filename))
+            if self.imageData is None:
+                self.labelFileOut = LabelFile() 
+                self.labelFileOut.load(filename)
+                self.imageData = self.labelFileOut.imageData
             if self.imageData:
                 self.imagePath = str(filename)
             self.labelFile = None
@@ -1727,6 +1751,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.status(self.tr("Error reading %s") % filename)
             return False
         self.image = image
+        self.canvas.imgDim = [image.height(), image.width()]
         self.filename = filename
         if self._config["keep_prev"]:
             prev_shapes = self.canvas.shapes
@@ -1740,7 +1765,11 @@ class MainWindow(QtWidgets.QMainWindow):
             pass
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
-            if self.labelFile.flags is not None:
+            if isinstance(self.labelFile.flags,list):
+                if self.labelFile.flags is not None:
+                    for flg in self.labelFile.flags:
+                        flags.update(flg)
+            else:
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
         if self._config["keep_prev"] and self.noShapes():
@@ -1810,7 +1839,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status(f"current Zoom Level {self.zoomWidget.value()} %")
 
     def adjustScale(self, initial=False):
-        value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
+        #TODO set the default zoom setting in config instead
+        value = self.scalers[self.initZoomMode if initial else self.zoomMode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
@@ -1855,9 +1885,12 @@ class MainWindow(QtWidgets.QMainWindow):
             ".%s" % fmt.data().decode().lower()
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
+        extensions.append(".json")
         if event.mimeData().hasUrls():
             items = [i.toLocalFile() for i in event.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
+                event.accept()
+            elif len(items)==1 and os.path.isdir(items[0]):
                 event.accept()
         else:
             event.ignore()
@@ -1867,7 +1900,10 @@ class MainWindow(QtWidgets.QMainWindow):
             event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
-        self.importDroppedImageFiles(items)
+        if len(items)==1 and os.path.isdir(items[0]):
+            self.importDirImages(items[0])
+        else:
+            self.importDroppedImageFiles(items)
 
     # User Dialogs #
 
@@ -1962,7 +1998,7 @@ class MainWindow(QtWidgets.QMainWindow):
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self,
             self.tr("%s - Save/Load Annotations in Directory") % __appname__,
-            default_output_dir,
+            str(default_output_dir),
             QtWidgets.QFileDialog.ShowDirsOnly
             | QtWidgets.QFileDialog.DontResolveSymlinks,
         )
@@ -2052,6 +2088,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #     label_file = self.filename
         # else:
         #     label_file = osp.splitext(self.filename)[0] + ".json"
+        if not isinstance(self.filename,pl.WindowsPath):
+            self.filename = pl.WindowsPath(self.filename)
 
         return str(self.filename.with_suffix(LabelFile.suffix))
 
@@ -2088,7 +2126,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def getRelOutputpath(self,filename:pl.WindowsPath):
         
         if self.output_dir:
-            if not self.filenameList:
+            if self.filenameList:
                 #reverse engineer the respective relative path
                 index_of_path = self.filenameList.index(filename)
                 currRelPath = self.relPathList[index_of_path]
@@ -2220,7 +2258,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ".%s" % fmt.data().decode().lower()
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-
+        extensions.append(".json")
         self.filename = None
         for file in imageFiles:
             if file in self.imageList or not file.lower().endswith(
@@ -2265,9 +2303,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.relPathList = []
         ImageList = self.scanAllImages(dirpath)
         for i,filename in enumerate(ImageList):
-            if pattern and pattern not in filename:
+            if pattern and pattern not in str(filename):
                 continue
-            filename = pl.WindowsPath(filename)
             self.filenameList.append(filename)
             self.relPathList.append(filename.relative_to(dirpath).parent) 
             label_file = filename.with_suffix(".json")
@@ -2301,12 +2338,17 @@ class MainWindow(QtWidgets.QMainWindow):
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         extensions.append(".json")
-        images = []
-        for root, dirs, files in os.walk(folderPath):
-            for file in files:
-                if file.lower().endswith(tuple(extensions)):
-                    relativePath = osp.join(root, file)
-                    images.append(relativePath)
-        images.sort(key=lambda x: x.lower())
-        images = [img.replace("/","\\") for img in images]
-        return images
+        image_suffix_priortiy = [".json",".png",".tiff",".bmp"]
+        for image_suffix in image_suffix_priortiy:
+            DATAPOINT_LIST = glob(folderPath+'/**/*{}'.format(image_suffix),recursive=True)     
+            if DATAPOINT_LIST:
+                break
+        DATAPOINT_LIST = [pl.WindowsPath(img) for img in DATAPOINT_LIST]
+        # for root, dirs, files in os.walk(folderPath):
+        #     for file in files:
+        #         if file.lower().endswith(tuple(extensions)):
+        #             relativePath = osp.join(root, file)
+        #             images.append(relativePath)
+        # images.sort(key=lambda x: x.lower())
+        # images = [img.replace("/","\\") for img in images]
+        return DATAPOINT_LIST

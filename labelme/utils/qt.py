@@ -95,5 +95,5 @@ def distancetoline(point, line:np.ndarray):
 
 
 def fmtShortcut(text):
-    mod, key = text.split("+", 1)
+    mod, key=text.split("+", 1)
     return "<b>%s</b>+<b>%s</b>" % (mod, key)
