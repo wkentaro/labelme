@@ -85,7 +85,7 @@ jobs:
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        flake8 ./labelme --exclude .git,__pycache__,build,dist,docker,sampleImages,.anaconda3/* --ignore=E203,E741,W503,W504,E265,E402
+        flake8 ./labelme/widgets --exclude .git,__pycache__,build,dist,docker,sampleImages,.anaconda3/* --ignore=E203,E741,W503,W504,E265,E402
 
     - name: Black
       shell: bash -l {0}
