@@ -228,7 +228,7 @@ class Shape(object):
         if shape == self.P_SQUARE:
             path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
         elif shape == self.P_ROUND:
-            path.addEllipse(point, d , d)
+            path.addEllipse(point, d, d)
         else:
             assert False, "unsupported vertex shape"
 
@@ -237,7 +237,7 @@ class Shape(object):
                                                           point.y()])
         dist = np.sum((self.component_dist)**2, axis=1)
         if np.sqrt(np.min(dist)) < epsilon:
-            return np.argmin(dist) , None
+            return np.argmin(dist), None
         else:
             return None, np.argmin(dist)
 

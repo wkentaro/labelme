@@ -25,3 +25,6 @@ labelme/utils/test.ipynb
 dist/labelme_with_tflite.exe
 dist/labelme.exe
 dist/main/*
+output_time.txt
+output.dat
+.vscode/settings.json
