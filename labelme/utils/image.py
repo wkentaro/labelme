@@ -7,6 +7,7 @@ import PIL.Image
 import PIL.ImageOps
 import cv2
 
+
 def img_data_to_pil(img_data):
     f = io.BytesIO()
     f.write(img_data)
@@ -59,10 +60,22 @@ def normalize_image(img):
         np_img = np.array(img)
     else:
         np_img = img
-    if img.dtype=="uint8":
-        np_img = (cv2.normalize(np_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255).astype(np.uint8)
+    if img.dtype == "uint8":
+        np_img = (cv2.normalize(
+            np_img,
+            None,
+            alpha=0,
+            beta=1,
+            norm_type=cv2.NORM_MINMAX,
+            dtype=cv2.CV_32F) * 255).astype(np.uint8)
     else:
-        np_img = (cv2.normalize(np_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 2**15-1).astype(np.uint16)
+        np_img = (cv2.normalize(
+            np_img,
+            None,
+            alpha=0,
+            beta=1,
+            norm_type=cv2.NORM_MINMAX,
+            dtype=cv2.CV_32F) * 2**15 - 1).astype(np.uint16)
     #img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
     return np_img
 

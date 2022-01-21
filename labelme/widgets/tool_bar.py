@@ -12,9 +12,9 @@ class ToolBar(QtWidgets.QToolBar):
         self.setContentsMargins(*m)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
 
-    def addAction(self, action):
+    def add_action(self, action):
         if isinstance(action, QtWidgets.QWidgetAction):
-            return super(ToolBar, self).addAction(action)
+            return super(ToolBar, self).add_action(action)
         btn = QtWidgets.QToolButton()
         btn.setDefaultAction(action)
         btn.setToolButtonStyle(self.toolButtonStyle())
