@@ -75,8 +75,8 @@ def normalize_image(img):
             alpha=0,
             beta=1,
             norm_type=cv2.NORM_MINMAX,
-            dtype=cv2.CV_32F) * 2**15 - 1).astype(np.uint16)
-    #img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
+            dtype=cv2.CV_32F) * 2**16 - 1).astype(np.uint16)
+    # img_t = PIL.Image.fromarray(np_img.astype("uint8"),mode="L")
     return np_img
 
 

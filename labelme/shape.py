@@ -124,7 +124,6 @@ class Shape(object):
     def insertPoint(self, i, point):
         self.points.insert(i, point)
         np.insert(self.poly_array, i, np.array([point.x(), point.y()]))
-        self.onPolygonChange()
 
     def removePoint(self, i):
         try:
@@ -178,7 +177,7 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
             else:
                 line_path.moveTo(self.points[0])
-                #self.poly = QtGui.QPolygonF(self.points)
+                # self.poly = QtGui.QPolygonF(self.points)
                 self.poly_array = np.array([[p.x(), p.y()]
                                             for p in self.points]
                                            )
@@ -186,7 +185,6 @@ class Shape(object):
                     np.min(self.poly_array[:, 0])
                 self.y_span = np.max(self.poly_array[:, 1]) -\
                     np.min(self.poly_array[:, 1])
-                self.onPolygonChange()
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
                 # may be desirable.
@@ -243,7 +241,7 @@ class Shape(object):
 
     def nearestEdge(self, point, epsilon, minDistIndex=None):
 
-        #TODO further optimize the algorightm, maybe preselect
+        # TODO further optimize the algorightm, maybe preselect
         # those which are closer than y_span/2 or x_span/2
         self.t = time.time()
         if (np.abs(self.t - np.round(self.t)) <= 0.005) and\

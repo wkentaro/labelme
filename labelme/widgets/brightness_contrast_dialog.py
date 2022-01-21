@@ -12,16 +12,21 @@ import cv2
 from .. import utils
 
 
+KERNEL_CORRECTION = {3: 500,
+                     5: 200,
+                     7: 50,
+                     9: 0.3,
+                     11: 0.1,
+                     }
+
+LOG_CLIPPING_RATE = 1.05
+
+CLIPPING_CEIL = 2**18
+
+
 class BrightnessContrastDialog(QtWidgets.QDialog):
     def __init__(self, img, callback, parent=None):
         super(BrightnessContrastDialog, self).__init__(parent)
-
-        self.kernel_correction = {3: 500,
-                                  5: 200,
-                                  7: 50,
-                                  9: 0.3,
-                                  11: 0.1,
-                                  }
 
         self.setModal(True)
         self.setWindowTitle("Brightness/Contrast")
@@ -72,34 +77,35 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.setLayout(formLayout)
 
         assert isinstance(img, PIL.Image.Image)
-        self.img = img
+        self.img = cv2.bitwise_not(np.array(img))
         self.callback = callback
 
     def brightness_contrast_transform(self):
         brightness = self.slider_brightness.value() - 50
         contrast = self.slider_contrast.value() / 50
-        img_np = np.array(self.img)
-        #img = self.img
-        #if img.mode != "L":
+        img_np = self.img
+        # img = self.img
+        # if img.mode != "L":
         #    img = img.convert("L")
-        #img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
-        #img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
+        # img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
+        # img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
         if brightness < 0:
-            if img_np.dtype == "uint8":
+            if img_np.dtype.name == "uint8":
                 img_np = np.clip(cv2.subtract(img_np, -1 * brightness), 0, 255)
+            elif img_np.dtype.name == "uint16":
+                img_np = cv2.subtract(
+                    img_np, -brightness * 255)
             else:
-                img_np = np.clip(cv2.subtract(
-                    img_np,
-                    -1 * brightness),
-                    0,
-                    2**15 - 1
-                )
+                pass
 
-        if img_np.dtype == "uint8":
+        if img_np.dtype.name == "uint8":
             img = (contrast * img_np + max(0, brightness)).astype(np.uint16)
             img = np.clip(img, 0, 255).astype(np.uint8)
-        else:
-            img = (contrast * img_np + max(0, brightness)).astype(np.uint16)
+        elif img_np.dtype.name == "uint16":
+            img = (
+                contrast * img_np + max(0, brightness * 255)
+            ).astype(np.uint32)
+            img = np.clip(img, 0, 2**16 - 1).astype(np.uint16)
         # img = cv2.convertScaleAbs(
         #     img_np,
         #     alpha=contrast,
@@ -140,7 +146,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self._apply_change(img)
 
     def connect_gauss_filter_Checkbox(self, checked):
-        #checked = self.apply_gauss_filter_checkbox.isChecked()
+        # checked = self.apply_gauss_filter_checkbox.isChecked()
         if checked:
             self.apply_gauss_filter()
         else:
@@ -175,11 +181,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             img = np.where(img < 0, img * 5, img)
             img = np.clip(
                 img,
-                -1.05**self.clip_level.value() /
-                self.kernel_correction[self.kernelSize.value()] * 2**18,
+                -LOG_CLIPPING_RATE**self.clip_level.value() /
+                KERNEL_CORRECTION[self.kernelSize.value()] * CLIPPING_CEIL,
 
-                1.05**self.clip_level.value() /
-                self.kernel_correction[self.kernelSize.value()] * 2**18
+                LOG_CLIPPING_RATE**self.clip_level.value() /
+                KERNEL_CORRECTION[self.kernelSize.value()] * CLIPPING_CEIL
             )
 
         except cv2.error:
@@ -202,11 +208,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         else:
             img = img - img.min()
 
-        if np.array(self.img).dtype == "int32":
+        if self.img.dtype == "int32":
             img = (img * 2**16 - 1 / img.max()).astype(np.uint16)
         else:
             img = (img * 255 / img.max()).astype(np.uint8)
-        #img = utils.image.normalize_image(img)
+        # img = utils.image.normalize_image(img)
         self._apply_change(img)
         return 1
 
@@ -239,9 +245,9 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             img_data = utils.img_pil_to_data(img)
             qimage = QtGui.QImage.fromData(img_data)
         elif isinstance(img, np.ndarray):
-            if img.dtype == "uint8":
+            if img.dtype.name == "uint8":
                 format_param = QImage.Format_Indexed8
-            elif img.dtype == "uint16":
+            elif img.dtype.name == "uint16":
                 format_param = QImage.Format_Grayscale16
             else:
                 raise ValueError(f"array has not the type expected,\
