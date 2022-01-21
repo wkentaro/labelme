@@ -85,7 +85,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         . scl_source enable llvm-toolset-6.0 || true
-        flake8 .
+        flake8 --exclude .git,__pycache__,build,dist,docker,sampleImages
 
     - name: Black
       shell: bash -l {0}
