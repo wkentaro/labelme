@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import functools
-from math import ceil,floor
+from math import ceil, floor
 import os
 import os.path as osp
 import re
@@ -9,9 +9,9 @@ from webbrowser import open as wb_open
 import sys
 import cv2
 from glob import glob
-from PyQt5.QtCore import QRect, QSize
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
-from PyQt5.QtWidgets import QLabel, QLayout, QPushButton, QWidget, QWhatsThis
+from PyQt5.QtWidgets import QPushButton, QWidget  # ,QWhatsThis
 from ruamel import yaml
 import pathlib as pl
 dev_path = os.getcwd()
@@ -32,24 +32,24 @@ from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
-from labelme.widgets import dock_title
-from labelme.widgets import BrightnessContrastDialog, canvas
-from labelme.widgets import Canvas
-from labelme.widgets import FileDialogPreview
-from labelme.widgets import LabelDialog
-from labelme.widgets import LabelListWidget
-from labelme.widgets import LabelListWidgetItem
-from labelme.widgets import ToolBar
-from labelme.widgets import UniqueLabelQListWidget
-from labelme.widgets import ZoomWidget
-from labelme.widgets import GenerateSegmentedData
-from labelme.widgets import set_snapping
-from labelme.widgets import add_flag_dialog
+from labelme.widgets import dock_title, \
+    BrightnessContrastDialog, \
+    Canvas, \
+    FileDialogPreview, \
+    LabelDialog, \
+    LabelListWidget, \
+    LabelListWidgetItem, \
+    ToolBar, \
+    UniqueLabelQListWidget, \
+    ZoomWidget, \
+    GenerateSegmentedData, \
+    set_snapping, \
+    add_flag_dialog
 
-# FIXME
+#FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
-# TODO(unknown):
+#TODO(unknown):
 # - Zoom is too "steppy".
 
 
@@ -67,7 +67,7 @@ class MainWindow(QtWidgets.QMainWindow):
         output=None,
         output_file=None,
         output_dir=None,
-        config_path = None
+        config_path=None
     ):
         if output is not None:
             logger.warning(
@@ -82,8 +82,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config = config
         self.generate_segmented_data = GenerateSegmentedData()
         # set default shape colors
-        Shape.line_color = QtGui.QColor(*self._config["shape"]["drawing"]["line_color"])
-        Shape.fill_color = QtGui.QColor(*self._config["shape"]["drawing"]["fill_color"])
+        Shape.line_color = QtGui.QColor(
+            *self._config["shape"]["drawing"]["line_color"]
+        )
+        Shape.fill_color = QtGui.QColor(
+            *self._config["shape"]["drawing"]["fill_color"]
+        )
         Shape.select_line_color = QtGui.QColor(
             *self._config["shape"]["select"]["line_color"]
         )
@@ -116,7 +120,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.initZoomValue = 100
 
-        assert self._config["init_zoom_mode"] in ["FIT_WINDOW","FIT_WIDTH","MANUAL_ZOOM", None], "specify ZoomMode as 'FIT_WINDOW','FIT_WIDTH' or 'MANUAL_ZOOM'"
+        assert self._config["init_zoom_mode"] in \
+            ["FIT_WINDOW", "FIT_WIDTH", "MANUAL_ZOOM", None], \
+            "specify ZoomMode as 'FIT_WINDOW','FIT_WIDTH' or 'MANUAL_ZOOM'"
 
         if self._config["init_zoom_mode"] == "FIT_WINDOW":
             self.initZoomMode = self.FIT_WINDOW
@@ -126,10 +132,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.initZoomValue = self._config["init_zoom_value"]
             self.initZoomMode = self.MANUAL_ZOOM
         else:
-            self.initZoomMode = self.FIT_WINDOW #fallback to fit window
-            logger.info(" initial zoom Mode not specified, using 'fit window', changing possible in config")
-         
-        
+            self.initZoomMode = self.FIT_WINDOW  # fallback to fit window
+            logger.info(" initial zoom Mode not specified, using 'fit window', \
+                changing possible in config")
+
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
             parent=self,
@@ -148,30 +154,34 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
         self.flag_dock.setObjectName("Flags")
         self.flag_widget = QtWidgets.QListWidget()
-        self.flag_widget.setFont(QFont("Arial",12))
+        self.flag_widget.setFont(QFont("Arial", 12))
         flag_palette = QtGui.QPalette()
         gray_bright = 200
-        flag_palette.setColor(QtGui.QPalette.Text, QColor(qRgb(gray_bright, gray_bright, gray_bright)))
+        flag_palette.setColor(
+            QtGui.QPalette.Text, QColor(
+                qRgb(gray_bright, gray_bright, gray_bright)
+            )
+        )
         self.flag_widget.setPalette(flag_palette)
 
         self.container = QWidget()
-        add_flag_icon = utils.newIcon("add_flag")
-        
+        add_flag_icon = utils.new_icon("add_flag")
+
         self.flag_add_button = QPushButton("Add Flag")
         self.flag_add_button.setIcon(add_flag_icon)
-        self.flag_add_button.setIconSize(QSize(20,20))
+        self.flag_add_button.setIconSize(QSize(20, 20))
         self.flag_add_button.clicked.connect(self.addFlag)
         self.flag_add_button.setStyleSheet("Text-align:left")
-             
+
         if config["flags"]:
             self.loadFlags({k: False for k in config["flags"]})
 
         add_flag_button_in_widget = False
-        #optionally add a add_flag button above the flag_dock        
+        #optionally add a add_flag button above the flag_dock
         if add_flag_button_in_widget:
             layout = QtWidgets.QFormLayout()
-            layout.addRow(self.tr(""),self.flag_add_button)
-            layout.addRow(self.tr(""),self.flag_widget)
+            layout.addRow(self.tr(""), self.flag_add_button)
+            layout.addRow(self.tr(""), self.flag_widget)
             self.container.setLayout(layout)
             self.flag_dock.setWidget(self.container)
         else:
@@ -180,8 +190,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock_title = dock_title.DockTitle("Flags")
         self.flag_dock.setTitleBarWidget(self.flag_dock_title)
 
-
-        
         self.flag_widget.itemChanged.connect(self.setDirty)
 
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
@@ -217,13 +225,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_dock_title = dock_title.DockTitle("Label List")
         self.label_dock.setTitleBarWidget(self.label_dock_title)
         self.label_dock.setWidget(self.uniqLabelList)
-        
 
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
         self.fileSearch.textChanged.connect(self.fileSearchChanged)
         self.fileListWidget = QtWidgets.QListWidget()
-        self.fileListWidget.setFont(QFont("Arial",10))
+        self.fileListWidget.setFont(QFont("Arial", 10))
         self.fileListWidget.itemSelectionChanged.connect(
             self.fileSelectionChanged
         )
@@ -236,8 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setObjectName(u"Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
-        
-        
+
         self.file_dock_title = dock_title.DockTitle("File List")
 
         self.file_dock.setTitleBarWidget(self.file_dock_title)
@@ -247,10 +253,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setAcceptDrops(True)
 
         self.canvas = self.labelList.canvas = Canvas(
-            trace_smothness = self._config["shape"]["trace"]["smothness"],
+            trace_smothness=self._config["shape"]["trace"]["smothness"],
             epsilon=self._config["shape"]["select"]["epsilon"],
-            double_click = self._config["canvas"]["double_click"],
-            num_backups = self._config["canvas"]["num_backups"]
+            double_click=self._config["canvas"]["double_click"],
+            num_backups=self._config["canvas"]["num_backups"]
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -288,7 +294,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
         # Actions
-        action = functools.partial(utils.newAction, self)
+        action = functools.partial(utils.new_action, self)
         shortcuts = self._config["shortcuts"]
         quit = action(
             self.tr("&Quit"),
@@ -410,12 +416,19 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.toggleDrawMode(False, createMode="trace"),
             shortcuts["create_trace"],
             "trace",
-            self.tr("Start tracing objects (ctrl+t) pause trace by keep pressing 'F'"),
+            self.tr(
+                "Start tracing objects (ctrl+t),\
+                 pause trace by keep pressing 'F'"
+            ),
             enabled=False,
         )
         resetTrace = action(
             self.tr("Reset Trace"),
-            lambda: QtWidgets.QApplication.postEvent(self.canvas, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Escape, Qt.NoModifier)),
+            lambda: QtWidgets.QApplication.postEvent(
+                self.canvas, QtGui.QKeyEvent(
+                    QtCore.QEvent.KeyPress, Qt.Key_Escape, Qt.NoModifier
+                )
+            ),
             shortcuts["reset_trace"],
             "eraser",
             self.tr("Clear current trace (ESC)"),
@@ -553,16 +566,16 @@ class MainWindow(QtWidgets.QMainWindow):
         addFlag = action(
             self.tr("&add Flag"),
             self.addFlag,
-            icon = "add_flag",
-            enabled = True,
-            tip= self.tr("add new flag to list")
+            icon="add_flag",
+            enabled=True,
+            tip=self.tr("add new flag to list")
         )
 
-        generate_data = action(
-            self.tr('Create Segmented Images'),
-            lambda: self.generate_segmented_data.show(),
-            tip=self.tr("Run macros to convert json data to training data.")
-        )
+        # generate_data = action(
+        #     self.tr('Create Segmented Images'),
+        #     lambda: self.generate_segmented_data.show(),
+        #     tip=self.tr("Run macros to convert json data to training data.")
+        # )
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -643,14 +656,14 @@ class MainWindow(QtWidgets.QMainWindow):
             "& Snapping Distance",
             self.setSnappingDistance,
             self.tr("set distance to interact with points"),
-            enabled = True
+            enabled=True
         )
 
         setTraceSmoothness = action(
             "& Trace Smoothness",
             self.setTraceSmoothness,
             self.tr("set smoothness of trace-polygon"),
-            enabled = True,
+            enabled=True,
         )
         # Group zoom controls into a list for easier toggling.
         zoomActions = (
@@ -667,7 +680,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.FIT_WINDOW: self.scaleFitWindow,
             self.FIT_WIDTH: self.scaleFitWidth,
             # Set to one to scale to 100% when loading files.
-            self.MANUAL_ZOOM: lambda: self.initZoomValue/100,
+            self.MANUAL_ZOOM: lambda: self.initZoomValue / 100,
         }
 
         edit = action(
@@ -692,7 +705,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
-        utils.addActions(labelMenu, (edit, delete))
+        utils.add_actions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(
             self.popLabelListMenu
@@ -793,13 +806,13 @@ class MainWindow(QtWidgets.QMainWindow):
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
             #macros=self.menu(self.tr("&Macros")),
-            settings = self.menu(self.tr("&Settings")),
+            settings=self.menu(self.tr("&Settings")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
             labelList=labelMenu,
         )
 
-        utils.addActions(
+        utils.add_actions(
             self.menus.file,
             (
                 open_,
@@ -817,9 +830,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 quit,
             ),
         )
-        utils.addActions(self.menus.help, (help,))
-        #utils.addActions(self.menus.macros, (generate_data,))
-        utils.addActions(
+        utils.add_actions(self.menus.help, (help,))
+        #utils.add_actions(self.menus.macros, (generate_data,))
+        utils.add_actions(
             self.menus.view,
             (
                 self.flag_dock.toggleViewAction(),
@@ -845,7 +858,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
-        utils.addActions(
+        utils.add_actions(
             self.menus.settings,
             (
                 saveWithImageData,
@@ -854,8 +867,8 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         # Custom context menu for the canvas widget:
-        utils.addActions(self.canvas.menus[0], self.actions.menu)
-        utils.addActions(
+        utils.add_actions(self.canvas.menus[0], self.actions.menu)
+        utils.add_actions(
             self.canvas.menus[1],
             (
                 action("&Copy here", self.copyShape),
@@ -900,7 +913,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "set as IMAGE_BASENAME.json."
             )
         self.output_file = output_file
-        if not output_dir is None:
+        if output_dir is not None:
             self.output_dir = pl.WindowsPath(output_dir)
 
         # Application state.
@@ -968,7 +981,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
-            utils.addActions(menu, actions)
+            utils.add_actions(menu, actions)
         return menu
 
     def toolbar(self, title, actions=None):
@@ -977,7 +990,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # toolbar.setOrientation(Qt.Vertical)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         if actions:
-            utils.addActions(toolbar, actions)
+            utils.add_actions(toolbar, actions)
         self.addToolBar(Qt.LeftToolBarArea, toolbar)
         return toolbar
 
@@ -988,8 +1001,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setTraceReset(self, setAsReset):
         """
-        Function to toggle the trace button to reset so that on touchscreens the 'escape' button can be pressed.
-        :param setAsReset: whether or no the reset functionality should be showing
+        Function to toggle the trace button to reset so that on touchscreens
+        the 'escape' button can be pressed.
+        :param setAsReset: whether or no the reset
+            functionality should be showing
         """
         tools_as_list = list(self.actions.tool)
         for i in range(len(tools_as_list)):
@@ -1001,14 +1016,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 break
         self.actions.tool = tuple(tools_as_list)
         self.tools.clear()
-        utils.addActions(self.tools, tools_as_list)
+        utils.add_actions(self.tools, tools_as_list)
 
     def populateModeActions(self):
         tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
-        utils.addActions(self.tools, tool)
+        utils.add_actions(self.tools, tool)
         self.canvas.menus[0].clear()
-        utils.addActions(self.canvas.menus[0], menu)
+        utils.add_actions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
         actions = (
             self.actions.createMode,
@@ -1020,14 +1035,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createLineStripMode,
             self.actions.editMode,
         )
-        utils.addActions(self.menus.edit, actions + self.actions.editMenu)
+        utils.add_actions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
         if self._config["auto_save"] or self.actions.saveAuto.isChecked():
-            currOutputPath = self.getRelOutputpath(pl.WindowsPath(self.filename))
+            currOutputPath = self.getRelOutputpath(
+                pl.WindowsPath(self.filename)
+            )
             self.saveLabels(currOutputPath)
             return
         self.dirty = True
@@ -1132,7 +1149,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             try:
                 action_dict[createMode][0] = False
-            except KeyError as e:
+            except KeyError:
                 raise KeyError("Unsupported createMode: %s" % createMode)
             for key in action_dict.keys():
                 action_dict[key][1].setEnabled(action_dict[key][0])
@@ -1159,9 +1176,11 @@ class MainWindow(QtWidgets.QMainWindow):
         menu.clear()
         files = [f for f in self.recentFiles if f != current and exists(f)]
         for i, f in enumerate(files):
-            icon = utils.newIcon("labels")
+            icon = utils.new_icon("labels")
             action = QtWidgets.QAction(
-                icon, "&%d %s" % (i + 1, QtCore.QFileInfo(str(f)).fileName()), self
+                icon,
+                "&%d %s" % (i + 1, QtCore.QFileInfo(str(f)).fileName()),
+                self
             )
             action.triggered.connect(functools.partial(self.loadRecent, f))
             menu.addAction(action)
@@ -1214,12 +1233,12 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.group_id = group_id
 
         if not self.uniqLabelList.findItemsByLabel(shape.label):
-                    item = QtWidgets.QListWidgetItem()
-                    item.setData(Qt.UserRole, shape.label)
-                    self.addLabel(shape)
-                    self.deleteSelectedShape(omitmsg=True)
+            item = QtWidgets.QListWidgetItem()
+            item.setData(Qt.UserRole, shape.label)
+            self.addLabel(shape)
+            self.deleteSelectedShape(omitmsg=True)
         #self._update_shape_color(shape)
-        
+
         if shape.group_id is None:
             item.setText(
                 '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
@@ -1229,9 +1248,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             item.setText("{} ({})".format(shape.label, shape.group_id))
 
-        
         self.setDirty()
-        
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -1280,7 +1297,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
-        
+
         if not self.uniqLabelList.findItemsByLabel(shape.label):
             item = self.uniqLabelList.createItemFromLabel(shape.label)
             self.uniqLabelList.addItem(item)
@@ -1291,8 +1308,10 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
-        self.labelList.addItem(label_list_item,text,shape.fill_color.getRgb()[:3])
-
+        self.labelList.addItem(label_list_item,
+                               text,
+                               shape.fill_color.getRgb()[:3]
+                               )
 
     def _update_shape_color(self, shape):
         r, g, b = self._get_rgb_by_label(shape.label)
@@ -1352,7 +1371,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 label=label,
                 shape_type=shape_type,
                 group_id=group_id,
-                vertex_epsilon= self.canvas.epsilon/10
+                vertex_epsilon=self.canvas.epsilon / 10
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1440,10 +1459,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
     def save_config_modifications(self):
-        with open (self.config_path,"w") as f:
-            yaml.dump(self._config,f, Dumper=yaml.RoundTripDumper,default_flow_style=True)
-
-
+        with open(self.config_path, "w") as f:
+            yaml.dump(self._config,
+                      f,
+                      Dumper=yaml.RoundTripDumper,
+                      default_flow_style=True
+                      )
 
     def duplicateSelectedShape(self):
         added_shapes = self.canvas.duplicateSelectedShapes()
@@ -1594,24 +1615,25 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.exec_()
         self.saveNewFlag(dialog.text)
 
-    def saveNewFlag(self,FlagText):
-        flagList = self._config["flags"] if not self._config["flags"] is None else []
+    def saveNewFlag(self, FlagText):
+        flagList = self._config["flags"] if self._config["flags"] is not None \
+            else []
         flagList.append(FlagText)
         if self.filename:
-            if hasattr(self.labelFile,"flags"):
-                flags = self.labelFile.flags #prioritize the file flags higher than the config ones
+            if hasattr(self.labelFile, "flags"):
+                # prioritize the file flags higher than the config ones
+                flags = self.labelFile.flags
                 for k in flagList:
-                    if not k in self.labelFile.flags.keys():
+                    if k not in self.labelFile.flags.keys():
                         flags.update({k: False})
-                
+
             else:
                 flags = {k: False for k in flagList}
         else:
-           flags = {k: False for k in flagList}
+            flags = {k: False for k in flagList}
         self._config["flags"] = list(flags.keys())
         self.save_config_modifications()
         self.loadFlags(flags)
-
 
     def brightnessContrast(self, value):
         dialog = BrightnessContrastDialog(
@@ -1633,33 +1655,37 @@ class MainWindow(QtWidgets.QMainWindow):
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
 
     def setSnappingDistance(self):
-        dialog = set_snapping.editSingleVariableDialog(self,
-                                                defaultValue = self.canvas.epsilon,
-                                                minValue = 5,
-                                                maxValue = 30,
-                                                lowValueText= "less tolerance",
-                                                highValueText= "more tolerance",
-                                                WindowTitle= "set snapping distance",
-                                                helpText= "this slider sets the distance (in pixels) for your courser to still be able to select the closest point nearby",
-                                                WindowWidth = 400,
-                                                WindowHeight = 150 
-                                                )
+        dialog = set_snapping.editSingleVariableDialog(
+            self,
+            defaultValue=self.canvas.epsilon,
+            minValue=5,
+            maxValue=30,
+            lowValueText="less tolerance",
+            highValueText="more tolerance",
+            WindowTitle="set snapping distance",
+            helpText="this slider sets the distance (in pixels) for your courser\
+                 to still be able to select the closest point nearby",
+            WindowWidth=400,
+            WindowHeight=150
+        )
         dialog.exec_()
         self.canvas.epsilon = dialog.value
         self._config["shape"]["select"]["epsilon"] = dialog.value
-    
+
     def setTraceSmoothness(self):
-        dialog = set_snapping.editSingleVariableDialog(self,
-                                                defaultValue = self.canvas.trace_smothness,
-                                                minValue = 1,
-                                                maxValue = 15,
-                                                lowValueText= "smaller distance \n between points",
-                                                highValueText= "greater distance \n between points",
-                                                WindowTitle= "set trace point-distance",
-                                                helpText= "this slider controls how often points are drawn when trace mode is used, i.e. how smooth the polygon should be",
-                                                WindowWidth = 400,
-                                                WindowHeight = 150 
-                                                )
+        dialog = set_snapping.editSingleVariableDialog(
+            self,
+            defaultValue=self.canvas.trace_smothness,
+            minValue=1,
+            maxValue=15,
+            lowValueText="smaller distance \n between points",
+            highValueText="greater distance \n between points",
+            WindowTitle="set trace point-distance",
+            helpText="this slider controls how often points are drawn when\
+                trace mode is used, i.e. how smooth the polygon should be",
+            WindowWidth=400,
+            WindowHeight=150
+        )
         dialog.exec_()
         self.canvas.trace_smothness = dialog.value
         self._config["shape"]["trace"]["smothness"] = dialog.value
@@ -1695,11 +1721,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         label_file = osp.splitext(filename)[0] + ".json"
         if self.output_dir:
-            # label_file_without_path = osp.basename(label_file)
-            # label_file = osp.join(self.output_dir, label_file_without_path)
             label_file = self.getRelOutputpath(filename)
-            #label_file = self.output_dir.joinpath(filename.name).with_suffix(LabelFile.suffix)
-        if QtCore.QFile.exists(str(label_file)) and LabelFile.is_label_file(str(label_file)):
+
+        if QtCore.QFile.exists(str(label_file)) and \
+           LabelFile.is_label_file(str(label_file)):
             try:
                 self.labelFile = LabelFile(str(label_file))
             except LabelFileError as e:
@@ -1722,20 +1747,30 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.imageData = LabelFile.load_image_file(str(filename))
             if self.imageData is None:
-                self.labelFileOut = LabelFile() 
+                self.labelFileOut = LabelFile()
                 self.labelFileOut.load(filename)
                 self.imageData = self.labelFileOut.imageData
             if self.imageData:
                 self.imagePath = str(filename)
             self.labelFile = None
         image = QtGui.QImage.fromData(self.imageData)
-         
+
         if image.isNull():
             image = cv2.imread(str(filename), cv2.IMREAD_ANYDEPTH)
-            if image.dtype== "uint8":
-                image = QtGui.QImage(image.data, image.shape[1], image.shape[0],QtGui.QImage.Format_Indexed8)
-            elif image.dtype =="uint16":
-                image = QtGui.QImage(image.data, image.shape[1], image.shape[0],QtGui.QImage.Format_Grayscale16)
+            if image.dtype == "uint8":
+                image = QtGui.QImage(
+                    image.data,
+                    image.shape[1],
+                    image.shape[0],
+                    QtGui.QImage.Format_Indexed8
+                )
+            elif image.dtype == "uint16":
+                image = QtGui.QImage(
+                    image.data,
+                    image.shape[1],
+                    image.shape[0],
+                    QtGui.QImage.Format_Grayscale16
+                )
         if image.isNull():
             formats = [
                 "*.{}".format(fmt.data().decode())
@@ -1759,13 +1794,13 @@ class MainWindow(QtWidgets.QMainWindow):
         flags = {k: False for k in self._config["flags"] or []}
         try:
             for flag in list(self.labelFile.flags.keys()):
-                if not flag in self._config["flags"]:
+                if flag not in self._config["flags"]:
                     self.saveNewFlag(flag)
         except AttributeError:
             pass
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
-            if isinstance(self.labelFile.flags,list):
+            if isinstance(self.labelFile.flags, list):
                 if self.labelFile.flags is not None:
                     for flg in self.labelFile.flags:
                         flags.update(flg)
@@ -1813,7 +1848,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if contrast is not None:
             dialog.slider_contrast.setValue(contrast)
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
-        if (brightness is not None or contrast is not None) and not dialog.HasReset:
+        if (brightness is not None or contrast is not None) and\
+                not dialog.HasReset:
             dialog.onNewValue()
         self.paintCanvas()
         self.addRecentFile(self.filename)
@@ -1890,7 +1926,7 @@ class MainWindow(QtWidgets.QMainWindow):
             items = [i.toLocalFile() for i in event.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
                 event.accept()
-            elif len(items)==1 and os.path.isdir(items[0]):
+            elif len(items) == 1 and os.path.isdir(items[0]):
                 event.accept()
         else:
             event.ignore()
@@ -1900,7 +1936,7 @@ class MainWindow(QtWidgets.QMainWindow):
             event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
-        if len(items)==1 and os.path.isdir(items[0]):
+        if len(items) == 1 and os.path.isdir(items[0]):
             self.importDirImages(items[0])
         else:
             self.importDroppedImageFiles(items)
@@ -2055,10 +2091,9 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
-  
+
         currOutputPath = self.getRelOutputpath(self.filename)
-        
-        
+
         filename = dlg.getSaveFileName(
             self,
             self.tr("Choose File"),
@@ -2088,7 +2123,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #     label_file = self.filename
         # else:
         #     label_file = osp.splitext(self.filename)[0] + ".json"
-        if not isinstance(self.filename,pl.WindowsPath):
+        if not isinstance(self.filename, pl.WindowsPath):
             self.filename = pl.WindowsPath(self.filename)
 
         return str(self.filename.with_suffix(LabelFile.suffix))
@@ -2123,8 +2158,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         return True
 
-    def getRelOutputpath(self,filename:pl.WindowsPath):
-        
+    def getRelOutputpath(self, filename: pl.WindowsPath):
+
         if self.output_dir:
             if self.filenameList:
                 #reverse engineer the respective relative path
@@ -2134,11 +2169,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 if not os.path.isdir(self.output_dir.joinpath(currRelPath)):
                     os.makedirs(self.output_dir.joinpath(currRelPath))
 
-                return self.output_dir.joinpath(currRelPath,filename.name).with_suffix(LabelFile.suffix)
-            
-        else:
-            return self.currentPath().joinpath(filename.name).with_suffix(LabelFile.suffix)
+                return self.output_dir.joinpath(
+                    currRelPath,
+                    filename.name).with_suffix(LabelFile.suffix)
 
+        else:
+            return self.currentPath().joinpath(filename.name).with_suffix(
+                LabelFile.suffix
+            )
 
     def hasLabelFile(self):
         if self.filename is None:
@@ -2175,7 +2213,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def currentPath(self):
-        return pl.WindowsPath(self.filename).parent if self.filename else pl.WindowsPath(os.getcwd())
+        return pl.WindowsPath(self.filename).parent if self.filename \
+            else pl.WindowsPath(os.getcwd())
 
     def toggleKeepPrevMode(self):
         self._config["keep_prev"] = not self._config["keep_prev"]
@@ -2191,7 +2230,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
 
-    def deleteSelectedShape(self,omitmsg=False):
+    def deleteSelectedShape(self, omitmsg=False):
         if not omitmsg:
             yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
             msg = self.tr(
@@ -2199,8 +2238,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "proceed anyway?"
             ).format(len(self.canvas.selectedShapes))
             if (yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes)
-            ):
+                    self, self.tr("Attention"), msg, yes | no, yes)):
                 self.remLabels(self.canvas.deleteSelected())
                 self.setDirty()
                 if self.noShapes():
@@ -2266,11 +2304,11 @@ class MainWindow(QtWidgets.QMainWindow):
             ):
                 continue
             file = pl.WindowsPath(file)
-            # label_file = osp.splitext(file)[0] + ".json"
+
             if self.output_dir:
-                label_file = self.output_dir.joinpath(file.name).with_suffix(LabelFile.suffix)
-                # label_file_without_path = osp.basename(label_file)
-                # label_file = osp.join(self.output_dir, label_file_without_path)
+                label_file = self.output_dir.joinpath(
+                    file.name).with_suffix(LabelFile.suffix)
+
             else:
                 label_file = None
             item = QtWidgets.QListWidgetItem(str(file))
@@ -2302,30 +2340,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.filenameList = []
         self.relPathList = []
         ImageList = self.scanAllImages(dirpath)
-        for i,filename in enumerate(ImageList):
+        for i, filename in enumerate(ImageList):
             if pattern and pattern not in str(filename):
                 continue
             self.filenameList.append(filename)
-            self.relPathList.append(filename.relative_to(dirpath).parent) 
+            self.relPathList.append(filename.relative_to(dirpath).parent)
             label_file = filename.with_suffix(".json")
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self.output_dir, label_file_without_path)
-            if i >= 1:
-                prev_img_filename = pl.WindowsPath(ImageList[i-1])
-                if prev_img_filename.with_suffix("") == filename.with_suffix("") and filename.suffix == LabelFile.suffix:
-                    
-                    continue
-            if i < len(ImageList)-1:
-                next_img_filename = pl.WindowsPath(ImageList[i+1])
-                if next_img_filename.with_suffix("") == filename.with_suffix("") and filename.suffix == LabelFile.suffix:
 
-                    continue
             item = QtWidgets.QListWidgetItem(str(filename))
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(str(label_file)) and LabelFile.is_label_file(
-                str(label_file)
-            ):
+            if QtCore.QFile.exists(str(label_file)) and\
+                    LabelFile.is_label_file(str(label_file)):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
@@ -2338,9 +2366,12 @@ class MainWindow(QtWidgets.QMainWindow):
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         extensions.append(".json")
-        image_suffix_priortiy = [".json",".png",".tiff",".bmp"]
+        image_suffix_priortiy = [".json", ".png", ".tiff", ".bmp"]
         for image_suffix in image_suffix_priortiy:
-            DATAPOINT_LIST = glob(folderPath+'/**/*{}'.format(image_suffix),recursive=True)     
+            DATAPOINT_LIST = glob(
+                folderPath + '/**/*{}'.format(image_suffix),
+                recursive=True
+            )
             if DATAPOINT_LIST:
                 break
         DATAPOINT_LIST = [pl.WindowsPath(img) for img in DATAPOINT_LIST]

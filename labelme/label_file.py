@@ -59,14 +59,14 @@ class LabelFile(object):
             elif ext in [".jpg", ".jpeg"]:
                 format = "JPEG"
             else:
-                if image_pil.decodermaxblock>255:
+                if image_pil.decodermaxblock > 255:
                     format = "TIFF"
                     if image_pil.format == "BMP":
-                        from utils.readAWR_bmp import readAWR_bmp 
+                        from utils.readAWR_bmp import readAWR_bmp
                         image_pil = readAWR_bmp(image_pil)
                 else:
                     format = "PNG"
-            
+
             image_pil.save(f, format=format)
             f.seek(0)
             out = f.read()

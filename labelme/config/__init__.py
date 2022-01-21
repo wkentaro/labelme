@@ -5,16 +5,20 @@ from ruamel import yaml
 
 from labelme.logger import logger
 
+
 _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
+
 def dict_representer(dumper, data):
-  return dumper.represent_mapping(_mapping_tag, data.iteritems())
+    return dumper.represent_mapping(_mapping_tag, data.iteritems())
+
 
 def dict_constructor(loader, node):
-  return collections.OrderedDict(loader.construct_pairs(node))
+    return collections.OrderedDict(loader.construct_pairs(node))
 
-yaml.add_representer( collections.OrderedDict , dict_representer )
-yaml.add_constructor( _mapping_tag, dict_constructor )
+
+yaml.add_representer(collections.OrderedDict , dict_representer)
+yaml.add_constructor(_mapping_tag, dict_constructor)
 
 here = osp.dirname(osp.abspath(__file__))
 
@@ -38,7 +42,7 @@ def update_dict(target_dict, new_dict, validate_item=None):
 def get_default_config():
     config_file = osp.join(here, "default_config.yaml")
     with open(config_file) as f:
-        config = yaml.load(f,Loader=yaml.RoundTripLoader)
+        config = yaml.load(f, Loader=yaml.RoundTripLoader)
 
     # save default config to ~/.labelmerc
     user_config_file = osp.join(osp.expanduser("~"), ".labelmerc")
@@ -82,7 +86,7 @@ def get_config(config_file_or_yaml=None, config_from_args=None):
                 logger.info(
                     "Loading config file from: {}".format(config_from_yaml)
                 )
-                config_from_yaml = yaml.load(f,Loader=yaml.RoundTripLoader)
+                config_from_yaml = yaml.load(f, Loader=yaml.RoundTripLoader)
         update_dict(
             config, config_from_yaml, validate_item=validate_config_item
         )
@@ -93,4 +97,4 @@ def get_config(config_file_or_yaml=None, config_from_args=None):
             config, config_from_args, validate_item=validate_config_item
         )
 
-    return config,from_file
+    return config, from_file

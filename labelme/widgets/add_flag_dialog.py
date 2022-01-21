@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QWidget
 from qtpy import QtCore
-from qtpy import QtGui
 from qtpy import QtWidgets
 import labelme.utils
+
 
 class FlagDialog(QtWidgets.QDialog):
     def __init__(
@@ -24,15 +23,17 @@ class FlagDialog(QtWidgets.QDialog):
             QtCore.Qt.Horizontal,
             self,
         )
-        bb.button(bb.Ok).setIcon(labelme.utils.newIcon("done"))
-        bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
+        bb.button(bb.Ok).setIcon(labelme.utils.new_icon("done"))
+        bb.button(bb.Cancel).setIcon(labelme.utils.new_icon("undo"))
         bb.accepted.connect(self.save_action)
         bb.rejected.connect(self.cancel)
         layout.addWidget(self.textBox)
         layout.addWidget(bb)
         self.setLayout(layout)
+
     def save_action(self):
         self.text = self.textBox.text()
         self.close()
+
     def cancel(self):
         self.close()

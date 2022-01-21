@@ -50,7 +50,8 @@ class Canvas(QtWidgets.QWidget):
                 )
             )
         self.num_backups = kwargs.pop("num_backups", 10)
-        self.trace_smothness = kwargs.pop("trace_smothness",3)  # lower value means finer contours and smaller distances between points
+        # lower value means finer contours and smaller distances between points
+        self.trace_smothness = kwargs.pop("trace_smothness", 3)
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -99,7 +100,7 @@ class Canvas(QtWidgets.QWidget):
 
     def init_poly_array(self):
         for s in self.shapes:
-            s.poly_array = np.array( [[p.x(), p.y()] for p in s.points])
+            s.poly_array = np.array([[p.x(), p.y()] for p in s.points])
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -215,7 +216,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            if self.createMode in ["polygon","trace"]:
+            if self.createMode in ["polygon", "trace"]:
                 self.line.shape_type = "polygon"
             else:
                 self.line.shape_type = self.createMode
@@ -294,15 +295,23 @@ class Canvas(QtWidgets.QWidget):
         # - Highlight vertex
         # Update shape/vertex fill and tooltip value accordingly.
         self.setToolTip(self.tr("Image"))
-        if not self.pixmap.isNull() and ((pos.x()>0 and pos.x()<self.imgDim[1]) and (pos.y()>0 and pos.y()<self.imgDim[0])):
+        if not self.pixmap.isNull() and\
+                ((pos.x() > 0 and pos.x() < self.imgDim[1])) and\
+                (pos.y() > 0 and pos.y() < self.imgDim[0]):
             for i in range(len(self.shapes)):
                 # Look for a nearby vertex to highlight. If that fails,
                 # check if we happen to be inside a shape.
-                if not self.distMap_crit[int(pos.y()),int(pos.x()),i]:
+                if not self.distMap_crit[int(pos.y()), int(pos.x()), i]:
                     continue
-                index, closest_vertex = self.shapes[i].nearestVertex(pos, self.epsilon / self.scale)
+                index, closest_vertex = self.shapes[i].nearestVertex(
+                    pos,
+                    self.epsilon / self.scale
+                )
                 if index is None:
-                    index_edge = self.shapes[i].nearestEdge(pos, self.epsilon / self.scale,minDistIndex=closest_vertex)
+                    index_edge = self.shapes[i].nearestEdge(
+                        pos,
+                        self.epsilon / self.scale,
+                        minDistIndex=closest_vertex)
                 else:
                     index_edge = None
 
@@ -313,7 +322,10 @@ class Canvas(QtWidgets.QWidget):
                     self.prevhShape = self.hShape = self.shapes[i]
                     self.prevhEdge = self.hEdge
                     self.hEdge = None
-                    self.shapes[i].highlightVertex(index, self.shapes[i].MOVE_VERTEX)
+                    self.shapes[i].highlightVertex(
+                        index,
+                        self.shapes[i].MOVE_VERTEX
+                    )
                     self.overrideCursor(CURSOR_POINT)
                     self.setToolTip(self.tr("Click & drag to move point"))
                     self.setStatusTip(self.toolTip())
@@ -340,7 +352,9 @@ class Canvas(QtWidgets.QWidget):
                     self.prevhEdge = self.hEdge
                     self.hEdge = None
                     self.setToolTip(
-                        self.tr("Click & drag to move shape '%s'") % self.shapes[i].label
+                        self.tr(
+                            "Click & drag to move shape '%s'"
+                        ) % self.shapes[i].label
                     )
                     self.setStatusTip(self.toolTip())
                     self.overrideCursor(CURSOR_GRAB)
@@ -350,40 +364,63 @@ class Canvas(QtWidgets.QWidget):
                 self.unHighlight()
             self.vertexSelected.emit(self.hVertex is not None)
 
-    def apply_distTrans(self,shape,index):
-        shape2draw = [[x[0] % self.ZeroImg.shape[1], x[1]] for x in shape.poly_array]
+    def apply_distTrans(self, shape, index):
+        shape2draw = [[x[0] % self.ZeroImg.shape[1], x[1]]
+                      for x in shape.poly_array]
         array_list = (np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
-        binImg = cv2.drawContours(np.zeros([self.ZeroImg.shape[0],self.ZeroImg.shape[1],3]),[array_list],-1,1,-1)[:,:,0]
-        distMap = cv2.distanceTransform(cv2.bitwise_not((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
-        distMap = np.clip(distMap,0,255).astype(np.uint8) 
-        self.distMap_crit[:,:,index] = (distMap <= (self.epsilon + 7)).astype(np.bool)
+        binImg = cv2.drawContours(
+            np.zeros([self.ZeroImg.shape[0], self.ZeroImg.shape[1], 3]),
+            [array_list], -1, 1, -1
+        )[:, :, 0]
+        distMap = cv2.distanceTransform(
+            cv2.bitwise_not((binImg * 255).astype(np.uint8)),
+            cv2.DIST_L2,
+            maskSize=0
+        )
+        # InvDistMap = cv2.distanceTransform(
+        #     (binImg * 255).astype(np.uint8),
+        #     cv2.DIST_L2,
+        #     maskSize=0
+        # )
+        # InvDistMap = np.clip(InvDistMap, 0, 255).astype(np.uint8)
+        distMap = np.clip(distMap, 0, 255).astype(np.uint8)
+        self.distMap_crit[:, :, index] = (distMap <= (self.epsilon + 7)
+                                          ).astype(np.bool)
 
-
-    def getDistMapUpdate(self, index = None):
+    def getDistMapUpdate(self, index=None):
         if self.ZeroImg is None:
-            self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
+            self.ZeroImg = np.zeros(
+                [self.imgDim[0],
+                    self.imgDim[1],
+                    len(self.shapes)
+                 ]
+            )
         if index is not None:
             if index > self.distMap_crit.shape[-1]:
-                self.ZeroImg = np.zeros([self.imgDim[0],self.imgDim[1],len(self.shapes)])
+                self.ZeroImg = np.zeros(
+                    [self.imgDim[0],
+                        self.imgDim[1],
+                        len(self.shapes)
+                     ]
+                )
         #FIXME change to elif statement and dstack to distMap_crit
         if index is None or index >= self.distMap_crit.shape[-1]:
             self.distMap_crit = self.ZeroImg.astype(np.bool)
-            for i,s in enumerate(self.shapes): 
+            for i, s in enumerate(self.shapes):
                 if not self.isVisible(s):
                     continue
-                if not hasattr(s,"poly_array"):
-                    s.poly_array = np.array( [[p.x(), p.y()] for p in s.points])
+                if not hasattr(s, "poly_array"):
+                    s.poly_array = np.array([[p.x(), p.y()] for p in s.points])
 
-                self.apply_distTrans(s,i)     
+                self.apply_distTrans(s, i)
         else:
-            assert isinstance(index,int), f"Index must be of Type int not {type(index)}"
-            self.apply_distTrans(self.shapes[index],index)
-        
-        #contours.append(np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2))
-        
-        #InvDistMap = cv2.distanceTransform(((binImg*255).astype(np.uint8)),cv2.DIST_L2,maskSize=0)
-        #InvDistMap = np.clip(InvDistMap,0,255).astype(np.uint8)
-        
+            assert isinstance(index, int),\
+                f"Index must be of Type int not {type(index)}"
+            self.apply_distTrans(self.shapes[index], index)
+
+        # contours.append(
+        #     np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2)
+        # )
 
     def addPointToEdge(self):
         shape = self.prevhShape
@@ -397,7 +434,6 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
         self.movingShape = True
-        
 
     def removeSelectedPoint(self):
         shape = self.prevhShape
@@ -427,7 +463,9 @@ class Canvas(QtWidgets.QWidget):
                         if self.current.isClosed():
                             self.finalise()
                     elif self.createMode == "trace":
-                        self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                        self.mouseDoubleClickEvent(
+                            QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick)
+                        )
                         self.tracingActive = False
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
@@ -476,12 +514,14 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
-        
 
     def mouseReleaseEvent(self, ev: QtGui.QMouseEvent) -> None:
-        if ev.button() == QtCore.Qt.LeftButton and self.current and self.tracingActive:
+        if ev.button() == QtCore.Qt.LeftButton and\
+                self.current and self.tracingActive:
             if len(self.current.points) > 1:
-                self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                self.mouseDoubleClickEvent(
+                    QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick)
+                )
                 self.tracingActive = False
 
         if ev.button() == QtCore.Qt.RightButton:
@@ -505,7 +545,6 @@ class Canvas(QtWidgets.QWidget):
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
 
-
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
             if (
@@ -514,7 +553,7 @@ class Canvas(QtWidgets.QWidget):
             ):
                 self.storeShapes()
                 self.shapeMoved.emit()
-                self.getDistMapUpdate(index = index)
+                self.getDistMapUpdate(index=index)
 
             self.movingShape = False
 
@@ -608,7 +647,10 @@ class Canvas(QtWidgets.QWidget):
         y1 = top - point.y()
         x2 = right - point.x()
         y2 = bottom - point.y()
-        self.offsets = QtCore.QPoint(int(x1), int(y1)), QtCore.QPoint(int(x2), int(y2))
+        self.offsets = QtCore.QPoint(int(x1), int(y1)), QtCore.QPoint(
+            int(x2),
+            int(y2)
+        )
 
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
@@ -622,7 +664,7 @@ class Canvas(QtWidgets.QWidget):
             return False  # No need to move
         o1 = pos + self.offsets[0]
         if self.outOfPixmap(o1):
-            pos -= QtCore.QPoint(int(min(0, o1.x())),int( min(0, o1.y())))
+            pos -= QtCore.QPoint(int(min(0, o1.x())), int(min(0, o1.y())))
         o2 = pos + self.offsets[1]
         if self.outOfPixmap(o2):
             pos += QtCore.QPoint(
@@ -656,7 +698,7 @@ class Canvas(QtWidgets.QWidget):
                 deleted_shapes.append(shape)
                 index = self.shapes.index(shape)
                 self.shapes.remove(shape)
-                self.distMap_crit = np.delete(self.distMap_crit,index,2)
+                self.distMap_crit = np.delete(self.distMap_crit, index, 2)
             self.storeShapes()
             self.getDistMapUpdate()
             self.selectedShapes = []
@@ -668,7 +710,7 @@ class Canvas(QtWidgets.QWidget):
             self.selectedShapes.remove(shape)
         if shape in self.shapes:
             self.shapes.remove(shape)
-        
+
         self.getDistMapUpdate()
         self.storeShapes()
         self.update()
@@ -788,9 +830,15 @@ class Canvas(QtWidgets.QWidget):
         if (x, y) == (x1, y1):
             # Handle cases where previous point is on one of the edges.
             if x3 == x4:
-                return QtCore.QPoint(int(x3), int(min(max(0, y2), max(y3, y4))))
+                return QtCore.QPoint(
+                    int(x3),
+                    int(min(max(0, y2), max(y3, y4)))
+                )
             else:  # y3 == y4
-                return QtCore.QPoint(int(min(max(0, x2)), max(x3, x4)),int(y3))
+                return QtCore.QPoint(
+                    int(min(max(0, x2)), max(x3, x4)),
+                    int(y3)
+                )
         return QtCore.QPoint(int(x), int(y))
 
     def intersectingEdges(self, point1, point2, points):
@@ -818,7 +866,7 @@ class Canvas(QtWidgets.QWidget):
             if 0 <= ua <= 1 and 0 <= ub <= 1:
                 x = x1 + ua * (x2 - x1)
                 y = y1 + ua * (y2 - y1)
-                m = QtCore.QPoint(int((x3 + x4) / 2),int( (y3 + y4) / 2))
+                m = QtCore.QPoint(int((x3 + x4) / 2), int((y3 + y4) / 2))
                 d = labelme.utils.distance(m - QtCore.QPoint(int(x2), int(y2)))
                 yield d, i, (x, y)
 
@@ -841,10 +889,16 @@ class Canvas(QtWidgets.QWidget):
                 # zoom
                 self.zoomRequest.emit(delta.y(), ev.pos())
             elif QtCore.Qt.ShiftModifier == int(mods):
-                self.scrollRequest.emit(int(delta.y()/4), QtCore.Qt.Horizontal)
+                self.scrollRequest.emit(
+                    int(delta.y() / 4),
+                    QtCore.Qt.Horizontal
+                )
             else:
                 # scroll
-                self.scrollRequest.emit(int(delta.x()/4), QtCore.Qt.Horizontal)
+                self.scrollRequest.emit(
+                    int(delta.x() / 4),
+                    QtCore.Qt.Horizontal
+                )
                 self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
         else:
             if ev.orientation() == QtCore.Qt.Vertical:
@@ -872,7 +926,7 @@ class Canvas(QtWidgets.QWidget):
             self.movingShape = True
 
     def keyPressEvent(self, ev):
-        modifiers = ev.modifiers()
+        # modifiers = ev.modifiers()
         key = ev.key()
         if key == QtCore.Qt.Key_Escape and self.current:
             self.current = None

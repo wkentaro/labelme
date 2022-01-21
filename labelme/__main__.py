@@ -12,16 +12,13 @@ from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_config
 from labelme.logger import logger
-from labelme.utils import newIcon
+from labelme.utils import new_icon
 
 import logging
 
 import os.path as osp
 
 from ruamel.yaml import safe_load
-
-
-
 
 
 def main():
@@ -149,7 +146,7 @@ def main():
     filename = config_from_args.pop("filename")
     output = config_from_args.pop("output")
     config_file_or_yaml = config_from_args.pop("config")
-    config,from_file = get_config(config_file_or_yaml, config_from_args)
+    config, from_file = get_config(config_file_or_yaml, config_from_args)
 
     if not config["labels"] and config["validate_label"]:
         logger.error(
@@ -174,11 +171,11 @@ def main():
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(newIcon("icon"))
+    app.setWindowIcon(new_icon("icon"))
     app.installTranslator(translator)
-    
+
     if config["dark_mode"]:
-    
+
         app.setStyle("Fusion")
 
     # Now use a palette to switch to dark colors:
@@ -196,8 +193,8 @@ def main():
         palette.setColor(QPalette.Link, QColor(42, 130, 218))
         palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
         palette.setColor(QPalette.HighlightedText, QtCore.Qt.black)
-        app.setStyleSheet(" :disabled { color: " +  "#5c5b5b"
-                            + "; background-color: " + "#b3b3b3 }")
+        app.setStyleSheet(" :disabled { color: " + "#5c5b5b"
+                          + "; background-color: " + "#b3b3b3 }")
 
         app.setPalette(palette)
 
@@ -206,7 +203,7 @@ def main():
         filename=filename,
         output_file=output_file,
         output_dir=output_dir,
-        config_path = config_file_or_yaml if from_file else None
+        config_path=config_file_or_yaml if from_file else None
     )
 
     if reset_config:
@@ -224,16 +221,15 @@ if __name__ == "__main__":
     # uncomment for profiling
     # import cProfile
     # import pstats
-    # from pstats import SortKey
 
-    # cProfile.run("main()","output.dat")
+    # cProfile.run("main()", "output.dat")
 
-    # with open("output_time.txt","w") as f:
-    #     p = pstats.Stats("output.dat",stream=f)
+    # with open("output_time.txt", "w") as f:
+    #     p = pstats.Stats("output.dat", stream=f)
     #     p.sort_stats("time").print_stats()
-    
-    # with open("outpufile_calls.txt","w") as f:
-    #     p = pstats.Stats("output.dat",stream=f)
+
+    # with open("outpufile_calls.txt", "w") as f:
+    #     p = pstats.Stats("output.dat", stream=f)
     #     p.sort_stats("calls").print_stats().print_stats()
-    
+
     main()

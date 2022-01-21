@@ -2,9 +2,7 @@ from PyQt5.QtGui import QColor, QFont, qRgb
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
-from qtpy.QtGui import QPalette
 from qtpy import QtWidgets
-from qtpy.QtWidgets import QStyle
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
@@ -17,8 +15,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         self.setCheckState(Qt.Checked)
         self.setEditable(False)
         self.setTextAlignment(Qt.AlignBottom)
-        self.setFont(QFont("Arial",12))
-        
+        self.setFont(QFont("Arial", 12))
 
     def clone(self):
         return LabelListWidgetItem(self.text(), self.shape())
@@ -34,7 +31,6 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def __repr__(self):
         return '{}("{}")'.format(self.__class__.__name__, self.text())
-
 
 
 class StandardItemModel(QtGui.QStandardItemModel):
@@ -72,6 +68,7 @@ class LabelListWidget(QtWidgets.QListView):
         self.setStyleSheet("""QListView::item:selected {
                             background: #8B8F99;
                             }""")
+
     def __len__(self):
         return self.model().rowCount()
 
@@ -112,7 +109,7 @@ class LabelListWidget(QtWidgets.QListView):
         self.model().setItem(self.model().rowCount(), 0, item)
         item.setText(label)
         item.setBackground(QColor(qRgb(*[c for c in color])))
-    
+
     def removeItem(self, item):
         index = self.model().indexFromItem(item)
         self.model().removeRows(index.row(), 1)
