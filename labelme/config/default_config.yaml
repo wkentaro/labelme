@@ -12,7 +12,7 @@ init_zoom_value:  # leave blank if zoom mode is not set on "MANUAL_ZOOM" otherwi
 flags: [a, b, c]
 label_flags:
 labels: [house, boat, water, tower, person]
-file_search: example
+file_search:
 sort_labels: true
 validate_label: exact
 default_shape_color: [0, 255, 0]

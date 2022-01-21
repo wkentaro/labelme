@@ -18,6 +18,8 @@ sampleImages/test.json
 sampleImages/th_barbara_16.json
 sampleImages/th_barbara_16.png
 labelme/utils/timeit_test.py
+outpufile_calls.txt
+dist/labelme_with_tflite.exe
 labelme/utils/readAWR_bmp.py
 labelme/utils/test.ipynb
 dist/labelme_with_tflite.exe

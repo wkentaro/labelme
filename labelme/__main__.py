@@ -17,6 +17,7 @@ from labelme.utils import new_icon
 import logging
 
 import os.path as osp
+import tflite_runtime
 
 from ruamel.yaml import safe_load
 

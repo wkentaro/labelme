@@ -17,6 +17,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         self.setTextAlignment(Qt.AlignBottom)
         self.setFont(QFont("Arial", 12))
 
+
     def clone(self):
         return LabelListWidgetItem(self.text(), self.shape())
 
@@ -69,6 +70,11 @@ class LabelListWidget(QtWidgets.QListView):
                             background: #8B8F99;
                             }""")
 
+        self.palette = QtGui.QPalette()
+        self.palette.setColor(QtGui.QPalette.Text, QColor(qRgb(200,200,200)))
+        self.setPalette(self.palette)
+
+
     def __len__(self):
         return self.model().rowCount()
 
@@ -108,8 +114,9 @@ class LabelListWidget(QtWidgets.QListView):
             raise TypeError("item must be LabelListWidgetItem")
         self.model().setItem(self.model().rowCount(), 0, item)
         item.setText(label)
-        item.setBackground(QColor(qRgb(*[c for c in color])))
 
+        item.setBackground(QColor(qRgb(*[max(0,c-20) for c in color])))
+    
     def removeItem(self, item):
         index = self.model().indexFromItem(item)
         self.model().removeRows(index.row(), 1)
