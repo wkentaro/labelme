@@ -82,13 +82,18 @@ jobs:
         pip install .
 
 
-
     - name: Black
       shell: bash -l {0}
       if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
       run: |
         pip install black
-        black --line-length 79 --check --diff labelme
+        black --line-length 79 --check
+
+    - name: Lint with flake8
+      shell: bash -l {0}
+      if: matrix.os != 'windows-latest'
+      run: |
+        flake8 ./labelme/utils/qt.py
 
     - name: Test with pytest
       shell: bash -l {0}
