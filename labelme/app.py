@@ -8,6 +8,7 @@ import re
 from webbrowser import open as wb_open
 import sys
 import cv2
+import numpy as np
 from glob import glob
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
@@ -44,12 +45,13 @@ from labelme.widgets import dock_title, \
     ZoomWidget, \
     GenerateSegmentedData, \
     set_snapping, \
-    add_flag_dialog
+    add_flag_dialog, \
+    chart_widget
 
-#FIXME
+# FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
-#TODO(unknown):
+# TODO(unknown):
 # - Zoom is too "steppy".
 
 
@@ -177,7 +179,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadFlags({k: False for k in config["flags"]})
 
         add_flag_button_in_widget = False
-        #optionally add a add_flag button above the flag_dock
+        # optionally add a add_flag button above the flag_dock
         if add_flag_button_in_widget:
             layout = QtWidgets.QFormLayout()
             layout.addRow(self.tr(""), self.flag_add_button)
@@ -200,7 +202,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Polygon Labels"), self
         )
         self.shape_dock.setObjectName("Labels")
-        #self.shape_dock.setTitleBarWidget()
+        # self.shape_dock.setTitleBarWidget()
 
         self.shape_dock_title = dock_title.DockTitle("Polygon Labels")
         self.shape_dock.setTitleBarWidget(self.shape_dock_title)
@@ -249,6 +251,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setTitleBarWidget(self.file_dock_title)
         self.file_dock.setWidget(fileListWidget)
 
+        self.chart_dock_title = dock_title.DockTitle("Chart of Line")
+        self.chart_dock = QtWidgets.QDockWidget(self.tr(u"Chart of Line"), self)
+
+        self.chart_dock.setTitleBarWidget(self.chart_dock_title)
+        self.chart_dock.setObjectName(u"Charts")
+        self.chart_widget = chart_widget.Canvas(self)
+        
+        # layout = QtWidgets.QFormLayout()
+        # layout.addRow(self.tr(""), self.chart_widget)
+        # # layout.addRow(self.tr(""), self.flag_widget)
+        # self.container = QWidget()
+        # self.container.setLayout(layout)
+        self.chart_dock.setWidget(self.chart_widget)
+
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
@@ -273,7 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
-
+        self.canvas.chartUpdate.connect(self.updateChart)
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
@@ -292,6 +308,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
 
         # Actions
         action = functools.partial(utils.new_action, self)
@@ -755,7 +772,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # XXX: need to add some actions here to activate the shortcut
             editMenu=(
                 edit,
-                #duplicate,
+                # duplicate,
                 delete,
                 None,
                 undo,
@@ -769,14 +786,14 @@ class MainWindow(QtWidgets.QMainWindow):
             menu=(
                 createMode,
                 createTraceMode,
-                #createRectangleMode,
-                #createCircleMode,
-                #createLineMode,
-                #createPointMode,
-                #createLineStripMode,
+                # createRectangleMode,
+                # createCircleMode,
+                # createLineMode,
+                # createPointMode,
+                # createLineStripMode,
                 editMode,
                 edit,
-                #duplicate,
+                # duplicate,
                 copy,
                 paste,
                 delete,
@@ -805,7 +822,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
-            #macros=self.menu(self.tr("&Macros")),
+            # macros=self.menu(self.tr("&Macros")),
             settings=self.menu(self.tr("&Settings")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
@@ -831,7 +848,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         utils.add_actions(self.menus.help, (help,))
-        #utils.add_actions(self.menus.macros, (generate_data,))
+        # utils.add_actions(self.menus.macros, (generate_data,))
         utils.add_actions(
             self.menus.view,
             (
@@ -885,21 +902,21 @@ class MainWindow(QtWidgets.QMainWindow):
             openPrevImg,
             openNextImg,
             save,
-            #deleteFile,
+            # deleteFile,
             None,
             addFlag,
             None,
             createMode,
             createTraceMode,
             editMode,
-            #duplicate,
-            #copy,
-            #paste,
+            # duplicate,
+            # copy,
+            # paste,
             delete,
             undo,
             brightnessContrast,
             None,
-            #zoom,
+            # zoom,
             fitWidth,
         )
 
@@ -1237,7 +1254,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setData(Qt.UserRole, shape.label)
             self.addLabel(shape)
             self.deleteSelectedShape(omitmsg=True)
-        #self._update_shape_color(shape)
+        # self._update_shape_color(shape)
 
         if shape.group_id is None:
             item.setText(
@@ -1287,7 +1304,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
-        #self.actions.duplicate.setEnabled(n_selected)
+        # self.actions.duplicate.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
 
@@ -1874,8 +1891,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.update()
         self.status(f"current Zoom Level {self.zoomWidget.value()} %")
 
+    def updateChart(self, arr, span, y_level):
+        ScrollRatio = self.scrollBars[Qt.Horizontal].value() / self.scrollBars[Qt.Horizontal].maximum()
+        if not ScrollRatio == 0:
+            start = max(int(ScrollRatio * self.canvas.pixmap.width()) - int(span / 2), 0)
+            end = min(int(ScrollRatio * self.canvas.pixmap.width()) + int(span / 2), self.canvas.pixmap.width() - 1)
+            if end - start < span:
+                if start == 0:
+                    end = span
+                else:
+                    start = end - span
+        else:
+            start = 0
+            end = span
+        line = arr[y_level, start:end]
+        self.chart_widget.update_plot([line.min(), line.max()], line)
+
     def adjustScale(self, initial=False):
-        #TODO set the default zoom setting in config instead
+        # TODO set the default zoom setting in config instead
         value = self.scalers[self.initZoomMode if initial else self.zoomMode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
@@ -2018,7 +2051,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("%s - Choose Image or Label file") % __appname__,
         )
         fileDialog.setWindowFilePath(path)
-        #fileDialog.setViewMode(FileDialogPreview.Detail)
+        # fileDialog.setViewMode(FileDialogPreview.Detail)
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
@@ -2162,7 +2195,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.output_dir:
             if self.filenameList:
-                #reverse engineer the respective relative path
+                # reverse engineer the respective relative path
                 index_of_path = self.filenameList.index(filename)
                 currRelPath = self.relPathList[index_of_path]
 

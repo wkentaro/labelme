@@ -27,6 +27,7 @@ class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
+    chartUpdate = QtCore.Signal(np.ndarray, int, int)
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
@@ -214,6 +215,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = pos
         self.restoreCursor()
 
+
         # Polygon drawing.
         if self.drawing():
             if self.createMode in ["polygon", "trace"]:
@@ -298,6 +300,8 @@ class Canvas(QtWidgets.QWidget):
         if not self.pixmap.isNull() and\
                 ((pos.x() > 0 and pos.x() < self.imgDim[1])) and\
                 (pos.y() > 0 and pos.y() < self.imgDim[0]):
+            if int(ev.modifiers()) == QtCore.Qt.ShiftModifier:
+                self.update_chart(pos)
             for i in range(len(self.shapes)):
                 # Look for a nearby vertex to highlight. If that fails,
                 # check if we happen to be inside a shape.
@@ -396,14 +400,15 @@ class Canvas(QtWidgets.QWidget):
                  ]
             )
         if index is not None:
-            if index > self.distMap_crit.shape[-1]:
+            self.distMap_crit = self.ZeroImg.astype(np.bool)
+            if index >= self.distMap_crit.shape[-1]:
                 self.ZeroImg = np.zeros(
                     [self.imgDim[0],
                         self.imgDim[1],
                         len(self.shapes)
                      ]
                 )
-        #FIXME change to elif statement and dstack to distMap_crit
+        # FIXME change to elif statement and dstack to distMap_crit
         if index is None or index >= self.distMap_crit.shape[-1]:
             self.distMap_crit = self.ZeroImg.astype(np.bool)
             for i, s in enumerate(self.shapes):
@@ -732,6 +737,16 @@ class Canvas(QtWidgets.QWidget):
         if not self.boundedMoveShapes(shapes, point - offset):
             self.boundedMoveShapes(shapes, point + offset)
 
+    def update_chart(self, pos):
+        pos_as_int = [int(pos.x()), int(pos.y())]
+        QImg = self.pixmap.toImage().convertToFormat(QtGui.QImage.Format_Indexed8)
+        width = QImg.width()
+        height = QImg.height()
+        s = QImg.bits().asstring(width * height * 1)
+        arr = np.fromstring(s, dtype=np.uint8).reshape((height, width, 1))
+        span = int(width * 1 / self.scale)
+        self.chartUpdate.emit(arr, span, pos_as_int[1])
+
     def paintEvent(self, event):
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
@@ -743,8 +758,8 @@ class Canvas(QtWidgets.QWidget):
         p.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
 
         p.scale(self.scale, self.scale)
-        p.translate(self.offsetToCenter())
-
+        self.offset = self.offsetToCenter()
+        p.translate(self.offset)
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
         for shape in self.shapes:
@@ -799,7 +814,7 @@ class Canvas(QtWidgets.QWidget):
         self.setHiding(False)
         self.newShape.emit()
         self.update()
-        index = len(self.shapes)
+        index = len(self.shapes) - 1
         self.getDistMapUpdate(index)
 
     def closeEnough(self, p1, p2):
