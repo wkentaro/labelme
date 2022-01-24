@@ -339,8 +339,11 @@ class Canvas(QtWidgets.QWidget):
                         if self.current.isClosed():
                             self.finalise()
                     elif self.createMode == "trace":
-                        self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
-                        self.tracingActive = False
+                        if not self.pause_tracing:
+                            self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                            self.tracingActive = False
+                        else:
+                            self.tracingActive = True
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -379,7 +382,8 @@ class Canvas(QtWidgets.QWidget):
     def mouseReleaseEvent(self, ev: QtGui.QMouseEvent) -> None:
         if ev.button() == QtCore.Qt.LeftButton and self.current and self.tracingActive:
             if len(self.current.points) > 1:
-                self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
+                if not self.pause_tracing:
+                    self.mouseDoubleClickEvent(QtCore.QEvent(QtCore.QEvent.MouseButtonDblClick))
                 self.tracingActive = False
 
         if ev.button() == QtCore.Qt.RightButton:
@@ -758,7 +762,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        if self.createMode in ["polygon", "linestrip"]:
+        if self.createMode in ["polygon", "linestrip", "trace"]:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]

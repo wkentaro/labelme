@@ -15,6 +15,8 @@ def lblsave(filename, lbl):
         lbl_pil = PIL.Image.fromarray(lbl.astype(np.uint8), mode="P")
         colormap = imgviz.label_colormap()
         lbl_pil.putpalette(colormap.flatten())
+        lbl_pil = lbl_pil.convert('RGB')
+        lbl_pil.putalpha(PIL.Image.fromarray(lbl.astype(np.uint8), mode="L"))
         lbl_pil.save(filename)
     else:
         raise ValueError(
