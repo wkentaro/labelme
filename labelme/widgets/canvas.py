@@ -396,7 +396,7 @@ class Canvas(QtWidgets.QWidget):
                  ]
             )
         if index is not None:
-            if index > self.distMap_crit.shape[-1]:
+            if index > self.distMap_crit.shape[-1] -1 :
                 self.ZeroImg = np.zeros(
                     [self.imgDim[0],
                         self.imgDim[1],

@@ -926,6 +926,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fit_window = False
         self.zoom_values = {}  # key=filename, value=(zoom_mode, zoom_value)
         self.brightnessContrast_values = {}
+        self.global_sobel_filter_enabled = None
+        self.global_sobel_filter_settings = None
         self.scroll_values = {
             Qt.Horizontal: {},
             Qt.Vertical: {},
@@ -1653,6 +1655,8 @@ class MainWindow(QtWidgets.QMainWindow):
         brightness = dialog.slider_brightness.value()
         contrast = dialog.slider_contrast.value()
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
+        self.global_sobel_filter_enabled = dialog.apply_sobel_filter_checkbox.isChecked()
+        self.global_sobel_filter_settings  = [dialog.kernelSize.value(), dialog.derivative.value(), dialog.clip_level.value()] 
 
     def setSnappingDistance(self):
         dialog = set_snapping.editSingleVariableDialog(
@@ -1843,10 +1847,19 @@ class MainWindow(QtWidgets.QMainWindow):
             _, contrast = self.brightnessContrast_values.get(
                 self.recentFiles[0], (None, None)
             )
+        kernel_size, derivative, clip_level = self.global_sobel_filter_settings if self.global_sobel_filter_settings is not None else [None, None, None]
         if brightness is not None:
             dialog.slider_brightness.setValue(brightness)
         if contrast is not None:
             dialog.slider_contrast.setValue(contrast)
+        # FIXME properly implement filter keeping settings 
+        if kernel_size is not None:
+            dialog.call_normalize()
+            dialog.apply_sobel_filter_checkbox.setChecked(True)
+            dialog.kernelSize.setValue(kernel_size)
+            dialog.derivative.setValue(derivative)
+            dialog.clip_level.setValue(clip_level)
+            dialog.HasReset = True
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
         if (brightness is not None or contrast is not None) and\
                 not dialog.HasReset:
@@ -2366,7 +2379,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         extensions.append(".json")
-        image_suffix_priortiy = [".json", ".png", ".tiff", ".bmp"]
+        image_suffix_priortiy = [".json", ".png", ".tif", ".bmp"]
         for image_suffix in image_suffix_priortiy:
             DATAPOINT_LIST = glob(
                 folderPath + '/**/*{}'.format(image_suffix),
