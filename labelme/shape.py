@@ -186,7 +186,7 @@ class Shape(object):
                     np.min(self.poly_array[:, 0])
                 self.y_span = np.max(self.poly_array[:, 1]) -\
                     np.min(self.poly_array[:, 1])
-                self.onPolygonChange()
+                # self.onPolygonChange()
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
                 # may be desirable.
