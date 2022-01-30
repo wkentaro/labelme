@@ -391,6 +391,15 @@ class Canvas(QtWidgets.QWidget):
         self.distMap_crit[:, :, index] = (distMap <= (self.epsilon + 7)
                                           ).astype(np.bool)
 
+    def init_zeroImg(self):
+        self.ZeroImg = np.zeros(
+                [self.imgDim[0],
+                    self.imgDim[1],
+                    len(self.shapes)
+                 ]
+        )
+
+
     def getDistMapUpdate(self, index=None):
         if self.ZeroImg is None:
             self.ZeroImg = np.zeros(
@@ -399,6 +408,8 @@ class Canvas(QtWidgets.QWidget):
                     len(self.shapes)
                  ]
             )
+        if self.distMap_crit is None:
+            self.distMap_crit = self.ZeroImg.astype(np.bool)
         if index is not None:
             self.distMap_crit = self.ZeroImg.astype(np.bool)
             if index >= self.distMap_crit.shape[-1]:
@@ -422,10 +433,6 @@ class Canvas(QtWidgets.QWidget):
             assert isinstance(index, int),\
                 f"Index must be of Type int not {type(index)}"
             self.apply_distTrans(self.shapes[index], index)
-
-        # contours.append(
-        #     np.array(shape2draw, dtype=np.int32).reshape(-1, 1, 2)
-        # )
 
     def addPointToEdge(self):
         shape = self.prevhShape
