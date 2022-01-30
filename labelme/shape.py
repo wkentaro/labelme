@@ -124,7 +124,7 @@ class Shape(object):
     def insertPoint(self, i, point):
         self.points.insert(i, point)
         np.insert(self.poly_array, i, np.array([point.x(), point.y()]))
-        self.onPolygonChange()
+        # self.onPolygonChange()
 
     def removePoint(self, i):
         try:
