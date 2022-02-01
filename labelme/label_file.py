@@ -57,12 +57,10 @@ class LabelFile(object):
 
         with io.BytesIO() as f:
             ext = osp.splitext(filename)[1].lower()
-            if PY2 and QT4:
+            if PY2 and QT4 or ext not in [".jpg", ".jpeg"]:
                 format = "PNG"
-            elif ext in [".jpg", ".jpeg"]:
-                format = "JPEG"
             else:
-                format = "PNG"
+                format = "JPEG"
             image_pil.save(f, format=format)
             f.seek(0)
             return f.read()
@@ -134,11 +132,7 @@ class LabelFile(object):
         except Exception as e:
             raise LabelFileError(e)
 
-        otherData = {}
-        for key, value in data.items():
-            if key not in keys:
-                otherData[key] = value
-
+        otherData = {key: value for key, value in data.items() if key not in keys}
         # Only replace data after everything is loaded.
         self.flags = flags
         self.shapes = shapes

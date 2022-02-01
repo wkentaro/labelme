@@ -136,10 +136,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def validate(self):
         text = self.edit.text()
-        if hasattr(text, "strip"):
-            text = text.strip()
-        else:
-            text = text.trimmed()
+        text = text.strip() if hasattr(text, "strip") else text.trimmed()
         if text:
             self.accept()
 
@@ -148,10 +145,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def postProcess(self):
         text = self.edit.text()
-        if hasattr(text, "strip"):
-            text = text.strip()
-        else:
-            text = text.trimmed()
+        text = text.strip() if hasattr(text, "strip") else text.trimmed()
         self.edit.setText(text)
 
     def updateFlags(self, label_new):
@@ -195,10 +189,7 @@ class LabelDialog(QtWidgets.QDialog):
         return flags
 
     def getGroupId(self):
-        group_id = self.edit_group_id.text()
-        if group_id:
-            return int(group_id)
-        return None
+        return int(group_id) if (group_id := self.edit_group_id.text()) else None
 
     def popUp(self, text=None, move=True, flags=None, group_id=None):
         if self._fit_to_content["row"]:
@@ -222,8 +213,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.edit_group_id.clear()
         else:
             self.edit_group_id.setText(str(group_id))
-        items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
-        if items:
+        if items := self.labelList.findItems(text, QtCore.Qt.MatchFixedString):
             if len(items) != 1:
                 logger.warning("Label list has duplicate '{}'".format(text))
             self.labelList.setCurrentItem(items[0])

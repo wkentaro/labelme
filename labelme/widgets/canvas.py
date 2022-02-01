@@ -113,9 +113,7 @@ class Canvas(QtWidgets.QWidget):
         self._createMode = value
 
     def storeShapes(self):
-        shapesBackup = []
-        for shape in self.shapes:
-            shapesBackup.append(shape.copy())
+        shapesBackup = [shape.copy() for shape in self.shapes]
         if len(self.shapesBackups) > self.num_backups:
             self.shapesBackups = self.shapesBackups[-self.num_backups - 1 :]
         self.shapesBackups.append(shapesBackup)
@@ -125,9 +123,7 @@ class Canvas(QtWidgets.QWidget):
         # We save the state AFTER each edit (not before) so for an
         # edit to be undoable, we expect the CURRENT and the PREVIOUS state
         # to be in the undo stack.
-        if len(self.shapesBackups) < 2:
-            return False
-        return True
+        return len(self.shapesBackups) >= 2
 
     def restoreShape(self):
         # This does _part_ of the job of restoring shapes.
@@ -189,10 +185,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
-            if QT5:
-                pos = self.transformPos(ev.localPos())
-            else:
-                pos = self.transformPos(ev.posF())
+            pos = self.transformPos(ev.localPos()) if QT5 else self.transformPos(ev.posF())
         except AttributeError:
             return
 
@@ -225,15 +218,16 @@ class Canvas(QtWidgets.QWidget):
             if self.createMode in ["polygon", "linestrip"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
-            elif self.createMode == "rectangle":
+            elif (
+                self.createMode == "rectangle"
+                or self.createMode != "circle"
+                and self.createMode == "line"
+            ):
                 self.line.points = [self.current[0], pos]
                 self.line.close()
             elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
                 self.line.shape_type = "circle"
-            elif self.createMode == "line":
-                self.line.points = [self.current[0], pos]
-                self.line.close()
             elif self.createMode == "point":
                 self.line.points = [self.current[0]]
                 self.line.close()
@@ -346,10 +340,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        if QT5:
-            pos = self.transformPos(ev.localPos())
-        else:
-            pos = self.transformPos(ev.posF())
+        pos = self.transformPos(ev.localPos()) if QT5 else self.transformPos(ev.posF())
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
@@ -417,15 +408,14 @@ class Canvas(QtWidgets.QWidget):
                 self.selectedShapesCopy = []
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton:
-            if self.editing():
-                if (
-                    self.hShape is not None
-                    and self.hShapeIsSelected
-                    and not self.movingShape
-                ):
-                    self.selectionChanged.emit(
-                        [x for x in self.selectedShapes if x != self.hShape]
-                    )
+            if self.editing() and (
+                self.hShape is not None
+                and self.hShapeIsSelected
+                and not self.movingShape
+            ):
+                self.selectionChanged.emit(
+                    [x for x in self.selectedShapes if x != self.hShape]
+                )
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -441,13 +431,12 @@ class Canvas(QtWidgets.QWidget):
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
         assert len(self.selectedShapesCopy) == len(self.selectedShapes)
-        if copy:
-            for i, shape in enumerate(self.selectedShapesCopy):
+        for i, shape in enumerate(self.selectedShapesCopy):
+            if copy:
                 self.shapes.append(shape)
                 self.selectedShapes[i].selected = False
                 self.selectedShapes[i] = shape
-        else:
-            for i, shape in enumerate(self.selectedShapesCopy):
+            else:
                 self.selectedShapes[i].points = shape.points
         self.selectedShapesCopy = []
         self.repaint()
@@ -548,13 +537,7 @@ class Canvas(QtWidgets.QWidget):
                 min(0, self.pixmap.width() - o2.x()),
                 min(0, self.pixmap.height() - o2.y()),
             )
-        # XXX: The next line tracks the new position of the cursor
-        # relative to the shape, but also results in making it
-        # a bit "shaky" when nearing the border and allows it to
-        # go outside of the shape's area for some reason.
-        # self.calculateOffsets(self.selectedShapes, pos)
-        dp = pos - self.prevPoint
-        if dp:
+        if dp := pos - self.prevPoint:
             for shape in shapes:
                 shape.moveBy(dp)
             self.prevPoint = pos
@@ -756,21 +739,20 @@ class Canvas(QtWidgets.QWidget):
                 # scroll
                 self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
                 self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
-        else:
-            if ev.orientation() == QtCore.Qt.Vertical:
-                mods = ev.modifiers()
-                if QtCore.Qt.ControlModifier == int(mods):
-                    # with Ctrl/Command key
-                    self.zoomRequest.emit(ev.delta(), ev.pos())
-                else:
-                    self.scrollRequest.emit(
-                        ev.delta(),
-                        QtCore.Qt.Horizontal
-                        if (QtCore.Qt.ShiftModifier == int(mods))
-                        else QtCore.Qt.Vertical,
-                    )
+        elif ev.orientation() == QtCore.Qt.Vertical:
+            mods = ev.modifiers()
+            if QtCore.Qt.ControlModifier == int(mods):
+                # with Ctrl/Command key
+                self.zoomRequest.emit(ev.delta(), ev.pos())
             else:
-                self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
+                self.scrollRequest.emit(
+                    ev.delta(),
+                    QtCore.Qt.Horizontal
+                    if (QtCore.Qt.ShiftModifier == int(mods))
+                    else QtCore.Qt.Vertical,
+                )
+        else:
+            self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
 
     def moveByKeyboard(self, offset):
@@ -835,7 +817,7 @@ class Canvas(QtWidgets.QWidget):
         if self.createMode in ["polygon", "linestrip"]:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
-            self.current.points = self.current.points[0:1]
+            self.current.points = self.current.points[:1]
         elif self.createMode == "point":
             self.current = None
         self.drawingPolygon.emit(True)

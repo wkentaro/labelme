@@ -19,8 +19,7 @@ def get_version():
         )
     if not match:
         raise RuntimeError("{} doesn't contain __version__".format(filename))
-    version = match.groups()[0]
-    return version
+    return match.groups()[0]
 
 
 def get_install_requires():

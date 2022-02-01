@@ -25,10 +25,8 @@ def get_ip():
         for row in output.splitlines():
             cols = row.strip().split(" ")
             if cols[0] == "inet":
-                ip = cols[1]
-                return ip
-        else:
-            raise RuntimeError("No ip is found.")
+                return cols[1]
+        raise RuntimeError("No ip is found.")
     else:
         raise RuntimeError("Unsupported platform.")
 
@@ -90,8 +88,7 @@ def main():
         sys.exit(1)
 
     try:
-        out_file = labelme_on_docker(args.in_file, args.output)
-        if out_file:
+        if out_file := labelme_on_docker(args.in_file, args.output):
             print("Saved to: %s" % out_file)
     except RuntimeError as e:
         sys.stderr.write(e.__str__() + "\n")

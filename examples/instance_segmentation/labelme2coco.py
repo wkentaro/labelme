@@ -119,11 +119,7 @@ def main():
 
             instance = (label, group_id)
 
-            if instance in masks:
-                masks[instance] = masks[instance] | mask
-            else:
-                masks[instance] = mask
-
+            masks[instance] = masks[instance] | mask if instance in masks else mask
             if shape_type == "rectangle":
                 (x1, y1), (x2, y2) = points
                 x1, x2 = sorted([x1, x2])
