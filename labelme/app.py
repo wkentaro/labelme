@@ -1905,20 +1905,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status(f"current Zoom Level {self.zoomWidget.value()} %")
 
     def updateChart(self, arr, span, y_level):
-        ScrollRatio = self.scrollBars[Qt.Horizontal].value() / self.scrollBars[Qt.Horizontal].maximum()
-        if not ScrollRatio == 0:
-            start = max(int(ScrollRatio * self.canvas.pixmap.width()) - int(span / 2), 0)
-            end = min(int(ScrollRatio * self.canvas.pixmap.width()) + int(span / 2), self.canvas.pixmap.width() - 1)
-            if end - start < span:
-                if start == 0:
-                    end = span
-                else:
-                    start = end - span
-        else:
-            start = 0
-            end = span
+        maxScrollValue = self.scrollBars[Qt.Horizontal].maximum()
+        horizontalOffset = maxScrollValue - self.scrollBars[Qt.Horizontal].value()
+        fitWidthZoom = self.scaleFitWidth()
+        span = int(span * fitWidthZoom)
+        mid = int(span / 2) + int((self.canvas.pixmap.width() - span) *
+                                    (1 - (horizontalOffset / maxScrollValue)))
+        end = mid + int(span / 2)
+        start = mid - int(span / 2)
+
         line = arr[y_level, start:end]
-        self.chart_widget.update_plot([line.min(), line.max()], line)
+        self.chart_widget.update_plot([line.min(), line.max()], line, start=start)
 
     def adjustScale(self, initial=False):
         # TODO set the default zoom setting in config instead
