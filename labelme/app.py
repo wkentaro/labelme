@@ -15,7 +15,6 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import PY2
-from labelme import QT5
 
 from . import utils
 from labelme.config import get_config
@@ -25,6 +24,7 @@ from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
+from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
@@ -32,14 +32,10 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
-
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
 # TODO(unknown):
-# - [high] Add polygon movement with arrow keys
-# - [high] Deselect shape when clicking and already selected(?)
-# - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
 
@@ -471,9 +467,11 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
-            self.tr(
-                "Zoom in or out of the image. Also accessible with "
-                "{} and {} from the canvas."
+            str(
+                self.tr(
+                    "Zoom in or out of the image. Also accessible with "
+                    "{} and {} from the canvas."
+                )
             ).format(
                 utils.fmtShortcut(
                     "{},{}".format(shortcuts["zoom_in"], shortcuts["zoom_out"])
@@ -763,7 +761,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWidth,
         )
 
-        self.statusBar().showMessage(self.tr("%s started.") % __appname__)
+        self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
         self.statusBar().show()
 
         if output_file is not None and self._config["auto_save"]:
@@ -802,17 +800,24 @@ class MainWindow(QtWidgets.QMainWindow):
         # XXX: Could be completely declarative.
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
-        # FIXME: QSettings.value can return None on PyQt4
         self.recentFiles = self.settings.value("recentFiles", []) or []
         size = self.settings.value("window/size", QtCore.QSize(600, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
+        state = self.settings.value("window/state", QtCore.QByteArray())
+        # PyQt4 cannot handle QVariant
+        if isinstance(self.recentFiles, QtCore.QVariant):
+            self.recentFiles = self.recentFiles.toList()
+        if isinstance(size, QtCore.QVariant):
+            size = size.toSize()
+        if isinstance(position, QtCore.QVariant):
+            position = position.toPoint()
+        if isinstance(state, QtCore.QVariant):
+            state = state.toByteArray()
         self.resize(size)
         self.move(position)
         # or simply:
         # self.restoreGeometry(settings['window/geometry']
-        self.restoreState(
-            self.settings.value("window/state", QtCore.QByteArray())
-        )
+        self.restoreState(state)
 
         # Populate the File menu dynamically.
         self.updateFileMenu()
@@ -1252,6 +1257,10 @@ class MainWindow(QtWidgets.QMainWindow):
         lf = LabelFile()
 
         def format_shape(s):
+            # PyQt4 cannot handle QVariant
+            if isinstance(s, QtCore.QVariant):
+                s = s.toPyObject()
+
             data = s.other_data.copy()
             data.update(
                 dict(
@@ -1495,7 +1504,9 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
         # assumes same name, but json extension
-        self.status(self.tr("Loading %s...") % osp.basename(str(filename)))
+        self.status(
+            str(self.tr("Loading %s...")) % osp.basename(str(filename))
+        )
         label_file = osp.splitext(filename)[0] + ".json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
@@ -1601,7 +1612,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addRecentFile(self.filename)
         self.toggleActions(True)
         self.canvas.setFocus()
-        self.status(self.tr("Loaded %s") % osp.basename(str(filename)))
+        self.status(str(self.tr("Loaded %s")) % osp.basename(str(filename)))
         return True
 
     def resizeEvent(self, event):
@@ -1748,17 +1759,18 @@ class MainWindow(QtWidgets.QMainWindow):
         filters = self.tr("Image & Label files (%s)") % " ".join(
             formats + ["*%s" % LabelFile.suffix]
         )
-        filename = QtWidgets.QFileDialog.getOpenFileName(
-            self,
+        fileDialog = FileDialogPreview(self)
+        fileDialog.setFileMode(FileDialogPreview.ExistingFile)
+        fileDialog.setNameFilter(filters)
+        fileDialog.setWindowTitle(
             self.tr("%s - Choose Image or Label file") % __appname__,
-            path,
-            filters,
         )
-        if QT5:
-            filename, _ = filename
-        filename = str(filename)
-        if filename:
-            self.loadFile(filename)
+        fileDialog.setWindowFilePath(path)
+        fileDialog.setViewMode(FileDialogPreview.Detail)
+        if fileDialog.exec_():
+            fileName = fileDialog.selectedFiles()[0]
+            if fileName:
+                self.loadFile(fileName)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
@@ -1966,9 +1978,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
-        self.labelList.clearSelection()
         for shape in self.canvas.selectedShapes:
             self.addLabel(shape)
+        self.labelList.clearSelection()
         self.setDirty()
 
     def moveShape(self):

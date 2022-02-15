@@ -253,19 +253,4 @@ MPLBACKEND='agg' pytest tests/ -m 'not gpu'
 
 ## Acknowledgement
 
-This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme),
-whose development has already stopped.
-
-
-## Cite This Project
-
-If you use this project in your research or wish to refer to the baseline results published in the README, please use the following BibTeX entry.
-
-```bash
-@misc{labelme2016,
-  author =       {Kentaro Wada},
-  title =        {{labelme: Image Polygonal Annotation with Python}},
-  howpublished = {\url{https://github.com/wkentaro/labelme}},
-  year =         {2016}
-}
-```
+This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme).
