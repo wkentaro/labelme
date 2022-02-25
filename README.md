@@ -57,7 +57,7 @@ It is written in Python and uses Qt for its graphical interface.
 
 - Ubuntu / macOS / Windows
 - Python3
-- [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+- [PyQt5 / PySide2](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
 
 
 ## Installation

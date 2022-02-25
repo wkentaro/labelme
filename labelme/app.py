@@ -792,15 +792,6 @@ class MainWindow(QtWidgets.QMainWindow):
         size = self.settings.value("window/size", QtCore.QSize(600, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
         state = self.settings.value("window/state", QtCore.QByteArray())
-        # PyQt4 cannot handle QVariant
-        if isinstance(self.recentFiles, QtCore.QVariant):
-            self.recentFiles = self.recentFiles.toList()
-        if isinstance(size, QtCore.QVariant):
-            size = size.toSize()
-        if isinstance(position, QtCore.QVariant):
-            position = position.toPoint()
-        if isinstance(state, QtCore.QVariant):
-            state = state.toByteArray()
         self.resize(size)
         self.move(position)
         # or simply:
@@ -1245,10 +1236,6 @@ class MainWindow(QtWidgets.QMainWindow):
         lf = LabelFile()
 
         def format_shape(s):
-            # PyQt4 cannot handle QVariant
-            if isinstance(s, QtCore.QVariant):
-                s = s.toPyObject()
-
             data = s.other_data.copy()
             data.update(
                 dict(
