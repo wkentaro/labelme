@@ -39,7 +39,7 @@ def get_install_requires():
     ]
 
     # Find python binding for qt with priority:
-    # PyQt5 -> PySide2 -> PyQt4,
+    # PyQt5 -> PySide2
     # and PyQt5 is automatically installed on Python3.
     QT_BINDING = None
 
@@ -59,23 +59,11 @@ def get_install_requires():
             pass
 
     if QT_BINDING is None:
-        try:
-            import PyQt4  # NOQA
+        # PyQt5 can be installed via pip for Python3
+        # 5.15.3, 5.15.4 won't work with PyInstaller
+        install_requires.append("PyQt5!=5.15.3,!=5.15.4")
+        QT_BINDING = "pyqt5"
 
-            QT_BINDING = "pyqt4"
-        except ImportError:
-            if PY2:
-                print(
-                    "Please install PyQt5, PySide2 or PyQt4 for Python2.\n"
-                    "Note that PyQt5 can be installed via pip for Python3.",
-                    file=sys.stderr,
-                )
-                sys.exit(1)
-            assert PY3
-            # PyQt5 can be installed via pip for Python3
-            # 5.15.3, 5.15.4 won't work with PyInstaller
-            install_requires.append("PyQt5!=5.15.3,!=5.15.4")
-            QT_BINDING = "pyqt5"
     del QT_BINDING
 
     if os.name == "nt":  # Windows

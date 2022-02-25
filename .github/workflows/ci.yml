@@ -14,14 +14,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ['3.9']
-        PYTEST_QT_API: [pyqt5, pyqt4v2]
-        exclude:
-          - os: macos-latest
-            PYTEST_QT_API: pyqt4v2
-          - os: windows-latest
-            PYTEST_QT_API: pyqt4v2
-          - python-version: '3.9'
-            PYTEST_QT_API: pyqt4v2
+        PYTEST_QT_API: [pyqt5, pyside2]
 
     steps:
     - uses: actions/checkout@v2
@@ -57,14 +50,8 @@ jobs:
       run: |
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyside2" ]; then
           conda install -q -y pyside2 -c conda-forge
-        elif [ "${{ matrix.PYTEST_QT_API }}" = "pyqt4v2" ]; then
-          conda install -q -y pyqt=4 -c conda-forge
-        else  # pyqt5
-          if [ "${{ matrix.os }}" = "macos-latest" -a "${{ matrix.python-version }}" = "3.9" ]; then
-            pip install pyqt5
-          else
-            conda install -q -y pyqt=5
-          fi
+        else
+          conda install -q -y pyqt=5
         fi
         if [ "${{ matrix.os }}" != "windows-latest" ]; then
           conda install -q -y help2man
@@ -92,7 +79,7 @@ jobs:
 
     - name: Test with pytest
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.os != 'windows-latest' && !(matrix.os == 'macos-latest' && matrix.PYTEST_QT_API == 'pyside2')
       env:
         PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
       run: |
@@ -129,7 +116,7 @@ jobs:
 
     - name: Run pyinstaller
       shell: bash -l {0}
-      if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.9'
+      if: matrix.PYTEST_QT_API == 'pyqt5'
       run: |
         # Build the standalone executable
         pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
