@@ -141,8 +141,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.uniqLabelList.addItem(item)
                 rgb = self._get_rgb_by_label(label)
                 self.uniqLabelList.setItemLabel(item, label, rgb)
-        self.label_dock = QtWidgets.QDockWidget(self.tr(u"Label List"), self)
-        self.label_dock.setObjectName(u"Label List")
+        self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
+        self.label_dock.setObjectName("Label List")
         self.label_dock.setWidget(self.uniqLabelList)
 
         self.fileSearch = QtWidgets.QLineEdit()
@@ -157,8 +157,8 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListLayout.setSpacing(0)
         fileListLayout.addWidget(self.fileSearch)
         fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr(u"File List"), self)
-        self.file_dock.setObjectName(u"Files")
+        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
+        self.file_dock.setObjectName("Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
         self.file_dock.setWidget(fileListWidget)
@@ -228,14 +228,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openDirDialog,
             shortcuts["open_dir"],
             "open",
-            self.tr(u"Open Dir"),
+            self.tr("Open Dir"),
         )
         openNextImg = action(
             self.tr("&Next Image"),
             self.openNextImg,
             shortcuts["open_next"],
             "next",
-            self.tr(u"Open next (hold Ctl+Shift to copy labels)"),
+            self.tr("Open next (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         openPrevImg = action(
@@ -243,7 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openPrevImg,
             shortcuts["open_prev"],
             "prev",
-            self.tr(u"Open prev (hold Ctl+Shift to copy labels)"),
+            self.tr("Open prev (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         save = action(
@@ -277,7 +277,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="open",
-            tip=self.tr(u"Change where annotations are loaded/saved"),
+            tip=self.tr("Change where annotations are loaded/saved"),
         )
 
         saveAuto = action(
