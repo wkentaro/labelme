@@ -73,7 +73,7 @@ jobs:
         if [ "${{ matrix.os }}" != "windows-latest" ]; then
           conda install -q -y help2man
         fi
-        pip install hacking pytest 'pytest-qt<4'
+        pip install pytest 'pytest-qt<4'
 
     - name: Install main
       shell: bash -l {0}
@@ -84,13 +84,18 @@ jobs:
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
+        if [ "${{ matrix.python-version }}" == "2.7" ]; then
+          pip install hacking==2.0.0
+        else
+          pip install hacking==4.1.0
+        fi
         flake8 .
 
     - name: Black
       shell: bash -l {0}
       if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
       run: |
-        pip install black
+        pip install black==22.1.0
         black --line-length 79 --check --diff labelme
 
     - name: Test with pytest
