@@ -6,6 +6,7 @@ import os
 import os.path as osp
 import re
 import webbrowser
+import regex
 
 import imgviz
 from qtpy import QtCore
@@ -2075,5 +2076,5 @@ class MainWindow(QtWidgets.QMainWindow):
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
-        images.sort(key=lambda x: x.lower())
+        images.sort(key=lambda f: int(regex.sub('\D', '', f.lower())))
         return images
