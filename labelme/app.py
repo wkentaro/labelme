@@ -8,6 +8,7 @@ import re
 import webbrowser
 
 import imgviz
+import natsort
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -2075,5 +2076,5 @@ class MainWindow(QtWidgets.QMainWindow):
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
-        images.sort(key=lambda x: x.lower())
+        images = natsort.os_sorted(images)
         return images
