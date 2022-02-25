@@ -56,7 +56,7 @@ It is written in Python and uses Qt for its graphical interface.
 ## Requirements
 
 - Ubuntu / macOS / Windows
-- Python2 / Python3
+- Python3
 - [PyQt4 / PyQt5](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
 
 
@@ -73,17 +73,8 @@ There are options:
 You need install [Anaconda](https://www.continuum.io/downloads), then run below:
 
 ```bash
-# python2
-conda create --name=labelme python=2.7
-source activate labelme
-# conda install -c conda-forge pyside2
-conda install pyqt
-pip install labelme
-# if you'd like to use the latest version. run below:
-# pip install git+https://github.com/wkentaro/labelme.git
-
 # python3
-conda create --name=labelme python=3.6
+conda create --name=labelme python=3
 source activate labelme
 # conda install -c conda-forge pyside2
 # conda install pyqt
@@ -110,31 +101,22 @@ docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=:0 -v $(pwd):/root/wo
 ### Ubuntu
 
 ```bash
-# Ubuntu 14.04 / Ubuntu 16.04
-# Python2
-# sudo apt-get install python-qt4  # PyQt4
-sudo apt-get install python-pyqt5  # PyQt5
-sudo pip install labelme
-# Python3
-sudo apt-get install python3-pyqt5  # PyQt5
+sudo apt-get install labelme
+
+# or
 sudo pip3 install labelme
 
 # or install standalone executable from:
 # https://github.com/wkentaro/labelme/releases
 ```
 
-### Ubuntu 19.10+ / Debian (sid)
-
-```bash
-sudo apt-get install labelme
-```
-
 ### macOS
 
 ```bash
 brew install pyqt  # maybe pyqt5
-pip install labelme  # both python2/3 should work
+pip install labelme
 
+# or
 brew install wkentaro/labelme/labelme  # command line interface
 # brew install --cask wkentaro/labelme/labelme  # app
 
@@ -147,10 +129,12 @@ brew install wkentaro/labelme/labelme  # command line interface
 Install [Anaconda](https://www.continuum.io/downloads), then in an Anaconda Prompt run:
 
 ```bash
-# python3
-conda create --name=labelme python=3.6
+conda create --name=labelme python=3
 conda activate labelme
 pip install labelme
+
+# or install standalone executable/app from:
+# https://github.com/wkentaro/labelme/releases
 ```
 
 
@@ -247,7 +231,7 @@ pip install black hacking pytest pytest-qt
 
 flake8 .
 black --line-length 79 --check labelme/
-MPLBACKEND='agg' pytest tests/ -m 'not gpu'
+MPLBACKEND='agg' pytest tests/
 ```
 
 
