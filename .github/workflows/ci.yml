@@ -13,14 +13,14 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.7', '2.7']
+        python-version: ['3.9', '2.7']
         PYTEST_QT_API: [pyqt5, pyqt4v2]
         exclude:
           - os: macos-latest
             PYTEST_QT_API: pyqt4v2
           - os: windows-latest
             PYTEST_QT_API: pyqt4v2
-          - python-version: '3.7'
+          - python-version: '3.9'
             PYTEST_QT_API: pyqt4v2
 
     steps:
@@ -64,7 +64,7 @@ jobs:
         elif [ "${{ matrix.PYTEST_QT_API }}" = "pyqt4v2" ]; then
           conda install -q -y pyqt=4 -c conda-forge
         else  # pyqt5
-          if [ "${{ matrix.os }}" = "macos-latest" -a "${{ matrix.python-version }}" = "3.7" ]; then
+          if [ "${{ matrix.os }}" = "macos-latest" -a "${{ matrix.python-version }}" = "3.9" ]; then
             pip install pyqt5
           else
             conda install -q -y pyqt=5
@@ -137,7 +137,7 @@ jobs:
 
     - name: Run pyinstaller
       shell: bash -l {0}
-      if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.7'
+      if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.9'
       run: |
         # Build the standalone executable
         pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
