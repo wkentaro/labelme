@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import distutils.spawn
 import os
 import re
@@ -24,10 +22,6 @@ def get_version():
 
 
 def get_install_requires():
-    PY3 = sys.version_info[0] == 3
-    PY2 = sys.version_info[0] == 2
-    assert PY3 or PY2
-
     install_requires = [
         "imgviz>=0.11",
         "matplotlib<3.3",  # for PyInstaller
