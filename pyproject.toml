@@ -1,0 +1,9 @@
+[tool.black]
+line-length = 79
+exclude = '''
+(
+    ^/\..*
+  | ^/docs/
+  | ^/github2pypi/
+)
+'''
