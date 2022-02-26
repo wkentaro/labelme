@@ -210,7 +210,7 @@ Below shows how to build the standalone executable on macOS, Linux and Windows.
 
 ```bash
 # Setup conda
-conda create --name labelme python==3.6.0
+conda create --name labelme python=3.9
 conda activate labelme
 
 # Build the standalone executable
