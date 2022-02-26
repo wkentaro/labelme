@@ -53,9 +53,6 @@ jobs:
         else
           conda install -q -y pyqt=5
         fi
-        if [ "${{ matrix.os }}" != "windows-latest" ]; then
-          conda install -q -y help2man
-        fi
         pip install pytest 'pytest-qt<4'
 
     - name: Install main
