@@ -98,7 +98,6 @@ def main():
             sys.exit(1)
 
         commands = [
-            "python tests/docs_tests/man_tests/test_labelme_1.py",
             "git push origin main",
             "git tag v{:s}".format(version),
             "git push origin --tags",
