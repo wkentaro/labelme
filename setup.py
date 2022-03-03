@@ -71,12 +71,14 @@ def get_long_description():
     with open("README.md") as f:
         long_description = f.read()
     try:
+        # when this package is being released
         import github2pypi
 
         return github2pypi.replace_url(
-            slug="wkentaro/labelme", content=long_description
+            slug="wkentaro/labelme", content=long_description, branch="main"
         )
-    except Exception:
+    except ImportError:
+        # when this package is being installed
         return long_description
 
 
@@ -84,6 +86,15 @@ def main():
     version = get_version()
 
     if sys.argv[1] == "release":
+        try:
+            import github2pypi  # NOQA
+        except ImportError:
+            print(
+                "Please install github2pypi\n\n\tpip install github2pypi\n",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
         if not distutils.spawn.find_executable("twine"):
             print(
                 "Please install twine:\n\n\tpip install twine\n",
@@ -106,7 +117,7 @@ def main():
     setup(
         name="labelme",
         version=version,
-        packages=find_packages(exclude=["github2pypi"]),
+        packages=find_packages(),
         description="Image Polygonal Annotation with Python",
         long_description=get_long_description(),
         long_description_content_type="text/markdown",
