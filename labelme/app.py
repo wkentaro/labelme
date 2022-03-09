@@ -8,6 +8,7 @@ import re
 import webbrowser
 
 import imgviz
+import natsort
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -15,7 +16,6 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import PY2
-from labelme import QT5
 
 from . import utils
 from labelme.config import get_config
@@ -25,6 +25,7 @@ from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
+from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
@@ -32,14 +33,10 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
-
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
 # TODO(unknown):
-# - [high] Add polygon movement with arrow keys
-# - [high] Deselect shape when clicking and already selected(?)
-# - [low,maybe] Preview images on file dialogs.
 # - Zoom is too "steppy".
 
 
@@ -145,8 +142,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.uniqLabelList.addItem(item)
                 rgb = self._get_rgb_by_label(label)
                 self.uniqLabelList.setItemLabel(item, label, rgb)
-        self.label_dock = QtWidgets.QDockWidget(self.tr(u"Label List"), self)
-        self.label_dock.setObjectName(u"Label List")
+        self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
+        self.label_dock.setObjectName("Label List")
         self.label_dock.setWidget(self.uniqLabelList)
 
         self.fileSearch = QtWidgets.QLineEdit()
@@ -161,8 +158,8 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListLayout.setSpacing(0)
         fileListLayout.addWidget(self.fileSearch)
         fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr(u"File List"), self)
-        self.file_dock.setObjectName(u"Files")
+        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
+        self.file_dock.setObjectName("Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
         self.file_dock.setWidget(fileListWidget)
@@ -232,14 +229,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openDirDialog,
             shortcuts["open_dir"],
             "open",
-            self.tr(u"Open Dir"),
+            self.tr("Open Dir"),
         )
         openNextImg = action(
             self.tr("&Next Image"),
             self.openNextImg,
             shortcuts["open_next"],
             "next",
-            self.tr(u"Open next (hold Ctl+Shift to copy labels)"),
+            self.tr("Open next (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         openPrevImg = action(
@@ -247,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openPrevImg,
             shortcuts["open_prev"],
             "prev",
-            self.tr(u"Open prev (hold Ctl+Shift to copy labels)"),
+            self.tr("Open prev (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         save = action(
@@ -281,7 +278,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="open",
-            tip=self.tr(u"Change where annotations are loaded/saved"),
+            tip=self.tr("Change where annotations are loaded/saved"),
         )
 
         saveAuto = action(
@@ -460,9 +457,11 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
-            self.tr(
-                "Zoom in or out of the image. Also accessible with "
-                "{} and {} from the canvas."
+            str(
+                self.tr(
+                    "Zoom in or out of the image. Also accessible with "
+                    "{} and {} from the canvas."
+                )
             ).format(
                 utils.fmtShortcut(
                     "{},{}".format(shortcuts["zoom_in"], shortcuts["zoom_out"])
@@ -751,7 +750,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWidth,
         )
 
-        self.statusBar().showMessage(self.tr("%s started.") % __appname__)
+        self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
         self.statusBar().show()
 
         if output_file is not None and self._config["auto_save"]:
@@ -790,17 +789,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # XXX: Could be completely declarative.
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
-        # FIXME: QSettings.value can return None on PyQt4
         self.recentFiles = self.settings.value("recentFiles", []) or []
         size = self.settings.value("window/size", QtCore.QSize(600, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
+        state = self.settings.value("window/state", QtCore.QByteArray())
         self.resize(size)
         self.move(position)
         # or simply:
         # self.restoreGeometry(settings['window/geometry']
-        self.restoreState(
-            self.settings.value("window/state", QtCore.QByteArray())
-        )
+        self.restoreState(state)
 
         # Populate the File menu dynamically.
         self.updateFileMenu()
@@ -1480,7 +1477,9 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
         # assumes same name, but json extension
-        self.status(self.tr("Loading %s...") % osp.basename(str(filename)))
+        self.status(
+            str(self.tr("Loading %s...")) % osp.basename(str(filename))
+        )
         label_file = osp.splitext(filename)[0] + ".json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
@@ -1586,7 +1585,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addRecentFile(self.filename)
         self.toggleActions(True)
         self.canvas.setFocus()
-        self.status(self.tr("Loaded %s") % osp.basename(str(filename)))
+        self.status(str(self.tr("Loaded %s")) % osp.basename(str(filename)))
         return True
 
     def resizeEvent(self, event):
@@ -1733,17 +1732,18 @@ class MainWindow(QtWidgets.QMainWindow):
         filters = self.tr("Image & Label files (%s)") % " ".join(
             formats + ["*%s" % LabelFile.suffix]
         )
-        filename = QtWidgets.QFileDialog.getOpenFileName(
-            self,
+        fileDialog = FileDialogPreview(self)
+        fileDialog.setFileMode(FileDialogPreview.ExistingFile)
+        fileDialog.setNameFilter(filters)
+        fileDialog.setWindowTitle(
             self.tr("%s - Choose Image or Label file") % __appname__,
-            path,
-            filters,
         )
-        if QT5:
-            filename, _ = filename
-        filename = str(filename)
-        if filename:
-            self.loadFile(filename)
+        fileDialog.setWindowFilePath(path)
+        fileDialog.setViewMode(FileDialogPreview.Detail)
+        if fileDialog.exec_():
+            fileName = fileDialog.selectedFiles()[0]
+            if fileName:
+                self.loadFile(fileName)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
@@ -1951,9 +1951,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def copyShape(self):
         self.canvas.endMove(copy=True)
-        self.labelList.clearSelection()
         for shape in self.canvas.selectedShapes:
             self.addLabel(shape)
+        self.labelList.clearSelection()
         self.setDirty()
 
     def moveShape(self):
@@ -2063,5 +2063,5 @@ class MainWindow(QtWidgets.QMainWindow):
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = osp.join(root, file)
                     images.append(relativePath)
-        images.sort(key=lambda x: x.lower())
+        images = natsort.os_sorted(images)
         return images
