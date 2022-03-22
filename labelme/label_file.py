@@ -36,7 +36,8 @@ class LabelFile(object):
 
     suffix = ".json"
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None,**kwargs):
+        self._imgPath=kwargs.get("imgPath",None)
         self.shapes = []
         self.imagePath = None
         self.imageData = None
@@ -108,9 +109,12 @@ class LabelFile(object):
                 if PY2 and QT4:
                     imageData = utils.img_data_to_png_data(imageData)
             else:
-                # relative path from label file to relative path from cwd
-                imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
+                if self._imgPath is None:
+                    # relative path from label file to relative path from cwd
+                    imagePath = osp.join(osp.dirname(filename), data["imagePath"])
+                    imageData = self.load_image_file(imagePath)
+                else:
+                    imageData = self.load_image_file(self._imgPath)
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
             self._check_image_height_and_width(
