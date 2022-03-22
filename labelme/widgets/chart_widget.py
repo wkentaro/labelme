@@ -1,9 +1,7 @@
-from cv2 import line
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Cursor
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from qtpy.QtWidgets import QWidget
 
 
 class Canvas(FigureCanvas):
@@ -17,7 +15,7 @@ class Canvas(FigureCanvas):
         t = np.arange(0.0, 2.0, 0.01)
         s = 1 + np.sin(2 * np.pi * t)
         # self.cursor = Cursor(self.ax, horizOn=True, vertOn=True)
-        
+
         self.ax.plot(t, s)
         self.ax.grid()
 
@@ -29,7 +27,10 @@ class Canvas(FigureCanvas):
         self.ax.use_sticky_edges = True
         y_range = np.arange(start, start + len(x_vals), 1)
         self.line, = self.ax.plot(y_range, x_vals)
-        self.ax.set(xlabel="X Position" , ylabel="Pixel Value", title="Height Plot")
+        self.ax.set(
+            xlabel="X Position" ,
+            ylabel="Pixel Value",
+            title="Height Plot")
         # self.ax.draw()
 
     def mousePressEvent(self, ev):
@@ -38,7 +39,7 @@ class Canvas(FigureCanvas):
         y = self.height() - y
         fig_shift = self.ax.bbox.size[0] * self.ax.figbox.intervalx[0]
         x = ev.pos().x() - fig_shift
-        
+
         x_pos = len(self.line.get_data()[0]) * x / self.ax.bbox.size[0]
         mapped_x_pos = int(self.line.get_data()[0][0] + x_pos)
         z_val = self.line.get_data()[1][int(x_pos)]
@@ -49,7 +50,7 @@ class Canvas(FigureCanvas):
                                            xycoords="subfigure pixels",
                                            textcoords="offset pixels"
                                            )
-       
+
         self.coord.append((x, y))
         self.cursor = Cursor(self.ax, horizOn=True, vertOn=True, useblit=True)
         self.ax.axvline(mapped_x_pos, color="red")
