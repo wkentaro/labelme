@@ -3,6 +3,7 @@ import contextlib
 import io
 import json
 import os.path as osp
+import pathlib as pl
 from labelme import __version__
 from labelme.logger import logger
 from labelme import PY2
@@ -43,11 +44,21 @@ class LabelFile(object):
 
     @staticmethod
     def load_image_file(filename):
-        try:
-            image_pil = PIL.Image.open(filename)
-        except IOError:
-            logger.error("Failed opening image file: {}".format(filename))
-            return
+        if pl.WindowsPath(filename).suffix == ".bmp":
+            try:
+                image_pil = PIL.Image.open(filename)
+            except IOError:
+                from utils.readAWR_bmp import readAWR_bmp
+                img = readAWR_bmp(filename)
+                image_pil = PIL.Image.fromarray(img)
+            
+        else:
+            try:
+                image_pil = PIL.Image.open(filename)
+            except IOError:
+                
+                logger.error("Failed opening image file: {}".format(filename))
+                return 0
 
         # apply orientation to image according to exif
         image_pil = utils.apply_exif_orientation(image_pil)
@@ -59,13 +70,13 @@ class LabelFile(object):
             elif ext in [".jpg", ".jpeg"]:
                 format = "JPEG"
             else:
-                if image_pil.decodermaxblock > 255:
-                    format = "TIFF"
-                    if image_pil.format == "BMP":
-                        from utils.readAWR_bmp import readAWR_bmp
-                        image_pil = readAWR_bmp(image_pil)
+                if hasattr(image_pil,"decodermaxblock"):
+                    if image_pil.decodermaxblock > 255:
+                        format = "TIFF"
+                    else:
+                        format = "PNG"
                 else:
-                    format = "PNG"
+                    format = "TIFF"
 
             image_pil.save(f, format=format)
             f.seek(0)
@@ -210,4 +221,6 @@ class LabelFile(object):
 
     @staticmethod
     def is_label_file(filename):
+        if filename is None:
+            return False
         return osp.splitext(filename)[1].lower() == LabelFile.suffix

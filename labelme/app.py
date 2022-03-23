@@ -571,11 +571,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("add new flag to list")
         )
 
-        # generate_data = action(
-        #     self.tr('Create Segmented Images'),
-        #     lambda: self.generate_segmented_data.show(),
-        #     tip=self.tr("Run macros to convert json data to training data.")
-        # )
+        generate_data = action(
+            self.tr('Create Segmented Images'),
+            lambda: self.generate_segmented_data.show(),
+            tip=self.tr("Run macros to convert json data to training data.")
+        )
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -805,7 +805,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
-            #macros=self.menu(self.tr("&Macros")),
+            macros=self.menu(self.tr("&Macros")),
             settings=self.menu(self.tr("&Settings")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
@@ -831,7 +831,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         utils.add_actions(self.menus.help, (help,))
-        #utils.add_actions(self.menus.macros, (generate_data,))
+        utils.add_actions(self.menus.macros, (generate_data,))
         utils.add_actions(
             self.menus.view,
             (
@@ -1353,6 +1353,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
         self.canvas.init_poly_array()
+        self.canvas.init_zeroImg()
         self.canvas.getDistMapUpdate()
 
     def loadLabels(self, shapes):
@@ -1810,6 +1811,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         flags.update(flg)
             else:
                 flags.update(self.labelFile.flags)
+        else:
+            self.canvas.init_zeroImg()
+            self.canvas.distMap_crit = None
         self.loadFlags(flags)
         if self._config["keep_prev"] and self.noShapes():
             self.loadShapes(prev_shapes, replace=False)
@@ -2064,8 +2068,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.statusBar().show()
 
+        # files_in_output_dir = list(self.output_dir.glob("**/*" + LabelFile.suffix))
+        # if a output directory is given, don't look for label files in the input dir
+        self.importDirImages(self.lastOpenDir, load=False,omit_label_files=True)
         current_filename = self.filename
-        self.importDirImages(self.lastOpenDir, load=False)
+            
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2105,7 +2112,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
 
-        currOutputPath = self.getRelOutputpath(self.filename)
+        currOutputPath = self.getRelOutputpath(pl.WindowsPath(self.filename))
 
         filename = dlg.getSaveFileName(
             self,
@@ -2173,6 +2180,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def getRelOutputpath(self, filename: pl.WindowsPath):
 
+        assert isinstance(filename, pl.WindowsPath)
         if self.output_dir:
             if self.filenameList:
                 #reverse engineer the respective relative path
@@ -2340,7 +2348,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.openNextImg()
 
-    def importDirImages(self, dirpath, pattern=None, load=True):
+    def importDirImages(self, dirpath, pattern=None, load=True, omit_label_files = False):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
@@ -2352,16 +2360,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.clear()
         self.filenameList = []
         self.relPathList = []
-        ImageList = self.scanAllImages(dirpath)
+        image_suffix_priortiy = [".png", ".tif", ".bmp"]
+        if not omit_label_files:
+            image_suffix_priortiy.insert(0,LabelFile.suffix)
+        ImageList = self.scanAllImages(dirpath,image_suffix_priortiy)
         for i, filename in enumerate(ImageList):
             if pattern and pattern not in str(filename):
                 continue
             self.filenameList.append(filename)
             self.relPathList.append(filename.relative_to(dirpath).parent)
-            label_file = filename.with_suffix(".json")
+            label_file = filename.with_suffix(LabelFile.suffix)
             if self.output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self.output_dir, label_file_without_path)
+                # get relative save path of potentially existing annotation
+                label_file = self.output_dir.joinpath(self.relPathList[-1],
+                                                      filename.with_suffix(LabelFile.suffix).name)
 
             item = QtWidgets.QListWidgetItem(str(filename))
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
@@ -2373,13 +2385,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
 
-    def scanAllImages(self, folderPath):
-        extensions = [
-            ".%s" % fmt.data().decode().lower()
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
-        extensions.append(".json")
-        image_suffix_priortiy = [".json", ".png", ".tif", ".bmp"]
+    def scanAllImages(self, folderPath,image_suffix_priortiy):
+        
+        #loop until suitalbe images are found
         for image_suffix in image_suffix_priortiy:
             DATAPOINT_LIST = glob(
                 folderPath + '/**/*{}'.format(image_suffix),
