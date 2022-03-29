@@ -1,0 +1,15 @@
+DeepWalk Quality Control Checklist:
+
+1. Check Raster image quality for holes in evaluated panel area. If significant misprojections or holes within panel area, check 'Raster' flag
+2. Check that Detectable warning is correclty inspected. If not, check 'Detectable warnings' flag
+3. If run slopes are above 15%, check 'running slopes' flag
+4. If cross slope is above 10%, check 'cross slopes' flag
+5. If vertical fault above 4 inches between two panels, or above 12 inches or curb gutter intersection, check 'Vertical Faults' flag
+6. Check that clear widths do not significantly decrease and ends of sidewalk or the ends of an evaluated sidewalk path (endpoint panel or gutter panel). If they do, check 'Width' flag. If there are any widths listed less than 20 inches check 'Width' flag
+7. Check that violations are listed correctly as follows:
+    - Panels with run slope over 8% should be listed as violations
+    - Panels with cross slope over 2% should be listed as violations
+    - Vertical displacements listed in the "Joints sections" should only be there if thye are above 0.5 inchec, and if so should be listed in violations
+    - Detectable warnings that are improperly placed or non existent when they should exist should be listed in Violations
+    - If any of the above are not listed properly, check the 'Violations' flag
+8. Check the 'Pass' flag if and only if no other flag has been checked

@@ -1,0 +1,100 @@
+auto_save: false
+display_label_popup: true
+store_data: true
+keep_prev: false
+keep_prev_scale: false
+keep_prev_brightness: false
+keep_prev_contrast: false
+logger_level: info
+
+flags: ['Raster','Running_Slope', 'Cross_slope' ,'Width', 'Vertical_Faults', 'Detectable_Warnings', 'Violations', 'Pass']
+label_flags: null
+labels: []
+file_search: null
+sort_labels: true
+validate_label: null
+
+default_shape_color: [0, 255, 0]
+shape_color: auto  # null, 'auto', 'manual'
+shift_auto_shape_color: 0
+label_colors: null
+
+shape:
+  # drawing
+  line_color: [0, 255, 0, 128]
+  fill_color: [0, 255, 0, 0]  # transparent
+  vertex_fill_color: [0, 255, 0, 255]
+  # selecting / hovering
+  select_line_color: [255, 255, 255, 255]
+  select_fill_color: [0, 255, 0, 155]
+  hvertex_fill_color: [255, 255, 255, 255]
+
+# main
+flag_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+label_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+shape_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+file_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+
+# label_dialog
+show_label_text_field: true
+label_completion: startswith
+fit_to_content:
+  column: true
+  row: false
+
+# canvas
+epsilon: 10.0
+canvas:
+  # None: do nothing
+  # close: close polygon
+  double_click: close
+
+shortcuts:
+  close: Ctrl+W
+  open: Ctrl+O
+  open_dir: Ctrl+U
+  quit: Ctrl+Q
+  save: Ctrl+S
+  save_as: Ctrl+Shift+S
+  save_to: null
+  delete_file: Ctrl+Delete
+
+  open_next: [D, Ctrl+Shift+D]
+  open_prev: [A, Ctrl+Shift+A]
+
+  zoom_in: [Ctrl++, Ctrl+=]
+  zoom_out: Ctrl+-
+  zoom_to_original: Ctrl+0
+  fit_window: Ctrl+F
+  fit_width: Ctrl+Shift+F
+
+  create_polygon: Ctrl+N
+  create_rectangle: Ctrl+R
+  create_circle: null
+  create_line: null
+  create_point: null
+  create_linestrip: null
+  edit_polygon: Ctrl+J
+  delete_polygon: Delete
+  duplicate_polygon: Ctrl+D
+  undo: Ctrl+Z
+  undo_last_point: [Ctrl+Z, Backspace]
+  add_point_to_edge: Ctrl+Shift+P
+  edit_label: Ctrl+E
+  toggle_keep_prev_mode: Ctrl+P

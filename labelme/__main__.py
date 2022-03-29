@@ -17,7 +17,7 @@ from labelme.logger import logger
 from labelme.utils import newIcon
 
 
-def main():
+def main(mode, username, manual_api, aws_api, config_fp=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--version", "-V", action="store_true", help="show version"
@@ -39,7 +39,12 @@ def main():
         help="output file or directory (if it ends with .json it is "
         "recognized as file, else as directory)",
     )
-    default_config_file = os.path.join(os.path.expanduser("~"), ".labelmerc")
+    
+    default_config_file = (
+        os.path.abspath("labelmerc") 
+        if config_fp is None else config_fp
+    )
+    
     parser.add_argument(
         "--config",
         dest="config",
@@ -160,16 +165,20 @@ def main():
         else:
             output_dir = output
 
-    translator = QtCore.QTranslator()
-    translator.load(
-        QtCore.QLocale.system().name(),
-        osp.dirname(osp.abspath(__file__)) + "/translate",
-    )
-    app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName(__appname__)
-    app.setWindowIcon(newIcon("icon"))
-    app.installTranslator(translator)
+    #translator = QtCore.QTranslator()
+    #translator.load(
+    #    QtCore.QLocale.system().name(),
+    #    osp.dirname(osp.abspath(__file__)) + "/translate",
+    #)
+    #app = QtWidgets.QApplication(sys.argv)
+    #app.setApplicationName(__appname__)
+    #app.setWindowIcon(newIcon("icon"))
+    #app.installTranslator(translator)
     win = MainWindow(
+        mode,
+        username,
+        manual_api,
+        aws_api,
         config=config,
         filename=filename,
         output_file=output_file,
@@ -183,7 +192,7 @@ def main():
 
     win.show()
     win.raise_()
-    sys.exit(app.exec_())
+    #sys.exit(app.exec_())
 
 
 # this main block is required to generate executable by pyinstaller

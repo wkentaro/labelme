@@ -6,6 +6,7 @@ import os
 import os.path as osp
 import re
 import webbrowser
+import json
 
 import imgviz
 import natsort
@@ -49,6 +50,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(
         self,
+        mode,
+        username,
+        manual_api,
+        aws_api,
         config=None,
         filename=None,
         output=None,
@@ -66,6 +71,22 @@ class MainWindow(QtWidgets.QMainWindow):
         if config is None:
             config = get_config()
         self._config = config
+        self.QUEUE_LEN = 10
+        self.mode = mode
+        self.username = username
+        self.manual_api = manual_api
+        self.aws_api = aws_api
+        self.userid = manual_api.getUserid(self.username)
+
+        self.loading_dict = {
+            "label": self.load_queue_label,
+            "qc": self.load_queue_qc
+        }
+
+        self.save_labels_dict = {
+            "label": self.save_labels_label,
+            "qc": self.save_labels_qc
+        }
 
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -811,6 +832,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.populateModeActions()
 
+        self.loading_dict[self.mode]()
+
         # self.firstStart = True
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
@@ -1281,6 +1304,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 items[0].setCheckState(Qt.Checked)
             # disable allows next and previous image to proceed
             # self.filename = filename
+            
+            self.save_labels_dict[self.mode](filename, shapes, flags)
             return True
         except LabelFileError as e:
             self.errorMessage(
@@ -2065,3 +2090,102 @@ class MainWindow(QtWidgets.QMainWindow):
                     images.append(relativePath)
         images = natsort.os_sorted(images)
         return images
+    
+    def load_models_queue(self):
+        stage_dict = {
+            "label": "preprocessed",
+            "qc": "qc"
+        }
+
+        stage = stage_dict[self.mode]
+        models = list(filter(
+            lambda model: (model["stage"] == stage) and (model["userId"] == self.userid),
+            self.manual_api.get_models()
+        ))
+
+        models.sort(key=lambda x: x["date"])
+        if len(models) > self.QUEUE_LEN:
+            models = models[0:self.QUEUE_LEN]
+        return models
+    
+    def load_queue_label(self):
+        self.images_path = os.path.abspath("images")
+        self.labels_path = os.path.abspath("labels")
+        if os.path.exists(self.images_path):
+            os.system("rm -rf " + self.images_path)
+        if os.path.exists(self.labels_path):
+            os.system("rm -rf " + self.labels_path)
+
+        os.makedirs(self.images_path)
+        os.makedirs(self.labels_path)
+
+        models = self.load_models_queue()
+        self.aws_api.configure_buckets("danville-labelling", "danville-labelling")
+
+        for model in models:
+            folder = model["folder"].strip("/")
+            image_key = folder + ".jpg"
+            label_key = folder + ".json"
+            self.aws_api.read_from_s3(image_key, os.path.join(self.images_path, image_key))
+            self.aws_api.read_from_s3(label_key, os.path.join(self.labels_path, label_key))
+
+        self.importDirImages(self.images_path)
+
+    def load_queue_qc(self):
+        self.images_path = os.path.abspath("images")
+        if os.path.exists(self.images_path):
+            os.system("rm -rf " + self.images_path)
+
+        os.makedirs(self.images_path)
+
+        models = self.load_models_queue()
+        self.aws_api.configure_buckets("lidar-results", "lidar-results")
+
+        for model in models:
+            folder = model["folder"].strip("/")
+            image_key = folder + "/" + "d_unchecked.jpg"
+            self.aws_api.read_from_s3(
+                image_key,
+                os.path.join(self.images_path, folder, "d_unchecked.jpg")
+            )
+
+        self.importDirImages(self.images_path)
+
+    def save_labels_label(self, filename, shapes, flags):
+        label_file = os.path.abspath(os.path.join(
+                self.labels_path,
+                os.path.splitext(os.path.split(filename)[-1])[0] + ".json"
+            ))
+        folder = os.path.splitext(os.path.split(filename)[-1])[0]
+
+        aws_fp = "completed_" + os.path.splitext(os.path.split(filename)[-1])[0] + ".json"
+
+        with open(label_file) as f:
+            data = json.load(f)
+
+        data['regions'] = shapes
+        data['name'] = self.manual_api.username
+        data['flags'] = flags
+
+        with open(label_file, 'w', encoding='utf-8') as updated_fd:
+            json.dump(data, updated_fd, ensure_ascii=False, indent=4)
+        
+        self.aws_api.output_s3(label_file, aws_fp)
+        self.manual_api.setStage(folder, "labelled")
+        logger.info("Pushed {} to s3 bucket".format(label_file))
+
+    def save_labels_qc(self, filename, shapes, flags):
+        folder = os.path.split(filename)[-2]
+        failures = ""
+
+        if flags["Pass"]:
+            self.manual_api.setStage(folder, "passed")
+            return
+        
+        gen = (flag for flag in flags if flag != "Pass" and flags[flag])
+        for flag in gen:
+            failures += "_" + flag if failures else flag
+
+        if failures:
+            self.manual_api.setFailures(folder, failures)
+            self.manual_api.setStage(folder, "failed")
