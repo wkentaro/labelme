@@ -9,6 +9,8 @@ from webbrowser import open as wb_open
 import sys
 import cv2
 from glob import glob
+import pyqtgraph as pg
+import pyqtgraph.opengl as gl
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
 from PyQt5.QtWidgets import QPushButton, QWidget  # ,QWhatsThis
@@ -44,7 +46,8 @@ from labelme.widgets import dock_title, \
     ZoomWidget, \
     GenerateSegmentedData, \
     set_snapping, \
-    add_flag_dialog
+    add_flag_dialog, \
+    render_3d
 
 #FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -248,7 +251,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.file_dock.setTitleBarWidget(self.file_dock_title)
         self.file_dock.setWidget(fileListWidget)
-
+        self.render_dock = QtWidgets.QDockWidget(self.tr(u"3d render"), self)
+        self.render_dock.setObjectName(u"render")
+        self.renderWidget = gl.GLViewWidget()
+        self.renderWidget.addItem(render_3d.draw_grid(1))
+        self.render_dock.setWidget(self.renderWidget)
+        
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
@@ -292,6 +300,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.render_dock)
 
         # Actions
         action = functools.partial(utils.new_action, self)
@@ -1791,6 +1800,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.status(self.tr("Error reading %s") % filename)
             return False
         self.image = image
+        self.image_as_array = utils.img_data_to_arr(self.imageData)
+        #FIXME some normalization procedure
+        self.renderWidget.addItem(render_3d.draw_SurfacePlot(self.image_as_array / 256))
         self.canvas.imgDim = [image.height(), image.width()]
         self.filename = filename
         if self._config["keep_prev"]:
