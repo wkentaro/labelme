@@ -19,22 +19,6 @@ class render_3d(gl.GLViewWidget):
         if not image is None:
             self.preproc_img()
 
-    def preproc_img(self):
-        self.z = z = img / 127 - 1
-        self.image = self.image[~np.all(img == 0, axis=1)]
-        self.image = self.image[:, ~np.all(img == 0, axis=0)]
-
-    def update_img(self,image:np.ndarray):
-        self.image = image
-        self.preproc_img()
-        self.draw_SurfacePlot()
-
-
-    
-
-    def set_Camera(self,Position):
-        self.setCameraPosition(distance=200)
-        self.setCameraParams(elevation=1000)
 
 def draw_SurfacePlot(z_vals):
     

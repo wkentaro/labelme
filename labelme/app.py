@@ -11,6 +11,7 @@ import cv2
 from glob import glob
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
+import numpy as np
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
 from PyQt5.QtWidgets import QPushButton, QWidget  # ,QWhatsThis
@@ -160,6 +161,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_widget.setFont(QFont("Arial", 12))
         flag_palette = QtGui.QPalette()
         gray_bright = 200
+        self.curPlot = None
         flag_palette.setColor(
             QtGui.QPalette.Text, QColor(
                 qRgb(gray_bright, gray_bright, gray_bright)
@@ -254,6 +256,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.render_dock = QtWidgets.QDockWidget(self.tr(u"3d render"), self)
         self.render_dock.setObjectName(u"render")
         self.renderWidget = gl.GLViewWidget()
+        self.renderWidget.setCameraPosition(distance=200)
+        self.renderWidget.setCameraParams(elevation=-1000)
         self.renderWidget.addItem(render_3d.draw_grid(1))
         self.render_dock.setWidget(self.renderWidget)
         
@@ -285,7 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
+        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock","render_dock"]:
             if self._config[dock]["closable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]["floatable"]:
@@ -1802,7 +1806,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image = image
         self.image_as_array = utils.img_data_to_arr(self.imageData)
         #FIXME some normalization procedure
-        self.renderWidget.addItem(render_3d.draw_SurfacePlot(self.image_as_array / 256))
+        
+        self.update3d_view()
+
         self.canvas.imgDim = [image.height(), image.width()]
         self.filename = filename
         if self._config["keep_prev"]:
@@ -2052,6 +2058,17 @@ class MainWindow(QtWidgets.QMainWindow):
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
                 self.loadFile(fileName)
+
+    def update3d_view(self):
+        self.cached_image = self.image_as_array / 255 - 1
+        self.cached_image = self.cached_image[~np.all(self.cached_image == 0, axis=1)]
+        self.cached_image = self.cached_image[:, ~np.all(self.cached_image == 0, axis=0)]
+        
+        # remove the current Plot before drawing a new one
+        if self.curPlot is not None:
+            self.renderWidget.removeItem(self.curPlot)
+        self.curPlot = render_3d.draw_SurfacePlot(self.cached_image)
+        self.renderWidget.addItem(self.curPlot)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir

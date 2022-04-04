@@ -57,6 +57,11 @@ file_dock:
   closable: true
   movable: true
   floatable: true
+render_dock:
+  show: false
+  closable: true
+  movable: true
+  floatable: false
 show_label_text_field: true
 label_completion: startswith
 fit_to_content:
