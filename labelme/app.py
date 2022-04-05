@@ -10,6 +10,9 @@ import sys
 import cv2
 import numpy as np
 from glob import glob
+import pyqtgraph as pg
+import pyqtgraph.opengl as gl
+import numpy as np
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QFont, qRgb
 from PyQt5.QtWidgets import QPushButton, QWidget  # ,QWhatsThis
@@ -46,7 +49,8 @@ from labelme.widgets import dock_title, \
     GenerateSegmentedData, \
     set_snapping, \
     add_flag_dialog, \
-    chart_widget
+    chart_widget, \
+    render_3d
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -159,6 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_widget.setFont(QFont("Arial", 12))
         flag_palette = QtGui.QPalette()
         gray_bright = 200
+        self.curPlot = None
         flag_palette.setColor(
             QtGui.QPalette.Text, QColor(
                 qRgb(gray_bright, gray_bright, gray_bright)
@@ -265,6 +270,14 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.container.setLayout(layout)
         self.chart_dock.setWidget(self.chart_widget)
 
+        self.render_dock = QtWidgets.QDockWidget(self.tr(u"3d render"), self)
+        self.render_dock.setObjectName(u"render")
+        self.renderWidget = gl.GLViewWidget()
+        self.renderWidget.setCameraPosition(distance=200)
+        self.renderWidget.setCameraParams(elevation=-1000)
+        self.renderWidget.addItem(render_3d.draw_grid(1))
+        self.render_dock.setWidget(self.renderWidget)
+        
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
@@ -293,7 +306,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
+        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock","render_dock"]:
             if self._config[dock]["closable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]["floatable"]:
@@ -309,6 +322,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.render_dock)
 
         # Actions
         action = functools.partial(utils.new_action, self)
@@ -588,11 +602,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("add new flag to list")
         )
 
-        # generate_data = action(
-        #     self.tr('Create Segmented Images'),
-        #     lambda: self.generate_segmented_data.show(),
-        #     tip=self.tr("Run macros to convert json data to training data.")
-        # )
+        generate_data = action(
+            self.tr('Create Segmented Images'),
+            lambda: self.generate_segmented_data.show(),
+            tip=self.tr("Run macros to convert json data to training data.")
+        )
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -1370,6 +1384,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
         self.canvas.init_poly_array()
+        self.canvas.init_zeroImg()
         self.canvas.getDistMapUpdate()
 
     def loadLabels(self, shapes):
@@ -1807,6 +1822,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.status(self.tr("Error reading %s") % filename)
             return False
         self.image = image
+        self.image_as_array = utils.img_data_to_arr(self.imageData)
+        #FIXME some normalization procedure
+        
+        self.update3d_view()
+
         self.canvas.imgDim = [image.height(), image.width()]
         self.filename = filename
         if self._config["keep_prev"]:
@@ -1827,6 +1847,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         flags.update(flg)
             else:
                 flags.update(self.labelFile.flags)
+        else:
+            self.canvas.init_zeroImg()
+            self.canvas.distMap_crit = None
         self.loadFlags(flags)
         if self._config["keep_prev"] and self.noShapes():
             self.loadShapes(prev_shapes, replace=False)
@@ -2070,6 +2093,17 @@ class MainWindow(QtWidgets.QMainWindow):
             if fileName:
                 self.loadFile(fileName)
 
+    def update3d_view(self):
+        self.cached_image = self.image_as_array / 255 - 1
+        self.cached_image = self.cached_image[~np.all(self.cached_image == 0, axis=1)]
+        self.cached_image = self.cached_image[:, ~np.all(self.cached_image == 0, axis=0)]
+        
+        # remove the current Plot before drawing a new one
+        if self.curPlot is not None:
+            self.renderWidget.removeItem(self.curPlot)
+        self.curPlot = render_3d.draw_SurfacePlot(self.cached_image)
+        self.renderWidget.addItem(self.curPlot)
+
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
         if default_output_dir is None and self.filename:
@@ -2097,8 +2131,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.statusBar().show()
 
+        # files_in_output_dir = list(self.output_dir.glob("**/*" + LabelFile.suffix))
+        # if a output directory is given, don't look for label files in the input dir
+        self.importDirImages(self.lastOpenDir, load=False,omit_label_files=True)
         current_filename = self.filename
-        self.importDirImages(self.lastOpenDir, load=False)
+            
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2138,7 +2175,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
 
-        currOutputPath = self.getRelOutputpath(self.filename)
+        currOutputPath = self.getRelOutputpath(pl.WindowsPath(self.filename))
 
         filename = dlg.getSaveFileName(
             self,
@@ -2206,6 +2243,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def getRelOutputpath(self, filename: pl.WindowsPath):
 
+        assert isinstance(filename, pl.WindowsPath)
         if self.output_dir:
             if self.filenameList:
                 # reverse engineer the respective relative path
@@ -2373,7 +2411,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.openNextImg()
 
-    def importDirImages(self, dirpath, pattern=None, load=True):
+    def importDirImages(self, dirpath, pattern=None, load=True, omit_label_files = False):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
@@ -2385,16 +2423,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.clear()
         self.filenameList = []
         self.relPathList = []
-        ImageList = self.scanAllImages(dirpath)
+        image_suffix_priortiy = [".png", ".tif", ".bmp"]
+        if not omit_label_files:
+            image_suffix_priortiy.insert(0,LabelFile.suffix)
+        ImageList = self.scanAllImages(dirpath,image_suffix_priortiy)
         for i, filename in enumerate(ImageList):
             if pattern and pattern not in str(filename):
                 continue
             self.filenameList.append(filename)
             self.relPathList.append(filename.relative_to(dirpath).parent)
-            label_file = filename.with_suffix(".json")
+            label_file = filename.with_suffix(LabelFile.suffix)
             if self.output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self.output_dir, label_file_without_path)
+                # get relative save path of potentially existing annotation
+                label_file = self.output_dir.joinpath(self.relPathList[-1],
+                                                      filename.with_suffix(LabelFile.suffix).name)
 
             item = QtWidgets.QListWidgetItem(str(filename))
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
@@ -2406,13 +2448,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
 
-    def scanAllImages(self, folderPath):
-        extensions = [
-            ".%s" % fmt.data().decode().lower()
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
-        extensions.append(".json")
-        image_suffix_priortiy = [".json", ".png", ".tif", ".bmp"]
+    def scanAllImages(self, folderPath,image_suffix_priortiy):
+        
+        #loop until suitalbe images are found
         for image_suffix in image_suffix_priortiy:
             DATAPOINT_LIST = glob(
                 folderPath + '/**/*{}'.format(image_suffix),

@@ -20,7 +20,6 @@ sampleImages/th_barbara_16.png
 labelme/utils/timeit_test.py
 outpufile_calls.txt
 dist/labelme_with_tflite.exe
-labelme/utils/readAWR_bmp.py
 labelme/utils/test.ipynb
 dist/labelme_with_tflite.exe
 dist/labelme.exe
@@ -28,3 +27,8 @@ dist/main/*
 output_time.txt
 output.dat
 .vscode/settings.json
+dist/labelme_old.exe
+dist/labelme_with_perf.exe
+dist/output_time.txt
+dist/output.dat
+labelme/utils/readAWR_bmp.py
