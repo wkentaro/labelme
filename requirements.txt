@@ -9,3 +9,5 @@ PyQt5
 termcolor
 opencv-python
 colorama
+pyqtgraph
+pyopengl
