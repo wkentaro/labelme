@@ -30,7 +30,8 @@ class Canvas(FigureCanvas):
         self.ax.set(
             xlabel="X Position" ,
             ylabel="Pixel Value",
-            title="Height Plot")
+            title="Height Plot",
+            ylim = ylim)
         # self.ax.draw()
 
     def mousePressEvent(self, ev):

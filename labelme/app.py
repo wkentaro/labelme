@@ -30,6 +30,7 @@ from qtpy import QtWidgets
 from labelme import __appname__
 from labelme import PY2
 
+from labelme.viewer.GLViewWidget import cust_GLViewWidget
 from labelme import utils
 from labelme.config import get_config
 from labelme.label_file import LabelFile
@@ -272,7 +273,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.render_dock = QtWidgets.QDockWidget(self.tr(u"3d render"), self)
         self.render_dock.setObjectName(u"render")
-        self.renderWidget = gl.GLViewWidget()
+        self.renderWidget = cust_GLViewWidget()
         self.renderWidget.setCameraPosition(distance=200)
         self.renderWidget.setCameraParams(elevation=-1000)
         self.renderWidget.addItem(render_3d.draw_grid(1))
@@ -607,6 +608,16 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.generate_segmented_data.show(),
             tip=self.tr("Run macros to convert json data to training data.")
         )
+
+        ai_infer = action(
+            self.tr("ai_infer"),
+            self.ai_infer,
+            enabled=True,
+            tip=self.tr("infer masks with specified model")
+
+
+        )
+
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -932,6 +943,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             # zoom,
             fitWidth,
+            ai_infer,
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -1781,7 +1793,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self.otherData = self.labelFile.otherData
         else:
-            self.imageData = LabelFile.load_image_file(str(filename))
+            self.imageData,self.is_8_bit = LabelFile.load_image_file(str(filename))
             if self.imageData is None:
                 self.labelFileOut = LabelFile()
                 self.labelFileOut.load(filename)
@@ -1800,6 +1812,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     image.shape[0],
                     QtGui.QImage.Format_Indexed8
                 )
+                self.is_8_bit = True
             elif image.dtype == "uint16":
                 image = QtGui.QImage(
                     image.data,
@@ -1807,6 +1820,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     image.shape[0],
                     QtGui.QImage.Format_Grayscale16
                 )
+                self.is_8_bit = False
         if image.isNull():
             formats = [
                 "*.{}".format(fmt.data().decode())
@@ -1823,6 +1837,15 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         self.image = image
         self.image_as_array = utils.img_data_to_arr(self.imageData)
+        
+        
+        # removing 0 edges in array
+        self.normalized_img = self.image_as_array[:, ~np.all(self.image_as_array == 0, axis=0)]
+        self.normalized_img = self.normalized_img[~np.all(self.normalized_img == 0, axis=1)]
+        if self.is_8_bit:
+            self.normalized_img = self.normalized_img / self.normalized_img.max()
+        else:
+            self.normalized_img = (self.normalized_img / self.normalized_img.max() * (2**16-1)).astype("uint16")
         #FIXME some normalization procedure
         
         self.update3d_view()
@@ -1939,9 +1962,10 @@ class MainWindow(QtWidgets.QMainWindow):
             mid = int(span / 2)
         end = mid + int(span / 2)
         start = mid - int(span / 2)
-
+        percent_min = np.percentile(self.normalized_img, 5)
+        percent_max = np.percentile(self.normalized_img, 99.99)
         line = arr[y_level, start:end]
-        self.chart_widget.update_plot([line.min(), line.max()], line, start=start)
+        self.chart_widget.update_plot([percent_min, percent_max], line, start=start)
 
     def adjustScale(self, initial=False):
         # TODO set the default zoom setting in config instead
@@ -2366,6 +2390,16 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.targetDirPath = targetDirPath
         self.importDirImages(targetDirPath)
+
+    def ai_infer(self):
+        if self.model is None:
+            self.model = utils.ai_infer.GeneralModel(
+                self._config["model_settings"]["model_path"],
+                "ov",
+                overlaps=[128, 128]
+            )
+        prediction = utils.ai_infer.predict(self.image_as_array, self.model)
+        points = utils.image.polygonfit(prediction)
 
     @property
     def imageList(self):
