@@ -746,13 +746,27 @@ class Canvas(QtWidgets.QWidget):
 
     def update_chart(self, pos):
         pos_as_int = [int(pos.x()), int(pos.y())]
-        QImg = self.pixmap.toImage().convertToFormat(QtGui.QImage.Format_Indexed8)
+        if self.pixmap.depth() == 32:
+            QImg = self.pixmap.toImage().convertToFormat(QtGui.QImage.Format_Grayscale16)
+            is_8_bit=False
+        else:
+            QImg = self.pixmap.toImage().convertToFormat(QtGui.QImage.Format_Indexed8)
+            is_8_bit = True
         width = QImg.width()
         height = QImg.height()
-        s = QImg.bits().asstring(width * height * 1)
-        arr = np.fromstring(s, dtype=np.uint8).reshape((height, width, 1))
+        if is_8_bit:
+            s = QImg.bits().asstring(int(width * height))
+            arr = np.fromstring(s, dtype=np.uint8).reshape((height, width, 1))
+        else:
+            s = QImg.bits().asstring(int(width * height * 2))
+            arr = np.fromstring(s, dtype=np.uint16).reshape((height, width, 1))
+            arr = 65535 - arr
+        arr = arr[:, ~np.all(arr == 0, axis=0)]
+        arr = arr[~np.all(arr == 0, axis=1)]
+        quantile_min = np.percentile(arr,1)
+        corr_arr = np.where(arr==0,quantile_min,arr)
         span = int(width * 1 / self.scale)
-        self.chartUpdate.emit(arr, span, pos_as_int[1])
+        self.chartUpdate.emit(corr_arr, span, pos_as_int[1])
 
     def paintEvent(self, event):
         if not self.pixmap:

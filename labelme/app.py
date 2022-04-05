@@ -1909,8 +1909,11 @@ class MainWindow(QtWidgets.QMainWindow):
         horizontalOffset = maxScrollValue - self.scrollBars[Qt.Horizontal].value()
         fitWidthZoom = self.scaleFitWidth()
         span = int(span * fitWidthZoom)
-        mid = int(span / 2) + int((self.canvas.pixmap.width() - span) *
-                                    (1 - (horizontalOffset / maxScrollValue)))
+        if maxScrollValue > 0:
+            mid = int(span / 2) + int((self.canvas.pixmap.width() - span) *
+                                        (1 - (horizontalOffset / maxScrollValue)))
+        else:
+            mid = int(span / 2)
         end = mid + int(span / 2)
         start = mid - int(span / 2)
 
