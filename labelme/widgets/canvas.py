@@ -28,7 +28,11 @@ class Canvas(QtWidgets.QWidget):
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
     chartUpdate = QtCore.Signal(np.ndarray, int, int)
+    # cursorMoved = QtCore.Signal(QtCore.QPointF)
     selectionChanged = QtCore.Signal(list)
+    # UpdateRenderedShape = QtCore.Signal(Shape, int)
+    # drawRenderedShape = QtCore.Signal(str)
+    # removeCurrentShape = QtCore.Signal()
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
@@ -88,6 +92,7 @@ class Canvas(QtWidgets.QWidget):
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
+        # self.beginShape = False
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -214,8 +219,8 @@ class Canvas(QtWidgets.QWidget):
 
         self.prevMovePoint = pos
         self.restoreCursor()
-
-
+        # if not self.pixmap.isNull():
+            # self.cursorMoved.emit(pos)
         # Polygon drawing.
         if self.drawing():
             if self.createMode in ["polygon", "trace"]:
@@ -290,6 +295,8 @@ class Canvas(QtWidgets.QWidget):
                 self.boundedMoveShapes(self.selectedShapes, pos)
                 self.repaint()
                 self.movingShape = True
+            # else:
+            #     raise ValueError
             return
 
         # Just hovering over the canvas, 2 possibilities:
@@ -472,6 +479,7 @@ class Canvas(QtWidgets.QWidget):
                     if self.createMode == "polygon":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
+                        # self.UpdateRenderedShape.emit(self.current, Index=None)
                         if self.current.isClosed():
                             self.finalise()
                     elif self.createMode == "trace":
@@ -490,6 +498,7 @@ class Canvas(QtWidgets.QWidget):
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
+                    # self.beginShape = True
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
                     if self.createMode == "trace":
@@ -669,7 +678,10 @@ class Canvas(QtWidgets.QWidget):
         point = shape[index]
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(point, pos)
+        # self.removeCurrentShape.emit()
+        # shape_index = self.shapes.index(shape)
         shape.moveVertexBy(index, pos - point)
+        # self.UpdateRenderedShape.emit(shape, shape_index)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
@@ -831,11 +843,13 @@ class Canvas(QtWidgets.QWidget):
         self.current.close()
         self.shapes.append(self.current)
         self.storeShapes()
+        # self.removeCurrentShape.emit()
         self.current = None
         self.setHiding(False)
         self.newShape.emit()
         self.update()
         index = len(self.shapes) - 1
+        # self.drawRenderedShape.emit("most_recent")
         self.getDistMapUpdate(index)
 
     def closeEnough(self, p1, p2):

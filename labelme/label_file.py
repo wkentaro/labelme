@@ -47,10 +47,12 @@ class LabelFile(object):
         if pl.WindowsPath(filename).suffix == ".bmp":
             try:
                 image_pil = PIL.Image.open(filename)
+                is_8_bit = True
             except IOError:
                 from utils.readAWR_bmp import readAWR_bmp
                 img = readAWR_bmp(filename)
                 image_pil = PIL.Image.fromarray(img)
+                is_8_bit = False
             
         else:
             try:
@@ -67,21 +69,26 @@ class LabelFile(object):
             ext = osp.splitext(filename)[1].lower()
             if PY2 and QT4:
                 format = "PNG"
+                is_8_bit = True
             elif ext in [".jpg", ".jpeg"]:
                 format = "JPEG"
+                is_8_bit = True
             else:
                 if hasattr(image_pil,"decodermaxblock"):
                     if image_pil.decodermaxblock > 255:
                         format = "TIFF"
+                        is_8_bit = False
                     else:
                         format = "PNG"
+                        is_8_bit = True
                 else:
                     format = "TIFF"
+                    is_8_bit = False
 
             image_pil.save(f, format=format)
             f.seek(0)
             out = f.read()
-            return out
+            return out, is_8_bit
 
     def load(self, filename):
         keys = [
@@ -126,7 +133,7 @@ class LabelFile(object):
             else:
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
+                imageData,_ = self.load_image_file(imagePath)
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
             self._check_image_height_and_width(

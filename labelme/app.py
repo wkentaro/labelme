@@ -127,6 +127,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.initZoomValue = 100
 
+        self.vert_crosshair = None
+
+        self.polygon_render_width = 5.0
+
+        self.rendererd_shapes = []
+
         assert self._config["init_zoom_mode"] in \
             ["FIT_WINDOW", "FIT_WIDTH", "MANUAL_ZOOM", None], \
             "specify ZoomMode as 'FIT_WINDOW','FIT_WIDTH' or 'MANUAL_ZOOM'"
@@ -276,7 +282,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.renderWidget = cust_GLViewWidget()
         self.renderWidget.setCameraPosition(distance=200)
         self.renderWidget.setCameraParams(elevation=-1000)
-        self.renderWidget.addItem(render_3d.draw_grid(1))
+        # self.renderWidget.addItem(render_3d.draw_grid(1000))
         self.render_dock.setWidget(self.renderWidget)
         
         self.zoomWidget = ZoomWidget()
@@ -304,6 +310,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
         self.canvas.chartUpdate.connect(self.updateChart)
+        # self.canvas.cursorMoved.connect(self.CursorMapping)
+        # self.canvas.UpdateRenderedShape.connect(self.updateRenderedShapes)
+        # self.canvas.drawRenderedShape.connect(self.drawRenderedShapes)
+        # self.canvas.removeCurrentShape.connect(self.removeRecentShapes)
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
@@ -1398,6 +1408,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.init_poly_array()
         self.canvas.init_zeroImg()
         self.canvas.getDistMapUpdate()
+        # self.drawRenderedShapes(mode="all")
 
     def loadLabels(self, shapes):
         s = []
@@ -1842,6 +1853,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # removing 0 edges in array
         self.normalized_img = self.image_as_array[:, ~np.all(self.image_as_array == 0, axis=0)]
         self.normalized_img = self.normalized_img[~np.all(self.normalized_img == 0, axis=1)]
+        self.is_8_bit = True if image.depth() != 16 else False
         if self.is_8_bit:
             self.normalized_img = self.normalized_img / self.normalized_img.max()
         else:
@@ -1934,6 +1946,69 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status(str(self.tr("Loaded %s")) % osp.basename(str(filename)))
         return True
 
+    def updateRenderedShapes(self, shape, index):
+        if index is None:
+            if self.temp_rendered_shape is not None:
+                self.renderWidget.removeItem(self.temp_rendered_shape)
+        else:
+            self.renderWidget.removeItem(self.rendererd_shapes[index])
+        points = self._get_interpolated_points(shape)
+        temp_rendered_shape = (gl.GLLinePlotItem(
+            pos=points,
+            color=shape.line_color,
+            width=self.polygon_render_width))
+        if index is None:
+            self.temp_rendered_shape = temp_rendered_shape
+        else:
+            self.rendererd_shapes[index] = temp_rendered_shape
+        self.renderWidget.addItem(self.rendererd_shapes[index])
+
+    def removeRecentShapes(self):
+        if not self.canvas.beginShape:
+            self.renderWidget.removeItem(self.rendererd_shape)
+        else:
+            self.canvas.beginShape = False
+            return
+
+    def drawRenderedShapes(self, mode: str):
+        self.temp_rendered_shape = None
+        # draw most recent shapes if one was added or all
+        if mode == "most_recent":
+            shapes = [self.canvas.shapes[-1]]
+        elif mode == "all":
+            shapes = self.canvas.shapes
+        else:
+            raise ValueError
+        for s in shapes:
+            points = self._get_interpolated_points(s)
+            self.rendererd_shapes.append(gl.GLLinePlotItem(
+                pos=points,
+                color=s.line_color,
+                width=self.polygon_render_width))
+            self.renderWidget.addItem(self.rendererd_shapes[-1])
+
+    def _get_interpolated_points(self, shape) -> np.ndarray:
+        expt_array = np.zeros((len(shape.poly_array) + 1, 2), dtype=np.float16)
+        expt_array[0:-1] = shape.poly_array
+        expt_array[-1] = shape.poly_array[0]
+        diff = expt_array[1:] - shape.poly_array
+        circum = np.array([np.sqrt(i.dot(i)).astype(np.uint16) for i in diff])
+        points = np.zeros((circum.sum(), 3))
+
+        for i, p in enumerate(expt_array[:-1]):
+            for sample in range(circum[i]):
+                norm_p = diff[i] / circum[i]
+                accum_cnt = circum[:i].sum()
+                cur_p = p + sample * norm_p
+                points[accum_cnt + sample] = (cur_p[1],
+                                              cur_p[0],
+                                              self.image_as_array[
+                                                  int(cur_p[1]),
+                                                  int(cur_p[0])] / 8
+                                              )
+        return points
+
+
     def resizeEvent(self, event):
         if (
             self.canvas
@@ -1949,6 +2024,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.adjustSize()
         self.canvas.update()
         self.status(f"current Zoom Level {self.zoomWidget.value()} %")
+
+    def CursorMapping(self, pos: QtCore.QPointF):
+        if self.vert_crosshair is not None:
+            try:
+                self.renderWidget.removeItem(self.vert_crosshair)
+                self.renderWidget.removeItem(self.hor_crosshair)
+            except ValueError:
+                pass
+
+        img_shape = self.image_as_array.shape
+        if (pos.y() < 0 or pos.x() < 0) or\
+           (pos.y() > img_shape[0] or pos.x() > img_shape[1]):
+            return
+        self.crosshair_color = (1.0, 1.0, 0.0, 1.0)
+        # self.crosshair_color = "darkblue"
+        self.crosshair_width = 5.0
+        vert_points = np.zeros((20, 3))
+        hor_points = np.zeros((20, 3))
+        for i, offset in enumerate(range(-10, 10)):
+            try:
+                vert_points[i] = pos.y(), pos.x() + offset, self.image_as_array[int(pos.y()), int(pos.x()) + offset] / 8 + 2
+                hor_points[i] = pos.y() + offset, pos.x(), self.image_as_array[int(pos.y()) + offset, int(pos.x())] / 8 + 2
+            except IndexError:
+                vert_points[i] = pos.y(), pos.x() + offset, 0
+                hor_points[i] = pos.y() + offset, pos.x(), 0
+        self.vert_crosshair = pg.opengl.GLLinePlotItem(
+            pos=vert_points,
+            color=self.crosshair_color,
+            width=self.crosshair_width
+            )
+        self.hor_crosshair = pg.opengl.GLLinePlotItem(
+            pos=hor_points,
+            color=self.crosshair_color,
+            width=self.crosshair_width
+            )
+        self.renderWidget.addItem(self.vert_crosshair)
+        self.renderWidget.addItem(self.hor_crosshair)
 
     def updateChart(self, arr, span, y_level):
         maxScrollValue = self.scrollBars[Qt.Horizontal].maximum()
@@ -2118,10 +2230,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.loadFile(fileName)
 
     def update3d_view(self):
-        self.cached_image = self.image_as_array / 255 - 1
-        self.cached_image = self.cached_image[~np.all(self.cached_image == 0, axis=1)]
-        self.cached_image = self.cached_image[:, ~np.all(self.cached_image == 0, axis=0)]
-        
+        self.cached_image = self.image_as_array / 8
+        # self.cached_image = self.cached_image[~np.all(self.cached_image == 0, axis=1)]
+        # self.cached_image = self.cached_image[:, ~np.all(self.cached_image == 0, axis=0)]
+
         # remove the current Plot before drawing a new one
         if self.curPlot is not None:
             self.renderWidget.removeItem(self.curPlot)

@@ -28,12 +28,12 @@ def draw_SurfacePlot(z_vals):
                         glOptions='opaque',
                         smooth=True,
                         )
-    Plot.scale(16./49., 16./49., 15)
-    Plot.translate(-500, -200, 0)
+    Plot.scale(1, 1, 1)
+    Plot.translate(0, 0, 0)
     return Plot
 
 def draw_grid(scale):
     grid = gl.GLGridItem()
-    grid.scale(100,100,0.1)
-    grid.setDepthValue(20)  # draw grid after surfaces since they may be translucent
+    grid.scale(scale, scale, 1)
+    grid.setDepthValue(10)  # draw grid after surfaces since they may be translucent
     return grid
