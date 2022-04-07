@@ -27,7 +27,7 @@ class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
-    chartUpdate = QtCore.Signal(np.ndarray, int, int)
+    # chartUpdate = QtCore.Signal(np.ndarray, int, int)
     # cursorMoved = QtCore.Signal(QtCore.QPointF)
     selectionChanged = QtCore.Signal(list)
     # UpdateRenderedShape = QtCore.Signal(Shape, int)
@@ -307,8 +307,8 @@ class Canvas(QtWidgets.QWidget):
         if not self.pixmap.isNull() and\
                 ((pos.x() > 0 and pos.x() < self.imgDim[1])) and\
                 (pos.y() > 0 and pos.y() < self.imgDim[0]):
-            if int(ev.modifiers()) == QtCore.Qt.ShiftModifier:
-                self.update_chart(pos)
+            # if int(ev.modifiers()) == QtCore.Qt.ShiftModifier:
+            #     self.update_chart(pos)
             for i in range(len(self.shapes)):
                 # Look for a nearby vertex to highlight. If that fails,
                 # check if we happen to be inside a shape.
@@ -778,7 +778,7 @@ class Canvas(QtWidgets.QWidget):
         quantile_min = np.percentile(arr,1)
         corr_arr = np.where(arr==0,quantile_min,arr)
         span = int(width * 1 / self.scale)
-        self.chartUpdate.emit(corr_arr, span, pos_as_int[1])
+        # self.chartUpdate.emit(corr_arr, span, pos_as_int[1])
 
     def paintEvent(self, event):
         if not self.pixmap:

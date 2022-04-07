@@ -263,26 +263,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setTitleBarWidget(self.file_dock_title)
         self.file_dock.setWidget(fileListWidget)
 
-        self.chart_dock_title = dock_title.DockTitle("Chart of Line")
-        self.chart_dock = QtWidgets.QDockWidget(self.tr(u"Chart of Line"), self)
+        # self.chart_dock_title = dock_title.DockTitle("Chart of Line")
+        # self.chart_dock = QtWidgets.QDockWidget(self.tr(u"Chart of Line"), self)
 
-        self.chart_dock.setTitleBarWidget(self.chart_dock_title)
-        self.chart_dock.setObjectName(u"Charts")
-        self.chart_widget = chart_widget.Canvas(self)
+        # self.chart_dock.setTitleBarWidget(self.chart_dock_title)
+        # self.chart_dock.setObjectName(u"Charts")
+        # self.chart_widget = chart_widget.Canvas(self)
         
         # layout = QtWidgets.QFormLayout()
         # layout.addRow(self.tr(""), self.chart_widget)
         # # layout.addRow(self.tr(""), self.flag_widget)
         # self.container = QWidget()
         # self.container.setLayout(layout)
-        self.chart_dock.setWidget(self.chart_widget)
+        # self.chart_dock.setWidget(self.chart_widget)
 
         self.render_dock = QtWidgets.QDockWidget(self.tr(u"3d render"), self)
         self.render_dock.setObjectName(u"render")
         self.renderWidget = cust_GLViewWidget()
         self.renderWidget.setCameraPosition(distance=200)
         self.renderWidget.setCameraParams(elevation=-1000)
-        # self.renderWidget.addItem(render_3d.draw_grid(1000))
+        self.renderWidget.addItem(render_3d.draw_grid(1000))
         self.render_dock.setWidget(self.renderWidget)
         
         self.zoomWidget = ZoomWidget()
@@ -332,7 +332,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.render_dock)
 
         # Actions
