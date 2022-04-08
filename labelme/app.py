@@ -47,8 +47,7 @@ from labelme.widgets import dock_title, \
     ToolBar, \
     UniqueLabelQListWidget, \
     ZoomWidget, \
-    GenerateSegmentedData, \
-    set_snapping, \
+    GenerateSegmentedData, genericValueDialog, \
     add_flag_dialog, \
     chart_widget, \
     render_3d
@@ -132,6 +131,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.polygon_render_width = 5.0
 
         self.rendererd_shapes = []
+
+        self.plotLim_low = 1
+
+        self.plotLim_high = 99
+
+        self.SetSmoothnessDialog = None
+
+        self.AxisLimitDialog = None
 
         assert self._config["init_zoom_mode"] in \
             ["FIT_WINDOW", "FIT_WIDTH", "MANUAL_ZOOM", None], \
@@ -303,6 +310,9 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Vertical: scrollArea.verticalScrollBar(),
             Qt.Horizontal: scrollArea.horizontalScrollBar(),
         }
+        
+        
+        
         self.canvas.scrollRequest.connect(self.scrollRequest)
 
         self.canvas.newShape.connect(self.newShape)
@@ -717,6 +727,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("set smoothness of trace-polygon"),
             enabled=True,
         )
+
+        setAxisLimits_lower = action(
+            "& lower Axis Limit",
+            self.setAxisLimit_lower,
+            self.tr("sets lower Axis Limit for Plot Widget"),
+            enabled=True,
+        )
         # Group zoom controls into a list for easier toggling.
         zoomActions = (
             self.zoomWidget,
@@ -916,6 +933,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 saveWithImageData,
                 setSnappingDistance,
                 setTraceSmoothness,
+                setAxisLimits_lower,
             ),
         )
         # Custom context menu for the canvas widget:
@@ -1714,9 +1732,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.global_sobel_filter_settings  = [dialog.kernelSize.value(), dialog.derivative.value(), dialog.clip_level.value()] 
 
     def setSnappingDistance(self):
-        dialog = set_snapping.editSingleVariableDialog(
+        dialog = genericValueDialog.editVariablesDialog(
             self,
-            defaultValue=self.canvas.epsilon,
+            defaultValues=self.canvas.epsilon,
             minValue=5,
             maxValue=30,
             lowValueText="less tolerance",
@@ -1732,22 +1750,49 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["shape"]["select"]["epsilon"] = dialog.value
 
     def setTraceSmoothness(self):
-        dialog = set_snapping.editSingleVariableDialog(
-            self,
-            defaultValue=self.canvas.trace_smothness,
-            minValue=1,
-            maxValue=15,
-            lowValueText="smaller distance \n between points",
-            highValueText="greater distance \n between points",
-            WindowTitle="set trace point-distance",
-            helpText="this slider controls how often points are drawn when\
-                trace mode is used, i.e. how smooth the polygon should be",
-            WindowWidth=400,
-            WindowHeight=150
-        )
-        dialog.exec_()
-        self.canvas.trace_smothness = dialog.value
-        self._config["shape"]["trace"]["smothness"] = dialog.value
+        if self.SetSmoothnessDialog is not None:
+            self.SetSmoothnessDialog = genericValueDialog.editVariablesDialog(
+                self,
+                defaultValues=[self.canvas.trace_smothness],
+                minValue=[1],
+                maxValue=[15],
+                lowValueText=["smaller distance \n between points"],
+                highValueText=["greater distance \n between points"],
+                WindowTitle="set trace point-distance",
+                helpText="this slider controls how often points are drawn when\
+                    trace mode is used, i.e. how smooth the polygon should be",
+                WindowWidth=400,
+                WindowHeight=150
+            )
+        self.SetSmoothnessDialog.exec_()
+        self.canvas.trace_smothness = self.SetSmoothnessDialog.values[0]
+        self._config["shape"]["trace"]["smothness"] = self.SetSmoothnessDialog.values[0]
+
+    def setAxisLimit_lower(self):
+        if self.AxisLimitDialog is None:
+            self.AxisLimitDialog = genericValueDialog.editVariablesDialog(
+                self,
+                defaultValues=[10, 10],
+                minValue=[0, 0],
+                maxValue=[100, 20],
+                lowValueText=["Low Permilles y Limit",
+                            "test bla"],
+                highValueText=["higher Permilles as lower y Limit",
+                            "testbla"],
+                WindowTitle="Plot lower Axis Limit",
+                helpText="lower value means more of the value range can be\
+                    displayed at any given time, higher value means details\
+                    are better visible but the cuve might go out of view",
+                reactive=True
+            )
+            self.AxisLimitDialog.updateChartLimit.connect(self.updateChartLimits)
+        self.AxisLimitDialog.exec_()
+        
+
+    def updateChartLimits(self, chartLimits):
+        self.plotLim_low = chartLimits[0] / 10
+        self.plotLim_high = 100 - chartLimits[1] / 10
+        self.updateChart()
 
     def togglePolygons(self, value):
         for item in self.labelList:
@@ -2069,22 +2114,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.renderWidget.addItem(self.vert_crosshair)
         self.renderWidget.addItem(self.hor_crosshair)
 
-    def updateChart(self, arr, span, y_level):
+    def updateChart(self, arr=None, span=None, y_level=None):
         maxScrollValue = self.scrollBars[Qt.Horizontal].maximum()
         horizontalOffset = maxScrollValue - self.scrollBars[Qt.Horizontal].value()
         fitWidthZoom = self.scaleFitWidth()
-        span = int(span * fitWidthZoom)
-        if maxScrollValue > 0:
-            mid = int(span / 2) + int((self.canvas.pixmap.width() - span) *
-                                        (1 - (horizontalOffset / maxScrollValue)))
-        else:
-            mid = int(span / 2)
-        end = mid + int(span / 2)
-        start = mid - int(span / 2)
-        percent_min = np.percentile(self.normalized_img, 3)
-        percent_max = np.percentile(self.normalized_img, 99.993)
-        line = self.normalized_img[y_level, start:end]
-        self.chart_widget.update_plot([percent_min, percent_max], line, start=start)
+        if span is not None:
+            self.span = int(span * fitWidthZoom)
+            if maxScrollValue > 0:
+                mid = int(span / 2) + int((self.canvas.pixmap.width() - span) *
+                                            (1 - (horizontalOffset / maxScrollValue)))
+            else:
+                mid = int(span / 2)
+            self.end = mid + int(span / 2)
+            self.start = mid - int(span / 2)
+        percent_min = np.percentile(self.normalized_img, self.plotLim_low)
+        percent_max = np.percentile(self.normalized_img, self.plotLim_high)
+        if y_level is not None:
+            self.y_level = y_level
+        line = self.normalized_img[self.y_level, self.start:self.end]
+        self.chart_widget.update_plot([percent_min, percent_max], line, start=self.start)
 
     def adjustScale(self, initial=False):
         # TODO set the default zoom setting in config instead

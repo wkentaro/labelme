@@ -308,7 +308,7 @@ class Canvas(QtWidgets.QWidget):
                 ((pos.x() > 0 and pos.x() < self.imgDim[1])) and\
                 (pos.y() > 0 and pos.y() < self.imgDim[0]):
             if int(ev.modifiers()) == QtCore.Qt.ShiftModifier:
-                self.update_chart(pos)
+                self.updateChart(pos)
             for i in range(len(self.shapes)):
                 # Look for a nearby vertex to highlight. If that fails,
                 # check if we happen to be inside a shape.
@@ -768,7 +768,7 @@ class Canvas(QtWidgets.QWidget):
         if not self.boundedMoveShapes(shapes, point - offset):
             self.boundedMoveShapes(shapes, point + offset)
 
-    def update_chart(self, pos):
+    def updateChart(self, pos):
         pos_as_int = [int(pos.x()), int(pos.y())]
         if self.pixmap.depth() == 32:
             QImg = self.pixmap.toImage().convertToFormat(QtGui.QImage.Format_Grayscale16)
