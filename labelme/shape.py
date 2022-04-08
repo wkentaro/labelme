@@ -65,6 +65,7 @@ class Shape(object):
         self.other_data = {}
         self.vertex_epsilon = vertex_epsilon
         self.prev_val = None
+        self.poly_array = None
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
@@ -111,6 +112,12 @@ class Shape(object):
             self.close()
         else:
             self.points.append(point)
+            if self.poly_array is None:
+                self.init_poly_array()
+                # import IPython; IPython.embed()
+                return
+            
+            self.poly_array = np.append(self.poly_array, [[point.x(), point.y()]], axis=0)
 
     def canAddPoint(self):
         return self.shape_type in ["polygon", "trace", "linestrip"]
@@ -128,6 +135,7 @@ class Shape(object):
     def removePoint(self, i):
         try:
             self.points.pop(i)
+            self.poly_array = np.delete(self.poly_array, i, axis=0)
         except IndexError:
             logger.warn(f"Index Error with point {i}")
             pass
@@ -178,9 +186,7 @@ class Shape(object):
             else:
                 line_path.moveTo(self.points[0])
                 # self.poly = QtGui.QPolygonF(self.points)
-                self.poly_array = np.array([[p.x(), p.y()]
-                                            for p in self.points]
-                                           )
+                self.init_poly_array()
                 self.x_span = np.max(self.poly_array[:, 0]) -\
                     np.min(self.poly_array[:, 0])
                 self.y_span = np.max(self.poly_array[:, 1]) -\
@@ -332,6 +338,10 @@ class Shape(object):
         """
         self._highlightIndex = i
         self._highlightMode = action
+
+    def init_poly_array(self):
+        self.poly_array = np.array([[p.x(), p.y()]
+                                            for p in self.points])
 
     def highlightClear(self):
         """Clear the highlighted point"""

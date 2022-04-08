@@ -27,12 +27,12 @@ class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
-    # chartUpdate = QtCore.Signal(np.ndarray, int, int)
-    # cursorMoved = QtCore.Signal(QtCore.QPointF)
+    chartUpdate = QtCore.Signal(np.ndarray, int, int)
+    cursorMoved = QtCore.Signal(QtCore.QPointF)
     selectionChanged = QtCore.Signal(list)
-    # UpdateRenderedShape = QtCore.Signal(Shape, int)
-    # drawRenderedShape = QtCore.Signal(str)
-    # removeCurrentShape = QtCore.Signal()
+    UpdateRenderedShape = QtCore.Signal(Shape, int)
+    drawRenderedShape = QtCore.Signal(str)
+    removeRenderedShape = QtCore.Signal(int)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
@@ -219,8 +219,8 @@ class Canvas(QtWidgets.QWidget):
 
         self.prevMovePoint = pos
         self.restoreCursor()
-        # if not self.pixmap.isNull():
-            # self.cursorMoved.emit(pos)
+        if not self.pixmap.isNull():
+            self.cursorMoved.emit(pos)
         # Polygon drawing.
         if self.drawing():
             if self.createMode in ["polygon", "trace"]:
@@ -307,8 +307,8 @@ class Canvas(QtWidgets.QWidget):
         if not self.pixmap.isNull() and\
                 ((pos.x() > 0 and pos.x() < self.imgDim[1])) and\
                 (pos.y() > 0 and pos.y() < self.imgDim[0]):
-            # if int(ev.modifiers()) == QtCore.Qt.ShiftModifier:
-            #     self.update_chart(pos)
+            if int(ev.modifiers()) == QtCore.Qt.ShiftModifier:
+                self.update_chart(pos)
             for i in range(len(self.shapes)):
                 # Look for a nearby vertex to highlight. If that fails,
                 # check if we happen to be inside a shape.
@@ -418,8 +418,10 @@ class Canvas(QtWidgets.QWidget):
         if self.distMap_crit is None:
             self.distMap_crit = self.ZeroImg.astype(np.bool)
         if index is not None:
-            self.distMap_crit = self.ZeroImg.astype(np.bool)
             if index >= self.distMap_crit.shape[-1]:
+            # self.distMap_crit = self.ZeroImg.astype(np.bool)
+            # if index >= self.distMap_crit.shape[-1]:
+
                 self.ZeroImg = np.zeros(
                     [self.imgDim[0],
                         self.imgDim[1],
@@ -457,14 +459,21 @@ class Canvas(QtWidgets.QWidget):
     def removeSelectedPoint(self):
         shape = self.prevhShape
         index = self.prevhVertex
+       
         if shape is None or index is None:
             return
         shape.removePoint(index)
+        # shape.poly_array = np.delete(shape.poly_array, shape.poly_array[index])
+        shape_index = self.shapes.index(shape)
+
+        self.UpdateRenderedShape.emit(shape, shape_index)
         shape.highlightClear()
         self.hShape = shape
         self.prevhVertex = None
-        self.movingShape = True  # Save changes
-        #index = self.shapes.index(shape)
+        self.movingShape = True
+        
+         # Save changes
+        
         #self.getDistMapUpdate()
 
     def mousePressEvent(self, ev):
@@ -479,7 +488,7 @@ class Canvas(QtWidgets.QWidget):
                     if self.createMode == "polygon":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
-                        # self.UpdateRenderedShape.emit(self.current, Index=None)
+                        self.UpdateRenderedShape.emit(self.current, -1)
                         if self.current.isClosed():
                             self.finalise()
                     elif self.createMode == "trace":
@@ -498,7 +507,7 @@ class Canvas(QtWidgets.QWidget):
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
-                    # self.beginShape = True
+                    self.beginShape = True
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
                     if self.createMode == "trace":
@@ -679,9 +688,9 @@ class Canvas(QtWidgets.QWidget):
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(point, pos)
         # self.removeCurrentShape.emit()
-        # shape_index = self.shapes.index(shape)
+        shape_index = self.shapes.index(shape)
         shape.moveVertexBy(index, pos - point)
-        # self.UpdateRenderedShape.emit(shape, shape_index)
+        self.UpdateRenderedShape.emit(shape, shape_index)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
@@ -704,6 +713,8 @@ class Canvas(QtWidgets.QWidget):
         if dp:
             for shape in shapes:
                 shape.moveBy(dp)
+                shape_index = self.shapes.index(shape)
+                self.UpdateRenderedShape.emit(shape, shape_index)
             self.prevPoint = pos
             return True
         return False
@@ -720,9 +731,10 @@ class Canvas(QtWidgets.QWidget):
         if self.selectedShapes:
             for shape in self.selectedShapes:
                 deleted_shapes.append(shape)
-                index = self.shapes.index(shape)
+                shape_index = self.shapes.index(shape)
                 self.shapes.remove(shape)
-                self.distMap_crit = np.delete(self.distMap_crit, index, 2)
+                self.distMap_crit = np.delete(self.distMap_crit, shape_index, 2)
+                self.removeRenderedShape.emit(shape_index)
             self.storeShapes()
             self.getDistMapUpdate()
             self.selectedShapes = []
@@ -778,7 +790,7 @@ class Canvas(QtWidgets.QWidget):
         quantile_min = np.percentile(arr,1)
         corr_arr = np.where(arr==0,quantile_min,arr)
         span = int(width * 1 / self.scale)
-        # self.chartUpdate.emit(corr_arr, span, pos_as_int[1])
+        self.chartUpdate.emit(corr_arr, span, pos_as_int[1])
 
     def paintEvent(self, event):
         if not self.pixmap:
@@ -843,13 +855,12 @@ class Canvas(QtWidgets.QWidget):
         self.current.close()
         self.shapes.append(self.current)
         self.storeShapes()
-        # self.removeCurrentShape.emit()
         self.current = None
         self.setHiding(False)
         self.newShape.emit()
         self.update()
         index = len(self.shapes) - 1
-        # self.drawRenderedShape.emit("most_recent")
+        self.drawRenderedShape.emit("most_recent")
         self.getDistMapUpdate(index)
 
     def closeEnough(self, p1, p2):
@@ -981,6 +992,8 @@ class Canvas(QtWidgets.QWidget):
         if key == QtCore.Qt.Key_Escape and self.current:
             self.current = None
             self.drawingPolygon.emit(False)
+            # remove temporary rendered Shape in memory
+            self.removeRenderedShape.emit(-1)
             self.update()
         elif key == QtCore.Qt.Key_Return and self.canCloseShape():
             self.finalise()

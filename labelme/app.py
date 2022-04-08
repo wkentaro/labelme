@@ -263,19 +263,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setTitleBarWidget(self.file_dock_title)
         self.file_dock.setWidget(fileListWidget)
 
-        # self.chart_dock_title = dock_title.DockTitle("Chart of Line")
-        # self.chart_dock = QtWidgets.QDockWidget(self.tr(u"Chart of Line"), self)
+        self.chart_dock_title = dock_title.DockTitle("Chart of Line")
+        self.chart_dock = QtWidgets.QDockWidget(self.tr(u"Chart of Line"), self)
 
-        # self.chart_dock.setTitleBarWidget(self.chart_dock_title)
-        # self.chart_dock.setObjectName(u"Charts")
-        # self.chart_widget = chart_widget.Canvas(self)
+        self.chart_dock.setTitleBarWidget(self.chart_dock_title)
+        self.chart_dock.setObjectName(u"Charts")
+        self.chart_widget = chart_widget.Canvas(self)
         
-        # layout = QtWidgets.QFormLayout()
-        # layout.addRow(self.tr(""), self.chart_widget)
-        # # layout.addRow(self.tr(""), self.flag_widget)
-        # self.container = QWidget()
-        # self.container.setLayout(layout)
-        # self.chart_dock.setWidget(self.chart_widget)
+        layout = QtWidgets.QFormLayout()
+        layout.addRow(self.tr(""), self.chart_widget)
+        # layout.addRow(self.tr(""), self.flag_widget)
+        self.container = QWidget()
+        self.container.setLayout(layout)
+        self.chart_dock.setWidget(self.chart_widget)
 
         self.render_dock = QtWidgets.QDockWidget(self.tr(u"3d render"), self)
         self.render_dock.setObjectName(u"render")
@@ -284,7 +284,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.renderWidget.setCameraParams(elevation=-1000)
         self.renderWidget.addItem(render_3d.draw_grid(1000))
         self.render_dock.setWidget(self.renderWidget)
-        
+
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
@@ -310,14 +310,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
         self.canvas.chartUpdate.connect(self.updateChart)
-        # self.canvas.cursorMoved.connect(self.CursorMapping)
-        # self.canvas.UpdateRenderedShape.connect(self.updateRenderedShapes)
-        # self.canvas.drawRenderedShape.connect(self.drawRenderedShapes)
-        # self.canvas.removeCurrentShape.connect(self.removeRecentShapes)
+        self.canvas.cursorMoved.connect(self.CursorMapping)
+        self.canvas.UpdateRenderedShape.connect(self.updateRenderedShapes)
+        self.canvas.drawRenderedShape.connect(self.drawRenderedShapes)
+        self.canvas.removeRenderedShape.connect(self.removeRecentShapes)
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock","render_dock"]:
+        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock", "render_dock","chart_dock"]:
             if self._config[dock]["closable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]["floatable"]:
@@ -332,7 +332,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.chart_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.render_dock)
 
         # Actions
@@ -1408,7 +1408,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.init_poly_array()
         self.canvas.init_zeroImg()
         self.canvas.getDistMapUpdate()
-        # self.drawRenderedShapes(mode="all")
+        self.drawRenderedShapes(mode="all")
 
     def loadLabels(self, shapes):
         s = []
@@ -1947,36 +1947,43 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def updateRenderedShapes(self, shape, index):
-        if index is None:
+        # None Index is not possible, that's why -1 
+        if index == -1:
             if self.temp_rendered_shape is not None:
                 self.renderWidget.removeItem(self.temp_rendered_shape)
         else:
             self.renderWidget.removeItem(self.rendererd_shapes[index])
+        # import IPython; IPython.embed()
         points = self._get_interpolated_points(shape)
         temp_rendered_shape = (gl.GLLinePlotItem(
             pos=points,
             color=shape.line_color,
             width=self.polygon_render_width))
-        if index is None:
+        if index == -1:
             self.temp_rendered_shape = temp_rendered_shape
         else:
             self.rendererd_shapes[index] = temp_rendered_shape
-        self.renderWidget.addItem(self.rendererd_shapes[index])
+        self.renderWidget.addItem(temp_rendered_shape)
 
-    def removeRecentShapes(self):
-        if not self.canvas.beginShape:
-            self.renderWidget.removeItem(self.rendererd_shape)
+    def removeRecentShapes(self, index):
+        if index == -1:
+            self.renderWidget.removeItem(self.temp_rendered_shape)
+            self.temp_rendered_shape = None
         else:
-            self.canvas.beginShape = False
-            return
+            self.renderWidget.removeItem(self.rendererd_shapes[index])
+            self.rendererd_shapes.remove(self.rendererd_shapes[index])
+
+
 
     def drawRenderedShapes(self, mode: str):
-        self.temp_rendered_shape = None
         # draw most recent shapes if one was added or all
         if mode == "most_recent":
             shapes = [self.canvas.shapes[-1]]
+            self.renderWidget.removeItem(self.temp_rendered_shape)
+            self.temp_rendered_shape = None
         elif mode == "all":
             shapes = self.canvas.shapes
+            self.temp_rendered_shape = None
         else:
             raise ValueError
         for s in shapes:
@@ -2074,9 +2081,9 @@ class MainWindow(QtWidgets.QMainWindow):
             mid = int(span / 2)
         end = mid + int(span / 2)
         start = mid - int(span / 2)
-        percent_min = np.percentile(self.normalized_img, 5)
-        percent_max = np.percentile(self.normalized_img, 99.99)
-        line = arr[y_level, start:end]
+        percent_min = np.percentile(self.normalized_img, 3)
+        percent_max = np.percentile(self.normalized_img, 99.993)
+        line = self.normalized_img[y_level, start:end]
         self.chart_widget.update_plot([percent_min, percent_max], line, start=start)
 
     def adjustScale(self, initial=False):
