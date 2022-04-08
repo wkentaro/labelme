@@ -788,7 +788,7 @@ class Canvas(QtWidgets.QWidget):
         arr = arr[:, ~np.all(arr == 0, axis=0)]
         arr = arr[~np.all(arr == 0, axis=1)]
         quantile_min = np.percentile(arr,1)
-        corr_arr = np.where(arr==0,quantile_min,arr)
+        corr_arr = np.where(arr==0, quantile_min,arr)
         span = int(width * 1 / self.scale)
         self.chartUpdate.emit(corr_arr, span, pos_as_int[1])
 
