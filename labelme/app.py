@@ -22,6 +22,7 @@ dev_path = os.getcwd()
 sys.path.insert(1, dev_path)
 
 from imgviz import label_colormap
+
 from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
@@ -241,10 +242,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.uniqLabelList.addItem(item)
                 rgb = self._get_rgb_by_label(label)
                 self.uniqLabelList.setItemLabel(item, label, rgb)
+
         self.label_dock = QtWidgets.QDockWidget(self.tr(u"Label List"), self)
         self.label_dock.setObjectName(u"Label List")
         self.label_dock_title = dock_title.DockTitle("Label List")
         self.label_dock.setTitleBarWidget(self.label_dock_title)
+
         self.label_dock.setWidget(self.uniqLabelList)
 
         self.fileSearch = QtWidgets.QLineEdit()
@@ -260,8 +263,8 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListLayout.setSpacing(0)
         fileListLayout.addWidget(self.fileSearch)
         fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr(u"File List"), self)
-        self.file_dock.setObjectName(u"Files")
+        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
+        self.file_dock.setObjectName("Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
 
@@ -367,14 +370,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openDirDialog,
             shortcuts["open_dir"],
             "open",
-            self.tr(u"Open Dir"),
+            self.tr("Open Dir"),
         )
         openNextImg = action(
             self.tr("&Next Image"),
             self.openNextImg,
             shortcuts["open_next"],
             "next",
-            self.tr(u"Open next (hold Ctl+Shift to copy labels)"),
+            self.tr("Open next (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         openPrevImg = action(
@@ -382,7 +385,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.openPrevImg,
             shortcuts["open_prev"],
             "prev",
-            self.tr(u"Open prev (hold Ctl+Shift to copy labels)"),
+            self.tr("Open prev (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         save = action(
@@ -416,7 +419,10 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="open",
-            tip=self.tr(u"Change where annotations are saved"),
+
+
+            tip=self.tr("Change where annotations are loaded/saved"),
+
         )
 
         saveAuto = action(
@@ -1020,15 +1026,6 @@ class MainWindow(QtWidgets.QMainWindow):
         size = self.settings.value("window/size", QtCore.QSize(600, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
         state = self.settings.value("window/state", QtCore.QByteArray())
-        # PyQt4 cannot handle QVariant
-        if isinstance(self.recentFiles, QtCore.QVariant):
-            self.recentFiles = self.recentFiles.toList()
-        if isinstance(size, QtCore.QVariant):
-            size = size.toSize()
-        if isinstance(position, QtCore.QVariant):
-            position = position.toPoint()
-        if isinstance(state, QtCore.QVariant):
-            state = state.toByteArray()
         self.resize(size)
         self.move(position)
         # or simply:
@@ -1477,10 +1474,6 @@ class MainWindow(QtWidgets.QMainWindow):
         lf = LabelFile()
 
         def format_shape(s):
-            # PyQt4 cannot handle QVariant
-            if isinstance(s, QtCore.QVariant):
-                s = s.toPyObject()
-
             data = s.other_data.copy()
             data.update(
                 dict(
@@ -2648,6 +2641,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Unchecked)
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
+
 
     def scanAllImages(self, folderPath,image_suffix_priortiy):
         
