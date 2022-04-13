@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import functools
 import math
 import os
+import shutil
 import os.path as osp
 import re
 import webbrowser
@@ -283,6 +282,15 @@ class MainWindow(QtWidgets.QMainWindow):
             "save-as",
             self.tr("Save labels to a different file"),
             enabled=False,
+        )
+
+        loadQueue = action(
+            self.tr("&Load Queue"),
+            self.reload_queue,
+            "reload",
+            "reload",
+            self.tr("Load Queue"),
+            enabled=True,
         )
 
         deleteFile = action(
@@ -603,6 +611,7 @@ class MainWindow(QtWidgets.QMainWindow):
             changeOutputDir=changeOutputDir,
             save=save,
             saveAs=saveAs,
+            loadQueue=loadQueue,
             open=open_,
             close=close,
             deleteFile=deleteFile,
@@ -701,6 +710,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.menus.recentFiles,
                 save,
                 saveAs,
+                loadQueue,
                 saveAuto,
                 changeOutputDir,
                 saveWithImageData,
@@ -756,6 +766,7 @@ class MainWindow(QtWidgets.QMainWindow):
             openNextImg,
             openPrevImg,
             save,
+            loadQueue,
             deleteFile,
             None,
             createMode,
@@ -890,6 +901,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
+        self.actions.loadQueue.setEnabled(False)
         title = __appname__
         if self.filename is not None:
             title = "{} - {}*".format(title, self.filename)
@@ -898,6 +910,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
+        self.actions.loadQueue.setEnabled(True)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
@@ -2112,9 +2125,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.images_path = os.path.abspath("images")
         self.labels_path = os.path.abspath("labels")
         if os.path.exists(self.images_path):
-            os.system("rm -rf " + self.images_path)
+            shutil.rmtree(self.images_path)
         if os.path.exists(self.labels_path):
-            os.system("rm -rf " + self.labels_path)
+            shutil.rmtree(self.labels_path)
 
         os.makedirs(self.images_path)
         os.makedirs(self.labels_path)
@@ -2134,7 +2147,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def load_queue_qc(self):
         self.images_path = os.path.abspath("images")
         if os.path.exists(self.images_path):
-            os.system("rm -rf " + self.images_path)
+            shutil.rmtree(self.images_path)
 
         os.makedirs(self.images_path)
 
@@ -2146,17 +2159,17 @@ class MainWindow(QtWidgets.QMainWindow):
             image_key = folder + "/" + "d_unchecked.jpg"
             self.aws_api.read_from_s3(
                 image_key,
-                os.path.join(self.images_path, folder, "d_unchecked.jpg")
+                os.path.join(self.images_path, folder + "_d_unchecked.jpg")
             )
 
         self.importDirImages(self.images_path)
 
     def save_labels_label(self, filename, shapes, flags):
         label_file = os.path.abspath(os.path.join(
-                self.labels_path,
-                os.path.splitext(os.path.split(filename)[-1])[0] + ".json"
-            ))
-        folder = os.path.splitext(os.path.split(filename)[-1])[0]
+            self.labels_path,
+            os.path.splitext(os.path.split(filename)[-1])[0] + ".json"
+        ))
+        folder = os.path.splitext(os.path.split(filename)[-1])[0].strip("/")
 
         aws_fp = "completed_" + os.path.splitext(os.path.split(filename)[-1])[0] + ".json"
 
@@ -2175,7 +2188,7 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.info("Pushed {} to s3 bucket".format(label_file))
 
     def save_labels_qc(self, filename, shapes, flags):
-        folder = os.path.split(filename)[-2]
+        folder = os.path.split(filename)[-1].split("_")[0]
         failures = ""
 
         if flags["Pass"]:
@@ -2189,3 +2202,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if failures:
             self.manual_api.setFailures(folder, failures)
             self.manual_api.setStage(folder, "failed")
+
+    def reload_queue(self, _value=False):
+        self.loading_dict[self.mode]()
