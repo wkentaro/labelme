@@ -1,11 +1,8 @@
-from qtpy import QtCore
-from qtpy import QtGui
-from qtpy import QtWidgets
-
+import labelme.utils
 from labelme import QT5
 from labelme.shape import Shape
-import labelme.utils
-
+from labelme.utils.debugger import debug_trace as dbg
+from qtpy import QtCore, QtGui, QtWidgets
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
@@ -671,7 +668,7 @@ class Canvas(QtWidgets.QWidget):
     def finalise(self):
         assert self.current
         self.current.close()
-        self.shapes.append(self.current)
+        self.shapes.insert(0, self.current)
         self.storeShapes()
         self.current = None
         self.setHiding(False)
@@ -828,11 +825,11 @@ class Canvas(QtWidgets.QWidget):
 
     def setLastLabel(self, text, flags):
         assert text
-        self.shapes[-1].label = text
-        self.shapes[-1].flags = flags
+        self.shapes[0].label = text
+        self.shapes[0].flags = flags
         self.shapesBackups.pop()
         self.storeShapes()
-        return self.shapes[-1]
+        return self.shapes[0]
 
     def undoLastLine(self):
         assert self.shapes

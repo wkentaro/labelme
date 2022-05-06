@@ -1,8 +1,7 @@
-from qtpy import QtCore
+from labelme.utils.debugger import debug_trace as dbg
+from qtpy import QtCore, QtGui, QtWidgets
 from qtpy.QtCore import Qt
-from qtpy import QtGui
 from qtpy.QtGui import QPalette
-from qtpy import QtWidgets
 from qtpy.QtWidgets import QStyle
 
 
@@ -160,11 +159,25 @@ class LabelListWidget(QtWidgets.QListView):
     def scrollToItem(self, item):
         self.scrollTo(self.model().indexFromItem(item))
 
+    # deprecated for doc analysis
     def addItem(self, item):
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
-        self.model().setItem(self.model().rowCount(), 0, item)
-        item.setSizeHint(self.itemDelegate().sizeHint(None, None))
+        if not len(self.model().findItems(item.text())):
+            self.model().setItem(self.model().rowCount(), 0, item)
+            item.setSizeHint(self.itemDelegate().sizeHint(None, None))
+
+    def addItemFront(self, item):
+        if not isinstance(item, LabelListWidgetItem):
+            raise TypeError("item must be LabelListWidgetItem")
+
+        item_new = item
+        if self.model().findItems(item.text()):
+            dbg()
+
+        self.model().insertRow(0, item_new)
+        item_new.setSizeHint(self.itemDelegate().sizeHint(None, None))
+        return item_new
 
     def removeItem(self, item):
         index = self.model().indexFromItem(item)

@@ -9,29 +9,21 @@ import webbrowser
 
 import imgviz
 import natsort
-from qtpy import QtCore
+from qtpy import QtCore, QtGui, QtWidgets
 from qtpy.QtCore import Qt
-from qtpy import QtGui
-from qtpy import QtWidgets
 
-from labelme import __appname__
-from labelme import PY2
-
-from . import utils
+from labelme import PY2, __appname__
 from labelme.config import get_config
-from labelme.label_file import LabelFile
-from labelme.label_file import LabelFileError
+from labelme.label_file import LabelFile, LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
-from labelme.widgets import BrightnessContrastDialog
-from labelme.widgets import Canvas
-from labelme.widgets import FileDialogPreview
-from labelme.widgets import LabelDialog
-from labelme.widgets import LabelListWidget
-from labelme.widgets import LabelListWidgetItem
-from labelme.widgets import ToolBar
-from labelme.widgets import UniqueLabelQListWidget
-from labelme.widgets import ZoomWidget
+from labelme.utils.debugger import debug_trace as dbg
+from labelme.widgets import (BrightnessContrastDialog, Canvas,
+                             FileDialogPreview, LabelDialog, LabelListWidget,
+                             LabelListWidgetItem, ToolBar,
+                             UniqueLabelQListWidget, ZoomWidget)
+
+from . import utils
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -1134,10 +1126,29 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
-        self.labelList.addItem(label_list_item)
+
+        if 'priority_labels' in self._config:
+            prior_labels = self._config['priority_labels']
+
+        # self.labelList.addItemFront(label_list_item)
+        if len(prior_labels):
+            is_present = False
+            for label in prior_labels:
+                if label in label_list_item.text():
+                    is_present = True
+
+        if is_present:
+            label_list_item = self.labelList.addItemFront(
+                label_list_item)
+        else:
+            self.labelList.addItem(label_list_item)
+
         if not self.uniqLabelList.findItemsByLabel(shape.label):
             item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
+            if is_present:
+                self.uniqLabelList.insertItem(0, item)
+            else:
+                self.uniqLabelList.addItem(item)
             rgb = self._get_rgb_by_label(shape.label)
             self.uniqLabelList.setItemLabel(item, shape.label, rgb)
         self.labelDialog.addLabelHistory(shape.label)
