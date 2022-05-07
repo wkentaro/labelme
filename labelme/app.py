@@ -17,7 +17,6 @@ from labelme.config import get_config
 from labelme.label_file import LabelFile, LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
-from labelme.utils.debugger import debug_trace as dbg
 from labelme.widgets import (BrightnessContrastDialog, Canvas,
                              FileDialogPreview, LabelDialog, LabelListWidget,
                              LabelListWidgetItem, ToolBar,
@@ -1127,16 +1126,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
 
-        if 'priority_labels' in self._config:
-            prior_labels = self._config['priority_labels']
-
-        # self.labelList.addItemFront(label_list_item)
-        if len(prior_labels):
-            is_present = False
-            for label in prior_labels:
-                if label in label_list_item.text():
-                    is_present = True
-
+        is_present = self._is_priority_labels_present(label_list_item.text())
         if is_present:
             label_list_item = self.labelList.addItemFront(
                 label_list_item)
@@ -1334,8 +1324,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
         self.canvas.loadShapes([item.shape() for item in self.labelList])
 
-    # Callback functions:
+    def _is_priority_labels_present(self, text):
+        is_present = False
+        if 'priority_labels' in self._config:
+            prior_labels = self._config['priority_labels']
 
+        if len(prior_labels):
+            for label in prior_labels:
+                if label in text:
+                    is_present = True
+                    break
+
+        return is_present
+
+    # Callback functions:
     def newShape(self):
         """Pop-up and give focus to the label editor.
 
@@ -1363,7 +1365,14 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ""
         if text:
             self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text, flags)
+
+            if self._is_priority_labels_present(text):
+                # modify canvas shapes
+                self.canvas.shapes.insert(0, self.canvas.shapes[-1])
+                del self.canvas.shapes[-1]
+                shape = self.canvas.setLastLabel(text, flags, idx=0)
+            else:
+                shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)

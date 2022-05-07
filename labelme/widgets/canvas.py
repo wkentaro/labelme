@@ -1,7 +1,6 @@
 import labelme.utils
 from labelme import QT5
 from labelme.shape import Shape
-from labelme.utils.debugger import debug_trace as dbg
 from qtpy import QtCore, QtGui, QtWidgets
 
 # TODO(unknown):
@@ -668,7 +667,7 @@ class Canvas(QtWidgets.QWidget):
     def finalise(self):
         assert self.current
         self.current.close()
-        self.shapes.insert(0, self.current)
+        self.shapes.append(self.current)
         self.storeShapes()
         self.current = None
         self.setHiding(False)
@@ -823,13 +822,13 @@ class Canvas(QtWidgets.QWidget):
 
                 self.movingShape = False
 
-    def setLastLabel(self, text, flags):
+    def setLastLabel(self, text, flags, idx=-1):
         assert text
-        self.shapes[0].label = text
-        self.shapes[0].flags = flags
+        self.shapes[idx].label = text
+        self.shapes[idx].flags = flags
         self.shapesBackups.pop()
         self.storeShapes()
-        return self.shapes[0]
+        return self.shapes[idx]
 
     def undoLastLine(self):
         assert self.shapes

@@ -1,4 +1,3 @@
-from labelme.utils.debugger import debug_trace as dbg
 from qtpy import QtCore, QtGui, QtWidgets
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QPalette
@@ -173,7 +172,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         item_new = item
         if self.model().findItems(item.text()):
-            dbg()
+            raise ValueError("items are repeated")
 
         self.model().insertRow(0, item_new)
         item_new.setSizeHint(self.itemDelegate().sizeHint(None, None))
