@@ -103,6 +103,11 @@ class LabelDialog(QtWidgets.QDialog):
         self.resetFlags()
         layout.addItem(self.flagsLayout)
         self.edit.textChanged.connect(self.updateFlags)
+        #text edit
+        self.textEdit = QtWidgets.QTextEdit()
+        self.textEdit.setPlaceholderText('Label content')
+        layout.addWidget(self.textEdit)
+        self.resize(300,200) 
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
@@ -200,7 +205,16 @@ class LabelDialog(QtWidgets.QDialog):
             return int(group_id)
         return None
 
-    def popUp(self, text=None, move=True, flags=None, group_id=None):
+    def getContent(self):
+        content = self.textEdit.toPlainText()
+        if content:
+            return content
+        return None
+
+    def setContent(self, content):
+        self.textEdit.setPlainText(content)
+
+    def popUp(self, text=None, move=True, flags=None, group_id=None, content=None):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
@@ -212,6 +226,9 @@ class LabelDialog(QtWidgets.QDialog):
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
+        if content is None:
+            content=""
+        self.setContent(content)
         if flags:
             self.setFlags(flags)
         else:
@@ -233,6 +250,6 @@ class LabelDialog(QtWidgets.QDialog):
         if move:
             self.move(QtGui.QCursor.pos())
         if self.exec_():
-            return self.edit.text(), self.getFlags(), self.getGroupId()
+            return self.edit.text(), self.getFlags(), self.getGroupId(), self.getContent()
         else:
-            return None, None, None
+            return None, None, None, None
