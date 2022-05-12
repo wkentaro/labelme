@@ -1059,7 +1059,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=shape.label,
             flags=shape.flags,
             group_id=shape.group_id,
-            content=shape.content
+            content=shape.content,
         )
         if text is None:
             return
