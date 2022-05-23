@@ -140,12 +140,13 @@ class MainWindow(QMainWindow):
         for user_id in users_dict:
             username_lookup[user_id] = self.manual_api.getUsername(user_id)
         
-        columns = ["username", "to_label", "labelled", "to_qc", "to_fix"]
+        columns = ["username", "initial_labelling", "complete_labelling", "labelled", "quality_control", "to_fix"]
         internal_data = []
         for user_id in users_dict:
             internal_data.append([
                 username_lookup[user_id],
                 users_dict[user_id]["preprocessed"],
+                users_dict[user_id]["initial_labelled"],
                 users_dict[user_id]["labelled"],
                 users_dict[user_id]["qc"],
                 users_dict[user_id]["failed"]
@@ -162,7 +163,7 @@ class MainWindow(QMainWindow):
             return None
 
         users_dict = {}
-        display_stages = {"preprocessed": 0, "labelled": 0, "qc": 0, "failed": 0}
+        display_stages = {"preprocessed": 0, "initial_labelled": 0, "labelled": 0, "qc": 0, "failed": 0}
         for model in self.models:
             model["folder"] = model["folder"].strip('/')
             stage = model["stage"]
@@ -190,14 +191,23 @@ class MainWindow(QMainWindow):
 
         if cols[0] == 1:
             annotator.main(
+                "initial_label",
+                username,
+                self.manual_api,
+                self.aws_api,
+                config_fp = os.path.abspath("initial_label_labelmerc")
+            )
+
+        if cols[0] == 2:
+            annotator.main(
                 "label",
                 username,
                 self.manual_api,
                 self.aws_api,
-                config_fp = os.path.abspath("annotator_labelmerc")
+                config_fp = os.path.abspath("label_labelmerc")
             )
 
-        if cols[0] == 3:
+        if cols[0] == 4:
             annotator.main(
                 "qc",
                 username,

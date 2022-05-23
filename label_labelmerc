@@ -7,9 +7,9 @@ keep_prev_brightness: false
 keep_prev_contrast: false
 logger_level: info
 
-flags: ['Bad Raster','Correct DW', 'Improper DW Placement','Grooved DW','No DW']
+flags: ['Bad Initial Annotations','Correct DW', 'Improper DW Placement','Grooved DW','No DW']
 label_flags: null
-labels: ['Panel','DW','POT','Gutter']
+labels: ['Panel','DW', 'Gutter']
 file_search: null
 sort_labels: true
 validate_label: null

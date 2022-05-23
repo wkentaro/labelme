@@ -18,6 +18,7 @@ from labelme.utils import newIcon
 
 from labelme import qc_app
 from labelme import label_app
+from labelme import initial_label_app
 
 
 def main(mode, username, manual_api, aws_api, config_fp=None):
@@ -179,7 +180,17 @@ def main(mode, username, manual_api, aws_api, config_fp=None):
     #app.installTranslator(translator)
     
     win: app.MainWindow
-    if mode == "label":
+    if mode == "initial_label":
+        win = initial_label_app.MainWindow(
+            username,
+            manual_api,
+            aws_api,
+            config=config,
+            filename=filename,
+            output_file=output_file,
+            output_dir=output_dir,
+        )
+    elif mode == "label":
         win = label_app.MainWindow(
             username,
             manual_api,
