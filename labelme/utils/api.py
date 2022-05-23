@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 import requests
 from labelme.logger import logger
 
@@ -26,7 +26,7 @@ class api_utils():
         
         return r.status_code
 
-    def get_models(self) -> Any:
+    def get_models(self) -> Dict:
         r = requests.get(
             self.API_ROOT + "/model",
             headers={"auth": self.auth_tok}

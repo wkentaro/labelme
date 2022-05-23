@@ -67,6 +67,29 @@ class LabelFile(object):
             f.seek(0)
             return f.read()
 
+    def transform_deepwalk_labels(self, deepwalk_data):
+        data = {
+            "version": __version__,
+            "imagePath": "",
+            "imageData": None,
+            "shapes": {},
+            "flags": {},
+            "imageHeight": None,
+            "imageWidth": None
+        }
+
+        if "regions" in deepwalk_data and deepwalk_data["regions"] is not None:
+            data["shapes"] = deepwalk_data["regions"]
+
+        if "flags" in deepwalk_data and deepwalk_data["flags"] is not None:
+            data["flags"] = deepwalk_data["flags"]
+
+        if "color_filename" in deepwalk_data and deepwalk_data["color_filename"] is not None and deepwalk_data["color_filename"]:
+            data["imagePath"] = deepwalk_data["color_filename"]
+
+        return data
+        
+
     def load(self, filename):
         keys = [
             "version",
@@ -86,7 +109,10 @@ class LabelFile(object):
         ]
         try:
             with open(filename, "r") as f:
-                data = json.load(f)
+                deepwalk_data = json.load(f)
+
+            data = self.transform_deepwalk_labels(deepwalk_data)
+
             version = data.get("version")
             if version is None:
                 logger.warn(
@@ -111,13 +137,17 @@ class LabelFile(object):
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data["imagePath"])
                 imageData = self.load_image_file(imagePath)
+
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
-            self._check_image_height_and_width(
-                base64.b64encode(imageData).decode("utf-8"),
-                data.get("imageHeight"),
-                data.get("imageWidth"),
-            )
+
+            if imageData is not None:
+                data["imageHeight"], data["imageWidth"] = self._check_image_height_and_width(
+                    base64.b64encode(imageData).decode("utf-8"),
+                    data.get("imageHeight"),
+                    data.get("imageWidth"),
+                )
+
             shapes = [
                 dict(
                     label=s["label"],
@@ -150,18 +180,19 @@ class LabelFile(object):
     @staticmethod
     def _check_image_height_and_width(imageData, imageHeight, imageWidth):
         img_arr = utils.img_b64_to_arr(imageData)
-        if imageHeight is not None and img_arr.shape[0] != imageHeight:
-            logger.error(
-                "imageHeight does not match with imageData or imagePath, "
-                "so getting imageHeight from actual image."
-            )
-            imageHeight = img_arr.shape[0]
-        if imageWidth is not None and img_arr.shape[1] != imageWidth:
-            logger.error(
-                "imageWidth does not match with imageData or imagePath, "
-                "so getting imageWidth from actual image."
-            )
-            imageWidth = img_arr.shape[1]
+#        if imageHeight is not None and img_arr.shape[0] != imageHeight:
+#            logger.error(
+#                "imageHeight does not match with imageData or imagePath, "
+#                "so getting imageHeight from actual image."
+#            )
+        imageHeight = img_arr.shape[0]
+#        if imageWidth is not None and img_arr.shape[1] != imageWidth:
+#            logger.error(
+#                "imageWidth does not match with imageData or imagePath, "
+#                "so getting imageWidth from actual image."
+#            )
+        imageWidth = img_arr.shape[1]
+
         return imageHeight, imageWidth
 
     def save(

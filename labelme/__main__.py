@@ -11,10 +11,13 @@ from qtpy import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
-from labelme.app import MainWindow
+from labelme import app
 from labelme.config import get_config
 from labelme.logger import logger
 from labelme.utils import newIcon
+
+from labelme import qc_app
+from labelme import label_app
 
 
 def main(mode, username, manual_api, aws_api, config_fp=None):
@@ -174,16 +177,30 @@ def main(mode, username, manual_api, aws_api, config_fp=None):
     #app.setApplicationName(__appname__)
     #app.setWindowIcon(newIcon("icon"))
     #app.installTranslator(translator)
-    win = MainWindow(
-        mode,
-        username,
-        manual_api,
-        aws_api,
-        config=config,
-        filename=filename,
-        output_file=output_file,
-        output_dir=output_dir,
-    )
+    
+    win: app.MainWindow
+    if mode == "label":
+        win = label_app.MainWindow(
+            username,
+            manual_api,
+            aws_api,
+            config=config,
+            filename=filename,
+            output_file=output_file,
+            output_dir=output_dir,
+        )
+    elif mode == "qc":
+        win = qc_app.MainWindow(
+            username,
+            manual_api,
+            aws_api,
+            config=config,
+            filename=filename,
+            output_file=output_file,
+            output_dir=output_dir,
+        )
+    else:
+        return
 
     if reset_config:
         logger.info("Resetting Qt config: %s" % win.settings.fileName())
@@ -196,5 +213,5 @@ def main(mode, username, manual_api, aws_api, config_fp=None):
 
 
 # this main block is required to generate executable by pyinstaller
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()

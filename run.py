@@ -45,24 +45,6 @@ class QueueTableModel(QtCore.QAbstractTableModel):
                 return str(self._data.index[section])
 
 class MainWindow(QMainWindow):
-    manual_api: api.api_utils
-    aws_api: aws.aws_utils
-
-    central_widget: QWidget
-    hlayout: QHBoxLayout
-    left_layout: QVBoxLayout
-    right_layout: QVBoxLayout
-
-    username_line: QLineEdit
-    password_line: QLineEdit
-    aws_key_id_line: QLineEdit
-    aws_secret_key_line: QLineEdit
-    login_button: QPushButton
-    queue_table_model = QueueTableModel
-    queue_table: QtWidgets.QTableView
-    annotate_button: QPushButton
-
-    models: Any
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
