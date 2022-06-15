@@ -41,7 +41,13 @@ from labelme.widgets import ZoomWidget
 
 
 LABEL_COLORMAP = imgviz.label_colormap()
-
+gGroupIdColorMap = {0: (161,18,61), 1: (238,200,30), 2: (70,36,123), 3: (0,255,0),
+                          4: (119,103,158), 5: (238,255,0), 6: (113,126,17), 7:
+                            (0,255,238), 8: (129,50,118), 8: (30,0,255), 9: (20,0,220), 10: (0,191,255),
+                          11: (48,187,197), 12: (255, 0,162), 13: (211,146,208), 14:
+                            (128,0,0), 15: (160,115,137), 16: (71,144,154), 17: (128,105,181),
+                          18: (236,162,162), 19: (41,125,18), 20: (255,228,153), 21:
+                            (255,224,224), 22: (157,164,160), 23: (197,169,249)}
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -567,6 +573,26 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing.trigger()
 
+        sort_shapes_by_id = action(
+            self.tr("Sort shapes by group_id"),
+            self.setGroupIdSort,
+            None,
+            "color",
+            self.tr("Sort shape colors by group_id"),
+            checkable=True,
+            enabled=True
+        )
+
+        sort_shapes_by_label_color = action(
+            self.tr("Sort shapes by label name"),
+            self.setGroupIdSortFalse,
+            None,
+            "color",
+            self.tr("Sort shape colors by label name"),
+            checkable=True,
+            enabled=True
+        )
+
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
         utils.addActions(labelMenu, (edit, delete))
@@ -657,6 +683,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 brightnessContrast,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
+            sort_shapes_by_label_color=sort_shapes_by_label_color,
+            sort_shapes_by_id=sort_shapes_by_id
         )
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
@@ -686,7 +714,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 close,
                 deleteFile,
                 None,
-                quit,
+                quit
             ),
         )
         utils.addActions(self.menus.help, (help,))
@@ -699,6 +727,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.file_dock.toggleViewAction(),
                 None,
                 fill_drawing,
+                None,
+                sort_shapes_by_id,
+                sort_shapes_by_label_color,
                 None,
                 hideAll,
                 showAll,
@@ -747,7 +778,7 @@ class MainWindow(QtWidgets.QMainWindow):
             brightnessContrast,
             None,
             zoom,
-            fitWidth,
+            fitWidth
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -1152,7 +1183,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _update_shape_color(self, shape):
-        r, g, b = self._get_rgb_by_label(shape.label)
+        if self.canvas.groupIdColorObjSort:
+            if shape.group_id is not None:
+                r, g, b = gGroupIdColorMap[shape.group_id]
+            else:
+                r, g, b = (255, 255, 255)
+        else:
+            r, g, b = self._get_rgb_by_label(shape.label)
         shape.line_color = QtGui.QColor(r, g, b)
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
@@ -1836,6 +1873,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.addRecentFile(filename)
             self.setClean()
 
+
     def closeFile(self, _value=False):
         if not self.mayContinue():
             return
@@ -2065,3 +2103,13 @@ class MainWindow(QtWidgets.QMainWindow):
                     images.append(relativePath)
         images = natsort.os_sorted(images)
         return images
+
+    def setGroupIdSort(self):
+        self.canvas.groupIdColorObjSort = True
+        self.actions.sort_shapes_by_id.setChecked(True)
+        self.actions.sort_shapes_by_label_color.setChecked(False)
+
+    def setGroupIdSortFalse(self):
+        self.canvas.groupIdColorObjSort = False
+        self.actions.sort_shapes_by_id.setChecked(False)
+        self.actions.sort_shapes_by_label_color.setChecked(True)
