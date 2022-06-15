@@ -99,6 +99,7 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+        self.groupIdColorObjSort = False
 
         self._ai_model = None
 
