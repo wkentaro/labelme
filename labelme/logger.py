@@ -67,5 +67,5 @@ class ColoredLogger(logging.Logger):
         return
 
 
-logging.setLoggerClass(ColoredLogger)
 logger = logging.getLogger(__appname__)
+logger.__class__ = ColoredLogger
