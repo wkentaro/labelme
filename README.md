@@ -18,7 +18,7 @@
   <a href="#usage"><b>Usage</b></a> |
   <a href="https://github.com/wkentaro/labelme/tree/main/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
   <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a> |
-  <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
+  <a href="https://github.com/wkentaro/labelme/discussions"><b>Discussions</b></a>
 </div>
 
 <br/>
