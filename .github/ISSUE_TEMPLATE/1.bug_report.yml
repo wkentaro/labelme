@@ -16,8 +16,10 @@ body:
       required: true
   - type: input
     attributes:
-      label: What OS are you using? (if relevant)
+      label: What OS are you using?
       description: 'Please specify the exact version. For example: macOS 12.4, Ubuntu 20.04.4'
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Describe the Bug
