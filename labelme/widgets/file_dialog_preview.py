@@ -3,6 +3,7 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 
 import json
+from labelme.label_file import open
 
 
 class ScrollAreaPreview(QtWidgets.QScrollArea):
