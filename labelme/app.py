@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from cProfile import label
 import functools
 import html
+import json
 import math
 import os
 import os.path as osp
-import re
-import json
-import webbrowser
 from pathlib import Path
+import re
+import webbrowser
 
 import imgviz
 import natsort
