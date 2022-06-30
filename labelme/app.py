@@ -2036,37 +2036,36 @@ class MainWindow(QtWidgets.QMainWindow):
         # it will return fileNames=[], labelFiles=[]
         # then don't set openNextImg button active
         if len(fileNames) == 0:
-            pass
-        else:
-            self.actions.openNextImg.setEnabled(True)
-            self.actions.openPrevImg.setEnabled(True)
+            return
 
-            if not self.mayContinue() or not dirpath:
-                return
+        self.actions.openNextImg.setEnabled(True)
+        self.actions.openPrevImg.setEnabled(True)
 
-            self.lastOpenDir = dirpath
-            self.filename = None
-            self.fileListWidget.clear()
+        if not self.mayContinue() or not dirpath:
+            return
 
-            for filename, label_file in zip(fileNames, labelFiles):
-                if pattern and pattern not in filename:
-                    continue
+        self.lastOpenDir = dirpath
+        self.filename = None
+        self.fileListWidget.clear()
 
-                # move output_dir label judge logic to scanAllImages()
-                # and returns label_files from scanAllImages()
+        for filename, label_file in zip(fileNames, labelFiles):
+            if pattern and pattern not in filename:
+                continue
 
-                item = QtWidgets.QListWidgetItem(filename)
-                item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-                if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
-                    label_file
-                ):
-                    item.setCheckState(Qt.Checked)
-                else:
-                    item.setCheckState(Qt.Unchecked)
-                self.fileListWidget.addItem(item)
+            # move output_dir label judge logic to scanAllImages()
+            # and returns label_files from scanAllImages()
 
-            print(self.filename)
-            self.openNextImg(load=load)
+            item = QtWidgets.QListWidgetItem(filename)
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+            if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(
+                label_file
+            ):
+                item.setCheckState(Qt.Checked)
+            else:
+                item.setCheckState(Qt.Unchecked)
+            self.fileListWidget.addItem(item)
+
+        self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):
         extensions = [
