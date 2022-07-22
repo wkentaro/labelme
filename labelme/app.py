@@ -1073,6 +1073,12 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.flags = flags
         shape.group_id = group_id
 
+        if not self.uniqLabelList.findItemsByLabel(shape.label):
+            uniq_item = self.uniqLabelList.createItemFromLabel(shape.label)
+            self.uniqLabelList.addItem(uniq_item)
+            rgb = self._get_rgb_by_label(shape.label)
+            self.uniqLabelList.setItemLabel(uniq_item, shape.label, rgb)
+
         self._update_shape_color(shape)
         if shape.group_id is None:
             item.setText(
@@ -1083,10 +1089,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             item.setText("{} ({})".format(shape.label, shape.group_id))
         self.setDirty()
-        if not self.uniqLabelList.findItemsByLabel(shape.label):
-            item = QtWidgets.QListWidgetItem()
-            item.setData(Qt.UserRole, shape.label)
-            self.uniqLabelList.addItem(item)
 
     def fileSearchChanged(self):
         self.importDirImages(
