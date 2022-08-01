@@ -18,7 +18,7 @@
   <a href="#usage"><b>Usage</b></a> |
   <a href="https://github.com/wkentaro/labelme/tree/main/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
   <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a> |
-  <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
+  <a href="https://github.com/wkentaro/labelme/discussions"><b>Discussions</b></a>
 </div>
 
 <br/>
@@ -182,15 +182,6 @@ For more advanced usage, please refer to the examples:
 - **How to get annotations for instance segmentation?** See [examples/instance_segmentation](examples/instance_segmentation).
 
 
-## Testing
-
-```bash
-pip install hacking pytest pytest-qt
-flake8 .
-pytest -v tests
-```
-
-
 ## Developing
 
 ```bash
@@ -227,11 +218,11 @@ Make sure below test passes on your environment.
 See `.github/workflows/ci.yml` for more detail.
 
 ```bash
-pip install black hacking pytest pytest-qt
+pip install -r requirements-dev.txt
 
 flake8 .
 black --line-length 79 --check labelme/
-MPLBACKEND='agg' pytest tests/
+MPLBACKEND='agg' pytest -vsx tests/
 ```
 
 

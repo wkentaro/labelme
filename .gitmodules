@@ -1,3 +1,0 @@
-[submodule "github2pypi"]
-	path = github2pypi
-	url = https://github.com/wkentaro/github2pypi.git

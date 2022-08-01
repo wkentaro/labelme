@@ -71,7 +71,7 @@ jobs:
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        pip install black==22.1.0
+        pip install black==22.3.0
         black --line-length 79 --check --diff labelme/
 
     - name: Test with pytest

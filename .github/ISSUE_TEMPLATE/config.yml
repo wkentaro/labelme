@@ -1,0 +1,10 @@
+contact_links:
+  - name: Ideas / Feature request
+    url: https://github.com/wkentaro/labelme/discussions/categories/ideas-feature-requests
+    about: Share ideas for new features
+  - name: Q&A / Help
+    url: https://github.com/wkentaro/labelme/discussions/categories/q-a-help
+    about: Ask the community for help
+  - name: Show and tell
+    url: https://github.com/wkentaro/labelme/discussions/categories/show-and-tell
+    about: Show off something you've made
