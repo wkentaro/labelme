@@ -1239,9 +1239,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def format_shape(s):
             data = s.other_data.copy()
+            ascii_label = s.label.encode(encoding="ascii",errors="backslashreplace")
+            
+            print("LABEL: {}".format(ascii_label))
+            # print("LABEL2: {}".format(ascii_label[2:8]))
+            print(ascii_label.find("09"))
+
             data.update(
                 dict(
-                    label=s.label.encode("utf-8") if PY2 else s.label,
+                    label=ascii_label[2:8] if PY2 else s.label,
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
                     shape_type=s.shape_type,
@@ -1338,7 +1344,8 @@ class MainWindow(QtWidgets.QMainWindow):
         flags = {}
         group_id = None
         if self._config["display_label_popup"] or not text:
-            previous_text = self.labelDialog.edit.text()
+            previous_text = self.labelDialog.edit.text() 
+            
             text, flags, group_id = self.labelDialog.popUp(text)
             if not text:
                 self.labelDialog.edit.setText(previous_text)
