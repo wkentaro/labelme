@@ -1239,15 +1239,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def format_shape(s):
             data = s.other_data.copy()
-            ascii_label = s.label.encode(encoding="ascii",errors="backslashreplace")
-            
-            print("LABEL: {}".format(ascii_label))
-            # print("LABEL2: {}".format(ascii_label[2:8]))
-            print(ascii_label.find("09"))
+            # unicode_label = s.label.encode(encoding="ascii",errors="backslashreplace")
+            # ascii_decoded_label = unicode_label.decode("ascii")
+            # print("Initial label: {}".format(s.label))
+            # encodedUnicode = json.dumps(s.label, ensure_ascii=True)
+            # print("encodedUnicode: {}".format(encodedUnicode))
+
+            # print("LABEL: {}".format(unicode_label))
+            # print("LABEL2: {}".format(unicode_label[2:8]))
+            # print("LABEL3: {}".format(unicode_label.decode("ascii")))
+            # print(unicode_label.find("09"))
 
             data.update(
                 dict(
-                    label=ascii_label[2:8] if PY2 else s.label,
+                    label=s.label.encode("utf-8") if PY2 else s.label,
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
                     shape_type=s.shape_type,
@@ -1257,6 +1262,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return data
 
         shapes = [format_shape(item.shape()) for item in self.labelList]
+        # print("shapes: {}".format(shapes))
         flags = {}
         for i in range(self.flag_widget.count()):
             item = self.flag_widget.item(i)

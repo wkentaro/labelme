@@ -197,8 +197,12 @@ class LabelFile(object):
             assert key not in data
             data[key] = value
         try:
+            '''
+            ensure_ascii = True is for encoding the json file with utf-8 encoding
+            ensure_ascii = False is for encoding the json file with ascii encoding
+            '''
             with open(filename, "w") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+                json.dump(data, f, ensure_ascii=True, indent=2)
             self.filename = filename
         except Exception as e:
             raise LabelFileError(e)
