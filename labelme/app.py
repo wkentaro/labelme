@@ -7,6 +7,7 @@ import os
 import os.path as osp
 import re
 import webbrowser
+import random
 
 import imgviz
 import natsort
@@ -1163,8 +1164,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
-            item = self.uniqLabelList.findItemsByLabel(label)[0]
-            label_id = self.uniqLabelList.indexFromItem(item).row() + 1
+            items = self.uniqLabelList.findItemsByLabel(label)
+            if len(items) == 0:
+                return random.choice(LABEL_COLORMAP)
+            label_id = self.uniqLabelList.indexFromItem(items[0]).row() + 1
             label_id += self._config["shift_auto_shape_color"]
             return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
         elif (
