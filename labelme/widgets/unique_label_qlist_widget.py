@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import html
+
 from qtpy.QtCore import Qt
 from qtpy import QtWidgets
 
@@ -32,7 +34,7 @@ class UniqueLabelQListWidget(EscapableQListWidget):
         else:
             qlabel.setText(
                 '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    label, *color
+                    html.escape(label), *color
                 )
             )
         qlabel.setAlignment(Qt.AlignBottom)
