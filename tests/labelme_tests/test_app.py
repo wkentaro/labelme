@@ -2,6 +2,8 @@ import os.path as osp
 import shutil
 import tempfile
 
+import pytest
+
 import labelme.app
 import labelme.config
 import labelme.testing
@@ -21,6 +23,7 @@ def _win_show_and_wait_imageData(qtbot, win):
     qtbot.waitUntil(check_imageData)  # wait for loadFile
 
 
+@pytest.mark.gui
 def test_MainWindow_open(qtbot):
     win = labelme.app.MainWindow()
     qtbot.addWidget(win)
@@ -28,6 +31,7 @@ def test_MainWindow_open(qtbot):
     win.close()
 
 
+@pytest.mark.gui
 def test_MainWindow_open_img(qtbot):
     img_file = osp.join(data_dir, "raw/2011_000003.jpg")
     win = labelme.app.MainWindow(filename=img_file)
@@ -36,6 +40,7 @@ def test_MainWindow_open_img(qtbot):
     win.close()
 
 
+@pytest.mark.gui
 def test_MainWindow_open_json(qtbot):
     json_files = [
         osp.join(data_dir, "annotated_with_data/apc2016_obj3.json"),
@@ -50,6 +55,7 @@ def test_MainWindow_open_json(qtbot):
         win.close()
 
 
+@pytest.mark.gui
 def test_MainWindow_open_dir(qtbot):
     directory = osp.join(data_dir, "raw")
     win = labelme.app.MainWindow(filename=directory)
@@ -58,16 +64,19 @@ def test_MainWindow_open_dir(qtbot):
     return win
 
 
+@pytest.mark.gui
 def test_MainWindow_openNextImg(qtbot):
     win = test_MainWindow_open_dir(qtbot)
     win.openNextImg()
 
 
+@pytest.mark.gui
 def test_MainWindow_openPrevImg(qtbot):
     win = test_MainWindow_open_dir(qtbot)
     win.openNextImg()
 
 
+@pytest.mark.gui
 def test_MainWindow_annotate_jpg(qtbot):
     tmp_dir = tempfile.mkdtemp()
     input_file = osp.join(data_dir, "raw/2011_000003.jpg")

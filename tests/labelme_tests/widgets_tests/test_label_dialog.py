@@ -1,3 +1,4 @@
+import pytest
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -5,6 +6,7 @@ from labelme.widgets import LabelDialog
 from labelme.widgets import LabelQLineEdit
 
 
+@pytest.mark.gui
 def test_LabelQLineEdit(qtbot):
     list_widget = QtWidgets.QListWidget()
     list_widget.addItems(["cat", "dog", "person"])
@@ -29,6 +31,7 @@ def test_LabelQLineEdit(qtbot):
     assert widget.text() == "person"
 
 
+@pytest.mark.gui
 def test_LabelDialog_addLabelHistory(qtbot):
     labels = ["cat", "dog", "person"]
     widget = LabelDialog(labels=labels, sort_labels=True)
@@ -42,6 +45,7 @@ def test_LabelDialog_addLabelHistory(qtbot):
     assert item.text() == "bicycle"
 
 
+@pytest.mark.gui
 def test_LabelDialog_popUp(qtbot):
     labels = ["cat", "dog", "person"]
     widget = LabelDialog(labels=labels, sort_labels=True)

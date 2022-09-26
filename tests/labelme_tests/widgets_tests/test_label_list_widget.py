@@ -1,9 +1,12 @@
 # -*- encoding: utf-8 -*-
 
+import pytest
+
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
 
 
+@pytest.mark.gui
 def test_LabelListWidget(qtbot):
     widget = LabelListWidget()
 
