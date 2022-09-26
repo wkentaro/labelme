@@ -14,15 +14,18 @@ class UniqueLabelQListWidget(EscapableQListWidget):
         if not self.indexAt(event.pos()).isValid():
             self.clearSelection()
 
-    def findItemsByLabel(self, label):
-        items = []
+    def findItemByLabel(self, label):
         for row in range(self.count()):
             item = self.item(row)
             if item.data(Qt.UserRole) == label:
-                items.append(item)
-        return items
+                return item
 
     def createItemFromLabel(self, label):
+        if self.findItemByLabel(label):
+            raise ValueError(
+                "Item for label '{}' already exists".format(label)
+            )
+
         item = QtWidgets.QListWidgetItem()
         item.setData(Qt.UserRole, label)
         return item
