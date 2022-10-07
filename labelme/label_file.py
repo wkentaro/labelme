@@ -60,7 +60,10 @@ class LabelFile(object):
             if PY2 and QT4:
                 format = "PNG"
             elif ext in [".jpg", ".jpeg"]:
-                format = "JPEG"
+                if image_pil.mode == 'RGBA':  # for buggy images
+                    format = "PNG"
+                else:
+                    format = "JPEG"
             else:
                 format = "PNG"
             image_pil.save(f, format=format)
