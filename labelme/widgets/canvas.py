@@ -31,7 +31,6 @@ class Canvas(QtWidgets.QWidget):
     vertexSelected = QtCore.Signal(bool)
 
     CREATE, EDIT = 0, 1
-    CREATE, EDIT = 0, 1
 
     # polygon, rectangle, line, or point
     _createMode = "polygon"
