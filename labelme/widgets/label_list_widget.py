@@ -61,7 +61,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
     def sizeHint(self, option, index):
         thefuckyourshitup_constant = 4
-        return QtCore.QSize(
+        return QtCore.QSizeF(
             self.doc.idealWidth(),
             self.doc.size().height() - thefuckyourshitup_constant,
         )
