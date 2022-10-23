@@ -527,7 +527,7 @@ class Canvas(QtWidgets.QWidget):
         y1 = top - point.y()
         x2 = right - point.x()
         y2 = bottom - point.y()
-        self.offsets = QtCore.QPoint(x1, y1), QtCore.QPoint(x2, y2)
+        self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
 
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
@@ -598,7 +598,7 @@ class Canvas(QtWidgets.QWidget):
         # Try to move in one direction, and if it fails in another.
         # Give up if both fail.
         point = shapes[0][0]
-        offset = QtCore.QPoint(2.0, 2.0)
+        offset = QtCore.QPointF(2.0, 2.0)
         self.offsets = QtCore.QPoint(), QtCore.QPoint()
         self.prevPoint = point
         if not self.boundedMoveShapes(shapes, point - offset):
@@ -656,7 +656,7 @@ class Canvas(QtWidgets.QWidget):
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
-        return QtCore.QPoint(x, y)
+        return QtCore.QPointF(x, y)
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
@@ -730,8 +730,8 @@ class Canvas(QtWidgets.QWidget):
             if 0 <= ua <= 1 and 0 <= ub <= 1:
                 x = x1 + ua * (x2 - x1)
                 y = y1 + ua * (y2 - y1)
-                m = QtCore.QPoint((x3 + x4) / 2, (y3 + y4) / 2)
-                d = labelme.utils.distance(m - QtCore.QPoint(x2, y2))
+                m = QtCore.QPointF((x3 + x4) / 2, (y3 + y4) / 2)
+                d = labelme.utils.distance(m - QtCore.QPointF(x2, y2))
                 yield d, i, (x, y)
 
     # These two, along with a call to adjustSize are required for the
@@ -795,13 +795,13 @@ class Canvas(QtWidgets.QWidget):
                 self.snapping = False
         elif self.editing():
             if key == QtCore.Qt.Key_Up:
-                self.moveByKeyboard(QtCore.QPoint(0.0, -MOVE_SPEED))
+                self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED))
             elif key == QtCore.Qt.Key_Down:
-                self.moveByKeyboard(QtCore.QPoint(0.0, MOVE_SPEED))
+                self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED))
             elif key == QtCore.Qt.Key_Left:
-                self.moveByKeyboard(QtCore.QPoint(-MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0))
             elif key == QtCore.Qt.Key_Right:
-                self.moveByKeyboard(QtCore.QPoint(MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
