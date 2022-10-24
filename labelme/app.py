@@ -1377,7 +1377,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setScroll(orientation, value)
 
     def setScroll(self, orientation, value):
-        self.scrollBars[orientation].setValue(value)
+        self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
 
     def setZoom(self, value):
