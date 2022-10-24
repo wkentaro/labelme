@@ -17,4 +17,4 @@ def test_LabelListWidget(qtbot):
 
     widget.show()
     qtbot.addWidget(widget)
-    qtbot.waitForWindowShown(widget)
+    qtbot.waitExposed(widget)
