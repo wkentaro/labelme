@@ -89,13 +89,13 @@ class LabelFile(object):
                 data = json.load(f)
             version = data.get("version")
             if version is None:
-                logger.warn(
+                logger.warning(
                     "Loading JSON file ({}) of unknown version".format(
                         filename
                     )
                 )
             elif version.split(".")[0] != __version__.split(".")[0]:
-                logger.warn(
+                logger.warning(
                     "This JSON file ({}) may be incompatible with "
                     "current labelme. version in file: {}, "
                     "current version: {}".format(
