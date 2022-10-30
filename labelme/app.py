@@ -172,6 +172,7 @@ class MainWindow(QtWidgets.QMainWindow):
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"],
+            edit_label_method=self.editLabel,
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
@@ -436,6 +437,7 @@ class MainWindow(QtWidgets.QMainWindow):
         hideAll = action(
             self.tr("&Hide\nPolygons"),
             functools.partial(self.togglePolygons, False),
+            shortcuts["hide_all_polygons"],
             icon="eye",
             tip=self.tr("Hide all polygons"),
             enabled=False,
@@ -443,8 +445,17 @@ class MainWindow(QtWidgets.QMainWindow):
         showAll = action(
             self.tr("&Show\nPolygons"),
             functools.partial(self.togglePolygons, True),
+            shortcuts["show_all_polygons"],
             icon="eye",
             tip=self.tr("Show all polygons"),
+            enabled=False,
+        )
+        toggleAll = action(
+            self.tr("&Toggle\nPolygons"),
+            functools.partial(self.togglePolygons, None),
+            shortcuts["toggle_all_polygons"],
+            icon="eye",
+            tip=self.tr("Toggle all polygons"),
             enabled=False,
         )
 
@@ -657,7 +668,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 brightnessContrast,
             ),
-            onShapesPresent=(saveAs, hideAll, showAll),
+            onShapesPresent=(saveAs, hideAll, showAll, toggleAll),
         )
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
@@ -703,6 +714,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 hideAll,
                 showAll,
+                toggleAll,
                 None,
                 zoomIn,
                 zoomOut,
@@ -1459,8 +1471,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
 
     def togglePolygons(self, value):
+        flag = value
         for item in self.labelList:
-            item.setCheckState(Qt.Checked if value else Qt.Unchecked)
+            if value is None:
+                flag = (item.checkState() == Qt.Unchecked)
+            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
@@ -2042,7 +2057,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.clear()
         for filename in self.scanAllImages(dirpath):
             if pattern and pattern not in filename:
-                continue
+                try:
+                    if not re.search(pattern, filename):
+                        continue
+                except re.error:
+                    pass
             label_file = osp.splitext(filename)[0] + ".json"
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
@@ -2068,7 +2087,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for root, dirs, files in os.walk(folderPath):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
-                    relativePath = osp.join(root, file)
+                    relativePath = os.path.normpath(osp.join(root, file))
                     images.append(relativePath)
         images = natsort.os_sorted(images)
         return images

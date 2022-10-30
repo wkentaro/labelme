@@ -333,6 +333,17 @@ Polygons</source>
         <translation>显示所有多边形</translation>
     </message>
     <message>
+        <location filename="../app.py" line="329"/>
+        <source>&amp;Toggle
+Polygons</source>
+        <translation>开关多边形(&amp;S)</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="329"/>
+        <source>Toggle all polygons</source>
+        <translation>开关所有多边形</translation>
+    </message>
+    <message>
         <location filename="../app.py" line="331"/>
         <source>&amp;Tutorial</source>
         <translation>教程[&amp;T]</translation>
