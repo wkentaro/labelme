@@ -48,9 +48,45 @@ def shape_to_mask(
     return mask
 
 
+def shapes_to_segmap(img_shape, shapes, label_name_to_value):
+    assert "__ignore__" in label_name_to_value, "Need to have '__ignore__' class in label_name_to_value"
+    min_val = min(label_name_to_value.values())
+    max_val = max(label_name_to_value.values())
+    if max_val - min_val < 255:
+        dtype = np.int8
+    else:
+        dtype = np.int32
+
+    segmap = np.zeros((*img_shape[:2], len(label_name_to_value)), dtype=dtype)
+
+    for shape in shapes:
+        points = shape["points"]
+        label = shape["label"]
+        group_id = shape.get("group_id")
+        if group_id is None:
+            group_id = uuid.uuid1()
+        shape_type = shape.get("shape_type", None)
+
+        # mask for this class
+        mask = np.zeros((img_shape[:2]), dtype=np.int32)
+
+        if label not in label_name_to_value:
+            cls_id = label_name_to_value["__ignore__"]
+        else:
+            cls_id = label_name_to_value[label]
+
+        # turn the mask values to 1
+        mask = shape_to_mask(img_shape[:2], points, shape_type)
+        segmap[..., cls_id][mask] = 1
+
+    # create the background class
+    segmap[..., label_name_to_value["__ignore__"]][segmap.sum(axis=-1) == 0] = 1
+
+    return segmap
+
 def shapes_to_label(img_shape, shapes, label_name_to_value):
     assert "__ignore__" in label_name_to_value, "Need to have '__ignore__' class in label_name_to_value"
-    cls = np.zeros(img_shape[:2], dtype=np.int32)
+    cls = np.zeros((img_shape[:2]), dtype=np.int32)
     ins = np.zeros_like(cls)
     instances = []
     for shape in shapes:
@@ -61,16 +97,15 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
             group_id = uuid.uuid1()
         shape_type = shape.get("shape_type", None)
 
-        cls_name = label
-        instance = (cls_name, group_id)
+        instance = (label, group_id)
 
         if instance not in instances:
             instances.append(instance)
         ins_id = instances.index(instance) + 1
-        if cls_name not in label_name_to_value:
+        if label not in label_name_to_value:
             cls_id = label_name_to_value["__ignore__"]
         else:
-            cls_id = label_name_to_value[cls_name]
+            cls_id = label_name_to_value[label]
 
         mask = shape_to_mask(img_shape[:2], points, shape_type)
         cls[mask] = cls_id
