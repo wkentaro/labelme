@@ -49,6 +49,7 @@ def shape_to_mask(
 
 
 def shapes_to_label(img_shape, shapes, label_name_to_value):
+    assert "__ignore__" in label_name_to_value, "Need to have '__ignore__' class in label_name_to_value"
     cls = np.zeros(img_shape[:2], dtype=np.int32)
     ins = np.zeros_like(cls)
     instances = []
@@ -66,7 +67,10 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         if instance not in instances:
             instances.append(instance)
         ins_id = instances.index(instance) + 1
-        cls_id = label_name_to_value[cls_name]
+        if cls_name not in label_name_to_value:
+            cls_id = label_name_to_value["__ignore__"]
+        else:
+            cls_id = label_name_to_value[cls_name]
 
         mask = shape_to_mask(img_shape[:2], points, shape_type)
         cls[mask] = cls_id
