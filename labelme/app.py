@@ -172,6 +172,7 @@ class MainWindow(QtWidgets.QMainWindow):
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"],
+            crosshair=self._config["canvas"]["crosshair"],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 

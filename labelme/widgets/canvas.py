@@ -47,6 +47,17 @@ class Canvas(QtWidgets.QWidget):
                 )
             )
         self.num_backups = kwargs.pop("num_backups", 10)
+        self._crosshair = kwargs.pop(
+            "crosshair",
+            {
+                "polygon": False,
+                "rectangle": True,
+                "circle": False,
+                "line": False,
+                "point": False,
+                "linestrip": False,
+            },
+        )
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -166,7 +177,11 @@ class Canvas(QtWidgets.QWidget):
 
     def setEditing(self, value=True):
         self.mode = self.EDIT if value else self.CREATE
-        if not value:  # Create
+        if self.mode == self.EDIT:
+            # CREATE -> EDIT
+            self.repaint()  # clear crosshair
+        else:
+            # EDIT -> CREATE
             self.unHighlight()
             self.deSelectShape()
 
@@ -204,6 +219,7 @@ class Canvas(QtWidgets.QWidget):
 
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
+                self.repaint()  # draw crosshair
                 return
 
             if self.outOfPixmap(pos):
@@ -617,6 +633,28 @@ class Canvas(QtWidgets.QWidget):
         p.translate(self.offsetToCenter())
 
         p.drawPixmap(0, 0, self.pixmap)
+
+        # draw crosshair
+        if (
+            self._crosshair[self._createMode]
+            and self.drawing()
+            and self.prevMovePoint
+            and not self.outOfPixmap(self.prevMovePoint)
+        ):
+            p.setPen(QtGui.QColor(0, 0, 0))
+            p.drawLine(
+                0,
+                int(self.prevMovePoint.y()),
+                self.width() - 1,
+                int(self.prevMovePoint.y()),
+            )
+            p.drawLine(
+                int(self.prevMovePoint.x()),
+                0,
+                int(self.prevMovePoint.x()),
+                self.height() - 1,
+            )
+
         Shape.scale = self.scale
         for shape in self.shapes:
             if (shape.selected or not self._hideBackround) and self.isVisible(
