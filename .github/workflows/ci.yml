@@ -50,10 +50,11 @@ jobs:
       run: |
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyside2" ]; then
           conda install -q -y pyside2 -c conda-forge
-        else
-          conda install -q -y pyqt=5
+        # should be installed via pip
+        # else
+        #   conda install -q -y pyqt=5
         fi
-        pip install pytest 'pytest-qt<4'
+        pip install -r requirements-dev.txt
 
     - name: Install main
       shell: bash -l {0}
@@ -64,14 +65,12 @@ jobs:
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        pip install hacking==4.1.0
         flake8 .
 
     - name: Black
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        pip install black==22.3.0
         black --line-length 79 --check --diff labelme/
 
     - name: Test with pytest
@@ -117,6 +116,7 @@ jobs:
       run: |
         # Build the standalone executable
         pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
+        pip install 'matplotlib<3.3'
         pip install pyinstaller
         pyinstaller labelme.spec
         dist/labelme --version
