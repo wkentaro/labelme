@@ -67,6 +67,14 @@ canvas:
   double_click: close
   # The max number of edits we can undo
   num_backups: 10
+  # show crosshair
+  crosshair:
+    polygon: false
+    rectangle: true
+    circle: false
+    line: false
+    point: false
+    linestrip: false
 
 shortcuts:
   close: Ctrl+W
