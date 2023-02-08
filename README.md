@@ -174,9 +174,9 @@ For more advanced usage, please refer to the examples:
 git clone https://github.com/wkentaro/labelme.git
 cd labelme
 
-# Install anaconda3 and labelme
-curl -L https://github.com/wkentaro/dotfiles/raw/main/local/bin/install_anaconda3.sh | bash -s .
-source .anaconda3/bin/activate
+# Install miniconda3 and labelme
+curl -L https://github.com/wkentaro/dotfiles/raw/main/local/bin/install_miniconda3.sh | bash -s .
+source .miniconda3/bin/activate
 pip install -e .
 ```
 
