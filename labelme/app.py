@@ -19,6 +19,7 @@ from labelme import __appname__
 from labelme import PY2
 
 from . import utils
+from labelme import __version__
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
@@ -455,6 +456,12 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="help",
             tip=self.tr("Show tutorial page"),
         )
+        about = action(
+            self.tr("&About"),
+            self.about,
+            icon="help",
+            tip=self.tr("Show about page"),
+        )
 
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
@@ -691,7 +698,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 quit,
             ),
         )
-        utils.addActions(self.menus.help, (help,))
+        utils.addActions(
+            self.menus.help,
+            (
+                help,
+                None,
+                about,
+            ),
+        )
         utils.addActions(
             self.menus.view,
             (
@@ -939,7 +953,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def tutorial(self):
         url = "https://github.com/wkentaro/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
-
+        
+    def about(self):
+        mb = QtWidgets.QMessageBox
+        msg = "Version: " + __version__
+        answer = mb.information(self, self.tr("About"), msg, mb.Ok)
+        
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
 
