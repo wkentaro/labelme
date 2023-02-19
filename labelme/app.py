@@ -817,6 +817,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
 
+        # Display cursor coordinates at the right of status bar
+        self.label_coordinates = QtWidgets.QLabel('')
+        self.statusBar().addPermanentWidget(self.label_coordinates)
+
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
@@ -914,6 +918,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelFile = None
         self.otherData = None
         self.canvas.resetState()
+        self.label_coordinates.clear()
 
     def currentItem(self):
         items = self.labelList.selectedItems()
