@@ -31,6 +31,7 @@ def get_install_requires():
         "PyYAML",
         "qtpy!=1.11.2",
         "termcolor",
+        "scikit-image"
     ]
 
     # Find python binding for qt with priority:

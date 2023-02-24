@@ -6,6 +6,7 @@ from labelme import QT5
 from labelme.shape import Shape
 import labelme.utils
 
+from labelme.logger import logger
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
@@ -115,6 +116,7 @@ class Canvas(QtWidgets.QWidget):
             "polygon",
             "rectangle",
             "circle",
+            "ellipse",
             "line",
             "point",
             "linestrip",
@@ -246,6 +248,9 @@ class Canvas(QtWidgets.QWidget):
             elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
                 self.line.shape_type = "circle"
+            elif self.createMode == "ellipse":
+                self.line.points = [self.current[0], pos]
+                self.line.shape_type = "ellipse"
             elif self.createMode == "line":
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -378,6 +383,8 @@ class Canvas(QtWidgets.QWidget):
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
+                    elif self.createMode == "ellipse":
+                        self.current.addPoint(self.line[1])
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
@@ -392,6 +399,8 @@ class Canvas(QtWidgets.QWidget):
                     else:
                         if self.createMode == "circle":
                             self.current.shape_type = "circle"
+                        elif self.createMode == "ellipse":
+                            self.current.shape_type = "ellipse"
                         self.line.points = [pos, pos]
                         self.setHiding()
                         self.drawingPolygon.emit(True)
@@ -873,6 +882,11 @@ class Canvas(QtWidgets.QWidget):
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]
+        elif self.createMode == "ellipse":
+            # TODO(ellipse)
+            logger.error(
+                "The 'undoLastLine' function is not supported for ellipses"
+            )
         elif self.createMode == "point":
             self.current = None
         self.drawingPolygon.emit(True)

@@ -98,6 +98,7 @@ shortcuts:
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
   create_circle: null
+  create_ellipse: null
   create_line: null
   create_point: null
   create_linestrip: null
