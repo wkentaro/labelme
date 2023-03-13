@@ -10,7 +10,6 @@
   <a href="https://pypi.python.org/pypi/labelme"><img src="https://img.shields.io/pypi/v/labelme.svg"></a>
   <a href="https://pypi.org/project/labelme"><img src="https://img.shields.io/pypi/pyversions/labelme.svg"></a>
   <a href="https://github.com/wkentaro/labelme/actions"><img src="https://github.com/wkentaro/labelme/workflows/ci/badge.svg?branch=main&event=push"></a>
-  <a href="https://hub.docker.com/r/wkentaro/labelme"><img src="https://img.shields.io/docker/cloud/build/wkentaro/labelme"></a>
 </div>
 
 <div align="center">
@@ -18,6 +17,7 @@
   <a href="#usage"><b>Usage</b></a> |
   <a href="https://github.com/wkentaro/labelme/tree/main/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
   <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a> |
+  <a href="https://github.com/wkentaro/labelme/discussions"><b>Discussions</b></a> |
   <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
 </div>
 
@@ -64,7 +64,7 @@ It is written in Python and uses Qt for its graphical interface.
 
 There are options:
 
-- Platform agnostic installation: [Anaconda](#anaconda), [Docker](#docker)
+- Platform agnostic installation: [Anaconda](#anaconda)
 - Platform specific installation: [Ubuntu](#ubuntu), [macOS](#macos), [Windows](#windows)
 - Pre-build binaries from [the release section](https://github.com/wkentaro/labelme/releases)
 
@@ -82,20 +82,6 @@ source activate labelme
 pip install labelme
 # or you can install everything by conda command
 # conda install labelme -c conda-forge
-```
-
-### Docker
-
-You need install [docker](https://www.docker.com), then run below:
-
-```bash
-# on macOS
-socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
-docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=docker.for.mac.host.internal:0 -v $(pwd):/root/workdir wkentaro/labelme
-
-# on Linux
-xhost +
-docker run -it -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=:0 -v $(pwd):/root/workdir wkentaro/labelme
 ```
 
 ### Ubuntu
@@ -206,6 +192,7 @@ conda activate labelme
 
 # Build the standalone executable
 pip install .
+pip install 'matplotlib<3.3'
 pip install pyinstaller
 pyinstaller labelme.spec
 dist/labelme --version

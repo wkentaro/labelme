@@ -26,16 +26,16 @@ jobs:
         auto-update-conda: true
         python-version: ${{ matrix.python-version }}
 
-    - name: Install system dependencies
-      shell: bash -l {0}
-      run: |
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          sudo apt-get install -y coreutils
-          sudo apt-get install -y xvfb herbstluftwm
-        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-          brew install coreutils
-          brew install --cask xquartz
-        fi
+    # - name: Install system dependencies
+    #   shell: bash -l {0}
+    #   run: |
+    #     if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+    #       sudo apt-get install -y coreutils
+    #       sudo apt-get install -y xvfb herbstluftwm
+    #     elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+    #       brew install coreutils
+    #       brew install --cask xquartz
+    #     fi
 
     - name: Set up Python
       shell: bash -l {0}
@@ -50,10 +50,11 @@ jobs:
       run: |
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyside2" ]; then
           conda install -q -y pyside2 -c conda-forge
-        else
-          conda install -q -y pyqt=5
+        # should be installed via pip
+        # else
+        #   conda install -q -y pyqt=5
         fi
-        pip install pytest 'pytest-qt<4'
+        pip install -r requirements-dev.txt
 
     - name: Install main
       shell: bash -l {0}
@@ -64,14 +65,12 @@ jobs:
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        pip install hacking==4.1.0
         flake8 .
 
     - name: Black
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        pip install black==22.1.0
         black --line-length 79 --check --diff labelme/
 
     - name: Test with pytest
@@ -79,17 +78,17 @@ jobs:
       if: matrix.os != 'windows-latest' && !(matrix.os == 'macos-latest' && matrix.PYTEST_QT_API == 'pyside2')
       env:
         PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
+        MPLBACKEND: 'agg'
       run: |
-        # open virtual display
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          export DISPLAY=:99.0
-          /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX +render -noreset
-          (herbstluftwm )&
-        else
-          (sudo Xvfb :99 -ac -screen 0 1024x768x8 )&
-        fi
-        # run test
-        MPLBACKEND='agg' pytest tests/
+        # # open virtual display
+        # if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+        #   export DISPLAY=:99.0
+        #   /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX +render -noreset
+        #   (herbstluftwm )&
+        # else
+        #   (sudo Xvfb :99 -ac -screen 0 1024x768x8 )&
+        # fi
+        pytest -vs -m 'not gui' tests/
 
     - name: Run examples
       shell: bash -l {0}
@@ -116,7 +115,6 @@ jobs:
       if: matrix.PYTEST_QT_API == 'pyqt5'
       run: |
         # Build the standalone executable
-        pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
         pip install pyinstaller
         pyinstaller labelme.spec
         dist/labelme --version

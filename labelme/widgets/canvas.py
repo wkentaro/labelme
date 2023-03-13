@@ -31,7 +31,6 @@ class Canvas(QtWidgets.QWidget):
     vertexSelected = QtCore.Signal(bool)
 
     CREATE, EDIT = 0, 1
-    CREATE, EDIT = 0, 1
 
     # polygon, rectangle, line, or point
     _createMode = "polygon"
@@ -48,6 +47,17 @@ class Canvas(QtWidgets.QWidget):
                 )
             )
         self.num_backups = kwargs.pop("num_backups", 10)
+        self._crosshair = kwargs.pop(
+            "crosshair",
+            {
+                "polygon": False,
+                "rectangle": True,
+                "circle": False,
+                "line": False,
+                "point": False,
+                "linestrip": False,
+            },
+        )
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
@@ -167,7 +177,11 @@ class Canvas(QtWidgets.QWidget):
 
     def setEditing(self, value=True):
         self.mode = self.EDIT if value else self.CREATE
-        if not value:  # Create
+        if self.mode == self.EDIT:
+            # CREATE -> EDIT
+            self.repaint()  # clear crosshair
+        else:
+            # EDIT -> CREATE
             self.unHighlight()
             self.deSelectShape()
 
@@ -205,6 +219,7 @@ class Canvas(QtWidgets.QWidget):
 
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
+                self.repaint()  # draw crosshair
                 return
 
             if self.outOfPixmap(pos):
@@ -527,7 +542,7 @@ class Canvas(QtWidgets.QWidget):
         y1 = top - point.y()
         x2 = right - point.x()
         y2 = bottom - point.y()
-        self.offsets = QtCore.QPoint(x1, y1), QtCore.QPoint(x2, y2)
+        self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
 
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
@@ -598,7 +613,7 @@ class Canvas(QtWidgets.QWidget):
         # Try to move in one direction, and if it fails in another.
         # Give up if both fail.
         point = shapes[0][0]
-        offset = QtCore.QPoint(2.0, 2.0)
+        offset = QtCore.QPointF(2.0, 2.0)
         self.offsets = QtCore.QPoint(), QtCore.QPoint()
         self.prevPoint = point
         if not self.boundedMoveShapes(shapes, point - offset):
@@ -618,6 +633,28 @@ class Canvas(QtWidgets.QWidget):
         p.translate(self.offsetToCenter())
 
         p.drawPixmap(0, 0, self.pixmap)
+
+        # draw crosshair
+        if (
+            self._crosshair[self._createMode]
+            and self.drawing()
+            and self.prevMovePoint
+            and not self.outOfPixmap(self.prevMovePoint)
+        ):
+            p.setPen(QtGui.QColor(0, 0, 0))
+            p.drawLine(
+                0,
+                int(self.prevMovePoint.y()),
+                self.width() - 1,
+                int(self.prevMovePoint.y()),
+            )
+            p.drawLine(
+                int(self.prevMovePoint.x()),
+                0,
+                int(self.prevMovePoint.x()),
+                self.height() - 1,
+            )
+
         Shape.scale = self.scale
         for shape in self.shapes:
             if (shape.selected or not self._hideBackround) and self.isVisible(
@@ -656,7 +693,7 @@ class Canvas(QtWidgets.QWidget):
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
-        return QtCore.QPoint(x, y)
+        return QtCore.QPointF(x, y)
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
@@ -700,10 +737,10 @@ class Canvas(QtWidgets.QWidget):
         if (x, y) == (x1, y1):
             # Handle cases where previous point is on one of the edges.
             if x3 == x4:
-                return QtCore.QPoint(x3, min(max(0, y2), max(y3, y4)))
+                return QtCore.QPointF(x3, min(max(0, y2), max(y3, y4)))
             else:  # y3 == y4
-                return QtCore.QPoint(min(max(0, x2), max(x3, x4)), y3)
-        return QtCore.QPoint(x, y)
+                return QtCore.QPointF(min(max(0, x2), max(x3, x4)), y3)
+        return QtCore.QPointF(x, y)
 
     def intersectingEdges(self, point1, point2, points):
         """Find intersecting edges.
@@ -730,8 +767,8 @@ class Canvas(QtWidgets.QWidget):
             if 0 <= ua <= 1 and 0 <= ub <= 1:
                 x = x1 + ua * (x2 - x1)
                 y = y1 + ua * (y2 - y1)
-                m = QtCore.QPoint((x3 + x4) / 2, (y3 + y4) / 2)
-                d = labelme.utils.distance(m - QtCore.QPoint(x2, y2))
+                m = QtCore.QPointF((x3 + x4) / 2, (y3 + y4) / 2)
+                d = labelme.utils.distance(m - QtCore.QPointF(x2, y2))
                 yield d, i, (x, y)
 
     # These two, along with a call to adjustSize are required for the
@@ -795,13 +832,13 @@ class Canvas(QtWidgets.QWidget):
                 self.snapping = False
         elif self.editing():
             if key == QtCore.Qt.Key_Up:
-                self.moveByKeyboard(QtCore.QPoint(0.0, -MOVE_SPEED))
+                self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED))
             elif key == QtCore.Qt.Key_Down:
-                self.moveByKeyboard(QtCore.QPoint(0.0, MOVE_SPEED))
+                self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED))
             elif key == QtCore.Qt.Key_Left:
-                self.moveByKeyboard(QtCore.QPoint(-MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0))
             elif key == QtCore.Qt.Key_Right:
-                self.moveByKeyboard(QtCore.QPoint(MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
