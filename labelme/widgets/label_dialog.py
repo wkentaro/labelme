@@ -93,6 +93,7 @@ class LabelDialog(QtWidgets.QDialog):
             )
         self.labelList.currentItemChanged.connect(self.labelSelected)
         self.labelList.itemDoubleClicked.connect(self.labelDoubleClicked)
+        self.labelList.setFixedHeight(150)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         # label_flags
@@ -106,8 +107,8 @@ class LabelDialog(QtWidgets.QDialog):
         # text edit
         self.textEdit = QtWidgets.QTextEdit()
         self.textEdit.setPlaceholderText("Label content")
+        self.textEdit.setFixedHeight(50)
         layout.addWidget(self.textEdit)
-        self.resize(300, 200)
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
