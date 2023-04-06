@@ -1055,11 +1055,11 @@ class MainWindow(QtWidgets.QMainWindow):
         shape = item.shape()
         if shape is None:
             return
-        text, flags, group_id, content = self.labelDialog.popUp(
+        text, flags, group_id, description = self.labelDialog.popUp(
             text=shape.label,
             flags=shape.flags,
             group_id=shape.group_id,
-            content=shape.content,
+            description=shape.description,
         )
         if text is None:
             return
@@ -1074,7 +1074,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.label = text
         shape.flags = flags
         shape.group_id = group_id
-        shape.content = content
+        shape.description = description
 
         self._update_shape_color(shape)
         if shape.group_id is None:
@@ -1206,7 +1206,7 @@ class MainWindow(QtWidgets.QMainWindow):
             points = shape["points"]
             shape_type = shape["shape_type"]
             flags = shape["flags"]
-            content = shape["content"]
+            description = shape["description"]
             group_id = shape["group_id"]
             other_data = shape["other_data"]
 
@@ -1218,7 +1218,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 label=label,
                 shape_type=shape_type,
                 group_id=group_id,
-                content=content,
+                description=description,
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1255,7 +1255,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     label=s.label.encode("utf-8") if PY2 else s.label,
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
-                    content=s.content,
+                    description=s.description,
                     shape_type=s.shape_type,
                     flags=s.flags,
                 )
@@ -1351,7 +1351,7 @@ class MainWindow(QtWidgets.QMainWindow):
         group_id = None
         if self._config["display_label_popup"] or not text:
             previous_text = self.labelDialog.edit.text()
-            text, flags, group_id, content = self.labelDialog.popUp(text)
+            text, flags, group_id, description = self.labelDialog.popUp(text)
             if not text:
                 self.labelDialog.edit.setText(previous_text)
 
@@ -1367,7 +1367,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.labelList.clearSelection()
             shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
-            shape.content = content
+            shape.description = description
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)

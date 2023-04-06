@@ -83,7 +83,7 @@ class LabelFile(object):
             "group_id",
             "shape_type",
             "flags",
-            "content",
+            "description",
         ]
         try:
             with open(filename, "r") as f:
@@ -125,7 +125,7 @@ class LabelFile(object):
                     points=s["points"],
                     shape_type=s.get("shape_type", "polygon"),
                     flags=s.get("flags", {}),
-                    content=s.get("content"),
+                    description=s.get("description"),
                     group_id=s.get("group_id"),
                     other_data={
                         k: v for k, v in s.items() if k not in shape_keys
