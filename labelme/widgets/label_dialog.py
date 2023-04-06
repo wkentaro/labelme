@@ -105,10 +105,10 @@ class LabelDialog(QtWidgets.QDialog):
         layout.addItem(self.flagsLayout)
         self.edit.textChanged.connect(self.updateFlags)
         # text edit
-        self.textEdit = QtWidgets.QTextEdit()
-        self.textEdit.setPlaceholderText("Label content")
-        self.textEdit.setFixedHeight(50)
-        layout.addWidget(self.textEdit)
+        self.editDescription = QtWidgets.QTextEdit()
+        self.editDescription.setPlaceholderText("Label description")
+        self.editDescription.setFixedHeight(50)
+        layout.addWidget(self.editDescription)
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
@@ -206,17 +206,8 @@ class LabelDialog(QtWidgets.QDialog):
             return int(group_id)
         return None
 
-    def getContent(self):
-        content = self.textEdit.toPlainText()
-        if content:
-            return content
-        return None
-
-    def setContent(self, content):
-        self.textEdit.setPlainText(content)
-
     def popUp(
-        self, text=None, move=True, flags=None, group_id=None, content=None
+        self, text=None, move=True, flags=None, group_id=None, description=None
     ):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
@@ -229,9 +220,10 @@ class LabelDialog(QtWidgets.QDialog):
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
-        if content is None:
-            content = ""
-        self.setContent(content)
+        # description is always initialized by empty text c.f., self.edit.text
+        if description is None:
+            description = ""
+        self.editDescription.setPlainText(description)
         if flags:
             self.setFlags(flags)
         else:
@@ -257,7 +249,7 @@ class LabelDialog(QtWidgets.QDialog):
                 self.edit.text(),
                 self.getFlags(),
                 self.getGroupId(),
-                self.getContent(),
+                self.editDescription.toPlainText(),
             )
         else:
             return None, None, None, None
