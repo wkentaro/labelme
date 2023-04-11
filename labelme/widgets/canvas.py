@@ -6,6 +6,9 @@ from labelme import QT5
 from labelme.shape import Shape
 import labelme.utils
 
+import cv2
+import numpy as np
+
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
@@ -28,9 +31,10 @@ class Canvas(QtWidgets.QWidget):
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
+    promptPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
 
-    CREATE, EDIT = 0, 1
+    CREATE, EDIT, PROMPT = 0, 1, 2
 
     # polygon, rectangle, line, or point
     _createMode = "polygon"
@@ -63,7 +67,11 @@ class Canvas(QtWidgets.QWidget):
         self.mode = self.EDIT
         self.shapes = []
         self.shapesBackups = []
-        self.current = None
+        self.current = None # 当前多边形的点集
+        self.current_prompt = None # 当前提示的点集
+        self.prompt_points = None
+        self.prompt_labels = None
+        self.prompt_box = None
         self.selectedShapes = []  # save the selected shapes here
         self.selectedShapesCopy = []
         # self.line represents:
@@ -98,6 +106,8 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+        # Models
+        self.predictor = None
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -175,6 +185,26 @@ class Canvas(QtWidgets.QWidget):
     def editing(self):
         return self.mode == self.EDIT
 
+    def prompting(self):
+        return self.mode == self.PROMPT
+        
+    
+    def setMode(self, mode='edit'):
+        print(f"set mode to {mode}")
+        if mode.upper() == 'EDIT':
+            self.mode = self.EDIT
+            self.repaint()  # clear crosshair
+        elif mode.upper() == 'PROMPT':
+            self.mode = self.PROMPT
+            self.unHighlight()
+            self.deSelectShape()
+        else:
+            self.mode = self.CREATE
+            self.unHighlight()
+            self.deSelectShape()
+            
+            
+
     def setEditing(self, value=True):
         self.mode = self.EDIT if value else self.CREATE
         if self.mode == self.EDIT:
@@ -184,8 +214,44 @@ class Canvas(QtWidgets.QWidget):
             # EDIT -> CREATE
             self.unHighlight()
             self.deSelectShape()
+    
+    def _predict_box(self, 
+                     input_point: np.ndarray = None, 
+                     input_label: np.ndarray = None, 
+                     input_box: np.ndarray = None,
+                     input_mask: np.ndarray = None) -> tuple:
+        """
+        使用 sam 预测一个矩形框，支持多个提示点，单个提示框，可同时使用
+        Args:
+            input_point (ndarray): 提示点坐标, shape: (n, 2)
+            input_label (ndarray): 0: 背景点, 1: 前景点。shape: (n, )
+            input_box (ndarray): 提示框, shape: (1, 4)
+            input_mask (ndarray): 提示掩码, shape: (1, height, width)
+        Return:
+            x, y, w, h
+        """
+        print("_predict_box")
+        if not input_point and not input_label and not input_box:
+            return None
+        masks, scores, _ = self.predictor.predict(
+            point_coords=input_point,
+            point_labels=input_label,
+            box=input_box,
+            mask_input=input_mask,
+            multimask_output=True,
+        )
+        idx = np.argmax(scores)
+        contours, _ = cv2.findContours(masks[idx].astype(np.uint8),cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        x, y, w, h = cv2.boundingRect(contours[0])
+        rect = x, y, w, h
+        return rect
 
+    def setPredictor(self, predictor):
+        self.predictor = predictor
+
+    
     def unHighlight(self):
+        """取消高亮"""
         if self.hShape:
             self.hShape.highlightClear()
             self.update()
@@ -255,6 +321,11 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()
             self.current.highlightClear()
             return
+        
+        if self.prompting():
+            # pos 对应图上的坐标，可直接用
+            return
+
 
         # Polygon copy moving.
         if QtCore.Qt.RightButton & ev.buttons():
@@ -410,48 +481,72 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
-        elif ev.button() == QtCore.Qt.RightButton and self.editing():
-            group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
-            if not self.selectedShapes or (
-                self.hShape is not None
-                and self.hShape not in self.selectedShapes
-            ):
-                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
-                self.repaint()
-            self.prevPoint = pos
+            elif self.prompting():
+                # TODO: 获取到当前绘制的点、框
+                # pos 对应图上的坐标，可直接用
+                if self.current_prompt:
+                    if self.createMode in ["point"]:
+                        # Add point to existing shape.
+                        pass
+                elif not self.outOfPixmap(pos):
+                    # Create new shape.
+                    self.current_prompt = Shape(shape_type=self.createMode)
+                    self.current_prompt.addPoint(pos)
+                    if self.createMode in ["point"]:
+                        pass
+        elif ev.button() == QtCore.Qt.RightButton:
+            if self.editing():
+                group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
+                if not self.selectedShapes or (
+                    self.hShape is not None
+                    and self.hShape not in self.selectedShapes
+                ):
+                    self.selectShapePoint(pos, multiple_selection_mode=group_mode)
+                    self.repaint()
+                self.prevPoint = pos
+            elif self.prompting:
+                # TODO: 提示分割背景
+                pass
+        
+        if self.prompting():
+            print("通过 sam 预测框")
+            # TODO: 通过 sam 预测
+            self._predict_box()
+
 
     def mouseReleaseEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:
-            menu = self.menus[len(self.selectedShapesCopy) > 0]
-            self.restoreCursor()
-            if (
-                not menu.exec_(self.mapToGlobal(ev.pos()))
-                and self.selectedShapesCopy
-            ):
-                # Cancel the move by deleting the shadow copy.
-                self.selectedShapesCopy = []
-                self.repaint()
-        elif ev.button() == QtCore.Qt.LeftButton:
-            if self.editing():
+        if not self.prompting():
+            if ev.button() == QtCore.Qt.RightButton:
+                menu = self.menus[len(self.selectedShapesCopy) > 0]
+                self.restoreCursor()
                 if (
-                    self.hShape is not None
-                    and self.hShapeIsSelected
-                    and not self.movingShape
+                    not menu.exec_(self.mapToGlobal(ev.pos()))
+                    and self.selectedShapesCopy
                 ):
-                    self.selectionChanged.emit(
-                        [x for x in self.selectedShapes if x != self.hShape]
-                    )
+                    # Cancel the move by deleting the shadow copy.
+                    self.selectedShapesCopy = []
+                    self.repaint()
+            elif ev.button() == QtCore.Qt.LeftButton:
+                if self.editing():
+                    if (
+                        self.hShape is not None
+                        and self.hShapeIsSelected
+                        and not self.movingShape
+                    ):
+                        self.selectionChanged.emit(
+                            [x for x in self.selectedShapes if x != self.hShape]
+                        )
 
-        if self.movingShape and self.hShape:
-            index = self.shapes.index(self.hShape)
-            if (
-                self.shapesBackups[-1][index].points
-                != self.shapes[index].points
-            ):
-                self.storeShapes()
-                self.shapeMoved.emit()
+            if self.movingShape and self.hShape:
+                index = self.shapes.index(self.hShape)
+                if (
+                    self.shapesBackups[-1][index].points
+                    != self.shapes[index].points
+                ):
+                    self.storeShapes()
+                    self.shapeMoved.emit()
 
-            self.movingShape = False
+                self.movingShape = False
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
@@ -577,6 +672,7 @@ class Canvas(QtWidgets.QWidget):
         return False
 
     def deSelectShape(self):
+        """取消选择的 Shape"""
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
@@ -700,6 +796,10 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
     def finalise(self):
+        """
+            关闭当前的对象，将其添加到 shapes 列表中，存储形状并将当前对象设置为None。
+            最后，它会发出一个新形状的信号并更新对象。
+        """
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
@@ -708,6 +808,14 @@ class Canvas(QtWidgets.QWidget):
         self.setHiding(False)
         self.newShape.emit()
         self.update()
+
+    def finalise_prompt(self):
+        """结束当前的prompt"""
+        assert self.current_prompt
+        self.current_prompt.close()
+        self.current_prompt = None
+        self.finalise()
+        
 
     def closeEnough(self, p1, p2):
         # d = distance(p1 - p2)
@@ -839,6 +947,10 @@ class Canvas(QtWidgets.QWidget):
                 self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0))
             elif key == QtCore.Qt.Key_Right:
                 self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
+        elif self.prompting():
+            if key == QtCore.Qt.Key_Return:
+                self.finalise_prompt()
+
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()

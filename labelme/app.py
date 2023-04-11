@@ -34,6 +34,9 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
+# segment anything
+from segment_anything import build_sam_vit_b, SamPredictor
+
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
 
@@ -68,7 +71,12 @@ class MainWindow(QtWidgets.QMainWindow):
             config = get_config()
         self._config = config
 
-        # set default shape colors
+        # 加载模型
+        checkpoint = self._config["models"]["sam"]
+        print(f"Loading Segment Anything Model From {checkpoint}")
+        self.sam_predictor = SamPredictor(build_sam_vit_b(checkpoint=checkpoint))
+
+        # 设置默认形状的颜色
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
         Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
         Shape.select_line_color = QtGui.QColor(
@@ -84,7 +92,7 @@ class MainWindow(QtWidgets.QMainWindow):
             *self._config["shape"]["hvertex_fill_color"]
         )
 
-        # Set point size from config file
+        # 设置点大小
         Shape.point_size = self._config["shape"]["point_size"]
 
         super(MainWindow, self).__init__()
@@ -320,12 +328,12 @@ class MainWindow(QtWidgets.QMainWindow):
         toggle_keep_prev_mode.setChecked(self._config["keep_prev"])
 
         createMode = action(
-            self.tr("Create Polygons"),
-            lambda: self.toggleDrawMode(False, createMode="polygon"),
-            shortcuts["create_polygon"],
-            "objects",
-            self.tr("Start drawing polygons"),
-            enabled=False,
+            self.tr("Create Polygons"),  # 按钮文本
+            lambda: self.toggleDrawMode(False, createMode="polygon"),  # 点击按钮后执行的函数
+            shortcuts["create_polygon"],  # 快捷键
+            "objects",  # 图标
+            self.tr("Start drawing polygons"),  # 鼠标悬停在按钮上时的提示文本
+            enabled=False,  # 按钮是否可用
         )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
@@ -373,6 +381,14 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcuts["edit_polygon"],
             "edit",
             self.tr("Move and edit the selected polygons"),
+            enabled=False,
+        )
+        promptMode = action(
+            self.tr("Prompt Polygons"),
+            self.setPromptMode,
+            shortcuts["prompt_polygon"],
+            "edit",
+            self.tr("Prompt polygons"),
             enabled=False,
         )
 
@@ -598,6 +614,7 @@ class MainWindow(QtWidgets.QMainWindow):
             removePoint=removePoint,
             createMode=createMode,
             editMode=editMode,
+            promptMode=promptMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
@@ -629,7 +646,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 toggle_keep_prev_mode,
             ),
-            # menu shown at right click
+            # 右键菜单
             menu=(
                 createMode,
                 createRectangleMode,
@@ -638,6 +655,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                promptMode,
                 edit,
                 duplicate,
                 copy,
@@ -647,6 +665,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undoLastPoint,
                 removePoint,
             ),
+            # 加载时 enable
             onLoadActive=(
                 close,
                 createMode,
@@ -656,6 +675,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 editMode,
+                promptMode,
                 brightnessContrast,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
@@ -741,6 +761,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             createMode,
             editMode,
+            promptMode,
             duplicate,
             copy,
             paste,
@@ -853,6 +874,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createPointMode,
             self.actions.createLineStripMode,
             self.actions.editMode,
+            self.actions.promptMode,
         )
         utils.addActions(self.menus.edit, actions + self.actions.editMenu)
 
@@ -950,10 +972,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
 
-    def toggleDrawMode(self, edit=True, createMode="polygon"):
-        self.canvas.setEditing(edit)
+    def toggleDrawMode(self, edit=True, prompt=False, createMode="polygon"):
+        # self.canvas.setEditing(edit)
+        print(f"toggleDrawMode to prompt: {prompt}")
+        if edit:
+            self.canvas.setMode('edit')
+        elif prompt:
+            self.canvas.setMode('prompt')
+        else:
+            self.canvas.setMode('create')
         self.canvas.createMode = createMode
         if edit:
+            self.actions.createMode.setEnabled(True)
+            self.actions.createRectangleMode.setEnabled(True)
+            self.actions.createCircleMode.setEnabled(True)
+            self.actions.createLineMode.setEnabled(True)
+            self.actions.createPointMode.setEnabled(True)
+            self.actions.createLineStripMode.setEnabled(True)
+        elif prompt:
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
             self.actions.createCircleMode.setEnabled(True)
@@ -1005,10 +1041,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(False)
             else:
                 raise ValueError("Unsupported createMode: %s" % createMode)
+        # self.actions.createMode.setEnabled(not (edit or prompt))
         self.actions.editMode.setEnabled(not edit)
+        self.actions.promptMode.setEnabled(not prompt)
 
     def setEditMode(self):
-        self.toggleDrawMode(True)
+        self.toggleDrawMode(edit=True, prompt=False)
+
+    def setPromptMode(self):
+        self.toggleDrawMode(False, prompt=True)
 
     def updateFileMenu(self):
         current = self.filename

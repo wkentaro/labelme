@@ -102,6 +102,7 @@ shortcuts:
   create_point: null
   create_linestrip: null
   edit_polygon: Ctrl+J
+  prompt_polygon: null
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
   copy_polygon: Ctrl+C
@@ -112,3 +113,6 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
+
+models:
+  sam: D:/Models/sam/sam_vit_b_01ec64.pth
