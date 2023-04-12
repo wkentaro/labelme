@@ -34,9 +34,8 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
-# segment anything
-import qimage2ndarray
-from segment_anything import sam_model_registry, SamPredictor
+from labelme.predictor import Predictor
+
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -76,10 +75,8 @@ class MainWindow(QtWidgets.QMainWindow):
         device = self._config["device"]
         model_type = self._config["sam"]["model_type"]
         checkpoint = self._config["sam"]["checkpoint"]
-        logger.debug(f"Loading Segment Anything Model {model_type} From {checkpoint}")
-        sam = sam_model_registry[model_type](checkpoint=checkpoint)
-        sam.to(device)
-        self.predictor = SamPredictor(sam)
+        self.predictor = Predictor(model_type, checkpoint, device)
+        
 
         # 设置默认形状的颜色
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -390,11 +387,19 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         promptMode = action(
-            self.tr("Prompt Polygons"),
+            self.tr("Prompt Point"),
             self.setPromptMode,
-            shortcuts["prompt_polygon"],
-            "edit",
-            self.tr("Prompt polygons"),
+            shortcuts["prompt_point"],
+            "objects",
+            self.tr("Prompt Point"),
+            enabled=False,
+        )
+        promptRectangleMode = action(
+            self.tr("Prompt Rectangle"),
+            lambda: self.toggleDrawMode(False, True, createMode="rectangle"),
+            shortcuts["prompt_rectangle"],
+            "objects",
+            self.tr("Prompt rectangle"),
             enabled=False,
         )
 
@@ -621,6 +626,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createMode=createMode,
             editMode=editMode,
             promptMode=promptMode,
+            promptRectangleMode=promptRectangleMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
@@ -662,6 +668,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 editMode,
                 promptMode,
+                promptRectangleMode,
                 edit,
                 duplicate,
                 copy,
@@ -682,6 +689,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 editMode,
                 promptMode,
+                promptRectangleMode,
                 brightnessContrast,
             ),
             onShapesPresent=(saveAs, hideAll, showAll),
@@ -756,7 +764,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.tools = self.toolbar("Tools")
-        # Menu buttons on Left
+        # 左侧工具栏
         self.actions.tool = (
             open_,
             opendir,
@@ -996,6 +1004,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createLineMode.setEnabled(True)
             self.actions.createPointMode.setEnabled(True)
             self.actions.createLineStripMode.setEnabled(True)
+            self.actions.promptMode.setEnabled(True)
+            self.actions.promptRectangleMode.setEnabled(True)
         elif prompt:
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
@@ -1003,6 +1013,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createLineMode.setEnabled(True)
             self.actions.createPointMode.setEnabled(True)
             self.actions.createLineStripMode.setEnabled(True)
+            if createMode == "point":
+                self.actions.promptMode.setEnabled(False)
+                self.actions.promptRectangleMode.setEnabled(True)
+            elif createMode == "rectangle":
+                self.actions.promptMode.setEnabled(True)
+                self.actions.promptRectangleMode.setEnabled(False)
         else:
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
@@ -1050,13 +1066,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 raise ValueError("Unsupported createMode: %s" % createMode)
         # self.actions.createMode.setEnabled(not (edit or prompt))
         self.actions.editMode.setEnabled(not edit)
-        self.actions.promptMode.setEnabled(not prompt)
 
     def setEditMode(self):
         self.toggleDrawMode(edit=True, prompt=False)
 
     def setPromptMode(self):
-        self.toggleDrawMode(False, prompt=True)
+        self.toggleDrawMode(False, prompt=True, createMode='point')
 
     def updateFileMenu(self):
         current = self.filename
@@ -1591,10 +1606,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         
         self.image = image
-        self.prompt_img = qimage2ndarray.rgb_view(image)
-        logger.debug(f"qimage2ndarry {self.prompt_img.shape} {self.prompt_img.dtype}")
-        logger.debug(f"sam set image")
-        self.predictor.set_image(image=self.prompt_img, image_format='RGB')
+        self.predictor.set_image(image)
         self.filename = filename
         if self._config["keep_prev"]:
             prev_shapes = self.canvas.shapes

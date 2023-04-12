@@ -66,7 +66,7 @@ class ColoredLogger(logging.Logger):
         self.addHandler(console)
         return
 
-FORMAT = "[%(asctime)s] [%(funcName)s:%(lineno)s] [%(levelname)1.1s] %(message)s"
+FORMAT = "[%(asctime)s] [%(pathname)s, line %(lineno)s, %(funcName)s:][%(levelname)1.1s] %(message)s"
 # FORMAT =  "[%(levelname)2s] %(module)s:%(funcName)s:%(lineno2)s - %(message2)s"
     
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)

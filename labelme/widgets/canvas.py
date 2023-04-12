@@ -5,10 +5,8 @@ from qtpy import QtWidgets
 from labelme import QT5
 from labelme.shape import Shape
 from labelme.logger import logger
+from labelme.predictor import Predictor, Prompt
 import labelme.utils
-
-import cv2
-import numpy as np
 
 
 # TODO(unknown):
@@ -28,10 +26,10 @@ class Canvas(QtWidgets.QWidget):
 
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
-    newShape = QtCore.Signal()
+    newShape = QtCore.Signal() # 完成绘制后选择标签
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
-    drawingPolygon = QtCore.Signal(bool)
+    drawingPolygon = QtCore.Signal(bool) # 绘制中屏蔽部分按钮
     promptPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
 
@@ -69,10 +67,8 @@ class Canvas(QtWidgets.QWidget):
         self.shapes = []
         self.shapesBackups = []
         self.current = None # 当前多边形的点集
-        self.current_prompt = None # 当前提示的点集
-        self.prompt_points = []
-        self.prompt_labels = []
-        self.prompt_box = None
+        self.prompt = None # 当前的提示
+        self.prompted_shape = None # 预测得到的 shape
         self.selectedShapes = []  # save the selected shapes here
         self.selectedShapesCopy = []
         # self.line represents:
@@ -216,44 +212,6 @@ class Canvas(QtWidgets.QWidget):
             self.unHighlight()
             self.deSelectShape()
     
-    def _predict_box(self, 
-                     input_point: np.ndarray = None, 
-                     input_label: np.ndarray = None, 
-                     input_box: np.ndarray = None,
-                     input_mask: np.ndarray = None) -> tuple:
-        """
-        使用 sam 预测一个矩形框，支持多个提示点，单个提示框，可同时使用
-        Args:
-            input_point (ndarray): 提示点坐标, shape: (n, 2)
-            input_label (ndarray): 0: 背景点, 1: 前景点。shape: (n, )
-            input_box (ndarray): 提示框, shape: (1, 4)
-            input_mask (ndarray): 提示掩码, shape: (1, height, width)
-        Return:
-            x, y, w, h
-        """
-        if self.predictor is None:
-            logger.error("predictor is None")
-        if not input_point and not input_label and not input_box:
-            return None
-        if isinstance(input_point, list):
-            input_point = np.array(input_point)
-        if isinstance(input_label, list):
-            input_label = np.array(input_label)
-        logger.debug(f"input_point: {type(input_point)} {input_point}")
-        logger.debug(f"input_label: {type(input_label)} {input_label}")
-        return None
-        # masks, scores, _ = self.predictor.predict(
-        #     point_coords=input_point,
-        #     point_labels=input_label,
-        #     box=input_box,
-        #     mask_input=input_mask,
-        #     multimask_output=True,
-        # )
-        # idx = np.argmax(scores)
-        # contours, _ = cv2.findContours(masks[idx].astype(np.uint8),cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-        # x, y, w, h = cv2.boundingRect(contours[0])
-        # rect = x, y, w, h
-        # return rect
 
     def setPredictor(self, predictor):
         self.predictor = predictor
@@ -332,7 +290,7 @@ class Canvas(QtWidgets.QWidget):
             return
         
         if self.prompting():
-            # pos 对应图上的坐标，可直接用
+            # TODO: 支持鼠标悬浮时预测该点的mask
             return
 
 
@@ -428,12 +386,6 @@ class Canvas(QtWidgets.QWidget):
         self.hVertex = index
         self.hEdge = None
         self.movingShape = True
-    
-    def addPointToPrompt(self, pos, label):
-        logger.debug(f"add point: {pos} label: {label} to prompt")
-        self.prompt_points.append([pos.x(), pos.y()])
-        self.prompt_labels.append(label)
-
 
     def removeSelectedPoint(self):
         shape = self.prevhShape
@@ -451,7 +403,6 @@ class Canvas(QtWidgets.QWidget):
             pos = self.transformPos(ev.localPos())
         else:
             pos = self.transformPos(ev.posF())
-        logger.debug(f"{self.editing()} {self.drawing()} {self.prompting()}")
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
@@ -500,21 +451,20 @@ class Canvas(QtWidgets.QWidget):
             elif self.prompting():
                 # TODO: 获取到当前绘制的点、框，添加fg点
                 # pos 对应图上的坐标，可直接用
-                if self.current_prompt:
-                    self.current_prompt.addPoint(pos)
-                    self.addPointToPrompt(pos, 1)
-                    # if self.createMode in ["point"]:
-                    #     # Add point to existing shape.
-                    #     self.current.addPoint(pos)
-                    #     self.addPointToPrompt(pos, 1)
+                if self.prompt:
+                    if self.createMode == "point":
+                        self.prompt.add_point(pos, 1)
+                        self.prompt.add_shape(Shape(shape_type=self.createMode, point_color=Shape.fg_point_color()))
+                        self.prompt.current_shape.addPoint(pos)
+                        self.prompt.current_shape.close()                     
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
-                    self.current_prompt = Shape(shape_type=self.createMode)
-                    self.current_prompt.addPoint(pos)
-                    self.addPointToPrompt(pos, 1)
-                    # if self.createMode in ["point"]:
-                    #     self.current_prompt.addPoint(pos)
-                    #     self.addPointToPrompt(pos, 1)
+                    self.prompt = Prompt()
+                    self.prompt.add_point(pos, 1)
+                    self.prompt.add_shape(Shape(shape_type=self.createMode, point_color=Shape.fg_point_color()))
+                    self.prompt.current_shape.addPoint(pos)
+                    if self.createMode == "point":
+                        self.prompt.current_shape.close()
         elif ev.button() == QtCore.Qt.RightButton:
             if self.editing():
                 group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
@@ -527,27 +477,32 @@ class Canvas(QtWidgets.QWidget):
                 self.prevPoint = pos
             elif self.prompting:
                 # TODO: 获取到当前绘制的点、框，添加bg点
-                if self.current_prompt:
-                    self.current_prompt.addPoint(pos)
-                    self.addPointToPrompt(pos, 0)
-                    # if self.createMode in ["point"]:
-                    #     # Add point to existing shape.
-                    #     self.current_prompt.addPoint(pos)
-                    #     self.addPointToPrompt(pos, 0)
+                if self.prompt:
+                    if self.createMode == "point":
+                        self.prompt.add_point(pos, 0)
+                        self.prompt.add_shape(Shape(shape_type=self.createMode, point_color=Shape.bg_point_color()))
+                        self.prompt.current_shape.addPoint(pos)
+                        self.prompt.current_shape.close()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
-                    self.current_prompt = Shape(shape_type=self.createMode)
-                    self.current_prompt.addPoint(pos)
-                    self.addPointToPrompt(pos, 0)
-                    # if self.createMode in ["point"]:
-                    #     self.current_prompt.addPoint(pos)
-                    #     self.addPointToPrompt(pos, 0)
-                        
+                    self.prompt = Prompt()
+                    self.prompt.add_point(pos, 0)
+                    self.prompt.add_shape(Shape(shape_type=self.createMode, point_color=Shape.bg_point_color()))
+                    self.prompt.current_shape.addPoint(pos)
+                    if self.createMode == "point":
+                        self.prompt.current_shape.close()
         
-        if self.prompting() and len(self.prompt_points) > 0:
-            logger.debug("通过 sam 预测框")
-            # TODO: 通过 sam 预测
-            rect = self._predict_box(input_point=self.prompt_points, input_label=self.prompt_labels)
+        if self.prompting() and len(self.prompt) > 0:
+            # TODO: 预测mask并显示
+            x, y, w, h = self.predictor.predict(self.prompt.points, self.prompt.labels)
+            tl = QtCore.QPoint(x, y)
+            br = QtCore.QPoint(x+w, y+h)
+            logger.debug(f'rect: {tl} {br}')
+            self.prompted_shape = Shape(shape_type='rectangle')
+            self.prompted_shape.addPoint(tl)
+            self.prompted_shape.addPoint(br)
+            self.prompted_shape.close()
+            self.update()
 
 
     def mouseReleaseEvent(self, ev):
@@ -812,6 +767,15 @@ class Canvas(QtWidgets.QWidget):
             drawing_shape.fill = True
             drawing_shape.paint(p)
 
+        # TODO: draw prompt shape
+        if self.prompt:
+            for shape in self.prompt.shapes:
+                if self.isVisible(shape):
+                    shape.paint(p)
+        
+        if self.prompted_shape and self.isVisible(self.prompted_shape):
+            self.prompted_shape.paint(p)
+
         p.end()
 
     def transformPos(self, point):
@@ -847,9 +811,12 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise_prompt(self):
         """结束当前的prompt"""
-        assert self.current_prompt
-        self.current_prompt.close()
-        self.current_prompt = None
+        assert self.prompt
+        assert self.prompted_shape
+        
+        self.current = self.prompted_shape
+        self.prompt = None
+        self.prompted_shape = None
         self.finalise()
         
 
@@ -984,7 +951,7 @@ class Canvas(QtWidgets.QWidget):
             elif key == QtCore.Qt.Key_Right:
                 self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
         elif self.prompting():
-            if key == QtCore.Qt.Key_Return:
+            if key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Space:
                 self.finalise_prompt()
 
 

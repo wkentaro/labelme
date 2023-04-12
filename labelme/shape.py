@@ -18,7 +18,9 @@ DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
 DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 155)  # selected
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
-
+DEFAULT_FG_POINT_COLOR = QtGui.QColor(125, 180, 220, 255) # prompt fg point
+DEFAULT_BG_POINT_COLOR = QtGui.QColor(243, 196, 203, 255) # prompt bg point
+DEFAULT_EDGE_COLOR = QtGui.QColor(77, 129, 180, 255)      # prompt segment edge
 
 class Shape(object):
 
@@ -36,11 +38,13 @@ class Shape(object):
 
     # The following class variables influence the drawing of all shape objects.
     line_color = DEFAULT_LINE_COLOR
-    fill_color = DEFAULT_FILL_COLOR
     select_line_color = DEFAULT_SELECT_LINE_COLOR
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
+    fill_color = DEFAULT_FILL_COLOR
+    fg_point_fill_color = DEFAULT_FG_POINT_COLOR
+    bg_point_fill_color = DEFAULT_BG_POINT_COLOR
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -53,6 +57,7 @@ class Shape(object):
         flags=None,
         group_id=None,
         description=None,
+        point_color = None,
     ):
         self.label = label
         self.group_id = group_id
@@ -63,6 +68,7 @@ class Shape(object):
         self.flags = flags
         self.description = description
         self.other_data = {}
+        self.point_color = point_color
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
@@ -80,6 +86,14 @@ class Shape(object):
             self.line_color = line_color
 
         self.shape_type = shape_type
+
+    @staticmethod
+    def fg_point_color():
+        return Shape.fg_point_fill_color
+    
+    @staticmethod
+    def bg_point_color():
+        return Shape.bg_point_fill_color
 
     @property
     def shape_type(self):
@@ -159,9 +173,12 @@ class Shape(object):
 
     def paint(self, painter):
         if self.points:
-            color = (
-                self.select_line_color if self.selected else self.line_color
-            )
+            if self.point_color is None:
+                color = (
+                    self.select_line_color if self.selected else self.line_color
+                )
+            else:
+                color = self.point_color
             pen = QtGui.QPen(color)
             # Try using integer sizes for smoother drawing(?)
             pen.setWidth(max(1, int(round(2.0 / self.scale))))
@@ -204,7 +221,7 @@ class Shape(object):
 
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
-            painter.fillPath(vrtx_path, self._vertex_fill_color)
+            painter.fillPath(vrtx_path, self._vertex_fill_color if self.point_color is None else self.point_color)
             if self.fill:
                 color = (
                     self.select_fill_color

@@ -102,7 +102,8 @@ shortcuts:
   create_point: null
   create_linestrip: null
   edit_polygon: Ctrl+J
-  prompt_polygon: null
+  prompt_point: null
+  prompt_rectangle: null
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
   copy_polygon: Ctrl+C
@@ -117,6 +118,6 @@ shortcuts:
 device: cuda
 
 sam: 
-  model_type: vit_b
-  checkpoint: F:/models/SAM/sam_vit_b_01ec64.pth
+  model_type: vit_l
+  checkpoint: D:/Models/sam/sam_vit_l_0b3195.pth
 
