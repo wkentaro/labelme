@@ -114,5 +114,9 @@ shortcuts:
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
 
-models:
-  sam: D:/Models/sam/sam_vit_b_01ec64.pth
+device: cuda
+
+sam: 
+  model_type: vit_b
+  checkpoint: F:/models/SAM/sam_vit_b_01ec64.pth
+

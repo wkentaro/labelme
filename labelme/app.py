@@ -35,7 +35,8 @@ from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
 # segment anything
-from segment_anything import build_sam_vit_b, SamPredictor
+import qimage2ndarray
+from segment_anything import sam_model_registry, SamPredictor
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -72,9 +73,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config = config
 
         # 加载模型
-        checkpoint = self._config["models"]["sam"]
-        print(f"Loading Segment Anything Model From {checkpoint}")
-        self.sam_predictor = SamPredictor(build_sam_vit_b(checkpoint=checkpoint))
+        device = self._config["device"]
+        model_type = self._config["sam"]["model_type"]
+        checkpoint = self._config["sam"]["checkpoint"]
+        logger.debug(f"Loading Segment Anything Model {model_type} From {checkpoint}")
+        sam = sam_model_registry[model_type](checkpoint=checkpoint)
+        sam.to(device)
+        self.predictor = SamPredictor(sam)
 
         # 设置默认形状的颜色
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -197,6 +202,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
+        self.canvas.setPredictor(self.predictor)
 
         self.setCentralWidget(scrollArea)
 
@@ -786,6 +792,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.output_dir = output_dir
 
         # Application state.
+        self.prompt_img = None
         self.image = QtGui.QImage()
         self.imagePath = None
         self.recentFiles = []
@@ -974,7 +981,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleDrawMode(self, edit=True, prompt=False, createMode="polygon"):
         # self.canvas.setEditing(edit)
-        print(f"toggleDrawMode to prompt: {prompt}")
+        logger.debug(f"toggleDrawMode to  edit: {edit} prompt: {prompt} createMode: {createMode}")
         if edit:
             self.canvas.setMode('edit')
         elif prompt:
@@ -1582,7 +1589,12 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self.status(self.tr("Error reading %s") % filename)
             return False
+        
         self.image = image
+        self.prompt_img = qimage2ndarray.rgb_view(image)
+        logger.debug(f"qimage2ndarry {self.prompt_img.shape} {self.prompt_img.dtype}")
+        logger.debug(f"sam set image")
+        self.predictor.set_image(image=self.prompt_img, image_format='RGB')
         self.filename = filename
         if self._config["keep_prev"]:
             prev_shapes = self.canvas.shapes
