@@ -89,7 +89,7 @@ jobs:
     - name: Get release file name & upload url
       id: get_release_info
       run: |
-        echo "::set-output name=upload_url::$(cat release_url/release_url.txt)"
+        echo "upload_url=$(cat release_url/release_url.txt)" >> $GITHUB_STATE
 
     - name: Upload release executable on macOS & Linux
       id: upload_release_executable_macos_linux
