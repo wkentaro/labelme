@@ -21,6 +21,7 @@ DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 DEFAULT_FG_POINT_COLOR = QtGui.QColor(125, 180, 220, 255) # prompt fg point
 DEFAULT_BG_POINT_COLOR = QtGui.QColor(243, 196, 203, 255) # prompt bg point
 DEFAULT_EDGE_COLOR = QtGui.QColor(77, 129, 180, 255)      # prompt segment edge
+DEFAULT_MASK_COLOR = QtGui.QColor(77, 129, 180, 128)      # prompt mask edge
 
 class Shape(object):
 
@@ -45,6 +46,7 @@ class Shape(object):
     fill_color = DEFAULT_FILL_COLOR
     fg_point_fill_color = DEFAULT_FG_POINT_COLOR
     bg_point_fill_color = DEFAULT_BG_POINT_COLOR
+    mask_fill_color = DEFAULT_MASK_COLOR
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -94,6 +96,10 @@ class Shape(object):
     @staticmethod
     def bg_point_color():
         return Shape.bg_point_fill_color
+    
+    @staticmethod
+    def mask_color():
+        return Shape.mask_fill_color
 
     @property
     def shape_type(self):

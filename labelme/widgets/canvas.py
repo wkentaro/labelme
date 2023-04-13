@@ -69,6 +69,7 @@ class Canvas(QtWidgets.QWidget):
         self.current = None # 当前多边形的点集
         self.prompt = None # 当前的提示
         self.prompted_shape = None # 预测得到的 shape
+        self.prompted_mask = None
         self.selectedShapes = []  # save the selected shapes here
         self.selectedShapesCopy = []
         # self.line represents:
@@ -213,7 +214,7 @@ class Canvas(QtWidgets.QWidget):
             self.deSelectShape()
     
 
-    def setPredictor(self, predictor):
+    def setPredictor(self, predictor: Predictor):
         self.predictor = predictor
 
     
@@ -290,7 +291,11 @@ class Canvas(QtWidgets.QWidget):
             return
         
         if self.prompting():
-            # TODO: 支持鼠标悬浮时预测该点的mask
+            if self.prompt is None:
+                tmp_prompt = Prompt()
+                tmp_prompt.add_point(pos, 1)
+                _, _, self.prompted_mask = self.predictor.predict(tmp_prompt.points, tmp_prompt.labels)
+                self.update()
             return
 
 
@@ -493,10 +498,7 @@ class Canvas(QtWidgets.QWidget):
                         self.prompt.current_shape.close()
         
         if self.prompting() and len(self.prompt) > 0:
-            # TODO: 预测mask并显示
-            x, y, w, h = self.predictor.predict(self.prompt.points, self.prompt.labels)
-            tl = QtCore.QPoint(x, y)
-            br = QtCore.QPoint(x+w, y+h)
+            tl, br, self.prompted_mask = self.predictor.predict(self.prompt.points, self.prompt.labels)
             logger.debug(f'rect: {tl} {br}')
             self.prompted_shape = Shape(shape_type='rectangle')
             self.prompted_shape.addPoint(tl)
@@ -773,8 +775,12 @@ class Canvas(QtWidgets.QWidget):
                 if self.isVisible(shape):
                     shape.paint(p)
         
-        if self.prompted_shape and self.isVisible(self.prompted_shape):
+        if self.prompted_shape is not None and self.isVisible(self.prompted_shape):
             self.prompted_shape.paint(p)
+
+        if self.prompted_mask is not None:
+            pixmap = QtGui.QPixmap.fromImage(self.prompted_mask)
+            p.drawPixmap(0, 0, pixmap)
 
         p.end()
 
@@ -817,6 +823,7 @@ class Canvas(QtWidgets.QWidget):
         self.current = self.prompted_shape
         self.prompt = None
         self.prompted_shape = None
+        self.prompted_mask = None
         self.finalise()
         
 
@@ -952,7 +959,12 @@ class Canvas(QtWidgets.QWidget):
                 self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
         elif self.prompting():
             if key == QtCore.Qt.Key_Return or key == QtCore.Qt.Key_Space:
-                self.finalise_prompt()
+                if self.prompt:
+                    self.finalise_prompt()
+            elif key == QtCore.Qt.Key_Escape:
+                self.prompt = None
+                self.prompted_mask = None
+                self.prompted_shape = None
 
 
     def keyReleaseEvent(self, ev):

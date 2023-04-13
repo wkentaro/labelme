@@ -10,6 +10,11 @@ from labelme.shape import Shape
 
 from segment_anything import sam_model_registry, SamPredictor
 
+def colormap():
+    color = Shape.mask_color()
+    _colormap = np.array([[0,0,0,0], [color.red(), color.green(), color.blue(), color.alpha()]], dtype=int)
+    return _colormap
+
 class Prompt(object):
     def __init__(self):
         self._points = []
@@ -90,14 +95,19 @@ class Predictor(object):
             idx = np.argmax(scores)
         else:
             idx = 0
-        logger.debug(f"mask: {masks[idx].shape} {masks[idx].dtype} {np.unique(masks[idx].flatten())}")
-        contours, _ = cv2.findContours(masks[idx].astype(np.uint8),cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-        logger.debug(f'contours: {type(contours)} {contours[0].dtype} {contours[0].shape}')
+        mask = masks[idx].astype(np.uint8)
+        logger.debug(f"mask: {mask.shape} {mask.dtype} {np.unique(mask.flatten())}")
+        contours, _ = cv2.findContours(mask,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        # 找所有轮廓加起来的凸包，获取外接矩形
         points = np.array([point for contour in contours for point in contour], contours[0].dtype)
         x, y, w, h = cv2.boundingRect(points)
-        rect = x, y, w, h
+        tl = QtCore.QPoint(x, y)
+        br = QtCore.QPoint(x+w, y+h)
+        colorful_mask = colormap()[mask]
+        # 把 mask 转换成彩色的 QImage，显示用
+        mask_qimg = qimage2ndarray.array2qimage(colorful_mask)
         logger.debug(f'postproc end')
-        return rect
+        return tl, br, mask_qimg
     
     def __call__(self, 
                 input_point: np.ndarray = None, 
@@ -120,7 +130,9 @@ class Predictor(object):
             input_box (ndarray): 提示框, shape: (1, 4), dtype: float
             input_mask (ndarray): 提示掩码, shape: (1, height, width)
         Return:
-            rect: x, y, w, h
+            tl (QtCore.QPoint): 框左上角
+            br (QtCore.QPoint): 右下角
+            mask (QtGui.QImage): 彩色掩码 (RGBA)
         """
         logger.debug(f'predict start')
         if self._predictor is None:

@@ -118,6 +118,6 @@ shortcuts:
 device: cuda
 
 sam: 
-  model_type: vit_l
-  checkpoint: D:/Models/sam/sam_vit_l_0b3195.pth
+  model_type: vit_h
+  checkpoint: F:/models/SAM/sam_vit_h_4b8939.pth
 
