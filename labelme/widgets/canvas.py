@@ -224,7 +224,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = pos
         self.restoreCursor()
 
-        is_shift_pressed = int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+        is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
         # Polygon drawing.
         if self.drawing():
@@ -393,7 +393,7 @@ class Canvas(QtWidgets.QWidget):
         else:
             pos = self.transformPos(ev.posF())
 
-        is_shift_pressed = int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+        is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
@@ -422,7 +422,7 @@ class Canvas(QtWidgets.QWidget):
                         self.line.point_labels[0] = self.current.point_labels[
                             -1
                         ]
-                        if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
+                        if ev.modifiers() & QtCore.Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
