@@ -6,6 +6,7 @@ from qtpy import QtWidgets
 import labelme.ai
 from labelme import QT5
 from labelme.shape import Shape
+from labelme.shape import Shape
 import labelme.utils
 
 
@@ -223,6 +224,8 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = pos
         self.restoreCursor()
 
+        is_shift_pressed = int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+
         # Polygon drawing.
         if self.drawing():
             if self.createMode == "ai_polygon":
@@ -250,21 +253,32 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip", "ai_polygon"]:
-                self.line[0] = self.current[-1]
-                self.line[1] = pos
+            if self.createMode in ["polygon", "linestrip"]:
+                self.line.points = [self.current[-1], pos]
+                self.line.point_labels = [1, 1]
+            elif self.createMode == "ai_polygon":
+                self.line.points = [self.current.points[-1], pos]
+                self.line.point_labels = [
+                    self.current.point_labels[-1],
+                    0 if is_shift_pressed else 1,
+                ]
             elif self.createMode == "rectangle":
                 self.line.points = [self.current[0], pos]
+                self.line.point_labels = [1, 1]
                 self.line.close()
             elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
+                self.line.point_labels = [1, 1]
                 self.line.shape_type = "circle"
             elif self.createMode == "line":
                 self.line.points = [self.current[0], pos]
+                self.line.point_labels = [1, 1]
                 self.line.close()
             elif self.createMode == "point":
                 self.line.points = [self.current[0]]
+                self.line.point_labels = [1]
                 self.line.close()
+            assert len(self.line.points) == len(self.line.point_labels)
             self.repaint()
             self.current.highlightClear()
             return
@@ -378,6 +392,9 @@ class Canvas(QtWidgets.QWidget):
             pos = self.transformPos(ev.localPos())
         else:
             pos = self.transformPos(ev.posF())
+
+        is_shift_pressed = int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+
         if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
@@ -391,9 +408,20 @@ class Canvas(QtWidgets.QWidget):
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
-                    elif self.createMode in ["linestrip", "ai_polygon"]:
+                    elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
+                        if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
+                            self.finalise()
+                    elif self.createMode == "ai_polygon":
+                        self.current.addPoint(
+                            self.line.points[1],
+                            label=self.line.point_labels[1],
+                        )
+                        self.line.points[0] = self.current.points[-1]
+                        self.line.point_labels[0] = self.current.point_labels[
+                            -1
+                        ]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
@@ -403,13 +431,22 @@ class Canvas(QtWidgets.QWidget):
                         if self.createMode == "ai_polygon"
                         else self.createMode
                     )
-                    self.current.addPoint(pos)
+                    self.current.addPoint(
+                        pos, label=0 if is_shift_pressed else 1
+                    )
                     if self.createMode == "point":
                         self.finalise()
                     else:
                         if self.createMode == "circle":
                             self.current.shape_type = "circle"
                         self.line.points = [pos, pos]
+                        if (
+                            self.createMode == "ai_polygon"
+                            and is_shift_pressed
+                        ):
+                            self.line.point_labels = [0, 0]
+                        else:
+                            self.line.point_labels = [1, 1]
                         self.setHiding()
                         self.drawingPolygon.emit(True)
                         self.update()
@@ -681,6 +718,7 @@ class Canvas(QtWidgets.QWidget):
                 shape.paint(p)
         if self.current:
             self.current.paint(p)
+            assert len(self.line.points) == len(self.line.point_labels)
             self.line.paint(p)
         if self.selectedShapesCopy:
             for s in self.selectedShapesCopy:
@@ -722,15 +760,16 @@ class Canvas(QtWidgets.QWidget):
             # convert points to polygon by an AI model
             assert self.current.shape_type == "points"
             points = self._ai_callback(
-                points=np.array(
-                    [[point.x(), point.y()] for point in self.current.points],
-                    dtype=np.float32,
-                )
+                points=[
+                    [point.x(), point.y()] for point in self.current.points
+                ],
+                point_labels=self.current.point_labels,
             )
             self.current.setShapeRefined(
                 points=[
                     QtCore.QPointF(point[0], point[1]) for point in points
                 ],
+                point_labels=[1] * len(points),
                 shape_type="polygon",
             )
         self.current.close()

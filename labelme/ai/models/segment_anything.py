@@ -37,7 +37,7 @@ class SegmentAnythingModel:
             )
         return self._image_embedding
 
-    def points_to_polygon_callback(self, points):
+    def points_to_polygon_callback(self, points, point_labels):
         self._thread.join()
         image_embedding = self.get_image_embedding()
 
@@ -47,6 +47,7 @@ class SegmentAnythingModel:
             image=self._image,
             image_embedding=image_embedding,
             points=points,
+            point_labels=point_labels,
         )
         return polygon
 
@@ -86,10 +87,10 @@ def _get_contour_length(contour):
 
 
 def compute_polygon_from_points(
-    image_size, decoder_session, image, image_embedding, points
+    image_size, decoder_session, image, image_embedding, points, point_labels
 ):
     input_point = np.array(points, dtype=np.float32)
-    input_label = np.ones(len(input_point), dtype=np.int32)
+    input_label = np.array(point_labels, dtype=np.int32)
 
     onnx_coord = np.concatenate([input_point, np.array([[0.0, 0.0]])], axis=0)[
         None, :, :
