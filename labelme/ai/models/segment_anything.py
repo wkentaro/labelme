@@ -1,5 +1,6 @@
 import threading
 
+import gdown
 import imgviz
 import numpy as np
 import onnxruntime
@@ -13,10 +14,20 @@ class SegmentAnythingModel:
 
         # encoder_path = "../segment-anything/models/sam_vit_h_4b8939.quantized.encoder.onnx"  # NOQA
         # decoder_path = "../segment-anything/models/sam_vit_h_4b8939.quantized.decoder.onnx"  # NOQA
-        encoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.encoder.onnx"  # NOQA
-        decoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.decoder.onnx"  # NOQA
+        #
+        # encoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.encoder.onnx"  # NOQA
+        # decoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.decoder.onnx"  # NOQA
+        #
         # encoder_path = "../segment-anything/models/sam_vit_b_01ec64.quantized.encoder.onnx"  # NOQA
         # decoder_path = "../segment-anything/models/sam_vit_b_01ec64.quantized.decoder.onnx"  # NOQA
+        encoder_path = gdown.cached_download(
+            url="https://github.com/wkentaro/labelme/releases/download/sam-20230416/sam_vit_l_0b3195.quantized.encoder.onnx",  # NOQA
+            md5="080004dc9992724d360a49399d1ee24b",
+        )
+        decoder_path = gdown.cached_download(
+            url="https://github.com/wkentaro/labelme/releases/download/sam-20230416/sam_vit_l_0b3195.quantized.decoder.onnx",  # NOQA
+            md5="851b7faac91e8e23940ee1294231d5c7",
+        )
 
         self._encoder_session = onnxruntime.InferenceSession(encoder_path)
         self._decoder_session = onnxruntime.InferenceSession(decoder_path)
