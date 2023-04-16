@@ -57,6 +57,10 @@ class Shape(object):
         self.label = label
         self.group_id = group_id
         self.points = []
+        self.shape_type = shape_type
+        self._shape_raw = None
+        self._points_raw = []
+        self._shape_type_raw = None
         self.fill = False
         self.selected = False
         self.shape_type = shape_type
@@ -79,7 +83,16 @@ class Shape(object):
             # is used for drawing the pending line a different color.
             self.line_color = line_color
 
+    def setShapeRefined(self, points, shape_type):
+        self._shape_raw = (self.points, self.shape_type)
+        self.points = points
         self.shape_type = shape_type
+
+    def restoreShapeRaw(self):
+        if self._shape_raw is None:
+            return
+        self.points, self.shape_type = self._shape_raw
+        self._shape_raw = None
 
     @property
     def shape_type(self):
@@ -96,6 +109,7 @@ class Shape(object):
             "line",
             "circle",
             "linestrip",
+            "points",
         ]:
             raise ValueError("Unexpected shape_type: {}".format(value))
         self._shape_type = value

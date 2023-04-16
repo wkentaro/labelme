@@ -75,6 +75,7 @@ canvas:
     line: false
     point: false
     linestrip: false
+    ai_polygon: false
 
 shortcuts:
   close: Ctrl+W

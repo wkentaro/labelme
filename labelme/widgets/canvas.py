@@ -1,7 +1,9 @@
+import numpy as np
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
+import labelme.ai
 from labelme import QT5
 from labelme.shape import Shape
 import labelme.utils
@@ -56,6 +58,7 @@ class Canvas(QtWidgets.QWidget):
                 "line": False,
                 "point": False,
                 "linestrip": False,
+                "ai_polygon": False,
             },
         )
         super(Canvas, self).__init__(*args, **kwargs)
@@ -99,6 +102,11 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
+        self._ai_callback = None
+
+    def setAiCallback(self, ai_callback):
+        self._ai_callback = ai_callback
+
     def fillDrawing(self):
         return self._fill_drawing
 
@@ -118,8 +126,10 @@ class Canvas(QtWidgets.QWidget):
             "line",
             "point",
             "linestrip",
+            "ai_polygon",
         ]:
             raise ValueError("Unsupported createMode: %s" % value)
+
         self._createMode = value
 
     def storeShapes(self):
@@ -215,7 +225,10 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            self.line.shape_type = self.createMode
+            if self.createMode == "ai_polygon":
+                self.line.shape_type = "points"
+            else:
+                self.line.shape_type = self.createMode
 
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
@@ -237,7 +250,7 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.current[0]
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip"]:
+            if self.createMode in ["polygon", "linestrip", "ai_polygon"]:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
             elif self.createMode == "rectangle":
@@ -378,14 +391,18 @@ class Canvas(QtWidgets.QWidget):
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
-                    elif self.createMode == "linestrip":
+                    elif self.createMode in ["linestrip", "ai_polygon"]:
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
-                    self.current = Shape(shape_type=self.createMode)
+                    self.current = Shape(
+                        shape_type="points"
+                        if self.createMode == "ai_polygon"
+                        else self.createMode
+                    )
                     self.current.addPoint(pos)
                     if self.createMode == "point":
                         self.finalise()
@@ -701,7 +718,23 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
+        if self.createMode == "ai_polygon":
+            # convert points to polygon by an AI model
+            assert self.current.shape_type == "points"
+            points = self._ai_callback(
+                points=np.array(
+                    [[point.x(), point.y()] for point in self.current.points],
+                    dtype=np.float32,
+                )
+            )
+            self.current.setShapeRefined(
+                points=[
+                    QtCore.QPointF(point[0], point[1]) for point in points
+                ],
+                shape_type="polygon",
+            )
         self.current.close()
+
         self.shapes.append(self.current)
         self.storeShapes()
         self.current = None
@@ -869,6 +902,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
+        self.current.restoreShapeRaw()
         if self.createMode in ["polygon", "linestrip"]:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
