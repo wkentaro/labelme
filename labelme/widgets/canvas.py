@@ -1,11 +1,9 @@
-import numpy as np
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
 import labelme.ai
 from labelme import QT5
-from labelme.shape import Shape
 from labelme.shape import Shape
 import labelme.utils
 
