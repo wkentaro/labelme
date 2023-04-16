@@ -8,6 +8,8 @@ import onnxruntime
 import PIL.Image
 import skimage.measure
 
+from ...logger import logger
+
 
 class SegmentAnythingModel:
     def __init__(self):
@@ -48,6 +50,7 @@ class SegmentAnythingModel:
 
     def get_image_embedding(self):
         if self._image_embedding is None:
+            logger.debug("Computing image embedding...")
             with self._lock:
                 self._image_embedding = compute_image_embedding(
                     image_size=self._image_size,
@@ -59,11 +62,14 @@ class SegmentAnythingModel:
                 self._image_embedding_cache[
                     self._image.tobytes()
                 ] = self._image_embedding
+            logger.debug("Done computing image embedding.")
         return self._image_embedding
 
     def points_to_polygon_callback(self, points, point_labels):
+        logger.debug("Waiting for image embedding...")
         self._thread.join()
         image_embedding = self.get_image_embedding()
+        logger.debug("Done waiting for image embedding.")
 
         polygon = compute_polygon_from_points(
             image_size=self._image_size,
