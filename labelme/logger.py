@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import sys
 
 import termcolor
 
@@ -49,23 +50,12 @@ class ColoredFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
-class ColoredLogger(logging.Logger):
-
-    FORMAT = (
-        "[%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s"
-    )
-
-    def __init__(self, name):
-        logging.Logger.__init__(self, name, logging.INFO)
-
-        color_formatter = ColoredFormatter(self.FORMAT)
-
-        console = logging.StreamHandler()
-        console.setFormatter(color_formatter)
-
-        self.addHandler(console)
-        return
-
-
 logger = logging.getLogger(__appname__)
-logger.__class__ = ColoredLogger
+
+stream_handler = logging.StreamHandler(sys.stderr)
+handler_format = ColoredFormatter(
+    "[%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s"
+)
+stream_handler.setFormatter(handler_format)
+
+logger.addHandler(stream_handler)
