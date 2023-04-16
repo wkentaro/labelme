@@ -23,13 +23,16 @@ def get_version():
 
 def get_install_requires():
     install_requires = [
+        "gdown",
         "imgviz>=0.11",
         "matplotlib",
         "natsort>=7.1.0",
         "numpy",
+        "onnxruntime",
         "Pillow>=2.8",
         "PyYAML",
         "qtpy!=1.11.2",
+        "scikit-image",
         "termcolor",
     ]
 
