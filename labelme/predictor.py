@@ -83,7 +83,10 @@ class Predictor(object):
         self.prompt_img = None
 
     def set_image(self, image):
-        self.prompt_img = qimage2ndarray.rgb_view(image)
+        if image.depth() == 32:
+            self.prompt_img = qimage2ndarray.rgb_view(image)
+        elif image.depth() == 8:
+            self.prompt_img = cv2.cvtColor(qimage2ndarray.byte_view(image), cv2.COLOR_GRAY2RGB)
         logger.debug(f"qimage2ndarry {self.prompt_img.shape} {self.prompt_img.dtype}")
         
         logger.debug(f"sam set image")
