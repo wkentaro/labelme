@@ -290,7 +290,7 @@ class Canvas(QtWidgets.QWidget):
             self.current.highlightClear()
             return
         
-        if self.prompting():
+        if self.prompting() and not self.outOfPixmap(pos):
             if self.prompt is None:
                 tmp_prompt = Prompt()
                 tmp_prompt.add_point(pos, 1)
@@ -453,7 +453,7 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
-            elif self.prompting():
+            elif self.prompting() and not self.outOfPixmap(pos):
                 # TODO: 获取到当前绘制的点、框，添加fg点
                 # pos 对应图上的坐标，可直接用
                 if self.prompt:
@@ -462,7 +462,7 @@ class Canvas(QtWidgets.QWidget):
                         self.prompt.add_shape(Shape(shape_type=self.createMode, point_color=Shape.fg_point_color()))
                         self.prompt.current_shape.addPoint(pos)
                         self.prompt.current_shape.close()                     
-                elif not self.outOfPixmap(pos):
+                else:
                     # Create new shape.
                     self.prompt = Prompt()
                     self.prompt.add_point(pos, 1)
@@ -480,7 +480,7 @@ class Canvas(QtWidgets.QWidget):
                     self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                     self.repaint()
                 self.prevPoint = pos
-            elif self.prompting:
+            elif self.prompting  and not self.outOfPixmap(pos):
                 # TODO: 获取到当前绘制的点、框，添加bg点
                 if self.prompt:
                     if self.createMode == "point":
@@ -488,7 +488,7 @@ class Canvas(QtWidgets.QWidget):
                         self.prompt.add_shape(Shape(shape_type=self.createMode, point_color=Shape.bg_point_color()))
                         self.prompt.current_shape.addPoint(pos)
                         self.prompt.current_shape.close()
-                elif not self.outOfPixmap(pos):
+                else:
                     # Create new shape.
                     self.prompt = Prompt()
                     self.prompt.add_point(pos, 0)
@@ -497,14 +497,15 @@ class Canvas(QtWidgets.QWidget):
                     if self.createMode == "point":
                         self.prompt.current_shape.close()
         
-        if self.prompting() and len(self.prompt) > 0:
+        if self.prompting() and not self.outOfPixmap(pos) and len(self.prompt) > 0:
             tl, br, self.prompted_mask = self.predictor.predict(self.prompt.points, self.prompt.labels)
             logger.debug(f'rect: {tl} {br}')
-            self.prompted_shape = Shape(shape_type='rectangle')
-            self.prompted_shape.addPoint(tl)
-            self.prompted_shape.addPoint(br)
-            self.prompted_shape.close()
-            self.update()
+            if tl is not None and br is not None:
+                self.prompted_shape = Shape(shape_type='rectangle')
+                self.prompted_shape.addPoint(tl)
+                self.prompted_shape.addPoint(br)
+                self.prompted_shape.close()
+                self.update()
 
 
     def mouseReleaseEvent(self, ev):

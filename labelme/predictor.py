@@ -41,11 +41,11 @@ class Prompt(object):
 
     @property
     def points(self):
-        return np.array(self._points, dtype=np.float)
+        return np.array(self._points, dtype=float)
 
     @property
     def labels(self):
-        return np.array(self._labels, dtype=np.float)
+        return np.array(self._labels, dtype=float)
 
     @property
     def box(self):
@@ -66,8 +66,8 @@ class Prompt(object):
             return False
         
     def reset(self):
-        self._points = np.array([], dtype=np.float)
-        self._labels = np.array([], dtype=np.float)
+        self._points = np.array([], dtype=float)
+        self._labels = np.array([], dtype=float)
         self._box = None
         self._mask = None
         self.current_shape = None
@@ -101,6 +101,8 @@ class Predictor(object):
         mask = masks[idx].astype(np.uint8)
         logger.debug(f"mask: {mask.shape} {mask.dtype} {np.unique(mask.flatten())}")
         contours, _ = cv2.findContours(mask,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        if len(contours) <= 0:
+            return None, None, None
         # 找所有轮廓加起来的凸包，获取外接矩形
         points = np.array([point for contour in contours for point in contour], contours[0].dtype)
         x, y, w, h = cv2.boundingRect(points)
