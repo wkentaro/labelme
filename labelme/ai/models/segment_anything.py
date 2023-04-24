@@ -115,7 +115,11 @@ def _get_contour_length(contour):
     contour_end = np.r_[contour[1:], contour[0:1]]
     return np.linalg.norm(contour_end - contour_start, axis=1).sum()
 
-
+def _pad_with(vector, pad_width, iaxis, kwargs):
+    pad_value = kwargs.get('padder', 0)
+    vector[:pad_width[0]] = pad_value
+    vector[-pad_width[1]:] = pad_value
+    
 def compute_polygon_from_points(
     image_size, decoder_session, image, image_embedding, points, point_labels
 ):
@@ -153,6 +157,8 @@ def compute_polygon_from_points(
     masks, _, _ = decoder_session.run(None, decoder_inputs)
     mask = masks[0, 0]  # (1, 1, H, W) -> (H, W)
     mask = mask > 0.0
+    mask = np.pad(mask, 1, _pad_with, padder=0)
+    
     if 0:
         imgviz.io.imsave(
             "mask.jpg", imgviz.label2rgb(mask, imgviz.rgb2gray(image))
