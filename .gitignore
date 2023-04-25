@@ -4,8 +4,10 @@
 /build/
 /dist/
 /*.egg-info/
+/examples/images/
 
 *.py[cdo]
 
 .DS_Store
 .idea/
+.vscode/
