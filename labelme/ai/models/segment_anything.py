@@ -83,12 +83,12 @@ class SegmentAnythingModel:
 
 
 def compute_image_embedding(image_size, encoder_session, image):
-    assert image.shape[1] > image.shape[0]
-    scale = image_size / image.shape[1]
+    # assert image.shape[1] > image.shape[0]
+    scale = image_size / max(image.shape)
     x = imgviz.resize(
         image,
-        height=int(round(image.shape[0] * scale)),
-        width=image_size,
+        height=int(round(min(image_size,image.shape[0] * scale))),
+        width=int(round(min(image_size,image.shape[1] * scale))),
         backend="pillow",
     ).astype(np.float32)
     x = (x - np.array([123.675, 116.28, 103.53], dtype=np.float32)) / np.array(
@@ -129,10 +129,10 @@ def compute_polygon_from_points(
         None, :
     ].astype(np.float32)
 
-    assert image.shape[1] > image.shape[0]
-    scale = image_size / image.shape[1]
-    new_height = int(round(image.shape[0] * scale))
-    new_width = image_size
+    # assert image.shape[1] > image.shape[0]
+    scale = image_size / max(image.shape)
+    new_height=int(round(min(image_size,image.shape[0] * scale)))
+    new_width=int(round(min(image_size,image.shape[1] * scale)))
     onnx_coord = (
         onnx_coord.astype(float)
         * (new_width / image.shape[1], new_height / image.shape[0])
