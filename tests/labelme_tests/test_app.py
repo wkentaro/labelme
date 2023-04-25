@@ -104,6 +104,7 @@ def test_MainWindow_annotate_jpg(qtbot):
             shape_type="polygon",
             flags={},
             other_data={},
+            description={},
         )
     ]
     win.loadLabels(shapes)
