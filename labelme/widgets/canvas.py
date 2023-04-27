@@ -218,7 +218,6 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.transformPos(ev.posF())
         except AttributeError:
             return
-
         self.prevMovePoint = pos
         self.restoreCursor()
 
@@ -331,6 +330,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
             elif index_edge is not None and shape.canAddPoint():
+                logger.debug(f"index_edge: {index_edge}")
                 if self.selectedVertex():
                     self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex
@@ -544,6 +544,12 @@ class Canvas(QtWidgets.QWidget):
             and len(self.current) > 3
         ):
             self.current.popPoint()
+            self.finalise()
+        elif (
+            self.double_click == "close"
+            and self.createMode == "ai_polygon"
+            and len(self.current) > 1
+        ):
             self.finalise()
 
     def selectShapes(self, shapes):
@@ -785,6 +791,8 @@ class Canvas(QtWidgets.QWidget):
                 ],
                 point_labels=self.current.point_labels,
             )
+            logger.debug(f"points[0] is {points[0]}")
+            logger.debug(f"points[-1] is {points[-1]}")
             self.current.setShapeRefined(
                 points=[
                     QtCore.QPointF(point[0], point[1]) for point in points
