@@ -109,6 +109,8 @@ def _resize_image(image_size, image):
 
 
 def _compute_image_embedding(image_size, encoder_session, image):
+    image = imgviz.asrgb(image)
+
     scale, x = _resize_image(image_size, image)
     x = (x - np.array([123.675, 116.28, 103.53], dtype=np.float32)) / np.array(
         [58.395, 57.12, 57.375], dtype=np.float32
