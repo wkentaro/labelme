@@ -45,14 +45,14 @@ class SegmentAnythingModel:
                 self._image.tobytes()
             )
 
-        self._thread = threading.Thread(target=self.get_image_embedding)
+        self._thread = threading.Thread(target=self._get_image_embedding)
         self._thread.start()
 
-    def get_image_embedding(self):
+    def _get_image_embedding(self):
         if self._image_embedding is None:
             logger.debug("Computing image embedding...")
             with self._lock:
-                self._image_embedding = compute_image_embedding(
+                self._image_embedding = _compute_image_embedding(
                     image_size=self._image_size,
                     encoder_session=self._encoder_session,
                     image=self._image,
@@ -68,10 +68,10 @@ class SegmentAnythingModel:
     def points_to_polygon_callback(self, points, point_labels):
         logger.debug("Waiting for image embedding...")
         self._thread.join()
-        image_embedding = self.get_image_embedding()
+        image_embedding = self._get_image_embedding()
         logger.debug("Done waiting for image embedding.")
 
-        polygon = compute_polygon_from_points(
+        polygon = _compute_polygon_from_points(
             image_size=self._image_size,
             decoder_session=self._decoder_session,
             image=self._image,
@@ -108,7 +108,7 @@ def _resize_image(image_size, image):
     return scale, scaled_image
 
 
-def compute_image_embedding(image_size, encoder_session, image):
+def _compute_image_embedding(image_size, encoder_session, image):
     scale, x = _resize_image(image_size, image)
     x = (x - np.array([123.675, 116.28, 103.53], dtype=np.float32)) / np.array(
         [58.395, 57.12, 57.375], dtype=np.float32
@@ -135,7 +135,7 @@ def _get_contour_length(contour):
     return np.linalg.norm(contour_end - contour_start, axis=1).sum()
 
 
-def compute_polygon_from_points(
+def _compute_polygon_from_points(
     image_size, decoder_session, image, image_embedding, points, point_labels
 ):
     input_point = np.array(points, dtype=np.float32)
