@@ -494,6 +494,14 @@ class Canvas(QtWidgets.QWidget):
             self.current.popPoint()
             self.finalise()
 
+        if QtCore.Qt.ControlModifier == int( ev.modifiers()):
+            try:
+
+                self.anchor_point = self.transformPos(ev.localPos())
+
+            except AttributeError:
+                return
+
     def selectShapes(self, shapes):
         self.setHiding()
         self.selectionChanged.emit(shapes)
@@ -890,6 +898,7 @@ class Canvas(QtWidgets.QWidget):
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
+        self.anchor_point = None
         if clear_shapes:
             self.shapes = []
         self.update()
@@ -923,3 +932,19 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = None
         self.shapesBackups = []
         self.update()
+
+    def culAnchorOnCanvas(self):
+        if  self.anchor_point is  None:
+            return None
+        else:
+            anchor_x = self.anchor_point.x()
+            anchor_y = self.anchor_point.y()
+            pixmap_w=self.pixmap.width()
+            pixmap_h=self.pixmap.height()
+            canvas_width=self.width()
+            canvas_height=self.height()
+
+            canvas_x=int((anchor_x/pixmap_w)*canvas_width)
+            canvas_y = int(anchor_y/ pixmap_h * canvas_height)
+
+            return  canvas_x,canvas_y

@@ -179,6 +179,7 @@ class MainWindow(QtWidgets.QMainWindow):
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)
         scrollArea.setWidgetResizable(True)
+        self.scrollArea=scrollArea
         self.scrollBars = {
             Qt.Vertical: scrollArea.verticalScrollBar(),
             Qt.Horizontal: scrollArea.horizontalScrollBar(),
@@ -1410,6 +1411,22 @@ class MainWindow(QtWidgets.QMainWindow):
             units = 0.9
         self.addZoom(units)
 
+        if self.canvas.culAnchorOnCanvas() is not None:
+
+            canvas_x,canvas_y=self.canvas.culAnchorOnCanvas()
+            canvas_x=max(canvas_x - self.scrollArea.width() // 2,0)
+            canvas_y = max(canvas_y - self.scrollArea.height() // 2, 0)
+
+            self.setScroll(
+                Qt.Horizontal,
+                canvas_x,
+            )
+            self.setScroll(
+                Qt.Vertical,
+                canvas_y,
+            )
+            return
+
         canvas_width_new = self.canvas.width()
         if canvas_width_old != canvas_width_new:
             canvas_scale_factor = canvas_width_new / canvas_width_old
@@ -1503,7 +1520,10 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file
         ):
             try:
-                self.labelFile = LabelFile(label_file)
+                if self.output_dir:
+                    self.labelFile = LabelFile(label_file, imgPath=filename)
+                else:
+                    self.labelFile = LabelFile(label_file)
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
