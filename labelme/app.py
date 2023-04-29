@@ -18,7 +18,6 @@ from qtpy import QtWidgets
 from labelme import __appname__
 from labelme import PY2
 
-from . import ai
 from . import utils
 from labelme.config import get_config
 from labelme.label_file import LabelFile
@@ -829,12 +828,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
 
-    @property
-    def _ai_model(self):
-        if not hasattr(self, "_ai_model_initialized"):
-            self._ai_model_initialized = ai.SegmentAnythingModel()
-        return self._ai_model_initialized
-
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
@@ -973,13 +966,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
-        if createMode == "ai_polygon":
-            self._ai_model.set_image(utils.img_data_to_arr(self.imageData))
-            self.canvas.setAiCallback(
-                self._ai_model.points_to_polygon_callback
-            )
-        else:
-            self.canvas.setAiCallback(None)
         if edit:
             self.actions.createMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
