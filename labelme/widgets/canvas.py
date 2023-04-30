@@ -547,7 +547,9 @@ class Canvas(QtWidgets.QWidget):
         if self.double_click != "close":
             return
 
-        if self.createMode == "polygon" and self.canCloseShape():
+        if (
+            self.createMode == "polygon" and self.canCloseShape()
+        ) or self.createMode == "ai_polygon":
             self.finalise()
 
     def selectShapes(self, shapes):
