@@ -437,6 +437,11 @@ class Canvas(QtWidgets.QWidget):
                     )
                     if self.createMode == "point":
                         self.finalise()
+                    elif (
+                        self.createMode == "ai_polygon"
+                        and ev.modifiers() & QtCore.Qt.ControlModifier
+                    ):
+                        self.finalise()
                     else:
                         if self.createMode == "circle":
                             self.current.shape_type = "circle"
