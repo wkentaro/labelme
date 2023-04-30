@@ -544,14 +544,10 @@ class Canvas(QtWidgets.QWidget):
         return self.drawing() and self.current and len(self.current) > 2
 
     def mouseDoubleClickEvent(self, ev):
-        # We need at least 4 points here, since the mousePress handler
-        # adds an extra one before this handler is called.
-        if (
-            self.double_click == "close"
-            and self.canCloseShape()
-            and len(self.current) > 3
-        ):
-            self.current.popPoint()
+        if self.double_click != "close":
+            return
+
+        if self.createMode == "polygon" and self.canCloseShape():
             self.finalise()
 
     def selectShapes(self, shapes):
