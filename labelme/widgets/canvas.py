@@ -3,8 +3,8 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 
 import labelme.ai
-from labelme import QT5
 from labelme.logger import logger
+from labelme import QT5
 from labelme.shape import Shape
 import labelme.utils
 
