@@ -751,7 +751,7 @@ class Canvas(QtWidgets.QWidget):
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
-            points = self._ai_model.points_to_polygon_callback(
+            points = self._ai_model.predict_polygon_from_points(
                 points=[
                     [point.x(), point.y()] for point in drawing_shape.points
                 ],
@@ -792,7 +792,7 @@ class Canvas(QtWidgets.QWidget):
         if self.createMode == "ai_polygon":
             # convert points to polygon by an AI model
             assert self.current.shape_type == "points"
-            points = self._ai_model.points_to_polygon_callback(
+            points = self._ai_model.predict_polygon_from_points(
                 points=[
                     [point.x(), point.y()] for point in self.current.points
                 ],

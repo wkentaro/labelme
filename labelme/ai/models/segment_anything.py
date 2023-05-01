@@ -65,7 +65,7 @@ class SegmentAnythingModel:
             logger.debug("Done computing image embedding.")
         return self._image_embedding
 
-    def points_to_polygon_callback(self, points, point_labels):
+    def predict_polygon_from_points(self, points, point_labels):
         logger.debug("Waiting for image embedding...")
         self._thread.join()
         image_embedding = self._get_image_embedding()
