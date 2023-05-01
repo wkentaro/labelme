@@ -745,6 +745,28 @@ class Canvas(QtWidgets.QWidget):
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
             drawing_shape.paint(p)
+        elif self.createMode == "ai_polygon" and self.current is not None:
+            drawing_shape = self.current.copy()
+            drawing_shape.addPoint(
+                point=self.line.points[1],
+                label=self.line.point_labels[1],
+            )
+            points = self._ai_model.points_to_polygon_callback(
+                points=[
+                    [point.x(), point.y()] for point in drawing_shape.points
+                ],
+                point_labels=drawing_shape.point_labels,
+            )
+            if len(points) > 2:
+                drawing_shape.setShapeRefined(
+                    points=[
+                        QtCore.QPointF(point[0], point[1]) for point in points
+                    ],
+                    point_labels=[1] * len(points),
+                    shape_type="polygon",
+                )
+                drawing_shape.fill = self.fillDrawing()
+                drawing_shape.paint(p)
 
         p.end()
 
