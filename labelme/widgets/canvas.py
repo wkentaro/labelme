@@ -4,6 +4,7 @@ from qtpy import QtWidgets
 
 import labelme.ai
 from labelme import QT5
+from labelme.logger import logger
 from labelme.shape import Shape
 import labelme.utils
 
@@ -735,6 +736,12 @@ class Canvas(QtWidgets.QWidget):
             and len(self.current.points) >= 2
         ):
             drawing_shape = self.current.copy()
+            if drawing_shape.fill_color.getRgb()[3] == 0:
+                logger.warning(
+                    "fill_drawing=true, but fill_color is transparent,"
+                    " so forcing to be opaque."
+                )
+                drawing_shape.fill_color.setAlpha(64)
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
             drawing_shape.paint(p)
