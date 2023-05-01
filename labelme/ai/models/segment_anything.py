@@ -186,7 +186,8 @@ def _compute_polygon_from_points(
     polygon = skimage.measure.approximate_polygon(
         coords=contour,
         tolerance=np.ptp(contour, axis=0).max() / 100,
-    )[:-1]  # drop last point that is duplicate of first point
+    )
+    polygon = polygon[:-1]  # drop last point that is duplicate of first point
     if 0:
         image_pil = PIL.Image.fromarray(image)
         imgviz.draw.line_(image_pil, yx=polygon, fill=(0, 255, 0))
