@@ -319,6 +319,15 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         toggle_keep_prev_mode.setChecked(self._config["keep_prev"])
 
+        hide_polys_creating = action(
+            text="Hide All Polygons When Creating",
+            slot=self.hidePolysWhenCreating,
+            tip="Hides all polygons when the Create Polygons tool is selected",
+            checkable=True,
+            checked=self._config["hide_polys"],
+        )
+        hide_polys_creating.setChecked(self._config["hide_polys"])
+
         createMode = action(
             self.tr("Create Polygons"),
             lambda: self.toggleDrawMode(False, createMode="polygon"),
@@ -588,6 +597,7 @@ class MainWindow(QtWidgets.QMainWindow):
             close=close,
             deleteFile=deleteFile,
             toggleKeepPrevMode=toggle_keep_prev_mode,
+            hidePolysWhenCreating=hide_polys_creating,
             delete=delete,
             edit=edit,
             duplicate=duplicate,
@@ -628,6 +638,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 removePoint,
                 None,
                 toggle_keep_prev_mode,
+                hide_polys_creating
             ),
             # menu shown at right click
             menu=(
@@ -1937,6 +1948,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleKeepPrevMode(self):
         self._config["keep_prev"] = not self._config["keep_prev"]
+
+    def hidePolysWhenCreating(self):
+        self._config["hide_polys"] = not self._config["hide_polys"]
 
     def removeSelectedPoint(self):
         self.canvas.removeSelectedPoint()
