@@ -7,6 +7,8 @@ keep_prev_brightness: false
 keep_prev_contrast: false
 logger_level: info
 
+hide_polys: false
+
 flags: null
 label_flags: null
 labels: null
