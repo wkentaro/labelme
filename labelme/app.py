@@ -1131,9 +1131,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.selectedShapes = selected_shapes
         for shape in self.canvas.selectedShapes:
             shape.selected = True
-            item = self.labelList.findItemByShape(shape)
-            self.labelList.selectItem(item)
-            self.labelList.scrollToItem(item)
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                item = findItem[1]
+                self.labelList.selectItem(item)
+                self.labelList.scrollToItem(item)
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
@@ -1197,8 +1199,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def remLabels(self, shapes):
         for shape in shapes:
-            item = self.labelList.findItemByShape(shape)
-            self.labelList.removeItem(item)
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                item = findItem[1]
+                self.labelList.removeItem(item)
 
     def loadShapes(self, shapes, replace=True):
         self._noSelectionSlot = True
@@ -2086,20 +2090,17 @@ class MainWindow(QtWidgets.QMainWindow):
         return images
 
     def highlightSelectedShapes(self):
-        shapesToCheck = [s.copy() for s in self.canvas.selectedShapes]
-        shapesToHighlight = []
+        shapesToCheck = self.canvas.selectedShapes
 
         for shape in shapesToCheck:
-            try:
-                self.highlightList.findItemByShape(shape) # for some reason, this throws an exception if it doesn't find a shape.
-            except:
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                self.highlightList.removeItem(findItem[1])
+            else:
                 logger.info("Shape " + shape.label + " was not found")
                 itemThing = LabelListWidgetItem(shape.label, shape)
-                shapesToHighlight.append(itemThing)
+                self.highlightList.addItem(itemThing)
 
-        for item in shapesToHighlight:
-            self.highlightList.addItem(item)
-            thing = item.shape()
 
         # Can add colour changing stuff here if needed
         # allOtherShapes = list(set(self.labelList).difference(shapesToHighlight)) # All labels that are not highlighted, so they can be coloured correctly
