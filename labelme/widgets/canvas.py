@@ -706,6 +706,9 @@ class Canvas(QtWidgets.QWidget):
         for shape in reversed([s for s in self.shapes if not self.isVisible(s)]):
             self.setShapeVisible(shape, True)
 
+        # Add Code here to check for outlier and to alter the shape.
+
+
         assert self.current
         self.current.close()
         self.shapes.append(self.current)

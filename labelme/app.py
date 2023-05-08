@@ -312,6 +312,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         hide_polys_creating.setChecked(self._config["hide_polys"])
 
+        highlight_outliers = action(
+            text="Find and highlight any outliers",
+            slot=self.highlightOutliers,
+            tip="Highlights any outlying annotations",
+            enabled=True,
+        )
+
         createMode = action(
             self.tr("Create Polygons"),
             lambda: self.toggleDrawMode(False, createMode="polygon"),
@@ -590,6 +597,7 @@ class MainWindow(QtWidgets.QMainWindow):
             deleteFile=deleteFile,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             hidePolysWhenCreating=hide_polys_creating,
+            highlightOutliers=highlight_outliers,
             delete=delete,
             edit=edit,
             duplicate=duplicate,
@@ -2149,8 +2157,32 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.highlightList.findItemByShape(i.shape())[0]:
                 allOtherShapes.append(i)
 
-        #allOtherShapes = list(set(self.labelList).difference(self.highlightList)) # All labels that are not highlighted, so they can be coloured correctly
+        self.update_highlighted_shape_color(self.highlightList, allOtherShapes)
+
+    def highlightShapes(self, shapesToCheck):
+
+        for shape in shapesToCheck:
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                self.highlightList.removeItem(findItem[1])
+            else:
+                logger.info("Shape " + shape.label + " was not found")
+                itemThing = LabelListWidgetItem(shape.label, shape)
+                self.highlightList.addItem(itemThing)
+
+        allOtherShapes = []
+        for i in self.labelList:
+            if not self.highlightList.findItemByShape(i.shape())[0]:
+                allOtherShapes.append(i)
+
         self.update_highlighted_shape_color(self.highlightList, allOtherShapes)
 
     def clearHighlightedLabels(self):
         self.highlightList.clear()
+
+    def highlightOutliers(self):
+        for i in range(len(self.labelList) -1):
+            if labelList[i].shape().containsShape(labelList[i+1].shape()): # nested annotation
+                self.highlightShapes(labelList[i+1])
+            elif labelList[i].shape().containsShapePercent(labelList[i+1].shape(), 50): # overlapping annotation
+                self.highlightShapes(labelList[i+1])
