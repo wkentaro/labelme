@@ -2089,6 +2089,28 @@ class MainWindow(QtWidgets.QMainWindow):
         images = natsort.os_sorted(images)
         return images
 
+    def update_highlighted_shape_color(self, highlightList, allOtherShapes):
+        if highlightList is None:
+            for item in allOtherShapes:
+                shape = item.shape()
+                shape.line_color = shape.previous_line_color
+                shape.fill_color = shape.previous_fill_color
+                shape.vertex_fill_color = shape.previous_vertex_color
+        else:
+            for item in highlightList:
+                shape = item.shape()
+                shape.previous_line_color = shape.line_color
+                shape.previous_fill_color = shape.fill_color
+                shape.previous_vertex_color = shape.vertex_fill_color
+                shape.line_color = shape.highlighted_line_color
+                shape.fill_color = shape.highlighted_fill_color
+                shape.vertex_fill_color = shape.highlighted_vertex_fill_color
+            for item in allOtherShapes:
+                shape = item.shape()
+                shape.line_color = shape.unhighlighted_line_color
+                shape.fill_color = shape.unhighlighted_fill_color
+                shape.vertex_fill_color = shape.unhighlighted_vertex_fill_color
+
     def highlightSelectedShapes(self):
         shapesToCheck = self.canvas.selectedShapes
 
@@ -2101,10 +2123,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 itemThing = LabelListWidgetItem(shape.label, shape)
                 self.highlightList.addItem(itemThing)
 
+        allOtherShapes = []
+        for i in self.labelList:
+            if not self.highlightList.findItemByShape(i.shape())[0]:
+                allOtherShapes.append(i)
 
-        # Can add colour changing stuff here if needed
-        # allOtherShapes = list(set(self.labelList).difference(shapesToHighlight)) # All labels that are not highlighted, so they can be coloured correctly
-        # ...
+        #allOtherShapes = list(set(self.labelList).difference(self.highlightList)) # All labels that are not highlighted, so they can be coloured correctly
+        self.update_highlighted_shape_color(self.highlightList, allOtherShapes)
 
     def clearHighlightedLabels(self):
         self.highlightList.clear()
