@@ -175,11 +175,15 @@ class LabelListWidget(QtWidgets.QListView):
         self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
 
     def findItemByShape(self, shape):
+        returnVar = [False, None]
         for row in range(self.model().rowCount()):
             item = self.model().item(row, 0)
             if item.shape() == shape:
-                return item
-        raise ValueError("cannot find shape: {}".format(shape))
+                returnVar = [True, item]
+                break
+        return returnVar
+
+
 
     def clear(self):
         self.model().clear()

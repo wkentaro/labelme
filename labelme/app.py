@@ -44,6 +44,7 @@ from labelme.widgets import ZoomWidget
 LABEL_COLORMAP = imgviz.label_colormap()
 
 
+
 class MainWindow(QtWidgets.QMainWindow):
 
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
@@ -108,27 +109,27 @@ class MainWindow(QtWidgets.QMainWindow):
             flags=self._config["label_flags"],
         )
 
-        self.labelList = LabelListWidget()
         self.lastOpenDir = None
 
-        self.flag_dock = self.flag_widget = None
-        self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
-        self.flag_dock.setObjectName("Flags")
-        self.flag_widget = QtWidgets.QListWidget()
+        self.createFlagWidget()
+        # must create flag widget before loadFlags can be called
         if config["flags"]:
             self.loadFlags({k: False for k in config["flags"]})
-        self.flag_dock.setWidget(self.flag_widget)
-        self.flag_widget.itemChanged.connect(self.setDirty)
 
+        self.highlightList = LabelListWidget()
+        self.highlightList.itemSelectionChanged.connect(self.labelSelectionChanged)
+        self.highlightList.itemDoubleClicked.connect(self.editLabel)
+        self.highlightList.itemChanged.connect(self.labelItemChanged)
+        self.highlightList.itemDropped.connect(self.labelOrderChanged)
+        self.createHighlightedWidget()
+
+        self.labelList = LabelListWidget()
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemDropped.connect(self.labelOrderChanged)
-        self.shape_dock = QtWidgets.QDockWidget(
-            self.tr("Polygon Labels"), self
-        )
-        self.shape_dock.setObjectName("Labels")
-        self.shape_dock.setWidget(self.labelList)
+
+        self.createShapeWidget()
 
         self.uniqLabelList = UniqueLabelQListWidget()
         self.uniqLabelList.setToolTip(
@@ -143,27 +144,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.uniqLabelList.addItem(item)
                 rgb = self._get_rgb_by_label(label)
                 self.uniqLabelList.setItemLabel(item, label, rgb)
-        self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
-        self.label_dock.setObjectName("Label List")
-        self.label_dock.setWidget(self.uniqLabelList)
+        self.createLabelWidget()
 
-        self.fileSearch = QtWidgets.QLineEdit()
-        self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
-        self.fileSearch.textChanged.connect(self.fileSearchChanged)
-        self.fileListWidget = QtWidgets.QListWidget()
-        self.fileListWidget.itemSelectionChanged.connect(
-            self.fileSelectionChanged
-        )
-        fileListLayout = QtWidgets.QVBoxLayout()
-        fileListLayout.setContentsMargins(0, 0, 0, 0)
-        fileListLayout.setSpacing(0)
-        fileListLayout.addWidget(self.fileSearch)
-        fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
-        self.file_dock.setObjectName("Files")
-        fileListWidget = QtWidgets.QWidget()
-        fileListWidget.setLayout(fileListLayout)
-        self.file_dock.setWidget(fileListWidget)
+        self.createFileListWidget()
 
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
@@ -193,7 +176,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
+        for dock in ["flag_dock", "highlight_dock", "label_dock", "shape_dock", "file_dock"]:
             if self._config[dock]["closable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]["floatable"]:
@@ -205,6 +188,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 getattr(self, dock).setVisible(False)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.highlight_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
@@ -417,6 +401,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Paste copied polygons"),
             enabled=False,
         )
+        highlight = action(
+            text="Highlight Polygons",
+            slot=self.highlightSelectedShapes,
+            shortcut=shortcuts["highlight_selected_polygon"],
+            icon="edit",
+            tip="Highlight selected polygon",
+            enabled=False,
+        )
         undoLastPoint = action(
             self.tr("Undo last point"),
             self.canvas.undoLastPoint,
@@ -578,7 +570,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing.trigger()
 
-        # Lavel list context menu.
+        # Label list context menu.
         labelMenu = QtWidgets.QMenu()
         utils.addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -603,6 +595,7 @@ class MainWindow(QtWidgets.QMainWindow):
             duplicate=duplicate,
             copy=copy,
             paste=paste,
+            highlight=highlight,
             undoLastPoint=undoLastPoint,
             undo=undo,
             removePoint=removePoint,
@@ -650,6 +643,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 editMode,
                 edit,
+                highlight,
                 duplicate,
                 copy,
                 paste,
@@ -707,6 +701,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.menus.view,
             (
                 self.flag_dock.toggleViewAction(),
+                self.highlight_dock.toggleViewAction(),
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
@@ -752,6 +747,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             createMode,
             editMode,
+            highlight,
             duplicate,
             copy,
             paste,
@@ -827,6 +823,48 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.firstStart = True
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
+
+    def createFlagWidget(self):
+        self.flag_dock = self.flag_widget = None
+        self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
+        self.flag_dock.setObjectName("Flags")
+        self.flag_widget = QtWidgets.QListWidget()
+        self.flag_dock.setWidget(self.flag_widget)
+        self.flag_widget.itemChanged.connect(self.setDirty)
+
+    def createHighlightedWidget(self):
+        self.highlight_dock = QtWidgets.QDockWidget(self.tr("Highlighted Labels"), self)
+        self.highlight_dock.setObjectName("Highlighted labels")
+        self.highlight_dock.setWidget(self.highlightList)
+
+    def createShapeWidget(self):
+        self.shape_dock = QtWidgets.QDockWidget(self.tr("Polygon Labels"), self)
+        self.shape_dock.setObjectName("Labels")
+        self.shape_dock.setWidget(self.labelList)
+
+    def createLabelWidget(self):
+        self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
+        self.label_dock.setObjectName("Label List")
+        self.label_dock.setWidget(self.uniqLabelList)
+
+    def createFileListWidget(self):
+        self.fileSearch = QtWidgets.QLineEdit()
+        self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
+        self.fileSearch.textChanged.connect(self.fileSearchChanged)
+        self.fileListWidget = QtWidgets.QListWidget()
+        self.fileListWidget.itemSelectionChanged.connect(
+            self.fileSelectionChanged
+        )
+        fileListLayout = QtWidgets.QVBoxLayout()
+        fileListLayout.setContentsMargins(0, 0, 0, 0)
+        fileListLayout.setSpacing(0)
+        fileListLayout.addWidget(self.fileSearch)
+        fileListLayout.addWidget(self.fileListWidget)
+        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
+        self.file_dock.setObjectName("Files")
+        fileListWidget = QtWidgets.QWidget()
+        fileListWidget.setLayout(fileListLayout)
+        self.file_dock.setWidget(fileListWidget)
 
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
@@ -964,55 +1002,27 @@ class MainWindow(QtWidgets.QMainWindow):
     def toggleDrawMode(self, edit=True, createMode="polygon"):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
-        if edit:
-            self.actions.createMode.setEnabled(True)
-            self.actions.createRectangleMode.setEnabled(True)
-            self.actions.createCircleMode.setEnabled(True)
-            self.actions.createLineMode.setEnabled(True)
-            self.actions.createPointMode.setEnabled(True)
-            self.actions.createLineStripMode.setEnabled(True)
-        else:
+
+        # default edit mode (which requires all modes set to true)
+        self.actions.createMode.setEnabled(True)
+        self.actions.createRectangleMode.setEnabled(True)
+        self.actions.createCircleMode.setEnabled(True)
+        self.actions.createLineMode.setEnabled(True)
+        self.actions.createPointMode.setEnabled(True)
+        self.actions.createLineStripMode.setEnabled(True)
+
+        if not edit:
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "rectangle":
-                self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "line":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "point":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
                 self.actions.createPointMode.setEnabled(False)
-                self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "circle":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
-                self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "linestrip":
-                self.actions.createMode.setEnabled(True)
-                self.actions.createRectangleMode.setEnabled(True)
-                self.actions.createCircleMode.setEnabled(True)
-                self.actions.createLineMode.setEnabled(True)
-                self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(False)
             else:
                 raise ValueError("Unsupported createMode: %s" % createMode)
@@ -1134,15 +1144,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.selectedShapes = selected_shapes
         for shape in self.canvas.selectedShapes:
             shape.selected = True
-            item = self.labelList.findItemByShape(shape)
-            self.labelList.selectItem(item)
-            self.labelList.scrollToItem(item)
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                item = findItem[1]
+                self.labelList.selectItem(item)
+                self.labelList.scrollToItem(item)
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
         self.actions.duplicate.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
+        self.actions.highlight.setEnabled(n_selected)
 
     def addLabel(self, shape):
         if shape.group_id is None:
@@ -1199,8 +1212,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def remLabels(self, shapes):
         for shape in shapes:
-            item = self.labelList.findItemByShape(shape)
-            self.labelList.removeItem(item)
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                item = findItem[1]
+                self.labelList.removeItem(item)
 
     def loadShapes(self, shapes, replace=True):
         self._noSelectionSlot = True
@@ -2094,3 +2109,48 @@ class MainWindow(QtWidgets.QMainWindow):
                     images.append(relativePath)
         images = natsort.os_sorted(images)
         return images
+
+    def update_highlighted_shape_color(self, highlightList, allOtherShapes):
+        if highlightList is None:
+            for item in allOtherShapes:
+                shape = item.shape()
+                shape.line_color = shape.previous_line_color
+                shape.fill_color = shape.previous_fill_color
+                shape.vertex_fill_color = shape.previous_vertex_color
+        else:
+            for item in highlightList:
+                shape = item.shape()
+                shape.previous_line_color = shape.line_color
+                shape.previous_fill_color = shape.fill_color
+                shape.previous_vertex_color = shape.vertex_fill_color
+                shape.line_color = shape.highlighted_line_color
+                shape.fill_color = shape.highlighted_fill_color
+                shape.vertex_fill_color = shape.highlighted_vertex_fill_color
+            for item in allOtherShapes:
+                shape = item.shape()
+                shape.line_color = shape.unhighlighted_line_color
+                shape.fill_color = shape.unhighlighted_fill_color
+                shape.vertex_fill_color = shape.unhighlighted_vertex_fill_color
+
+    def highlightSelectedShapes(self):
+        shapesToCheck = self.canvas.selectedShapes
+
+        for shape in shapesToCheck:
+            findItem = self.highlightList.findItemByShape(shape)
+            if findItem[0]:
+                self.highlightList.removeItem(findItem[1])
+            else:
+                logger.info("Shape " + shape.label + " was not found")
+                itemThing = LabelListWidgetItem(shape.label, shape)
+                self.highlightList.addItem(itemThing)
+
+        allOtherShapes = []
+        for i in self.labelList:
+            if not self.highlightList.findItemByShape(i.shape())[0]:
+                allOtherShapes.append(i)
+
+        #allOtherShapes = list(set(self.labelList).difference(self.highlightList)) # All labels that are not highlighted, so they can be coloured correctly
+        self.update_highlighted_shape_color(self.highlightList, allOtherShapes)
+
+    def clearHighlightedLabels(self):
+        self.highlightList.clear()

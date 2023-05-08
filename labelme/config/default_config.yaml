@@ -38,6 +38,11 @@ flag_dock:
   closable: true
   movable: true
   floatable: true
+highlight_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
 label_dock:
   show: true
   closable: true
@@ -114,3 +119,4 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
+  highlight_selected_polygon: Ctrl+H
