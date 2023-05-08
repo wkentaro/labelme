@@ -303,6 +303,15 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         toggle_keep_prev_mode.setChecked(self._config["keep_prev"])
 
+        hide_polys_creating = action(
+            text="Hide All Polygons When Creating",
+            slot=self.hidePolysWhenCreating,
+            tip="Hides all polygons when the Create Polygons tool is selected",
+            checkable=True,
+            checked=self._config["hide_polys"],
+        )
+        hide_polys_creating.setChecked(self._config["hide_polys"])
+
         createMode = action(
             self.tr("Create Polygons"),
             lambda: self.toggleDrawMode(False, createMode="polygon"),
@@ -580,6 +589,7 @@ class MainWindow(QtWidgets.QMainWindow):
             close=close,
             deleteFile=deleteFile,
             toggleKeepPrevMode=toggle_keep_prev_mode,
+            hidePolysWhenCreating=hide_polys_creating,
             delete=delete,
             edit=edit,
             duplicate=duplicate,
@@ -621,6 +631,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 removePoint,
                 None,
                 toggle_keep_prev_mode,
+                hide_polys_creating
             ),
             # menu shown at right click
             menu=(
@@ -1065,10 +1076,11 @@ class MainWindow(QtWidgets.QMainWindow):
         shape = item.shape()
         if shape is None:
             return
-        text, flags, group_id = self.labelDialog.popUp(
+        text, flags, group_id, description = self.labelDialog.popUp(
             text=shape.label,
             flags=shape.flags,
             group_id=shape.group_id,
+            description=shape.description,
         )
         if text is None:
             return
@@ -1083,6 +1095,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.label = text
         shape.flags = flags
         shape.group_id = group_id
+        shape.description = description
 
         self._update_shape_color(shape)
         if shape.group_id is None:
@@ -1219,6 +1232,7 @@ class MainWindow(QtWidgets.QMainWindow):
             points = shape["points"]
             shape_type = shape["shape_type"]
             flags = shape["flags"]
+            description = shape.get("description", "")
             group_id = shape["group_id"]
             other_data = shape["other_data"]
 
@@ -1230,6 +1244,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 label=label,
                 shape_type=shape_type,
                 group_id=group_id,
+                description=description,
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1266,6 +1281,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     label=s.label.encode("utf-8") if PY2 else s.label,
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
+                    description=s.description,
                     shape_type=s.shape_type,
                     flags=s.flags,
                 )
@@ -1359,9 +1375,10 @@ class MainWindow(QtWidgets.QMainWindow):
             text = items[0].data(Qt.UserRole)
         flags = {}
         group_id = None
+        description = ""
         if self._config["display_label_popup"] or not text:
             previous_text = self.labelDialog.edit.text()
-            text, flags, group_id = self.labelDialog.popUp(text)
+            text, flags, group_id, description = self.labelDialog.popUp(text)
             if not text:
                 self.labelDialog.edit.setText(previous_text)
 
@@ -1377,6 +1394,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.labelList.clearSelection()
             shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
+            shape.description = description
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
@@ -1945,6 +1963,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleKeepPrevMode(self):
         self._config["keep_prev"] = not self._config["keep_prev"]
+
+    def hidePolysWhenCreating(self):
+        self._config["hide_polys"] = not self._config["hide_polys"]
 
     def removeSelectedPoint(self):
         self.canvas.removeSelectedPoint()

@@ -4,7 +4,9 @@ import math
 from qtpy import QtCore
 from qtpy import QtGui
 
+from labelme.logger import logger
 import labelme.utils
+
 
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
@@ -26,6 +28,7 @@ DEFAULT_UNHIGHLIGHTED_VERTEX_FILL_COLOR = QtGui.QColor(169, 169, 169, 255)  # un
 
 
 class Shape(object):
+
     # Render handles as squares
     P_SQUARE = 0
 
@@ -59,12 +62,13 @@ class Shape(object):
     scale = 1.0
 
     def __init__(
-            self,
-            label=None,
-            line_color=None,
-            shape_type=None,
-            flags=None,
-            group_id=None,
+        self,
+        label=None,
+        line_color=None,
+        shape_type=None,
+        flags=None,
+        group_id=None,
+        description=None,
     ):
         self.label = label
         self.group_id = group_id
@@ -73,6 +77,7 @@ class Shape(object):
         self.selected = False
         self.shape_type = shape_type
         self.flags = flags
+        self.description = description
         self.other_data = {}
 
         self._highlightIndex = None
@@ -132,6 +137,29 @@ class Shape(object):
         self.points.insert(i, point)
 
     def removePoint(self, i):
+        if not self.canAddPoint():
+            logger.warning(
+                "Cannot remove point from: shape_type=%r",
+                self.shape_type,
+            )
+            return
+
+        if self.shape_type == "polygon" and len(self.points) <= 3:
+            logger.warning(
+                "Cannot remove point from: shape_type=%r, len(points)=%d",
+                self.shape_type,
+                len(self.points),
+            )
+            return
+
+        if self.shape_type == "linestrip" and len(self.points) <= 2:
+            logger.warning(
+                "Cannot remove point from: shape_type=%r, len(points)=%d",
+                self.shape_type,
+                len(self.points),
+            )
+            return
+
         self.points.pop(i)
 
     def isClosed(self):
