@@ -2111,7 +2111,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return images
 
     def update_highlighted_shape_color(self, highlightList, allOtherShapes):
-        if highlightList is None:
+        if len(highlightList) == 0 or highlightList is None:
             for item in allOtherShapes:
                 shape = item.shape()
                 shape.line_color = shape.previous_line_color
