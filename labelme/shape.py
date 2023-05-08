@@ -7,7 +7,6 @@ from qtpy import QtGui
 from labelme.logger import logger
 import labelme.utils
 
-
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
@@ -21,7 +20,6 @@ DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
 
 class Shape(object):
-
     # Render handles as squares
     P_SQUARE = 0
 
@@ -46,13 +44,13 @@ class Shape(object):
     scale = 1.0
 
     def __init__(
-        self,
-        label=None,
-        line_color=None,
-        shape_type=None,
-        flags=None,
-        group_id=None,
-        description=None,
+            self,
+            label=None,
+            line_color=None,
+            shape_type=None,
+            flags=None,
+            group_id=None,
+            description=None,
     ):
         self.label = label
         self.group_id = group_id
@@ -317,3 +315,18 @@ class Shape(object):
 
     def __setitem__(self, key, value):
         self.points[key] = value
+
+    def containsShape(self, shape):
+        for p in shape.points:
+            if not self.containsPoint(p):  # if any point of the shape is not in the current shape, return False
+                return False
+        return True
+
+    def containsShapePercent(self, shape, percent):
+        count = 0
+        for p in shape.points:
+            if self.containsPoint(p):
+                count += 1
+        if count / len(shape.points) >= percent:
+            return True
+        return False
