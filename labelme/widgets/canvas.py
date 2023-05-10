@@ -1,3 +1,4 @@
+import gdown
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -126,14 +127,32 @@ class Canvas(QtWidgets.QWidget):
             "ai_polygon",
         ]:
             raise ValueError("Unsupported createMode: %s" % value)
+        self._createMode = value
 
-        if value == "ai_polygon" and self._ai_model is None:
-            self._ai_model = labelme.ai.SegmentAnythingModel()
-            self._ai_model.set_image(
-                image=labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+    def initializeAiModel(self, name):
+        if name not in [model.name for model in labelme.ai.MODELS]:
+            raise ValueError("Unsupported ai model: %s" % name)
+        model = [model for model in labelme.ai.MODELS if model.name == name][0]
+
+        if self._ai_model is not None and self._ai_model.name == model.name:
+            logger.debug("AI model is already initialized: %r" % model.name)
+        else:
+            logger.debug("Initializing AI model: %r" % model.name)
+            self._ai_model = labelme.ai.SegmentAnythingModel(
+                name=model.name,
+                encoder_path = gdown.cached_download(
+                    url=model.encoder_weight.url,
+                    md5=model.encoder_weight.md5,
+                ),
+                decoder_path = gdown.cached_download(
+                    url=model.decoder_weight.url,
+                    md5=model.decoder_weight.md5,
+                ),
             )
 
-        self._createMode = value
+        self._ai_model.set_image(
+            image=labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+        )
 
     def storeShapes(self):
         shapesBackup = []

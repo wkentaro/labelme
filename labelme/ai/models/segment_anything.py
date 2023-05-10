@@ -12,25 +12,10 @@ from ...logger import logger
 
 
 class SegmentAnythingModel:
-    def __init__(self):
-        self._image_size = 1024
+    def __init__(self, name, encoder_path, decoder_path):
+        self.name = name
 
-        # encoder_path = "../segment-anything/models/sam_vit_h_4b8939.quantized.encoder.onnx"  # NOQA
-        # decoder_path = "../segment-anything/models/sam_vit_h_4b8939.quantized.decoder.onnx"  # NOQA
-        #
-        # encoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.encoder.onnx"  # NOQA
-        # decoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.decoder.onnx"  # NOQA
-        #
-        # encoder_path = "../segment-anything/models/sam_vit_b_01ec64.quantized.encoder.onnx"  # NOQA
-        # decoder_path = "../segment-anything/models/sam_vit_b_01ec64.quantized.decoder.onnx"  # NOQA
-        encoder_path = gdown.cached_download(
-            url="https://github.com/wkentaro/labelme/releases/download/sam-20230416/sam_vit_l_0b3195.quantized.encoder.onnx",  # NOQA
-            md5="080004dc9992724d360a49399d1ee24b",
-        )
-        decoder_path = gdown.cached_download(
-            url="https://github.com/wkentaro/labelme/releases/download/sam-20230416/sam_vit_l_0b3195.quantized.decoder.onnx",  # NOQA
-            md5="851b7faac91e8e23940ee1294231d5c7",
-        )
+        self._image_size = 1024
 
         self._encoder_session = onnxruntime.InferenceSession(encoder_path)
         self._decoder_session = onnxruntime.InferenceSession(decoder_path)
@@ -45,10 +30,11 @@ class SegmentAnythingModel:
                 self._image.tobytes()
             )
 
-        self._thread = threading.Thread(
-            target=self._compute_and_cache_image_embedding
-        )
-        self._thread.start()
+        if self._image_embedding is None:
+            self._thread = threading.Thread(
+                target=self._compute_and_cache_image_embedding
+            )
+            self._thread.start()
 
     def _compute_and_cache_image_embedding(self):
         with self._lock:
