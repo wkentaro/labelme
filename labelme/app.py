@@ -753,7 +753,9 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel.setDefaultWidget(QtWidgets.QWidget())
         selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
         self._selectAiModelComboBox = QtWidgets.QComboBox()
-        selectAiModel.defaultWidget().layout().addWidget(self._selectAiModelComboBox)
+        selectAiModel.defaultWidget().layout().addWidget(
+            self._selectAiModelComboBox
+        )
         self._selectAiModelComboBox.addItems([model.name for model in MODELS])
         self._selectAiModelComboBox.setCurrentIndex(1)
         self._selectAiModelComboBox.setEnabled(False)
