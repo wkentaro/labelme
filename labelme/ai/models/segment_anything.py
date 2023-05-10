@@ -23,6 +23,8 @@ class SegmentAnythingModel:
         self._lock = threading.Lock()
         self._image_embedding_cache = collections.OrderedDict()
 
+        self._thread = None
+
     def set_image(self, image: np.ndarray):
         with self._lock:
             self._image = image
