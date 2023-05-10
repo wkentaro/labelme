@@ -1,9 +1,11 @@
 import collections
 
-from .models.segment_anything import SegmentAnythingModel
+from .models.segment_anything import SegmentAnythingModel  # NOQA
 
 
-Model = collections.namedtuple("Model", ["name", "encoder_weight", "decoder_weight"])
+Model = collections.namedtuple(
+    "Model", ["name", "encoder_weight", "decoder_weight"]
+)
 
 Weight = collections.namedtuple("Weight", ["url", "md5"])
 

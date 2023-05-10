@@ -140,11 +140,11 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("Initializing AI model: %r" % model.name)
             self._ai_model = labelme.ai.SegmentAnythingModel(
                 name=model.name,
-                encoder_path = gdown.cached_download(
+                encoder_path=gdown.cached_download(
                     url=model.encoder_weight.url,
                     md5=model.encoder_weight.md5,
                 ),
-                decoder_path = gdown.cached_download(
+                decoder_path=gdown.cached_download(
                     url=model.decoder_weight.url,
                     md5=model.decoder_weight.md5,
                 ),
