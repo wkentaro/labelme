@@ -1,7 +1,6 @@
 import collections
 import threading
 
-import gdown
 import imgviz
 import numpy as np
 import onnxruntime
