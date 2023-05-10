@@ -465,7 +465,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         zoom = QtWidgets.QWidgetAction(self)
-        zoom.setDefaultWidget(self.zoomWidget)
+        zoomBoxLayout = QtWidgets.QVBoxLayout()
+        zoomBoxLayout.addWidget(self.zoomWidget)
+        zoomLabel = QtWidgets.QLabel("Zoom")
+        zoomLabel.setAlignment(Qt.AlignCenter)
+        zoomLabel.setFont(QtGui.QFont(None, 10))
+        zoomBoxLayout.addWidget(zoomLabel)
+        zoom.setDefaultWidget(QtWidgets.QWidget())
+        zoom.defaultWidget().setLayout(zoomBoxLayout)
         self.zoomWidget.setWhatsThis(
             str(
                 self.tr(
