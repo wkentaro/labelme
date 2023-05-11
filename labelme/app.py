@@ -14,6 +14,7 @@ from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
+from PyQt5.QtWidgets import QListWidget
 
 from labelme import __appname__
 from labelme import PY2
@@ -123,6 +124,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.highlightList.itemDropped.connect(self.labelOrderChanged)
         self.createHighlightedWidget()
 
+        self.neighbourlist = QListWidget()
+        self.createNeighbourWidget()
+
         self.labelList = LabelListWidget()
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.labelList.itemDoubleClicked.connect(self.editLabel)
@@ -190,6 +194,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.highlight_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.neighbour_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
@@ -855,6 +860,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_dock.setObjectName("Label List")
         self.label_dock.setWidget(self.uniqLabelList)
 
+    def createNeighbourWidget(self):
+        self.neighbour_dock = QtWidgets.QDockWidget(self.tr("Neighbour List"), self)
+        self.neighbour_dock.setObjectName("Neighbour List")
+        self.neighbour_dock.setWidget(self.neighbourlist)
+
     def createFileListWidget(self):
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
@@ -1164,6 +1174,52 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected == 1)
         self.actions.highlight.setEnabled(n_selected)
+
+        self.sortLabelListByDistance()
+
+    def sortLabelListByDistance(self):
+        if self.neighbourlist:
+            self.neighbourlist.clear()
+        if self.canvas.selectedShapes:
+
+            o = self.canvas.selectedShapes[0].points
+            distancelist = []
+            x, y=0, 0
+            for p in o:
+                x += int(QtCore.QPointF.x(p))
+                y += int(QtCore.QPointF.y(p))
+            x /= len(o)
+            y /= len(o)
+
+            ori = [x, y]
+
+            for s in self.canvas.shapes:
+                if s == self.canvas.selectedShapes[0]:
+                    label = (s.label + " (selected)")
+                    origin = True
+                else:
+                    label = s.label
+                    origin = False
+                points = s.points
+                x,y = 0,0
+                for p in points:
+                    x += int(QtCore.QPointF.x(p))
+                    y += int(QtCore.QPointF.y(p))
+                x /= len(points)
+                y /= len(points)
+                if not origin:
+                    distance = math.sqrt((ori[0] - x)**2 + (ori[1] - y)**2)
+                else:
+                    distance = 0
+
+                distancelist.append([label, distance])
+            distancelist.sort(key=lambda x: x[1])
+            for label in distancelist:
+                self.neighbourlist.addItem(label[0])
+        else:
+            self.neighbourlist.clear()
+
+
 
     def addLabel(self, shape):
         if shape.group_id is None:
