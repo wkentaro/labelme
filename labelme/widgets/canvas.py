@@ -385,6 +385,9 @@ class Canvas(QtWidgets.QWidget):
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
+                    for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
+                        self.setShapeVisible(shape, False)
+                    
                     self.current = Shape(shape_type=self.createMode)
                     self.current.addPoint(pos)
                     if self.createMode == "point":
@@ -700,6 +703,12 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
     def finalise(self):
+        for shape in reversed([s for s in self.shapes if not self.isVisible(s)]):
+            self.setShapeVisible(shape, True)
+
+        # Add Code here to check for outlier and to alter the shape.
+
+
         assert self.current
         self.current.close()
         self.shapes.append(self.current)

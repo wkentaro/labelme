@@ -7,6 +7,8 @@ keep_prev_brightness: false
 keep_prev_contrast: false
 logger_level: info
 
+hide_polys: false
+
 flags: null
 label_flags: null
 labels: null
@@ -32,6 +34,11 @@ shape:
 
 # main
 flag_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
+highlight_dock:
   show: true
   closable: true
   movable: true
@@ -112,3 +119,4 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
+  highlight_selected_polygon: Ctrl+H

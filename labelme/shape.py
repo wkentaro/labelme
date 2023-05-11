@@ -7,7 +7,6 @@ from qtpy import QtGui
 from labelme.logger import logger
 import labelme.utils
 
-
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
@@ -19,9 +18,15 @@ DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 155)  # selected
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
+DEFAULT_HIGHLIGHTED_FILL_COLOR = QtGui.QColor(255, 255, 0, 255)  # highlighted
+DEFAULT_HIGHLIGHTED_LINE_COLOR = QtGui.QColor(255, 255, 0, 155)  # highlighted
+DEFAULT_HIGHLIGHTED_VERTEX_FILL_COLOR = QtGui.QColor(255, 255, 0, 255)  # highlighted
+DEFAULT_UNHIGHLIGHTED_FILL_COLOR = QtGui.QColor(169, 169, 169, 255)  # unhighlighted
+DEFAULT_UNHIGHLIGHTED_LINE_COLOR = QtGui.QColor(169, 169, 169, 155)  # unhighlighted
+DEFAULT_UNHIGHLIGHTED_VERTEX_FILL_COLOR = QtGui.QColor(169, 169, 169, 255)  # unhighlighted
+
 
 class Shape(object):
-
     # Render handles as squares
     P_SQUARE = 0
 
@@ -35,24 +40,33 @@ class Shape(object):
     NEAR_VERTEX = 1
 
     # The following class variables influence the drawing of all shape objects.
+    previous_line_color = DEFAULT_LINE_COLOR
+    previous_fill_color = DEFAULT_FILL_COLOR
+    previous_vertex_color = DEFAULT_VERTEX_FILL_COLOR
     line_color = DEFAULT_LINE_COLOR
     fill_color = DEFAULT_FILL_COLOR
     select_line_color = DEFAULT_SELECT_LINE_COLOR
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
     hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
+    highlighted_fill_color = DEFAULT_HIGHLIGHTED_FILL_COLOR
+    highlighted_line_color = DEFAULT_HIGHLIGHTED_LINE_COLOR
+    highlighted_vertex_fill_color = DEFAULT_HIGHLIGHTED_VERTEX_FILL_COLOR
+    unhighlighted_fill_color = DEFAULT_UNHIGHLIGHTED_FILL_COLOR
+    unhighlighted_line_color = DEFAULT_UNHIGHLIGHTED_LINE_COLOR
+    unhighlighted_vertex_fill_color = DEFAULT_UNHIGHLIGHTED_VERTEX_FILL_COLOR
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
 
     def __init__(
-        self,
-        label=None,
-        line_color=None,
-        shape_type=None,
-        flags=None,
-        group_id=None,
-        description=None,
+            self,
+            label=None,
+            line_color=None,
+            shape_type=None,
+            flags=None,
+            group_id=None,
+            description=None,
     ):
         self.label = label
         self.group_id = group_id
@@ -317,3 +331,18 @@ class Shape(object):
 
     def __setitem__(self, key, value):
         self.points[key] = value
+
+    def containsShape(self, shape):
+        for p in shape.points:
+            if not self.containsPoint(p):  # if any point of the shape is not in the current shape, return False
+                return False
+        return True
+
+    def containsShapePercent(self, shape, percent):
+        count = 0
+        for p in shape.points:
+            if self.containsPoint(p):
+                count += 1
+        if count / len(shape.points) >= percent:
+            return True
+        return False
