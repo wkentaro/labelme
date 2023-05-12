@@ -7,6 +7,7 @@ import os
 import os.path as osp
 import re
 import webbrowser
+import hashlib
 
 import imgviz
 import natsort
@@ -75,6 +76,9 @@ class MainWindow(QtWidgets.QMainWindow):
         device = self._config["device"]
         model_type = self._config["sam"]["model_type"]
         checkpoint = self._config["sam"]["checkpoint"]
+        self.embeddings_dir = self._config["sam"]["embeddings_dir"]
+        if not os.path.exists(self.embeddings_dir):
+            os.makedirs(self.embeddings_dir, exist_ok=True)
         self.predictor = Predictor(model_type, checkpoint, device)
         
 
@@ -1606,7 +1610,22 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         
         self.image = image
-        self.predictor.set_image(image)
+        if filename is not None:
+            logger.debug(f'read img from {filename}')
+            fname = hashlib.sha256(filename.encode('utf8')).hexdigest() + '.bin'
+            fpath = os.path.join(self.embeddings_dir, fname)
+        else:
+            fpath = None
+
+        try:
+            if fpath is not None and os.path.exists(fpath):
+                self.predictor.set_embeddings(fpath)
+            else:
+                self.predictor.predict_embeddings(image, "RGB", fpath)
+        except Exception as e:
+            logger.error(f"set embeddings failed:\n{e}")
+            self.predictor.predict_embeddings(image, "RGB", fpath)
+
         self.filename = filename
         if self._config["keep_prev"]:
             prev_shapes = self.canvas.shapes

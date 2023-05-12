@@ -1,4 +1,7 @@
+import pickle
+
 import cv2
+import torch
 import numpy as np
 import qimage2ndarray
 from qtpy import QtCore
@@ -74,23 +77,50 @@ class Prompt(object):
         self._shapes = []
 
 
-class Predictor(object):
+class Predictor(SamPredictor):
     def __init__(self, model_type, checkpoint, device) -> None:
-        logger.debug(f"Loading Segment Anything Model {model_type} From {checkpoint}")
+        logger.debug(f"Loading Segment Anything Model {model_type} From {checkpoint}, device: {device}")
+        if isinstance(device, str):
+            self._device = torch.device(device)
+        elif isinstance(device, torch.device):
+            self._device = device
         sam = sam_model_registry[model_type](checkpoint=checkpoint)
-        sam.to(device)
-        self._predictor = SamPredictor(sam)
-        self.prompt_img = None
+        sam.to(self._device)
+        super().__init__(sam)
+        logger.debug(f"set_torch_image input must be BCHW with long side {self.model.image_encoder.img_size}.")
 
-    def set_image(self, image):
-        if image.depth() == 32:
-            self.prompt_img = qimage2ndarray.rgb_view(image)
-        elif image.depth() == 8:
-            self.prompt_img = cv2.cvtColor(qimage2ndarray.byte_view(image), cv2.COLOR_GRAY2RGB)
-        logger.debug(f"qimage2ndarry {self.prompt_img.shape} {self.prompt_img.dtype}")
-        
-        logger.debug(f"sam set image")
-        self._predictor.set_image(self.prompt_img, image_format='RGB')
+    def predict_embeddings(self, qimage, image_format="RGB", fpath : str =None):
+        logger.debug('start')
+        if qimage.depth() == 32:
+            image = qimage2ndarray.rgb_view(qimage)
+        elif qimage.depth() == 8:
+            image = cv2.cvtColor(qimage2ndarray.byte_view(qimage), cv2.COLOR_GRAY2RGB)
+        else:
+            image = qimage2ndarray.rgb_view(qimage)
+        self.set_image(image, image_format=image_format)
+        if fpath is not None and fpath != "":
+            data = {
+                'original_size': self.original_size,
+                'input_size': self.input_size,
+                'embeddings': self.features.cpu().numpy()
+            }
+            logger.debug(f'save embeddings as {fpath}')
+            with open(fpath, 'wb') as f:
+                pickle.dump(data, f)
+        logger.debug('end')
+
+    def set_embeddings(self, fpath):
+        logger.debug('start')
+        logger.debug(f'Loading embeddings from {fpath}')
+        self.reset_image()
+        with open(fpath, 'rb') as f:
+            data = pickle.load(f)
+        embeddings = data['embeddings']
+        self.original_size = data['original_size']
+        self.input_size = data['input_size']
+        self.features = torch.from_numpy(embeddings).to(self._device)
+        self.is_image_set = True
+        logger.debug('end')
 
     def postproc(self, masks, scores, logits, multimask_output):
         logger.debug(f'postproc start')
@@ -139,8 +169,8 @@ class Predictor(object):
             br (QtCore.QPoint): 右下角
             mask (QtGui.QImage): 彩色掩码 (RGBA)
         """
-        logger.debug(f'predict start')
-        if self._predictor is None:
+        logger.debug(f'start')
+        if self.model is None:
             logger.error("predictor is None")
             return None
         if input_points is None and input_labels is None:
@@ -153,7 +183,7 @@ class Predictor(object):
         logger.debug(f"input_point: {type(input_points)} {input_points.shape} \n{input_points}")
         logger.debug(f"input_label: {type(input_labels)} {input_labels.shape} \n{input_labels}")
         multimask_output = True if input_points.shape[0] > 1 else False
-        masks, scores, logits = self._predictor.predict(
+        masks, scores, logits = super().predict(
             point_coords=input_points,
             point_labels=input_labels,
             box=input_box,
@@ -161,6 +191,6 @@ class Predictor(object):
             multimask_output=multimask_output,
         )
         
-        rect = self.postproc(masks, scores, logits, multimask_output)
-        logger.debug(f'predict end')
-        return rect
+        result = self.postproc(masks, scores, logits, multimask_output)
+        logger.debug(f'end')
+        return result
