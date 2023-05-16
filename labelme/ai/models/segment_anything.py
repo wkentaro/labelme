@@ -168,12 +168,13 @@ def _compute_polygon_from_points(
             "mask.jpg", imgviz.label2rgb(mask, imgviz.rgb2gray(image))
         )
 
-    contours = skimage.measure.find_contours(mask)
+    contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
     contour = max(contours, key=_get_contour_length)
     polygon = skimage.measure.approximate_polygon(
         coords=contour,
         tolerance=np.ptp(contour, axis=0).max() / 100,
     )
+    polygon = np.clip(polygon, (0, 0), (mask.shape[0] - 1, mask.shape[1] - 1))
     polygon = polygon[:-1]  # drop last point that is duplicate of first point
     if 0:
         image_pil = PIL.Image.fromarray(image)
