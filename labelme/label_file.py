@@ -88,21 +88,6 @@ class LabelFile(object):
         try:
             with open(filename, "r") as f:
                 data = json.load(f)
-            version = data.get("version")
-            if version is None:
-                logger.warning(
-                    "Loading JSON file ({}) of unknown version".format(
-                        filename
-                    )
-                )
-            elif version.split(".")[0] != __version__.split(".")[0]:
-                logger.warning(
-                    "This JSON file ({}) may be incompatible with "
-                    "current labelme. version in file: {}, "
-                    "current version: {}".format(
-                        filename, version, __version__
-                    )
-                )
 
             if data["imageData"] is not None:
                 imageData = base64.b64decode(data["imageData"])

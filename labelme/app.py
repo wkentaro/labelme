@@ -20,6 +20,7 @@ from labelme import PY2
 
 from . import ai
 from . import utils
+from labelme.ai import MODELS
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
@@ -466,7 +467,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         zoom = QtWidgets.QWidgetAction(self)
-        zoom.setDefaultWidget(self.zoomWidget)
+        zoomBoxLayout = QtWidgets.QVBoxLayout()
+        zoomBoxLayout.addWidget(self.zoomWidget)
+        zoomLabel = QtWidgets.QLabel("Zoom")
+        zoomLabel.setAlignment(Qt.AlignCenter)
+        zoomLabel.setFont(QtGui.QFont(None, 10))
+        zoomBoxLayout.addWidget(zoomLabel)
+        zoom.setDefaultWidget(QtWidgets.QWidget())
+        zoom.defaultWidget().setLayout(zoomBoxLayout)
         self.zoomWidget.setWhatsThis(
             str(
                 self.tr(
@@ -576,7 +584,8 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
             enabled=True,
         )
-        fill_drawing.trigger()
+        if self._config["canvas"]["fill_drawing"]:
+            fill_drawing.trigger()
 
         # Lavel list context menu.
         labelMenu = QtWidgets.QMenu()
@@ -741,8 +750,27 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
+        selectAiModel = QtWidgets.QWidgetAction(self)
+        selectAiModel.setDefaultWidget(QtWidgets.QWidget())
+        selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
+        self._selectAiModelComboBox = QtWidgets.QComboBox()
+        selectAiModel.defaultWidget().layout().addWidget(
+            self._selectAiModelComboBox
+        )
+        self._selectAiModelComboBox.addItems([model.name for model in MODELS])
+        self._selectAiModelComboBox.setCurrentIndex(1)
+        self._selectAiModelComboBox.setEnabled(False)
+        self._selectAiModelComboBox.currentIndexChanged.connect(
+            lambda: self.canvas.initializeAiModel(
+                name=self._selectAiModelComboBox.currentText()
+            )
+        )
+        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Model"))
+        selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
+        selectAiModelLabel.setFont(QtGui.QFont(None, 10))
+        selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
+
         self.tools = self.toolbar("Tools")
-        # Menu buttons on Left
         self.actions.tool = (
             open_,
             opendir,
@@ -762,6 +790,8 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             zoom,
             fitWidth,
+            None,
+            selectAiModel,
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -848,7 +878,7 @@ class MainWindow(QtWidgets.QMainWindow):
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         if actions:
             utils.addActions(toolbar, actions)
-        self.addToolBar(Qt.LeftToolBarArea, toolbar)
+        self.addToolBar(Qt.TopToolBarArea, toolbar)
         return toolbar
 
     # Support Functions
@@ -988,6 +1018,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createPointMode.setEnabled(True)
             self.actions.createLineStripMode.setEnabled(True)
             self.actions.createAiPolygonMode.setEnabled(True)
+            self._selectAiModelComboBox.setEnabled(False)
         else:
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
@@ -997,6 +1028,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
+                self._selectAiModelComboBox.setEnabled(False)
             elif createMode == "rectangle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
@@ -1005,6 +1037,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
+                self._selectAiModelComboBox.setEnabled(False)
             elif createMode == "line":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1013,6 +1046,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
+                self._selectAiModelComboBox.setEnabled(False)
             elif createMode == "point":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1021,6 +1055,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(False)
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
+                self._selectAiModelComboBox.setEnabled(False)
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1029,6 +1064,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
+                self._selectAiModelComboBox.setEnabled(False)
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1037,6 +1073,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(False)
                 self.actions.createAiPolygonMode.setEnabled(True)
+                self._selectAiModelComboBox.setEnabled(False)
             elif createMode == "ai_polygon":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1045,6 +1082,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createPointMode.setEnabled(True)
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(False)
+                self.canvas.initializeAiModel(
+                    name=self._selectAiModelComboBox.currentText()
+                )
+                self._selectAiModelComboBox.setEnabled(True)
             else:
                 raise ValueError("Unsupported createMode: %s" % createMode)
         self.actions.editMode.setEnabled(not edit)
@@ -1248,7 +1289,7 @@ class MainWindow(QtWidgets.QMainWindow):
             points = shape["points"]
             shape_type = shape["shape_type"]
             flags = shape["flags"]
-            description = shape["description"]
+            description = shape.get("description", "")
             group_id = shape["group_id"]
             other_data = shape["other_data"]
 
@@ -1391,6 +1432,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text = items[0].data(Qt.UserRole)
         flags = {}
         group_id = None
+        description = ""
         if self._config["display_label_popup"] or not text:
             previous_text = self.labelDialog.edit.text()
             text, flags, group_id, description = self.labelDialog.popUp(text)

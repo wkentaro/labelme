@@ -1,7 +1,6 @@
 import collections
 import threading
 
-import gdown
 import imgviz
 import numpy as np
 import onnxruntime
@@ -12,31 +11,18 @@ from ...logger import logger
 
 
 class SegmentAnythingModel:
-    def __init__(self):
-        self._image_size = 1024
+    def __init__(self, name, encoder_path, decoder_path):
+        self.name = name
 
-        # encoder_path = "../segment-anything/models/sam_vit_h_4b8939.quantized.encoder.onnx"  # NOQA
-        # decoder_path = "../segment-anything/models/sam_vit_h_4b8939.quantized.decoder.onnx"  # NOQA
-        #
-        # encoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.encoder.onnx"  # NOQA
-        # decoder_path = "../segment-anything/models/sam_vit_l_0b3195.quantized.decoder.onnx"  # NOQA
-        #
-        # encoder_path = "../segment-anything/models/sam_vit_b_01ec64.quantized.encoder.onnx"  # NOQA
-        # decoder_path = "../segment-anything/models/sam_vit_b_01ec64.quantized.decoder.onnx"  # NOQA
-        encoder_path = gdown.cached_download(
-            url="https://github.com/wkentaro/labelme/releases/download/sam-20230416/sam_vit_l_0b3195.quantized.encoder.onnx",  # NOQA
-            md5="080004dc9992724d360a49399d1ee24b",
-        )
-        decoder_path = gdown.cached_download(
-            url="https://github.com/wkentaro/labelme/releases/download/sam-20230416/sam_vit_l_0b3195.quantized.decoder.onnx",  # NOQA
-            md5="851b7faac91e8e23940ee1294231d5c7",
-        )
+        self._image_size = 1024
 
         self._encoder_session = onnxruntime.InferenceSession(encoder_path)
         self._decoder_session = onnxruntime.InferenceSession(decoder_path)
 
         self._lock = threading.Lock()
         self._image_embedding_cache = collections.OrderedDict()
+
+        self._thread = None
 
     def set_image(self, image: np.ndarray):
         with self._lock:
@@ -45,33 +31,37 @@ class SegmentAnythingModel:
                 self._image.tobytes()
             )
 
-        self._thread = threading.Thread(target=self.get_image_embedding)
-        self._thread.start()
-
-    def get_image_embedding(self):
         if self._image_embedding is None:
+            self._thread = threading.Thread(
+                target=self._compute_and_cache_image_embedding
+            )
+            self._thread.start()
+
+    def _compute_and_cache_image_embedding(self):
+        with self._lock:
             logger.debug("Computing image embedding...")
-            with self._lock:
-                self._image_embedding = compute_image_embedding(
-                    image_size=self._image_size,
-                    encoder_session=self._encoder_session,
-                    image=self._image,
-                )
-                if len(self._image_embedding_cache) > 10:
-                    self._image_embedding_cache.popitem(last=False)
-                self._image_embedding_cache[
-                    self._image.tobytes()
-                ] = self._image_embedding
+            self._image_embedding = _compute_image_embedding(
+                image_size=self._image_size,
+                encoder_session=self._encoder_session,
+                image=self._image,
+            )
+            if len(self._image_embedding_cache) > 10:
+                self._image_embedding_cache.popitem(last=False)
+            self._image_embedding_cache[
+                self._image.tobytes()
+            ] = self._image_embedding
             logger.debug("Done computing image embedding.")
-        return self._image_embedding
 
-    def points_to_polygon_callback(self, points, point_labels):
-        logger.debug("Waiting for image embedding...")
-        self._thread.join()
-        image_embedding = self.get_image_embedding()
-        logger.debug("Done waiting for image embedding.")
+    def _get_image_embedding(self):
+        if self._thread is not None:
+            self._thread.join()
+            self._thread = None
+        with self._lock:
+            return self._image_embedding
 
-        polygon = compute_polygon_from_points(
+    def predict_polygon_from_points(self, points, point_labels):
+        image_embedding = self._get_image_embedding()
+        polygon = _compute_polygon_from_points(
             image_size=self._image_size,
             decoder_session=self._decoder_session,
             image=self._image,
@@ -81,16 +71,37 @@ class SegmentAnythingModel:
         )
         return polygon
 
+      
+def _compute_scale_to_resize_image(image_size, image):
+    height, width = image.shape[:2]
+    if width > height:
+        scale = image_size / width
+        new_height = int(round(height * scale))
+        new_width = image_size
+    else:
+        scale = image_size / height
+        new_height = image_size
+        new_width = int(round(width * scale))
+    return scale, new_height, new_width
 
-def compute_image_embedding(image_size, encoder_session, image):
-    assert image.shape[1] > image.shape[0]
-    scale = image_size / image.shape[1]
-    x = imgviz.resize(
+
+def _resize_image(image_size, image):
+    scale, new_height, new_width = _compute_scale_to_resize_image(
+        image_size=image_size, image=image
+    )
+    scaled_image = imgviz.resize(
         image,
-        height=int(round(image.shape[0] * scale)),
-        width=image_size,
+        height=new_height,
+        width=new_width,
         backend="pillow",
     ).astype(np.float32)
+    return scale, scaled_image
+
+
+def _compute_image_embedding(image_size, encoder_session, image):
+    image = imgviz.asrgb(image)
+
+    scale, x = _resize_image(image_size, image)
     x = (x - np.array([123.675, 116.28, 103.53], dtype=np.float32)) / np.array(
         [58.395, 57.12, 57.375], dtype=np.float32
     )
@@ -133,10 +144,9 @@ def compute_polygon_from_points(
         None, :
     ].astype(np.float32)
 
-    assert image.shape[1] > image.shape[0]
-    scale = image_size / image.shape[1]
-    new_height = int(round(image.shape[0] * scale))
-    new_width = image_size
+    scale, new_height, new_width = _compute_scale_to_resize_image(
+        image_size=image_size, image=image
+    )
     onnx_coord = (
         onnx_coord.astype(float)
         * (new_width / image.shape[1], new_height / image.shape[0])
@@ -170,6 +180,7 @@ def compute_polygon_from_points(
         coords=contour,
         tolerance=np.ptp(contour, axis=0).max() / 100,
     )
+    polygon = polygon[:-1]  # drop last point that is duplicate of first point
     if 0:
         image_pil = PIL.Image.fromarray(image)
         imgviz.draw.line_(image_pil, yx=polygon, fill=(0, 255, 0))
