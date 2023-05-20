@@ -34,7 +34,15 @@ class LabelFileError(Exception):
 
 class LabelFile(object):
 
-    suffix = ".json"
+    defaultSuffix = '.json'  # by default using labelme format
+    support_suffix_list = [
+        ".json",
+        ".txt"
+    ]
+    suffix_corresponding_formats = [
+        "labelme",
+        "yolo"
+    ]
 
     def __init__(self, filename=None):
         self.shapes = []
@@ -207,4 +215,47 @@ class LabelFile(object):
 
     @staticmethod
     def is_label_file(filename):
-        return osp.splitext(filename)[1].lower() == LabelFile.suffix
+        return osp.splitext(filename)[1].lower() == LabelFile.defaultSuffix
+
+
+class LabelFileYolo(LabelFile):
+    def __init__(self):
+        super(LabelFile, self).__init__()
+
+    def save(
+        self,
+        filename,
+        shapes,
+        imagePath,
+        imageHeight,
+        imageWidth,
+        imageData=None,
+        otherData=None,
+        flags=None,
+    ):
+        outputList = []
+        # Note: in yolo annotation, one rectangle bounding box is used.
+        for indexShape, oneShape in enumerate(shapes):
+            centerX = (oneShape['points'][0][0] + oneShape['points'][1][0]) / 2 /imageWidth
+            centerY = (oneShape['points'][0][1] + oneShape['points'][1][1]) / 2 / imageHeight
+            boxWidth = abs(oneShape['points'][0][0] - oneShape['points'][1][0]) / imageWidth
+            boxHeight = abs(oneShape['points'][0][1] - oneShape['points'][1][1]) / imageHeight
+            oneLine = ' '.join([oneShape['label'], str(centerX), str(centerY), str(boxWidth), str(boxHeight)])
+            if indexShape == (len(shapes) - 1):
+                outputList.append(oneLine)
+            else:
+                outputList.append(oneLine + '\n')
+        if filename[-4:] != '.txt':
+            filename += '.txt'
+        try:
+            with open(filename, 'w') as outputFile:
+                outputFile.writelines(outputList)
+        except Exception as e:
+            raise LabelFileError(e)
+
+
+def GetLabelFileClassFromFormat(selectedFormat):
+    if selectedFormat == 'labelme':
+        return LabelFile
+    elif selectedFormat == 'yolo':
+        return LabelFileYolo
