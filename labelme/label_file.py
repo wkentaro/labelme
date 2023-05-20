@@ -235,7 +235,7 @@ class LabelFileYolo(LabelFile):
     ):
         try:
             outputList = []
-            # Note: in yolo annotation, one rectangle bounding box is used.
+            # Note: in yolo annotation, only rectangle bounding box is used.
             for indexShape, oneShape in enumerate(shapes):
                 centerX = (oneShape['points'][0][0] + oneShape['points'][1][0]) / 2 /imageWidth
                 centerY = (oneShape['points'][0][1] + oneShape['points'][1][1]) / 2 / imageHeight
