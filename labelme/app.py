@@ -1846,7 +1846,10 @@ class MainWindow(QtWidgets.QMainWindow):
             default_labelfile_name,
             filters,
         )
-        selectedFormat = selectedFilter.rsplit('Label files in ', 1)[1].split(' format')[0]
+        if selectedFilter != '':
+            selectedFormat = selectedFilter.rsplit('Label files in ', 1)[1].split(' format')[0]
+        else:
+            selectedFormat = None
         if isinstance(filename, tuple):
             filename, _ = filename
         return filename, selectedFormat
