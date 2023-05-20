@@ -233,25 +233,25 @@ class LabelFileYolo(LabelFile):
         otherData=None,
         flags=None,
     ):
-        outputList = []
-        # Note: in yolo annotation, one rectangle bounding box is used.
-        for indexShape, oneShape in enumerate(shapes):
-            centerX = (oneShape['points'][0][0] + oneShape['points'][1][0]) / 2 /imageWidth
-            centerY = (oneShape['points'][0][1] + oneShape['points'][1][1]) / 2 / imageHeight
-            boxWidth = abs(oneShape['points'][0][0] - oneShape['points'][1][0]) / imageWidth
-            boxHeight = abs(oneShape['points'][0][1] - oneShape['points'][1][1]) / imageHeight
-            oneLine = ' '.join([oneShape['label'], str(centerX), str(centerY), str(boxWidth), str(boxHeight)])
-            if indexShape == (len(shapes) - 1):
-                outputList.append(oneLine)
-            else:
-                outputList.append(oneLine + '\n')
-        if filename[-4:] != '.txt':
-            filename += '.txt'
         try:
+            outputList = []
+            # Note: in yolo annotation, one rectangle bounding box is used.
+            for indexShape, oneShape in enumerate(shapes):
+                centerX = (oneShape['points'][0][0] + oneShape['points'][1][0]) / 2 /imageWidth
+                centerY = (oneShape['points'][0][1] + oneShape['points'][1][1]) / 2 / imageHeight
+                boxWidth = abs(oneShape['points'][0][0] - oneShape['points'][1][0]) / imageWidth
+                boxHeight = abs(oneShape['points'][0][1] - oneShape['points'][1][1]) / imageHeight
+                oneLine = ' '.join([oneShape['label'], str(centerX), str(centerY), str(boxWidth), str(boxHeight)])
+                if indexShape == (len(shapes) - 1):
+                    outputList.append(oneLine)
+                else:
+                    outputList.append(oneLine + '\n')
+            if filename[-4:] != '.txt':
+                filename += '.txt'
             with open(filename, 'w') as outputFile:
                 outputFile.writelines(outputList)
         except Exception as e:
-            raise LabelFileError(e)
+            raise LabelFileError('<Warning> Yolo format only for rectangle annotations!: \n' + e)
 
 
 def GetLabelFileClassFromFormat(selectedFormat):
