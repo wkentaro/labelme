@@ -1247,7 +1247,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def saveLabels(self, filename, selectedFormat=None):
         if selectedFormat is None:
-            selectedFormat = 'labelme'
+            selectedFormat = "labelme"
         lf = GetLabelFileClassFromFormat(selectedFormat)()
 
         def format_shape(s):
@@ -1803,9 +1803,9 @@ class MainWindow(QtWidgets.QMainWindow):
         assert not self.image.isNull(), "cannot save empty image"
         if self.labelFile:
             # DL20180323 - overwrite when in directory
-            self._saveFile(self.labelFile.filename, 'labelme')
+            self._saveFile(self.labelFile.filename, "labelme")
         elif self.output_file:
-            self._saveFile(self.output_file, 'labelme')
+            self._saveFile(self.output_file, "labelme")
             self.close()
         else:
             self._saveFile(*self.saveFileDialog())
@@ -1816,7 +1816,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def saveFileDialog(self):
         caption = self.tr("%s - Choose File") % __appname__
-        filters = self.tr(';;'.join(['Label files in %s format (*%s)' % (oneSuffixFormat, oneSuffix) for oneSuffix, oneSuffixFormat in zip(LabelFile.support_suffix_list, LabelFile.suffix_corresponding_formats)]))
+        filters = self.tr(
+            ";;".join(
+                [
+                    "Label files in %s format (*%s)"
+                    % (oneSuffixFormat, oneSuffix)
+                    for oneSuffix, oneSuffixFormat in zip(
+                        LabelFile.support_suffix_list,
+                        LabelFile.suffix_corresponding_formats,
+                    )
+                ]
+            )
+        )
         if self.output_dir:
             dlg = QtWidgets.QFileDialog(
                 self, caption, self.output_dir, filters
@@ -1846,8 +1857,8 @@ class MainWindow(QtWidgets.QMainWindow):
             default_labelfile_name,
             filters,
         )
-        if selectedFilter != '':
-            selectedFormat = selectedFilter.rsplit('Label files in ', 1)[1].split(' format')[0]
+        if selectedFilter != "":
+            selectedFormat = selectedFilter.rsplit("Label files in ", 1)[1].split(" format")[0]
         else:
             selectedFormat = None
         if isinstance(filename, tuple):
@@ -1855,7 +1866,9 @@ class MainWindow(QtWidgets.QMainWindow):
         return filename, selectedFormat
 
     def _saveFile(self, filename, selectedFormat):
-        if filename and self.saveLabels(filename, selectedFormat=selectedFormat):
+        if filename and self.saveLabels(
+            filename, selectedFormat=selectedFormat
+        ):
             self.addRecentFile(filename)
             self.setClean()
 

@@ -34,15 +34,9 @@ class LabelFileError(Exception):
 
 class LabelFile(object):
 
-    defaultSuffix = '.json'  # by default using labelme format
-    support_suffix_list = [
-        ".json",
-        ".txt"
-    ]
-    suffix_corresponding_formats = [
-        "labelme",
-        "yolo"
-    ]
+    defaultSuffix = ".json"  # by default using labelme format
+    support_suffix_list = [".json", ".txt"]
+    suffix_corresponding_formats = ["labelme", "yolo"]
 
     def __init__(self, filename=None):
         self.shapes = []
@@ -237,25 +231,43 @@ class LabelFileYolo(LabelFile):
             outputList = []
             # Note: in yolo annotation, only rectangle bounding box is used.
             for indexShape, oneShape in enumerate(shapes):
-                centerX = (oneShape['points'][0][0] + oneShape['points'][1][0]) / 2 /imageWidth
-                centerY = (oneShape['points'][0][1] + oneShape['points'][1][1]) / 2 / imageHeight
-                boxWidth = abs(oneShape['points'][0][0] - oneShape['points'][1][0]) / imageWidth
-                boxHeight = abs(oneShape['points'][0][1] - oneShape['points'][1][1]) / imageHeight
-                oneLine = ' '.join([oneShape['label'], str(centerX), str(centerY), str(boxWidth), str(boxHeight)])
+                centerX = (
+                    (oneShape["points"][0][0] + oneShape["points"][1][0]) / 2 / imageWidth
+                )
+                centerY = (
+                    (oneShape["points"][0][1] + oneShape["points"][1][1]) / 2 / imageHeight
+                )
+                boxWidth = (
+                    abs(oneShape["points"][0][0] - oneShape["points"][1][0]) / imageWidth
+                )
+                boxHeight = (
+                    abs(oneShape["points"][0][1] - oneShape["points"][1][1]) / imageHeight
+                )
+                oneLine = " ".join(
+                    [
+                        oneShape["label"],
+                        str(centerX),
+                        str(centerY),
+                        str(boxWidth),
+                        str(boxHeight),
+                    ]
+                )
                 if indexShape == (len(shapes) - 1):
                     outputList.append(oneLine)
                 else:
-                    outputList.append(oneLine + '\n')
-            if filename[-4:] != '.txt':
-                filename += '.txt'
-            with open(filename, 'w') as outputFile:
+                    outputList.append(oneLine + "\n")
+            if filename[-4:] != ".txt":
+                filename += ".txt"
+            with open(filename, "w") as outputFile:
                 outputFile.writelines(outputList)
         except Exception as e:
-            raise LabelFileError('<Warning> Yolo format only for rectangle annotations!: \n' + e)
+            raise LabelFileError(
+                "<Warning> Yolo format only for rectangle annotations!: \n" + e
+            )
 
 
 def GetLabelFileClassFromFormat(selectedFormat):
-    if selectedFormat == 'labelme':
+    if selectedFormat == "labelme":
         return LabelFile
-    elif selectedFormat == 'yolo':
+    elif selectedFormat == "yolo":
         return LabelFileYolo
