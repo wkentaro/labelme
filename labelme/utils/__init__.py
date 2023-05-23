@@ -9,6 +9,7 @@ from .image import img_data_to_arr
 from .image import img_data_to_pil
 from .image import img_data_to_png_data
 from .image import img_pil_to_data
+from .image import img_qt_to_arr
 
 from .shape import labelme_shapes_to_label
 from .shape import masks_to_bboxes
