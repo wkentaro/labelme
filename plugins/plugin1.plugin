@@ -1,0 +1,10 @@
+[Core]
+Name = Plugin Test
+Module = plugin1
+
+[Documentation]
+Author = Leonel Hernandez
+Version = 0.1
+Website = https://github.com/leonelhs/
+Description = This is a demo plugin
+

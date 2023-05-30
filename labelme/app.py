@@ -34,6 +34,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from .plugins import AttachPluginsSystem
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -687,10 +688,13 @@ class MainWindow(QtWidgets.QMainWindow):
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
+            plugins=self.menu(self.tr("&Plugins")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
             labelList=labelMenu,
         )
+        
+        AttachPluginsSystem(self)
 
         utils.addActions(
             self.menus.file,

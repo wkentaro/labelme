@@ -34,6 +34,7 @@ def get_install_requires():
         "qtpy!=1.11.2",
         "scikit-image",
         "termcolor",
+        "yapsygui"
     ]
 
     # Find python binding for qt with priority:
@@ -144,7 +145,7 @@ def main():
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3 :: Only",
         ],
-        package_data={"labelme": ["icons/*", "config/*.yaml"]},
+        package_data={"labelme": ["icons/*", "config/*.yaml", "plugins/*.py", "plugins/*.plugin"]},
         entry_points={
             "console_scripts": [
                 "labelme=labelme.__main__:main",
