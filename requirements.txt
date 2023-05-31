@@ -64,8 +64,8 @@ segment-anything
 six==1.16.0
 termcolor==2.2.0
 tomli==2.0.1
-torch==1.7.1+cu110
-torchvision==0.8.2+cu110
+# torch==1.7.1+cu110
+# torchvision==0.8.2+cu110
 twine==4.0.2
 typing_extensions==4.5.0
 urllib3==1.26.15

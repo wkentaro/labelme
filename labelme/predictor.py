@@ -8,7 +8,7 @@ from qtpy import QtCore
 
 from labelme.logger import logger
 from labelme.shape import Shape
-
+import yaml
 # segment anything
 
 from segment_anything import sam_model_registry, SamPredictor
@@ -78,7 +78,7 @@ class Prompt(object):
 
 
 class Predictor(SamPredictor):
-    def __init__(self, model_type, checkpoint, device) -> None:
+    def __init__(self, model_type, checkpoint, device, config=None) -> None:
         logger.debug(f"Loading Segment Anything Model {model_type} From {checkpoint}, device: {device}")
         if isinstance(device, str):
             self._device = torch.device(device)
@@ -87,6 +87,12 @@ class Predictor(SamPredictor):
         sam = sam_model_registry[model_type](checkpoint=checkpoint)
         sam.to(self._device)
         super().__init__(sam)
+        if config is not None:
+            if isinstance(config, str):
+                with open(config, 'r') as f:
+                    self.cfg = yaml.safe_load(f)
+            else:
+                self.cfg = config
         logger.debug(f"set_torch_image input must be BCHW with long side {self.model.image_encoder.img_size}.")
 
     def predict_embeddings(self, qimage, image_format="RGB", fpath : str =None):
@@ -136,13 +142,15 @@ class Predictor(SamPredictor):
         # 找所有轮廓加起来的凸包，获取外接矩形
         points = np.array([point for contour in contours for point in contour], contours[0].dtype)
         x, y, w, h = cv2.boundingRect(points)
+        (cx, cy), (rw, rh), ra = cv2.minAreaRect(points)
+        logger.debug(f'{cx}, {cy}, {rw}, {rh} ,{ra}')
         tl = QtCore.QPoint(x, y)
         br = QtCore.QPoint(x+w, y+h)
         colorful_mask = colormap()[mask]
         # 把 mask 转换成彩色的 QImage，显示用
         mask_qimg = qimage2ndarray.array2qimage(colorful_mask)
         logger.debug(f'postproc end')
-        return tl, br, mask_qimg
+        return tl, br, (cx, cy, rw, rh, ra), mask_qimg
     
     def __call__(self, 
                 input_point: np.ndarray = None, 

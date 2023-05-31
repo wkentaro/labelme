@@ -78,7 +78,7 @@ class Shape(object):
             self.NEAR_VERTEX: (4, self.P_ROUND),
             self.MOVE_VERTEX: (1.5, self.P_SQUARE),
         }
-
+        self.rotate_rect = None
         self._closed = False
 
         if line_color is not None:

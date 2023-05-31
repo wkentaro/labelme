@@ -1317,16 +1317,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def format_shape(s):
             data = s.other_data.copy()
-            data.update(
-                dict(
-                    label=s.label.encode("utf-8") if PY2 else s.label,
-                    points=[(p.x(), p.y()) for p in s.points],
-                    group_id=s.group_id,
-                    description=s.description,
-                    shape_type=s.shape_type,
-                    flags=s.flags,
+            if hasattr(s, 'rotate_rect'):
+                data.update(
+                    dict(
+                        label=s.label.encode("utf-8") if PY2 else s.label,
+                        points=[(p.x(), p.y()) for p in s.points],
+                        group_id=s.group_id,
+                        description=s.description,
+                        shape_type=s.shape_type,
+                        flags=s.flags,
+                        rotate_rect = [v for v in s.rotate_rect]
+                    )
                 )
-            )
+            else:
+                data.update(
+                    dict(
+                        label=s.label.encode("utf-8") if PY2 else s.label,
+                        points=[(p.x(), p.y()) for p in s.points],
+                        group_id=s.group_id,
+                        description=s.description,
+                        shape_type=s.shape_type,
+                        flags=s.flags,
+                    )
+                )
             return data
 
         shapes = [format_shape(item.shape()) for item in self.labelList]

@@ -106,6 +106,9 @@ class Canvas(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
         # Models
         self.predictor = None
+        
+        self.rotate_rect = None
+        self.rotate_rects = []
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -294,7 +297,7 @@ class Canvas(QtWidgets.QWidget):
             if self.prompt is None:
                 tmp_prompt = Prompt()
                 tmp_prompt.add_point(pos, 1)
-                _, _, self.prompted_mask = self.predictor.predict(tmp_prompt.points, tmp_prompt.labels)
+                _, _, _, self.prompted_mask = self.predictor.predict(tmp_prompt.points, tmp_prompt.labels)
                 self.update()
             return
 
@@ -498,15 +501,15 @@ class Canvas(QtWidgets.QWidget):
                         self.prompt.current_shape.close()
         
         if self.prompting() and not self.outOfPixmap(pos) and len(self.prompt) > 0:
-            tl, br, self.prompted_mask = self.predictor.predict(self.prompt.points, self.prompt.labels)
+            tl, br, rotate_rect, self.prompted_mask = self.predictor.predict(self.prompt.points, self.prompt.labels)
             logger.debug(f'rect: {tl} {br}')
-            if tl is not None and br is not None:
+            if tl is not None and br is not None and rotate_rect is not None:
                 self.prompted_shape = Shape(shape_type='rectangle')
                 self.prompted_shape.addPoint(tl)
                 self.prompted_shape.addPoint(br)
+                self.prompted_shape.rotate_rect = rotate_rect
                 self.prompted_shape.close()
                 self.update()
-
 
     def mouseReleaseEvent(self, ev):
         if not self.prompting():
@@ -810,6 +813,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
+        # self.rotate_rects.append(self.rotate_rect)
         self.storeShapes()
         self.current = None
         self.setHiding(False)
@@ -966,7 +970,6 @@ class Canvas(QtWidgets.QWidget):
                 self.prompt = None
                 self.prompted_mask = None
                 self.prompted_shape = None
-
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
