@@ -145,7 +145,7 @@ def main():
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3 :: Only",
         ],
-        package_data={"labelme": ["icons/*", "config/*.yaml", "plugins/*.py", "plugins/*.plugin"]},
+        package_data={"labelme": ["icons/*", "config/*.yaml"]},
         entry_points={
             "console_scripts": [
                 "labelme=labelme.__main__:main",
