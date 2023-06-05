@@ -200,6 +200,21 @@ class Shape(object):
                     line_path.addRect(rectangle)
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
+                if hasattr(self, 'rotate_rect') and self.rotate_rect is not None:
+                    from PyQt5.QtGui import QPainter, QPolygonF
+                    from PyQt5.QtCore import Qt, QPointF
+                    import cv2
+                    painter
+                    painter.setPen(pen)
+                    painter.setRenderHint(QPainter.Antialiasing)
+
+                    # 将 OpenCV 的旋转矩形转换为 QPolygonF
+                    points = cv2.boxPoints(self.rotate_rect)
+                    polygon = QPolygonF([QPointF(pt[0], pt[1]) for pt in points])
+
+                    # 绘制旋转矩形
+                    painter.drawPolygon(polygon)
+
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:

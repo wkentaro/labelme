@@ -107,8 +107,7 @@ class Canvas(QtWidgets.QWidget):
         # Models
         self.predictor = None
         
-        self.rotate_rect = None
-        self.rotate_rects = []
+
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -813,7 +812,6 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
-        # self.rotate_rects.append(self.rotate_rect)
         self.storeShapes()
         self.current = None
         self.setHiding(False)

@@ -150,7 +150,7 @@ class Predictor(SamPredictor):
         # 把 mask 转换成彩色的 QImage，显示用
         mask_qimg = qimage2ndarray.array2qimage(colorful_mask)
         logger.debug(f'postproc end')
-        return tl, br, (cx, cy, rw, rh, ra), mask_qimg
+        return tl, br, ((cx, cy), (rw, rh), ra), mask_qimg
     
     def __call__(self, 
                 input_point: np.ndarray = None, 

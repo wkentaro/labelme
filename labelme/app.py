@@ -1316,7 +1316,9 @@ class MainWindow(QtWidgets.QMainWindow):
         lf = LabelFile()
 
         def format_shape(s):
+            logger.debug(type(s))
             data = s.other_data.copy()
+
             if hasattr(s, 'rotate_rect'):
                 data.update(
                     dict(
@@ -1326,7 +1328,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         description=s.description,
                         shape_type=s.shape_type,
                         flags=s.flags,
-                        rotate_rect = [v for v in s.rotate_rect]
+                        rotate_rect = [v for v in s.rotate_rect] if hasattr(s, 'rotate_rect') and s.rotate_rect is not None else None
                     )
                 )
             else:
@@ -1340,6 +1342,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         flags=s.flags,
                     )
                 )
+            logger.debug(data) 
             return data
 
         shapes = [format_shape(item.shape()) for item in self.labelList]
