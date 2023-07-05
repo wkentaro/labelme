@@ -768,6 +768,24 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
         selectAiModelLabel.setFont(QtGui.QFont(None, 10))
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
+        
+        aiRectangle = QtWidgets.QWidgetAction(self)
+        aiRectangle.setDefaultWidget(QtWidgets.QWidget())
+        aiRectangle.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
+        self._aiRectanglePrompt = QtWidgets.QLineEdit()
+        self._aiRectanglePrompt.setMaxLength(50)
+        self._aiRectanglePrompt.setFont(QtGui.QFont("Arial",10))
+        self._aiRectanglePrompt.setEnabled(False)
+        self._aiRectanglePrompt.setFixedWidth(200)
+        aiRectangleLabel = QtWidgets.QLabel(self.tr("AI Rectangle Prompt"))
+        aiRectangleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        aiRectangleLabel.setFont(QtGui.QFont(None, 10))
+        aiRectangleLabel.setFixedWidth(200)
+        aiRectangle.defaultWidget().layout().addWidget(self._aiRectanglePrompt)
+        aiRectangle.defaultWidget().layout().addWidget(aiRectangleLabel)
+        self._aiRectanglePrompt.returnPressed.connect(
+            lambda : self.canvas.predictAiRectangle(self._aiRectanglePrompt.text())
+        )
 
         self.tools = self.toolbar("Tools")
         self.actions.tool = (
@@ -791,6 +809,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWidth,
             None,
             selectAiModel,
+            aiRectangle
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -1005,6 +1024,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createLineStripMode.setEnabled(True)
             self.actions.createAiPolygonMode.setEnabled(True)
             self._selectAiModelComboBox.setEnabled(False)
+            self._aiRectanglePrompt.setEnabled(False)
         else:
             if createMode == "polygon":
                 self.actions.createMode.setEnabled(False)
@@ -1015,6 +1035,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
                 self._selectAiModelComboBox.setEnabled(False)
+                self._aiRectanglePrompt.setEnabled(False)
             elif createMode == "rectangle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
@@ -1024,6 +1045,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
                 self._selectAiModelComboBox.setEnabled(False)
+                self._aiRectanglePrompt.setEnabled(True)
             elif createMode == "line":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1033,6 +1055,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
                 self._selectAiModelComboBox.setEnabled(False)
+                self._aiRectanglePrompt.setEnabled(False)
             elif createMode == "point":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1042,6 +1065,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
                 self._selectAiModelComboBox.setEnabled(False)
+                self._aiRectanglePrompt.setEnabled(False)
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1051,6 +1075,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
                 self.actions.createAiPolygonMode.setEnabled(True)
                 self._selectAiModelComboBox.setEnabled(False)
+                self._aiRectanglePrompt.setEnabled(False)
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1060,6 +1085,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(False)
                 self.actions.createAiPolygonMode.setEnabled(True)
                 self._selectAiModelComboBox.setEnabled(False)
+                self._aiRectanglePrompt.setEnabled(False)
             elif createMode == "ai_polygon":
                 self.actions.createMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
@@ -1072,6 +1098,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     name=self._selectAiModelComboBox.currentText()
                 )
                 self._selectAiModelComboBox.setEnabled(True)
+                self._aiRectanglePrompt.setEnabled(False)
             else:
                 raise ValueError("Unsupported createMode: %s" % createMode)
         self.actions.editMode.setEnabled(not edit)

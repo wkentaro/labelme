@@ -104,6 +104,7 @@ class Canvas(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
         self._ai_model = None
+        self._ai_model_rect = None
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -153,6 +154,33 @@ class Canvas(QtWidgets.QWidget):
         self._ai_model.set_image(
             image=labelme.utils.img_qt_to_arr(self.pixmap.toImage())
         )
+
+    def initializeAiRectModel (self) :
+        self._ai_model_rect = labelme.ai.GroundingDINOModel()
+        self._ai_model_rect.load_model("path") # TODO : update model path
+    
+    def predictAiRectangle (self, prompt) :
+        if self._ai_model_rect == None :
+            self.initializeAiRectModel()
+        
+        image_data = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+        bboxes = self._ai_model_rect.predict(prompt, image_data)
+        
+        w, h, c = image_data.shape
+        for box in bboxes :
+            points = [
+                [box[0]*h - box[2]*h/2, box[1]*w - box[3]*w/2],
+                [box[0]*h + box[2]*h/2, box[1]*w + box[3]*w/2]
+            ]
+            self.current = Shape(
+                label=prompt,
+                shape_type="points" if self.createMode == "ai_polygon" else self.createMode,
+            )
+            self.current.addPoint(QtCore.QPointF(*points[0]))
+            self.current.addPoint(QtCore.QPointF(*points[1]))
+            
+            self.finalise()
+        
 
     def storeShapes(self):
         shapesBackup = []
