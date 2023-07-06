@@ -768,13 +768,13 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
         selectAiModelLabel.setFont(QtGui.QFont(None, 10))
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
-        
+
         aiRectangle = QtWidgets.QWidgetAction(self)
         aiRectangle.setDefaultWidget(QtWidgets.QWidget())
         aiRectangle.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
         self._aiRectanglePrompt = QtWidgets.QLineEdit()
         self._aiRectanglePrompt.setMaxLength(50)
-        self._aiRectanglePrompt.setFont(QtGui.QFont("Arial",10))
+        self._aiRectanglePrompt.setFont(QtGui.QFont("Arial", 10))
         self._aiRectanglePrompt.setEnabled(False)
         self._aiRectanglePrompt.setFixedWidth(200)
         aiRectangleLabel = QtWidgets.QLabel(self.tr("AI Rectangle Prompt"))
@@ -784,7 +784,8 @@ class MainWindow(QtWidgets.QMainWindow):
         aiRectangle.defaultWidget().layout().addWidget(self._aiRectanglePrompt)
         aiRectangle.defaultWidget().layout().addWidget(aiRectangleLabel)
         self._aiRectanglePrompt.returnPressed.connect(
-            lambda : self.canvas.predictAiRectangle(self._aiRectanglePrompt.text())
+            lambda : self.canvas.predictAiRectangle(
+                self._aiRectanglePrompt.text())
         )
 
         self.tools = self.toolbar("Tools")
