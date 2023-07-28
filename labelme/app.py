@@ -918,7 +918,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setClean(self):
         self.dirty = False
-        self.actions.save.setEnabled(False)
+        self.actions.save.setEnabled(True)
         self.actions.createMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
@@ -1875,7 +1875,20 @@ class MainWindow(QtWidgets.QMainWindow):
             self._saveFile(self.output_file)
             self.close()
         else:
-            self._saveFile(self.saveFileDialog())
+            # self._saveFile(self.saveFileDialog())
+            basename = osp.basename(osp.splitext(self.filename)[0])
+            if self.output_dir:
+                default_labelfile_name = osp.join(
+                    self.output_dir, basename + LabelFile.suffix
+                )
+            else:
+                default_labelfile_name = osp.join(
+                    self.currentPath(), basename + LabelFile.suffix
+                )
+            print('Saving to default file: {}'.format(default_labelfile_name))
+            self._saveFile(default_labelfile_name)
+            
+            
 
     def saveFileAs(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
