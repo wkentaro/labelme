@@ -1,3 +1,5 @@
+import math
+
 import gdown
 from qtpy import QtCore
 from qtpy import QtGui
@@ -905,7 +907,7 @@ class Canvas(QtWidgets.QWidget):
             return self.scale * self.pixmap.size()
         return super(Canvas, self).minimumSizeHint()
 
-    def wheelEvent(self, ev):
+    def wheelEventMoveAround(self, ev):
         if QT5:
             mods = ev.modifiers()
             delta = ev.angleDelta()
@@ -933,6 +935,39 @@ class Canvas(QtWidgets.QWidget):
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
+
+    def wheelEventRotate(self, ev):
+        # Press CTRL to rotate every 10 degree
+        mods = ev.modifiers()
+        sgn = -1 if (ev.pixelDelta().y() > 0) else 1
+        if mods & QtCore.Qt.ControlModifier:
+            rad = math.radians(30) * sgn
+        else:
+            rad = math.radians(2) * sgn
+
+        # Press SHIFT to breaks rectangle
+        break_rectangle = ev.modifiers() & QtCore.Qt.ShiftModifier
+
+        # Rotate shape
+        for shape in self.selectedShapes:
+            if break_rectangle:
+                shape.rotateCenterBreak(rad)
+            else:
+                shape.rotateCenter(rad)
+
+        # Redraw
+        self.repaint()
+
+    def wheelEvent(self, ev):
+        """Handles mouse wheel event.
+
+        If no shapes are selected, move around.
+        If there are selected shape, rotate it.
+        """
+        if len(self.selectedShapes) > 0:
+            self.wheelEventRotate(ev)
+        else:
+            self.wheelEventMoveAround(ev)
 
     def moveByKeyboard(self, offset):
         if self.selectedShapes:
