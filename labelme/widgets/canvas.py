@@ -1,7 +1,8 @@
+from datetime import datetime
+from datetime import timedelta
 import math
-import time
-from datetime import datetime, timedelta
 from threading import Thread
+import time
 
 import gdown
 from qtpy import QtCore
@@ -981,14 +982,13 @@ class Canvas(QtWidgets.QWidget):
         self._last_rotation = datetime.now()
         self.repaint()
 
-        # Enabled scroll again
-        # For whatever reason, enable the scroll right away does not block the scroll
+        # Enabled scroll again, for whatever reason
+        # enable the scroll right away does not block the scroll
         # A sleep of 0.1 is not very noticable
         def wait_and_enable_scroll():
             time.sleep(0.1)
             self.scrollToggleRequest.emit(True)
         Thread(target=wait_and_enable_scroll).start()
-
 
     def wheelEvent(self, ev):
         """Handles mouse wheel event.

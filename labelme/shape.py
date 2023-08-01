@@ -319,8 +319,8 @@ class Shape(object):
         return path
 
     def rotateCenterBreak(self, rad: float):
-        """
-        Wrapper for `rotateCenter`.
+        """Wrapper for `rotateCenter`.
+
         But this will breaks the rectangle and turn the shape into
         a polygon, therefore rotating it in "normal sense".
 
@@ -346,12 +346,12 @@ class Shape(object):
         self.rotateCenter(rad)
 
     def rotateCenter(self, rad: float):
-        """
-        Rotate the shape around the center. This modifies the shape.
+        """Rotate the shape around the center. This modifies the shape.
 
         Notes:
-        - For points and circles this is no-op since it's either useless or undesired behaviour
-        - For rectangle it will not rotate the rectangle in normal sense
+        - For points and circles this is no-op since
+          it's either useless or undesired behaviour.
+        - For rectangle it will not rotate the rectangle in normal sense.
 
         Args:
             rad (float): Angle to rotate in radian.
