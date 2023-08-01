@@ -1,4 +1,5 @@
 import math
+import time
 from datetime import datetime, timedelta
 from threading import Thread
 
@@ -31,6 +32,7 @@ class Canvas(QtWidgets.QWidget):
 
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
+    scrollToggleRequest = QtCore.Signal(bool)
     newShape = QtCore.Signal()
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
@@ -942,6 +944,9 @@ class Canvas(QtWidgets.QWidget):
         ev.accept()
 
     def wheelEventRotate(self, ev):
+        # Disable scrolling from scroll area
+        self.scrollToggleRequest.emit(False)
+
         # Press CTRL to rotate every 10 degree
         mods = ev.modifiers()
         sgn = -1 if (ev.pixelDelta().y() > 0) else 1
@@ -976,13 +981,22 @@ class Canvas(QtWidgets.QWidget):
         self._last_rotation = datetime.now()
         self.repaint()
 
+        # Enabled scroll again
+        # For whatever reason, enable the scroll right away does not block the scroll
+        # A sleep of 0.1 is not very noticable
+        def wait_and_enable_scroll():
+            time.sleep(0.1)
+            self.scrollToggleRequest.emit(True)
+        Thread(target=wait_and_enable_scroll).start()
+
+
     def wheelEvent(self, ev):
         """Handles mouse wheel event.
 
         If no shapes are selected, move around.
         If there are selected shape, rotate it.
         """
-        if self.editing() and len(self.selectedShapes) > 0:
+        if len(self.selectedShapes) > 0:
             self.wheelEventRotate(ev)
         else:
             self.wheelEventMoveAround(ev)

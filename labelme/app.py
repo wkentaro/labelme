@@ -185,6 +185,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Horizontal: scrollArea.horizontalScrollBar(),
         }
         self.canvas.scrollRequest.connect(self.scrollRequest)
+        self.canvas.scrollToggleRequest.connect(self.toggleScrollBars)
 
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
@@ -1452,6 +1453,10 @@ class MainWindow(QtWidgets.QMainWindow):
         bar = self.scrollBars[orientation]
         value = bar.value() + bar.singleStep() * units
         self.setScroll(orientation, value)
+
+    def toggleScrollBars(self, enable: bool):
+        for bar in self.scrollBars.values():
+            bar.setEnabled(enable)
 
     def setScroll(self, orientation, value):
         self.scrollBars[orientation].setValue(int(value))
