@@ -350,12 +350,15 @@ class Shape(object):
         Rotate the shape around the center. This modifies the shape.
 
         Notes:
-        - For points and circles, this is useless
+        - For points and circles this is no-op since it's either useless or undesired behaviour
         - For rectangle it will not rotate the rectangle in normal sense
 
         Args:
             rad (float): Angle to rotate in radian.
         """
+        if self.shape_type in ["point", "circle"]:
+            return
+
         def rotate(x, y, cx, cy):
             cos = math.cos(rad)
             sin = math.sin(rad)
