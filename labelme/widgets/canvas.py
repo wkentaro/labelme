@@ -1,4 +1,6 @@
 import math
+from datetime import datetime, timedelta
+from threading import Thread
 
 import gdown
 from qtpy import QtCore
@@ -106,6 +108,9 @@ class Canvas(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
         self._ai_model = None
+
+        # To check if the shapes need backing up
+        self._last_rotation = datetime.now()
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -943,10 +948,14 @@ class Canvas(QtWidgets.QWidget):
         if mods & QtCore.Qt.ControlModifier:
             rad = math.radians(30) * sgn
         else:
-            rad = math.radians(2) * sgn
+            rad = math.radians(5) * sgn
 
         # Press SHIFT to breaks rectangle
         break_rectangle = ev.modifiers() & QtCore.Qt.ShiftModifier
+
+        # Backup if IF the there's a long enough break
+        now = datetime.now()
+        store_shape = now - self._last_rotation > timedelta(seconds=1)
 
         # Rotate shape
         for shape in self.selectedShapes:
@@ -955,7 +964,16 @@ class Canvas(QtWidgets.QWidget):
             else:
                 shape.rotateCenter(rad)
 
-        # Redraw
+        # Store once, otherwise set the last one to the rotated
+        # since we have just rotated it before
+        if store_shape:
+            self.storeShapes()
+        else:
+            self.shapesBackups[-1] = self.shapes
+        self.shapeMoved.emit()
+
+        # Redraw and store the last rotation point
+        self._last_rotation = datetime.now()
         self.repaint()
 
     def wheelEvent(self, ev):
@@ -964,7 +982,7 @@ class Canvas(QtWidgets.QWidget):
         If no shapes are selected, move around.
         If there are selected shape, rotate it.
         """
-        if len(self.selectedShapes) > 0:
+        if self.editing() and len(self.selectedShapes) > 0:
             self.wheelEventRotate(ev)
         else:
             self.wheelEventMoveAround(ev)
