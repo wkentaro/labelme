@@ -318,6 +318,47 @@ class Shape(object):
                 path.lineTo(p)
         return path
 
+    def rotateCenter(self, rad: float):
+        """
+        Rotate the shape around the center. This modifies the shape.
+
+        Notes:
+        - For points and circles, this is useless
+        - For rectangle it will not rotate the rectangle in normal sense
+
+        Args:
+            rad (float): Angle to rotate in radian.
+        """
+        def rotate(x, y, cx, cy):
+            cos = math.cos(rad)
+            sin = math.sin(rad)
+            # Translate
+            x = x - cx
+            y = y - cy
+
+            # Rotate
+            x_ = x * cos - y * sin
+            y_ = x * sin + y * cos
+
+            # Translate back
+            x_ = x_ + cx
+            y_ = y_ + cy
+            return x_, y_
+
+        # Calculate the center
+        cx, cy, n = 0, 0, 0
+        for pt in self.points:
+            cx = cx + pt.x()
+            cy = cy + pt.y()
+            n = n + 1
+        cx, cy = (cx / n, cy / n)
+
+        # Rotate
+        for pt in self.points:
+            x, y = rotate(pt.x(), pt.y(), cx, cy)
+            pt.setX(x)
+            pt.setY(y)
+
     def boundingRect(self):
         return self.makePath().boundingRect()
 
