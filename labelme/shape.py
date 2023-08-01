@@ -318,6 +318,33 @@ class Shape(object):
                 path.lineTo(p)
         return path
 
+    def rotateCenterBreak(self, rad: float):
+        """
+        Wrapper for `rotateCenter`.
+        But this will breaks the rectangle and turn the shape into
+        a polygon, therefore rotating it in "normal sense".
+
+        Notes:
+        - For points and circles, this is still useless.
+
+        Args:
+            rad (float): Angle to rotate in radian.
+        """
+        if self.shape_type == "rectangle":
+            tl = self.points[0]
+            br = self.points[1]
+            x0, y0 = tl.x(), tl.y()
+            x1, y1 = br.x(), br.y()
+            new_points = [
+                QtCore.QPointF(x0, y0),
+                QtCore.QPointF(x1, y0),
+                QtCore.QPointF(x1, y1),
+                QtCore.QPointF(x0, y1),
+            ]
+            self.points = new_points
+            self.shape_type = "polygon"
+        self.rotateCenter(rad)
+
     def rotateCenter(self, rad: float):
         """
         Rotate the shape around the center. This modifies the shape.
