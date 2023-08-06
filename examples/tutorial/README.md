@@ -26,7 +26,7 @@ To convert the json to set of image and label, you can run following:
 
 
 ```bash
-labelme_json_to_dataset apc2016_obj3.json -o apc2016_obj3_json
+labelme_export_json apc2016_obj3.json -o apc2016_obj3_json
 ```
 
 It generates standard files from the JSON file.
