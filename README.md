@@ -13,12 +13,12 @@
 </div>
 
 <div align="center">
-  <a href="#installation"><b>Installation</b></a> |
-  <a href="#usage"><b>Usage</b></a> |
-  <a href="https://github.com/wkentaro/labelme/tree/main/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
-  <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a> |
-  <a href="https://github.com/wkentaro/labelme/discussions"><b>Discussions</b></a> |
-  <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
+  <a href="#starter-kit"><b>Starter Kit</b></a>
+  | <a href="#installation"><b>Installation</b></a>
+  | <a href="#usage"><b>Usage</b></a>
+  | <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a>
+  | <a href="https://github.com/wkentaro/labelme/discussions"><b>Community</b></a>
+  <!-- | <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a> -->
 </div>
 
 <br/>
@@ -52,12 +52,21 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
 
 
+## Starter Kit
 
-## Requirements
+You can get [Labelme Starter Kit](https://wkentaro.gumroad.com/l/labelmeapp) on Gumroad for free, which contains:
 
-- Ubuntu / macOS / Windows
-- Python3
-- [PyQt5 / PySide2](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+- Installation guides for all platforms: Windows, macOS, and Linux 💻
+- Step-by-step tutorials: first annotation to editing, exporting, and integrating with other programs 📕
+- A compilation of valuable resources for further exploration 🔗.
+
+
+
+<!-- ## Requirements -->
+<!--  -->
+<!-- - Ubuntu / macOS / Windows -->
+<!-- - Python3 -->
+<!-- - [PyQt5 / PySide2](http://www.riverbankcomputing.co.uk/software/pyqt/intro) -->
 
 
 ## Installation
@@ -148,7 +157,6 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 For more advanced usage, please refer to the examples:
 
-* [Tutorial (Single Image Example)](examples/tutorial)
 * [Semantic Segmentation Example](examples/semantic_segmentation)
 * [Instance Segmentation Example](examples/instance_segmentation)
 * [Video Annotation Example](examples/video_annotation)
