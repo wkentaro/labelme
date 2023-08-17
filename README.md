@@ -56,9 +56,9 @@ It is written in Python and uses Qt for its graphical interface.
 
 You can get [Labelme Starter Kit](https://wkentaro.gumroad.com/l/labelmeapp) on Gumroad for free, which contains:
 
-- Installation guides for all platforms: Windows, macOS, and Linux 💻
-- Step-by-step tutorials: first annotation to editing, exporting, and integrating with other programs 📕
-- A compilation of valuable resources for further exploration 🔗.
+- **Installation guides** for all platforms: Windows, macOS, and Linux 💻
+- **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
+- **A compilation of valuable resources** for further exploration 🔗.
 
 
 
