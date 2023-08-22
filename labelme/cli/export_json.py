@@ -20,7 +20,7 @@ def main():
     json_file = args.json_file
 
     if args.out is None:
-        out_dir = osp.basename(json_file).replace(".", "_")
+        out_dir = osp.splitext(osp.basename(json_file))[0]
         out_dir = osp.join(osp.dirname(json_file), out_dir)
     else:
         out_dir = args.out
