@@ -51,6 +51,7 @@ class ColoredFormatter(logging.Formatter):
 
 
 logger = logging.getLogger(__appname__)
+logger.setLevel(logging.INFO)
 
 stream_handler = logging.StreamHandler(sys.stderr)
 handler_format = ColoredFormatter(
