@@ -345,8 +345,14 @@ class Canvas(QtWidgets.QWidget):
                 angle_speed = ANGLES_PER_PIXEL_LOW_SPEED
 
             delta_angle = (self._rotate_anchor_point.y() - pos.y()) * angle_speed
+
             for shape in self.selectedShapes:
+                last_rotate_points = shape.new_points
                 shape.rotate(degree=delta_angle)
+                # bounding constraint for rotation
+                if any(self.outOfPixmap(p) for p in shape.new_points):
+                    shape.new_points = last_rotate_points
+
             self.repaint()
 
             return
