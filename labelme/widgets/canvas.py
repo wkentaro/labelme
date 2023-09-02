@@ -312,7 +312,7 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon copy moving.
-        if QtCore.Qt.RightButton & ev.buttons():
+        if QtCore.Qt.RightButton & ev.buttons() and not self.isRotatingShapes():
             if self.selectedShapesCopy and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
@@ -325,7 +325,7 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon/Vertex moving.
-        if QtCore.Qt.LeftButton & ev.buttons():
+        if QtCore.Qt.LeftButton & ev.buttons() and not self.isRotatingShapes():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
                 self.repaint()
@@ -521,6 +521,9 @@ class Canvas(QtWidgets.QWidget):
                 self.prevPoint = pos
                 self.repaint()
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
+            if self.isRotatingShapes():
+                return
+
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             if not self.selectedShapes or (
                 self.hShape is not None
@@ -532,6 +535,9 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
+            if self.isRotatingShapes():
+                return
+
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
             if (
@@ -1022,9 +1028,11 @@ class Canvas(QtWidgets.QWidget):
                 elif self.isRotatingShapes():
                     self.rotateSelectedShapes(False)
                     self._rotate_anchor_point = None
+                    self.repaint()
             elif key == QtCore.Qt.Key_Escape and self.isRotatingShapes():
                 self.rotateSelectedShapes(False)
                 self._rotate_anchor_point = None
+                self.repaint()
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
