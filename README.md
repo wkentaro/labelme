@@ -13,7 +13,7 @@
 </div>
 
 <div align="center">
-  <a href="#starter-kit"><b>Starter Kit</b></a>
+  <a href="#starter-bundle"><b>Starter Bundle</b></a>
   | <a href="#installation"><b>Installation</b></a>
   | <a href="#usage"><b>Usage</b></a>
   | <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a>
@@ -52,9 +52,9 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
 
 
-## Starter Kit
+## Starter Bundle
 
-You can get [Labelme Starter Kit](https://wkentaro.gumroad.com/l/labelmeapp) on Gumroad for free, which contains:
+You can get [Labelme Starter Bundle](https://wkentaro.gumroad.com/l/labelmeapp) on Gumroad for free, which contains:
 
 - **Installation guides** for all platforms: Windows, macOS, and Linux 💻
 - **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
