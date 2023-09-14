@@ -20,7 +20,9 @@ def main():
     )
     parser.add_argument("input_dir", help="Input annotated directory")
     parser.add_argument("output_dir", help="Output dataset directory")
-    parser.add_argument("--labels", help="Labels file", required=True)
+    parser.add_argument(
+        "--labels", help="Labels file or comma separated text", required=True
+    )
     parser.add_argument(
         "--noobject", help="Flag not to generate object label", action="store_true"
     )
@@ -50,11 +52,17 @@ def main():
             os.makedirs(osp.join(args.output_dir, "SegmentationObjectVisualization"))
     print("Creating dataset:", args.output_dir)
 
+    if osp.exists(args.labels):
+        with open(args.labels) as f:
+            labels = [label.strip() for label in f if label]
+    else:
+        labels = [label.strip() for label in args.labels.split(",")]
+
     class_names = []
     class_name_to_id = {}
-    for i, line in enumerate(open(args.labels).readlines()):
+    for i, label in enumerate(labels):
         class_id = i - 1  # starts with -1
-        class_name = line.strip()
+        class_name = label.strip()
         class_name_to_id[class_name] = class_id
         if class_id == -1:
             assert class_name == "__ignore__"
