@@ -629,7 +629,7 @@ class Canvas(QtWidgets.QWidget):
             pos = self.intersectionPoint(point, pos)
         shape.moveVertexBy(index, pos - point)
 
-    def boundedMoveShapes(self, shapes, pos):
+    def boundedMoveShapes(self, shapes, pos, iVertex=None):
         if self.outOfPixmap(pos):
             return False  # No need to move
         o1 = pos + self.offsets[0]
@@ -649,7 +649,10 @@ class Canvas(QtWidgets.QWidget):
         dp = pos - self.prevPoint
         if dp:
             for shape in shapes:
-                shape.moveBy(dp)
+                if iVertex is not None:
+                    shape.moveVertexBy(iVertex, dp)
+                else:
+                    shape.moveBy(dp)
             self.prevPoint = pos
             return True
         return False
@@ -934,15 +937,25 @@ class Canvas(QtWidgets.QWidget):
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
 
-    def moveByKeyboard(self, offset):
+    def moveByKeyboard(self, offset,ev=None):
         if self.selectedShapes:
+            iVertex = None
+            if ev is not None:
+                modifiers = ev.modifiers()
+                is_shift_pressed = modifiers & QtCore.Qt.ShiftModifier
+                is_control_pressed = modifiers & QtCore.Qt.ControlModifier
+                # is_alt_pressed = modifiers & QtCore.Qt.AltModifier
+                if is_shift_pressed:
+                    iVertex = 0
+                elif is_control_pressed:
+                    iVertex = 1
             self.boundedMoveShapes(
-                self.selectedShapes, self.prevPoint + offset
+                self.selectedShapes, self.prevPoint + offset,iVertex
             )
             self.repaint()
             self.movingShape = True
 
-    def keyPressEvent(self, ev):
+    def keyPressEvent(self, ev):        
         modifiers = ev.modifiers()
         key = ev.key()
         if self.drawing():
@@ -956,13 +969,13 @@ class Canvas(QtWidgets.QWidget):
                 self.snapping = False
         elif self.editing():
             if key == QtCore.Qt.Key_Up:
-                self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED))
+                self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED),ev)
             elif key == QtCore.Qt.Key_Down:
-                self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED))
+                self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED),ev)
             elif key == QtCore.Qt.Key_Left:
-                self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0),ev)
             elif key == QtCore.Qt.Key_Right:
-                self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0),ev)
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
