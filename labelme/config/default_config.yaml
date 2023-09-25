@@ -106,11 +106,14 @@ shortcuts:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
+  select_all_polygons: Ctrl+A
   copy_polygon: Ctrl+C
   paste_polygon: Ctrl+V
   undo: Ctrl+Z
   undo_last_point: Ctrl+Z
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
-  toggle_keep_prev_mode: Ctrl+P
+  toggle_keep_prev_mode: Ctrl+M
+  copy_filename: Ctrl-P
   remove_selected_point: [Meta+H, Backspace]
+

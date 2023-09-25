@@ -276,6 +276,15 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
 
+        copyFilename = action(
+            self.tr("&Copy Filename"),
+            self.copyFilename,
+            shortcuts["copy_filename"],
+            "copy filename",
+            self.tr("Copy current image filename"),
+            enabled=True,
+        )
+        
         changeOutputDir = action(
             self.tr("&Change Output Dir"),
             slot=self.changeOutputDirDialog,
@@ -392,6 +401,14 @@ class MainWindow(QtWidgets.QMainWindow):
             "cancel",
             self.tr("Delete the selected polygons"),
             enabled=False,
+        )
+        selectAllPolygons = action(
+            self.tr("Select All Polygons"),
+            self.selectAllPolygons,
+            shortcuts["select_all_polygons"],
+            "select_all",
+            self.tr("Copy all polygons"),
+            enabled=True,
         )
         duplicate = action(
             self.tr("Duplicate Polygons"),
@@ -604,10 +621,12 @@ class MainWindow(QtWidgets.QMainWindow):
             open=open_,
             close=close,
             deleteFile=deleteFile,
+            copyFileName=copyFilename,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             edit=edit,
             duplicate=duplicate,
+            selectAllPolygons=selectAllPolygons,
             copy=copy,
             paste=paste,
             undoLastPoint=undoLastPoint,
@@ -637,7 +656,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # XXX: need to add some actions here to activate the shortcut
             editMenu=(
                 edit,
-                duplicate,
+                duplicate,                
                 delete,
                 None,
                 undo,
@@ -707,6 +726,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 saveWithImageData,
                 close,
                 deleteFile,
+                copyFilename,
                 None,
                 quit,
             ),
@@ -777,10 +797,12 @@ class MainWindow(QtWidgets.QMainWindow):
             openPrevImg,
             save,
             deleteFile,
+            copyFilename,
             None,
             createMode,
             editMode,
             duplicate,
+            selectAllPolygons,
             copy,
             paste,
             delete,
@@ -1370,6 +1392,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
 
+    def selectAllPolygons(self):
+        all_shapes = [s for s in self.canvas.shapes]
+        self.canvas.selectShapes(all_shapes)
+        
     def duplicateSelectedShape(self):
         added_shapes = self.canvas.duplicateSelectedShapes()
         self.labelList.clearSelection()
@@ -1950,6 +1976,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return label_file
 
+    def copyFilename(self):
+        if self.filename is None:
+            print('No filename to copy')
+        else:
+            cb = QtWidgets.QApplication.instance().clipboard()
+            cb.clear(mode=cb.Clipboard )
+            cb.setText(self.filename, mode=cb.Clipboard)
+            print('Copied {} to clipboard'.format(self.filename))
+            
     def deleteFile(self):
         mb = QtWidgets.QMessageBox
         msg = self.tr(
