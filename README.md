@@ -1,4 +1,9 @@
-# Changes in this repo fork
+## Why did I fork labelme?
+
+I just wanted to add a few UI features specific to the scenario where boxes are prepopulated from detector-generated boxes, to generate data I could use to train new detectors.  This means that (a) deleting boxes is important, (b) being able to definitively mark images as empty is important, and (c) fine adjustment of close-but-not-quite-there boxes (with the keyboard) is important.
+
+
+## Changes in this fork
 
 * Shift/ctrl + up/down/left right move the upper-left and lower-right borders of a selected
   rectangle.
