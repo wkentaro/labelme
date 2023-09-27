@@ -982,7 +982,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def currentItem(self):
         items = self.labelList.selectedItems()
-        if items:
+        if items and len(items) > 0:
             return items[0]
         return None
 
