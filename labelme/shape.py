@@ -6,7 +6,7 @@ from qtpy import QtGui
 
 from labelme.logger import logger
 import labelme.utils
-
+from labelme.config import global_properties
 
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
@@ -185,7 +185,8 @@ class Shape(object):
             )
             pen = QtGui.QPen(color)
             # Try using integer sizes for smoother drawing(?)
-            pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            # pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            pen.setWidth(global_properties['line_width'])
             painter.setPen(pen)
 
             line_path = QtGui.QPainterPath()

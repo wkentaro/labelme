@@ -8,6 +8,8 @@ from labelme.logger import logger
 
 here = osp.dirname(osp.abspath(__file__))
 
+global_properties = {}
+global_properties['line_width'] = 5
 
 def update_dict(target_dict, new_dict, validate_item=None):
     for key, value in new_dict.items():

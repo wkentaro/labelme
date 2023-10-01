@@ -44,7 +44,6 @@ from labelme.widgets import ZoomWidget
 
 LABEL_COLORMAP = imgviz.label_colormap()
 
-
 class MainWindow(QtWidgets.QMainWindow):
 
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
@@ -56,6 +55,8 @@ class MainWindow(QtWidgets.QMainWindow):
         output=None,
         output_file=None,
         output_dir=None,
+        last_updated_file=None,
+        resume_from_last_update=False
     ):
         if output is not None:
             logger.warning(
@@ -111,6 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.labelList = LabelListWidget()
         self.lastOpenDir = None
+        self.last_updated_file = last_updated_file
 
         self.flag_dock = self.flag_widget = None
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
@@ -847,6 +849,15 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.filename = filename
 
+        if self.last_updated_file is not None and resume_from_last_update:
+            if not os.path.isfile(self.last_updated_file):
+                print("Can't resume from {}".format(self.last_updated_file))
+            else:
+                with open(last_updated_file,'r') as f:
+                    s = f.readlines()[0].strip()
+                    print('Loading previous file {}'.format(s))
+                    self.filename = s
+                
         if config["file_search"]:
             self.fileSearch.setText(config["file_search"])
             self.fileSearchChanged()
@@ -1214,7 +1225,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.selectedShapes = selected_shapes
         for shape in self.canvas.selectedShapes:
             shape.selected = True
-            item = self.labelList.findItemByShape(shape)
+            try:
+                item = self.labelList.findItemByShape(shape)
+            except Exception as e:
+                print('Item selection error: {}'.format(str(e)))
+                continue
             self.labelList.selectItem(item)
             self.labelList.scrollToItem(item)
         self._noSelectionSlot = False
@@ -1258,15 +1273,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
-            item = self.uniqLabelList.findItemByLabel(label)
-            if item is None:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
-            label_id = self.uniqLabelList.indexFromItem(item).row() + 1
-            label_id += self._config["shift_auto_shape_color"]
-            return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
+            if self._config["label_colors"] and label in self._config["label_colors"]:
+                return self._config["label_colors"][label]
+            else:
+                item = self.uniqLabelList.findItemByLabel(label)
+                if item is None:
+                    item = self.uniqLabelList.createItemFromLabel(label)
+                    self.uniqLabelList.addItem(item)
+                    rgb = self._get_rgb_by_label(label)
+                    self.uniqLabelList.setItemLabel(item, label, rgb)
+                label_id = self.uniqLabelList.indexFromItem(item).row() + 1
+                label_id += self._config["shift_auto_shape_color"]
+                return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
         elif (
             self._config["shape_color"] == "manual"
             and self._config["label_colors"]
@@ -1696,6 +1714,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toggleActions(True)
         self.canvas.setFocus()
         self.status(str(self.tr("Loaded %s")) % osp.basename(str(filename)))
+        if self.last_updated_file is not None:
+            with open(self.last_updated_file,'w') as f:
+                f.write(filename)
+        
         return True
 
     def resizeEvent(self, event):

@@ -102,13 +102,34 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
+        "--resume_from_last_update",
+        action="store_true",
+        help="start from the file stored in the 'last updated' file",        
+    )
+    parser.add_argument(
+        "--last_updated_file",
+        type=str,
+        default=None,
+        help="file to which we should write the current filename (to resume later)"        
+    )
+    parser.add_argument(
         "--epsilon",
         type=float,
         help="epsilon to find nearest vertex on canvas",
         default=argparse.SUPPRESS,
     )
+    parser.add_argument(
+        "--linewidth",
+        type=int,
+        help="drawing line width",
+        default=None
+    )
     args = parser.parse_args()
 
+    if args.linewidth is not None:
+        from labelme.config import global_properties
+        global_properties['line_width'] = args.linewidth
+        
     if args.version:
         print("{0} {1}".format(__appname__, __version__))
         sys.exit(0)
@@ -174,6 +195,8 @@ def main():
         filename=filename,
         output_file=output_file,
         output_dir=output_dir,
+        last_updated_file=args.last_updated_file,
+        resume_from_last_update=args.resume_from_last_update
     )
 
     if reset_config:

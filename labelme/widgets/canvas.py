@@ -968,14 +968,45 @@ class Canvas(QtWidgets.QWidget):
             elif modifiers == QtCore.Qt.AltModifier:
                 self.snapping = False
         elif self.editing():
-            if key == QtCore.Qt.Key_Up:
-                self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED),ev)
-            elif key == QtCore.Qt.Key_Down:
-                self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED),ev)
-            elif key == QtCore.Qt.Key_Left:
-                self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0),ev)
-            elif key == QtCore.Qt.Key_Right:
-                self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0),ev)
+            modifiers = ev.modifiers()
+            is_alt_pressed = ev.modifiers() & QtCore.Qt.AltModifier
+            
+            if is_alt_pressed:
+                
+                if (not self.shapes) or len(self.shapes) == 0:
+                    return
+                
+                current_selection_index = 0
+                if self.selectedShapes and len(self.selectedShapes) > 0:
+                    try:                        
+                        current_selection_index = self.shapes.index(self.selectedShapes[0])
+                    except Exception:
+                        pass
+                
+                index_to_select = None
+                if key == QtCore.Qt.Key_Left:
+                    index_to_select = current_selection_index - 1
+                    if index_to_select < 0:
+                        index_to_select = len(self.shapes)-1
+                elif key == QtCore.Qt.Key_Right:
+                    index_to_select = current_selection_index + 1
+                    if index_to_select >= len(self.shapes):
+                        index_to_select = 0
+                else:
+                    return
+                assert index_to_select is not None
+                self.selectShapes([self.shapes[index_to_select]])
+                
+            else:
+                
+                if key == QtCore.Qt.Key_Up:
+                    self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED),ev)
+                elif key == QtCore.Qt.Key_Down:
+                    self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED),ev)
+                elif key == QtCore.Qt.Key_Left:
+                    self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0),ev)
+                elif key == QtCore.Qt.Key_Right:
+                    self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0),ev)
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
@@ -983,14 +1014,17 @@ class Canvas(QtWidgets.QWidget):
             if int(modifiers) == 0:
                 self.snapping = True
         elif self.editing():
-            if self.movingShape and self.selectedShapes:
-                index = self.shapes.index(self.selectedShapes[0])
-                if (
-                    self.shapesBackups[-1][index].points
-                    != self.shapes[index].points
-                ):
-                    self.storeShapes()
-                    self.shapeMoved.emit()
+            if self.movingShape and self.selectedShapes and len(self.selectedShapes) > 0:
+                try:
+                    index = self.shapes.index(self.selectedShapes[0])
+                    if (
+                        self.shapesBackups[-1][index].points
+                        != self.shapes[index].points
+                    ):
+                        self.storeShapes()
+                        self.shapeMoved.emit()
+                except Exception:
+                    pass
 
                 self.movingShape = False
 

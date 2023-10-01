@@ -1,6 +1,6 @@
-auto_save: false
+auto_save: true
 display_label_popup: true
-store_data: true
+store_data: false
 keep_prev: false
 keep_prev_scale: false
 keep_prev_brightness: false
@@ -17,8 +17,7 @@ validate_label: null
 default_shape_color: [0, 255, 0]
 shape_color: auto  # null, 'auto', 'manual'
 shift_auto_shape_color: 0
-label_colors: null
-
+label_colors: {'animal': [255, 0, 0],'person':[0,0,255],'vehicle':[0,255,0]}
 shape:
   # drawing
   line_color: [0, 255, 0, 128]
@@ -113,7 +112,7 @@ shortcuts:
   undo_last_point: Ctrl+Z
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
-  toggle_keep_prev_mode: Ctrl+M
+  toggle_keep_prev_mode: null 
   copy_filename: Ctrl-P
   remove_selected_point: [Meta+H, Backspace]
 
