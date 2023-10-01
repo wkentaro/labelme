@@ -9,7 +9,7 @@ I compared a few OSS labeling tools and found that none *quite* supported this s
 
 I wanted to add a few UI features specific to the scenario where boxes are prepopulated from detector-generated boxes, to generate data I could use to train new detectors.  This scenario has a few unique UI requirements:
 
-* Deleting boxes efficient (i.e., without using the mouse) is more important than in the typical de-novo-boxes scenario
+* Deleting boxes efficiently (i.e., without using the mouse) is more important than in the typical de-novo-boxes scenario
 * Being able to definitively mark images as empty is important
 * Fine adjustment of close-but-not-quite-there boxes (with the keyboard) is important
 * Being able to page quickly through mostly-correct boxes and see huge bright red boxes that require almost no cognitive processing time is important
