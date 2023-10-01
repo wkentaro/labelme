@@ -1,3 +1,10 @@
+## What am I using labelme for?
+
+I am fine-tuning detector models that *almost* work in the target domain, but not quite.  In particular, I'm fine-tuning [MegaDetector](https://github.com/agentmorris/MegaDetector/) (MD) for cases where it [struggles](https://github.com/agentmorris/MegaDetector/blob/main/megadetector-challenges.md), but still has some signal.  In these cases, if you use MD to generate boxes, you will get many target objects and save yourself *gobs* of time in building a training set, but you will miss some target objects entirely, and you will have to use a sufficiently low confidence threshold that you get a bunch of junk.  Before I do any labelme work, I do an aggressive [repeat detection elimination](https://github.com/agentmorris/MegaDetector/tree/main/api/batch_processing/postprocessing/repeat_detection_elimination) pass, but still, there's some junk, and some misses, but mostly good boxes, and I want to clean all that up to make a new training set.
+
+I compared a few OSS labeling tools and found that none *quite* supported this scenario, since the common path is still the one where you're making boxes from scratch.  But labelme was the easiest to populate with bounding boxes from ML results, and by far the easiest for me to modify (all in Python, no fancy-schmancy Web infrastructure).
+
+
 ## Why did I fork labelme?
 
 I wanted to add a few UI features specific to the scenario where boxes are prepopulated from detector-generated boxes, to generate data I could use to train new detectors.  This scenario has a few unique UI requirements:
