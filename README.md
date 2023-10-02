@@ -39,3 +39,41 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * My fine adjustment logic breaks down a little when boxes are near the edge of the canvas (nothing bad happens, fine adjustment just stops working), fix this
 
+* Right now I do a one-time conversion of ML output to labelme files, and I choose a confidence threshold when doing that conversion.  I really really really want a way of quickly showing all the boxes below some backup confidence threshold, e.g. "press F1 to show (or load, but preferably just show) lower-confidence detections".  This would support the case where an object of interest missed the confidence threshold; in this case, I would load all the low-confidence detections, select all, unselect the object of interest, and delete the selected boxes, all without touching the mouse.
+
+## Notes to self about how I set up my environment
+
+### Setting up this repo
+
+```bash
+cd ~/git
+git clone https://github.com/agentmorris/labelme
+cd labelme
+mamba create -n labelme-git pip -y && mamba activate labelme-git && pip install -e .
+```
+
+### Running labelme in the context of bbox refinement
+
+#### When starting with new label files for a folder_name
+
+`python labelme folder_name --labels animal --last_updated_file ~/labelme-last-updated.txt`
+
+#### When resuming
+
+`python labelme folder_name --labels animal --last_updated_file ~/labelme-last-updated.txt --resume_from_last_update`
+
+#### If the app hangs on startup
+
+`labelme --reset-config`
+
+#### Stuff I had to do to make it work in WSL
+
+...because I got QT errors.
+
+```bash
+sudo apt-get upgrade -y
+sudo apt install -y libgl1-mesa-dev
+# I don’t think this was necessary
+export QT_QPA_PLATFORM="xcb"
+sudo apt install libxcb-xinerama0 libqt5x11extras5
+```
