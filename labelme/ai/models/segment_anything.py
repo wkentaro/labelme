@@ -16,8 +16,8 @@ class SegmentAnythingModel:
 
         self._image_size = 1024
 
-        self._encoder_session = onnxruntime.InferenceSession(encoder_path)
-        self._decoder_session = onnxruntime.InferenceSession(decoder_path)
+        self._encoder_session = onnxruntime.InferenceSession(encoder_path, providers=["CPUExecutionProvider"])
+        self._decoder_session = onnxruntime.InferenceSession(decoder_path, providers=["CPUExecutionProvider"])
 
         self._lock = threading.Lock()
         self._image_embedding_cache = collections.OrderedDict()
