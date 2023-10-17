@@ -60,7 +60,12 @@ If you're new to Labelme, you can get started with [Labelme Starter Pack](https:
 - **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
 - **A compilation of valuable resources** for further exploration 🔗.
 
+## Community Guides
 
+The community has also written guides on how to use Labelme, some of which are listed below.
+
+- [How to Use LabelMe](https://blog.roboflow.com/labelme/) by Roboflow
+- [Annotate images with labelme](https://jsk-docs.readthedocs.io/projects/jsk_recognition/en/latest/deep_learning_with_image_dataset/annotate_images_with_labelme.html) by jsk_recognition
 
 <!-- ## Requirements -->
 <!--  -->
