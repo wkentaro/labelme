@@ -51,7 +51,7 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 cd ~/git
 git clone https://github.com/agentmorris/labelme
 cd labelme
-mamba create -n labelme-git pip -y && mamba activate labelme-git && pip install -e .
+mamba create -n labelme-git python=3.11 pip -y && mamba activate labelme-git && pip install -e .
 ```
 
 ### Running labelme in the context of bbox refinement
