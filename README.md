@@ -79,3 +79,14 @@ sudo apt install -y libgl1-mesa-dev
 export QT_QPA_PLATFORM="xcb"
 sudo apt install libxcb-xinerama0 libqt5x11extras5
 ```
+
+## Reminders of keyboard shortcuts I use
+
+* A,D (previous/next)
+* Ctrl-R (create rectangle mode)
+* Ctrl-J (edit polygons mode)
+* Ctrl-A (select all polygons)
+* Alt-right/alt-left (select next/previous polygons)
+* Shift/control + left/right/up/down (fine adjustment of 0th/1st vertices)
+* Delete (delete current polygon)
+* Ctrl-C,ctrl-v (copy/paste selected polygons)
