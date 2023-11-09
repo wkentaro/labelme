@@ -214,6 +214,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Actions
         action = functools.partial(utils.newAction, self)
+        
+        # Hard-code page-up and page-down
+        action_next_pgdn = action('next_pgdn',slot=self.openNextImg,
+                                  shortcut=QtCore.Qt.Key_PageDown,
+                                  icon=None,tip=None,checkable=False,enabled=True)
+        utils.addActions(self,[action_next_pgdn])
+        
+        action_prev_pgup = action('prev_pgup',slot=self.openPrevImg,
+                                  shortcut=QtCore.Qt.Key_PageUp,
+                                  icon=None,tip=None,checkable=False,enabled=True)
+        utils.addActions(self,[action_prev_pgup])
+                                         
         shortcuts = self._config["shortcuts"]
         quit = action(
             self.tr("&Quit"),
@@ -2045,6 +2057,16 @@ class MainWindow(QtWidgets.QMainWindow):
         return osp.exists(label_file)
 
     def mayContinue(self):
+        
+        # DSM: I'm changing the behavior here to have a really strong interpretation
+        # of "auto-save", which is: any time you do anything that might even merit
+        # checking whether we should save, save.  This will force us to write out
+        # the flag that indicates that this image has been reviewed, even if nothing
+        # was changed.
+        if self._config["auto_save"] and (not self.image.isNull()):
+            self.saveFile()
+            return True
+        
         if not self.dirty:
             return True
         mb = QtWidgets.QMessageBox

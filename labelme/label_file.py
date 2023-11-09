@@ -12,6 +12,7 @@ from labelme import PY2
 from labelme import QT4
 from labelme import utils
 
+from datetime import datetime
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
@@ -178,11 +179,12 @@ class LabelFile(object):
             imagePath=imagePath,
             imageData=imageData,
             imageHeight=imageHeight,
-            imageWidth=imageWidth,
+            imageWidth=imageWidth,            
         )
         for key, value in otherData.items():
             assert key not in data
             data[key] = value
+        data['saved_by_labelme'] = str(datetime.now())
         try:
             with open(filename, "w") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
