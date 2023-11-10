@@ -664,6 +664,57 @@ class Canvas(QtWidgets.QWidget):
             self.hShapeIsSelected = False
             self.update()
 
+    def mergeAllRectangles(self):
+        
+        if self.shapes is None:
+            return None
+        if len(self.shapes) <= 1:
+            return None
+        
+        label = None
+        for s in self.shapes:
+            if label is None:
+                label = s.label
+            elif label != s.label:
+                print('Cannot merge shapes with different labels')
+                return None
+            
+        min_x = None
+        max_x = None
+        min_y = None
+        max_y = None
+        
+        for shape in self.shapes:
+            for p in shape.points:
+                if min_x is None or p.x() < min_x:
+                    min_x = p.x()
+                if min_y is None or p.y() < min_y:
+                    min_y = p.y()
+                if max_x is None or p.x() > max_x:
+                    max_x = p.x()
+                if max_y is None or p.y() > max_y:
+                    max_y = p.y()
+        assert min_x is not None and min_y is not None and max_x is not None and max_y is not None
+        
+        p0 = QtCore.QPointF(min_x,min_y)
+        p1 = QtCore.QPointF(max_x,max_y)
+        
+        deleted_shapes = [s for s in self.shapes]
+        for shape in self.shapes:
+            self.shapes.remove(shape)
+                
+        new_shape = Shape(shape_type='rectangle', label=label, flags={})
+        new_shape.addPoint(p0)
+        new_shape.addPoint(p1)
+        self.shapes = [new_shape]
+        
+        self.storeShapes()
+        self.selectedShapes = []
+        self.update()
+        self.repaint()
+        
+        return (deleted_shapes,new_shape)
+                
     def deleteSelected(self):
         deleted_shapes = []
         if self.selectedShapes:

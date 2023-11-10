@@ -416,6 +416,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Delete the selected polygons"),
             enabled=False,
         )
+        merge = action(
+            self.tr("Merge Rectangles"),
+            self.mergeAllRectangles,
+            shortcuts["merge_all_rectangles"],
+            "objects",
+            self.tr("Merge all rectangles"),
+            enabled=True,
+        )
+        
         selectAllPolygons = action(
             self.tr("Select All Polygons"),
             self.selectAllPolygons,
@@ -638,6 +647,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copyFileName=copyFilename,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
+            merge=merge,
             edit=edit,
             duplicate=duplicate,
             selectAllPolygons=selectAllPolygons,
@@ -695,6 +705,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 copy,
                 paste,
                 delete,
+                merge,
                 undo,
                 undoLastPoint,
                 removePoint,
@@ -820,6 +831,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copy,
             paste,
             delete,
+            merge,
             undo,
             brightnessContrast,
             None,
@@ -2110,6 +2122,21 @@ class MainWindow(QtWidgets.QMainWindow):
                     action.setEnabled(False)
         self.setDirty()
 
+    def mergeAllRectangles(self):
+        
+        merge_result = self.canvas.mergeAllRectangles()
+        if merge_result is None:
+            print('No shapes merged')
+            return
+        
+        deleted_shapes = merge_result[0]
+        new_shape = merge_result[1]
+        
+        self.remLabels(deleted_shapes)
+        self.loadShapes([new_shape])
+        print(self.canvas.shapes)
+        self.setDirty()
+        
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(

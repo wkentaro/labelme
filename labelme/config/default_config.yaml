@@ -104,6 +104,7 @@ shortcuts:
   create_linestrip: null
   edit_polygon: Ctrl+J
   delete_polygon: Delete
+  merge_all_rectangles: M
   duplicate_polygon: Ctrl+D
   select_all_polygons: Ctrl+A
   copy_polygon: Ctrl+C
