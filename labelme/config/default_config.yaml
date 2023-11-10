@@ -105,6 +105,7 @@ shortcuts:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   merge_all_rectangles: M
+  keep_smallest_rectangle: S
   duplicate_polygon: Ctrl+D
   select_all_polygons: Ctrl+A
   copy_polygon: Ctrl+C

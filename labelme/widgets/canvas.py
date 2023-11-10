@@ -664,6 +664,46 @@ class Canvas(QtWidgets.QWidget):
             self.hShapeIsSelected = False
             self.update()
 
+    def keepSmallestRectangle(self):    
+        
+        if self.shapes is None:
+            return None
+        if len(self.shapes) <= 1:
+            return None
+        
+        min_area = None
+        min_area_index = None
+        
+        for i_shape,shape in enumerate(self.shapes):
+            if shape.shape_type != 'rectangle':
+                print('Can\'t perform smallest-rect operation with non-rectangle shapes')
+                return None
+            assert len(shape.points) == 2
+            dx = abs(shape.points[1].x()-shape.points[0].x())
+            dy = abs(shape.points[1].y()-shape.points[0].y())
+            area = dx*dy
+            if min_area is None or area < min_area:
+                min_area = area
+                min_area_index = i_shape
+        
+        assert min_area is not None
+        
+        shapes_to_delete = []
+        for i_shape,shape in enumerate(self.shapes):
+            if i_shape != min_area_index:
+                shapes_to_delete.append(shape)
+                
+        assert len(shapes_to_delete) == len(self.shapes) - 1
+                
+        for shape in shapes_to_delete:
+            self.shapes.remove(shape)            
+        self.storeShapes()
+        self.selectedShapes = []
+        self.update()
+        
+        return shapes_to_delete
+        
+        
     def mergeAllRectangles(self):
         
         if self.shapes is None:

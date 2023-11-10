@@ -416,12 +416,21 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Delete the selected polygons"),
             enabled=False,
         )
+        
         merge = action(
             self.tr("Merge Rectangles"),
             self.mergeAllRectangles,
             shortcuts["merge_all_rectangles"],
             "objects",
             self.tr("Merge all rectangles"),
+            enabled=True,
+        )
+        smallest = action(
+            self.tr("Keep Smallest Rectangle"),
+            self.keepSmallestRectangle,
+            shortcuts["keep_smallest_rectangle"],
+            "objects",
+            self.tr("Keep smallest rectangles"),
             enabled=True,
         )
         
@@ -648,6 +657,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             merge=merge,
+            smallest=smallest,
             edit=edit,
             duplicate=duplicate,
             selectAllPolygons=selectAllPolygons,
@@ -706,6 +716,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 paste,
                 delete,
                 merge,
+                smallest,
                 undo,
                 undoLastPoint,
                 removePoint,
@@ -832,6 +843,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paste,
             delete,
             merge,
+            smallest,
             undo,
             brightnessContrast,
             None,
@@ -2137,6 +2149,17 @@ class MainWindow(QtWidgets.QMainWindow):
         print(self.canvas.shapes)
         self.setDirty()
         
+    def keepSmallestRectangle(self):
+        
+        deleted_shapes = self.canvas.keepSmallestRectangle()
+        if deleted_shapes is None:
+            print('No shapes removed')
+            return
+        
+        self.remLabels(deleted_shapes)
+        print(self.canvas.shapes)
+        self.setDirty()
+            
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(

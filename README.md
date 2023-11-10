@@ -25,7 +25,9 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * The save action is enabled by default (so we can save images with no boxes)
 
-* A new action to merge all shapes in an image into one rectangle that's the union of the current shapes
+* A new action to merge all shapes in an image into one rectangle that's the union of the current shapes (useful when an object has been split into multiple overlapping objects)
+
+* A new action to keep only the smallest rectangle
 
 * A new field ("saved_by_labelme") is written to the output on every save, and saving happens every time you change images; together, these allow us to confirm that an image has been reviewed, even if no changes were made.
 
@@ -90,6 +92,7 @@ sudo apt install libxcb-xinerama0 libqt5x11extras5
 
 * A,D (previous/next)
 * M (merge all rectangles into one rectangle that's the union of everything)
+* S (keep only the smallest rectangle)
 * PgUp,PgDn (previous/next)
 * Ctrl-R (create rectangle mode)
 * Ctrl-J (edit polygons mode)
