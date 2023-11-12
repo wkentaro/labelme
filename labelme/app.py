@@ -417,6 +417,14 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         
+        loadAltLabels = action(
+            self.tr("Load alt labels"),
+            self.loadAltLabels,
+            shortcuts["load_alt_labels"],
+            "objects",
+            self.tr("Load alt labels"),
+            enabled=True,
+        )
         merge = action(
             self.tr("Merge Rectangles"),
             self.mergeAllRectangles,
@@ -657,6 +665,7 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             merge=merge,
+            loadAltLabels=loadAltLabels,
             smallest=smallest,
             edit=edit,
             duplicate=duplicate,
@@ -716,6 +725,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 paste,
                 delete,
                 merge,
+                loadAltLabels,
                 smallest,
                 undo,
                 undoLastPoint,
@@ -843,6 +853,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paste,
             delete,
             merge,
+            loadAltLabels,
             smallest,
             undo,
             brightnessContrast,
@@ -1304,8 +1315,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
         shape.fill_color = QtGui.QColor(r, g, b, 128)
-        shape.select_line_color = QtGui.QColor(255, 255, 255)
-        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
+        shape.select_line_color = QtGui.QColor(0, 0, 0, 255)
+        shape.select_fill_color = QtGui.QColor(r, g, b, 10)
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
@@ -1619,7 +1630,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for item in self.labelList:
             item.setCheckState(Qt.Checked if value else Qt.Unchecked)
 
-    def loadFile(self, filename=None):
+    def loadFile(self, filename=None, use_alt_labels=False):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
         if filename in self.imageList and (
@@ -1645,6 +1656,9 @@ class MainWindow(QtWidgets.QMainWindow):
             str(self.tr("Loading %s...")) % osp.basename(str(filename))
         )
         label_file = osp.splitext(filename)[0] + ".json"
+        if use_alt_labels:
+            label_file = osp.splitext(filename)[0] + ".alt.json"    
+            print('Loading from alt file {}'.format(label_file))
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
             label_file = osp.join(self.output_dir, label_file_without_path)
@@ -1753,7 +1767,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.last_updated_file is not None:
             with open(self.last_updated_file,'w') as f:
                 f.write(filename)
-        
+        if use_alt_labels:
+            self.setDirty()
         return True
 
     def resizeEvent(self, event):
@@ -2134,11 +2149,17 @@ class MainWindow(QtWidgets.QMainWindow):
                     action.setEnabled(False)
         self.setDirty()
 
+    def loadAltLabels(self):
+        
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,use_alt_labels=True)        
+        
     def mergeAllRectangles(self):
         
         merge_result = self.canvas.mergeAllRectangles()
         if merge_result is None:
-            print('No shapes merged')
+            # print('No shapes merged')
             return
         
         deleted_shapes = merge_result[0]
@@ -2146,14 +2167,13 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.remLabels(deleted_shapes)
         self.loadShapes([new_shape])
-        print(self.canvas.shapes)
         self.setDirty()
         
     def keepSmallestRectangle(self):
         
         deleted_shapes = self.canvas.keepSmallestRectangle()
         if deleted_shapes is None:
-            print('No shapes removed')
+            # print('No shapes removed')
             return
         
         self.remLabels(deleted_shapes)

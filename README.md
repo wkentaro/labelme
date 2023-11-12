@@ -21,13 +21,15 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 * Shift/ctrl + up/down/left right move the upper-left and lower-right borders of a selected
   rectangle.
 
-* PageUp and PageDown select the previous/next image, in addition to the default A/D shortcuts.  This is useful when you're moving really fast, and you want to switch hands for the next/prev action.
+* PageUp and PageDown select the previous/next image, in addition to the default A/D shortcuts.  This is useful when you're moving really fast, and you want to switch hands for the next/prev action. (This turned out to be unnecessary, I just didn't know you could already map multiple shortcuts to the same action.  Now I know.  But pgup/pgdn are still hard-coded in my fork.)
 
 * The save action is enabled by default (so we can save images with no boxes)
 
-* A new action to merge all shapes in an image into one rectangle that's the union of the current shapes (useful when an object has been split into multiple overlapping objects)
+* A new action (default M) to merge all shapes in an image into one rectangle that's the union of the current shapes (useful when an object has been split into multiple overlapping objects)
 
-* A new action to keep only the smallest rectangle
+* A new action (default S) to keep only the smallest rectangle
+
+* A new action (default L) to load labels from image_file.alt.json, instead of image_file.json, typically used to load a version of the pregenerated labels that uses a lower confidence threshold
 
 * A new field ("saved_by_labelme") is written to the output on every save, and saving happens every time you change images; together, these allow us to confirm that an image has been reviewed, even if no changes were made.
 
@@ -39,7 +41,9 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * Command-line argument to resume from the last image you saved
 
-* Customizable line width, including a command line option --linewidth
+* Customizable line width, including a command line option --linewidth, because when paging through images at five images per second, it's really helpful to have huge, bright boxes.
+
+* ...but thin boxes and lower opacity are helpful when doing fine adjustment, so the selected box has a thin line and reduced opacity.
 
 * Changes to the defaults that make it faster for cases where you're mostly just confirming boxes: a brighter color for the "animal" class, auto-save by default, don't save image binary data to .json by default
 
@@ -91,6 +95,7 @@ sudo apt install libxcb-xinerama0 libqt5x11extras5
 ## Reminders of keyboard shortcuts I use
 
 * A,D (previous/next)
+* L (load the alternative annotation file for this image)
 * M (merge all rectangles into one rectangle that's the union of everything)
 * S (keep only the smallest rectangle)
 * PgUp,PgDn (previous/next)

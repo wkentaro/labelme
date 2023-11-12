@@ -15,7 +15,7 @@ from labelme.config import global_properties
 DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)  # bf hovering
 DEFAULT_FILL_COLOR = QtGui.QColor(0, 255, 0, 128)  # hovering
 DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
-DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 155)  # selected
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 50)  # selected
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
@@ -186,7 +186,10 @@ class Shape(object):
             pen = QtGui.QPen(color)
             # Try using integer sizes for smoother drawing(?)
             # pen.setWidth(max(1, int(round(2.0 / self.scale))))
-            pen.setWidth(global_properties['line_width'])
+            line_width = global_properties['line_width']
+            if self.selected:
+                line_width = 2
+            pen.setWidth(line_width)
             painter.setPen(pen)
 
             line_path = QtGui.QPainterPath()

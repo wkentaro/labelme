@@ -630,23 +630,29 @@ class Canvas(QtWidgets.QWidget):
         shape.moveVertexBy(index, pos - point)
 
     def boundedMoveShapes(self, shapes, pos, iVertex=None):
-        if self.outOfPixmap(pos):
-            return False  # No need to move
-        o1 = pos + self.offsets[0]
-        if self.outOfPixmap(o1):
-            pos -= QtCore.QPointF(min(0, o1.x()), min(0, o1.y()))
-        o2 = pos + self.offsets[1]
-        if self.outOfPixmap(o2):
-            pos += QtCore.QPointF(
-                min(0, self.pixmap.width() - o2.x()),
-                min(0, self.pixmap.height() - o2.y()),
-            )
-        # XXX: The next line tracks the new position of the cursor
-        # relative to the shape, but also results in making it
-        # a bit "shaky" when nearing the border and allows it to
-        # go outside of the shape's area for some reason.
-        # self.calculateOffsets(self.selectedShapes, pos)
-        dp = pos - self.prevPoint
+        if shapes is None or len(shapes) == 0:
+            print('no shapes selected')
+            return
+        if iVertex is not None:
+            dp = pos
+        else:
+            if self.outOfPixmap(pos):
+                 return False  # No need to move
+            o1 = pos + self.offsets[0]
+            if self.outOfPixmap(o1):
+                pos -= QtCore.QPointF(min(0, o1.x()), min(0, o1.y()))
+            o2 = pos + self.offsets[1]
+            if self.outOfPixmap(o2):
+                pos += QtCore.QPointF(
+                    min(0, self.pixmap.width() - o2.x()),
+                    min(0, self.pixmap.height() - o2.y()),
+                )
+            # XXX: The next line tracks the new position of the cursor
+            # relative to the shape, but also results in making it
+            # a bit "shaky" when nearing the border and allows it to
+            # go outside of the shape's area for some reason.
+            # self.calculateOffsets(self.selectedShapes, pos)
+            dp = pos - self.prevPoint
         if dp:
             for shape in shapes:
                 if iVertex is not None:
@@ -1028,7 +1034,7 @@ class Canvas(QtWidgets.QWidget):
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
 
-    def moveByKeyboard(self, offset,ev=None):
+    def moveByKeyboard(self, offset, ev=None):
         if self.selectedShapes:
             iVertex = None
             if ev is not None:
@@ -1040,15 +1046,18 @@ class Canvas(QtWidgets.QWidget):
                     iVertex = 0
                 elif is_control_pressed:
                     iVertex = 1
-            self.boundedMoveShapes(
-                self.selectedShapes, self.prevPoint + offset,iVertex
-            )
+            if iVertex is None:
+                self.boundedMoveShapes(self.selectedShapes, self.prevPoint + offset,None)
+            else:
+                self.boundedMoveShapes(self.selectedShapes,offset,iVertex)
             self.repaint()
             self.movingShape = True
 
     def keyPressEvent(self, ev):        
+        
         modifiers = ev.modifiers()
         key = ev.key()
+        
         if self.drawing():
             if key == QtCore.Qt.Key_Escape and self.current:
                 self.current = None
@@ -1058,7 +1067,13 @@ class Canvas(QtWidgets.QWidget):
                 self.finalise()
             elif modifiers == QtCore.Qt.AltModifier:
                 self.snapping = False
-        elif self.editing():
+        
+        # elif self.editing():
+        # 
+        # Move/fine-adjust regardless of whether we're in editing mode
+        
+        if True:
+            
             modifiers = ev.modifiers()
             is_alt_pressed = ev.modifiers() & QtCore.Qt.AltModifier
             
