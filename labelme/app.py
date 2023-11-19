@@ -438,10 +438,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self.keepSmallestRectangle,
             shortcuts["keep_smallest_rectangle"],
             "objects",
-            self.tr("Keep smallest rectangles"),
+            self.tr("Keep smallest rectangle"),
+            enabled=True,
+        )        
+        largest = action(
+            self.tr("Keep Largest Rectangle"),
+            self.keepLargestRectangle,
+            shortcuts["keep_largest_rectangle"],
+            "objects",
+            self.tr("Keep largest rectangle"),
+            enabled=True,
+        )        
+        keepSelected = action(
+            self.tr("Keep Selected Polygons"),
+            self.keepSelectedPolygons,
+            shortcuts["keep_selected_polygons"],
+            "objects",
+            self.tr("Keep selected polygons"),
             enabled=True,
         )
-        
         selectAllPolygons = action(
             self.tr("Select All Polygons"),
             self.selectAllPolygons,
@@ -665,8 +680,10 @@ class MainWindow(QtWidgets.QMainWindow):
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             merge=merge,
+            keep=keepSelected,
             loadAltLabels=loadAltLabels,
             smallest=smallest,
+            largest=largest,
             edit=edit,
             duplicate=duplicate,
             selectAllPolygons=selectAllPolygons,
@@ -725,8 +742,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 paste,
                 delete,
                 merge,
+                keepSelected,
                 loadAltLabels,
                 smallest,
+                largest,
                 undo,
                 undoLastPoint,
                 removePoint,
@@ -853,8 +872,10 @@ class MainWindow(QtWidgets.QMainWindow):
             paste,
             delete,
             merge,
+            keepSelected,
             loadAltLabels,
             smallest,
+            largest,
             undo,
             brightnessContrast,
             None,
@@ -1657,8 +1678,15 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         label_file = osp.splitext(filename)[0] + ".json"
         if use_alt_labels:
-            label_file = osp.splitext(filename)[0] + ".alt.json"    
-            print('Loading from alt file {}'.format(label_file))
+            alt_label_file = osp.splitext(filename)[0] + ".alt.json"    
+            print('Replacing label file with alt file {}:'.format(alt_label_file))
+            import json
+            with open(alt_label_file,'r') as f:
+                d = json.load(f)
+                for k in d:
+                    print('{}: {}'.format(k,d[k]))
+            import shutil
+            shutil.copyfile(alt_label_file,label_file)
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
             label_file = osp.join(self.output_dir, label_file_without_path)
@@ -2169,17 +2197,33 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loadShapes([new_shape])
         self.setDirty()
         
+    def keepSelectedPolygons(self):
+        
+        deleted_shapes = self.canvas.keepSelected()
+        if deleted_shapes is None:
+            return
+        
+        self.remLabels(deleted_shapes)
+        self.setDirty()
+                
     def keepSmallestRectangle(self):
         
         deleted_shapes = self.canvas.keepSmallestRectangle()
         if deleted_shapes is None:
-            # print('No shapes removed')
             return
         
         self.remLabels(deleted_shapes)
-        print(self.canvas.shapes)
         self.setDirty()
             
+    def keepLargestRectangle(self):
+        
+        deleted_shapes = self.canvas.keepLargestRectangle()
+        if deleted_shapes is None:
+            return
+        
+        self.remLabels(deleted_shapes)
+        self.setDirty()
+    
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(

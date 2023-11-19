@@ -25,7 +25,11 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * The save action is enabled by default (so we can save images with no boxes)
 
+* A new action (default K) to keep only the selected polygons
+
 * A new action (default M) to merge all shapes in an image into one rectangle that's the union of the current shapes (useful when an object has been split into multiple overlapping objects)
+
+* A new action (default B) to keep only the largest ("*B*iggest") rectangle
 
 * A new action (default S) to keep only the smallest rectangle
 
@@ -97,6 +101,8 @@ sudo apt install libxcb-xinerama0 libqt5x11extras5
 * A,D (previous/next)
 * L (load the alternative annotation file for this image)
 * M (merge all rectangles into one rectangle that's the union of everything)
+* K (keep only selected polygons)
+* B (keep only the largest ("B" for "biggest") rectangle)
 * S (keep only the smallest rectangle)
 * PgUp,PgDn (previous/next)
 * Ctrl-R (create rectangle mode)

@@ -107,6 +107,8 @@ shortcuts:
   merge_all_rectangles: M
   load_alt_labels: L
   keep_smallest_rectangle: S
+  keep_largest_rectangle: B
+  keep_selected_polygons: K
   duplicate_polygon: Ctrl+D
   select_all_polygons: Ctrl+A
   copy_polygon: Ctrl+C

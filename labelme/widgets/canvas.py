@@ -709,7 +709,45 @@ class Canvas(QtWidgets.QWidget):
         
         return shapes_to_delete
         
+    def keepLargestRectangle(self):    
         
+        if self.shapes is None:
+            return None
+        if len(self.shapes) <= 1:
+            return None
+        
+        max_area = None
+        max_area_index = None
+        
+        for i_shape,shape in enumerate(self.shapes):
+            if shape.shape_type != 'rectangle':
+                print('Can\'t perform largest-rect operation with non-rectangle shapes')
+                return None
+            assert len(shape.points) == 2
+            dx = abs(shape.points[1].x()-shape.points[0].x())
+            dy = abs(shape.points[1].y()-shape.points[0].y())
+            area = dx*dy
+            if max_area is None or area > max_area:
+                max_area = area
+                max_area_index = i_shape
+        
+        assert max_area is not None
+        
+        shapes_to_delete = []
+        for i_shape,shape in enumerate(self.shapes):
+            if i_shape != max_area_index:
+                shapes_to_delete.append(shape)
+                
+        assert len(shapes_to_delete) == len(self.shapes) - 1
+                
+        for shape in shapes_to_delete:
+            self.shapes.remove(shape)            
+        self.storeShapes()
+        self.selectedShapes = []
+        self.update()
+        
+        return shapes_to_delete
+    
     def mergeAllRectangles(self):
         
         if self.shapes is None:
@@ -770,6 +808,22 @@ class Canvas(QtWidgets.QWidget):
             self.storeShapes()
             self.selectedShapes = []
             self.update()
+        return deleted_shapes
+
+    def keepSelected(self):
+        deleted_shapes = []
+        kept_shapes = []        
+        if self.selectedShapes:
+            for shape in self.shapes:
+                if shape in self.selectedShapes:
+                    kept_shapes.append(shape)
+                else:
+                    deleted_shapes.append(shape)
+            self.storeShapes()
+            self.selectedShapes = kept_shapes
+            self.update()
+            for shape in deleted_shapes:
+                self.shapes.remove(shape)                
         return deleted_shapes
 
     def deleteShape(self, shape):
