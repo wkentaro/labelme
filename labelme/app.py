@@ -470,7 +470,6 @@ class MainWindow(QtWidgets.QMainWindow):
         zoomBoxLayout.addWidget(self.zoomWidget)
         zoomLabel = QtWidgets.QLabel("Zoom")
         zoomLabel.setAlignment(Qt.AlignCenter)
-        zoomLabel.setFont(QtGui.QFont(None, 10))
         zoomBoxLayout.addWidget(zoomLabel)
         zoom.setDefaultWidget(QtWidgets.QWidget())
         zoom.defaultWidget().setLayout(zoomBoxLayout)
@@ -766,7 +765,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Model"))
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
-        selectAiModelLabel.setFont(QtGui.QFont(None, 10))
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
 
         self.tools = self.toolbar("Tools")
