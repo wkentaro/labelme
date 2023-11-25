@@ -467,10 +467,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         zoom = QtWidgets.QWidgetAction(self)
         zoomBoxLayout = QtWidgets.QVBoxLayout()
-        zoomBoxLayout.addWidget(self.zoomWidget)
         zoomLabel = QtWidgets.QLabel("Zoom")
         zoomLabel.setAlignment(Qt.AlignCenter)
         zoomBoxLayout.addWidget(zoomLabel)
+        zoomBoxLayout.addWidget(self.zoomWidget)
         zoom.setDefaultWidget(QtWidgets.QWidget())
         zoom.defaultWidget().setLayout(zoomBoxLayout)
         self.zoomWidget.setWhatsThis(
@@ -751,6 +751,11 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel = QtWidgets.QWidgetAction(self)
         selectAiModel.setDefaultWidget(QtWidgets.QWidget())
         selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
+        #
+        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Model"))
+        selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
+        selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
+        #
         self._selectAiModelComboBox = QtWidgets.QComboBox()
         selectAiModel.defaultWidget().layout().addWidget(
             self._selectAiModelComboBox
@@ -763,9 +768,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 name=self._selectAiModelComboBox.currentText()
             )
         )
-        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Model"))
-        selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
-        selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
 
         self.tools = self.toolbar("Tools")
         self.actions.tool = (
@@ -779,14 +781,12 @@ class MainWindow(QtWidgets.QMainWindow):
             createMode,
             editMode,
             duplicate,
-            copy,
-            paste,
             delete,
             undo,
             brightnessContrast,
             None,
-            zoom,
             fitWidth,
+            zoom,
             None,
             selectAiModel,
         )
