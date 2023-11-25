@@ -228,7 +228,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Open image or label file"),
         )
         opendir = action(
-            self.tr("&Open Dir"),
+            self.tr("Open Dir"),
             self.openDirDialog,
             shortcuts["open_dir"],
             "open",
