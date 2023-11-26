@@ -785,7 +785,7 @@ class MainWindow(QtWidgets.QMainWindow):
             undo,
             brightnessContrast,
             None,
-            fitWidth,
+            fitWindow,
             zoom,
             None,
             selectAiModel,
