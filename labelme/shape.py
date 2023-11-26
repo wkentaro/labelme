@@ -12,14 +12,6 @@ import labelme.utils
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)  # bf hovering
-DEFAULT_FILL_COLOR = QtGui.QColor(0, 255, 0, 128)  # hovering
-DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
-DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 255, 0, 155)  # selected
-DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)  # hovering
-DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
-
-
 class Shape(object):
 
     # Render handles as squares
@@ -35,12 +27,12 @@ class Shape(object):
     NEAR_VERTEX = 1
 
     # The following class variables influence the drawing of all shape objects.
-    line_color = DEFAULT_LINE_COLOR
-    fill_color = DEFAULT_FILL_COLOR
-    select_line_color = DEFAULT_SELECT_LINE_COLOR
-    select_fill_color = DEFAULT_SELECT_FILL_COLOR
-    vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
-    hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
+    line_color = None
+    fill_color = None
+    select_line_color = None
+    select_fill_color = None
+    vertex_fill_color = None
+    hvertex_fill_color = None
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
