@@ -1,4 +1,5 @@
 import gdown
+import imgviz
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -60,6 +61,7 @@ class Canvas(QtWidgets.QWidget):
                 "point": False,
                 "linestrip": False,
                 "ai_polygon": False,
+                "ai_mask": False,
             },
         )
         super(Canvas, self).__init__(*args, **kwargs)
@@ -125,6 +127,7 @@ class Canvas(QtWidgets.QWidget):
             "point",
             "linestrip",
             "ai_polygon",
+            "ai_mask",
         ]:
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
@@ -249,7 +252,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            if self.createMode == "ai_polygon":
+            if self.createMode in ["ai_polygon", "ai_mask"]:
                 self.line.shape_type = "points"
             else:
                 self.line.shape_type = self.createMode
@@ -277,7 +280,7 @@ class Canvas(QtWidgets.QWidget):
             if self.createMode in ["polygon", "linestrip"]:
                 self.line.points = [self.current[-1], pos]
                 self.line.point_labels = [1, 1]
-            elif self.createMode == "ai_polygon":
+            elif self.createMode in ["ai_polygon", "ai_mask"]:
                 self.line.points = [self.current.points[-1], pos]
                 self.line.point_labels = [
                     self.current.point_labels[-1],
@@ -434,7 +437,7 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
-                    elif self.createMode == "ai_polygon":
+                    elif self.createMode in ["ai_polygon", "ai_mask"]:
                         self.current.addPoint(
                             self.line.points[1],
                             label=self.line.point_labels[1],
@@ -449,7 +452,7 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(
                         shape_type="points"
-                        if self.createMode == "ai_polygon"
+                        if self.createMode in ["ai_polygon", "ai_mask"]
                         else self.createMode
                     )
                     self.current.addPoint(
@@ -458,7 +461,7 @@ class Canvas(QtWidgets.QWidget):
                     if self.createMode == "point":
                         self.finalise()
                     elif (
-                        self.createMode == "ai_polygon"
+                        self.createMode in ["ai_polygon", "ai_mask"]
                         and ev.modifiers() & QtCore.Qt.ControlModifier
                     ):
                         self.finalise()
@@ -467,7 +470,7 @@ class Canvas(QtWidgets.QWidget):
                             self.current.shape_type = "circle"
                         self.line.points = [pos, pos]
                         if (
-                            self.createMode == "ai_polygon"
+                            self.createMode in ["ai_polygon", "ai_mask"]
                             and is_shift_pressed
                         ):
                             self.line.point_labels = [0, 0]
@@ -569,7 +572,7 @@ class Canvas(QtWidgets.QWidget):
 
         if (
             self.createMode == "polygon" and self.canCloseShape()
-        ) or self.createMode == "ai_polygon":
+        ) or self.createMode in ["ai_polygon", "ai_mask"]:
             self.finalise()
 
     def selectShapes(self, shapes):
@@ -770,7 +773,6 @@ class Canvas(QtWidgets.QWidget):
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
-            drawing_shape.selected = True
             points = self._ai_model.predict_polygon_from_points(
                 points=[
                     [point.x(), point.y()] for point in drawing_shape.points
@@ -779,14 +781,38 @@ class Canvas(QtWidgets.QWidget):
             )
             if len(points) > 2:
                 drawing_shape.setShapeRefined(
+                    shape_type="polygon",
                     points=[
                         QtCore.QPointF(point[0], point[1]) for point in points
                     ],
                     point_labels=[1] * len(points),
-                    shape_type="polygon",
                 )
                 drawing_shape.fill = self.fillDrawing()
+                drawing_shape.selected = True
                 drawing_shape.paint(p)
+        elif self.createMode == "ai_mask" and self.current is not None:
+            drawing_shape = self.current.copy()
+            drawing_shape.addPoint(
+                point=self.line.points[1],
+                label=self.line.point_labels[1],
+            )
+            mask = self._ai_model.predict_mask_from_points(
+                points=[
+                    [point.x(), point.y()] for point in drawing_shape.points
+                ],
+                point_labels=drawing_shape.point_labels,
+            )
+            y1, x1, y2, x2 = imgviz.instances.mask_to_bbox([mask])[0].astype(
+                int
+            )
+            drawing_shape.setShapeRefined(
+                shape_type="mask",
+                points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
+                point_labels=[1, 1],
+                mask=mask[y1:y2, x1:x2],
+            )
+            drawing_shape.selected = True
+            drawing_shape.paint(p)
 
         p.end()
 
@@ -824,6 +850,24 @@ class Canvas(QtWidgets.QWidget):
                 ],
                 point_labels=[1] * len(points),
                 shape_type="polygon",
+            )
+        elif self.createMode == "ai_mask":
+            # convert points to mask by an AI model
+            assert self.current.shape_type == "points"
+            mask = self._ai_model.predict_mask_from_points(
+                points=[
+                    [point.x(), point.y()] for point in self.current.points
+                ],
+                point_labels=self.current.point_labels,
+            )
+            y1, x1, y2, x2 = imgviz.instances.mask_to_bbox([mask])[0].astype(
+                int
+            )
+            self.current.setShapeRefined(
+                shape_type="mask",
+                points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
+                point_labels=[1, 1],
+                mask=mask[y1:y2, x1:x2],
             )
         self.current.close()
 
