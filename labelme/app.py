@@ -383,6 +383,21 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.canvas.createMode == "ai_polygon"
             else None
         )
+        createAiMaskMode = action(
+            self.tr("Create AI-Mask"),
+            lambda: self.toggleDrawMode(False, createMode="ai_mask"),
+            None,
+            "objects",
+            self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
+            enabled=False,
+        )
+        createAiMaskMode.changed.connect(
+            lambda: self.canvas.initializeAiModel(
+                name=self._selectAiModelComboBox.currentText()
+            )
+            if self.canvas.createMode == "ai_mask"
+            else None
+        )
         editMode = action(
             self.tr("Edit Polygons"),
             self.setEditMode,
@@ -627,6 +642,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createPointMode=createPointMode,
             createLineStripMode=createLineStripMode,
             createAiPolygonMode=createAiPolygonMode,
+            createAiMaskMode=createAiMaskMode,
             zoom=zoom,
             zoomIn=zoomIn,
             zoomOut=zoomOut,
@@ -662,6 +678,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 createAiPolygonMode,
+                createAiMaskMode,
                 editMode,
                 edit,
                 duplicate,
@@ -681,6 +698,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 createAiPolygonMode,
+                createAiMaskMode,
                 editMode,
                 brightnessContrast,
             ),
@@ -773,7 +791,7 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.canvas.initializeAiModel(
                 name=self._selectAiModelComboBox.currentText()
             )
-            if self.canvas.createMode == "ai_polygon"
+            if self.canvas.createMode in ["ai_polygon", "ai_mask"]
             else None
         )
 
@@ -900,6 +918,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createPointMode,
             self.actions.createLineStripMode,
             self.actions.createAiPolygonMode,
+            self.actions.createAiMaskMode,
             self.actions.editMode,
         )
         utils.addActions(self.menus.edit, actions + self.actions.editMenu)
@@ -932,6 +951,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.createPointMode.setEnabled(True)
         self.actions.createLineStripMode.setEnabled(True)
         self.actions.createAiPolygonMode.setEnabled(True)
+        self.actions.createAiMaskMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = "{} - {}".format(title, self.filename)
@@ -1008,6 +1028,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "line": self.actions.createLineMode,
             "linestrip": self.actions.createLineStripMode,
             "ai_polygon": self.actions.createAiPolygonMode,
+            "ai_mask": self.actions.createAiMaskMode,
         }
 
         self.canvas.setEditing(edit)
@@ -1232,6 +1253,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape_type=shape_type,
                 group_id=group_id,
                 description=description,
+                mask=shape["mask"],
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1271,6 +1293,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     description=s.description,
                     shape_type=s.shape_type,
                     flags=s.flags,
+                    mask=None
+                    if s.mask is None
+                    else utils.img_arr_to_b64(s.mask),
                 )
             )
             return data
