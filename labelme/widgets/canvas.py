@@ -770,6 +770,7 @@ class Canvas(QtWidgets.QWidget):
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
+            drawing_shape.selected = True
             points = self._ai_model.predict_polygon_from_points(
                 points=[
                     [point.x(), point.y()] for point in drawing_shape.points
