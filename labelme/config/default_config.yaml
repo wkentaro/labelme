@@ -26,7 +26,7 @@ shape:
   vertex_fill_color: [0, 255, 0, 255]
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
-  select_fill_color: [0, 255, 0, 155]
+  select_fill_color: [0, 255, 0, 64]
   hvertex_fill_color: [255, 255, 255, 255]
   point_size: 8
 
