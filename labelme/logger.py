@@ -55,7 +55,7 @@ logger.setLevel(logging.INFO)
 
 stream_handler = logging.StreamHandler(sys.stderr)
 handler_format = ColoredFormatter(
-    "[%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s"
+    "%(asctime)s [%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s"
 )
 stream_handler.setFormatter(handler_format)
 
