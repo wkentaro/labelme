@@ -35,10 +35,7 @@ def img_pil_to_data(img_pil):
 
 def img_arr_to_b64(img_arr):
     img_data = img_arr_to_data(img_arr)
-    if hasattr(base64, "encodebytes"):
-        img_b64 = base64.encodebytes(img_data)
-    else:
-        img_b64 = base64.encodestring(img_data)
+    img_b64 = base64.b64encode(img_data).decode("utf-8")
     return img_b64
 
 
