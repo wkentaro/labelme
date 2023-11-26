@@ -34,15 +34,18 @@ def img_pil_to_data(img_pil):
 
 
 def img_arr_to_b64(img_arr):
-    img_pil = PIL.Image.fromarray(img_arr)
-    f = io.BytesIO()
-    img_pil.save(f, format="PNG")
-    img_bin = f.getvalue()
+    img_data = img_arr_to_data(img_arr)
     if hasattr(base64, "encodebytes"):
-        img_b64 = base64.encodebytes(img_bin)
+        img_b64 = base64.encodebytes(img_data)
     else:
-        img_b64 = base64.encodestring(img_bin)
+        img_b64 = base64.encodestring(img_data)
     return img_b64
+
+
+def img_arr_to_data(img_arr):
+    img_pil = PIL.Image.fromarray(img_arr)
+    img_data = img_pil_to_data(img_pil)
+    return img_data
 
 
 def img_data_to_png_data(img_data):
