@@ -12,16 +12,6 @@ from labelme import utils
 
 
 def main():
-    logger.warning(
-        "DEPRECATED: This script will be removed in the near future. "
-        "Please use `labelme_export_json` instead."
-    )
-    logger.warning(
-        "NOTE: This script is aimed to demonstrate how to convert a JSON file "
-        "to a single image dataset. so it won't handle multiple JSON files to "
-        "generate a real-use dataset."
-    )
-
     parser = argparse.ArgumentParser()
     parser.add_argument("json_file")
     parser.add_argument("-o", "--out", default=None)
@@ -30,7 +20,7 @@ def main():
     json_file = args.json_file
 
     if args.out is None:
-        out_dir = osp.basename(json_file).replace(".", "_")
+        out_dir = osp.splitext(osp.basename(json_file))[0]
         out_dir = osp.join(osp.dirname(json_file), out_dir)
     else:
         out_dir = args.out

@@ -7,29 +7,50 @@ on:
 
 jobs:
   release:
+    if: startsWith(github.ref, 'refs/tags/')
+
     runs-on: ubuntu-latest
 
     steps:
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          configurationJson: |
+            {
+                "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>\n\nIf you find this project useful, please consider [sponsoring](https://github.com/sponsors/wkentaro) its development.",
+                "categories": [
+                    {
+                        "title": "## 🚀 Features",
+                        "labels": ["feature"]
+                    },
+                    {
+                        "title": "## 🐛 Fixes",
+                        "labels": ["fix"]
+                    },
+                    {
+                        "title": "## 💬 Other",
+                        "labels": ["other"]
+                    }
+                ]
+            }
 
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        draft: false
-        prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: mikepenz/action-gh-release@v0.2.0-a03
+        with:
+          body: ${{steps.github_release.outputs.changelog}}
 
-    - name: Create release url file
-      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+      - name: Create release url file
+        run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
 
-    - name: Save release url file for publish
-      uses: actions/upload-artifact@v1
-      with:
-        name: release_url
-        path: release_url.txt
+      - name: Save release url file for publish
+        uses: actions/upload-artifact@v1
+        with:
+          name: release_url
+          path: release_url.txt
 
   publish:
     needs: [release]

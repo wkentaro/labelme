@@ -22,7 +22,7 @@ label_colors: null
 shape:
   # drawing
   line_color: [0, 255, 0, 128]
-  fill_color: [0, 255, 0, 0]  # transparent
+  fill_color: [0, 0, 0, 64]
   vertex_fill_color: [0, 255, 0, 255]
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
@@ -62,6 +62,7 @@ fit_to_content:
 # canvas
 epsilon: 10.0
 canvas:
+  fill_drawing: true
   # None: do nothing
   # close: close polygon
   double_click: close
@@ -75,6 +76,7 @@ canvas:
     line: false
     point: false
     linestrip: false
+    ai_polygon: false
 
 shortcuts:
   close: Ctrl+W

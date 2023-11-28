@@ -23,13 +23,16 @@ def get_version():
 
 def get_install_requires():
     install_requires = [
+        "gdown",
         "imgviz>=0.11",
         "matplotlib",
         "natsort>=7.1.0",
         "numpy",
+        "onnxruntime>=1.14.1",
         "Pillow>=2.8",
         "PyYAML",
         "qtpy!=1.11.2",
+        "scikit-image",
         "termcolor",
     ]
 
@@ -148,6 +151,7 @@ def main():
                 "labelme_draw_json=labelme.cli.draw_json:main",
                 "labelme_draw_label_png=labelme.cli.draw_label_png:main",
                 "labelme_json_to_dataset=labelme.cli.json_to_dataset:main",
+                "labelme_export_json=labelme.cli.export_json:main",
                 "labelme_on_docker=labelme.cli.on_docker:main",
             ],
         },

@@ -65,7 +65,7 @@ jobs:
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        flake8 .
+        flake8 labelme/
 
     - name: Black
       shell: bash -l {0}
@@ -115,8 +115,6 @@ jobs:
       if: matrix.PYTEST_QT_API == 'pyqt5'
       run: |
         # Build the standalone executable
-        pip install PyQt5 -I --use-feature=2020-resolver  # https://stackoverflow.com/a/68784578
-        pip install 'matplotlib<3.3'
         pip install pyinstaller
         pyinstaller labelme.spec
         dist/labelme --version
