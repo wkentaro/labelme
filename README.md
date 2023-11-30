@@ -13,7 +13,7 @@
 </div>
 
 <div align="center">
-  <a href="#starter-pack"><b>Starter Pack</b></a>
+  <a href="#starter-bundle"><b>Starter Bundle</b></a>
   | <a href="#installation"><b>Installation</b></a>
   | <a href="#usage"><b>Usage</b></a>
   | <a href="#examples"><b>Examples</b></a>
@@ -52,9 +52,9 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
 
 
-## Starter Pack
+## Starter Bundle
 
-If you're new to Labelme, you can get started with [Labelme Starter Pack](https://wkentaro.gumroad.com/l/labelmeapp) (FREE), which contains:
+If you're new to Labelme, you can get started with [Starter Bundle](https://labelme.gumroad.com/l/starter-bundle) (FREE), which contains:
 
 - **Installation guides** for all platforms: Windows, macOS, and Linux 💻
 - **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
@@ -174,7 +174,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 ### Dataset examples
 
-* [Object Detection Dataset](https://wkentaro.gumroad.com/l/labelmedataset-example-object-detection): 20 object categories and 1.7K images
+* [Object Detection Dataset](https://labelme.gumroad.com/l/object-detection-dataset): 20 object categories and 1.7K images
 
 ### Annotation examples
 
