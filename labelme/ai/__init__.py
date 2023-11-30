@@ -1,6 +1,7 @@
 import collections
 
 from .models.segment_anything import SegmentAnythingModel  # NOQA
+from .models.grounding_dino import GroundingDINOModel  # NOQA
 
 
 Model = collections.namedtuple(
