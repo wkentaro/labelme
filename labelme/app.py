@@ -188,6 +188,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
+        self.canvas.shapeRotated.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
@@ -457,6 +458,13 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Show all polygons"),
             enabled=False,
         )
+        hideOrShow = action(
+            self.tr("&Show or Hide\n Polygons"),
+            self.reversePolygons,
+            icon="eye",
+            tip=self.tr("Hide or show all polygons"),
+            enabled=False,
+        )
 
         help = action(
             self.tr("&Tutorial"),
@@ -655,6 +663,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 createAiPolygonMode,
+                hideOrShow,
                 editMode,
                 edit,
                 duplicate,
@@ -674,6 +683,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createPointMode,
                 createLineStripMode,
                 createAiPolygonMode,
+                hideOrShow,
                 editMode,
                 brightnessContrast,
             ),
@@ -1536,6 +1546,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def togglePolygons(self, value):
         for item in self.labelList:
             item.setCheckState(Qt.Checked if value else Qt.Unchecked)
+
+    def reversePolygons(self):
+        for item in self.labelList:
+            item.setCheckState(Qt.Checked if item.checkState() == Qt.Unchecked else Qt.Unchecked)
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
