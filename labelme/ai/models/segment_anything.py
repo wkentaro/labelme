@@ -170,9 +170,10 @@ def _compute_polygon_from_points(
 
     contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
     contour = max(contours, key=_get_contour_length)
+    POLYGON_APPROX_TOLERANCE = 0.004
     polygon = skimage.measure.approximate_polygon(
         coords=contour,
-        tolerance=np.ptp(contour, axis=0).max() / 100,
+        tolerance=np.ptp(contour, axis=0).max() * POLYGON_APPROX_TOLERANCE,
     )
     polygon = np.clip(polygon, (0, 0), (mask.shape[0] - 1, mask.shape[1] - 1))
     polygon = polygon[:-1]  # drop last point that is duplicate of first point
