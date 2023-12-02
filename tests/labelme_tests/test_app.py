@@ -55,8 +55,7 @@ def test_MainWindow_open_json(qtbot):
         win.close()
 
 
-@pytest.mark.gui
-def test_MainWindow_open_dir(qtbot):
+def create_MainWindow_with_directory(qtbot):
     directory = osp.join(data_dir, "raw")
     win = labelme.app.MainWindow(filename=directory)
     qtbot.addWidget(win)
@@ -66,13 +65,13 @@ def test_MainWindow_open_dir(qtbot):
 
 @pytest.mark.gui
 def test_MainWindow_openNextImg(qtbot):
-    win = test_MainWindow_open_dir(qtbot)
+    win = create_MainWindow_with_directory(qtbot)
     win.openNextImg()
 
 
 @pytest.mark.gui
 def test_MainWindow_openPrevImg(qtbot):
-    win = test_MainWindow_open_dir(qtbot)
+    win = create_MainWindow_with_directory(qtbot)
     win.openNextImg()
 
 
