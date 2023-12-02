@@ -28,7 +28,7 @@ def get_install_requires():
         "matplotlib",
         "natsort>=7.1.0",
         "numpy",
-        "onnxruntime>=1.14.1",
+        "onnxruntime>=1.14.1,!=1.16.0",
         "Pillow>=2.8",
         "PyYAML",
         "qtpy!=1.11.2",
