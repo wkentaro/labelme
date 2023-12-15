@@ -13,12 +13,13 @@
 </div>
 
 <div align="center">
-  <a href="#installation"><b>Installation</b></a> |
-  <a href="#usage"><b>Usage</b></a> |
-  <a href="https://github.com/wkentaro/labelme/tree/main/examples/tutorial#tutorial-single-image-example"><b>Tutorial</b></a> |
-  <a href="https://github.com/wkentaro/labelme/tree/main/examples"><b>Examples</b></a> |
-  <a href="https://github.com/wkentaro/labelme/discussions"><b>Discussions</b></a> |
-  <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a>
+  <a href="#starter-bundle"><b>Starter Bundle</b></a>
+  | <a href="#installation"><b>Installation</b></a>
+  | <a href="#usage"><b>Usage</b></a>
+  | <a href="#examples"><b>Examples</b></a>
+  | <a href="https://x.com/labelmeai"><b>𝕏 (@labelmeai)</b></a>
+  <!-- | <a href="https://github.com/wkentaro/labelme/discussions"><b>Community</b></a> -->
+  <!-- | <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a> -->
 </div>
 
 <br/>
@@ -32,7 +33,7 @@
 Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
-<img src="examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassPNG/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectPNG/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg" width="19%" />  
+<img src="examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClass/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObject/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg" width="19%" />  
 <i>VOC dataset example of instance segmentation.</i>
 
 <img src="examples/semantic_segmentation/.readme/annotation.jpg" width="30%" /> <img src="examples/bbox_detection/.readme/annotation.jpg" width="30%" /> <img src="examples/classification/.readme/annotation_cat.jpg" width="35%" />  
@@ -52,12 +53,21 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
 
 
+## Starter Bundle
 
-## Requirements
+If you're new to Labelme, you can get started with [Labelme Starter Bundle](https://labelme.gumroad.com/l/starter-bundle) (FREE), which contains:
 
-- Ubuntu / macOS / Windows
-- Python3
-- [PyQt5 / PySide2](http://www.riverbankcomputing.co.uk/software/pyqt/intro)
+- **Installation guides** for all platforms: Windows, macOS, and Linux 💻
+- **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
+- **A compilation of valuable resources** for further exploration 🔗.
+
+
+
+<!-- ## Requirements -->
+<!--  -->
+<!-- - Ubuntu / macOS / Windows -->
+<!-- - Python3 -->
+<!-- - [PyQt5 / PySide2](http://www.riverbankcomputing.co.uk/software/pyqt/intro) -->
 
 
 ## Installation
@@ -146,13 +156,6 @@ labelme data_annotated/  # Open directory to annotate all images in it
 labelme data_annotated/ --labels labels.txt  # specify label list with a file
 ```
 
-For more advanced usage, please refer to the examples:
-
-* [Tutorial (Single Image Example)](examples/tutorial)
-* [Semantic Segmentation Example](examples/semantic_segmentation)
-* [Instance Segmentation Example](examples/instance_segmentation)
-* [Video Annotation Example](examples/video_annotation)
-
 ### Command Line Arguments
 - `--output` specifies the location that annotations will be written to. If the location ends with .json, a single annotation will be written to this file. Only one image can be annotated if a location is specified with .json. If the location does not end with .json, the program will assume it is a directory. Annotations will be stored in this directory with a name that corresponds to the image that the annotation was made on.
 - The first time you run labelme, it will create a config file in `~/.labelmerc`. You can edit this file and the changes will be applied the next time that you launch labelme. If you would prefer to use a config file from another location, you can specify this file with the `--config` flag.
@@ -160,7 +163,7 @@ For more advanced usage, please refer to the examples:
 - Flags are assigned to an entire image. [Example](examples/classification)
 - Labels are assigned to a single polygon. [Example](examples/bbox_detection)
 
-## FAQ
+### FAQ
 
 - **How to convert JSON file to numpy array?** See [examples/tutorial](examples/tutorial#convert-to-dataset).
 - **How to load label PNG file?** See [examples/tutorial](examples/tutorial#how-to-load-label-png-file).
@@ -168,7 +171,23 @@ For more advanced usage, please refer to the examples:
 - **How to get annotations for instance segmentation?** See [examples/instance_segmentation](examples/instance_segmentation).
 
 
-## Developing
+## Examples
+
+### Dataset examples
+
+* [Object Detection Dataset](https://labelme.gumroad.com/l/object-detection-dataset): 20 object categories and 1.7K images
+
+### Annotation examples
+
+A few object categories and images:
+
+* [Image Classification](examples/image_classification)
+* [Bounding Box Detection](examples/bbox_detection)
+* [Semantic Segmentation](examples/semantic_segmentation)
+* [Instance Segmentation](examples/instance_segmentation)
+* [Video Annotation](examples/video_annotation)
+
+## How to develop
 
 ```bash
 git clone https://github.com/wkentaro/labelme.git
@@ -181,7 +200,7 @@ pip install -e .
 ```
 
 
-## How to build standalone executable
+### How to build standalone executable
 
 Below shows how to build the standalone executable on macOS, Linux and Windows.  
 
@@ -199,7 +218,7 @@ dist/labelme --version
 ```
 
 
-## How to contribute
+### How to contribute
 
 Make sure below test passes on your environment.  
 See `.github/workflows/ci.yml` for more detail.
