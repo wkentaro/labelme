@@ -359,6 +359,77 @@ class Shape(object):
                 path.lineTo(p)
         return path
 
+    def rotateCenterBreak(self, rad: float):
+        """Wrapper for `rotateCenter`.
+
+        But this will breaks the rectangle and turn the shape into
+        a polygon, therefore rotating it in "normal sense".
+
+        Notes:
+        - For points and circles, this is still useless.
+
+        Args:
+            rad (float): Angle to rotate in radian.
+        """
+        if self.shape_type == "rectangle":
+            tl = self.points[0]
+            br = self.points[1]
+            x0, y0 = tl.x(), tl.y()
+            x1, y1 = br.x(), br.y()
+            new_points = [
+                QtCore.QPointF(x0, y0),
+                QtCore.QPointF(x1, y0),
+                QtCore.QPointF(x1, y1),
+                QtCore.QPointF(x0, y1),
+            ]
+            self.points = new_points
+            self.shape_type = "polygon"
+        self.rotateCenter(rad)
+
+    def rotateCenter(self, rad: float):
+        """Rotate the shape around the center. This modifies the shape.
+
+        Notes:
+        - For points and circles this is no-op since
+          it's either useless or undesired behaviour.
+        - For rectangle it will not rotate the rectangle in normal sense.
+
+        Args:
+            rad (float): Angle to rotate in radian.
+        """
+        if self.shape_type in ["point", "circle"]:
+            return
+
+        def rotate(x, y, cx, cy):
+            cos = math.cos(rad)
+            sin = math.sin(rad)
+            # Translate
+            x = x - cx
+            y = y - cy
+
+            # Rotate
+            x_ = x * cos - y * sin
+            y_ = x * sin + y * cos
+
+            # Translate back
+            x_ = x_ + cx
+            y_ = y_ + cy
+            return x_, y_
+
+        # Calculate the center
+        cx, cy, n = 0, 0, 0
+        for pt in self.points:
+            cx = cx + pt.x()
+            cy = cy + pt.y()
+            n = n + 1
+        cx, cy = (cx / n, cy / n)
+
+        # Rotate
+        for pt in self.points:
+            x, y = rotate(pt.x(), pt.y(), cx, cy)
+            pt.setX(x)
+            pt.setY(y)
+
     def boundingRect(self):
         return self.makePath().boundingRect()
 

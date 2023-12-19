@@ -1,3 +1,9 @@
+from datetime import datetime
+from datetime import timedelta
+import math
+from threading import Thread
+import time
+
 import gdown
 import imgviz
 from qtpy import QtCore
@@ -28,6 +34,7 @@ class Canvas(QtWidgets.QWidget):
 
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
+    scrollToggleRequest = QtCore.Signal(bool)
     newShape = QtCore.Signal()
     selectionChanged = QtCore.Signal(list)
     shapeMoved = QtCore.Signal()
@@ -106,6 +113,9 @@ class Canvas(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
         self._ai_model = None
+
+        # To check if the shapes need backing up
+        self._last_rotation = datetime.now()
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -950,7 +960,7 @@ class Canvas(QtWidgets.QWidget):
             return self.scale * self.pixmap.size()
         return super(Canvas, self).minimumSizeHint()
 
-    def wheelEvent(self, ev):
+    def wheelEventMoveAround(self, ev):
         if QT5:
             mods = ev.modifiers()
             delta = ev.angleDelta()
@@ -978,6 +988,63 @@ class Canvas(QtWidgets.QWidget):
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
+
+    def wheelEventRotate(self, ev):
+        # Disable scrolling from scroll area
+        self.scrollToggleRequest.emit(False)
+
+        # Press CTRL to rotate every 10 degree
+        mods = ev.modifiers()
+        sgn = -1 if (ev.pixelDelta().y() > 0) else 1
+        if mods & QtCore.Qt.ControlModifier:
+            rad = math.radians(30) * sgn
+        else:
+            rad = math.radians(5) * sgn
+
+        # Press SHIFT to breaks rectangle
+        break_rectangle = ev.modifiers() & QtCore.Qt.ShiftModifier
+
+        # Backup if IF the there's a long enough break
+        now = datetime.now()
+        store_shape = now - self._last_rotation > timedelta(seconds=1)
+
+        # Rotate shape
+        for shape in self.selectedShapes:
+            if break_rectangle:
+                shape.rotateCenterBreak(rad)
+            else:
+                shape.rotateCenter(rad)
+
+        # Store once, otherwise set the last one to the rotated
+        # since we have just rotated it before
+        if store_shape:
+            self.storeShapes()
+        else:
+            self.shapesBackups[-1] = self.shapes
+        self.shapeMoved.emit()
+
+        # Redraw and store the last rotation point
+        self._last_rotation = datetime.now()
+        self.repaint()
+
+        # Enabled scroll again, for whatever reason
+        # enable the scroll right away does not block the scroll
+        # A sleep of 0.1 is not very noticable
+        def wait_and_enable_scroll():
+            time.sleep(0.1)
+            self.scrollToggleRequest.emit(True)
+        Thread(target=wait_and_enable_scroll).start()
+
+    def wheelEvent(self, ev):
+        """Handles mouse wheel event.
+
+        If no shapes are selected, move around.
+        If there are selected shape, rotate it.
+        """
+        if len(self.selectedShapes) > 0:
+            self.wheelEventRotate(ev)
+        else:
+            self.wheelEventMoveAround(ev)
 
     def moveByKeyboard(self, offset):
         if self.selectedShapes:
