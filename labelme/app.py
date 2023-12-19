@@ -174,6 +174,7 @@ class MainWindow(QtWidgets.QMainWindow):
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"],
             crosshair=self._config["canvas"]["crosshair"],
+            edit_label_method=self.editLabel,
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
 
