@@ -6,7 +6,7 @@ import numpy as np
 import onnxruntime
 import skimage
 
-from ...logger import logger
+from ..logger import logger
 
 from . import _utils
 

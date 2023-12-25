@@ -1,6 +1,6 @@
 import collections
 
-from .models.segment_anything import SegmentAnythingModel  # NOQA
+from .segment_anything_model import SegmentAnythingModel  # NOQA
 
 
 Model = collections.namedtuple(
