@@ -12,9 +12,7 @@ from . import _utils
 
 
 class SegmentAnythingModel:
-    def __init__(self, name, encoder_path, decoder_path):
-        self.name = name
-
+    def __init__(self, encoder_path, decoder_path):
         self._image_size = 1024
 
         self._encoder_session = onnxruntime.InferenceSession(encoder_path)
