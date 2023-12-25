@@ -30,6 +30,9 @@ shape:
   hvertex_fill_color: [255, 255, 255, 255]
   point_size: 8
 
+ai:
+  default: 'SegmentAnything (balanced)'
+
 # main
 flag_dock:
   show: true

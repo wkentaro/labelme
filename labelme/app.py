@@ -785,8 +785,17 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel.defaultWidget().layout().addWidget(
             self._selectAiModelComboBox
         )
-        self._selectAiModelComboBox.addItems([model.name for model in MODELS])
-        self._selectAiModelComboBox.setCurrentIndex(1)
+        model_names = [model.name for model in MODELS]
+        self._selectAiModelComboBox.addItems(model_names)
+        if self._config["ai"]["default"] in model_names:
+            model_index = model_names.index(self._config["ai"]["default"])
+        else:
+            logger.warning(
+                "Default AI model is not found: %r",
+                self._config["ai"]["default"],
+            )
+            model_index = 0
+        self._selectAiModelComboBox.setCurrentIndex(model_index)
         self._selectAiModelComboBox.currentIndexChanged.connect(
             lambda: self.canvas.initializeAiModel(
                 name=self._selectAiModelComboBox.currentText()
