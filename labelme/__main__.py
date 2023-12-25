@@ -27,7 +27,7 @@ def main():
     )
     parser.add_argument(
         "--logger-level",
-        default="info",
+        default="debug",
         choices=["debug", "info", "warning", "fatal", "error"],
         help="logger level",
     )
