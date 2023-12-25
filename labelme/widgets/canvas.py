@@ -1,4 +1,3 @@
-import gdown
 import imgviz
 from qtpy import QtCore
 from qtpy import QtGui
@@ -141,17 +140,7 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("AI model is already initialized: %r" % model.name)
         else:
             logger.debug("Initializing AI model: %r" % model.name)
-            self._ai_model = labelme.ai.SegmentAnythingModel(
-                name=model.name,
-                encoder_path=gdown.cached_download(
-                    url=model.encoder_weight.url,
-                    md5=model.encoder_weight.md5,
-                ),
-                decoder_path=gdown.cached_download(
-                    url=model.decoder_weight.url,
-                    md5=model.decoder_weight.md5,
-                ),
-            )
+            self._ai_model = model()
 
         if self.pixmap is None:
             logger.warning("Pixmap is not set yet")
