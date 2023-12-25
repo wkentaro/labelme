@@ -153,6 +153,10 @@ class Canvas(QtWidgets.QWidget):
                 ),
             )
 
+        if self.pixmap is None:
+            logger.warning("Pixmap is not set yet")
+            return
+
         self._ai_model.set_image(
             image=labelme.utils.img_qt_to_arr(self.pixmap.toImage())
         )
