@@ -1,5 +1,6 @@
 import gdown
 
+from .efficient_sam import EfficientSam
 from .segment_anything_model import SegmentAnythingModel
 
 
@@ -51,8 +52,30 @@ class SegmentAnythingModelVitH(SegmentAnythingModel):
         )
 
 
+class EfficientSamVitT(EfficientSam):
+    name = "EfficientSam (speed)"
+
+    def __init__(self):
+        super().__init__(
+            encoder_path="/Users/wkentaro/Projects/Labelme/efficient-sam/weights/efficient_sam_vitt_encoder.onnx",
+            decoder_path="/Users/wkentaro/Projects/Labelme/efficient-sam/weights/efficient_sam_vitt_decoder.onnx",
+        )
+
+
+class EfficientSamVitS(EfficientSam):
+    name = "EfficientSam (accuracy)"
+
+    def __init__(self):
+        super().__init__(
+            encoder_path="/Users/wkentaro/Projects/Labelme/efficient-sam/weights/efficient_sam_vits_encoder.onnx",
+            decoder_path="/Users/wkentaro/Projects/Labelme/efficient-sam/weights/efficient_sam_vits_decoder.onnx",
+        )
+
+
 MODELS = [
-    SegmentAnythingModelVitL,
     SegmentAnythingModelVitB,
+    SegmentAnythingModelVitL,
     SegmentAnythingModelVitH,
+    EfficientSamVitT,
+    EfficientSamVitS,
 ]

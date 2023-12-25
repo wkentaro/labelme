@@ -31,7 +31,7 @@ shape:
   point_size: 8
 
 ai:
-  default: 'SegmentAnything (balanced)'
+  default: 'EfficientSam (accuracy)'
 
 # main
 flag_dock:
