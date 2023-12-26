@@ -1,7 +1,6 @@
+import imgviz
 import numpy as np
 import skimage
-import PIL.Image
-import imgviz
 
 
 def _get_contour_length(contour):
@@ -22,6 +21,8 @@ def compute_polygon_from_mask(mask):
     polygon = polygon[:-1]  # drop last point that is duplicate of first point
 
     if 0:
+        import PIL.Image
+
         image_pil = PIL.Image.fromarray(
             imgviz.gray2rgb(imgviz.bool2ubyte(mask))
         )
