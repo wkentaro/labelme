@@ -226,8 +226,8 @@ See `.github/workflows/ci.yml` for more detail.
 ```bash
 pip install -r requirements-dev.txt
 
-flake8 .
-black --line-length 79 --check labelme/
+ruff format --check  # `ruff format` to auto-fix
+ruff check  # `ruff check --fix` to auto-fix
 MPLBACKEND='agg' pytest -vsx tests/
 ```
 
