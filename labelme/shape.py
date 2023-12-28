@@ -236,8 +236,8 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "points":
                 assert len(self.points) == len(self.point_labels)
-                for i, (p, l) in enumerate(zip(self.points, self.point_labels)):
-                    if l == 1:
+                for i, point_label in enumerate(self.point_labels):
+                    if point_label == 1:
                         self.drawVertex(vrtx_path, i)
                     else:
                         self.drawVertex(negative_vrtx_path, i)
