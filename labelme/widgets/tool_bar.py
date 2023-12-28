@@ -22,7 +22,5 @@ class ToolBar(QtWidgets.QToolBar):
 
         # center align
         for i in range(self.layout().count()):
-            if isinstance(
-                self.layout().itemAt(i).widget(), QtWidgets.QToolButton
-            ):
+            if isinstance(self.layout().itemAt(i).widget(), QtWidgets.QToolButton):
                 self.layout().itemAt(i).setAlignment(QtCore.Qt.AlignCenter)

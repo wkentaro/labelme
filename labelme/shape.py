@@ -15,7 +15,6 @@ import labelme.utils
 
 
 class Shape(object):
-
     # Render handles as squares
     P_SQUARE = 0
 
@@ -194,9 +193,7 @@ class Shape(object):
                 else self.fill_color.getRgb()
             )
             image_to_draw[self.mask] = fill_color
-            qimage = QtGui.QImage.fromData(
-                labelme.utils.img_arr_to_data(image_to_draw)
-            )
+            qimage = QtGui.QImage.fromData(labelme.utils.img_arr_to_data(image_to_draw))
             painter.drawImage(
                 int(round(self.points[0].x())),
                 int(round(self.points[0].y())),
@@ -204,9 +201,7 @@ class Shape(object):
             )
 
             line_path = QtGui.QPainterPath()
-            contours = skimage.measure.find_contours(
-                np.pad(self.mask, pad_width=1)
-            )
+            contours = skimage.measure.find_contours(np.pad(self.mask, pad_width=1))
             for contour in contours:
                 contour += [self.points[0].y(), self.points[0].x()]
                 line_path.moveTo(contour[0, 1], contour[0, 0])
@@ -241,9 +236,7 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "points":
                 assert len(self.points) == len(self.point_labels)
-                for i, (p, l) in enumerate(
-                    zip(self.points, self.point_labels)
-                ):
+                for i, (p, l) in enumerate(zip(self.points, self.point_labels)):
                     if l == 1:
                         self.drawVertex(vrtx_path, i)
                     else:
@@ -266,11 +259,7 @@ class Shape(object):
                 painter.drawPath(vrtx_path)
                 painter.fillPath(vrtx_path, self._vertex_fill_color)
             if self.fill and self.mask is None:
-                color = (
-                    self.select_fill_color
-                    if self.selected
-                    else self.fill_color
-                )
+                color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
 
             pen.setColor(QtGui.QColor(255, 0, 0, 255))

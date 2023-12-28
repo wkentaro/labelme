@@ -23,14 +23,10 @@ def compute_polygon_from_mask(mask):
     if 0:
         import PIL.Image
 
-        image_pil = PIL.Image.fromarray(
-            imgviz.gray2rgb(imgviz.bool2ubyte(mask))
-        )
+        image_pil = PIL.Image.fromarray(imgviz.gray2rgb(imgviz.bool2ubyte(mask)))
         imgviz.draw.line_(image_pil, yx=polygon, fill=(0, 255, 0))
         for point in polygon:
-            imgviz.draw.circle_(
-                image_pil, center=point, diameter=10, fill=(0, 255, 0)
-            )
+            imgviz.draw.circle_(image_pil, center=point, diameter=10, fill=(0, 255, 0))
         imgviz.io.imsave("contour.jpg", np.asarray(image_pil))
 
     return polygon[:, ::-1]  # yx -> xy

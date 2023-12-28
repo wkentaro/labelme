@@ -19,12 +19,8 @@ from labelme.utils import newIcon
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--version", "-V", action="store_true", help="show version"
-    )
-    parser.add_argument(
-        "--reset-config", action="store_true", help="reset qt config"
-    )
+    parser.add_argument("--version", "-V", action="store_true", help="show version")
+    parser.add_argument("--reset-config", action="store_true", help="reset qt config")
     parser.add_argument(
         "--logger-level",
         default="debug",

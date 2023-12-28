@@ -72,11 +72,7 @@ def apply_exif_orientation(image):
     if exif is None:
         return image
 
-    exif = {
-        PIL.ExifTags.TAGS[k]: v
-        for k, v in exif.items()
-        if k in PIL.ExifTags.TAGS
-    }
+    exif = {PIL.ExifTags.TAGS[k]: v for k, v in exif.items() if k in PIL.ExifTags.TAGS}
 
     orientation = exif.get("Orientation", None)
 
