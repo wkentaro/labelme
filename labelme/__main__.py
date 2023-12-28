@@ -4,8 +4,8 @@ import logging
 import os
 import os.path as osp
 import sys
-import yaml
 
+import yaml
 from qtpy import QtCore
 from qtpy import QtWidgets
 

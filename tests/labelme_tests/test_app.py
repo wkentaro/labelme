@@ -8,7 +8,6 @@ import labelme.app
 import labelme.config
 import labelme.testing
 
-
 here = osp.dirname(osp.abspath(__file__))
 data_dir = osp.join(here, "data")
 

@@ -2,6 +2,7 @@ import json
 import os.path as osp
 
 import imgviz
+
 import labelme.utils
 
 

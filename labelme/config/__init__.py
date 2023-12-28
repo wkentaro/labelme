@@ -5,7 +5,6 @@ import yaml
 
 from labelme.logger import logger
 
-
 here = osp.dirname(osp.abspath(__file__))
 
 

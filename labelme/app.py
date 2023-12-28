@@ -11,14 +11,12 @@ import webbrowser
 import imgviz
 import natsort
 from qtpy import QtCore
-from qtpy.QtCore import Qt
 from qtpy import QtGui
 from qtpy import QtWidgets
+from qtpy.QtCore import Qt
 
-from labelme import __appname__
 from labelme import PY2
-
-from . import utils
+from labelme import __appname__
 from labelme.ai import MODELS
 from labelme.config import get_config
 from labelme.label_file import LabelFile
@@ -34,6 +32,8 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+
+from . import utils
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window

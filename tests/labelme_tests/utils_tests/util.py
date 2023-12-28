@@ -4,7 +4,6 @@ import os.path as osp
 from labelme.utils import image as image_module
 from labelme.utils import shape as shape_module
 
-
 here = osp.dirname(osp.abspath(__file__))
 data_dir = osp.join(here, "../data")
 

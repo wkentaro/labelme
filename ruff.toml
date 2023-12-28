@@ -11,7 +11,7 @@ indent-width = 4
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
-select = ["E"]
+select = ["E", "I"]
 ignore = []
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -30,3 +30,6 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+[isort]
+force-single-line = true
