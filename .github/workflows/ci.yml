@@ -75,20 +75,18 @@ jobs:
 
     - name: Test with pytest
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest' && !(matrix.os == 'macos-latest' && matrix.PYTEST_QT_API == 'pyside2')
+      if: matrix.os == 'ubuntu-latest'
       env:
         PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
         MPLBACKEND: 'agg'
       run: |
-        # # open virtual display
-        # if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-        #   export DISPLAY=:99.0
-        #   /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX +render -noreset
-        #   (herbstluftwm )&
-        # else
-        #   (sudo Xvfb :99 -ac -screen 0 1024x768x8 )&
-        # fi
-        pytest -vs -m 'not gui' tests/
+        sudo apt-get update
+        sudo apt-get install -y xvfb libqt5widgets5
+
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        export DISPLAY=:99
+
+        pytest tests
 
     - name: Run examples
       shell: bash -l {0}
