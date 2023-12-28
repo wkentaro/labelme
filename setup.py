@@ -12,9 +12,7 @@ from setuptools import setup
 def get_version():
     filename = "labelme/__init__.py"
     with open(filename) as f:
-        match = re.search(
-            r"""^__version__ = ['"]([^'"]*)['"]""", f.read(), re.M
-        )
+        match = re.search(r"""^__version__ = ['"]([^'"]*)['"]""", f.read(), re.M)
     if not match:
         raise RuntimeError("{} doesn't contain __version__".format(filename))
     version = match.groups()[0]
