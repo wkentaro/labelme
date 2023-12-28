@@ -101,6 +101,7 @@ def test_MainWindow_annotate_jpg(qtbot):
             group_id=None,
             points=points,
             shape_type="polygon",
+            mask=None,
             flags={},
             other_data={},
         )
