@@ -29,9 +29,7 @@ def main():
     parser.add_argument("input_dir", help="input annotated directory")
     parser.add_argument("output_dir", help="output dataset directory")
     parser.add_argument("--labels", help="labels file", required=True)
-    parser.add_argument(
-        "--noviz", help="no visualization", action="store_true"
-    )
+    parser.add_argument("--noviz", help="no visualization", action="store_true")
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -120,9 +118,7 @@ def main():
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
-            mask = labelme.utils.shape_to_mask(
-                img.shape[:2], points, shape_type
-            )
+            mask = labelme.utils.shape_to_mask(img.shape[:2], points, shape_type)
 
             if group_id is None:
                 group_id = uuid.uuid1()
@@ -196,9 +192,7 @@ def main():
                     font_size=15,
                     line_width=2,
                 )
-            out_viz_file = osp.join(
-                args.output_dir, "Visualization", base + ".jpg"
-            )
+            out_viz_file = osp.join(args.output_dir, "Visualization", base + ".jpg")
             imgviz.io.imsave(out_viz_file, viz)
 
     with open(out_ann_file, "w") as f:
