@@ -4,7 +4,7 @@ exclude = [
   "src",
 ]
 
-line-length = 79
+line-length = 88
 indent-width = 4
 
 [lint]

@@ -46,9 +46,7 @@ class SegmentAnythingModel:
             )
             if len(self._image_embedding_cache) > 10:
                 self._image_embedding_cache.popitem(last=False)
-            self._image_embedding_cache[
-                self._image.tobytes()
-            ] = self._image_embedding
+            self._image_embedding_cache[self._image.tobytes()] = self._image_embedding
             logger.debug("Done computing image embedding.")
 
     def _get_image_embedding(self):
@@ -69,9 +67,7 @@ class SegmentAnythingModel:
         )
 
     def predict_polygon_from_points(self, points, point_labels):
-        mask = self.predict_mask_from_points(
-            points=points, point_labels=point_labels
-        )
+        mask = self.predict_mask_from_points(points=points, point_labels=point_labels)
         return _utils.compute_polygon_from_mask(mask=mask)
 
 
@@ -133,9 +129,9 @@ def _compute_mask_from_points(
     onnx_coord = np.concatenate([input_point, np.array([[0.0, 0.0]])], axis=0)[
         None, :, :
     ]
-    onnx_label = np.concatenate([input_label, np.array([-1])], axis=0)[
-        None, :
-    ].astype(np.float32)
+    onnx_label = np.concatenate([input_label, np.array([-1])], axis=0)[None, :].astype(
+        np.float32
+    )
 
     scale, new_height, new_width = _compute_scale_to_resize_image(
         image_size=image_size, image=image
@@ -167,7 +163,5 @@ def _compute_mask_from_points(
     )
 
     if 0:
-        imgviz.io.imsave(
-            "mask.jpg", imgviz.label2rgb(mask, imgviz.rgb2gray(image))
-        )
+        imgviz.io.imsave("mask.jpg", imgviz.label2rgb(mask, imgviz.rgb2gray(image)))
     return mask

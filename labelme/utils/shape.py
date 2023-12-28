@@ -10,15 +10,12 @@ from labelme.logger import logger
 
 def polygons_to_mask(img_shape, polygons, shape_type=None):
     logger.warning(
-        "The 'polygons_to_mask' function is deprecated, "
-        "use 'shape_to_mask' instead."
+        "The 'polygons_to_mask' function is deprecated, " "use 'shape_to_mask' instead."
     )
     return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
 
-def shape_to_mask(
-    img_shape, points, shape_type=None, line_width=10, point_size=5
-):
+def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=5):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
     draw = PIL.ImageDraw.Draw(mask)
@@ -77,8 +74,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
 
 def labelme_shapes_to_label(img_shape, shapes):
     logger.warn(
-        "labelme_shapes_to_label is deprecated, so please use "
-        "shapes_to_label."
+        "labelme_shapes_to_label is deprecated, so please use " "shapes_to_label."
     )
 
     label_name_to_value = {"_background_": 0}
@@ -96,9 +92,7 @@ def labelme_shapes_to_label(img_shape, shapes):
 
 def masks_to_bboxes(masks):
     if masks.ndim != 3:
-        raise ValueError(
-            "masks.ndim must be 3, but it is {}".format(masks.ndim)
-        )
+        raise ValueError("masks.ndim must be 3, but it is {}".format(masks.ndim))
     if masks.dtype != bool:
         raise ValueError(
             "masks.dtype must be bool type, but it is {}".format(masks.dtype)
