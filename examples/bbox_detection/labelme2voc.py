@@ -9,6 +9,7 @@ import os.path as osp
 import sys
 
 import imgviz
+
 import labelme
 
 try:

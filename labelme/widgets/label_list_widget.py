@@ -1,8 +1,8 @@
 from qtpy import QtCore
-from qtpy.QtCore import Qt
 from qtpy import QtGui
-from qtpy.QtGui import QPalette
 from qtpy import QtWidgets
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QPalette
 from qtpy.QtWidgets import QStyle
 
 

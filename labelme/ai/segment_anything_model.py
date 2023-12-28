@@ -7,7 +7,6 @@ import onnxruntime
 import skimage
 
 from ..logger import logger
-
 from . import _utils
 
 
