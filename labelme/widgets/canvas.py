@@ -768,12 +768,12 @@ class Canvas(QtWidgets.QWidget):
                 points=[[point.x(), point.y()] for point in drawing_shape.points],
                 point_labels=drawing_shape.point_labels,
             )
-            y1, x1, y2, x2 = imgviz.instances.mask_to_bbox([mask])[0].astype(int)
+            y1, x1, y2, x2 = imgviz.instances.masks_to_bboxes([mask])[0].astype(int)
             drawing_shape.setShapeRefined(
                 shape_type="mask",
                 points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
                 point_labels=[1, 1],
-                mask=mask[y1:y2, x1:x2],
+                mask=mask[y1 : y2 + 1, x1 : x2 + 1],
             )
             drawing_shape.selected = True
             drawing_shape.paint(p)
@@ -818,12 +818,12 @@ class Canvas(QtWidgets.QWidget):
                 points=[[point.x(), point.y()] for point in self.current.points],
                 point_labels=self.current.point_labels,
             )
-            y1, x1, y2, x2 = imgviz.instances.mask_to_bbox([mask])[0].astype(int)
+            y1, x1, y2, x2 = imgviz.instances.masks_to_bboxes([mask])[0].astype(int)
             self.current.setShapeRefined(
                 shape_type="mask",
                 points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
                 point_labels=[1, 1],
-                mask=mask[y1:y2, x1:x2],
+                mask=mask[y1 : y2 + 1, x1 : x2 + 1],
             )
         self.current.close()
 
