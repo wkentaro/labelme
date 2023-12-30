@@ -165,7 +165,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 ## Examples
 
-* [Image Classification](examples/image_classification)
+* [Image Classification](examples/classification)
 * [Bounding Box Detection](examples/bbox_detection)
 * [Semantic Segmentation](examples/semantic_segmentation)
 * [Instance Segmentation](examples/instance_segmentation)
