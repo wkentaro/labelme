@@ -62,14 +62,6 @@ If you're new to Labelme, you can get started with [Labelme Starter Bundle](http
 - **A compilation of valuable resources** for further exploration 🔗.
 
 
-
-<!-- ## Requirements -->
-<!--  -->
-<!-- - Ubuntu / macOS / Windows -->
-<!-- - Python3 -->
-<!-- - [PyQt5 / PySide2](http://www.riverbankcomputing.co.uk/software/pyqt/intro) -->
-
-
 ## Installation
 
 There are options:
