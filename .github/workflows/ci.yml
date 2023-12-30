@@ -97,7 +97,7 @@ jobs:
         (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
         (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
 
-        pip install lxml  # for bbox_detection/labelme2voc.py
+        pip install 'lxml<5.0.0'  # for bbox_detection/labelme2voc.py
         (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
 
         pip install cython && pip install pycocotools  # for instance_segmentation/labelme2coco.py
