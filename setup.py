@@ -22,7 +22,7 @@ def get_version():
 def get_install_requires():
     install_requires = [
         "gdown",
-        "imgviz>=0.11",
+        "imgviz>=1.7.5",
         "matplotlib",
         "natsort>=7.1.0",
         "numpy",
