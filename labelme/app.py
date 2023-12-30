@@ -1510,7 +1510,7 @@ class MainWindow(QtWidgets.QMainWindow):
         flag = value
         for item in self.labelList:
             if value is None:
-                flag = (item.checkState() == Qt.Unchecked)
+                flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
     def loadFile(self, filename=None):
