@@ -2,9 +2,11 @@
 
 import functools
 import html
+import json
 import math
 import os
 import os.path as osp
+from pathlib import Path
 import re
 import webbrowser
 
@@ -2060,6 +2062,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openNextImg()
 
     def importDirImages(self, dirpath, pattern=None, load=True):
+
+        fileNames, labelFiles = self.scanAllImages(dirpath)
+
+        # check if successfully scanned all images
+        # if self.scanAllImage() meet errorMessages
+        # it will return fileNames=[], labelFiles=[]
+        # then don't set openNextImg button active
+        if len(fileNames) == 0:
+            return
+
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
@@ -2069,13 +2081,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lastOpenDir = dirpath
         self.filename = None
         self.fileListWidget.clear()
-        for filename in self.scanAllImages(dirpath):
+
+        for filename, label_file in zip(fileNames, labelFiles):
             if pattern and pattern not in filename:
                 continue
-            label_file = osp.splitext(filename)[0] + ".json"
-            if self.output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self.output_dir, label_file_without_path)
+
+            # move output_dir label judge logic to scanAllImages()
+            # and returns label_files from scanAllImages()
+
             item = QtWidgets.QListWidgetItem(filename)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(label_file):
@@ -2083,6 +2096,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setCheckState(Qt.Unchecked)
             self.fileListWidget.addItem(item)
+
         self.openNextImg(load=load)
 
     def scanAllImages(self, folderPath):
@@ -2092,10 +2106,84 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
 
         images = []
+        labels = []
         for root, dirs, files in os.walk(folderPath):
+
+            # get the excluded json file name list
+            notJsonFileNames = []
             for file in files:
+                if "json" not in file:
+                    notJsonFileNames.append(osp.splitext(file)[0])
+
+            # origial loops
+            for file in files:
+                # if is image (orignal)
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = os.path.normpath(osp.join(root, file))
                     images.append(relativePath)
+
+                    # moved from def importDirImages()
+                    # add labels under the same dir
+                    # or given output_dir for founded image
+                    label_file = osp.splitext(file)[0] + LabelFile.suffix
+                    if self.output_dir:
+                        label_file_without_path = osp.basename(label_file)
+                        label_file = osp.join(self.output_dir,
+                                              label_file_without_path)
+                    labels.append(osp.join(root, label_file))
+
+                # if is json
+                if file.lower().endswith(LabelFile.suffix):
+                    # if the json has companion img file, skip json parse
+                    if osp.splitext(file)[0] in notJsonFileNames:
+                        continue
+
+                    # if not exists companion image file, parse json file
+                    jsonRelativePath = osp.join(root, file)
+                    if QtCore.QFile.exists(
+                        jsonRelativePath
+                    ) and LabelFile.is_label_file(
+                        jsonRelativePath
+                    ):
+                        # too slow with LabelFile.imagePath
+                        # just need imagePath here
+                        with open(jsonRelativePath, "r") as f:
+                            data = json.load(f)
+                        # get the absolute path from image relative path
+                        mod_path = Path(root)
+                        imagePath = (mod_path / data["imagePath"]).resolve()
+
+                        images.append(str(imagePath))
+                        labels.append(jsonRelativePath)
+
+        # ------ set output dir -------
+        # if not setting output_dir correctly (default None)
+        # the labels will not show in GUI, because self.loadFile()
+        # simple replace xxxx.jpg with xxxx.json if output_dir not given
+        # rather than using the correct path to label.json
+        # ...........................................................
+        # should have the same output dirs for those label files
+        outputDirList = [os.path.split(f)[0] for f in labels]
+        if not all(element == outputDirList[0] for element in outputDirList):
+            # this should not happen in most cases, just in case
+            # if someone open the folder like this:
+            # .folder
+            # |-- subfolder1
+            # |   |-- aaa1.json
+            # |   |-- aaa2.json  (without any images)
+            # |-- subfolder2
+            # |   |-- bbb1.json
+            # |   |-- bbb1.json  (without any images)
+            # this is incorrect output_dir variable value to show labels
+            self.errorMessage(self.tr("Subfolders Error"),
+                              self.tr("If you open with folder with several "
+                                      "subfolders that only contains json "
+                                      "files, please only select one "
+                                      "subfolder"))
+            return [], []
+        else:
+            self.output_dir = outputDirList[0]
+        # -------- end set output dir ------------
+
         images = natsort.os_sorted(images)
-        return images
+        return images, labels
