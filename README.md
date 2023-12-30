@@ -165,14 +165,6 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 ## Examples
 
-### Dataset examples
-
-* [Object Detection Dataset](https://labelme.gumroad.com/l/object-detection-dataset): 20 object categories and 1.7K images
-
-### Annotation examples
-
-A few object categories and images:
-
 * [Image Classification](examples/image_classification)
 * [Bounding Box Detection](examples/bbox_detection)
 * [Semantic Segmentation](examples/semantic_segmentation)
