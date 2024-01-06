@@ -23,7 +23,7 @@ jobs:
         with:
           configurationJson: |
             {
-                "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>\n\n- Tips and updates→ [Twitter/X <@labelmeai>](https://x.com/labelmeai)\n- Labelme Starter Bundle→ https://labelme.gumroad.com/l/starter-bundle",
+                "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>\n\n- Tips and updates→ [X/Twitter <@labelmeai>](https://x.com/labelmeai)\n- Labelme Starter Bundle→ https://labelme.gumroad.com/l/starter-bundle",
                 "pr_template": "- #{{TITLE}} ##{{NUMBER}}",
                 "categories": [
                     {
