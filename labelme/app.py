@@ -660,6 +660,8 @@ class MainWindow(QtWidgets.QMainWindow):
             editMenu=(
                 edit,
                 duplicate,
+                copy,
+                paste,
                 delete,
                 None,
                 undo,
