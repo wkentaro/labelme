@@ -2,6 +2,8 @@ import imgviz
 import numpy as np
 import skimage
 
+from labelme.logger import logger
+
 
 def _get_contour_length(contour):
     contour_start = contour
@@ -11,6 +13,10 @@ def _get_contour_length(contour):
 
 def compute_polygon_from_mask(mask):
     contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
+    if len(contours) == 0:
+        logger.warning("No contour found, so returning empty polygon.")
+        return np.empty((0, 2), dtype=np.float32)
+
     contour = max(contours, key=_get_contour_length)
     POLYGON_APPROX_TOLERANCE = 0.004
     polygon = skimage.measure.approximate_polygon(
