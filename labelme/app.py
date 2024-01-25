@@ -1347,7 +1347,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def duplicateSelectedShape(self):
         added_shapes = self.canvas.duplicateSelectedShapes()
-        self.labelList.clearSelection()
         for shape in added_shapes:
             self.addLabel(shape)
         self.setDirty()
