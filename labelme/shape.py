@@ -23,7 +23,7 @@ class Shape(object):
     # Flag for the handles we would move if dragging
     MOVE_VERTEX = 0
 
-    # Flag for all other handles on the curent shape
+    # Flag for all other handles on the current shape
     NEAR_VERTEX = 1
 
     # The following class variables influence the drawing of all shape objects.
