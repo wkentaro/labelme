@@ -57,7 +57,6 @@ class Shape(object):
         self._shape_type_raw = None
         self.fill = False
         self.selected = False
-        self.shape_type = shape_type
         self.flags = flags
         self.description = description
         self.other_data = {}
