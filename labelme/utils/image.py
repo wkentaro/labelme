@@ -1,3 +1,6 @@
+# MIT License
+# Copyright (c) Kentaro Wada
+
 import base64
 import io
 
