@@ -57,8 +57,6 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * My fine adjustment logic breaks down a little when boxes are near the edge of the canvas (nothing bad happens, fine adjustment just stops working), fix this
 
-* Right now I do a one-time conversion of ML output to labelme files, and I choose a confidence threshold when doing that conversion.  I really really really want a way of quickly showing all the boxes below some backup confidence threshold, e.g. "press F1 to show (or load, but preferably just show) lower-confidence detections".  This would support the case where an object of interest missed the confidence threshold; in this case, I would load all the low-confidence detections, select all, unselect the object of interest, and delete the selected boxes, all without touching the mouse.
-
 ## Notes to self about how I set up my environment
 
 ### Setting up this repo
