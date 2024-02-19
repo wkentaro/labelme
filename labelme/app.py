@@ -609,7 +609,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._config["canvas"]["fill_drawing"]:
             fill_drawing.trigger()
 
-        # Lavel list context menu.
+        # Label list context menu.
         labelMenu = QtWidgets.QMenu()
         utils.addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
