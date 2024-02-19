@@ -307,7 +307,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.toggleKeepPrevMode,
             shortcuts["toggle_keep_prev_mode"],
             None,
-            self.tr('Toggle "keep pevious annotation" mode'),
+            self.tr('Toggle "keep previous annotation" mode'),
             checkable=True,
         )
         toggle_keep_prev_mode.setChecked(self._config["keep_prev"])
