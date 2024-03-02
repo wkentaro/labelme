@@ -288,19 +288,19 @@ class MainWindow(QtWidgets.QMainWindow):
         saveAuto.setChecked(self._config["auto_save"])
 
         saveWithImageData = action(
-            text="Save With Image Data",
+            text=self.tr("Save With Image Data"),
             slot=self.enableSaveImageWithData,
-            tip="Save image data in label file",
+            tip=self.tr("Save image data in label file"),
             checkable=True,
             checked=self._config["store_data"],
         )
 
         close = action(
-            "&Close",
+            self.tr("&Close"),
             self.closeFile,
             shortcuts["close"],
             "close",
-            "Close current file",
+            self.tr("Close current file"),
         )
 
         toggle_keep_prev_mode = action(
@@ -441,11 +441,11 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         removePoint = action(
-            text="Remove Selected Point",
+            text=self.tr("Remove Selected Point"),
             slot=self.removeSelectedPoint,
             shortcut=shortcuts["remove_selected_point"],
             icon="edit",
-            tip="Remove selected point from polygon",
+            tip=self.tr("Remove selected point from polygon"),
             enabled=False,
         )
 
@@ -492,7 +492,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         zoom = QtWidgets.QWidgetAction(self)
         zoomBoxLayout = QtWidgets.QVBoxLayout()
-        zoomLabel = QtWidgets.QLabel("Zoom")
+        zoomLabel = QtWidgets.QLabel(self.tr("Zoom"))
         zoomLabel.setAlignment(Qt.AlignCenter)
         zoomBoxLayout.addWidget(zoomLabel)
         zoomBoxLayout.addWidget(self.zoomWidget)
@@ -564,11 +564,11 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         brightnessContrast = action(
-            "&Brightness Contrast",
+            self.tr("&Brightness Contrast"),
             self.brightnessContrast,
             None,
             "color",
-            "Adjust brightness and contrast",
+            self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
         # Group zoom controls into a list for easier toggling.
