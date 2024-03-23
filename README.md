@@ -35,6 +35,10 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * A new action (default L) to load labels from image_file.alt.json, instead of image_file.json, typically used to load a version of the pregenerated labels that uses a lower confidence threshold
 
+* A variation on that action (default shift-L) to load from image_filt.alt-0.json instead
+
+* A variation on that action (default ctrl-L) to load from image_filt.alt-1.json instead
+
 * A new field ("saved_by_labelme") is written to the output on every save, and saving happens every time you change images; together, these allow us to confirm that an image has been reviewed, even if no changes were made.
 
 * Shortcut to copy the current file to the clipboard (useful for re-starting where you left off when you've prepopulated the list, so the checkboxes aren't useuful)
@@ -98,16 +102,18 @@ sudo apt install libxcb-xinerama0 libqt5x11extras5
 
 ## Reminders of keyboard shortcuts I use
 
-* A,D (previous/next)
-* L (load the alternative annotation file for this image)
+* A,D or PgUp,PgDn (previous/next)
+* L (load the alternative annotation file for this image) (.alt.json)
+* Shift-L (load the <i>backup</i> alternative annotation file for this image) (.alt-0.json)
+* Ctrl-L (load the <i>backup-backup</i> alternative annotation file for this image) (.alt-1.json)
 * M (merge all rectangles into one rectangle that's the union of everything)
 * K (keep only selected polygons)
 * B (keep only the largest ("B" for "biggest") rectangle)
 * S (keep only the smallest rectangle)
-* PgUp,PgDn (previous/next)
 * Ctrl-R (create rectangle mode)
 * Ctrl-J (edit polygons mode)
 * Ctrl-A (select all polygons)
+* Ctrl-E (edit the label of the selected polygon)
 * Alt-right/alt-left (select next/previous polygons)
 * Shift/control + left/right/up/down (fine adjustment of 0th/1st vertices)
 * Delete (delete current polygon)

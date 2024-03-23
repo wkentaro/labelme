@@ -415,14 +415,29 @@ class MainWindow(QtWidgets.QMainWindow):
             "cancel",
             self.tr("Delete the selected polygons"),
             enabled=False,
-        )
-        
+        )        
         loadAltLabels = action(
             self.tr("Load alt labels"),
             self.loadAltLabels,
             shortcuts["load_alt_labels"],
             "objects",
             self.tr("Load alt labels"),
+            enabled=True,
+        )
+        loadAltAltLabels = action(
+            self.tr("Load alt-alt labels"),
+            self.loadAltAltLabels,
+            shortcuts["load_alt_alt_labels"],
+            "objects",
+            self.tr("Load alt-alt labels"),
+            enabled=True,
+        )
+        loadAltAltAltLabels = action(
+            self.tr("Load alt-alt-alt labels"),
+            self.loadAltAltAltLabels,
+            shortcuts["load_alt_alt_alt_labels"],
+            "objects",
+            self.tr("Load alt-alt-alt labels"),
             enabled=True,
         )
         merge = action(
@@ -682,6 +697,8 @@ class MainWindow(QtWidgets.QMainWindow):
             merge=merge,
             keep=keepSelected,
             loadAltLabels=loadAltLabels,
+            loadAltAltLabels=loadAltAltLabels,
+            loadAltAltAltLabels=loadAltAltAltLabels,
             smallest=smallest,
             largest=largest,
             edit=edit,
@@ -744,6 +761,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 merge,
                 keepSelected,
                 loadAltLabels,
+                loadAltAltLabels,
                 smallest,
                 largest,
                 undo,
@@ -874,6 +892,7 @@ class MainWindow(QtWidgets.QMainWindow):
             merge,
             keepSelected,
             loadAltLabels,
+            loadAltAltLabels,
             smallest,
             largest,
             undo,
@@ -1651,7 +1670,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for item in self.labelList:
             item.setCheckState(Qt.Checked if value else Qt.Unchecked)
 
-    def loadFile(self, filename=None, use_alt_labels=False):
+    def loadFile(self, filename=None, alt_level=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
         if filename in self.imageList and (
@@ -1661,6 +1680,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.repaint()
             return
 
+        previous_filename = self.filename
+        
         self.resetState()
         self.canvas.setEnabled(False)
         if filename is None:
@@ -1677,8 +1698,20 @@ class MainWindow(QtWidgets.QMainWindow):
             str(self.tr("Loading %s...")) % osp.basename(str(filename))
         )
         label_file = osp.splitext(filename)[0] + ".json"
-        if use_alt_labels:
-            alt_label_file = osp.splitext(filename)[0] + ".alt.json"    
+        if alt_level is not None:
+            if alt_level == 0:
+                alt_label_file = osp.splitext(filename)[0] + ".alt.json"    
+            elif alt_level == 1:
+                alt_label_file = osp.splitext(filename)[0] + ".alt-0.json"    
+            elif alt_level == 2:
+                alt_label_file = osp.splitext(filename)[0] + ".alt-1.json"    
+            else:
+                print('Unsupported alt level {}'.format(alt_level))
+                alt_label_file = 'x-y-z-a-b-c'
+            if not os.path.isfile(alt_label_file):
+                print('Alt label file {} is not available'.format(alt_label_file))
+                self.loadFile(previous_filename,alt_level=None)
+                return
             print('Replacing label file with alt file {}:'.format(alt_label_file))
             import json
             with open(alt_label_file,'r') as f:
@@ -1795,7 +1828,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.last_updated_file is not None:
             with open(self.last_updated_file,'w') as f:
                 f.write(filename)
-        if use_alt_labels:
+        if alt_level is not None:
             self.setDirty()
         return True
 
@@ -2178,11 +2211,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
 
     def loadAltLabels(self):
-        
         if self.filename is None:
             return
-        self.loadFile(self.filename,use_alt_labels=True)        
+        self.loadFile(self.filename,alt_level=0)
         
+    def loadAltAltLabels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=1)
+    
+    def loadAltAltAltLabels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=2)
+    
     def mergeAllRectangles(self):
         
         merge_result = self.canvas.mergeAllRectangles()

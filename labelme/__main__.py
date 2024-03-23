@@ -39,7 +39,7 @@ def main():
         help="output file or directory (if it ends with .json it is "
         "recognized as file, else as directory)",
     )
-    default_config_file = os.path.join(os.path.expanduser("~"), ".labelmerc")
+    default_config_file = os.path.join(os.path.expanduser("~"), ".labelmerc")    
     parser.add_argument(
         "--config",
         dest="config",

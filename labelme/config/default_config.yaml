@@ -106,6 +106,8 @@ shortcuts:
   delete_polygon: Delete
   merge_all_rectangles: M
   load_alt_labels: L
+  load_alt_alt_labels: Shift+L
+  load_alt_alt_alt_labels: Ctrl+L
   keep_smallest_rectangle: S
   keep_largest_rectangle: B
   keep_selected_polygons: K
