@@ -35,9 +35,7 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * A new action (default L) to load labels from image_file.alt.json, instead of image_file.json, typically used to load a version of the pregenerated labels that uses a lower confidence threshold
 
-* A variation on that action (default shift-L) to load from image_filt.alt-0.json instead
-
-* A variation on that action (default ctrl-L) to load from image_filt.alt-1.json instead
+* Variations on that action (default Alt-0 ... Alt-9) to load from image_filt.alt-N.json instead
 
 * A new field ("saved_by_labelme") is written to the output on every save, and saving happens every time you change images; together, these allow us to confirm that an image has been reviewed, even if no changes were made.
 

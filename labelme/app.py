@@ -424,22 +424,89 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Load alt labels"),
             enabled=True,
         )
-        loadAltAltLabels = action(
-            self.tr("Load alt-alt labels"),
-            self.loadAltAltLabels,
-            shortcuts["load_alt_alt_labels"],
+        
+        loadAlt0Labels = action(
+            self.tr("Load alt_0_labels"),
+            self.loadAlt0Labels,
+            shortcuts["load_alt_0_labels"],
             "objects",
-            self.tr("Load alt-alt labels"),
+            self.tr("Load alt-0 labels"),
             enabled=True,
         )
-        loadAltAltAltLabels = action(
-            self.tr("Load alt-alt-alt labels"),
-            self.loadAltAltAltLabels,
-            shortcuts["load_alt_alt_alt_labels"],
+        loadAlt1Labels = action(
+            self.tr("Load alt_1_labels"),
+            self.loadAlt1Labels,
+            shortcuts["load_alt_1_labels"],
             "objects",
-            self.tr("Load alt-alt-alt labels"),
+            self.tr("Load alt-1 labels"),
             enabled=True,
         )
+        loadAlt2Labels = action(
+            self.tr("Load alt_2_labels"),
+            self.loadAlt2Labels,
+            shortcuts["load_alt_2_labels"],
+            "objects",
+            self.tr("Load alt-2 labels"),
+            enabled=True,
+        )
+        loadAlt3Labels = action(
+            self.tr("Load alt_3_labels"),
+            self.loadAlt3Labels,
+            shortcuts["load_alt_3_labels"],
+            "objects",
+            self.tr("Load alt-3 labels"),
+            enabled=True,
+        )
+        loadAlt4Labels = action(
+            self.tr("Load alt_4_labels"),
+            self.loadAlt4Labels,
+            shortcuts["load_alt_4_labels"],
+            "objects",
+            self.tr("Load alt-4 labels"),
+            enabled=True,
+        )
+        loadAlt5Labels = action(
+            self.tr("Load alt_5_labels"),
+            self.loadAlt5Labels,
+            shortcuts["load_alt_5_labels"],
+            "objects",
+            self.tr("Load alt-5 labels"),
+            enabled=True,
+        )
+        loadAlt6Labels = action(
+            self.tr("Load alt_6_labels"),
+            self.loadAlt6Labels,
+            shortcuts["load_alt_6_labels"],
+            "objects",
+            self.tr("Load alt-6 labels"),
+            enabled=True,
+        )
+        loadAlt7Labels = action(
+            self.tr("Load alt_7_labels"),
+            self.loadAlt7Labels,
+            shortcuts["load_alt_7_labels"],
+            "objects",
+            self.tr("Load alt-7 labels"),
+            enabled=True,
+        )
+        loadAlt8Labels = action(
+            self.tr("Load alt_8_labels"),
+            self.loadAlt8Labels,
+            shortcuts["load_alt_8_labels"],
+            "objects",
+            self.tr("Load alt-8 labels"),
+            enabled=True,
+        )
+        loadAlt9Labels = action(
+            self.tr("Load alt_9_labels"),
+            self.loadAlt9Labels,
+            shortcuts["load_alt_9_labels"],
+            "objects",
+            self.tr("Load alt-9 labels"),
+            enabled=True,
+        )
+        
+        
         merge = action(
             self.tr("Merge Rectangles"),
             self.mergeAllRectangles,
@@ -697,8 +764,16 @@ class MainWindow(QtWidgets.QMainWindow):
             merge=merge,
             keep=keepSelected,
             loadAltLabels=loadAltLabels,
-            loadAltAltLabels=loadAltAltLabels,
-            loadAltAltAltLabels=loadAltAltAltLabels,
+            loadAlt0Labels=loadAlt0Labels,
+            loadAlt1Labels=loadAlt1Labels,
+            loadAlt2Labels=loadAlt2Labels,
+            loadAlt3Labels=loadAlt3Labels,
+            loadAlt4Labels=loadAlt4Labels,
+            loadAlt5Labels=loadAlt5Labels,
+            loadAlt6Labels=loadAlt6Labels,
+            loadAlt7Labels=loadAlt7Labels,
+            loadAlt8Labels=loadAlt8Labels,
+            loadAlt9Labels=loadAlt9Labels,            
             smallest=smallest,
             largest=largest,
             edit=edit,
@@ -761,7 +836,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 merge,
                 keepSelected,
                 loadAltLabels,
-                loadAltAltLabels,
                 smallest,
                 largest,
                 undo,
@@ -892,7 +966,16 @@ class MainWindow(QtWidgets.QMainWindow):
             merge,
             keepSelected,
             loadAltLabels,
-            loadAltAltLabels,
+            loadAlt0Labels,
+            loadAlt1Labels,
+            loadAlt2Labels,
+            loadAlt3Labels,
+            loadAlt4Labels,
+            loadAlt5Labels,
+            loadAlt6Labels,
+            loadAlt7Labels,
+            loadAlt8Labels,
+            loadAlt9Labels,
             smallest,
             largest,
             undo,
@@ -1699,15 +1782,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         label_file = osp.splitext(filename)[0] + ".json"
         if alt_level is not None:
-            if alt_level == 0:
+            if alt_level < 0:
                 alt_label_file = osp.splitext(filename)[0] + ".alt.json"    
-            elif alt_level == 1:
-                alt_label_file = osp.splitext(filename)[0] + ".alt-0.json"    
-            elif alt_level == 2:
-                alt_label_file = osp.splitext(filename)[0] + ".alt-1.json"    
             else:
-                print('Unsupported alt level {}'.format(alt_level))
-                alt_label_file = 'x-y-z-a-b-c'
+                alt_label_file = osp.splitext(filename)[0] + \
+                ".alt-{}.json".format(alt_level)
+            
             if not os.path.isfile(alt_label_file):
                 print('Alt label file {} is not available'.format(alt_label_file))
                 self.loadFile(previous_filename,alt_level=None)
@@ -2213,17 +2293,48 @@ class MainWindow(QtWidgets.QMainWindow):
     def loadAltLabels(self):
         if self.filename is None:
             return
-        self.loadFile(self.filename,alt_level=0)
+        self.loadFile(self.filename,alt_level=-1)
         
-    def loadAltAltLabels(self):
+    def loadAlt0Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=0)
+    def loadAlt1Labels(self):
         if self.filename is None:
             return
         self.loadFile(self.filename,alt_level=1)
-    
-    def loadAltAltAltLabels(self):
+    def loadAlt2Labels(self):
         if self.filename is None:
             return
         self.loadFile(self.filename,alt_level=2)
+    def loadAlt3Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=3)
+    def loadAlt4Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=4)
+    def loadAlt5Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=5)
+    def loadAlt6Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=6)
+    def loadAlt7Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=7)
+    def loadAlt8Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=8)
+    def loadAlt9Labels(self):
+        if self.filename is None:
+            return
+        self.loadFile(self.filename,alt_level=9)    
     
     def mergeAllRectangles(self):
         

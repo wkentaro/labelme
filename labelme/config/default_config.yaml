@@ -105,9 +105,17 @@ shortcuts:
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   merge_all_rectangles: M
-  load_alt_labels: L
-  load_alt_alt_labels: Shift+L
-  load_alt_alt_alt_labels: Ctrl+L
+  load_alt_labels: L  
+  load_alt_0_labels: Alt+0
+  load_alt_1_labels: Alt+1
+  load_alt_2_labels: Alt+2
+  load_alt_3_labels: Alt+3
+  load_alt_4_labels: Alt+4  
+  load_alt_5_labels: Alt+5
+  load_alt_6_labels: Alt+6
+  load_alt_7_labels: Alt+7
+  load_alt_8_labels: Alt+8
+  load_alt_9_labels: Alt+9  
   keep_smallest_rectangle: S
   keep_largest_rectangle: B
   keep_selected_polygons: K
@@ -120,6 +128,6 @@ shortcuts:
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
   toggle_keep_prev_mode: null 
-  copy_filename: Ctrl-P
+  copy_filename: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
 
