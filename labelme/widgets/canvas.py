@@ -476,6 +476,7 @@ class Canvas(QtWidgets.QWidget):
                         self.setHiding()
                         self.drawingPolygon.emit(True)
                         self.update()
+            # ...if we're drawing
             elif self.editing():
                 if self.selectedEdge():
                     self.addPointToEdge()
@@ -487,9 +488,25 @@ class Canvas(QtWidgets.QWidget):
                     self.removeSelectedPoint()
 
                 group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
-                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
+                selected_something = self.selectShapePoint(pos, multiple_selection_mode=group_mode)                
+                
+                # If we didn't select anything, and the shift key is pressed, select points in the rectangle
+                # between this point and the previous point
+                select_rectangles_mode = int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+                
+                if (not selected_something) and select_rectangles_mode and (self.prevPoint is not None): 
+                    print('Selecting rectangles between {} and {}'.format(self.prevPoint,pos))
+                    matching_shapes = []
+                    for shape in self.shapes:
+                        if shape.intersects_rectangle(self.prevPoint,pos):
+                            matching_shapes.append(shape)
+                    print('Found {} intersecting shapes (of {})'.format(len(matching_shapes),len(self.shapes)))
+                    self.selectShapes(matching_shapes)
+                    
                 self.prevPoint = pos
                 self.repaint()
+            # ...if we're editing
+        # ...if this was a left click
         elif ev.button() == QtCore.Qt.RightButton and self.editing():
             group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             if not self.selectedShapes or (
@@ -579,9 +596,15 @@ class Canvas(QtWidgets.QWidget):
 
     def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
+        
+        """
+        DSM: returns whether anything was selected, i.e. "False" means "clicked on nothing"
+        """
+        to_return = False
         if self.selectedVertex():  # A vertex is marked for selection.
             index, shape = self.hVertex, self.hShape
             shape.highlightVertex(index, shape.MOVE_VERTEX)
+            to_return = True
         else:
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
@@ -597,8 +620,9 @@ class Canvas(QtWidgets.QWidget):
                     else:
                         self.hShapeIsSelected = True
                     self.calculateOffsets(point)
-                    return
+                    return True
         self.deSelectShape()
+        return to_return
 
     def calculateOffsets(self, point):
         left = self.pixmap.width() - 1

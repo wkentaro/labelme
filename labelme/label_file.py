@@ -64,7 +64,11 @@ class LabelFile(object):
                 format = "JPEG"
             else:
                 format = "PNG"
-            image_pil.save(f, format=format)
+            try:
+                image_pil.save(f, format=format)
+            except Exception:
+                print('Error saving file {} to bytesio'.format(filename))
+                return
             f.seek(0)
             return f.read()
 
@@ -120,6 +124,8 @@ class LabelFile(object):
                 for s in data["shapes"]
             ]
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())
             raise LabelFileError(e)
 
         otherData = {}

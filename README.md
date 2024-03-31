@@ -18,8 +18,9 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 ## Changes in this fork
 
-* Shift/ctrl + up/down/left right move the upper-left and lower-right borders of a selected
-  rectangle.
+* Clicking an empty area in the canvas, then shift-clicking another point, selects all rectangles that intersect with the rectangle defined by the two points you just clicked.
+
+* Shift/ctrl + up/down/left right move the upper-left and lower-right borders of a selected rectangle.
 
 * PageUp and PageDown select the previous/next image, in addition to the default A/D shortcuts.  This is useful when you're moving really fast, and you want to switch hands for the next/prev action. (This turned out to be unnecessary, I just didn't know you could already map multiple shortcuts to the same action.  Now I know.  But pgup/pgdn are still hard-coded in my fork.)
 

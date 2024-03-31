@@ -325,6 +325,16 @@ class Shape(object):
     def boundingRect(self):
         return self.makePath().boundingRect()
 
+    def intersects_rectangle(self,p1,p2):
+        if self.shape_type != 'rectangle':
+            print('Skipping intersection test with non-rect shape')
+            return False
+        r = self.boundingRect()
+        selection_r = QtCore.QRectF(p1,p2)
+        intersects = r.intersects(selection_r)
+        # print('Test intersection between {} and {},{}: {}'.format(r,p1,p2,intersects))
+        return intersects
+    
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
 

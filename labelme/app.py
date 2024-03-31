@@ -544,7 +544,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.selectAllPolygons,
             shortcuts["select_all_polygons"],
             "select_all",
-            self.tr("Copy all polygons"),
+            self.tr("Select all polygons"),
             enabled=True,
         )
         duplicate = action(
