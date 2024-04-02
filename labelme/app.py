@@ -215,6 +215,143 @@ class MainWindow(QtWidgets.QMainWindow):
         # Actions
         action = functools.partial(utils.newAction, self)
         
+        shortcuts = self._config["shortcuts"]
+
+        forwardN = action(
+            self.tr("Forward N"),
+            self.forwardN,
+            shortcuts["forward_n"],
+            "forward N",
+            self.tr("Move forward by N images"),
+            enabled=True,
+        )
+    
+        backwardN = action(
+            self.tr("Backward N"),
+            self.backwardN,
+            shortcuts["backward_n"],
+            "backward N",
+            self.tr("Move backward by N images"),
+            enabled=True,
+        )
+        
+        forwardLittleN = action(
+            self.tr("Forward Little N"),
+            self.forwardLittleN,
+            shortcuts["forward_little_n"],
+            "forward little N",
+            self.tr("Move forward by <N images"),
+            enabled=True,
+        )
+    
+        backwardLittleN = action(
+            self.tr("Backward Little N"),
+            self.backwardLittleN,
+            shortcuts["backward_little_n"],
+            "backward Little N",
+            self.tr("Move backward by <N images"),
+            enabled=True,
+        )
+        
+        utils.addActions(self,
+                         [forwardN,
+                          backwardN,
+                          forwardLittleN,
+                          backwardLittleN])
+        
+        loadAlt0Labels = action(
+            self.tr("Load alt_0_labels"),
+            self.loadAlt0Labels,
+            shortcuts["load_alt_0_labels"],
+            "objects",
+            self.tr("Load alt-0 labels"),
+            enabled=True,
+        )
+        loadAlt1Labels = action(
+            self.tr("Load alt_1_labels"),
+            self.loadAlt1Labels,
+            shortcuts["load_alt_1_labels"],
+            "objects",
+            self.tr("Load alt-1 labels"),
+            enabled=True,
+        )
+        loadAlt2Labels = action(
+            self.tr("Load alt_2_labels"),
+            self.loadAlt2Labels,
+            shortcuts["load_alt_2_labels"],
+            "objects",
+            self.tr("Load alt-2 labels"),
+            enabled=True,
+        )
+        loadAlt3Labels = action(
+            self.tr("Load alt_3_labels"),
+            self.loadAlt3Labels,
+            shortcuts["load_alt_3_labels"],
+            "objects",
+            self.tr("Load alt-3 labels"),
+            enabled=True,
+        )
+        loadAlt4Labels = action(
+            self.tr("Load alt_4_labels"),
+            self.loadAlt4Labels,
+            shortcuts["load_alt_4_labels"],
+            "objects",
+            self.tr("Load alt-4 labels"),
+            enabled=True,
+        )
+        loadAlt5Labels = action(
+            self.tr("Load alt_5_labels"),
+            self.loadAlt5Labels,
+            shortcuts["load_alt_5_labels"],
+            "objects",
+            self.tr("Load alt-5 labels"),
+            enabled=True,
+        )
+        loadAlt6Labels = action(
+            self.tr("Load alt_6_labels"),
+            self.loadAlt6Labels,
+            shortcuts["load_alt_6_labels"],
+            "objects",
+            self.tr("Load alt-6 labels"),
+            enabled=True,
+        )
+        loadAlt7Labels = action(
+            self.tr("Load alt_7_labels"),
+            self.loadAlt7Labels,
+            shortcuts["load_alt_7_labels"],
+            "objects",
+            self.tr("Load alt-7 labels"),
+            enabled=True,
+        )
+        loadAlt8Labels = action(
+            self.tr("Load alt_8_labels"),
+            self.loadAlt8Labels,
+            shortcuts["load_alt_8_labels"],
+            "objects",
+            self.tr("Load alt-8 labels"),
+            enabled=True,
+        )
+        loadAlt9Labels = action(
+            self.tr("Load alt_9_labels"),
+            self.loadAlt9Labels,
+            shortcuts["load_alt_9_labels"],
+            "objects",
+            self.tr("Load alt-9 labels"),
+            enabled=True,
+        )        
+        
+        utils.addActions(self,
+                         [loadAlt0Labels,
+                          loadAlt1Labels,
+                          loadAlt2Labels,
+                          loadAlt3Labels,
+                          loadAlt4Labels,
+                          loadAlt5Labels,
+                          loadAlt6Labels,
+                          loadAlt7Labels,
+                          loadAlt9Labels,
+                          loadAlt9Labels])
+
         # Hard-code page-up and page-down
         action_next_pgdn = action('next_pgdn',slot=self.openNextImg,
                                   shortcut=QtCore.Qt.Key_PageDown,
@@ -225,8 +362,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                   shortcut=QtCore.Qt.Key_PageUp,
                                   icon=None,tip=None,checkable=False,enabled=True)
         utils.addActions(self,[action_prev_pgup])
-                                         
-        shortcuts = self._config["shortcuts"]
+                              
         quit = action(
             self.tr("&Quit"),
             self.close,
@@ -424,88 +560,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Load alt labels"),
             enabled=True,
         )
-        
-        loadAlt0Labels = action(
-            self.tr("Load alt_0_labels"),
-            self.loadAlt0Labels,
-            shortcuts["load_alt_0_labels"],
-            "objects",
-            self.tr("Load alt-0 labels"),
-            enabled=True,
-        )
-        loadAlt1Labels = action(
-            self.tr("Load alt_1_labels"),
-            self.loadAlt1Labels,
-            shortcuts["load_alt_1_labels"],
-            "objects",
-            self.tr("Load alt-1 labels"),
-            enabled=True,
-        )
-        loadAlt2Labels = action(
-            self.tr("Load alt_2_labels"),
-            self.loadAlt2Labels,
-            shortcuts["load_alt_2_labels"],
-            "objects",
-            self.tr("Load alt-2 labels"),
-            enabled=True,
-        )
-        loadAlt3Labels = action(
-            self.tr("Load alt_3_labels"),
-            self.loadAlt3Labels,
-            shortcuts["load_alt_3_labels"],
-            "objects",
-            self.tr("Load alt-3 labels"),
-            enabled=True,
-        )
-        loadAlt4Labels = action(
-            self.tr("Load alt_4_labels"),
-            self.loadAlt4Labels,
-            shortcuts["load_alt_4_labels"],
-            "objects",
-            self.tr("Load alt-4 labels"),
-            enabled=True,
-        )
-        loadAlt5Labels = action(
-            self.tr("Load alt_5_labels"),
-            self.loadAlt5Labels,
-            shortcuts["load_alt_5_labels"],
-            "objects",
-            self.tr("Load alt-5 labels"),
-            enabled=True,
-        )
-        loadAlt6Labels = action(
-            self.tr("Load alt_6_labels"),
-            self.loadAlt6Labels,
-            shortcuts["load_alt_6_labels"],
-            "objects",
-            self.tr("Load alt-6 labels"),
-            enabled=True,
-        )
-        loadAlt7Labels = action(
-            self.tr("Load alt_7_labels"),
-            self.loadAlt7Labels,
-            shortcuts["load_alt_7_labels"],
-            "objects",
-            self.tr("Load alt-7 labels"),
-            enabled=True,
-        )
-        loadAlt8Labels = action(
-            self.tr("Load alt_8_labels"),
-            self.loadAlt8Labels,
-            shortcuts["load_alt_8_labels"],
-            "objects",
-            self.tr("Load alt-8 labels"),
-            enabled=True,
-        )
-        loadAlt9Labels = action(
-            self.tr("Load alt_9_labels"),
-            self.loadAlt9Labels,
-            shortcuts["load_alt_9_labels"],
-            "objects",
-            self.tr("Load alt-9 labels"),
-            enabled=True,
-        )
-        
         
         merge = action(
             self.tr("Merge Rectangles"),
@@ -748,7 +802,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.popLabelListMenu
         )
 
-        # Store actions for further handling.
+        # Store actions for further handling
         self.actions = utils.struct(
             saveAuto=saveAuto,
             saveWithImageData=saveWithImageData,
@@ -759,6 +813,10 @@ class MainWindow(QtWidgets.QMainWindow):
             close=close,
             deleteFile=deleteFile,
             copyFileName=copyFilename,
+            forwardN=forwardN,
+            backwardN=backwardN,
+            forwardLittleN=forwardLittleN,
+            backwardLittleN=backwardLittleN,
             toggleKeepPrevMode=toggle_keep_prev_mode,
             delete=delete,
             merge=merge,
@@ -966,16 +1024,6 @@ class MainWindow(QtWidgets.QMainWindow):
             merge,
             keepSelected,
             loadAltLabels,
-            loadAlt0Labels,
-            loadAlt1Labels,
-            loadAlt2Labels,
-            loadAlt3Labels,
-            loadAlt4Labels,
-            loadAlt5Labels,
-            loadAlt6Labels,
-            loadAlt7Labels,
-            loadAlt8Labels,
-            loadAlt9Labels,
             smallest,
             largest,
             undo,
@@ -986,7 +1034,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None,
             selectAiModel,
         )
-
+        
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
         self.statusBar().show()
 
@@ -1117,6 +1165,10 @@ class MainWindow(QtWidgets.QMainWindow):
         title = __appname__
         if self.filename is not None:
             title = "{} - {}*".format(title, self.filename)
+            currIndex = self.imageList.index(self.filename)
+            if currIndex >= 0:
+                title += ' ({} of {})'.format(currIndex,len(self.imageList))
+        
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -1132,6 +1184,10 @@ class MainWindow(QtWidgets.QMainWindow):
         title = __appname__
         if self.filename is not None:
             title = "{} - {}".format(title, self.filename)
+            currIndex = self.imageList.index(self.filename)
+            if currIndex >= 0:
+                title += ' ({} of {})'.format(currIndex,len(self.imageList))
+                
         self.setWindowTitle(title)
 
         if self.hasLabelFile():
@@ -2190,6 +2246,56 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return label_file
 
+    def moveByNImages(self,n):
+        
+        if not self.mayContinue():
+            return
+
+        if len(self.imageList) <= 0:
+            return
+
+        if self.filename is None:
+            return
+        
+        if len(self.imageList) == 0:
+            return
+        
+        currIndex = self.imageList.index(self.filename)
+        if currIndex <= 0:
+            print('Could not find current index')
+            return
+        
+        newIndex = currIndex + n
+        if newIndex < 0:
+            newIndex = 0
+        if newIndex >= len(self.imageList):
+            newIndex = len(self.imageList) - 1
+
+        filename = self.imageList[newIndex]            
+        if filename != None:
+            self.filename = filename
+            self.loadFile(self.filename)        
+    
+    def forwardLittleN(self):
+        n = int(self._config["quick_advance_n"] / self._config["quick_advance_little_n_scale"])
+        print('Moving forward by {} images'.format(n))
+        self.moveByNImages(int(n))
+        
+    def backwardLittleN(self):
+        n = int(self._config["quick_advance_n"] / self._config["quick_advance_little_n_scale"])
+        print('Moving backward by {} images'.format(n))
+        self.moveByNImages(int(-1*n))
+        
+    def forwardN(self):
+        n = self._config["quick_advance_n"]
+        print('Moving forward by {} images'.format(n))
+        self.moveByNImages(n)
+        
+    def backwardN(self):
+        n = self._config["quick_advance_n"]
+        print('Moving backward by {} images'.format(n))
+        self.moveByNImages(-1*n)
+    
     def copyFilename(self):
         if self.filename is None:
             print('No filename to copy')
@@ -2361,6 +2467,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 
     def keepSmallestRectangle(self):
         
+        print('keep smallest')
         deleted_shapes = self.canvas.keepSmallestRectangle()
         if deleted_shapes is None:
             return
@@ -2370,6 +2477,7 @@ class MainWindow(QtWidgets.QMainWindow):
             
     def keepLargestRectangle(self):
         
+        print('keep largest')
         deleted_shapes = self.canvas.keepLargestRectangle()
         if deleted_shapes is None:
             return
@@ -2378,14 +2486,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
     
     def deleteSelectedShape(self):
-        yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-        msg = self.tr(
-            "You are about to permanently delete {} polygons, "
-            "proceed anyway?"
-        ).format(len(self.canvas.selectedShapes))
-        if yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes
-        ):
+        do_deletion = True
+        prompt_before_deletion = False
+        if prompt_before_deletion:
+            yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
+            msg = self.tr(
+                "You are about to permanently delete {} polygons, "
+                "proceed anyway?"
+            ).format(len(self.canvas.selectedShapes))
+            do_deletion = (yes == QtWidgets.QMessageBox.warning(
+                self, self.tr("Attention"), msg, yes | no, yes
+            ))
+        if do_deletion:
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():

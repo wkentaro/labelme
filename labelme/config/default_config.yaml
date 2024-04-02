@@ -6,6 +6,8 @@ keep_prev_scale: false
 keep_prev_brightness: false
 keep_prev_contrast: false
 logger_level: info
+quick_advance_n: 100
+quick_advance_little_n_scale: 5
 
 flags: null
 label_flags: null
@@ -106,6 +108,10 @@ shortcuts:
   delete_polygon: Delete
   merge_all_rectangles: M
   load_alt_labels: L  
+  forward_little_n: Shift+PgDown
+  backward_little_n: Shift+PgUp  
+  forward_n: Ctrl+PgDown
+  backward_n: Ctrl+PgUp
   load_alt_0_labels: Alt+0
   load_alt_1_labels: Alt+1
   load_alt_2_labels: Alt+2

@@ -145,17 +145,18 @@ class LabelFile(object):
     def _check_image_height_and_width(imageData, imageHeight, imageWidth):
         img_arr = utils.img_b64_to_arr(imageData)
         if imageHeight is not None and img_arr.shape[0] != imageHeight:
-            logger.error(
-                "imageHeight does not match with imageData or imagePath, "
-                "so getting imageHeight from actual image."
-            )
-            imageHeight = img_arr.shape[0]
+            new_imageHeight = img_arr.shape[0]
+            s = 'imageHeight {} does not match with imageData ({}) or imagePath,'.format(imageHeight,img_arr.shape[0])
+            s += ' getting imageHeight {} from actual image'.format(new_imageHeight)
+            logger.error(s)
+            imageHeight = new_imageHeight
         if imageWidth is not None and img_arr.shape[1] != imageWidth:
-            logger.error(
-                "imageWidth does not match with imageData or imagePath, "
-                "so getting imageWidth from actual image."
-            )
-            imageWidth = img_arr.shape[1]
+            new_imageWidth = img_arr.shape[1]            
+            s = 'imageWidth {} does not match with imageData ({}) or imagePath,'.format(imageWidth,img_arr.shape[1])
+            s += ' getting imageWidth {} from actual image'.format(new_imageWidth)
+            logger.error(s)
+            imageWidth = new_imageWidth
+            
         return imageHeight, imageWidth
 
     def save(

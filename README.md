@@ -18,7 +18,11 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 ## Changes in this fork
 
+* Ctrl-PageDown and Shift-PageDown advance by 100 and 20 images, respectively (configurable in the .yaml file), ditto for PageUp.  Related: the current index in the file list is now displayed in the title bar.
+
 * Clicking an empty area in the canvas, then shift-clicking another point, selects all rectangles that intersect with the rectangle defined by the two points you just clicked.
+
+* Deletion no longer raises a confirmation prompt (every click counts!)
 
 * Shift/ctrl + up/down/left right move the upper-left and lower-right borders of a selected rectangle.
 
