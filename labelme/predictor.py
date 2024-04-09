@@ -11,7 +11,8 @@ from labelme.shape import Shape
 import yaml
 # segment anything
 
-from segment_anything import sam_model_registry, SamPredictor
+# from segment_anything import sam_model_registry, SamPredictor
+from edge_sam import SamPredictor, sam_model_registry
 
 def colormap():
     color = Shape.mask_color()
@@ -191,12 +192,21 @@ class Predictor(SamPredictor):
         logger.debug(f"input_point: {type(input_points)} {input_points.shape} \n{input_points}")
         logger.debug(f"input_label: {type(input_labels)} {input_labels.shape} \n{input_labels}")
         multimask_output = True if input_points.shape[0] > 1 else False
+        # masks, scores, logits = super().predict(
+        #     point_coords=input_points,
+        #     point_labels=input_labels,
+        #     box=input_box,
+        #     mask_input=input_mask,
+        #     multimask_output=multimask_output,
+        # )
+        
+        num_multimask_outputs = 3 if multimask_output else 1
         masks, scores, logits = super().predict(
             point_coords=input_points,
             point_labels=input_labels,
             box=input_box,
             mask_input=input_mask,
-            multimask_output=multimask_output,
+            num_multimask_outputs=num_multimask_outputs,
         )
         
         result = self.postproc(masks, scores, logits, multimask_output)
