@@ -6,6 +6,7 @@ import math
 import os
 import os.path as osp
 import re
+import json
 import webbrowser
 
 import imgviz
@@ -217,6 +218,32 @@ class MainWindow(QtWidgets.QMainWindow):
         
         shortcuts = self._config["shortcuts"]
 
+        toggleIgnoreFlag = action(
+            self.tr("Toggle Ignore Flag"),
+            self.toggleIgnoreFlag,
+            shortcuts["toggle_ignore_flag"],
+            "toggle ignore flag",
+            self.tr("Toggle the 'ignore' flag (if present)"),
+            enabled=True,
+        )
+        
+        goToNextNonEmpty = action(
+            self.tr("Go to next non-empty"),
+            self.goToNextNonEmpty,
+            shortcuts["go_to_next_non_empty"],
+            "go to next non-empty",
+            self.tr("Move forward to the next non-empty image"),
+            enabled=True,
+        )
+        goToPrevNonEmpty = action(
+            self.tr("Go to previous non-empty"),
+            self.goToPrevNonEmpty,
+            shortcuts["go_to_prev_non_empty"],
+            "go to previous non-empty",
+            self.tr("Move back to the previous non-empty image"),
+            enabled=True,
+        )
+        
         forwardN = action(
             self.tr("Forward N"),
             self.forwardN,
@@ -224,8 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "forward N",
             self.tr("Move forward by N images"),
             enabled=True,
-        )
-    
+        )    
         backwardN = action(
             self.tr("Backward N"),
             self.backwardN,
@@ -254,7 +280,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         
         utils.addActions(self,
-                         [forwardN,
+                         [toggleIgnoreFlag,
+                          goToPrevNonEmpty,
+                          goToNextNonEmpty,
+                          forwardN,
                           backwardN,
                           forwardLittleN,
                           backwardLittleN])
@@ -585,6 +614,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Keep largest rectangle"),
             enabled=True,
         )        
+        select_smallest = action(
+            self.tr("Select Smallest Rectangle"),
+            self.selectSmallestRectangle,
+            shortcuts["select_smallest_rectangle"],
+            "objects",
+            self.tr("Select smallest rectangle"),
+            enabled=True,
+        )        
+        select_largest = action(
+            self.tr("Select Largest Rectangle"),
+            self.selectLargestRectangle,
+            shortcuts["select_largest_rectangle"],
+            "objects",
+            self.tr("Select largest rectangle"),
+            enabled=True,
+        )        
         keepSelected = action(
             self.tr("Keep Selected Polygons"),
             self.keepSelectedPolygons,
@@ -666,6 +711,8 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
 
+        utils.addActions(self,[select_largest,select_smallest])
+        
         help = action(
             self.tr("&Tutorial"),
             self.tutorial,
@@ -813,7 +860,10 @@ class MainWindow(QtWidgets.QMainWindow):
             close=close,
             deleteFile=deleteFile,
             copyFileName=copyFilename,
+            toggleIgnoreFlag=toggleIgnoreFlag,
             forwardN=forwardN,
+            goToPrevNonEmpty=goToPrevNonEmpty,
+            goToNextNonEmpty=goToNextNonEmpty,
             backwardN=backwardN,
             forwardLittleN=forwardLittleN,
             backwardLittleN=backwardLittleN,
@@ -832,8 +882,10 @@ class MainWindow(QtWidgets.QMainWindow):
             loadAlt7Labels=loadAlt7Labels,
             loadAlt8Labels=loadAlt8Labels,
             loadAlt9Labels=loadAlt9Labels,            
-            smallest=smallest,
+            select_smallest=select_smallest,
+            select_largest=select_largest,
             largest=largest,
+            smallest=smallest,
             edit=edit,
             duplicate=duplicate,
             selectAllPolygons=selectAllPolygons,
@@ -1150,6 +1202,7 @@ class MainWindow(QtWidgets.QMainWindow):
         utils.addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
+        
         # Even if we autosave the file, we keep the ability to undo
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
@@ -2261,7 +2314,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         
         currIndex = self.imageList.index(self.filename)
-        if currIndex <= 0:
+        if currIndex < 0:
             print('Could not find current index')
             return
         
@@ -2286,6 +2339,105 @@ class MainWindow(QtWidgets.QMainWindow):
         print('Moving backward by {} images'.format(n))
         self.moveByNImages(int(-1*n))
         
+    def toggleIgnoreFlag(self):        
+        ignore_status = 'not found'
+        for i in range(self.flag_widget.count()):
+            item = self.flag_widget.item(i)
+            key = item.text()
+            if key == 'ignore':
+                flag_value = (item.checkState() == Qt.Checked)
+                if flag_value:
+                    ignore_status = 'clearing ignore flag'
+                    item.setCheckState(Qt.Unchecked)
+                else:
+                    ignore_status = 'setting ignore flag'
+                    item.setCheckState(Qt.Checked)
+        if ignore_status == 'not found':
+            print('Ignore flag not present')        
+        else:
+            print(ignore_status)
+    
+    def goToNonEmpty(self,forward):
+        
+        if not self.mayContinue():
+            return
+
+        if len(self.imageList) <= 0:
+            return
+
+        if self.filename is None:
+            return
+        
+        if len(self.imageList) == 0:
+            return
+        
+        curr_index = self.imageList.index(self.filename)
+        if curr_index < 0:
+            print('Could not find current index')
+            return
+        
+        increment = 1 if forward else -1
+        
+        test_index = curr_index + increment
+        new_index = None
+        
+        while(True):
+            
+            if test_index < 0:
+                assert not forward
+                print('No previous non-empty image')
+                return
+            if test_index >= len(self.imageList):
+                assert forward
+                print('No next non-empty image')
+                return
+        
+            test_image_file = self.imageList[test_index]
+            test_label_file = os.path.splitext(test_image_file)[0] + ".json"
+            if not os.path.isfile(test_label_file):
+                print('Skipping search, {} does not exist'.format(test_label_file))
+                return
+        
+            with open(test_label_file,'r') as f:
+                json_data = json.load(f)
+                                
+            shapes = json_data['shapes']
+            
+            # Example alternative query to hack this functionality to, e.g., find the
+            # next non-person.
+            if False:
+                if (len(shapes) == 0):
+                    new_index = test_index
+                    break
+                else:
+                    for shape in shapes:
+                        if shape['label'] != 'person':
+                            new_index = test_index
+                            break
+                    if new_index != None:
+                        break
+                    
+            if len(shapes) > 0:
+                print('Found a non-empty image at index {} (from {})'.format(test_index,curr_index))
+                new_index = test_index
+                break
+        
+            test_index += increment            
+            
+        assert new_index is not None
+        
+        new_filename = self.imageList[new_index]
+        assert new_filename is not None
+        self.filename = new_filename
+        self.loadFile(self.filename)        
+    
+    
+    def goToNextNonEmpty(self):
+        self.goToNonEmpty(True)        
+    
+    def goToPrevNonEmpty(self):
+        self.goToNonEmpty(False)        
+    
     def forwardN(self):
         n = self._config["quick_advance_n"]
         print('Moving forward by {} images'.format(n))
@@ -2465,6 +2617,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.remLabels(deleted_shapes)
         self.setDirty()
                 
+    def selectSmallestRectangle(self):        
+        self.canvas.selectSmallestRectangle()
+            
+    def selectLargestRectangle(self):
+        self.canvas.selectLargestRectangle()
+        
     def keepSmallestRectangle(self):
         
         print('keep smallest')

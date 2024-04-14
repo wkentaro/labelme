@@ -18,6 +18,10 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 ## Changes in this fork
 
+* Alt-PageDown advances to the next non-empty image (and ditto for Alt-PageUp)
+
+* Alt-I toggles the "ignore" flag (if present)
+
 * Ctrl-PageDown and Shift-PageDown advance by 100 and 20 images, respectively (configurable in the .yaml file), ditto for PageUp.  Related: the current index in the file list is now displayed in the title bar.
 
 * Clicking an empty area in the canvas, then shift-clicking another point, selects all rectangles that intersect with the rectangle defined by the two points you just clicked.
@@ -37,6 +41,10 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 * A new action (default B) to keep only the largest ("*B*iggest") rectangle
 
 * A new action (default S) to keep only the smallest rectangle
+
+* A new action (default shift-B) to select the largest ("*B*iggest") rectangle
+
+* A new action (default shift-S) to select the smallest rectangle
 
 * A new action (default L) to load labels from image_file.alt.json, instead of image_file.json, typically used to load a version of the pregenerated labels that uses a lower confidence threshold
 

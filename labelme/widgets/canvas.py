@@ -733,7 +733,49 @@ class Canvas(QtWidgets.QWidget):
         
         return shapes_to_delete
         
-    def keepLargestRectangle(self):    
+    def selectLargestRectangle(self):
+        self.selectBySize(largest=True)
+        
+    def selectSmallestRectangle(self):
+        self.selectBySize(largest=False)
+        
+    def selectBySize(self,largest):
+        if self.shapes is None:
+            return None
+        if len(self.shapes) == 1:
+            self.selectShapes([self.shapes[0]])
+            return
+        if len(self.shapes) <= 1:
+            return None
+        
+        selected_area = None
+        selected_area_index = None
+        
+        for i_shape,shape in enumerate(self.shapes):
+            if shape.shape_type != 'rectangle':
+                print('Can\'t perform largest-rect operation with non-rectangle shapes')
+                return None
+            assert len(shape.points) == 2
+            dx = abs(shape.points[1].x()-shape.points[0].x())
+            dy = abs(shape.points[1].y()-shape.points[0].y())
+            area = abs(dx*dy)
+            if selected_area is None:
+                selected_area = area
+                selected_area_index = i_shape
+            else:
+                if largest and area > selected_area:
+                    selected_area = area
+                    selected_area_index = i_shape
+                elif (not largest) and area < selected_area:
+                    selected_area = area
+                    selected_area_index = i_shape                    
+        # ... for each shape
+        
+        assert selected_area is not None
+        
+        self.selectShapes([self.shapes[selected_area_index]])
+        
+    def keepLargestRectangle(self):
         
         if self.shapes is None:
             return None
