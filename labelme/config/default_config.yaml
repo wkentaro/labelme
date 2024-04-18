@@ -114,7 +114,7 @@ shortcuts:
   backward_little_n: Shift+PgUp  
   forward_n: Ctrl+PgDown
   backward_n: Ctrl+PgUp
-  toggle_ignore_flag: Alt+I
+  toggle_ignore_flag: X
   load_alt_0_labels: Alt+0
   load_alt_1_labels: Alt+1
   load_alt_2_labels: Alt+2
