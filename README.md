@@ -1,11 +1,10 @@
-# Dan's random labelme fork
+# Dan's labelme fork for camera trap images
 
 ## What am I using labelme for?
 
 I am fine-tuning detector models that *almost* work in the target domain, but not quite.  In particular, I'm fine-tuning [MegaDetector](https://github.com/agentmorris/MegaDetector/) (MD) for cases where it [struggles](https://github.com/agentmorris/MegaDetector/blob/main/megadetector-challenges.md), but still has some signal.  In these cases, if you use MD to generate boxes, you will get many target objects and save yourself *gobs* of time in building a training set, but you will miss some target objects entirely, and you will have to use a sufficiently low confidence threshold that you get a bunch of junk.  Before I do any labelme work, I do an aggressive [repeat detection elimination](https://github.com/agentmorris/MegaDetector/tree/main/api/batch_processing/postprocessing/repeat_detection_elimination) pass, but still, there's some junk, and some misses, but mostly good boxes, and I want to clean all that up to make a new training set.
 
 I compared a few OSS labeling tools and found that none *quite* supported this scenario, since the common path is still the one where you're making boxes from scratch.  But labelme was the easiest to populate with bounding boxes from ML results, and by far the easiest for me to modify (all in Python, no fancy-schmancy Web infrastructure).
-
 
 ## Why did I fork labelme?
 
@@ -68,10 +67,6 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 * Alt-right and alt-left to select next/prev boxes (super-useful for the case where multiple overlapping boxes are predicted for a single object, which is a time-consuming situation to resolve with the mouse)
 
-## TODO
-
-* My fine adjustment logic breaks down a little when boxes are near the edge of the canvas (nothing bad happens, fine adjustment just stops working), fix this
-
 ## Notes to self about how I set up my environment
 
 ### Setting up this repo
@@ -127,3 +122,8 @@ sudo apt install libxcb-xinerama0 libqt5x11extras5
 * Shift/control + left/right/up/down (fine adjustment of 0th/1st vertices)
 * Delete (delete current polygon)
 * Ctrl-C,ctrl-v (copy/paste selected polygons)
+
+## TODO
+
+* My fine adjustment logic breaks down a little when boxes are near the edge of the canvas (nothing bad happens, fine adjustment just stops working), fix this
+
