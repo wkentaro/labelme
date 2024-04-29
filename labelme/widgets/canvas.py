@@ -30,6 +30,7 @@ class Canvas(QtWidgets.QWidget):
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
+    mouseMoved = QtCore.Signal(QtCore.QPointF)
 
     CREATE, EDIT = 0, 1
 
@@ -233,6 +234,8 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.transformPos(ev.posF())
         except AttributeError:
             return
+
+        self.mouseMoved.emit(pos)
 
         self.prevMovePoint = pos
         self.restoreCursor()
