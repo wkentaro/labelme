@@ -169,6 +169,9 @@ class MainWindow(QtWidgets.QMainWindow):
             crosshair=self._config["canvas"]["crosshair"],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.mouseMoved.connect(
+            lambda pos: self.status(f"Mouse is at: x={pos.x()}, y={pos.y()}")
+        )
 
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)
