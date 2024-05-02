@@ -14,6 +14,7 @@
 
 <div align="center">
   <a href="#starter-guide"><b>Starter Guide</b></a>
+  | <a href="https://github.com/labelmeai/toolkit"><b>Toolkit↗</b></a>
   | <a href="#installation"><b>Installation</b></a>
   | <a href="#usage"><b>Usage</b></a>
   | <a href="#examples"><b>Examples</b></a>
