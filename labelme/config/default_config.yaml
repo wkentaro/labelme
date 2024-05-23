@@ -115,6 +115,11 @@ shortcuts:
   forward_n: Ctrl+PgDown
   backward_n: Ctrl+PgUp
   toggle_ignore_flag: X
+  toggle_flag_0: 0
+  toggle_flag_1: 1
+  toggle_flag_2: 2
+  toggle_flag_3: 3
+  toggle_flag_4: 4  
   load_alt_0_labels: Alt+0
   load_alt_1_labels: Alt+1
   load_alt_2_labels: Alt+2

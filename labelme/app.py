@@ -369,8 +369,50 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )        
         
+        toggleFlag0 = action(
+            self.tr("Toggle flag 0"),
+            self.toggleFlag0,
+            shortcuts["toggle_flag_0"],
+            "objects",
+            self.tr("Toggle flag 0"),
+            enabled=True,
+        )
+        toggleFlag1 = action(
+            self.tr("Toggle flag 1"),
+            self.toggleFlag1,
+            shortcuts["toggle_flag_1"],
+            "objects",
+            self.tr("Toggle flag 1"),
+            enabled=True,
+        )
+        toggleFlag2 = action(
+            self.tr("Toggle flag 2"),
+            self.toggleFlag2,
+            shortcuts["toggle_flag_2"],
+            "objects",
+            self.tr("Toggle flag 2"),
+            enabled=True,
+        )
+        toggleFlag3 = action(
+            self.tr("Toggle flag 3"),
+            self.toggleFlag3,
+            shortcuts["toggle_flag_3"],
+            "objects",
+            self.tr("Toggle flag 3"),
+            enabled=True,
+        )
+        toggleFlag4 = action(
+            self.tr("Toggle flag 4"),
+            self.toggleFlag4,
+            shortcuts["toggle_flag_4"],
+            "objects",
+            self.tr("Toggle flag 4"),
+            enabled=True,
+        )
+            
         utils.addActions(self,
-                         [loadAlt0Labels,
+                         [toggleFlag0,toggleFlag1,toggleFlag2,toggleFlag3,toggleFlag4,
+                          loadAlt0Labels,
                           loadAlt1Labels,
                           loadAlt2Labels,
                           loadAlt3Labels,
@@ -871,6 +913,11 @@ class MainWindow(QtWidgets.QMainWindow):
             delete=delete,
             merge=merge,
             keep=keepSelected,
+            toggleFlag0=toggleFlag0,
+            toggleFlag1=toggleFlag1,
+            toggleFlag2=toggleFlag2,
+            toggleFlag3=toggleFlag3,
+            toggleFlag4=toggleFlag4,
             loadAltLabels=loadAltLabels,
             loadAlt0Labels=loadAlt0Labels,
             loadAlt1Labels=loadAlt1Labels,
@@ -2356,6 +2403,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print('Ignore flag not present')        
         else:
             print(ignore_status)
+        self.setDirty()
     
     def goToNonEmpty(self,forward):
         
@@ -2548,6 +2596,42 @@ class MainWindow(QtWidgets.QMainWindow):
                     action.setEnabled(False)
         self.setDirty()
 
+    def toggleFlagByNumber(self,n):
+        if self.filename is None:
+            return
+        print('Toggling flag: {}'.format(n))
+        
+        flag_status = 'not found'
+        for i in range(self.flag_widget.count()):
+            item = self.flag_widget.item(i)
+            key = item.text()
+            query = str(n)
+            if key.startswith(query):
+                flag_value = (item.checkState() == Qt.Checked)
+                if flag_value:
+                    flag_status = 'clearing flag {}'.format(key)
+                    item.setCheckState(Qt.Unchecked)
+                else:
+                    flag_status = 'setting flag {}'.format(key)
+                    item.setCheckState(Qt.Checked)
+                break
+        if flag_status == 'not found':
+            print('flag not present')        
+        else:
+            print(flag_status)
+        self.setDirty()
+        
+    def toggleFlag0(self):
+        self.toggleFlagByNumber(0)
+    def toggleFlag1(self):
+        self.toggleFlagByNumber(1)
+    def toggleFlag2(self):
+        self.toggleFlagByNumber(2)
+    def toggleFlag3(self):
+        self.toggleFlagByNumber(3)
+    def toggleFlag4(self):
+        self.toggleFlagByNumber(4)
+    
     def loadAltLabels(self):
         if self.filename is None:
             return

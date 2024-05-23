@@ -8,6 +8,7 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 
 
+
 here = osp.dirname(osp.abspath(__file__))
 
 
@@ -42,6 +43,13 @@ def newAction(
         a.setIconText(text.replace(" ", "\n"))
         a.setIcon(newIcon(icon))
     if shortcut is not None:
+        try:
+            val = int(shortcut)
+            assert val >= 0 and val <=9, 'Invalid numeric shortcut: {}'.format(shortcut)
+            print('Creating numberic shortcut from {}'.format(shortcut))
+            shortcut = QtGui.QKeySequence(val+QtCore.Qt.Key_0)
+        except Exception:
+            pass
         if isinstance(shortcut, (list, tuple)):
             a.setShortcuts(shortcut)
         else:

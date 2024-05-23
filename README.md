@@ -17,6 +17,8 @@ I wanted to add a few UI features specific to the scenario where boxes are prepo
 
 ## Changes in this fork
 
+* New keyboard shortcuts (defaulting to the integers 0-4) to toggle labels starting with numeric integers, e.g. "0" toggles the first label starting with the string "0".
+
 * Alt-PageDown advances to the next non-empty image (and ditto for Alt-PageUp)
 
 * Alt-I toggles the "ignore" flag (if present)
