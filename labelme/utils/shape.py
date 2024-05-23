@@ -4,6 +4,8 @@
 import math
 import uuid
 
+import colorsys
+import random
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
@@ -107,3 +109,17 @@ def masks_to_bboxes(masks):
         bboxes.append((y1, x1, y2, x2))
     bboxes = np.asarray(bboxes, dtype=np.float32)
     return bboxes
+
+
+def generate_random_colors(shape_amount, bright=False):
+    """
+    Generate random colors.
+    To get visually distinct colors, generate them in HSV space then
+    convert to RGB.
+    """
+    brightness = 1.0 if bright else 0.7
+    hsv = [(i / shape_amount, 256, brightness) for i in range(shape_amount)]
+    colors = list(map(lambda c: tuple(abs(hue) for hue in colorsys.hsv_to_rgb(*c)), hsv))
+    random.shuffle(colors)
+    return colors
+
