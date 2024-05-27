@@ -234,6 +234,12 @@ class Canvas(QtWidgets.QWidget):
         except AttributeError:
             return
 
+        # Update coordinates in status bar if image is opened
+        window = self.parent().window()
+        if not window.image.isNull():
+            self.parent().window().label_coordinates.setText(
+                'X: %d; Y: %d' % (pos.x(), pos.y()))
+
         self.prevMovePoint = pos
         self.restoreCursor()
 
