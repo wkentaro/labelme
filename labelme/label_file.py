@@ -35,8 +35,8 @@ class LabelFileError(Exception):
 class LabelFile(object):
 
     defaultSuffix = ".json"  # by default using labelme format
-    support_suffix_list = [".json", ".txt"]
-    suffix_corresponding_formats = ["labelme", "yolo"]
+    support_suffix_list = [".txt", ".json"]
+    suffix_corresponding_formats = ["yolo", "labelme"]
 
     def __init__(self, filename=None):
         self.shapes = []

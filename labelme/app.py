@@ -1837,7 +1837,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self, caption, self.currentPath(), filters
             )
 
-        dlg.setDefaultSuffix(LabelFile.defaultSuffix[1:])
+        dlg.setDefaultSuffix(LabelFile.support_suffix_list[0][1:])
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
@@ -1845,11 +1845,11 @@ class MainWindow(QtWidgets.QMainWindow):
         basename = osp.basename(osp.splitext(self.filename)[0])
         if self.output_dir:
             default_labelfile_name = osp.join(
-                self.output_dir, basename + LabelFile.defaultSuffix
+                self.output_dir, basename + LabelFile.support_suffix_list[0]
             )
         else:
             default_labelfile_name = osp.join(
-                self.currentPath(), basename + LabelFile.defaultSuffix
+                self.currentPath(), basename + LabelFile.support_suffix_list[0]
             )
         filename, selectedFilter = dlg.getSaveFileName(
             self,

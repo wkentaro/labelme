@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0",
+  "version": "5.2.0.post4",
   "flags": {},
   "shapes": [
     {
@@ -23,6 +23,7 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "polygon",
       "flags": {}
     },
@@ -71,6 +72,7 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "polygon",
       "flags": {}
     },
@@ -115,6 +117,7 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "polygon",
       "flags": {}
     },
@@ -235,7 +238,25 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "kong_air_dog_squeakair_tennis_ball",
+      "points": [
+        [
+          364.1133004926108,
+          369.756157635468
+        ],
+        [
+          795.6403940886698,
+          557.9334975369458
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
       "flags": {}
     }
   ],
