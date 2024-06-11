@@ -13,11 +13,11 @@
 </div>
 
 <div align="center">
-  <a href="https://starter-guide.labelme.io"><b>Starter Guide</b></a>
+  <a href="#starter-guide"><b>Starter Guide</b></a>
   | <a href="#installation"><b>Installation</b></a>
   | <a href="#usage"><b>Usage</b></a>
   | <a href="#examples"><b>Examples</b></a>
-  | <a href="https://twitter.com/labelmeai"><b>Twitter</b></a>
+  | <a href="https://x.com/labelmeai"><b>X/Twitter</b></a>
   <!-- | <a href="https://github.com/wkentaro/labelme/discussions"><b>Community</b></a> -->
   <!-- | <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a> -->
 </div>
@@ -30,7 +30,7 @@
 
 ## Description
 
-Labelme is a graphical image annotation tool.
+Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
 It is written in Python and uses Qt for its graphical interface.
 
 <img src="examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClass/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObject/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg" width="19%" />  
@@ -51,6 +51,15 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
 - [x] Exporting VOC-format dataset for semantic/instance segmentation. ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
 - [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
+
+
+## Starter Guide
+
+If you're new to Labelme, you can get started with [Labelme Starter Guide](https://labelme.gumroad.com/l/starter-guide) (FREE), which contains:
+
+- **Installation guides** for all platforms: Windows, macOS, and Linux 💻
+- **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
+- **A compilation of valuable resources** for further exploration 🔗.
 
 
 ## Installation
