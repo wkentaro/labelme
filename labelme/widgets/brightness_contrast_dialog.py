@@ -6,6 +6,8 @@ from qtpy.QtGui import QImage
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
+    _base_value = 50
+
     def __init__(self, img, callback, parent=None):
         super(BrightnessContrastDialog, self).__init__(parent)
         self.setModal(True)
@@ -24,8 +26,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.callback = callback
 
     def onNewValue(self, _):
-        brightness = self.slider_brightness.value() / 50.0
-        contrast = self.slider_contrast.value() / 50.0
+        brightness = self.slider_brightness.value() / self._base_value
+        contrast = self.slider_contrast.value() / self._base_value
 
         img = self.img
         if brightness != 1:
@@ -38,12 +40,12 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
 
     def _create_slider(self):
         slider = QtWidgets.QSlider(Qt.Horizontal)
-        slider.setRange(0, 150)
-        slider.setValue(50)
+        slider.setRange(0, 3 * self._base_value)
+        slider.setValue(self._base_value)
         slider.valueChanged.connect(self.onNewValue)
-        value_label = QtWidgets.QLabel(f"{slider.value() / 50:.2f}")
+        value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
         slider.valueChanged.connect(
-            lambda value: value_label.setText(f"{value / 50:.2f}")
+            lambda value: value_label.setText(f"{value / self._base_value:.2f}")
         )
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(slider)
