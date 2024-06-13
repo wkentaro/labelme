@@ -35,7 +35,9 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         if contrast != 1:
             img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
 
-        qimage = QImage(img.tobytes(), img.width, img.height, QImage.Format_RGB888)
+        qimage = QImage(
+            img.tobytes(), img.width, img.height, img.width * 3, QImage.Format_RGB888
+        )
         self.callback(qimage)
 
     def _create_slider(self):
