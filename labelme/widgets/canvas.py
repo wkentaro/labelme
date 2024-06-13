@@ -540,7 +540,10 @@ class Canvas(QtWidgets.QWidget):
         self._hideBackround = self.hideBackround if enable else False
 
     def canCloseShape(self):
-        return self.drawing() and ((self.current and len(self.current) > 2) or self.createMode in ["ai_polygon", "ai_mask"])
+        return self.drawing() and (
+            (self.current and len(self.current) > 2)
+            or self.createMode in ["ai_polygon", "ai_mask"]
+        )
 
     def mouseDoubleClickEvent(self, ev):
         if self.double_click != "close":
