@@ -10,6 +10,7 @@ import webbrowser
 
 import imgviz
 import natsort
+import numpy as np
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -1303,7 +1304,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     description=s.description,
                     shape_type=s.shape_type,
                     flags=s.flags,
-                    mask=None if s.mask is None else utils.img_arr_to_b64(s.mask),
+                    mask=None
+                    if s.mask is None
+                    else utils.img_arr_to_b64(s.mask.astype(np.uint8)),
                 )
             )
             return data
