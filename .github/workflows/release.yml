@@ -78,7 +78,7 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
-        python-version: '3.7'
+        python-version: '3.9'
 
     - name: Install main
       shell: bash -l {0}
