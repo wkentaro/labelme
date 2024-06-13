@@ -120,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_widget.itemChanged.connect(self.setDirty)
 
         self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
-        self.labelList.itemDoubleClicked.connect(self.editLabel)
+        self.labelList.itemDoubleClicked.connect(self._edit_label)
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemDropped.connect(self.labelOrderChanged)
         self.shape_dock = QtWidgets.QDockWidget(self.tr("Polygon Labels"), self)
@@ -591,7 +591,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         edit = action(
             self.tr("&Edit Label"),
-            self.editLabel,
+            self._edit_label,
             shortcuts["edit_label"],
             "edit",
             self.tr("Modify the label of the selected polygon"),
@@ -1087,7 +1087,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     return True
         return False
 
-    def editLabel(self, value=None):
+    def _edit_label(self, value=None):
         if not self.canvas.editing():
             return
 
