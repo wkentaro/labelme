@@ -13,13 +13,39 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.setModal(True)
         self.setWindowTitle("Brightness/Contrast")
 
-        self.slider_brightness, widget_brightness = self._create_slider()
-        self.slider_contrast, widget_contrast = self._create_slider()
+        sliders = {}
+        layouts = {}
+        for title in ["Brightness:", "Contrast:"]:
+            layout = QtWidgets.QHBoxLayout()
+            title_label = QtWidgets.QLabel(self.tr(title))
+            title_label.setFixedWidth(75)
+            layout.addWidget(title_label)
+            #
+            slider = QtWidgets.QSlider(Qt.Horizontal)
+            slider.setRange(0, 3 * self._base_value)
+            slider.setValue(self._base_value)
+            layout.addWidget(slider)
+            #
+            value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
+            value_label.setAlignment(Qt.AlignRight)
+            layout.addWidget(value_label)
+            #
+            slider.valueChanged.connect(self.onNewValue)
+            slider.valueChanged.connect(
+                lambda: value_label.setText(f"{slider.value() / self._base_value:.2f}")
+            )
+            layouts[title] = layout
+            sliders[title] = slider
 
-        form_layout = QtWidgets.QFormLayout()
-        form_layout.addRow(self.tr("Brightness"), widget_brightness)
-        form_layout.addRow(self.tr("Contrast"), widget_contrast)
-        self.setLayout(form_layout)
+        self.slider_brightness = sliders["Brightness:"]
+        self.slider_contrast = sliders["Contrast:"]
+        del sliders
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(layouts["Brightness:"])
+        layout.addLayout(layouts["Contrast:"])
+        del layouts
+        self.setLayout(layout)
 
         assert isinstance(img, PIL.Image.Image)
         self.img = img
@@ -39,19 +65,3 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             img.tobytes(), img.width, img.height, img.width * 3, QImage.Format_RGB888
         )
         self.callback(qimage)
-
-    def _create_slider(self):
-        slider = QtWidgets.QSlider(Qt.Horizontal)
-        slider.setRange(0, 3 * self._base_value)
-        slider.setValue(self._base_value)
-        slider.valueChanged.connect(self.onNewValue)
-        value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
-        slider.valueChanged.connect(
-            lambda value: value_label.setText(f"{value / self._base_value:.2f}")
-        )
-        layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(slider)
-        layout.addWidget(value_label)
-        widget = QtWidgets.QWidget()
-        widget.setLayout(layout)
-        return slider, widget
