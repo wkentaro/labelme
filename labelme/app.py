@@ -1087,27 +1087,78 @@ class MainWindow(QtWidgets.QMainWindow):
                     return True
         return False
 
-    def editLabel(self, item=None):
-        if item and not isinstance(item, LabelListWidgetItem):
-            raise TypeError("item must be LabelListWidgetItem type")
-
+    def editLabel(self, value=None):
         if not self.canvas.editing():
             return
-        if not item:
-            item = self.currentItem()
-        if item is None:
+
+        items = self.labelList.selectedItems()
+        if not items:
+            logger.warning("No label is selected, so cannot edit label.")
             return
-        shape = item.shape()
-        if shape is None:
-            return
+
+        shape = items[0].shape()
+
+        if len(items) == 1:
+            edit_text = True
+            edit_flags = True
+            edit_group_id = True
+            edit_description = True
+        else:
+            edit_text = all(item.shape().label == shape.label for item in items[1:])
+            edit_flags = all(item.shape().flags == shape.flags for item in items[1:])
+            edit_group_id = all(
+                item.shape().group_id == shape.group_id for item in items[1:]
+            )
+            edit_description = all(
+                item.shape().description == shape.description for item in items[1:]
+            )
+
+        if not edit_text:
+            self.labelDialog.edit.setDisabled(True)
+            self.labelDialog.labelList.setDisabled(True)
+        if not edit_flags:
+            for i in range(self.labelDialog.flagsLayout.count()):
+                self.labelDialog.flagsLayout.itemAt(i).setDisabled(True)
+        if not edit_group_id:
+            self.labelDialog.edit_group_id.setDisabled(True)
+        if not edit_description:
+            self.labelDialog.editDescription.setDisabled(True)
+
         text, flags, group_id, description = self.labelDialog.popUp(
-            text=shape.label,
-            flags=shape.flags,
-            group_id=shape.group_id,
-            description=shape.description,
+            text=shape.label if edit_text else "",
+            flags=shape.flags if edit_flags else None,
+            group_id=shape.group_id if edit_group_id else None,
+            description=shape.description if edit_description else None,
         )
+
+        if not edit_text:
+            self.labelDialog.edit.setDisabled(False)
+            self.labelDialog.labelList.setDisabled(False)
+        if not edit_flags:
+            for i in range(self.labelDialog.flagsLayout.count()):
+                self.labelDialog.flagsLayout.itemAt(i).setDisabled(False)
+        if not edit_group_id:
+            self.labelDialog.edit_group_id.setDisabled(False)
+        if not edit_description:
+            self.labelDialog.editDescription.setDisabled(False)
+
         if text is None:
+            assert flags is None
+            assert group_id is None
+            assert description is None
             return
+
+        self.canvas.storeShapes()
+        for item in items:
+            self._update_item(
+                item=item,
+                text=text if edit_text else None,
+                flags=flags if edit_flags else None,
+                group_id=group_id if edit_group_id else None,
+                description=description if edit_description else None,
+            )
+
+    def _update_item(self, item, text, flags, group_id, description):
         if not self.validateLabel(text):
             self.errorMessage(
                 self.tr("Invalid label"),
@@ -1116,10 +1167,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 ),
             )
             return
-        shape.label = text
-        shape.flags = flags
-        shape.group_id = group_id
-        shape.description = description
+
+        shape = item.shape()
+
+        if text is not None:
+            shape.label = text
+        if flags is not None:
+            shape.flags = flags
+        if group_id is not None:
+            shape.group_id = group_id
+        if description is not None:
+            shape.description = description
 
         self._update_shape_color(shape)
         if shape.group_id is None:
@@ -1176,7 +1234,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.delete.setEnabled(n_selected)
         self.actions.duplicate.setEnabled(n_selected)
         self.actions.copy.setEnabled(n_selected)
-        self.actions.edit.setEnabled(n_selected == 1)
+        self.actions.edit.setEnabled(n_selected)
 
     def addLabel(self, shape):
         if shape.group_id is None:
