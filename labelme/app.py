@@ -107,6 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.labelList = LabelListWidget()
+        self.pointList = LabelListWidget()
         self.lastOpenDir = None
 
         self.flag_dock = self.flag_widget = None
@@ -125,6 +126,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.shape_dock = QtWidgets.QDockWidget(self.tr("Polygon Labels"), self)
         self.shape_dock.setObjectName("Labels")
         self.shape_dock.setWidget(self.labelList)
+
+        # pointList
+        # self.pointList.itemSelectionChanged.connect(self.labelSelectionChanged)
+        # self.pointList.itemDoubleClicked.connect(self.editLabel)
+        # self.pointList.itemChanged.connect(self.labelItemChanged)
+        # self.pointList.itemDropped.connect(self.labelOrderChanged)
+        self.shape_dock = QtWidgets.QDockWidget('坐标列表', self)
+        self.shape_dock.setObjectName("Labels")
+        self.shape_dock.setWidget(self.pointList)
 
         self.uniqLabelList = UniqueLabelQListWidget()
         self.uniqLabelList.setToolTip(
@@ -987,6 +997,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def resetState(self):
         self.labelList.clear()
+        self.pointList.clear()
         self.filename = None
         self.imagePath = None
         self.imageData = None
@@ -1170,6 +1181,14 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.labelList.findItemByShape(shape)
             self.labelList.selectItem(item)
             self.labelList.scrollToItem(item)
+
+            # pointList
+            self.pointList.clear()
+            for point_item in shape.points:
+                point_text = f'{point_item.x()},{point_item.y()}'
+                point_list_item = LabelListWidgetItem(point_text, shape)
+                point_list_item.setText('{}'.format(html.escape(point_text)))
+                self.pointList.addItem(point_list_item)
         self._noSelectionSlot = False
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
@@ -1183,6 +1202,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
+
         self.labelList.addItem(label_list_item)
         if self.uniqLabelList.findItemByLabel(shape.label) is None:
             item = self.uniqLabelList.createItemFromLabel(shape.label)
@@ -1199,6 +1219,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 html.escape(text), *shape.fill_color.getRgb()[:3]
             )
         )
+
 
     def _update_shape_color(self, shape):
         r, g, b = self._get_rgb_by_label(shape.label)
