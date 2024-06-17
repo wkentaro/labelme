@@ -75,6 +75,7 @@ canvas:
   crosshair:
     polygon: false
     rectangle: true
+    rotate_rectangle: true
     circle: false
     line: false
     point: false
@@ -103,6 +104,7 @@ shortcuts:
 
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
+  create_rotate_rectangle: Ctrl+T
   create_circle: null
   create_line: null
   create_point: null
@@ -118,7 +120,5 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
-
-  show_all_polygons: null
-  hide_all_polygons: null
-  toggle_all_polygons: T
+  rotate_left: Z
+  rotate_right: C

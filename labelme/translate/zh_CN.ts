@@ -198,6 +198,16 @@
         <translation>开始绘制矩形</translation>
     </message>
     <message>
+        <location filename="../app.py" line="336"/>
+        <source>Create Rotate Rectangle</source>
+        <translation>创建可旋转矩形</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="323"/>
+        <source>Start drawing rotate rectangles</source>
+        <translation>开始绘制可旋转矩形</translation>
+    </message>
+    <message>
         <location filename="../app.py" line="331"/>
         <source>Create Circle</source>
         <translation>创建圆形</translation>
@@ -236,6 +246,26 @@
         <location filename="../app.py" line="355"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>开始绘制折线。Ctrl+单击左键结束绘制。</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="355"/>
+        <source>Rotate Left</source>
+        <translation>向左旋转1°</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="355"/>
+        <source>Rotate the selected rectangle clockwise to the left.</source>
+        <translation>向左顺时针旋转选定的矩形</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="355"/>
+        <source>Rotate Right</source>
+        <translation>向右旋转1°</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="355"/>
+        <source>Rotate the selected rectangle clockwise to the right.</source>
+        <translation>向右顺时针旋转选定的矩形。</translation>
     </message>
     <message>
         <location filename="../app.py" line="363"/>

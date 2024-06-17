@@ -5,6 +5,7 @@ import numpy as np
 import skimage.measure
 from qtpy import QtCore
 from qtpy import QtGui
+from labelme.rotate_rectangle_shape import RotateRectangle
 
 import labelme.utils
 from labelme.logger import logger
@@ -101,6 +102,7 @@ class Shape(object):
         if value not in [
             "polygon",
             "rectangle",
+            "rotate_rectangle",
             "point",
             "line",
             "circle",
@@ -110,6 +112,32 @@ class Shape(object):
         ]:
             raise ValueError("Unexpected shape_type: {}".format(value))
         self._shape_type = value
+
+    def setRotate(self):
+        self.rotate_rect.createFromPoint(self.points)
+
+    def rotota(self, angle_delta, pixmap):
+        if self.rotate_rect.rect is None:
+            self.setRotate()
+        # Set backup
+        backup = self.rotate_rect.clone()
+        # Rotate the rectangle
+        angle = self.rotate_rect.angle + angle_delta
+        if abs(angle) > 45:
+            multiple = int(angle / 45)
+            r = self.rotate_rect.rotatePoints(-multiple * 90)
+            self.rotate_rect.rect = (
+                [r[3], r[0], r[1], r[2]] if angle > 0 else [r[1], r[2], r[3], r[0]]
+            )
+            self.rotate_rect.angle = angle - (multiple * 90)
+        else:
+            self.rotate_rect.angle = angle
+        # Check if the rotated point set exceeds the limit
+        points = self.rotate_rect.getPoints()
+        if self.rotate_rect.outOfPixmap(pixmap, points):
+            self.rotate_rect = backup
+        else:
+            self.points = points
 
     def close(self):
         self._closed = True
@@ -220,6 +248,27 @@ class Shape(object):
                 if self.shape_type == "rectangle":
                     for i in range(len(self.points)):
                         self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "rotate_rectangle":
+                if len(self.points) == 1:
+                    self.drawVertex(vrtx_path, 0)
+                elif len(self.points) == 2:
+                    pt1 = self.points[0]
+                    pt2 = self.points[1]
+                    self.rotate_rect.createFromLine(pt1, pt2)
+                    self.points = self.rotate_rect.rect
+                    line_path.moveTo(self.points[0])
+                    for i, p in enumerate(self.points):
+                        line_path.lineTo(p)
+                        self.drawVertex_rotate(vrtx_path, self.points, i)
+                    line_path.lineTo(self.points[0])
+                elif len(self.points) == 4:
+                    line_path.moveTo(self.points[0])
+                    for i, p in enumerate(self.points):
+                        line_path.lineTo(p)
+                        self.drawVertex_rotate(vrtx_path, self.points, i)
+                    line_path.lineTo(self.points[0])
+                else:
+                    raise Exception(f"Rotate rectangle points is {len(self.points)}")
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
@@ -269,6 +318,25 @@ class Shape(object):
         d = self.point_size / self.scale
         shape = self.point_type
         point = self.points[i]
+        if i == self._highlightIndex:
+            size, shape = self._highlightSettings[self._highlightMode]
+            d *= size
+        if self._highlightIndex is not None:
+            self._vertex_fill_color = self.hvertex_fill_color
+        else:
+            self._vertex_fill_color = self.vertex_fill_color
+        if shape == self.P_SQUARE:
+            path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
+        elif shape == self.P_ROUND:
+            path.addEllipse(point, d / 2.0, d / 2.0)
+        else:
+            assert False, "unsupported vertex shape"
+
+    def drawVertex_rotate(self, path, points, i):
+        d = self.point_size / self.scale
+        shape = self.point_type
+
+        point = points[i]
         if i == self._highlightIndex:
             size, shape = self._highlightSettings[self._highlightMode]
             d *= size
@@ -335,6 +403,17 @@ class Shape(object):
             if len(self.points) == 2:
                 rectangle = self.getRectFromLine(*self.points)
                 path.addRect(rectangle)
+        elif self.shape_type == "rotate_rectangle":
+            path = QtGui.QPainterPath(self.points[0])
+            if len(self.points) == 2:
+                pt1 = self.points[0]
+                pt2 = self.points[1]
+                points_ = self.getRotateRectFromLine(pt1, pt2, self.angle)
+                for p in points_[1:]:
+                    path.lineTo(p)
+            elif len(self.points) == 4:
+                for p in self.points[1:]:
+                    path.lineTo(p)
         elif self.shape_type == "circle":
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
@@ -351,9 +430,19 @@ class Shape(object):
 
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
+        if self.shape_type == "rotate_rectangle":
+            if self.rotate_rect.rect is None:
+                self.setRotate()
+            self.rotate_rect.moveBy(offset)
 
-    def moveVertexBy(self, i, offset):
-        self.points[i] = self.points[i] + offset
+    def moveVertexBy(self, i, offset, pixmap):
+        if self.shape_type == "rotate_rectangle":
+            if self.rotate_rect.rect is None:
+                self.setRotate()
+            self.points = self.rotate_rect.moveVertexBy(self.points, i, offset, pixmap)
+            self.setRotate()
+        else:
+            self.points[i] = self.points[i] + offset
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action
