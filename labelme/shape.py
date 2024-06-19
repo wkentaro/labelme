@@ -176,9 +176,6 @@ class Shape(object):
         if self.mask is None and not self.points:
             return
 
-        painter.save()
-        painter.scale(1 / self.scale, 1 / self.scale)
-
         color = self.select_line_color if self.selected else self.line_color
         pen = QtGui.QPen(color)
         # Try using integer sizes for smoother drawing(?)
@@ -283,8 +280,6 @@ class Shape(object):
             painter.setPen(pen)
             painter.drawPath(negative_vrtx_path)
             painter.fillPath(negative_vrtx_path, QtGui.QColor(255, 0, 0, 255))
-
-        painter.restore()
 
     def drawVertex(self, path, i):
         d = self.point_size
