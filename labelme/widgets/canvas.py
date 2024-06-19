@@ -697,6 +697,8 @@ class Canvas(QtWidgets.QWidget):
 
         p.drawPixmap(0, 0, self.pixmap)
 
+        p.scale(1 / self.scale, 1 / self.scale)
+
         # draw crosshair
         if (
             self._crosshair[self._createMode]
@@ -707,14 +709,14 @@ class Canvas(QtWidgets.QWidget):
             p.setPen(QtGui.QColor(0, 0, 0))
             p.drawLine(
                 0,
-                int(self.prevMovePoint.y()),
+                int(self.prevMovePoint.y() * self.scale),
                 self.width() - 1,
-                int(self.prevMovePoint.y()),
+                int(self.prevMovePoint.y() * self.scale),
             )
             p.drawLine(
-                int(self.prevMovePoint.x()),
+                int(self.prevMovePoint.x() * self.scale),
                 0,
-                int(self.prevMovePoint.x()),
+                int(self.prevMovePoint.x() * self.scale),
                 self.height() - 1,
             )
 
