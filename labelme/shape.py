@@ -251,6 +251,19 @@ class Shape(object):
                     self.drawVertex(vrtx_path, i)
                 if self.isClosed():
                     line_path.lineTo(self.points[0])
+                    # display length in pixels for a line
+                    if self.shape_type == "line":
+                        painter.setFont(QtGui.QFont("Arial", 25))
+                        _x = self.points[0].x()
+                        _y = self.points[0].y()
+                        dist = labelme.utils.distance(
+                            self.points[0] - self.points[1]
+                        )
+                        painter.drawText(
+                            _x - 15,
+                            _y - 15,
+                            f"Line length: {round(dist,2)} pixels"
+                        )
 
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
