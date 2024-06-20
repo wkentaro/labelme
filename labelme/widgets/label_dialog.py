@@ -235,7 +235,8 @@ class LabelDialog(QtWidgets.QDialog):
             h = centralWidget.height()
 
             x = QtGui.QCursor.pos().x()
-            y = QtGui.QCursor.pos().y() if QtGui.QCursor.pos().y() < h else h - 200
+            dialog_height = self.sizeHint().height()
+            y = QtGui.QCursor.pos().y() if QtGui.QCursor.pos().y() < h else h - int(dialog_height / 2)
             QtGui.QCursor.setPos(x, y)
             self.move(QtGui.QCursor.pos())
         if self.exec_():
