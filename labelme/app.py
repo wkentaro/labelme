@@ -1115,6 +1115,7 @@ class MainWindow(QtWidgets.QMainWindow):
             flags=shape.flags,
             group_id=shape.group_id,
             description=shape.description,
+            centralWidget=self.centralWidget()
         )
         if text is None:
             return
