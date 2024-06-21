@@ -548,6 +548,14 @@ class MainWindow(QtWidgets.QMainWindow):
             checked=self._config["keep_prev_scale"],
             enabled=True,
         )
+        smoothPixmap = action(
+            self.tr("&Smooth Pixmap"),
+            self.enableSmoothPixmap,
+            tip=self.tr("Whether smooth pixmap"),
+            checkable=True,
+            checked=self._config["canvas"]["smooth_pixmap"],
+            enabled=True,
+        )
         fitWindow = action(
             self.tr("&Fit Window"),
             self.setFitWindow,
@@ -652,6 +660,7 @@ class MainWindow(QtWidgets.QMainWindow):
             zoomOut=zoomOut,
             zoomOrg=zoomOrg,
             keepPrevScale=keepPrevScale,
+            smoothPixmap=smoothPixmap,
             fitWindow=fitWindow,
             fitWidth=fitWidth,
             brightnessContrast=brightnessContrast,
@@ -760,6 +769,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 zoomOut,
                 zoomOrg,
                 keepPrevScale,
+                smoothPixmap,
                 None,
                 fitWindow,
                 fitWidth,
@@ -1549,6 +1559,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["keep_prev_scale"] = enabled
         self.actions.keepPrevScale.setChecked(enabled)
 
+    def enableSmoothPixmap(self, enabled):
+        self._config["canvas"]["smooth_pixmap"] = enabled
+        self.actions.smoothPixmap.setChecked(enabled)
+        self.paintCanvas()
+
     def onNewBrightnessContrast(self, qimage):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage), clear_shapes=False)
 
@@ -1718,6 +1733,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def paintCanvas(self):
         assert not self.image.isNull(), "cannot paint null image"
+        self.canvas.smooth_pixmap = self._config["canvas"]["smooth_pixmap"]
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
         self.canvas.update()
