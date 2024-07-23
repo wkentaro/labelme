@@ -23,8 +23,8 @@ jobs:
         with:
           configurationJson: |
             {
-                "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>\n\n- Tips and updates→ [X/Twitter <@labelmeai>](https://x.com/labelmeai)\n- Labelme Starter Bundle→ https://labelme.gumroad.com/l/starter-bundle",
-                "pr_template": "- #{{TITLE}} ##{{NUMBER}}",
+                "template": "#{{CHANGELOG}}\n\n<details>\n<summary>",
+                "pr_template": "- #{{TITLE}} ##{{NUMBER}} (Thanks @#{{AUTHOR}})",
                 "categories": [
                     {
                         "title": "## 🚀 Features",
@@ -50,6 +50,7 @@ jobs:
         uses: mikepenz/action-gh-release@v0.2.0-a03
         with:
           body: ${{steps.github_release.outputs.changelog}}
+          draft: true
 
       - name: Create release url file
         run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
@@ -74,10 +75,10 @@ jobs:
       with:
         submodules: true
 
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
-        python-version: '3.7'
+        python-version: '3.9'
 
     - name: Install main
       shell: bash -l {0}

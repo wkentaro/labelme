@@ -30,6 +30,7 @@ class Canvas(QtWidgets.QWidget):
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
+    mouseMoved = QtCore.Signal(QtCore.QPointF)
 
     CREATE, EDIT = 0, 1
 
@@ -233,6 +234,8 @@ class Canvas(QtWidgets.QWidget):
                 pos = self.transformPos(ev.posF())
         except AttributeError:
             return
+
+        self.mouseMoved.emit(pos)
 
         self.prevMovePoint = pos
         self.restoreCursor()
@@ -540,7 +543,10 @@ class Canvas(QtWidgets.QWidget):
         self._hideBackround = self.hideBackround if enable else False
 
     def canCloseShape(self):
-        return self.drawing() and self.current and len(self.current) > 2
+        return self.drawing() and (
+            (self.current and len(self.current) > 2)
+            or self.createMode in ["ai_polygon", "ai_mask"]
+        )
 
     def mouseDoubleClickEvent(self, ev):
         if self.double_click != "close":
