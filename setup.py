@@ -27,6 +27,7 @@ def get_install_requires():
         "natsort>=7.1.0",
         "numpy",
         "onnxruntime>=1.14.1,!=1.16.0",
+        "osam>=0.2.2",
         "Pillow>=2.8",
         "PyYAML",
         "qtpy!=1.11.2",

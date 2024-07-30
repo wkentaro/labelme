@@ -18,12 +18,14 @@ from qtpy.QtCore import Qt
 
 from labelme import PY2
 from labelme import __appname__
+from labelme import ai
 from labelme.ai import MODELS
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
+from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
@@ -784,7 +786,7 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel.setDefaultWidget(QtWidgets.QWidget())
         selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
         #
-        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Model"))
+        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
         #
@@ -809,6 +811,12 @@ class MainWindow(QtWidgets.QMainWindow):
             else None
         )
 
+        self._ai_prompt_widget: QtWidgets.QWidget = AiPromptWidget(
+            on_submit=self._submit_ai_prompt, parent=self
+        )
+        ai_prompt_action = QtWidgets.QWidgetAction(self)
+        ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
+
         self.tools = self.toolbar("Tools")
         self.actions.tool = (
             open_,
@@ -829,6 +837,8 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom,
             None,
             selectAiModel,
+            None,
+            ai_prompt_action,
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -988,6 +998,66 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
+
+    def _submit_ai_prompt(self, _) -> None:
+        texts = self._ai_prompt_widget.get_text_prompt().split(",")
+        boxes, scores, labels = ai.get_rectangles_from_texts(
+            model="yoloworld",
+            image=utils.img_qt_to_arr(self.image)[:, :, :3],
+            texts=texts,
+        )
+
+        for shape in self.canvas.shapes:
+            if shape.shape_type != "rectangle" or shape.label not in texts:
+                continue
+            box = np.array(
+                [
+                    shape.points[0].x(),
+                    shape.points[0].y(),
+                    shape.points[1].x(),
+                    shape.points[1].y(),
+                ],
+                dtype=np.float32,
+            )
+            boxes = np.r_[boxes, [box]]
+            scores = np.r_[scores, [1.01]]
+            labels = np.r_[labels, [texts.index(shape.label)]]
+
+        boxes, scores, labels = ai.non_maximum_suppression(
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            iou_threshold=self._ai_prompt_widget.get_iou_threshold(),
+            score_threshold=self._ai_prompt_widget.get_score_threshold(),
+            max_num_detections=100,
+        )
+
+        keep = scores != 1.01
+        boxes = boxes[keep]
+        scores = scores[keep]
+        labels = labels[keep]
+
+        shape_dicts: list[dict] = ai.get_shapes_from_annotations(
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            texts=texts,
+        )
+
+        shapes: list[Shape] = []
+        for shape_dict in shape_dicts:
+            shape = Shape(
+                label=shape_dict["label"],
+                shape_type=shape_dict["shape_type"],
+                description=shape_dict["description"],
+            )
+            for point in shape_dict["points"]:
+                shape.addPoint(QtCore.QPointF(*point))
+            shapes.append(shape)
+
+        self.canvas.storeShapes()
+        self.loadShapes(shapes, replace=False)
+        self.setDirty()
 
     def resetState(self):
         self.labelList.clear()
