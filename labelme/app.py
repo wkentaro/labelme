@@ -1600,7 +1600,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if filename is None:
             filename = self.settings.value("filename", "")
         filename = str(filename)
-        self.filenames = [filename]
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
                 self.tr("Error opening file"),
@@ -1868,6 +1867,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
+                self.filenames = [str(fileName)]
                 self.loadFile(fileName)
 
     def changeOutputDirDialog(self, _value=False):
