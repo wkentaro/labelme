@@ -439,11 +439,9 @@ class Canvas(QtWidgets.QWidget):
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
                     self.current = Shape(
-                        shape_type=(
-                            "points"
-                            if self.createMode in ["ai_polygon", "ai_mask"]
-                            else self.createMode
-                        )
+                        shape_type="points"
+                        if self.createMode in ["ai_polygon", "ai_mask"]
+                        else self.createMode
                     )
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
                     if self.createMode == "point":
@@ -937,11 +935,9 @@ class Canvas(QtWidgets.QWidget):
                 else:
                     self.scrollRequest.emit(
                         ev.delta(),
-                        (
-                            QtCore.Qt.Horizontal
-                            if (QtCore.Qt.ShiftModifier == int(mods))
-                            else QtCore.Qt.Vertical
-                        ),
+                        QtCore.Qt.Horizontal
+                        if (QtCore.Qt.ShiftModifier == int(mods))
+                        else QtCore.Qt.Vertical,
                     )
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)

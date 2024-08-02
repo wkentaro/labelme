@@ -199,7 +199,7 @@ class Shape(object):
 
             painter.drawImage(
                 # Position error will increase with the scaling factor
-                self.scaleTranslate(self.points[0] + QtCore.QPointF(0.5, 0.5)),
+                self.scaleTranslate(self.points[0]),
                 qimage,
             )
 
