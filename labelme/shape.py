@@ -78,7 +78,7 @@ class Shape(object):
             # is used for drawing the pending line a different color.
             self.line_color = line_color
 
-    def scaleTranslate(self, point):
+    def _scale_point(self, point: QtCore.QPointF) -> QtCore.QPointF:
         return QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
 
     def setShapeRefined(self, shape_type, points, point_labels, mask=None):
@@ -197,22 +197,18 @@ class Shape(object):
                 QtCore.Qt.SmoothTransformation,
             )
 
-            painter.drawImage(
-                # Position error will increase with the scaling factor
-                self.scaleTranslate(self.points[0]),
-                qimage,
-            )
+            painter.drawImage(self._scale_point(point=self.points[0]), qimage)
 
             line_path = QtGui.QPainterPath()
             contours = skimage.measure.find_contours(np.pad(self.mask, pad_width=1))
             for contour in contours:
                 contour += [self.points[0].y(), self.points[0].x()]
                 line_path.moveTo(
-                    self.scaleTranslate(QtCore.QPointF(contour[0, 1], contour[0, 0]))
+                    self._scale_point(QtCore.QPointF(contour[0, 1], contour[0, 0]))
                 )
                 for point in contour[1:]:
                     line_path.lineTo(
-                        self.scaleTranslate(QtCore.QPointF(point[1], point[0]))
+                        self._scale_point(QtCore.QPointF(point[1], point[0]))
                     )
             painter.drawPath(line_path)
 
@@ -225,8 +221,8 @@ class Shape(object):
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
                     rectangle = QtCore.QRectF(
-                        self.scaleTranslate(self.points[0]),
-                        self.scaleTranslate(self.points[1]),
+                        self._scale_point(self.points[0]),
+                        self._scale_point(self.points[1]),
                     )
                     line_path.addRect(rectangle)
                 if self.shape_type == "rectangle":
@@ -236,17 +232,17 @@ class Shape(object):
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
                     raidus = labelme.utils.distance(
-                        self.scaleTranslate(self.points[0] - self.points[1])
+                        self._scale_point(self.points[0] - self.points[1])
                     )
                     line_path.addEllipse(
-                        self.scaleTranslate(self.points[0]), raidus, raidus
+                        self._scale_point(self.points[0]), raidus, raidus
                     )
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "linestrip":
-                line_path.moveTo(self.scaleTranslate(self.points[0]))
+                line_path.moveTo(self._scale_point(self.points[0]))
                 for i, p in enumerate(self.points):
-                    line_path.lineTo(self.scaleTranslate(p))
+                    line_path.lineTo(self._scale_point(p))
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "points":
                 assert len(self.points) == len(self.point_labels)
@@ -256,17 +252,17 @@ class Shape(object):
                     else:
                         self.drawVertex(negative_vrtx_path, i)
             else:
-                line_path.moveTo(self.scaleTranslate(self.points[0]))
+                line_path.moveTo(self._scale_point(self.points[0]))
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
                 # may be desirable.
                 # self.drawVertex(vrtx_path, 0)
 
                 for i, p in enumerate(self.points):
-                    line_path.lineTo(self.scaleTranslate(p))
+                    line_path.lineTo(self._scale_point(p))
                     self.drawVertex(vrtx_path, i)
                 if self.isClosed():
-                    line_path.lineTo(self.scaleTranslate(self.points[0]))
+                    line_path.lineTo(self._scale_point(self.points[0]))
 
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
@@ -284,7 +280,7 @@ class Shape(object):
     def drawVertex(self, path, i):
         d = self.point_size
         shape = self.point_type
-        point = self.scaleTranslate(self.points[i])
+        point = self._scale_point(self.points[i])
         if i == self._highlightIndex:
             size, shape = self._highlightSettings[self._highlightMode]
             d *= size
