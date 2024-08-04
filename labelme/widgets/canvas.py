@@ -922,7 +922,7 @@ class Canvas(QtWidgets.QWidget):
                 self.zoomRequest.emit(delta.y(), ev.pos())
             elif QtCore.Qt.ShiftModifier == int(mods):
                 # side scroll
-                self.scrollRequest.emit(-delta.y(), QtCore.Qt.Horizontal)
+                self.scrollRequest.emit(delta.y(), QtCore.Qt.Horizontal)
                 self.scrollRequest.emit(delta.x(), QtCore.Qt.Vertical)
             else:
                 # scroll
