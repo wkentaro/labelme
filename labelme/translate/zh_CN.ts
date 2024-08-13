@@ -272,52 +272,52 @@ ALT + SHIFT + Click to delete point</source>
     <message>
         <location filename="../app.py" line="386"/>
         <source>Edit Polygons</source>
-        <translation>编辑多边形</translation>
+        <translation type="obsolete">编辑多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="386"/>
         <source>Move and edit the selected polygons</source>
-        <translation>移动、编辑选中的多边形</translation>
+        <translation type="obsolete">移动、编辑选中的多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="395"/>
         <source>Delete Polygons</source>
-        <translation>删除多边形</translation>
+        <translation type="obsolete">删除多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="395"/>
         <source>Delete the selected polygons</source>
-        <translation>删除选中的多边形</translation>
+        <translation type="obsolete">删除选中的多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="403"/>
         <source>Duplicate Polygons</source>
-        <translation>复制多边形</translation>
+        <translation type="obsolete">复制多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="403"/>
         <source>Create a duplicate of the selected polygons</source>
-        <translation>为选中的多边形创建副本</translation>
+        <translation type="obsolete">为选中的多边形创建副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="411"/>
         <source>Copy Polygons</source>
-        <translation>复制多边形</translation>
+        <translation type="obsolete">复制多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="411"/>
         <source>Copy selected polygons to clipboard</source>
-        <translation>复制选中多边形到剪贴板</translation>
+        <translation type="obsolete">复制选中多边形到剪贴板</translation>
     </message>
     <message>
         <location filename="../app.py" line="419"/>
         <source>Paste Polygons</source>
-        <translation>粘贴多边形</translation>
+        <translation type="obsolete">粘贴多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="419"/>
         <source>Paste copied polygons</source>
-        <translation>粘贴已复制的多边形</translation>
+        <translation type="obsolete">粘贴已复制的多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="427"/>
@@ -354,34 +354,34 @@ ALT + SHIFT + Click to delete point</source>
         <location filename="../app.py" line="453"/>
         <source>&amp;Hide
 Polygons</source>
-        <translation>隐藏多边形(&amp;H)</translation>
+        <translation type="obsolete">隐藏多边形(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="453"/>
         <source>Hide all polygons</source>
-        <translation>隐藏所有多边形</translation>
+        <translation type="obsolete">隐藏所有多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="461"/>
         <source>&amp;Show
 Polygons</source>
-        <translation>显示多边形(&amp;S)</translation>
+        <translation type="obsolete">显示多边形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="461"/>
         <source>Show all polygons</source>
-        <translation>显示所有多边形</translation>
+        <translation type="obsolete">显示所有多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="469"/>
         <source>&amp;Toggle
 Polygons</source>
-        <translation>开关多边形(&amp;S)</translation>
+        <translation type="obsolete">开关多边形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="469"/>
         <source>Toggle all polygons</source>
-        <translation>开关所有多边形</translation>
+        <translation type="obsolete">开关所有多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="478"/>
@@ -646,7 +646,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="2084"/>
         <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>即将永久性删除多边形{}。还要继续吗?</translation>
+        <translation type="obsolete">即将永久性删除多边形{}。还要继续吗?</translation>
     </message>
     <message>
         <location filename="../app.py" line="2117"/>
@@ -661,6 +661,94 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="774"/>
         <source>AI Mask Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="386"/>
+        <source>Edit Shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="386"/>
+        <source>Move and edit the selected shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="395"/>
+        <source>Delete Shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="395"/>
+        <source>Delete the selected shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="403"/>
+        <source>Duplicate Shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="403"/>
+        <source>Create a duplicate of the selected shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="411"/>
+        <source>Copy Shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="411"/>
+        <source>Copy selected shape(s) to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="419"/>
+        <source>Paste Shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="419"/>
+        <source>Paste copied shape(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="453"/>
+        <source>&amp;Hide
+Shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="453"/>
+        <source>Hide all shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="461"/>
+        <source>&amp;Show
+Shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="461"/>
+        <source>Show all shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="469"/>
+        <source>&amp;Toggle
+Shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="469"/>
+        <source>Toggle all shapes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="2084"/>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
