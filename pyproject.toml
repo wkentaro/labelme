@@ -68,7 +68,12 @@ markers = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = [
+  "E", # pycodestyle
+  "F", # pyflakes
+  "I", # isort
+  "UP", # pyupgrade
+]
 
 [tool.ruff.lint.isort]
 force-single-line = true
