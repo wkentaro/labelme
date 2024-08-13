@@ -135,12 +135,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 "Select label to start annotating for it. " "Press 'Esc' to deselect."
             )
         )
-        if self._config["labels"]:
-            for label in self._config["labels"]:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+        for label in self._config["labels"] or ():
+            self._ensure_label_in_list(label)
         self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
         self.label_dock.setObjectName("Label List")
         self.label_dock.setWidget(self.uniqLabelList)
@@ -1253,11 +1249,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setText("{} ({})".format(shape.label, shape.group_id))
             self.setDirty()
-            if self.uniqLabelList.findItemByLabel(shape.label) is None:
-                item = self.uniqLabelList.createItemFromLabel(shape.label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(shape.label)
-                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            self._ensure_label_in_list(shape.label)
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -1307,11 +1299,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
-        if self.uniqLabelList.findItemByLabel(shape.label) is None:
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
-            rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+        self._ensure_label_in_list(shape.label)
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
@@ -1334,12 +1322,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
-            item = self.uniqLabelList.findItemByLabel(label)
-            if item is None:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+            item = self._ensure_label_in_list(label)
             label_id = self.uniqLabelList.indexFromItem(item).row() + 1
             label_id += self._config["shift_auto_shape_color"]
             return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
@@ -1352,6 +1335,17 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self._config["default_shape_color"]:
             return self._config["default_shape_color"]
         return (0, 255, 0)
+
+    def _ensure_label_in_list(self, label: str) -> QtWidgets.QListWidgetItem:
+        """
+        Ensure that the label is in the label list, and return the item.
+        """
+        item = self.uniqLabelList.findItemByLabel(label)
+        if item is None:
+            item = self.uniqLabelList.createItemFromLabel(label)
+            self.uniqLabelList.addItem(item)
+            self.uniqLabelList.setItemLabel(item, label, self._get_rgb_by_label(label))
+        return item
 
     def remLabels(self, shapes):
         for shape in shapes:
