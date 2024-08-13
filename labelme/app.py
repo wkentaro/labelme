@@ -562,15 +562,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
-        # Group zoom controls into a list for easier toggling.
-        zoomActions = (
-            self.zoomWidget,
-            zoomIn,
-            zoomOut,
-            zoomOrg,
-            fitWindow,
-            fitWidth,
-        )
         self.zoomMode = self.FIT_WINDOW
         fitWindow.setChecked(Qt.Checked)
         self.scalers = {
@@ -643,60 +634,78 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWindow=fitWindow,
             fitWidth=fitWidth,
             brightnessContrast=brightnessContrast,
-            zoomActions=zoomActions,
             openNextImg=openNextImg,
             openPrevImg=openPrevImg,
-            fileMenuActions=(open_, opendir, save, saveAs, close, quit),
-            tool=(),
-            # XXX: need to add some actions here to activate the shortcut
-            editMenu=(
-                edit,
-                duplicate,
-                copy,
-                paste,
-                delete,
-                None,
-                undo,
-                undoLastPoint,
-                None,
-                removePoint,
-                None,
-                toggle_keep_prev_mode,
-            ),
-            # menu shown at right click
-            menu=(
-                createMode,
-                createRectangleMode,
-                createCircleMode,
-                createLineMode,
-                createPointMode,
-                createLineStripMode,
-                createAiPolygonMode,
-                createAiMaskMode,
-                editMode,
-                edit,
-                duplicate,
-                copy,
-                paste,
-                delete,
-                undo,
-                undoLastPoint,
-                removePoint,
-            ),
-            onLoadActive=(
-                close,
-                createMode,
-                createRectangleMode,
-                createCircleMode,
-                createLineMode,
-                createPointMode,
-                createLineStripMode,
-                createAiPolygonMode,
-                createAiMaskMode,
-                editMode,
-                brightnessContrast,
-            ),
-            onShapesPresent=(saveAs, hideAll, showAll, toggleAll),
+        )
+        self.on_shapes_present_actions = (saveAs, hideAll, showAll, toggleAll)
+
+        self.draw_actions = {
+            "polygon": createMode,
+            "rectangle": createRectangleMode,
+            "circle": createCircleMode,
+            "point": createPointMode,
+            "line": createLineMode,
+            "linestrip": createLineStripMode,
+            "ai_polygon": createAiPolygonMode,
+            "ai_mask": createAiMaskMode,
+        }
+
+        # Group zoom controls into a list for easier toggling.
+        self.zoom_actions = (
+            self.zoomWidget,
+            zoomIn,
+            zoomOut,
+            zoomOrg,
+            fitWindow,
+            fitWidth,
+        )
+        self.on_load_active_actions = (
+            close,
+            createMode,
+            createRectangleMode,
+            createCircleMode,
+            createLineMode,
+            createPointMode,
+            createLineStripMode,
+            createAiPolygonMode,
+            createAiMaskMode,
+            editMode,
+            brightnessContrast,
+        )
+        # menu shown at right click
+        self.context_menu_actions = (
+            createMode,
+            createRectangleMode,
+            createCircleMode,
+            createLineMode,
+            createPointMode,
+            createLineStripMode,
+            createAiPolygonMode,
+            createAiMaskMode,
+            editMode,
+            edit,
+            duplicate,
+            copy,
+            paste,
+            delete,
+            undo,
+            undoLastPoint,
+            removePoint,
+        )
+        # XXX: need to add some actions here to activate the shortcut
+        self.edit_menu_actions = (
+            edit,
+            duplicate,
+            copy,
+            paste,
+            delete,
+            None,
+            undo,
+            undoLastPoint,
+            None,
+            removePoint,
+            None,
+            toggle_keep_prev_mode,
         )
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
@@ -759,7 +768,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        utils.addActions(self.canvas.menus[0], self.actions.menu)
+        utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         utils.addActions(
             self.canvas.menus[1],
             (
@@ -813,7 +822,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
         self.tools = self.toolbar("Tools")
-        self.actions.tool = (
+        self.toolbar_actions = (
             open_,
             opendir,
             openPrevImg,
@@ -924,24 +933,17 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self.labelList)
 
     def populateModeActions(self):
-        tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
-        utils.addActions(self.tools, tool)
+        utils.addActions(self.tools, self.toolbar_actions)
         self.canvas.menus[0].clear()
-        utils.addActions(self.canvas.menus[0], menu)
+        utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         self.menus.edit.clear()
         actions = (
-            self.actions.createMode,
-            self.actions.createRectangleMode,
-            self.actions.createCircleMode,
-            self.actions.createLineMode,
-            self.actions.createPointMode,
-            self.actions.createLineStripMode,
-            self.actions.createAiPolygonMode,
-            self.actions.createAiMaskMode,
+            *self.draw_actions.values(),
             self.actions.editMode,
+            *self.edit_menu_actions,
         )
-        utils.addActions(self.menus.edit, actions + self.actions.editMenu)
+        utils.addActions(self.menus.edit, actions)
 
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
@@ -965,14 +967,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.createMode.setEnabled(True)
-        self.actions.createRectangleMode.setEnabled(True)
-        self.actions.createCircleMode.setEnabled(True)
-        self.actions.createLineMode.setEnabled(True)
-        self.actions.createPointMode.setEnabled(True)
-        self.actions.createLineStripMode.setEnabled(True)
-        self.actions.createAiPolygonMode.setEnabled(True)
-        self.actions.createAiMaskMode.setEnabled(True)
+        for action in self.draw_actions.values():
+            action.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = f"{title} - {self.filename}"
@@ -985,9 +981,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
-        for z in self.actions.zoomActions:
+        for z in self.zoom_actions:
             z.setEnabled(value)
-        for action in self.actions.onLoadActive:
+        for action in self.on_load_active_actions:
             action.setEnabled(value)
 
     def queueEvent(self, function):
@@ -1101,24 +1097,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.delete.setEnabled(not drawing)
 
     def toggleDrawMode(self, edit=True, createMode="polygon"):
-        draw_actions = {
-            "polygon": self.actions.createMode,
-            "rectangle": self.actions.createRectangleMode,
-            "circle": self.actions.createCircleMode,
-            "point": self.actions.createPointMode,
-            "line": self.actions.createLineMode,
-            "linestrip": self.actions.createLineStripMode,
-            "ai_polygon": self.actions.createAiPolygonMode,
-            "ai_mask": self.actions.createAiMaskMode,
-        }
-
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
         if edit:
-            for draw_action in draw_actions.values():
+            for draw_action in self.draw_actions.values():
                 draw_action.setEnabled(True)
         else:
-            for draw_mode, draw_action in draw_actions.items():
+            for draw_mode, draw_action in self.draw_actions.items():
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
 
@@ -1303,7 +1288,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 label=shape.label, color=self._get_rgb_by_label(label=shape.label)
             )
         self.labelDialog.addLabelHistory(shape.label)
-        for action in self.actions.onShapesPresent:
+        for action in self.on_shapes_present_actions:
             action.setEnabled(True)
 
         self._update_shape_color(shape)
@@ -2088,7 +2073,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.deleteShape(self.canvas.hShape)
             self.remLabels([self.canvas.hShape])
             if self.noShapes():
-                for action in self.actions.onShapesPresent:
+                for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
         self.setDirty()
 
@@ -2103,7 +2088,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
-                for action in self.actions.onShapesPresent:
+                for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
 
     def copyShape(self):
