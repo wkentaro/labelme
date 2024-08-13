@@ -70,11 +70,6 @@ def labelValidator():
     return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
-class struct(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
-
-
 def distance(p):
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
