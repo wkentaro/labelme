@@ -1,4 +1,5 @@
 import base64
+import builtins
 import contextlib
 import io
 import json
@@ -21,7 +22,7 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 def open(name, mode):
     assert mode in ["r", "w"]
     encoding = "utf-8"
-    yield io.open(name, mode, encoding=encoding)
+    yield builtins.open(name, mode, encoding=encoding)
     return
 
 
@@ -124,7 +125,7 @@ class LabelFileError(Exception):
     pass
 
 
-class LabelFile(object):
+class LabelFile:
     shapes: list[ShapeDict]
     suffix = ".json"
 
@@ -140,8 +141,8 @@ class LabelFile(object):
     def load_image_file(filename):
         try:
             image_pil = PIL.Image.open(filename)
-        except IOError:
-            logger.error("Failed opening image file: {}".format(filename))
+        except OSError:
+            logger.error("Failed opening image file: %r", filename)
             return
 
         # apply orientation to image according to exif

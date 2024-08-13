@@ -52,7 +52,7 @@ class Canvas(QtWidgets.QWidget):
         self.double_click = kwargs.pop("double_click", "close")
         if self.double_click not in [None, "close"]:
             raise ValueError(
-                "Unexpected value for double_click event: {}".format(self.double_click)
+                f"Unexpected value for double_click event: {self.double_click}"
             )
         self.num_backups = kwargs.pop("num_backups", 10)
         self._crosshair = kwargs.pop(
@@ -68,7 +68,7 @@ class Canvas(QtWidgets.QWidget):
                 "ai_mask": False,
             },
         )
-        super(Canvas, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
         self.shapes = []
@@ -133,7 +133,7 @@ class Canvas(QtWidgets.QWidget):
             "ai_polygon",
             "ai_mask",
         ]:
-            raise ValueError("Unsupported createMode: %s" % value)
+            raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
 
     def set_ai_model_name(self, model_name: str) -> None:
@@ -655,7 +655,7 @@ class Canvas(QtWidgets.QWidget):
 
     def paintEvent(self, event: QtGui.QPaintEvent) -> None:
         if not self.pixmap:
-            return super(Canvas, self).paintEvent(event)
+            return super().paintEvent(event)
 
         p = self._painter
         p.begin(self)
@@ -745,7 +745,7 @@ class Canvas(QtWidgets.QWidget):
 
     def offsetToCenter(self) -> QtCore.QPointF:
         s = self.scale
-        area = super(Canvas, self).size()
+        area = super().size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
@@ -844,7 +844,7 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self):
         if self.pixmap:
             return self.scale * self.pixmap.size()
-        return super(Canvas, self).minimumSizeHint()
+        return super().minimumSizeHint()
 
     def wheelEvent(self, ev):
         mods = ev.modifiers()
