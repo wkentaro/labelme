@@ -111,6 +111,10 @@ def distance_to_line(
     return float(np.hypot(px - nearest_x, py - nearest_y))
 
 
+def shift_pressed() -> bool:
+    return bool(QtWidgets.QApplication.keyboardModifiers() & QtCore.Qt.ShiftModifier)
+
+
 def format_shortcut(text: str) -> str:
     if "+" not in text:
         raise ValueError(f"shortcut missing '+': {text!r}")

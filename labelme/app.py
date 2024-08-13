@@ -46,6 +46,7 @@ from labelme._label_file import write_label_file
 from labelme._shape import Shape
 from labelme._shape_clipboard import ShapeClipboard
 from labelme.config import load_config
+from labelme.utils.qt import shift_pressed
 from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
 from labelme.widgets import BrightnessContrastDialog
@@ -400,7 +401,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.delete_selected_shapes,
             shortcuts["delete_shape"],
             icon="phosphor/trash.svg",
-            tip=self.tr("Delete the selected shapes"),
+            tip="{} {}".format(
+                self.tr("Delete the selected shapes"),
+                self.tr("(Hold Shift to skip confirmation)"),
+            ),
             enabled=False,
         )
         edit = action(
@@ -2449,7 +2453,7 @@ class MainWindow(QtWidgets.QMainWindow):
         msg = self.tr(
             "Permanently delete {} shapes? This action cannot be undone."
         ).format(len(self._canvas_widgets.canvas.selected_shapes))
-        if yes == QtWidgets.QMessageBox.warning(
+        if shift_pressed() or yes == QtWidgets.QMessageBox.warning(
             self, self.tr("Attention"), msg, yes | no, yes
         ):
             self.remove_labels(self._canvas_widgets.canvas.delete_selected())
