@@ -68,7 +68,12 @@ markers = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = [
+    "E",
+    "F",
+    "I",
+    "RUF002",  # sort `__all__`s
+]
 
 [tool.ruff.lint.isort]
 force-single-line = true
