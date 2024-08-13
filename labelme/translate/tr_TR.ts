@@ -902,5 +902,15 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <source>Shape had no area; nothing created.</source>
         <translation>Şeklin alanı yoktu; hiçbir şey oluşturulmadı.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display Label Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display label popup when creating an object (otherwise, use label selected above)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

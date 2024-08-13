@@ -899,5 +899,15 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <source>Shape had no area; nothing created.</source>
         <translation>Kształt nie ma obszaru; nic nie zostało utworzone.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display Label Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display label popup when creating an object (otherwise, use label selected above)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

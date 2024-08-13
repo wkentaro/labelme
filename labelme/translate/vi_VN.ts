@@ -899,5 +899,15 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <source>Shape had no area; nothing created.</source>
         <translation>Hình không có diện tích; không có gì được tạo.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display Label Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display label popup when creating an object (otherwise, use label selected above)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -105,6 +105,7 @@ class _DockWidgets(NamedTuple):
     label_list: LabelListWidget
     label_dock: QtWidgets.QDockWidget
     unique_label_list: UniqueLabelQListWidget
+    display_label_popup_checkbox: QtWidgets.QCheckBox
     file_dock: QtWidgets.QDockWidget
     file_search: QtWidgets.QLineEdit
     file_list: QtWidgets.QListWidget
@@ -250,6 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._prev_opened_dir = None
         self._docks = self._setup_dock_widgets()
+        self._update_display_label_popup_checkbox()
 
         self.setAcceptDrops(True)
         self._canvas_widgets = self._setup_canvas()
@@ -1112,9 +1114,31 @@ class MainWindow(QtWidgets.QMainWindow):
                         label=lbl, unique_label_list=unique_label_list
                     ),
                 )
+
+        display_label_popup_checkbox = QtWidgets.QCheckBox(
+            self.tr("Display Label Popup")
+        )
+        display_label_popup_checkbox.setChecked(self._config["display_label_popup"])
+        display_label_popup_checkbox.setToolTip(
+            self.tr(
+                "Display label popup when creating an object "
+                "(otherwise, use label selected above)"
+            )
+        )
+        unique_label_list.itemSelectionChanged.connect(
+            lambda: self._update_display_label_popup_checkbox()
+        )
+
+        label_list_layout = QtWidgets.QVBoxLayout()
+        label_list_layout.setContentsMargins(0, 0, 0, 0)
+        label_list_layout.setSpacing(0)
+        label_list_layout.addWidget(unique_label_list)
+        label_list_layout.addWidget(display_label_popup_checkbox)
+        label_list_container = QtWidgets.QWidget()
+        label_list_container.setLayout(label_list_layout)
         label = QtWidgets.QDockWidget(self.tr("Label List"), self)
         label.setObjectName("Label List")
-        label.setWidget(unique_label_list)
+        label.setWidget(label_list_container)
 
         file_search = QtWidgets.QLineEdit()
         file_search.setPlaceholderText(self.tr("Search Filename"))
@@ -1157,6 +1181,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_list=label_list,
             label_dock=label,
             unique_label_list=unique_label_list,
+            display_label_popup_checkbox=display_label_popup_checkbox,
             file_dock=file,
             file_search=file_search,
             file_list=file_list,
@@ -1550,6 +1575,15 @@ class MainWindow(QtWidgets.QMainWindow):
                         unique_label_list=self._docks.unique_label_list,
                     ),
                 )
+        self._update_display_label_popup_checkbox()
+
+    def _update_display_label_popup_checkbox(self) -> None:
+        # `display_label_popup` couldn't have an effect if no item is selected,
+        # so disable and force it on when nothing is selected.
+        has_selected_item = bool(self._docks.unique_label_list.selectedItems())
+        self._docks.display_label_popup_checkbox.setEnabled(has_selected_item)
+        if not has_selected_item:
+            self._docks.display_label_popup_checkbox.setChecked(True)
 
     def _on_file_search_changed(self) -> None:
         self._import_images_from_dir(
@@ -1598,6 +1632,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     unique_label_list=self._docks.unique_label_list,
                 ),
             )
+        self._update_display_label_popup_checkbox()
         self._label_dialog.add_label_history(shape.label)
         for action in self._actions.on_shapes_present:
             action.setEnabled(True)
@@ -1788,7 +1823,7 @@ class MainWindow(QtWidgets.QMainWindow):
         flags = {}
         group_id = None
         description = ""
-        if self._config["display_label_popup"] or not text:
+        if self._docks.display_label_popup_checkbox.isChecked() or not text:
             previous_text = self._label_dialog.edit.text()
             text, flags, group_id, description = self._label_dialog.popup(text)
             if not text:

@@ -905,5 +905,15 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>Shape had no area; nothing created.</source>
         <translation>Az alakzatnak nincs területe; nem jött létre semmi.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display Label Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display label popup when creating an object (otherwise, use label selected above)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -899,5 +899,15 @@ Please select a different model or use AI-Box mode.</source>
         <source>Shape had no area; nothing created.</source>
         <translation>形狀面積為零，未建立。</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display Label Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Display label popup when creating an object (otherwise, use label selected above)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>
