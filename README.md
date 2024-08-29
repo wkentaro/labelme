@@ -5,6 +5,13 @@
 
 Для начала нужен питон с официального сайта (у меня работает на 3.11.9).
 
+Клонируем репозиторий:
+```
+git clone https://github.com/DemidNeuroLab/NeuroLabel
+
+cd ./NeuroLabel
+```
+
 Далее рекомендую создать vevn:
 ```
 python -m venv venv
@@ -14,13 +21,17 @@ python -m venv venv
 
 Далее устанавливаем зависимости:
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 
-pip install requirements-dev.txt
+pip install -r requirements-dev.txt
 ```
 
 Для запуска приложения нужно запустить файл start.py.
+```
+python start.py
+```
 
+# Далее ридми от разрабов:
 
 <h1 align="center">
   <img src="labelme/icons/icon.png"><br/>labelme
