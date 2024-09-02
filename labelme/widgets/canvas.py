@@ -58,6 +58,7 @@ class Canvas(QtWidgets.QWidget):
                 "linestrip": False,
                 "ai_polygon": False,
                 "ai_mask": False,
+                "selrectangle": False
             },
         )
         super(Canvas, self).__init__(*args, **kwargs)
@@ -124,6 +125,7 @@ class Canvas(QtWidgets.QWidget):
             "linestrip",
             "ai_polygon",
             "ai_mask",
+            "selrectangle"
         ]:
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
@@ -282,6 +284,10 @@ class Canvas(QtWidgets.QWidget):
                 self.line.points = [self.current[0], pos]
                 self.line.point_labels = [1, 1]
                 self.line.close()
+            elif self.createMode == "selrectangle":
+                self.line.points = [self.current[0], pos]
+                self.line.point_labels = [1, 1]
+                self.line.close()
             elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
                 self.line.point_labels = [1, 1]
@@ -418,7 +424,7 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
-                    elif self.createMode in ["rectangle", "circle", "line"]:
+                    elif self.createMode in ["rectangle", "circle", "line","selrectangle"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
@@ -835,11 +841,40 @@ class Canvas(QtWidgets.QWidget):
             )
         self.current.close()
 
-        self.shapes.append(self.current)
-        self.storeShapes()
-        self.current = None
-        self.setHiding(False)
-        self.newShape.emit()
+        # self.shapes.append(self.current)
+        # self.storeShapes()
+        # self.current = None
+        # self.setHiding(False)
+        # self.newShape.emit()
+        if self.createMode != "selrectangle":  # do not store shape,because it is not a real shape
+            self.shapes.append(self.current)
+            self.storeShapes()
+            self.current = None
+            self.setHiding(False)
+            self.newShape.emit()
+        else:
+
+            x1 = self.current.points[0].x()
+            y1 = self.current.points[0].y()
+            x2 = self.current.points[1].x()
+            y2 = self.current.points[1].y()
+            xMax = max([x1, x2])
+            yMax = max([y1, y2])
+            xMin = min([x1, x2])
+            yMin = min([y1, y2])
+
+            for shape in self.shapes:
+                if shape is None: continue
+                for pnt in shape.points:
+                    if xMax >= pnt.x() >= xMin and yMax >= pnt.y() >= yMin:
+                        shape.selected = True
+                        self.selectedShapes.append(shape)
+                        break
+
+            self.current = None  # clear current shape
+            self.selectionChanged.emit(self.selectedShapes)
+            self.setEditing(True)
+
         self.update()
 
     def closeEnough(self, p1, p2):
