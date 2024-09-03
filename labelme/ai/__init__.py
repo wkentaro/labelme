@@ -2,6 +2,7 @@ import gdown
 
 from .efficient_sam import EfficientSam
 from .segment_anything_model import SegmentAnythingModel
+from .segment_anything2_model import SegmentAnything2Model
 from .text_to_annotation import get_rectangles_from_texts  # NOQA: F401
 from .text_to_annotation import get_shapes_from_annotations  # NOQA: F401
 from .text_to_annotation import non_maximum_suppression  # NOQA: F401
@@ -86,6 +87,24 @@ class EfficientSamVitS(EfficientSam):
             ),
         )
 
+class SAM2HieraL(SegmentAnything2Model):
+    name = "SegmentAnything2 (accuracy)"
+
+    def __init__(self):
+        super().__init__(
+            encoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_large.encoder.onnx",
+            decoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_large.decoder.onnx"
+        )
+
+class SAM2HieraT(SegmentAnything2Model):
+    name = "SegmentAnything2 (speed)"
+
+    def __init__(self):
+        super().__init__(
+            encoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_hiera_tiny.encoder.onnx",
+            decoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_hiera_tiny.decoder.onnx"
+        )
+
 
 MODELS = [
     SegmentAnythingModelVitB,
@@ -93,4 +112,6 @@ MODELS = [
     SegmentAnythingModelVitH,
     EfficientSamVitT,
     EfficientSamVitS,
+    SAM2HieraT,
+    SAM2HieraL
 ]

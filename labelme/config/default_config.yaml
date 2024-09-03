@@ -81,6 +81,7 @@ canvas:
     linestrip: false
     ai_polygon: false
     ai_mask: false
+    ai_batch: false
 
 shortcuts:
   close: Ctrl+W
