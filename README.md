@@ -1,3 +1,13 @@
+## Added features in this fork
+- [x] Support for [SAM2](https://github.com/facebookresearch/segment-anything-2) tiny and large models
+- [x] AI Batch mode implementation -- labeling multiple similar polygons at the same time
+- [] On-line / continuous finetuning of AI models for enhanced polygon / mask predictions per dataset
+- [] Widgets and utils to train custom models once annotation is complete (Deeplab / UNET / Mask-RCNN / YOLO)
+- [] Additional image preprocessing options
+
+
+## Main branch documentation
+
 <h1 align="center">
   <img src="labelme/icons/icon.png"><br/>labelme
 </h1>

@@ -92,8 +92,8 @@ class SAM2HieraL(SegmentAnything2Model):
 
     def __init__(self):
         super().__init__(
-            encoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_large.encoder.onnx",
-            decoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_large.decoder.onnx"
+            encoder_path="output_models/sam2_large.encoder.onnx",
+            decoder_path="output_models/sam2_large.decoder.onnx"
         )
 
 class SAM2HieraT(SegmentAnything2Model):
@@ -101,8 +101,8 @@ class SAM2HieraT(SegmentAnything2Model):
 
     def __init__(self):
         super().__init__(
-            encoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_hiera_tiny.encoder.onnx",
-            decoder_path="C:/Users/jdpet/Projects/labelme/output_models/sam2_hiera_tiny.decoder.onnx"
+            encoder_path="output_models/sam2_hiera_tiny.encoder.onnx",
+            decoder_path="output_models/sam2_hiera_tiny.decoder.onnx"
         )
 
 
