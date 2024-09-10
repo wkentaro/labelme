@@ -2,14 +2,15 @@ import collections
 import threading
 from typing import Any
 
-import cv2
+import imgviz
 import numpy as np
 import onnxruntime
+import skimage
 from numpy import ndarray
 
-import skimage
 from ..logger import logger
 from . import _utils
+
 
 class SegmentAnything2Model:
     """Segmentation model using Segment Anything 2 (SAM2)"""
@@ -52,9 +53,14 @@ class SegmentAnything2Model:
         embedding = self._get_image_embedding()
         masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
         best_mask = masks[np.argmax(scores)]
-        best_mask = cv2.resize(
-            best_mask, (orig_im_size[1], orig_im_size[0])
-        )
+        # best_mask = cv2.resize(
+        #     best_mask, (orig_im_size[1], orig_im_size[0])
+        # )
+
+        best_mask = imgviz.resize(best_mask, 
+                                  height=orig_im_size[0],
+                                  width=orig_im_size[1])
+        
         best_mask = np.array([[best_mask]])
 
 
@@ -70,17 +76,16 @@ class SegmentAnything2Model:
         mask = self.predict_mask_from_points(points=points, point_labels=point_labels)
         return _utils.compute_polygon_from_mask(mask=mask, points=points)
 
-    def auto_masks(self):
-        embedding = self._get_image_embedding()
+    # def auto_masks(self):
+    #     embedding = self._get_image_embedding()
         
-        x = np.linspace(0, self._image.shape[1], 64)
-        y = np.linspace(0, self._image.shape[0], 64)
-        xv, yv = np.meshgrid(x, y)
-        points = np.column_stack((xv.ravel(), yv.ravel()))
-        point_labels = np.ones(len(points))
-
-        masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
-        print(masks)
+    #     x = np.linspace(0, self._image.shape[1], 64)
+    #     y = np.linspace(0, self._image.shape[0], 64)
+    #     xv, yv = np.meshgrid(x, y)
+    #     points = np.column_stack((xv.ravel(), yv.ravel()))
+    #     point_labels = np.ones(len(points))
+        
+    #     masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
 
 
 
@@ -150,8 +155,13 @@ class SAM2ImageEncoder:
     def prepare_input(self, image: np.ndarray) -> np.ndarray:
         self.img_height, self.img_width = image.shape[:2]
 
-        input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        input_img = cv2.resize(input_img, (self.input_width, self.input_height))
+        # input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # input_img = cv2.resize(input_img, (self.input_width, self.input_height))
+
+        input_img = image[:, :, [2, 1, 0]]
+    
+    # Resize the image using imgviz
+        input_img = imgviz.resize(input_img, height=self.input_height, width=self.input_width)
 
         mean = np.array([0.485, 0.456, 0.406])
         std = np.array([0.229, 0.224, 0.225])

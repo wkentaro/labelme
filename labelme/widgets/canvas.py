@@ -1,4 +1,6 @@
 import imgviz
+import numpy as np
+import skimage
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -8,9 +10,6 @@ import labelme.utils
 from labelme import QT5
 from labelme.logger import logger
 from labelme.shape import Shape
-
-import numpy as np
-import skimage
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
