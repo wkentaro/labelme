@@ -50,8 +50,15 @@ class SegmentAnything2Model:
 
     def predict_mask_from_points(self, points, point_labels):
         embedding = self._get_image_embedding()
-        masks, scores = self.model.predict_masks(embedding, points, point_labels)
-        best_mask = masks[0,0]
+        masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
+        best_mask = masks[np.argmax(scores)]
+        best_mask = cv2.resize(
+            best_mask, (orig_im_size[1], orig_im_size[0])
+        )
+        best_mask = np.array([[best_mask]])
+
+
+        best_mask = best_mask[0,0]
         mask = best_mask > 0.0
 
         MIN_SIZE_RATIO = 0.05
@@ -62,6 +69,21 @@ class SegmentAnything2Model:
     def predict_polygon_from_points(self, points, point_labels):
         mask = self.predict_mask_from_points(points=points, point_labels=point_labels)
         return _utils.compute_polygon_from_mask(mask=mask, points=points)
+
+    def auto_masks(self):
+        embedding = self._get_image_embedding()
+        
+        x = np.linspace(0, self._image.shape[1], 64)
+        y = np.linspace(0, self._image.shape[0], 64)
+        xv, yv = np.meshgrid(x, y)
+        points = np.column_stack((xv.ravel(), yv.ravel()))
+        point_labels = np.ones(len(points))
+
+        masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
+        print(masks)
+
+
+
 
 class SegmentAnything2ONNX:
     """Segmentation model using Segment Anything 2 (SAM2)"""
@@ -90,7 +112,7 @@ class SegmentAnything2ONNX:
         high_res_feats_1 = embedding["high_res_feats_1"]
         original_size = embedding["original_size"]
         self.decoder.set_image_size(original_size)
-        masks, scores = self.decoder(
+        masks, scores, orig_im_size = self.decoder(
             image_embedding,
             high_res_feats_0,
             high_res_feats_1,
@@ -98,7 +120,7 @@ class SegmentAnything2ONNX:
             labels,
         )
 
-        return masks, scores
+        return masks, scores, orig_im_size
 
 class SAM2ImageEncoder:
     def __init__(self, path: str) -> None:
@@ -323,13 +345,10 @@ class SAM2ImageDecoder:
         masks = outputs[0][0]
 
         # Select the best masks based on the scores
-        best_mask = masks[np.argmax(scores)]
-        best_mask = cv2.resize(
-            best_mask, (self.orig_im_size[1], self.orig_im_size[0])
-        )
-        return (
-            np.array([[best_mask]]),
+
+        return (masks,
             scores,
+            self.orig_im_size
         )
 
     def set_image_size(self, orig_im_size: tuple[int, int]) -> None:

@@ -90,11 +90,6 @@ class EfficientSamVitS(EfficientSam):
 class SAM2HieraL(SegmentAnything2Model):
     name = "SegmentAnything2 (accuracy)"
 
-    # def __init__(self):
-    #     super().__init__(
-    #         encoder_path="output_models/sam2_large.encoder.onnx",
-    #         decoder_path="output_models/sam2_large.decoder.onnx"
-    #     )
     def __init__(self):
         super().__init__(
             encoder_path=gdown.cached_download(
@@ -108,11 +103,6 @@ class SAM2HieraL(SegmentAnything2Model):
 class SAM2HieraT(SegmentAnything2Model):
     name = "SegmentAnything2 (speed)"
 
-    # def __init__(self):
-    #     super().__init__(
-    #         encoder_path="output_models/sam2_hiera_tiny.encoder.onnx",
-    #         decoder_path="output_models/sam2_hiera_tiny.decoder.onnx"
-    #     )
     def __init__(self):
         super().__init__(
             encoder_path=gdown.cached_download(

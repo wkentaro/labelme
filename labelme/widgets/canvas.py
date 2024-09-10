@@ -752,6 +752,7 @@ class Canvas(QtWidgets.QWidget):
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
             drawing_shape.paint(p)
+            
         elif self.createMode == "ai_polygon" and self.current is not None:
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(
@@ -790,6 +791,7 @@ class Canvas(QtWidgets.QWidget):
             )
             drawing_shape.selected = True
             drawing_shape.paint(p)
+
         elif self.createMode == "ai_batch" and self.current is not None:
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(
