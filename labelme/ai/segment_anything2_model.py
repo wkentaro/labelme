@@ -53,17 +53,11 @@ class SegmentAnything2Model:
         embedding = self._get_image_embedding()
         masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
         best_mask = masks[np.argmax(scores)]
-        # best_mask = cv2.resize(
-        #     best_mask, (orig_im_size[1], orig_im_size[0])
-        # )
-
         best_mask = imgviz.resize(best_mask, 
                                   height=orig_im_size[0],
                                   width=orig_im_size[1])
         
         best_mask = np.array([[best_mask]])
-
-
         best_mask = best_mask[0,0]
         mask = best_mask > 0.0
 
@@ -74,21 +68,7 @@ class SegmentAnything2Model:
 
     def predict_polygon_from_points(self, points, point_labels):
         mask = self.predict_mask_from_points(points=points, point_labels=point_labels)
-        return _utils.compute_polygon_from_mask(mask=mask, points=points)
-
-    # def auto_masks(self):
-    #     embedding = self._get_image_embedding()
-        
-    #     x = np.linspace(0, self._image.shape[1], 64)
-    #     y = np.linspace(0, self._image.shape[0], 64)
-    #     xv, yv = np.meshgrid(x, y)
-    #     points = np.column_stack((xv.ravel(), yv.ravel()))
-    #     point_labels = np.ones(len(points))
-        
-    #     masks, scores, orig_im_size = self.model.predict_masks(embedding, points, point_labels)
-
-
-
+        return _utils.compute_polygon_from_mask(mask=mask)
 
 class SegmentAnything2ONNX:
     """Segmentation model using Segment Anything 2 (SAM2)"""
@@ -154,9 +134,6 @@ class SAM2ImageEncoder:
 
     def prepare_input(self, image: np.ndarray) -> np.ndarray:
         self.img_height, self.img_width = image.shape[:2]
-
-        # input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        # input_img = cv2.resize(input_img, (self.input_width, self.input_height))
 
         input_img = image[:, :, [2, 1, 0]]
     
@@ -353,8 +330,6 @@ class SAM2ImageDecoder:
 
         scores = outputs[1].squeeze()
         masks = outputs[0][0]
-
-        # Select the best masks based on the scores
 
         return (masks,
             scores,

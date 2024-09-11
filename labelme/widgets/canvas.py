@@ -1,6 +1,4 @@
 import imgviz
-import numpy as np
-import skimage
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -10,6 +8,9 @@ import labelme.utils
 from labelme import QT5
 from labelme.logger import logger
 from labelme.shape import Shape
+
+import numpy as np
+import skimage
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
@@ -751,7 +752,6 @@ class Canvas(QtWidgets.QWidget):
             drawing_shape.addPoint(self.line[1])
             drawing_shape.fill = True
             drawing_shape.paint(p)
-            
         elif self.createMode == "ai_polygon" and self.current is not None:
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(
@@ -790,7 +790,6 @@ class Canvas(QtWidgets.QWidget):
             )
             drawing_shape.selected = True
             drawing_shape.paint(p)
-
         elif self.createMode == "ai_batch" and self.current is not None:
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(
