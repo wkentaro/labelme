@@ -10,32 +10,6 @@ def _get_contour_length(contour):
     contour_end = np.r_[contour[1:], contour[0:1]]
     return np.linalg.norm(contour_end - contour_start, axis=1).sum()
 
-# def _get_contour_closest_to_points_CoM(contours, points):
-#     """Return the contour closest to the center of mass of the input points"""
-#     x1 = [p[0] for p in points]
-#     y1 = [p[1] for p in points]
-#     px = sum(x1)/len(x1)
-#     py = sum(y1)/len(y1)
-#     pcent = np.array([px, py])
-
-#     distances = []
-#     for contour in contours:
-#         if len(contour) == 0 or contour.shape[1] != 2:
-#             continue
-
-#         x = contour[:, 1]
-#         y = contour[:, 0]
-#         cx = np.mean(x)
-#         cy = np.mean(y)
-#         centroid = np.array([cx, cy])
-#         distance = np.linalg.norm(pcent-centroid, axis = None)
-#         distances.append(distance)
-    
-#     closest_index = np.argmin(distances)
-#     closest_contour = contours[closest_index]
-
-#     return closest_contour
-
 def compute_polygon_from_mask(mask):
     contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
     if len(contours) == 0:
