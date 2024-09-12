@@ -354,7 +354,7 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge = index_edge
                 self.overrideCursor(CURSOR_POINT)
-                self.setToolTip(self.tr("Click to create point"))
+                self.setToolTip(self.tr("CTRL + Click to create point"))
                 self.setStatusTip(self.toolTip())
                 self.update()
                 break
@@ -466,7 +466,8 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             elif self.editing():
-                if self.selectedEdge():
+                if self.selectedEdge() and int(ev.modifiers()) == QtCore.Qt.ControlModifier:
+                    # Add point if: CTRL + Left-click on an edge
                     self.addPointToEdge()
                 elif (
                     self.selectedVertex()
