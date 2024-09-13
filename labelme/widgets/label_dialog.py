@@ -134,6 +134,10 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setText(item.text())
 
     def validate(self):
+        if not self.edit.isEnabled():
+            self.accept()
+            return
+
         text = self.edit.text()
         if hasattr(text, "strip"):
             text = text.strip()
