@@ -669,19 +669,8 @@ class Canvas(QtWidgets.QWidget):
     def duplicateSelectedShapes(self):
         if self.selectedShapes:
             self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-            self.boundedShiftShapes(self.selectedShapesCopy)
             self.endMove(copy=True)
         return self.selectedShapes
-
-    def boundedShiftShapes(self, shapes):
-        # Try to move in one direction, and if it fails in another.
-        # Give up if both fail.
-        point = shapes[0][0]
-        offset = QtCore.QPointF(2.0, 2.0)
-        self.offsets = QtCore.QPoint(), QtCore.QPoint()
-        self.prevPoint = point
-        if not self.boundedMoveShapes(shapes, point - offset):
-            self.boundedMoveShapes(shapes, point + offset)
 
     def paintEvent(self, event):
         if not self.pixmap:
