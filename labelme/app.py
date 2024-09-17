@@ -1221,17 +1221,6 @@ class MainWindow(QtWidgets.QMainWindow):
             assert description is None
             return
 
-        self.canvas.storeShapes()
-        for item in items:
-            self._update_item(
-                item=item,
-                text=text if edit_text else None,
-                flags=flags if edit_flags else None,
-                group_id=group_id if edit_group_id else None,
-                description=description if edit_description else None,
-            )
-
-    def _update_item(self, item, text, flags, group_id, description):
         if not self.validateLabel(text):
             self.errorMessage(
                 self.tr("Invalid label"),
@@ -1241,32 +1230,34 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        shape = item.shape()
+        self.canvas.storeShapes()
+        for item in items:
+            shape: Shape = item.shape()
 
-        if text is not None:
-            shape.label = text
-        if flags is not None:
-            shape.flags = flags
-        if group_id is not None:
-            shape.group_id = group_id
-        if description is not None:
-            shape.description = description
+            if edit_text:
+                shape.label = text
+            if edit_flags:
+                shape.flags = flags
+            if edit_group_id:
+                shape.group_id = group_id
+            if edit_description:
+                shape.description = description
 
-        self._update_shape_color(shape)
-        if shape.group_id is None:
-            item.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    html.escape(shape.label), *shape.fill_color.getRgb()[:3]
+            self._update_shape_color(shape)
+            if shape.group_id is None:
+                item.setText(
+                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                        html.escape(shape.label), *shape.fill_color.getRgb()[:3]
+                    )
                 )
-            )
-        else:
-            item.setText("{} ({})".format(shape.label, shape.group_id))
-        self.setDirty()
-        if self.uniqLabelList.findItemByLabel(shape.label) is None:
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
-            rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            else:
+                item.setText("{} ({})".format(shape.label, shape.group_id))
+            self.setDirty()
+            if self.uniqLabelList.findItemByLabel(shape.label) is None:
+                item = self.uniqLabelList.createItemFromLabel(shape.label)
+                self.uniqLabelList.addItem(item)
+                rgb = self._get_rgb_by_label(shape.label)
+                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
 
     def fileSearchChanged(self):
         self.importDirImages(
