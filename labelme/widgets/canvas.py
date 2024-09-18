@@ -666,12 +666,6 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.update()
 
-    def duplicateSelectedShapes(self):
-        if self.selectedShapes:
-            self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-            self.endMove(copy=True)
-        return self.selectedShapes
-
     def paintEvent(self, event):
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)

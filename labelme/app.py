@@ -1471,10 +1471,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
     def duplicateSelectedShape(self):
-        added_shapes = self.canvas.duplicateSelectedShapes()
-        for shape in added_shapes:
-            self.addLabel(shape)
-        self.setDirty()
+        self.copySelectedShape()
+        self.pasteSelectedShape()
 
     def pasteSelectedShape(self):
         self.loadShapes(self._copied_shapes, replace=False)
