@@ -1,7 +1,10 @@
 # -*- mode: python -*-
 # vim: ft=python
 
+import os.path as osp
 import sys
+
+import osam._models.yoloworld.clip
 
 
 sys.setrecursionlimit(5000)  # required on Windows
@@ -15,6 +18,13 @@ a = Analysis(
         ('labelme/config/default_config.yaml', 'labelme/config'),
         ('labelme/icons/*', 'labelme/icons'),
         ('labelme/translate/*.qm', 'translate'),
+        (
+            osp.join(
+                osp.dirname(osam._models.yoloworld.clip.__file__),
+                "bpe_simple_vocab_16e6.txt.gz",
+            ),
+            'osam/_models/yoloworld/clip',
+        ),
     ],
     hiddenimports=[],
     hookspath=[],

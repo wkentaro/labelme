@@ -18,12 +18,14 @@ from qtpy.QtCore import Qt
 
 from labelme import PY2
 from labelme import __appname__
+from labelme import ai
 from labelme.ai import MODELS
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape
+from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
@@ -784,7 +786,7 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel.setDefaultWidget(QtWidgets.QWidget())
         selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
         #
-        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Model"))
+        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
         #
@@ -809,6 +811,12 @@ class MainWindow(QtWidgets.QMainWindow):
             else None
         )
 
+        self._ai_prompt_widget: QtWidgets.QWidget = AiPromptWidget(
+            on_submit=self._submit_ai_prompt, parent=self
+        )
+        ai_prompt_action = QtWidgets.QWidgetAction(self)
+        ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
+
         self.tools = self.toolbar("Tools")
         self.actions.tool = (
             open_,
@@ -829,6 +837,8 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom,
             None,
             selectAiModel,
+            None,
+            ai_prompt_action,
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -990,6 +1000,66 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
+
+    def _submit_ai_prompt(self, _) -> None:
+        texts = self._ai_prompt_widget.get_text_prompt().split(",")
+        boxes, scores, labels = ai.get_rectangles_from_texts(
+            model="yoloworld",
+            image=utils.img_qt_to_arr(self.image)[:, :, :3],
+            texts=texts,
+        )
+
+        for shape in self.canvas.shapes:
+            if shape.shape_type != "rectangle" or shape.label not in texts:
+                continue
+            box = np.array(
+                [
+                    shape.points[0].x(),
+                    shape.points[0].y(),
+                    shape.points[1].x(),
+                    shape.points[1].y(),
+                ],
+                dtype=np.float32,
+            )
+            boxes = np.r_[boxes, [box]]
+            scores = np.r_[scores, [1.01]]
+            labels = np.r_[labels, [texts.index(shape.label)]]
+
+        boxes, scores, labels = ai.non_maximum_suppression(
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            iou_threshold=self._ai_prompt_widget.get_iou_threshold(),
+            score_threshold=self._ai_prompt_widget.get_score_threshold(),
+            max_num_detections=100,
+        )
+
+        keep = scores != 1.01
+        boxes = boxes[keep]
+        scores = scores[keep]
+        labels = labels[keep]
+
+        shape_dicts: list[dict] = ai.get_shapes_from_annotations(
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            texts=texts,
+        )
+
+        shapes: list[Shape] = []
+        for shape_dict in shape_dicts:
+            shape = Shape(
+                label=shape_dict["label"],
+                shape_type=shape_dict["shape_type"],
+                description=shape_dict["description"],
+            )
+            for point in shape_dict["points"]:
+                shape.addPoint(QtCore.QPointF(*point))
+            shapes.append(shape)
+
+        self.canvas.storeShapes()
+        self.loadShapes(shapes, replace=False)
+        self.setDirty()
 
     def resetState(self):
         self.labelList.clear()
@@ -1153,17 +1223,6 @@ class MainWindow(QtWidgets.QMainWindow):
             assert description is None
             return
 
-        self.canvas.storeShapes()
-        for item in items:
-            self._update_item(
-                item=item,
-                text=text if edit_text else None,
-                flags=flags if edit_flags else None,
-                group_id=group_id if edit_group_id else None,
-                description=description if edit_description else None,
-            )
-
-    def _update_item(self, item, text, flags, group_id, description):
         if not self.validateLabel(text):
             self.errorMessage(
                 self.tr("Invalid label"),
@@ -1173,32 +1232,34 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        shape = item.shape()
+        self.canvas.storeShapes()
+        for item in items:
+            shape: Shape = item.shape()
 
-        if text is not None:
-            shape.label = text
-        if flags is not None:
-            shape.flags = flags
-        if group_id is not None:
-            shape.group_id = group_id
-        if description is not None:
-            shape.description = description
+            if edit_text:
+                shape.label = text
+            if edit_flags:
+                shape.flags = flags
+            if edit_group_id:
+                shape.group_id = group_id
+            if edit_description:
+                shape.description = description
 
-        self._update_shape_color(shape)
-        if shape.group_id is None:
-            item.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    html.escape(shape.label), *shape.fill_color.getRgb()[:3]
+            self._update_shape_color(shape)
+            if shape.group_id is None:
+                item.setText(
+                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
+                        html.escape(shape.label), *shape.fill_color.getRgb()[:3]
+                    )
                 )
-            )
-        else:
-            item.setText("{} ({})".format(shape.label, shape.group_id))
-        self.setDirty()
-        if self.uniqLabelList.findItemByLabel(shape.label) is None:
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
-            rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            else:
+                item.setText("{} ({})".format(shape.label, shape.group_id))
+            self.setDirty()
+            if self.uniqLabelList.findItemByLabel(shape.label) is None:
+                item = self.uniqLabelList.createItemFromLabel(shape.label)
+                self.uniqLabelList.addItem(item)
+                rgb = self._get_rgb_by_label(shape.label)
+                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -1412,10 +1473,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
     def duplicateSelectedShape(self):
-        added_shapes = self.canvas.duplicateSelectedShapes()
-        for shape in added_shapes:
-            self.addLabel(shape)
-        self.setDirty()
+        self.copySelectedShape()
+        self.pasteSelectedShape()
 
     def pasteSelectedShape(self):
         self.loadShapes(self._copied_shapes, replace=False)

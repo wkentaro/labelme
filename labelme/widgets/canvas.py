@@ -331,8 +331,8 @@ class Canvas(QtWidgets.QWidget):
         for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
             # Look for a nearby vertex to highlight. If that fails,
             # check if we happen to be inside a shape.
-            index = shape.nearestVertex(pos, self.epsilon / self.scale)
-            index_edge = shape.nearestEdge(pos, self.epsilon / self.scale)
+            index = shape.nearestVertex(pos, self.epsilon)
+            index_edge = shape.nearestEdge(pos, self.epsilon)
             if index is not None:
                 if self.selectedVertex():
                     self.hShape.highlightClear()
@@ -342,7 +342,12 @@ class Canvas(QtWidgets.QWidget):
                 self.hEdge = None
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
-                self.setToolTip(self.tr("Click & drag to move point"))
+                self.setToolTip(
+                    self.tr(
+                        "Click & Drag to move point\n"
+                        "ALT + SHIFT + Click to delete point"
+                    )
+                )
                 self.setStatusTip(self.toolTip())
                 self.update()
                 break
@@ -354,7 +359,7 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge = index_edge
                 self.overrideCursor(CURSOR_POINT)
-                self.setToolTip(self.tr("Click to create point"))
+                self.setToolTip(self.tr("ALT + Click to create point"))
                 self.setStatusTip(self.toolTip())
                 self.update()
                 break
@@ -466,13 +471,11 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             elif self.editing():
-                if self.selectedEdge():
+                if self.selectedEdge() and ev.modifiers() == QtCore.Qt.AltModifier:
                     self.addPointToEdge()
-                elif (
-                    self.selectedVertex()
-                    and int(ev.modifiers()) == QtCore.Qt.ShiftModifier
+                elif self.selectedVertex() and ev.modifiers() == (
+                    QtCore.Qt.AltModifier | QtCore.Qt.ShiftModifier
                 ):
-                    # Delete point if: left-click + SHIFT on a point
                     self.removeSelectedPoint()
 
                 group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
@@ -663,23 +666,6 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.update()
 
-    def duplicateSelectedShapes(self):
-        if self.selectedShapes:
-            self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-            self.boundedShiftShapes(self.selectedShapesCopy)
-            self.endMove(copy=True)
-        return self.selectedShapes
-
-    def boundedShiftShapes(self, shapes):
-        # Try to move in one direction, and if it fails in another.
-        # Give up if both fail.
-        point = shapes[0][0]
-        offset = QtCore.QPointF(2.0, 2.0)
-        self.offsets = QtCore.QPoint(), QtCore.QPoint()
-        self.prevPoint = point
-        if not self.boundedMoveShapes(shapes, point - offset):
-            self.boundedMoveShapes(shapes, point + offset)
-
     def paintEvent(self, event):
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
@@ -695,6 +681,8 @@ class Canvas(QtWidgets.QWidget):
 
         p.drawPixmap(0, 0, self.pixmap)
 
+        p.scale(1 / self.scale, 1 / self.scale)
+
         # draw crosshair
         if (
             self._crosshair[self._createMode]
@@ -705,14 +693,14 @@ class Canvas(QtWidgets.QWidget):
             p.setPen(QtGui.QColor(0, 0, 0))
             p.drawLine(
                 0,
-                int(self.prevMovePoint.y()),
+                int(self.prevMovePoint.y() * self.scale),
                 self.width() - 1,
-                int(self.prevMovePoint.y()),
+                int(self.prevMovePoint.y() * self.scale),
             )
             p.drawLine(
-                int(self.prevMovePoint.x()),
+                int(self.prevMovePoint.x() * self.scale),
                 0,
-                int(self.prevMovePoint.x()),
+                int(self.prevMovePoint.x() * self.scale),
                 self.height() - 1,
             )
 
