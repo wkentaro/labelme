@@ -35,6 +35,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from labelme.widgets import LabelLetterDialog
 
 from . import utils
 
@@ -1530,6 +1531,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._config["display_label_popup"] or not text:
             previous_text = self.labelDialog.edit.text()
             text, flags, group_id, description = self.labelDialog.popUp(text)
+            self.labelLetterDialog = LabelLetterDialog(self)
+            a, b = self.labelLetterDialog.popUp()
             if not text:
                 self.labelDialog.edit.setText(previous_text)
 

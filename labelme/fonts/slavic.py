@@ -25,22 +25,25 @@ class SlavicFont:
     
     # def GetFont(self):
     #     return self.GetFont()
-    def usage_example():
-        label = QtWidgets.QLabel("AI Prompt")
-        label.setText("Якосhрjаxл на де\\\\\\\\еалеt")
-        label.setFont(SlavicFont.GetFont())
+
+
+    # def usage_example():
+    #     label = QtWidgets.QLabel("AI Prompt")
+    #     label.setText("Якосhрjаxл на де\\\\\\\\еалеt")
+    #     label.setFont(SlavicFont.GetFont())
 
     
     __font = None
-    
+
     @classmethod    
-    def GetFont(cls):
+    def GetFont(cls, size):
         if cls.__font is None:
             fontId = QFontDatabase.addApplicationFont(":/fonts/Hirmos.ttf")
             if fontId == 0:
                 fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
-                cls.__font = QFont(fontName)
+                cls.__font = QFont(fontName, size)
             else:
                 cls.__font = QFont()
                 logger.warning("Failed to load slavic font. Loading default font.")
         return cls.__font
+    
