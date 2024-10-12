@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix='/'>
+  <file>fonts/Hirmos.ttf</file>
+</qresource>
+</RCC>
