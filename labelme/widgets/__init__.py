@@ -23,3 +23,5 @@ from .unique_label_qlist_widget import UniqueLabelQListWidget
 from .zoom_widget import ZoomWidget
 
 from .label_letter_dialog import LabelLetterDialog
+
+from .label_line_dialog import LabelLineDialog

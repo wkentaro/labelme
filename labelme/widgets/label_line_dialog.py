@@ -2,7 +2,7 @@ from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel, QTextEdit
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import * 
 
@@ -15,36 +15,52 @@ from labelme.fonts.slavic import SlavicFont
 QT5 = QT_VERSION[0] == "5"
 
 """
-    Окно, выдающее ту букву, которую пользователь ввёл со своей или с экранной клавиатуры.
+    Окно, выдающее ту строку, которую пользователь ввёл со своей и/или с экранной клавиатуры.
     Если пользователь нажал cancel или закрыл окно, то вернётся None
-    Если пользователь ввёл всё корректно, то вернётся буква 
+    Если пользователь ввёл всё корректно, то вернётся строка
+    Славянская клавиатура добавляет символы в конец вводимой строки 
 """
-class LabelLetterDialog(QtWidgets.QDialog):
+class LabelLineDialog(QtWidgets.QDialog):
     def __init__(
         self,
         parent=None
     ):
-        super(LabelLetterDialog, self).__init__(parent)
-        self.recognised_letter = None
+        super(LabelLineDialog, self).__init__(parent)
+        self.recognised_line = None
 
-        self.setMinimumSize(QSize(300, 100))
+        self.setMinimumSize(QSize(600, 150))
         self.keyboard = Keyboard()
-    
-        layout = QtWidgets.QVBoxLayout()
 
+        layout = QtWidgets.QVBoxLayout()
+        
         invite_label = QLabel()
-        invite_label.setText("Разметка символа")
+        invite_label.setText("Разметка строки")
         invite_label.setFont(QFont('Arial', 18))
         layout.addWidget(invite_label, 0, Qt.AlignTop | Qt.AlignHCenter)
+        
+        layout_slavic_text = QtWidgets.QHBoxLayout()
+        invite_text_label = QLabel()
+        invite_text_label.setText("Введённая строка:")
+        invite_text_label.setFont(QFont('Arial', 8))
+        layout_slavic_text.addWidget(invite_text_label, 2)
+
+        self.text_view = LabelQLineEdit()
+        self.text_view.setText("")
+        self.text_view.setFont(SlavicFont.GetFont(22))
+        self.text_view.setReadOnly(True)
+        layout_slavic_text.addWidget(self.text_view, 9)
+
+        layout.addLayout(layout_slavic_text)
 
         layout_enter = QtWidgets.QHBoxLayout()
         self.edit = LabelQLineEdit()
-        self.edit.setPlaceholderText("Введите букву")
-        layout_enter.addWidget(self.edit, 4)
+        self.edit.setPlaceholderText("Аннотация строки")
+        self.edit.textChanged.connect(self.changeLabel)
+        layout_enter.addWidget(self.edit, 6)
 
         keyboard_button = QtWidgets.QPushButton("Славянская клавиатура")
         keyboard_button.clicked.connect(self.get_keyboard)
-        layout_enter.addWidget(keyboard_button, 4)
+        layout_enter.addWidget(keyboard_button, 2)
         
         layout.addLayout(layout_enter)
 
@@ -61,11 +77,11 @@ class LabelLetterDialog(QtWidgets.QDialog):
         layout.addWidget(bb)
 
         self.setLayout(layout)
-    
+
     def validate_input(self):
         text = self.edit.text()
-        if len(text) and text in SlavicFont.ALL_LETTERS:
-            self.recognised_letter = text
+        if all(letter in SlavicFont.ALL_LETTERS for letter in text):
+            self.recognised_line = text
             self.close()
         else:
             messageBox = QtWidgets.QMessageBox(
@@ -75,12 +91,16 @@ class LabelLetterDialog(QtWidgets.QDialog):
             )
             messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
             messageBox.exec_()
-
+        
+    def changeLabel(self):
+        self.text_view.setText(self.edit.text())
+        
     def get_keyboard(self):
         letter = self.keyboard.popUp()
         if letter is not None:
-            self.edit.setText(letter)
+            self.edit.setText(self.edit.text() + letter)
 
     def popUp(self):
         self.exec_()
-        return self.recognised_letter
+        return self.recognised_line 
+

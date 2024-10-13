@@ -5,36 +5,15 @@ import labelme.fonts.fonts_rc
 from labelme.logger import logger
 
 class SlavicFont:  
-    # def __new__(cls):
-    #     if not hasattr(cls, "instance"):
-    #         cls.instance = super(SlavicFont, cls).__new__(cls)
-    #     return cls.instance
-    
-    # @staticmethod
-    # def __get_font() -> QFont:     
-    #     fontId = QFontDatabase.addApplicationFont(":/fonts/Hirmos.ttf")
-    #     if fontId == 0:
-    #         fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
-    #         font = QFont(fontName)
-    #     else:
-    #         font = QFont()
-    #         logger.warning("Failed to load slavic font. Loading default font.")
-    #     return font
-    
-    # __font = __get_font()
-    
-    # def GetFont(self):
-    #     return self.GetFont()
-
-
     # def usage_example():
     #     label = QtWidgets.QLabel("AI Prompt")
     #     label.setText("Якосhрjаxл на де\\\\\\\\еалеt")
     #     label.setFont(SlavicFont.GetFont())
-
     
     __font = None
 
+    ALL_LETTERS = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7fЂЃ‚ѓ„…†‡€‰Љ‹ЊЌЋЏђ‘’“”•–—�™љ›њќћџ\xa0ЎўЈ¤Ґ¦§Ё©Є«¬\xad®Ї°±Ііґµ¶·ё№є»јЅѕїАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя'
+    
     @classmethod    
     def GetFont(cls, size):
         if cls.__font is None:
