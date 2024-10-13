@@ -1,14 +1,12 @@
 from qtpy import QT_VERSION
 from qtpy import QtCore
-from qtpy import QtGui
 from qtpy import QtWidgets
 from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import * 
 
 import labelme.utils
-from labelme.logger import logger
-from labelme.widgets.label_dialog import LabelQLineEdit
 from labelme.widgets.keyboard import Keyboard
 from labelme.fonts.slavic import SlavicFont
 
@@ -38,7 +36,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
         layout.addWidget(invite_label, 0, Qt.AlignTop | Qt.AlignHCenter)
 
         layout_enter = QtWidgets.QHBoxLayout()
-        self.edit = LabelQLineEdit()
+        self.edit = QLineEdit()
         self.edit.setPlaceholderText("Введите букву")
         layout_enter.addWidget(self.edit, 4)
 

@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import *
 from qtpy import QtWidgets
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import * 
 from labelme.fonts.slavic import SlavicFont
 
 class PushButton(QPushButton):
@@ -18,35 +20,59 @@ class PushButton(QPushButton):
 class Keyboard(QtWidgets.QDialog): 
     def __init__(self):
         super(Keyboard, self).__init__()
+        
+        self.setMinimumSize(QApplication.desktop().width() - 40, QApplication.desktop().height() - 100)
 
         self.text_from_keyboard = None
 
         self.rows = 16
         self.columns = 16
-
+        
         self.layout = QGridLayout()
+
+        # for i in range(self.columns):
+        #     self.layout.setColumnMinimumWidth(i, 50)
+
+        # for i in range(3, self.rows):
+        #     self.layout.setRowMinimumHeight(i, 60)
 
         i = 0
         for row in range(self.rows): 
             for column in range(self.columns): 
                 letter = self.smart_keyboard(i)
                 if letter is not None:
+                    letter_layout = QtWidgets.QVBoxLayout()
+
+                    invite_label = QLabel()
+                    invite_label.setText(f"{letter}")
+                    invite_label.setFont(QFont('Arial', 10))
+                    letter_layout.addWidget(invite_label, 0, Qt.AlignTop | Qt.AlignHCenter)
+
                     button = PushButton("")
                     button.setText(f'{letter}')
                     button.setFont(SlavicFont.GetFont(22))
                     button.clicked.connect(self.click)
-                    self.layout.addWidget(button, row+1, column)
+                    letter_layout.addWidget(button)
+
+                    self.layout.addLayout(letter_layout, row+1, column)
                 i += 1
-        
-        self.setLayout(self.layout)
+
+        layoutH = QHBoxLayout()  
+        layoutV = QVBoxLayout()        
+        scroll = QScrollArea()  
+        self.widget = QWidget() 
+        layoutH.addWidget(scroll)
+        self.widget.setLayout(self.layout)
+        scroll.setWidget(self.widget)
+        scroll.setWidgetResizable(True) 
+        layoutV.addLayout(layoutH)
+        self.setLayout(layoutV)
 
     def smart_keyboard(self, x : int):
-        if x >= 0 and x <= 31:
-            return None
-        elif x >= 32 and x <= 255:
+        if x >= 32 and x <= len(SlavicFont.ALL_LETTERS) + 31:
             return SlavicFont.ALL_LETTERS[x - 32]
         else:
-            raise Exception("fatal in smart_keyboard: wrong letter to encode")
+            return None
         
     def click(self):
         button = QApplication.instance().sender()
@@ -54,6 +80,6 @@ class Keyboard(QtWidgets.QDialog):
         self.close()
 
     def popUp(self):
-        self.exec_()
+        self.exec_() 
         return self.text_from_keyboard
         

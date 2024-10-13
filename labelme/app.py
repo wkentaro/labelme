@@ -1535,13 +1535,13 @@ class MainWindow(QtWidgets.QMainWindow):
             text, flags, group_id, description = self.labelDialog.popUp(text)
 
             # Попробовать открыть окна (откроются после закрытия окна от разрабов labelme)
-            self.labelLetterDialog = LabelLetterDialog(self)
-            a = self.labelLetterDialog.popUp()
-            print(a)
-            
-            # self.labelLineDialog = LabelLineDialog(self)
-            # a = self.labelLineDialog.popUp()
+            # self.labelLetterDialog = LabelLetterDialog(self)
+            # a = self.labelLetterDialog.popUp()
             # print(a)
+            
+            self.labelLineDialog = LabelLineDialog(self)
+            a = self.labelLineDialog.popUp()
+            print(a)
 
             if not text:
                 self.labelDialog.edit.setText(previous_text)

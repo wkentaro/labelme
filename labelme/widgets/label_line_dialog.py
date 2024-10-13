@@ -1,14 +1,11 @@
 from qtpy import QT_VERSION
 from qtpy import QtCore
-from qtpy import QtGui
 from qtpy import QtWidgets
-from PyQt5.QtWidgets import QLabel, QTextEdit
+from PyQt5.QtWidgets import QLabel, QTextEdit, QLineEdit
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import * 
 
 import labelme.utils
-from labelme.logger import logger
-from labelme.widgets.label_dialog import LabelQLineEdit
 from labelme.widgets.keyboard import Keyboard
 from labelme.fonts.slavic import SlavicFont
 
@@ -28,7 +25,7 @@ class LabelLineDialog(QtWidgets.QDialog):
         super(LabelLineDialog, self).__init__(parent)
         self.recognised_line = None
 
-        self.setMinimumSize(QSize(600, 150))
+        self.setMinimumSize(QSize(600, 100))
         self.keyboard = Keyboard()
 
         layout = QtWidgets.QVBoxLayout()
@@ -44,16 +41,20 @@ class LabelLineDialog(QtWidgets.QDialog):
         invite_text_label.setFont(QFont('Arial', 8))
         layout_slavic_text.addWidget(invite_text_label, 2)
 
-        self.text_view = LabelQLineEdit()
+        self.text_view = QTextEdit()
         self.text_view.setText("")
         self.text_view.setFont(SlavicFont.GetFont(22))
         self.text_view.setReadOnly(True)
+        self.text_view.setWordWrapMode(QTextOption.NoWrap)
+        self.text_view.setMinimumHeight(75)
+        self.text_view.setMaximumHeight(75)
+        self.text_view.textChanged.connect(self.cursor_to_right)
         layout_slavic_text.addWidget(self.text_view, 9)
 
         layout.addLayout(layout_slavic_text)
 
         layout_enter = QtWidgets.QHBoxLayout()
-        self.edit = LabelQLineEdit()
+        self.edit = QLineEdit()
         self.edit.setPlaceholderText("Аннотация строки")
         self.edit.textChanged.connect(self.changeLabel)
         layout_enter.addWidget(self.edit, 6)
@@ -94,6 +95,11 @@ class LabelLineDialog(QtWidgets.QDialog):
         
     def changeLabel(self):
         self.text_view.setText(self.edit.text())
+        
+    def cursor_to_right(self):
+        cursor = self.text_view.textCursor()     
+        cursor.movePosition(QTextCursor.End) 
+        self.text_view.setTextCursor(cursor)
         
     def get_keyboard(self):
         letter = self.keyboard.popUp()
