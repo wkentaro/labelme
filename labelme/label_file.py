@@ -68,7 +68,6 @@ class LabelFile(object):
     def load(self, filename):
         keys = [
             "version",
-            "imageData",
             "imagePath",
             "shapes",  # polygonal annotations
             "flags",  # image level flags
@@ -88,14 +87,10 @@ class LabelFile(object):
             with open(filename, "r") as f:
                 data = json.load(f)
 
-            if data["imageData"] is not None:
-                imageData = base64.b64decode(data["imageData"])
-                if PY2 and QT4:
-                    imageData = utils.img_data_to_png_data(imageData)
-            else:
-                # relative path from label file to relative path from cwd
-                imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
+            
+            imagePath = osp.join(osp.dirname(filename), data["imagePath"])
+            imageData = self.load_image_file(imagePath)
+            
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
             self._check_image_height_and_width(
@@ -158,15 +153,9 @@ class LabelFile(object):
         imagePath,
         imageHeight,
         imageWidth,
-        imageData=None,
         otherData=None,
         flags=None,
     ):
-        if imageData is not None:
-            imageData = base64.b64encode(imageData).decode("utf-8")
-            imageHeight, imageWidth = self._check_image_height_and_width(
-                imageData, imageHeight, imageWidth
-            )
         if otherData is None:
             otherData = {}
         if flags is None:
@@ -176,7 +165,6 @@ class LabelFile(object):
             flags=flags,
             shapes=shapes,
             imagePath=imagePath,
-            imageData=imageData,
             imageHeight=imageHeight,
             imageWidth=imageWidth,
         )

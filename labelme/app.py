@@ -36,7 +36,7 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 
-from . import utils
+from labelme import utils
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -291,14 +291,6 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )
         saveAuto.setChecked(self._config["auto_save"])
-
-        saveWithImageData = action(
-            text=self.tr("Save With Image Data"),
-            slot=self.enableSaveImageWithData,
-            tip=self.tr("Save image data in label file"),
-            checkable=True,
-            checked=self._config["store_data"],
-        )
 
         close = action(
             self.tr("&Close"),
@@ -624,7 +616,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Store actions for further handling.
         self.actions = utils.struct(
             saveAuto=saveAuto,
-            saveWithImageData=saveWithImageData,
             changeOutputDir=changeOutputDir,
             save=save,
             saveAs=saveAs,
@@ -736,7 +727,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 saveAs,
                 saveAuto,
                 changeOutputDir,
-                saveWithImageData,
                 close,
                 deleteFile,
                 None,
@@ -1451,14 +1441,12 @@ class MainWindow(QtWidgets.QMainWindow):
             flags[key] = flag
         try:
             imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
-            imageData = self.imageData if self._config["store_data"] else None
             if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
                 os.makedirs(osp.dirname(filename))
             lf.save(
                 filename=filename,
                 shapes=shapes,
                 imagePath=imagePath,
-                imageData=imageData,
                 imageHeight=self.image.height(),
                 imageWidth=self.image.width(),
                 otherData=self.otherData,
@@ -1815,10 +1803,6 @@ class MainWindow(QtWidgets.QMainWindow):
         w = self.centralWidget().width() - 2.0
         return w / self.canvas.pixmap.width()
 
-    def enableSaveImageWithData(self, enabled):
-        self._config["store_data"] = enabled
-        self.actions.saveWithImageData.setChecked(enabled)
-
     def closeEvent(self, event):
         if not self.mayContinue():
             event.ignore()
@@ -2118,7 +2102,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "You are about to permanently delete {} polygons, " "proceed anyway?"
         ).format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes
+                self, self.tr("Attention"), msg, yes | no, yes
         ):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
