@@ -21,6 +21,8 @@ shape:
   line_color: [0, 255, 0, 128]
   fill_color: [0, 0, 0, 64]
   vertex_fill_color: [0, 255, 0, 255]
+  text_color: [0, 0, 0, 255]  # color of text rectangles
+  row_color:  [0, 0, 211, 255] # color of row rectangles
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 64]
@@ -115,6 +117,9 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
+
+  select: Ctrl+A
+  deselect: Esc
 
   show_all_polygons: null
   hide_all_polygons: null

@@ -65,6 +65,52 @@ class LabelFile(object):
             f.seek(0)
             return f.read()
 
+    def _loadRecursice(self,data):
+        """
+            Метод для рекурсивной подгрузки bbox-ов из словаря.
+            
+            Преобразует поля словаря как это делалось в коде ранее, 
+            но с учётом иерархии в bbox.
+            
+            -------
+            Параметры
+            
+            data
+                Список bbox-ов
+            
+            -------    
+            Возвращает 
+                
+            Преобразованный список
+        """
+        shape_keys = [
+            "label",
+            "points",
+            "group_id",
+            "shapes",
+            "shape_type",
+            "flags",
+            "description",
+            "mask",
+        ]
+        shapes = [
+                dict(
+                    label=s["label"],
+                    shapes=self._loadRecursice(s["shapes"]),
+                    points=s["points"],
+                    shape_type=s.get("shape_type", "polygon"),
+                    flags=s.get("flags", {}),
+                    description=s.get("description"),
+                    group_id=s.get("group_id"),
+                    mask=utils.img_b64_to_arr(s["mask"]).astype(bool)
+                    if s.get("mask")
+                    else None,
+                    other_data={k: v for k, v in s.items() if k not in shape_keys},
+                )
+                for s in data
+            ]
+        return shapes
+
     def load(self, filename):
         keys = [
             "version",
@@ -73,15 +119,6 @@ class LabelFile(object):
             "flags",  # image level flags
             "imageHeight",
             "imageWidth",
-        ]
-        shape_keys = [
-            "label",
-            "points",
-            "group_id",
-            "shape_type",
-            "flags",
-            "description",
-            "mask",
         ]
         try:
             with open(filename, "r") as f:
@@ -98,21 +135,7 @@ class LabelFile(object):
                 data.get("imageHeight"),
                 data.get("imageWidth"),
             )
-            shapes = [
-                dict(
-                    label=s["label"],
-                    points=s["points"],
-                    shape_type=s.get("shape_type", "polygon"),
-                    flags=s.get("flags", {}),
-                    description=s.get("description"),
-                    group_id=s.get("group_id"),
-                    mask=utils.img_b64_to_arr(s["mask"]).astype(bool)
-                    if s.get("mask")
-                    else None,
-                    other_data={k: v for k, v in s.items() if k not in shape_keys},
-                )
-                for s in data["shapes"]
-            ]
+            shapes = self._loadRecursice(data["shapes"])
         except Exception as e:
             raise LabelFileError(e)
 

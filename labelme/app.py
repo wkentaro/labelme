@@ -24,7 +24,7 @@ from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
-from labelme.shape import Shape
+from labelme.shape import Shape, ShapeClass
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
@@ -82,6 +82,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
+        )
+        Shape.text_color = QtGui.QColor(
+            *self._config["shape"]["text_color"]
+        )
+        Shape.row_color = QtGui.QColor(
+            *self._config["shape"]["row_color"]
         )
 
         # Set point size from config file
@@ -353,6 +359,26 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Remove selected point from polygon"),
             enabled=False,
         )
+        
+        # Действия для выбора и сброса выбора прямоугольника
+        # Отвечает за "переход" к элементу, чтобы создавались его потомки
+        # т.е. в тексте создавались строки, а в строках буквы
+        selectShape = action(
+            text=self.tr("Select rectangle"),
+            slot=self.selectShape,
+            shortcut=shortcuts["select"],
+            icon="edit",
+            tip=self.tr("Select rectangle and zoom in"),
+            enabled=True,
+        )
+        deSelectShape = action(
+            text=self.tr("De select rectangle"),
+            slot=self.deSelectShape,
+            shortcut=shortcuts["deselect"],
+            icon="edit",
+            tip=self.tr("De select rectangle and zoom out"),
+            enabled=True,
+        )
 
         undo = action(
             self.tr("Undo\n"),
@@ -527,6 +553,8 @@ class MainWindow(QtWidgets.QMainWindow):
             undoLastPoint=undoLastPoint,
             undo=undo,
             removePoint=removePoint,
+            selectShape=selectShape,
+            deSelectShape=deSelectShape,
             editMode=editMode,
             createRectangleMode=createRectangleMode,
             createAiPolygonMode=createAiPolygonMode,
@@ -546,6 +574,9 @@ class MainWindow(QtWidgets.QMainWindow):
             editMenu=(
                 edit,
                 delete,
+                None,
+                selectShape,
+                deSelectShape,
                 None,
                 undo,
                 undoLastPoint,
@@ -684,9 +715,13 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             None,
+            createRectangleMode,
             editMode,
             delete,
             undo,
+            None,
+            selectShape,
+            deSelectShape,
             None,
             fitWindow,
             zoom,
@@ -1149,6 +1184,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
+        label_list_item.setCheckState(Qt.Checked if self.canvas.isVisible(shape) else Qt.Unchecked)
         self.labelList.addItem(label_list_item)
         if self.uniqLabelList.findItemByLabel(shape.label) is None:
             item = self.uniqLabelList.createItemFromLabel(shape.label)
@@ -1209,16 +1245,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
 
-    def loadLabels(self, shapes):
-        s = []
-        for shape in shapes:
-            label = shape["label"]
-            points = shape["points"]
-            shape_type = shape["shape_type"]
-            flags = shape["flags"]
-            description = shape.get("description", "")
-            group_id = shape["group_id"]
-            other_data = shape["other_data"]
+    def _loadLabelsRecursive(self,inputList, shapes, parent : Shape = None):
+        for shape_dict in inputList:
+            label = shape_dict["label"]
+            points = shape_dict["points"]
+            shape_type = shape_dict["shape_type"]
+            flags = shape_dict["flags"]
+            description = shape_dict.get("description", "")
+            group_id = shape_dict["group_id"]
+            other_data = shape_dict["other_data"]
 
             if not points:
                 # skip point-empty shape
@@ -1229,11 +1264,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape_type=shape_type,
                 group_id=group_id,
                 description=description,
-                mask=shape["mask"],
+                mask=shape_dict["mask"],
+                parent=parent,
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
+
+            self._loadLabelsRecursive(shape_dict["shapes"], shapes, parent = shape)
 
             default_flags = {}
             if self._config["label_flags"]:
@@ -1245,7 +1283,11 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.flags.update(flags)
             shape.other_data = other_data
 
-            s.append(shape)
+            shapes.append(shape)
+
+    def loadLabels(self, shapes):
+        s = []
+        self._loadLabelsRecursive(shapes,s)
         self.loadShapes(s)
 
     def loadFlags(self, flags):
@@ -1259,11 +1301,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveLabels(self, filename):
         lf = LabelFile()
 
-        def format_shape(s):
+        def format_shape(s:Shape):
             data = s.other_data.copy()
             data.update(
                 dict(
                     label=s.label.encode("utf-8") if PY2 else s.label,
+                    shapes=[format_shape(a) for a in s.getChildren()],
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
                     description=s.description,
@@ -1276,7 +1319,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return data
 
-        shapes = [format_shape(item.shape()) for item in self.labelList]
+        shapes = [format_shape(item.shape()) for item in self.labelList if item.shape().getClass() == ShapeClass.TEXT]
         flags = {}
         for i in range(self.flag_widget.count()):
             item = self.flag_widget.item(i)
@@ -1439,7 +1482,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def togglePolygons(self, value):
         flag = value
+        shapes = self.canvas.selectedShape.getAllChildren()
         for item in self.labelList:
+            if not item.shape() in shapes:
+                continue
+            
             if value is None:
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
@@ -1571,15 +1618,15 @@ class MainWindow(QtWidgets.QMainWindow):
         h1 = self.centralWidget().height() - e
         a1 = w1 / h1
         # Calculate a new scale value based on the pixmap's aspect ratio.
-        w2 = self.canvas.pixmap.width() - 0.0
-        h2 = self.canvas.pixmap.height() - 0.0
+        w2 = self.canvas.cropped_image.width() - 0.0
+        h2 = self.canvas.cropped_image.height() - 0.0
         a2 = w2 / h2
         return w1 / w2 if a2 >= a1 else h1 / h2
 
     def scaleFitWidth(self):
         # The epsilon does not seem to work too well here.
         w = self.centralWidget().width() - 2.0
-        return w / self.canvas.pixmap.width()
+        return w / self.canvas.cropped_image.width()
 
     def closeEvent(self, event):
         if not self.mayContinue():
@@ -1862,6 +1909,15 @@ class MainWindow(QtWidgets.QMainWindow):
                     action.setEnabled(False)
         self.setDirty()
 
+
+    def selectShape(self):
+        self.canvas.zoomShape()
+        self.canvas.update()
+        
+    def deSelectShape(self):
+        self.canvas.unZoomShape()
+        self.canvas.update()
+    
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
