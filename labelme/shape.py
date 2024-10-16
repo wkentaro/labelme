@@ -1,4 +1,7 @@
+from typing import List
+
 import copy
+from enum import Enum
 
 import numpy as np
 import skimage.measure
@@ -11,7 +14,26 @@ from labelme.logger import logger
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
+class ShapeClass(Enum):
+    TEXT = 0
+    ROW = 1
+    LETTER = 2
 
+class IdController:
+
+    _count : int = 0
+    
+    @classmethod
+    def resetCount(cls):
+        cls._count = 0
+        
+    @classmethod
+    def getId(cls):
+        tmp = cls._count
+        cls._count += 1
+        return tmp
+        
+        
 class Shape(object):
     # Render handles as squares
     P_SQUARE = 0
@@ -27,6 +49,9 @@ class Shape(object):
 
     PEN_WIDTH = 2
 
+    # цвета для блока текста и строки
+    text_color = None
+    row_color = None
     # The following class variables influence the drawing of all shape objects.
     line_color = None
     fill_color = None
@@ -40,6 +65,7 @@ class Shape(object):
 
     def __init__(
         self,
+        id = None,
         label=None,
         line_color=None,
         shape_type=None,
@@ -47,10 +73,15 @@ class Shape(object):
         group_id=None,
         description=None,
         mask=None,
+        parent : "Shape" = None,
     ):
+        if id is None:
+            self._id : int = IdController.getId()
+        else:
+            self._id = id
         self.label = label
         self.group_id = group_id
-        self.points = []
+        self.points : List[QtCore.QPoint] = []
         self.point_labels = []
         self.shape_type = shape_type
         self._shape_raw = None
@@ -62,6 +93,24 @@ class Shape(object):
         self.description = description
         self.other_data = {}
         self.mask = mask
+        
+        # self.parent - родительский элемент по отношению к текущему.
+        # В зависимости от класса родителя автоматически подбирается класс потомка
+        # self._shape_class - класс элемента (текст, строка, буква)
+        if parent is None:
+            self.parent = None
+            self._shape_class = ShapeClass.TEXT
+        else:
+            self.parent = parent
+            if parent.getClass() == ShapeClass.TEXT:
+                self._shape_class = ShapeClass.ROW
+            elif parent.getClass() == ShapeClass.ROW:
+                self._shape_class = ShapeClass.LETTER
+            else:
+                raise Exception(f"Shape wrong parent shape_class: {parent.getClass()}")
+            parent._addChild(self)
+        # self._children - список потомков элемента
+        self._children : List[Shape] = []
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
@@ -77,6 +126,51 @@ class Shape(object):
             # with an object attribute. Currently this
             # is used for drawing the pending line a different color.
             self.line_color = line_color
+    
+    def delete(self):
+        """
+            Удаляет элемент и также стирает его из списка потомков родителя
+        """
+        if self.parent is not None:
+            self.parent._deleteChild(self)
+
+    def _addChild(self,shape:"Shape"):
+        if self._shape_class == ShapeClass.LETTER:
+            Exception("Letter can't be parent.")
+        self._children.append(shape)
+        
+    def _deleteChild(self,shape:"Shape"):
+        if shape in self._children:
+            self._children.remove(shape)
+        
+    def _childrenRecursive(self,list:List["Shape"]):
+        for a in self._children:
+            list.append(a)
+        for a in self._children:
+            a._childrenRecursive(list)
+    
+    def getAllChildren(self) -> List["Shape"] :
+        """
+            Возвращает всех потомков
+        """
+        list = []
+        self._childrenRecursive(list)
+        return list
+    
+    def getChildren(self):
+        """
+            Возвращает прямых потомков
+        """
+        return self._children
+    
+    def getId(self):
+        return self._id
+    
+    def getClass(self):
+        """
+            Возвращает класс элемента (Текст, Строка, Буква)
+        """
+        return self._shape_class
 
     def _scale_point(self, point: QtCore.QPointF) -> QtCore.QPointF:
         return QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
@@ -101,15 +195,9 @@ class Shape(object):
     @shape_type.setter
     def shape_type(self, value):
         if value is None:
-            value = "polygon"
+            value = "rectangle"
         if value not in [
-            "polygon",
             "rectangle",
-            "point",
-            "line",
-            "circle",
-            "linestrip",
-            "points",
             "mask",
         ]:
             raise ValueError("Unexpected shape_type: {}".format(value))
@@ -124,9 +212,31 @@ class Shape(object):
         else:
             self.points.append(point)
             self.point_labels.append(label)
+            
+    def getCroppBox(self) -> QtCore.QRect:
+        """
+            Находит обрамляющий прямоугольник для обрезки изоображения
+            
+            -------------
+            Возвращает
+            
+            QTCore.QRect(x, y, width, height)
+                Координаты и размеры прямоугольника
+        """
+        
+        x = [100000000, 0]
+        y = [100000000, 0]
+        for point in self.points:
+            x[0]= min(point.x(),x[0])
+            x[1]= max(point.x(),x[1])
+            
+            y[0]= min(point.y(),y[0])
+            y[1]= max(point.y(),y[1])
+            
+        return QtCore.QRect(int(x[0]),int(y[0]),int(x[1]-x[0]),int(y[1]-y[0]))  
 
     def canAddPoint(self):
-        return self.shape_type in ["polygon", "linestrip"]
+        return self.shape_type in ["polygon"]
 
     def popPoint(self):
         if self.points:
@@ -148,14 +258,6 @@ class Shape(object):
             return
 
         if self.shape_type == "polygon" and len(self.points) <= 3:
-            logger.warning(
-                "Cannot remove point from: shape_type=%r, len(points)=%d",
-                self.shape_type,
-                len(self.points),
-            )
-            return
-
-        if self.shape_type == "linestrip" and len(self.points) <= 2:
             logger.warning(
                 "Cannot remove point from: shape_type=%r, len(points)=%d",
                 self.shape_type,
@@ -228,29 +330,6 @@ class Shape(object):
                 if self.shape_type == "rectangle":
                     for i in range(len(self.points)):
                         self.drawVertex(vrtx_path, i)
-            elif self.shape_type == "circle":
-                assert len(self.points) in [1, 2]
-                if len(self.points) == 2:
-                    raidus = labelme.utils.distance(
-                        self._scale_point(self.points[0] - self.points[1])
-                    )
-                    line_path.addEllipse(
-                        self._scale_point(self.points[0]), raidus, raidus
-                    )
-                for i in range(len(self.points)):
-                    self.drawVertex(vrtx_path, i)
-            elif self.shape_type == "linestrip":
-                line_path.moveTo(self._scale_point(self.points[0]))
-                for i, p in enumerate(self.points):
-                    line_path.lineTo(self._scale_point(p))
-                    self.drawVertex(vrtx_path, i)
-            elif self.shape_type == "points":
-                assert len(self.points) == len(self.point_labels)
-                for i, point_label in enumerate(self.point_labels):
-                    if point_label == 1:
-                        self.drawVertex(vrtx_path, i)
-                    else:
-                        self.drawVertex(negative_vrtx_path, i)
             else:
                 line_path.moveTo(self._scale_point(self.points[0]))
                 # Uncommenting the following line will draw 2 paths
@@ -343,11 +422,6 @@ class Shape(object):
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
                 path.addRect(QtCore.QRectF(self.points[0], self.points[1]))
-        elif self.shape_type == "circle":
-            path = QtGui.QPainterPath()
-            if len(self.points) == 2:
-                raidus = labelme.utils.distance(self.points[0] - self.points[1])
-                path.addEllipse(self.points[0], raidus, raidus)
         else:
             path = QtGui.QPainterPath(self.points[0])
             for p in self.points[1:]:
@@ -379,7 +453,29 @@ class Shape(object):
         self._highlightIndex = None
 
     def copy(self):
-        return copy.deepcopy(self)
+        shape = Shape(parent=self.parent, id = self._id)
+        shape.label = self.label
+        shape.points = copy.deepcopy(self.points)
+        shape.shape_type = self.shape_type
+        shape.flags = self.flags
+        shape.description = self.description
+    
+    def _copyWithChildren(self, list : List["Shape"], parent : "Shape" = None):
+        shape = Shape(parent=parent,id = self._id)
+        shape.label = self.label
+        shape.points = copy.deepcopy(self.points)
+        shape.shape_type = self.shape_type
+        shape.flags = self.flags
+        shape.description = self.description
+        list.append(shape)
+        for child in self._children:
+            child._copyWithChildren(list,shape)
+    
+    def copyWithChildren(self):
+        allShapes : List[Shape] = []
+        self._copyWithChildren(allShapes, None)
+        return allShapes
+        
 
     def __len__(self):
         return len(self.points)

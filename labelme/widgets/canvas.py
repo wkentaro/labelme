@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 import imgviz
 from qtpy import QtCore
 from qtpy import QtGui
@@ -7,7 +9,7 @@ import labelme.ai
 import labelme.utils
 from labelme import QT5
 from labelme.logger import logger
-from labelme.shape import Shape
+from labelme.shape import Shape,ShapeClass,IdController
 
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
@@ -35,7 +37,7 @@ class Canvas(QtWidgets.QWidget):
     CREATE, EDIT = 0, 1
 
     # polygon, rectangle, line, or point
-    _createMode = "polygon"
+    _createMode = "rectangle"
 
     _fill_drawing = False
 
@@ -50,23 +52,17 @@ class Canvas(QtWidgets.QWidget):
         self._crosshair = kwargs.pop(
             "crosshair",
             {
-                "polygon": False,
                 "rectangle": True,
-                "circle": False,
-                "line": False,
-                "point": False,
-                "linestrip": False,
                 "ai_polygon": False,
-                "ai_mask": False,
             },
         )
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
-        self.shapes = []
-        self.shapesBackups = []
+        self.shapes : List[Shape] = []
+        self.shapesBackups : List[Shape] = []
         self.current = None
-        self.selectedShapes = []  # save the selected shapes here
+        self.selectedShapes : List[Shape] = []  # save the selected shapes here
         self.selectedShapesCopy = []
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
@@ -78,8 +74,13 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = QtCore.QPoint()
         self.offsets = QtCore.QPoint(), QtCore.QPoint()
         self.scale = 1.0
-        self.pixmap = QtGui.QPixmap()
-        self.visible = {}
+        # Полное изоображение
+        self.full_image = QtGui.QPixmap()
+        # Обрезанное изоображение
+        self.cropped_image = QtGui.QPixmap()
+        # Сдвиг обрезанного изообоажения относительно полного
+        self.image_offsets = (0 , 0)
+        self.visible : Dict[int,bool] = {} # TODO: change visible logic. Use shape id
         self._hideBackround = False
         self.hideBackround = False
         self.hShape = None
@@ -91,6 +92,8 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = False
         self.snapping = True
         self.hShapeIsSelected = False
+        self.selectedShape : Shape = None
+        self._selectedShapeId : int = -1
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         # Menus:
@@ -116,14 +119,8 @@ class Canvas(QtWidgets.QWidget):
     @createMode.setter
     def createMode(self, value):
         if value not in [
-            "polygon",
             "rectangle",
-            "circle",
-            "line",
-            "point",
-            "linestrip",
             "ai_polygon",
-            "ai_mask",
         ]:
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
@@ -139,18 +136,21 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("Initializing AI model: %r" % model.name)
             self._ai_model = model()
 
-        if self.pixmap is None:
+        if self.cropped_image is None:
             logger.warning("Pixmap is not set yet")
             return
 
         self._ai_model.set_image(
-            image=labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+            image=labelme.utils.img_qt_to_arr(self.cropped_image.toImage())
         )
 
     def storeShapes(self):
         shapesBackup = []
         for shape in self.shapes:
-            shapesBackup.append(shape.copy())
+            if shape.getClass() == ShapeClass.TEXT:
+                list = shape.copyWithChildren()
+                for shap in list:
+                    shapesBackup.append(shap)
         if len(self.shapesBackups) > self.num_backups:
             self.shapesBackups = self.shapesBackups[-self.num_backups - 1 :]
         self.shapesBackups.append(shapesBackup)
@@ -176,9 +176,11 @@ class Canvas(QtWidgets.QWidget):
         # push this right back onto the stack.
         shapesBackup = self.shapesBackups.pop()
         self.shapes = shapesBackup
-        self.selectedShapes = []
+        self.selectedShapes : List[Shape] = []
         for shape in self.shapes:
             shape.selected = False
+            if shape.getId() == self._selectedShapeId:
+                self.selectedShape = shape
         self.update()
 
     def enterEvent(self, ev):
@@ -191,8 +193,8 @@ class Canvas(QtWidgets.QWidget):
     def focusOutEvent(self, ev):
         self.restoreCursor()
 
-    def isVisible(self, shape):
-        return self.visible.get(shape, True)
+    def isVisible(self, shape : Shape):
+        return self.visible.get(shape.getId(), True)
 
     def drawing(self):
         return self.mode == self.CREATE
@@ -244,7 +246,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            if self.createMode in ["ai_polygon", "ai_mask"]:
+            if self.createMode in ["ai_polygon"]:
                 self.line.shape_type = "points"
             else:
                 self.line.shape_type = self.createMode
@@ -258,21 +260,7 @@ class Canvas(QtWidgets.QWidget):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
                 pos = self.intersectionPoint(self.current[-1], pos)
-            elif (
-                self.snapping
-                and len(self.current) > 1
-                and self.createMode == "polygon"
-                and self.closeEnough(pos, self.current[0])
-            ):
-                # Attract line to starting point and
-                # colorise to alert the user.
-                pos = self.current[0]
-                self.overrideCursor(CURSOR_POINT)
-                self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip"]:
-                self.line.points = [self.current[-1], pos]
-                self.line.point_labels = [1, 1]
-            elif self.createMode in ["ai_polygon", "ai_mask"]:
+            if self.createMode in ["ai_polygon"]:
                 self.line.points = [self.current.points[-1], pos]
                 self.line.point_labels = [
                     self.current.point_labels[-1],
@@ -281,18 +269,6 @@ class Canvas(QtWidgets.QWidget):
             elif self.createMode == "rectangle":
                 self.line.points = [self.current[0], pos]
                 self.line.point_labels = [1, 1]
-                self.line.close()
-            elif self.createMode == "circle":
-                self.line.points = [self.current[0], pos]
-                self.line.point_labels = [1, 1]
-                self.line.shape_type = "circle"
-            elif self.createMode == "line":
-                self.line.points = [self.current[0], pos]
-                self.line.point_labels = [1, 1]
-                self.line.close()
-            elif self.createMode == "point":
-                self.line.points = [self.current[0]]
-                self.line.point_labels = [1]
                 self.line.close()
             assert len(self.line.points) == len(self.line.point_labels)
             self.repaint()
@@ -401,6 +377,37 @@ class Canvas(QtWidgets.QWidget):
         self.prevhVertex = None
         self.movingShape = True  # Save changes
 
+    def zoomShape(self):
+        """
+            "Переходит" к элементу, ч тобы добавлять элементы
+            соответствующего типа.
+        """
+        if len(self.selectedShapes) == 1:
+            if self.selectedShapes[0].getClass() != ShapeClass.LETTER:
+                self.selectedShape = self.selectedShapes[0]
+                self._selectedShapeId = self.selectedShape.getId()
+                self.visible.update((k, False) for k in self.visible)    
+                self.visible.update((shape.getId(), True) for shape in self.selectedShape.getAllChildren())
+                self.cropp()
+        else:
+            print("Необходимо выбрать 1 примоугольник.")
+        
+    def unZoomShape(self):
+        """
+            "Переходит" к родителю текущего элемента.
+        """
+        if self.selectedShape is not None: 
+            self.selectedShape = self.selectedShape.parent
+            
+            if self.selectedShape is not None:
+                self._selectedShapeId = self.selectedShape.getId()
+                self.visible.update((k, False) for k in self.visible)
+                self.visible.update((shape.getId(), True) for shape in self.selectedShape.getAllChildren())
+            else: 
+                self._selectedShapeId = -1
+                self.visible.update((k, True) for k in self.visible)
+            self.cropp()
+
     def mousePressEvent(self, ev):
         if QT5:
             pos = self.transformPos(ev.localPos())
@@ -413,21 +420,11 @@ class Canvas(QtWidgets.QWidget):
             if self.drawing():
                 if self.current:
                     # Add point to existing shape.
-                    if self.createMode == "polygon":
-                        self.current.addPoint(self.line[1])
-                        self.line[0] = self.current[-1]
-                        if self.current.isClosed():
-                            self.finalise()
-                    elif self.createMode in ["rectangle", "circle", "line"]:
+                    if self.createMode in ["rectangle"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
-                    elif self.createMode == "linestrip":
-                        self.current.addPoint(self.line[1])
-                        self.line[0] = self.current[-1]
-                        if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
-                            self.finalise()
-                    elif self.createMode in ["ai_polygon", "ai_mask"]:
+                    elif self.createMode in ["ai_polygon"]:
                         self.current.addPoint(
                             self.line.points[1],
                             label=self.line.point_labels[1],
@@ -440,23 +437,20 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(
                         shape_type="points"
-                        if self.createMode in ["ai_polygon", "ai_mask"]
-                        else self.createMode
+                        if self.createMode in ["ai_polygon"]
+                        else self.createMode,
+                        parent = self.selectedShape
                     )
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
-                    if self.createMode == "point":
-                        self.finalise()
-                    elif (
-                        self.createMode in ["ai_polygon", "ai_mask"]
+                    if (
+                        self.createMode in ["ai_polygon"]
                         and ev.modifiers() & QtCore.Qt.ControlModifier
                     ):
                         self.finalise()
                     else:
-                        if self.createMode == "circle":
-                            self.current.shape_type = "circle"
                         self.line.points = [pos, pos]
                         if (
-                            self.createMode in ["ai_polygon", "ai_mask"]
+                            self.createMode in ["ai_polygon"]
                             and is_shift_pressed
                         ):
                             self.line.point_labels = [0, 0]
@@ -545,16 +539,14 @@ class Canvas(QtWidgets.QWidget):
     def canCloseShape(self):
         return self.drawing() and (
             (self.current and len(self.current) > 2)
-            or self.createMode in ["ai_polygon", "ai_mask"]
+            or self.createMode in ["ai_polygon"]
         )
 
     def mouseDoubleClickEvent(self, ev):
         if self.double_click != "close":
             return
 
-        if (
-            self.createMode == "polygon" and self.canCloseShape()
-        ) or self.createMode in ["ai_polygon", "ai_mask"]:
+        if self.createMode in ["ai_polygon"]:
             self.finalise()
 
     def selectShapes(self, shapes):
@@ -584,10 +576,12 @@ class Canvas(QtWidgets.QWidget):
         self.deSelectShape()
 
     def calculateOffsets(self, point):
-        left = self.pixmap.width() - 1
-        right = 0
-        top = self.pixmap.height() - 1
-        bottom = 0
+        x0, y0 = self.image_offsets
+        
+        left = x0 + self.cropped_image.width() - 1
+        right = x0
+        top = y0 + self.cropped_image.height() - 1
+        bottom = y0
         for s in self.selectedShapes:
             rect = s.boundingRect()
             if rect.left() < left:
@@ -612,20 +606,30 @@ class Canvas(QtWidgets.QWidget):
             pos = self.intersectionPoint(point, pos)
         shape.moveVertexBy(index, pos - point)
 
-    def boundedMoveShapes(self, shapes, pos):
+    def _outOfPixmapClear(self, p : QtCore.QPointF):
+        w, h = self.cropped_image.width(), self.cropped_image.height()
+        return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
+
+    def boundedMoveShapes(self, shapes : List[Shape], pos):
         if self.outOfPixmap(pos):
             return False  # No need to move
-        o1 = pos + self.offsets[0]
-        if self.outOfPixmap(o1):
+        x0, y0 = self.image_offsets
+        qp = QtCore.QPointF(x0, y0)
+        
+        pos -= qp
+        o1 = pos + self.offsets[0] 
+        if self._outOfPixmapClear(o1):
             pos -= QtCore.QPointF(min(0, o1.x()), min(0, o1.y()))
         o2 = pos + self.offsets[1]
-        if self.outOfPixmap(o2):
+        if self._outOfPixmapClear(o2):
             pos += QtCore.QPointF(
-                min(0, self.pixmap.width() - o2.x()),
-                min(0, self.pixmap.height() - o2.y()),
+                min(0, self.cropped_image.width() - o2.x()),
+                min(0, self.cropped_image.height() - o2.y()),
             )
+        pos += qp
+        
         # XXX: The next line tracks the new position of the cursor
-        # relative to the shape, but also results in making it
+        # relative to the shape, but also resulSts in making it
         # a bit "shaky" when nearing the border and allows it to
         # go outside of the shape's area for some reason.
         # self.calculateOffsets(self.selectedShapes, pos)
@@ -650,25 +654,20 @@ class Canvas(QtWidgets.QWidget):
             for shape in self.selectedShapes:
                 self.shapes.remove(shape)
                 deleted_shapes.append(shape)
+                shape.delete()
             self.storeShapes()
             self.selectedShapes = []
             self.update()
         return deleted_shapes
 
-    def deleteShape(self, shape):
+    def deleteShape(self, shape:Shape):
         if shape in self.selectedShapes:
             self.selectedShapes.remove(shape)
         if shape in self.shapes:
             self.shapes.remove(shape)
+        shape.delete()
         self.storeShapes()
         self.update()
-
-    def duplicateSelectedShapes(self):
-        if self.selectedShapes:
-            self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-            self.boundedShiftShapes(self.selectedShapesCopy)
-            self.endMove(copy=True)
-        return self.selectedShapes
 
     def boundedShiftShapes(self, shapes):
         # Try to move in one direction, and if it fails in another.
@@ -681,7 +680,7 @@ class Canvas(QtWidgets.QWidget):
             self.boundedMoveShapes(shapes, point + offset)
 
     def paintEvent(self, event):
-        if not self.pixmap:
+        if not self.cropped_image:
             return super(Canvas, self).paintEvent(event)
 
         p = self._painter
@@ -692,8 +691,12 @@ class Canvas(QtWidgets.QWidget):
 
         p.scale(self.scale, self.scale)
         p.translate(self.offsetToCenter())
-
-        p.drawPixmap(0, 0, self.pixmap)
+        
+        # Сдвиг относительно. 
+        # неоходимость вознокает из-за обрезания картинки по "переходу" к элементу 
+        p.translate(-self.image_offsets[0],-self.image_offsets[1])
+     
+        p.drawPixmap(self.image_offsets[0],self.image_offsets[1], self.cropped_image)
 
         p.scale(1 / self.scale, 1 / self.scale)
 
@@ -731,23 +734,7 @@ class Canvas(QtWidgets.QWidget):
             for s in self.selectedShapesCopy:
                 s.paint(p)
 
-        if (
-            self.fillDrawing()
-            and self.createMode == "polygon"
-            and self.current is not None
-            and len(self.current.points) >= 2
-        ):
-            drawing_shape = self.current.copy()
-            if drawing_shape.fill_color.getRgb()[3] == 0:
-                logger.warning(
-                    "fill_drawing=true, but fill_color is transparent,"
-                    " so forcing to be opaque."
-                )
-                drawing_shape.fill_color.setAlpha(64)
-            drawing_shape.addPoint(self.line[1])
-            drawing_shape.fill = True
-            drawing_shape.paint(p)
-        elif self.createMode == "ai_polygon" and self.current is not None:
+        if self.createMode == "ai_polygon" and self.current is not None:
             drawing_shape = self.current.copy()
             drawing_shape.addPoint(
                 point=self.line.points[1],
@@ -766,44 +753,26 @@ class Canvas(QtWidgets.QWidget):
                 drawing_shape.fill = self.fillDrawing()
                 drawing_shape.selected = True
                 drawing_shape.paint(p)
-        elif self.createMode == "ai_mask" and self.current is not None:
-            drawing_shape = self.current.copy()
-            drawing_shape.addPoint(
-                point=self.line.points[1],
-                label=self.line.point_labels[1],
-            )
-            mask = self._ai_model.predict_mask_from_points(
-                points=[[point.x(), point.y()] for point in drawing_shape.points],
-                point_labels=drawing_shape.point_labels,
-            )
-            y1, x1, y2, x2 = imgviz.instances.masks_to_bboxes([mask])[0].astype(int)
-            drawing_shape.setShapeRefined(
-                shape_type="mask",
-                points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
-                point_labels=[1, 1],
-                mask=mask[y1 : y2 + 1, x1 : x2 + 1],
-            )
-            drawing_shape.selected = True
-            drawing_shape.paint(p)
-
         p.end()
 
     def transformPos(self, point):
         """Convert from widget-logical coordinates to painter-logical ones."""
-        return point / self.scale - self.offsetToCenter()
+        return (point / self.scale - self.offsetToCenter() + 
+            QtCore.QPointF(self.image_offsets[0],self.image_offsets[1]))
 
     def offsetToCenter(self):
         s = self.scale
         area = super(Canvas, self).size()
-        w, h = self.pixmap.width() * s, self.pixmap.height() * s
+        w, h = self.cropped_image.width() * s, self.cropped_image.height() * s
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
         return QtCore.QPointF(x, y)
 
     def outOfPixmap(self, p):
-        w, h = self.pixmap.width(), self.pixmap.height()
-        return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
+        w, h = self.cropped_image.width(), self.cropped_image.height()
+        x,y = self.image_offsets
+        return not (x <= p.x() <= x + w - 1 and y <= p.y() <= y + h - 1)
 
     def finalise(self):
         assert self.current
@@ -818,20 +787,6 @@ class Canvas(QtWidgets.QWidget):
                 points=[QtCore.QPointF(point[0], point[1]) for point in points],
                 point_labels=[1] * len(points),
                 shape_type="polygon",
-            )
-        elif self.createMode == "ai_mask":
-            # convert points to mask by an AI model
-            assert self.current.shape_type == "points"
-            mask = self._ai_model.predict_mask_from_points(
-                points=[[point.x(), point.y()] for point in self.current.points],
-                point_labels=self.current.point_labels,
-            )
-            y1, x1, y2, x2 = imgviz.instances.masks_to_bboxes([mask])[0].astype(int)
-            self.current.setShapeRefined(
-                shape_type="mask",
-                points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
-                point_labels=[1, 1],
-                mask=mask[y1 : y2 + 1, x1 : x2 + 1],
             )
         self.current.close()
 
@@ -853,16 +808,18 @@ class Canvas(QtWidgets.QWidget):
         # Cycle through each image edge in clockwise fashion,
         # and find the one intersecting the current line segment.
         # http://paulbourke.net/geometry/lineline2d/
-        size = self.pixmap.size()
+        size = self.cropped_image.size()
+        x0, y0 =  self.image_offsets
+        
         points = [
-            (0, 0),
-            (size.width() - 1, 0),
-            (size.width() - 1, size.height() - 1),
-            (0, size.height() - 1),
+            (x0, y0),
+            (x0 + size.width() - 1, y0),
+            (x0 + size.width() - 1, y0 + size.height() - 1),
+            (x0, y0 + size.height() - 1),
         ]
         # x1, y1 should be in the pixmap, x2, y2 should be out of the pixmap
-        x1 = min(max(p1.x(), 0), size.width() - 1)
-        y1 = min(max(p1.y(), 0), size.height() - 1)
+        x1 = min(max(p1.x() + x0, x0), x0 + size.width() - 1)
+        y1 = min(max(p1.y() + y0, y0), y0 + size.height() - 1)
         x2, y2 = p2.x(), p2.y()
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
@@ -870,9 +827,9 @@ class Canvas(QtWidgets.QWidget):
         if (x, y) == (x1, y1):
             # Handle cases where previous point is on one of the edges.
             if x3 == x4:
-                return QtCore.QPointF(x3, min(max(0, y2), max(y3, y4)))
+                return QtCore.QPointF(x3, min(max(y0, y2), max(y3, y4)))
             else:  # y3 == y4
-                return QtCore.QPointF(min(max(0, x2), max(x3, x4)), y3)
+                return QtCore.QPointF(min(max(x0, x2), max(x3, x4)), y3)
         return QtCore.QPointF(x, y)
 
     def intersectingEdges(self, point1, point2, points):
@@ -910,8 +867,8 @@ class Canvas(QtWidgets.QWidget):
         return self.minimumSizeHint()
 
     def minimumSizeHint(self):
-        if self.pixmap:
-            return self.scale * self.pixmap.size()
+        if self.cropped_image:
+            return self.scale * self.cropped_image.size()
         return super(Canvas, self).minimumSizeHint()
 
     def wheelEvent(self, ev):
@@ -998,12 +955,8 @@ class Canvas(QtWidgets.QWidget):
         self.current = self.shapes.pop()
         self.current.setOpen()
         self.current.restoreShapeRaw()
-        if self.createMode in ["polygon", "linestrip"]:
-            self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in ["rectangle", "line", "circle"]:
+        if self.createMode in ["rectangle"]:
             self.current.points = self.current.points[0:1]
-        elif self.createMode == "point":
-            self.current = None
         self.drawingPolygon.emit(True)
 
     def undoLastPoint(self):
@@ -1017,11 +970,28 @@ class Canvas(QtWidgets.QWidget):
             self.drawingPolygon.emit(False)
         self.update()
 
+    def cropp(self):
+        """
+            Образает картинку соответственно текущему выбранному элементу
+        """
+        if self.selectedShape is None:
+            self.cropped_image = self.full_image.copy()
+            self.image_offsets = (0,0)
+        else:
+            shape = self.selectedShape
+            rect = shape.getCroppBox()
+            self.image_offsets = (rect.x(),rect.y())
+            self.cropped_image.convertFromImage(self.full_image.copy(rect).toImage())
+            
+        self.update()
+        
+        
     def loadPixmap(self, pixmap, clear_shapes=True):
-        self.pixmap = pixmap
+        self.full_image = pixmap
+        self.cropped_image = pixmap.copy()
         if self._ai_model:
             self._ai_model.set_image(
-                image=labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+                image=labelme.utils.img_qt_to_arr(self.cropped_image.toImage())
             )
         if clear_shapes:
             self.shapes = []
@@ -1040,7 +1010,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def setShapeVisible(self, shape, value):
-        self.visible[shape] = value
+        self.visible[shape.getId()] = value
         self.update()
 
     def overrideCursor(self, cursor):
@@ -1053,6 +1023,12 @@ class Canvas(QtWidgets.QWidget):
 
     def resetState(self):
         self.restoreCursor()
-        self.pixmap = None
+        self.cropped_image = None
         self.shapesBackups = []
+        self.shapes = []
+        self.selectedShape = None
+        self._selectedShapeId = -1
+        self.image_offsets = (0, 0)
+        IdController.resetCount()
+        self.visible = {}        
         self.update()
