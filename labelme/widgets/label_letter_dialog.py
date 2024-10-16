@@ -26,7 +26,6 @@ class LabelLetterDialog(QtWidgets.QDialog):
         self.recognised_letter = None
 
         self.setMinimumSize(QSize(300, 100))
-        self.keyboard = Keyboard()
     
         layout = QtWidgets.QVBoxLayout()
 
@@ -62,7 +61,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
     
     def validate_input(self):
         text = self.edit.text()
-        if len(text) and text in SlavicFont.ALL_LETTERS:
+        if len(text) == 1 and text in SlavicFont.ALL_LETTERS:
             self.recognised_letter = text
             self.close()
         else:
@@ -75,7 +74,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
             messageBox.exec_()
 
     def get_keyboard(self):
-        letter = self.keyboard.popUp()
+        letter = Keyboard().popUp()
         if letter is not None:
             self.edit.setText(letter)
 

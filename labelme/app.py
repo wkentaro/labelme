@@ -928,7 +928,6 @@ class MainWindow(QtWidgets.QMainWindow):
             shape = Shape(
                 label=shape_dict["label"],
                 shape_type=shape_dict["shape_type"],
-                description=shape_dict["description"],
             )
             for point in shape_dict["points"]:
                 shape.addPoint(QtCore.QPointF(*point))
@@ -1046,52 +1045,30 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if len(items) == 1:
             edit_text = True
-            edit_flags = True
-            edit_group_id = True
-            edit_description = True
         else:
             edit_text = all(item.shape().label == shape.label for item in items[1:])
-            edit_flags = all(item.shape().flags == shape.flags for item in items[1:])
-            edit_group_id = all(
-                item.shape().group_id == shape.group_id for item in items[1:]
-            )
-            edit_description = all(
-                item.shape().description == shape.description for item in items[1:]
-            )
 
         if not edit_text:
             self.labelDialog.edit.setDisabled(True)
             self.labelDialog.labelList.setDisabled(True)
-        if not edit_flags:
-            for i in range(self.labelDialog.flagsLayout.count()):
-                self.labelDialog.flagsLayout.itemAt(i).setDisabled(True)
-        if not edit_group_id:
-            self.labelDialog.edit_group_id.setDisabled(True)
-        if not edit_description:
-            self.labelDialog.editDescription.setDisabled(True)
 
-        text, flags, group_id, description = self.labelDialog.popUp(
-            text=shape.label if edit_text else "",
-            flags=shape.flags if edit_flags else None,
-            group_id=shape.group_id if edit_group_id else None,
-            description=shape.description if edit_description else None,
-        )
+        shape = self.canvas.getCurrentShape()
+        state = shape.getClass()
+
+        if state == ShapeClass.ROW:
+            labelLineDialog = LabelLineDialog(self)
+            text = labelLineDialog.popUp()
+        elif state == ShapeClass.LETTER:
+            labelLetterDialog = LabelLetterDialog(self)
+            text = labelLetterDialog.popUp()
+        else:
+            text = ""
 
         if not edit_text:
             self.labelDialog.edit.setDisabled(False)
             self.labelDialog.labelList.setDisabled(False)
-        if not edit_flags:
-            for i in range(self.labelDialog.flagsLayout.count()):
-                self.labelDialog.flagsLayout.itemAt(i).setDisabled(False)
-        if not edit_group_id:
-            self.labelDialog.edit_group_id.setDisabled(False)
-        if not edit_description:
-            self.labelDialog.editDescription.setDisabled(False)
 
         if text is None:
-            assert flags is None
-            assert group_id is None
-            assert description is None
             return
 
         self.canvas.storeShapes()
@@ -1099,12 +1076,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self._update_item(
                 item=item,
                 text=text if edit_text else None,
-                flags=flags if edit_flags else None,
-                group_id=group_id if edit_group_id else None,
-                description=description if edit_description else None,
             )
 
-    def _update_item(self, item, text, flags, group_id, description):
+    def _update_item(self, item, text):
         if not self.validateLabel(text):
             self.errorMessage(
                 self.tr("Invalid label"),
@@ -1118,12 +1092,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if text is not None:
             shape.label = text
-        if flags is not None:
-            shape.flags = flags
-        if group_id is not None:
-            shape.group_id = group_id
-        if description is not None:
-            shape.description = description
 
         self._update_shape_color(shape)
         if shape.group_id is None:
@@ -1252,9 +1220,6 @@ class MainWindow(QtWidgets.QMainWindow):
             label = shape_dict["label"]
             points = shape_dict["points"]
             shape_type = shape_dict["shape_type"]
-            flags = shape_dict["flags"]
-            description = shape_dict.get("description", "")
-            group_id = shape_dict["group_id"]
             other_data = shape_dict["other_data"]
 
             if not points:
@@ -1264,9 +1229,6 @@ class MainWindow(QtWidgets.QMainWindow):
             shape = Shape(
                 label=label,
                 shape_type=shape_type,
-                group_id=group_id,
-                description=description,
-                mask=shape_dict["mask"],
                 parent=parent,
             )
             for x, y in points:
@@ -1282,7 +1244,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         for key in keys:
                             default_flags[key] = False
             shape.flags = default_flags
-            shape.flags.update(flags)
             shape.other_data = other_data
 
             shapes.append(shape)
@@ -1310,24 +1271,13 @@ class MainWindow(QtWidgets.QMainWindow):
                     label=s.label.encode("utf-8") if PY2 else s.label,
                     shapes=[format_shape(a) for a in s.getChildren()],
                     points=[(p.x(), p.y()) for p in s.points],
-                    group_id=s.group_id,
-                    description=s.description,
                     shape_type=s.shape_type,
-                    flags=s.flags,
-                    mask=None
-                    if s.mask is None
-                    else utils.img_arr_to_b64(s.mask.astype(np.uint8)),
                 )
             )
             return data
 
         shapes = [format_shape(item.shape()) for item in self.labelList if item.shape().getClass() == ShapeClass.TEXT]
-        flags = {}
-        for i in range(self.flag_widget.count()):
-            item = self.flag_widget.item(i)
-            key = item.text()
-            flag = item.checkState() == Qt.Checked
-            flags[key] = flag
+
         try:
             imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
             if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
@@ -1339,7 +1289,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 imageHeight=self.image.height(),
                 imageWidth=self.image.width(),
                 otherData=self.otherData,
-                flags=flags,
             )
             self.labelFile = lf
             items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)
@@ -1379,47 +1328,23 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callback functions:
 
     def newShape(self):
-        """Pop-up and give focus to the label editor.
+        shape = self.canvas.getCurrentShape()
+        state = shape.getClass()
 
-        position MUST be in global coordinates.
-        """
-        items = self.uniqLabelList.selectedItems()
-        text = None
-        if items:
-            text = items[0].data(Qt.UserRole)
-        flags = {}
-        group_id = None
-        description = ""
-        if self._config["display_label_popup"] or not text:
-            previous_text = self.labelDialog.edit.text()
-
-            text, flags, group_id, description = self.labelDialog.popUp(text)
-
-            # Попробовать открыть окна (откроются после закрытия окна от разрабов labelme)
-            # self.labelLetterDialog = LabelLetterDialog(self)
-            # a = self.labelLetterDialog.popUp()
-            # print(a)
-            
-            self.labelLineDialog = LabelLineDialog(self)
-            a = self.labelLineDialog.popUp()
-            print(a)
-
-            if not text:
-                self.labelDialog.edit.setText(previous_text)
-
-        if text and not self.validateLabel(text):
-            self.errorMessage(
-                self.tr("Invalid label"),
-                self.tr("Invalid label '{}' with validation type '{}'").format(
-                    text, self._config["validate_label"]
-                ),
-            )
+        if state == ShapeClass.ROW:
+            labelLineDialog = LabelLineDialog(self)
+            text = labelLineDialog.popUp()
+        elif state == ShapeClass.LETTER:
+            labelLetterDialog = LabelLetterDialog(self)
+            text = labelLetterDialog.popUp()
+        else:
             text = ""
-        if text:
+
+        if text is not None:
             self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text, flags)
-            shape.group_id = group_id
-            shape.description = description
+            shape = self.canvas.setLastLabel(text, {})
+            shape.group_id = None
+            shape.description = None
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
@@ -1575,12 +1500,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image = image
         self.filename = filename
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
-        flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
             self.loadLabels(self.labelFile.shapes)
-            if self.labelFile.flags is not None:
-                flags.update(self.labelFile.flags)
-        self.loadFlags(flags)
         self.setClean()
         self.canvas.setEnabled(True)
         # set zoom values

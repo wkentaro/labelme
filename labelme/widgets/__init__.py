@@ -2,8 +2,6 @@
 
 from .ai_prompt_widget import AiPromptWidget
 
-from .brightness_contrast_dialog import BrightnessContrastDialog
-
 from .canvas import Canvas
 
 from .color_dialog import ColorDialog

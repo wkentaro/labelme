@@ -26,7 +26,6 @@ class LabelLineDialog(QtWidgets.QDialog):
         self.recognised_line = None
 
         self.setMinimumSize(QSize(600, 100))
-        self.keyboard = Keyboard()
 
         layout = QtWidgets.QVBoxLayout()
         
@@ -102,11 +101,10 @@ class LabelLineDialog(QtWidgets.QDialog):
         self.text_view.setTextCursor(cursor)
         
     def get_keyboard(self):
-        letter = self.keyboard.popUp()
+        letter = Keyboard().popUp()
         if letter is not None:
             self.edit.setText(self.edit.text() + letter)
 
     def popUp(self):
         self.exec_()
         return self.recognised_line 
-
