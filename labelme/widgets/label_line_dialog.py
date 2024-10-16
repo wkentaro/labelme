@@ -20,7 +20,8 @@ QT5 = QT_VERSION[0] == "5"
 class LabelLineDialog(QtWidgets.QDialog):
     def __init__(
         self,
-        parent=None
+        parent=None,
+        old_text=None
     ):
         super(LabelLineDialog, self).__init__(parent)
         self.recognised_line = None
@@ -56,6 +57,8 @@ class LabelLineDialog(QtWidgets.QDialog):
         self.edit = QLineEdit()
         self.edit.setPlaceholderText("Аннотация строки")
         self.edit.textChanged.connect(self.changeLabel)
+        if old_text is not None:
+            self.edit.setText(old_text)
         layout_enter.addWidget(self.edit, 6)
 
         keyboard_button = QtWidgets.QPushButton("Славянская клавиатура")
@@ -80,7 +83,7 @@ class LabelLineDialog(QtWidgets.QDialog):
 
     def validate_input(self):
         text = self.edit.text()
-        if all(letter in SlavicFont.ALL_LETTERS for letter in text):
+        if len(text) != 0 and all(letter in SlavicFont.ALL_LETTERS for letter in text):
             self.recognised_line = text
             self.close()
         else:

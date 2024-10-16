@@ -20,7 +20,8 @@ QT5 = QT_VERSION[0] == "5"
 class LabelLetterDialog(QtWidgets.QDialog):
     def __init__(
         self,
-        parent=None
+        parent=None,
+        old_text=None
     ):
         super(LabelLetterDialog, self).__init__(parent)
         self.recognised_letter = None
@@ -37,6 +38,8 @@ class LabelLetterDialog(QtWidgets.QDialog):
         layout_enter = QtWidgets.QHBoxLayout()
         self.edit = QLineEdit()
         self.edit.setPlaceholderText("Введите букву")
+        if old_text is not None:
+            self.edit.setText(old_text)
         layout_enter.addWidget(self.edit, 4)
 
         keyboard_button = QtWidgets.QPushButton("Славянская клавиатура")

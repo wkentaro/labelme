@@ -1052,14 +1052,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.labelDialog.edit.setDisabled(True)
             self.labelDialog.labelList.setDisabled(True)
 
-        shape = self.canvas.getCurrentShape()
         state = shape.getClass()
+        old_text = shape.label
 
         if state == ShapeClass.ROW:
-            labelLineDialog = LabelLineDialog(self)
+            labelLineDialog = LabelLineDialog(self, old_text=old_text)
             text = labelLineDialog.popUp()
         elif state == ShapeClass.LETTER:
-            labelLetterDialog = LabelLetterDialog(self)
+            labelLetterDialog = LabelLetterDialog(self, old_text=old_text)
             text = labelLetterDialog.popUp()
         else:
             text = ""
@@ -1328,7 +1328,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callback functions:
 
     def newShape(self):
-        shape = self.canvas.getCurrentShape()
+        shape = self.canvas.getLastShape()
         state = shape.getClass()
 
         if state == ShapeClass.ROW:

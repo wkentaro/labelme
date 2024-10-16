@@ -949,7 +949,11 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         return self.shapes[-1]
     
-    def getCurrentShape(self):
+    
+    def getLastShape(self):
+        """
+            Возвращает последний добавленный shape
+        """
         return self.shapes[-1]
 
     def undoLastLine(self):
