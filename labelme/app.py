@@ -186,6 +186,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Horizontal: scrollArea.horizontalScrollBar(),
         }
         self.canvas.scrollRequest.connect(self.scrollRequest)
+        self.canvas.scrollDragRequest.connect(self.scrollDragRequest)
 
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
@@ -1421,6 +1422,15 @@ class MainWindow(QtWidgets.QMainWindow):
         bar = self.scrollBars[orientation]
         value = bar.value() + bar.singleStep() * units
         self.setScroll(orientation, value)
+
+    # Обработка события панорамирования
+    def scrollDragRequest(self, delta, orientation):
+        bar = self.scrollBars[orientation]
+        # Новое значение слайдера получается как предыдущее + нормированное смещение по координатам в окне
+        if orientation == QtCore.Qt.Vertical:
+            self.setScroll(orientation, bar.value() + delta * bar.height())
+        else:
+            self.setScroll(orientation, bar.value() + delta * bar.width())
 
     def setScroll(self, orientation, value):
         self.scrollBars[orientation].setValue(int(value))
