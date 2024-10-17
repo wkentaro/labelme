@@ -942,8 +942,9 @@ class Canvas(QtWidgets.QWidget):
 
                 self.movingShape = False
 
-    def setLastLabel(self, text, flags):
+    def setLastLabel(self, text, flags, diacritical = ""):
         self.shapes[-1].label = text
+        self.shapes[-1].diacritical = diacritical
         self.shapes[-1].flags = flags
         self.shapesBackups.pop()
         self.storeShapes()

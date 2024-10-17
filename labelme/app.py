@@ -928,6 +928,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for shape_dict in shape_dicts:
             shape = Shape(
                 label=shape_dict["label"],
+                diacritical=shape_dict["diacritical"],
                 shape_type=shape_dict["shape_type"],
             )
             for point in shape_dict["points"]:
@@ -1044,17 +1045,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         shape = items[0].shape()
 
-        if len(items) == 1:
-            edit_text = True
-        else:
-            edit_text = all(item.shape().label == shape.label for item in items[1:])
-
-        if not edit_text:
-            self.labelDialog.edit.setDisabled(True)
-            self.labelDialog.labelList.setDisabled(True)
-
         state = shape.getClass()
-        old_text = shape.label
+        old_text = shape.label + shape.diacritical
 
         if state == ShapeClass.ROW:
             labelLineDialog = LabelLineDialog(self, old_text=old_text)
@@ -1065,23 +1057,18 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = Literal("")
 
-        if not edit_text:
-            self.labelDialog.edit.setDisabled(False)
-            self.labelDialog.labelList.setDisabled(False)
-
         if text is None:
             return
-        
-        text = text.to_text()
-        
+
         self.canvas.storeShapes()
         for item in items:
             self._update_item(
                 item=item,
-                text=text if edit_text else None,
+                text=text.letter,
+                diacritical=text.diacritical if text.diacritical is not None else ""
             )
 
-    def _update_item(self, item, text):
+    def _update_item(self, item, text, diacritical):
         if not self.validateLabel(text):
             self.errorMessage(
                 self.tr("Invalid label"),
@@ -1095,6 +1082,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if text is not None:
             shape.label = text
+            shape.diacritical = diacritical
 
         self._update_shape_color(shape)
         if shape.group_id is None:
@@ -1221,6 +1209,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _loadLabelsRecursive(self,inputList, shapes, parent : Shape = None):
         for shape_dict in inputList:
             label = shape_dict["label"]
+            diacritical=shape_dict["diacritical"]
             points = shape_dict["points"]
             shape_type = shape_dict["shape_type"]
             other_data = shape_dict["other_data"]
@@ -1231,6 +1220,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             shape = Shape(
                 label=label,
+                diacritical=diacritical,
                 shape_type=shape_type,
                 parent=parent,
             )
@@ -1272,6 +1262,7 @@ class MainWindow(QtWidgets.QMainWindow):
             data.update(
                 dict(
                     label=s.label.encode("utf-8") if PY2 else s.label,
+                    diacritical=s.diacritical,
                     shapes=[format_shape(a) for a in s.getChildren()],
                     points=[(p.x(), p.y()) for p in s.points],
                     shape_type=s.shape_type,
@@ -1344,9 +1335,11 @@ class MainWindow(QtWidgets.QMainWindow):
             text = Literal("")
 
         if text is not None:
-            text = text.to_text()
             self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text, {})
+            if text.diacritical is not None:
+                shape = self.canvas.setLastLabel(text.letter, {}, diacritical=text.diacritical)
+            else:
+                shape = self.canvas.setLastLabel(text.letter, {})
             shape.group_id = None
             shape.description = None
             self.addLabel(shape)

@@ -85,6 +85,7 @@ class LabelFile(object):
         """
         shape_keys = [
             "label",
+            "diacritical",
             "points",
             "shapes",
             "shape_type",
@@ -92,6 +93,7 @@ class LabelFile(object):
         shapes = [
                 dict(
                     label=s["label"],
+                    diacritical=s["diacritical"],
                     shapes=self._loadRecursice(s["shapes"]),
                     points=s["points"],
                     shape_type=s.get("shape_type", "rectangle"),

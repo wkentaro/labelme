@@ -67,6 +67,7 @@ class Shape(object):
         self,
         id = None,
         label=None,
+        diacritical=None,
         line_color=None,
         shape_type=None,
         flags=None,
@@ -80,6 +81,7 @@ class Shape(object):
         else:
             self._id = id
         self.label = label
+        self.diacritical=diacritical
         self.group_id = group_id
         self.points : List[QtCore.QPoint] = []
         self.point_labels = []
@@ -455,6 +457,7 @@ class Shape(object):
     def copy(self):
         shape = Shape(parent=self.parent, id = self._id)
         shape.label = self.label
+        shape.diacritical = self.diacritical
         shape.points = copy.deepcopy(self.points)
         shape.shape_type = self.shape_type
         shape.flags = self.flags
@@ -463,6 +466,7 @@ class Shape(object):
     def _copyWithChildren(self, list : List["Shape"], parent : "Shape" = None):
         shape = Shape(parent=parent,id = self._id)
         shape.label = self.label
+        shape.diacritical = self.diacritical
         shape.points = copy.deepcopy(self.points)
         shape.shape_type = self.shape_type
         shape.flags = self.flags
