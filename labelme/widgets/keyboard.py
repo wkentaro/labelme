@@ -5,6 +5,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import * 
 from labelme.fonts.slavic import SlavicFont
 
+from math import isqrt, ceil
+
 class PushButton(QPushButton):
     SIZE = 50
     def __init__(self, text, parent=None):
@@ -18,23 +20,27 @@ class PushButton(QPushButton):
     Окно экранной клавиатуры для вывода всех возможных символов для разметки
 """
 class Keyboard(QtWidgets.QDialog): 
-    def __init__(self):
+    def __init__(self, type=None):
         super(Keyboard, self).__init__()
-        
+
+        if type == 'letter':
+            self.symbol_list = SlavicFont.LETTERS
+        elif type == 'diacritical':
+            self.symbol_list = SlavicFont.DIACRITICAL_SIGNS
+        else:
+            raise Exception("wrong type of keyboard")
+
         self.setMinimumSize(QApplication.desktop().width() - 40, QApplication.desktop().height() - 100)
 
         self.text_from_keyboard = None
 
-        self.rows = 16
-        self.columns = 16
+        # Шиза с размерами клавиатуры
+        min_gaps = isqrt(len(self.symbol_list))
+        len_sym_list = len(self.symbol_list)
+        self.rows = min_gaps + ceil((len_sym_list - min_gaps * min_gaps) / min_gaps)
+        self.columns = min_gaps
         
         self.layout = QGridLayout()
-
-        # for i in range(self.columns):
-        #     self.layout.setColumnMinimumWidth(i, 50)
-
-        # for i in range(3, self.rows):
-        #     self.layout.setRowMinimumHeight(i, 60)
 
         i = 0
         for row in range(self.rows): 
@@ -67,10 +73,10 @@ class Keyboard(QtWidgets.QDialog):
         scroll.setWidgetResizable(True) 
         layoutV.addLayout(layoutH)
         self.setLayout(layoutV)
-
-    def smart_keyboard(self, x : int):
-        if x >= 32 and x <= len(SlavicFont.ALL_LETTERS) + 31:
-            return SlavicFont.ALL_LETTERS[x - 32]
+        
+    def smart_keyboard(self, i):
+        if len(self.symbol_list) > i:
+            return self.symbol_list[i]
         else:
             return None
         

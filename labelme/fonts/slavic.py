@@ -13,6 +13,8 @@ class SlavicFont:
     __font = None
 
     ALL_LETTERS = ' !"#$%\'+,-.0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}ЂЃѓ…†‡€‰Љ‹ЊЌЋЏђ‘’“”•™љ›њќћџЎўЈ¤Ґ¦§Ё©®Ї°±Ііґµё№єјЅѕїАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя'
+    LETTERS = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя'
+    DIACRITICAL_SIGNS = '123456•cdg'
     
     @classmethod    
     def GetFont(cls, size):

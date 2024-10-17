@@ -36,6 +36,7 @@ from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 from labelme.widgets import LabelLetterDialog
 from labelme.widgets import LabelLineDialog
+from labelme.widgets.label_letter_dialog import Literal
 
 from labelme import utils
 
@@ -1338,9 +1339,10 @@ class MainWindow(QtWidgets.QMainWindow):
             labelLetterDialog = LabelLetterDialog(self)
             text = labelLetterDialog.popUp()
         else:
-            text = ""
+            text = Literal("")
 
         if text is not None:
+            text = text.to_text()
             self.labelList.clearSelection()
             shape = self.canvas.setLastLabel(text, {})
             shape.group_id = None
