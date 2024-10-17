@@ -1,4 +1,39 @@
 <h1 align="center">
+  Гайд для установки
+</h1>
+Разрабы не смогли нормально написать что необходимо для запуска программы и какие зависимости необходимо подгрузить, так что придётся это делать мне.
+
+Для начала нужен питон с официального сайта (у меня работает на 3.11.9).
+
+Клонируем репозиторий:
+```
+git clone https://github.com/DemidNeuroLab/NeuroLabel
+
+cd ./NeuroLabel
+```
+
+Далее рекомендую создать vevn:
+```
+python -m venv venv
+
+.\venv\Scripts\activate
+```
+
+Далее устанавливаем зависимости:
+```
+pip install -r requirements.txt
+
+pip install -r requirements-dev.txt
+```
+
+Для запуска приложения нужно запустить файл start.py.
+```
+python start.py
+```
+
+# Далее ридми от разрабов:
+
+<h1 align="center">
   <img src="labelme/icons/icon.png"><br/>labelme
 </h1>
 

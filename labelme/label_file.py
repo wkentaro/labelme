@@ -65,47 +65,38 @@ class LabelFile(object):
             f.seek(0)
             return f.read()
 
-    def load(self, filename):
-        keys = [
-            "version",
-            "imageData",
-            "imagePath",
-            "shapes",  # polygonal annotations
-            "flags",  # image level flags
-            "imageHeight",
-            "imageWidth",
-        ]
+    def _loadRecursice(self,data):
+        """
+            Метод для рекурсивной подгрузки bbox-ов из словаря.
+            
+            Преобразует поля словаря как это делалось в коде ранее, 
+            но с учётом иерархии в bbox.
+            
+            -------
+            Параметры
+            
+            data
+                Список bbox-ов
+            
+            -------    
+            Возвращает 
+                
+            Преобразованный список
+        """
         shape_keys = [
             "label",
             "points",
             "group_id",
+            "shapes",
             "shape_type",
             "flags",
             "description",
             "mask",
         ]
-        try:
-            with open(filename, "r") as f:
-                data = json.load(f)
-
-            if data["imageData"] is not None:
-                imageData = base64.b64decode(data["imageData"])
-                if PY2 and QT4:
-                    imageData = utils.img_data_to_png_data(imageData)
-            else:
-                # relative path from label file to relative path from cwd
-                imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
-            flags = data.get("flags") or {}
-            imagePath = data["imagePath"]
-            self._check_image_height_and_width(
-                base64.b64encode(imageData).decode("utf-8"),
-                data.get("imageHeight"),
-                data.get("imageWidth"),
-            )
-            shapes = [
+        shapes = [
                 dict(
                     label=s["label"],
+                    shapes=self._loadRecursice(s["shapes"]),
                     points=s["points"],
                     shape_type=s.get("shape_type", "polygon"),
                     flags=s.get("flags", {}),
@@ -116,8 +107,35 @@ class LabelFile(object):
                     else None,
                     other_data={k: v for k, v in s.items() if k not in shape_keys},
                 )
-                for s in data["shapes"]
+                for s in data
             ]
+        return shapes
+
+    def load(self, filename):
+        keys = [
+            "version",
+            "imagePath",
+            "shapes",  # polygonal annotations
+            "flags",  # image level flags
+            "imageHeight",
+            "imageWidth",
+        ]
+        try:
+            with open(filename, "r") as f:
+                data = json.load(f)
+
+            
+            imagePath = osp.join(osp.dirname(filename), data["imagePath"])
+            imageData = self.load_image_file(imagePath)
+            
+            flags = data.get("flags") or {}
+            imagePath = data["imagePath"]
+            self._check_image_height_and_width(
+                base64.b64encode(imageData).decode("utf-8"),
+                data.get("imageHeight"),
+                data.get("imageWidth"),
+            )
+            shapes = self._loadRecursice(data["shapes"])
         except Exception as e:
             raise LabelFileError(e)
 
@@ -158,15 +176,9 @@ class LabelFile(object):
         imagePath,
         imageHeight,
         imageWidth,
-        imageData=None,
         otherData=None,
         flags=None,
     ):
-        if imageData is not None:
-            imageData = base64.b64encode(imageData).decode("utf-8")
-            imageHeight, imageWidth = self._check_image_height_and_width(
-                imageData, imageHeight, imageWidth
-            )
         if otherData is None:
             otherData = {}
         if flags is None:
@@ -176,7 +188,6 @@ class LabelFile(object):
             flags=flags,
             shapes=shapes,
             imagePath=imagePath,
-            imageData=imageData,
             imageHeight=imageHeight,
             imageWidth=imageWidth,
         )

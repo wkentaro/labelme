@@ -9,3 +9,7 @@
 
 .DS_Store
 .idea/
+
+/venv/*
+
+/.vscode/
