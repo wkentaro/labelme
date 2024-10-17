@@ -692,11 +692,11 @@ class Canvas(QtWidgets.QWidget):
         p.scale(self.scale, self.scale)
         p.translate(self.offsetToCenter())
         
-        # Сдвиг относительно. 
-        # неоходимость вознокает из-за обрезания картинки по "переходу" к элементу 
+        # Сдвиг относительно изначального изоображения 
+        # неоходимость возникает из-за обрезания картинки по "переходу" к элементу 
         p.translate(-self.image_offsets[0],-self.image_offsets[1])
      
-        p.drawPixmap(self.image_offsets[0],self.image_offsets[1], self.cropped_image)
+        p.drawPixmap(self.image_offsets[0], self.image_offsets[1], self.cropped_image)
 
         p.scale(1 / self.scale, 1 / self.scale)
 
@@ -707,18 +707,19 @@ class Canvas(QtWidgets.QWidget):
             and self.prevMovePoint
             and not self.outOfPixmap(self.prevMovePoint)
         ):
+            inf = 1000000
             p.setPen(QtGui.QColor(0, 0, 0))
             p.drawLine(
-                0,
+                -inf,
                 int(self.prevMovePoint.y() * self.scale),
-                self.width() - 1,
+                inf,
                 int(self.prevMovePoint.y() * self.scale),
             )
             p.drawLine(
                 int(self.prevMovePoint.x() * self.scale),
-                0,
+                -inf,
                 int(self.prevMovePoint.x() * self.scale),
-                self.height() - 1,
+                inf,
             )
 
         Shape.scale = self.scale
@@ -982,7 +983,8 @@ class Canvas(QtWidgets.QWidget):
             rect = shape.getCroppBox()
             self.image_offsets = (rect.x(),rect.y())
             self.cropped_image.convertFromImage(self.full_image.copy(rect).toImage())
-            
+        point = QtCore.QPoint(0, 0)
+        self.zoomRequest.emit(0, point)
         self.update()
         
         
