@@ -1063,7 +1063,7 @@ class MainWindow(QtWidgets.QMainWindow):
             labelLetterDialog = LabelLetterDialog(self, old_text=old_text)
             text = labelLetterDialog.popUp()
         else:
-            text = ""
+            text = Literal("")
 
         if not edit_text:
             self.labelDialog.edit.setDisabled(False)
@@ -1071,7 +1071,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if text is None:
             return
-
+        
+        text = text.to_text()
+        
         self.canvas.storeShapes()
         for item in items:
             self._update_item(

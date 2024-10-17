@@ -28,18 +28,26 @@ class Keyboard(QtWidgets.QDialog):
         elif type == 'diacritical':
             self.symbol_list = SlavicFont.DIACRITICAL_SIGNS
         else:
-            raise Exception("wrong type of keyboard")
-
-        self.setMinimumSize(QApplication.desktop().width() - 40, QApplication.desktop().height() - 100)
-
-        self.text_from_keyboard = None
+            self.symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS
 
         # Шиза с размерами клавиатуры
         min_gaps = isqrt(len(self.symbol_list))
         len_sym_list = len(self.symbol_list)
         self.rows = min_gaps + ceil((len_sym_list - min_gaps * min_gaps) / min_gaps)
         self.columns = min_gaps
-        
+
+        possible_width = QApplication.desktop().width() - 40
+        possible_height = QApplication.desktop().height() - 100
+        self.setMaximumSize(possible_width, possible_height)
+        grid_width = self.columns * (PushButton.SIZE + 20)
+        grid_height = self.rows * (PushButton.SIZE + 40)
+        if grid_width < possible_width and grid_height < possible_height:
+            self.setFixedSize(grid_width, grid_height)
+        else:
+            self.setMinimumSize(possible_width, possible_height)
+
+        self.text_from_keyboard = None
+  
         self.layout = QGridLayout()
 
         i = 0

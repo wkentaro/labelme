@@ -47,7 +47,8 @@ class LabelLetterDialog(QtWidgets.QDialog):
         layout.addWidget(invite_label, 0, Qt.AlignTop | Qt.AlignHCenter)
 
         self.text_view = QLineEdit()
-        self.text_view.setText("")
+        if old_text is not None:
+            self.text_view.setText(old_text)
         self.text_view.setFont(SlavicFont.GetFont(22))
         self.text_view.setReadOnly(True)
         self.text_view.setMaximumHeight(45)
@@ -80,6 +81,8 @@ class LabelLetterDialog(QtWidgets.QDialog):
         )
         bb.button(bb.Ok).setIcon(labelme.utils.newIcon("done"))
         bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
+        if old_text is None:
+            bb.button(bb.Ok).setDisabled(True)
         bb.accepted.connect(self.validate_input)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
@@ -87,13 +90,16 @@ class LabelLetterDialog(QtWidgets.QDialog):
         self.setLayout(layout)
     
     def changeLabel(self):
-        self.text_view.setText(self.edit.text())
+        text = self.edit.text()
+        if len(text) == 0:
+            self.buttonBox.button(self.buttonBox.Ok).setDisabled(True)
+        else:
+            self.buttonBox.button(self.buttonBox.Ok).setDisabled(False)
+        self.text_view.setText(text)
 
     def validate_input(self):
         text = self.edit.text()
-        if len(text) == 0:
-            self.getMessageBox("Строка не введена!")
-        elif len(text) > 2:
+        if len(text) > 2:
             self.getMessageBox("Строка слишком длинная!")
         else:
             if len(text) == 1 and text in SlavicFont.LETTERS:
@@ -114,11 +120,11 @@ class LabelLetterDialog(QtWidgets.QDialog):
     def dia_letter_correct(self, text):
         return text[0] in SlavicFont.LETTERS and text[1] in SlavicFont.DIACRITICAL_SIGNS
      
-    def getMessageBox(text):
+    def getMessageBox(self, text):
         messageBox = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Warning,
                 "Ошибка",
-                "Введено некорректное значение"
+                text
             )
         messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
         messageBox.exec_()

@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 import labelme.utils
 from labelme.widgets.keyboard import Keyboard
 from labelme.fonts.slavic import SlavicFont
+from labelme.widgets.label_letter_dialog import Literal
 
 QT5 = QT_VERSION[0] == "5"
 
@@ -42,7 +43,8 @@ class LabelLineDialog(QtWidgets.QDialog):
         layout_slavic_text.addWidget(invite_text_label, 2)
 
         self.text_view = QTextEdit()
-        self.text_view.setText("")
+        if old_text is not None:
+            self.text_view.setText(old_text)
         self.text_view.setFont(SlavicFont.GetFont(22))
         self.text_view.setReadOnly(True)
         self.text_view.setWordWrapMode(QTextOption.NoWrap)
@@ -56,9 +58,9 @@ class LabelLineDialog(QtWidgets.QDialog):
         layout_enter = QtWidgets.QHBoxLayout()
         self.edit = QLineEdit()
         self.edit.setPlaceholderText("Аннотация строки")
-        self.edit.textChanged.connect(self.changeLabel)
         if old_text is not None:
             self.edit.setText(old_text)
+        self.edit.textChanged.connect(self.changeLabel)
         layout_enter.addWidget(self.edit, 6)
 
         keyboard_button = QtWidgets.QPushButton("Славянская клавиатура")
@@ -75,6 +77,8 @@ class LabelLineDialog(QtWidgets.QDialog):
         )
         bb.button(bb.Ok).setIcon(labelme.utils.newIcon("done"))
         bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
+        if old_text is None:
+            bb.button(bb.Ok).setDisabled(True)
         bb.accepted.connect(self.validate_input)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
@@ -83,20 +87,35 @@ class LabelLineDialog(QtWidgets.QDialog):
 
     def validate_input(self):
         text = self.edit.text()
-        if len(text) != 0 and all(letter in SlavicFont.ALL_LETTERS for letter in text):
-            self.recognised_line = text
-            self.close()
+        symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS
+        if not all(letter in symbol_list for letter in text):
+            self.getMessageBox("Введён некорректный символ!")
+        elif text[0] in SlavicFont.DIACRITICAL_SIGNS:
+            self.getMessageBox("Диакритический знак не может быть в начале строки!") 
         else:
-            messageBox = QtWidgets.QMessageBox(
+            for i in range(len(text) - 1):
+                if text[i] in SlavicFont.DIACRITICAL_SIGNS and text[i + 1] in SlavicFont.DIACRITICAL_SIGNS:
+                    self.getMessageBox("В строке не могут подряд идти 2 диакритических знака!")
+                    return
+            self.recognised_line = Literal(text)
+            self.close()
+
+    def getMessageBox(self, text):
+        messageBox = QtWidgets.QMessageBox(
                 QtWidgets.QMessageBox.Warning,
                 "Ошибка",
-                "Введено некорректное значение"
+                text
             )
-            messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
-            messageBox.exec_()
+        messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
+        messageBox.exec_()
         
     def changeLabel(self):
-        self.text_view.setText(self.edit.text())
+        text = self.edit.text()
+        if len(text) == 0:
+            self.buttonBox.button(self.buttonBox.Ok).setDisabled(True)
+        else:
+            self.buttonBox.button(self.buttonBox.Ok).setDisabled(False)
+        self.text_view.setText(text)
         
     def cursor_to_right(self):
         cursor = self.text_view.textCursor()     
