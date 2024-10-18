@@ -1975,7 +1975,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self.settings.setValue('lastOpenedDirectory', defaultOpenDirPath)
+        self.settings.setValue('lastOpenedDirectory', targetDirPath)
         self.importDirImages(targetDirPath)
 
     @property
