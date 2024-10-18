@@ -732,7 +732,8 @@ class Canvas(QtWidgets.QWidget):
             self.line.paint(p)
         if self.selectedShapesCopy:
             for s in self.selectedShapesCopy:
-                s.paint(p)
+                if s is not None:
+                    s.paint(p)
 
         if self.createMode == "ai_polygon" and self.current is not None:
             drawing_shape = self.current.copy()

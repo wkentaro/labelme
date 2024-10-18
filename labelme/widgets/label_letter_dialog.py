@@ -62,6 +62,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
         self.edit.setPlaceholderText("Введите букву")
         if old_text is not None:
             self.edit.setText(old_text)
+        self.edit.setMaxLength(2)
         self.edit.textChanged.connect(self.changeLabel)    
         layout.addWidget(self.edit)
         
@@ -111,23 +112,20 @@ class LabelLetterDialog(QtWidgets.QDialog):
 
     def validate_input(self):
         text = self.edit.text()
-        if len(text) > 2:
-            self.getMessageBox("Строка слишком длинная!")
-        else:
-            if len(text) == 1 and text in SlavicFont.LETTERS + SlavicFont.TITLA:
-                self.recognised_letter = Literal(text)
+        if len(text) == 1 and text in SlavicFont.LETTERS + SlavicFont.TITLA:
+            self.recognised_letter = Literal(text)
+            self.close()
+        elif len(text) == 1 and text not in SlavicFont.LETTERS + SlavicFont.TITLA:
+            self.getMessageBox("Введённый символ некорректен!") 
+        elif len(text) == 2:
+            is_correct = self.dia_letter_correct(text)
+            if is_correct:
+                self.recognised_letter = Literal(text[0], text[1])
                 self.close()
-            elif len(text) == 1 and text not in SlavicFont.LETTERS + SlavicFont.TITLA:
-                self.getMessageBox("Введённый символ некорректен!") 
-            elif len(text) == 2:
-                is_correct = self.dia_letter_correct(text)
-                if is_correct:
-                    self.recognised_letter = Literal(text[0], text[1])
-                    self.close()
-                else:
-                    self.getMessageBox("Некорректная строка с диакритическим знаком!")
             else:
-                raise Exception("error in validating text")
+                self.getMessageBox("Некорректная строка с диакритическим знаком!")
+        else:
+            raise Exception("error in validating text")
 
     def dia_letter_correct(self, text):
         return text[0] in SlavicFont.LETTERS and text[1] in SlavicFont.DIACRITICAL_SIGNS
