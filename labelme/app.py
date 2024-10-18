@@ -189,6 +189,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Horizontal: scrollArea.horizontalScrollBar(),
         }
         self.canvas.scrollRequest.connect(self.scrollRequest)
+        self.canvas.scrollDragRequest.connect(self.scrollDragRequest)
 
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
@@ -1357,6 +1358,15 @@ class MainWindow(QtWidgets.QMainWindow):
         value = bar.value() + bar.singleStep() * units
         self.setScroll(orientation, value)
 
+    # Обработка события панорамирования
+    def scrollDragRequest(self, delta, orientation):
+        bar = self.scrollBars[orientation]
+        # Новое значение слайдера получается как предыдущее + нормированное смещение по координатам в окне
+        if orientation == QtCore.Qt.Vertical:
+            self.setScroll(orientation, bar.value() + delta * bar.height())
+        else:
+            self.setScroll(orientation, bar.value() + delta * bar.width())
+
     def setScroll(self, orientation, value):
         self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
@@ -1642,7 +1652,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def openFile(self, _value=False):
         if not self.mayContinue():
             return
-        path = osp.dirname(str(self.filename)) if self.filename else "."
+        path = self.settings.value('lastOpenedDirectory', osp.dirname(str(self.filename)) if self.filename else '.')
         formats = [
             "*.{}".format(fmt.data().decode())
             for fmt in QtGui.QImageReader.supportedImageFormats()
@@ -1651,6 +1661,7 @@ class MainWindow(QtWidgets.QMainWindow):
             formats + ["*%s" % LabelFile.suffix]
         )
         fileDialog = FileDialogPreview(self)
+        fileDialog.setDirectory(path)
         fileDialog.setFileMode(FileDialogPreview.ExistingFile)
         fileDialog.setNameFilter(filters)
         fileDialog.setWindowTitle(
@@ -1661,6 +1672,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
+                self.settings.setValue('lastOpenedDirectory', os.path.dirname(fileName))
                 self.loadFile(fileName)
 
     def changeOutputDirDialog(self, _value=False):
@@ -1879,8 +1891,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         defaultOpenDirPath = dirpath if dirpath else "."
-        if self.lastOpenDir and osp.exists(self.lastOpenDir):
-            defaultOpenDirPath = self.lastOpenDir
+        lastDir = self.settings.value('lastOpenedDirectory', osp.dirname(self.filename) if self.filename else ".")
+        if lastDir and osp.exists(lastDir):
+            defaultOpenDirPath = lastDir
         else:
             defaultOpenDirPath = osp.dirname(self.filename) if self.filename else "."
 
@@ -1893,6 +1906,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
+        self.settings.setValue('lastOpenedDirectory', targetDirPath)
         self.importDirImages(targetDirPath)
 
     @property

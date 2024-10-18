@@ -33,6 +33,7 @@ class Canvas(QtWidgets.QWidget):
     drawingPolygon = QtCore.Signal(bool)
     vertexSelected = QtCore.Signal(bool)
     mouseMoved = QtCore.Signal(QtCore.QPointF)
+    scrollDragRequest = QtCore.Signal(float, int) # Сигнал для панорамирования
 
     CREATE, EDIT = 0, 1
 
@@ -228,6 +229,19 @@ class Canvas(QtWidgets.QWidget):
         return self.hEdge is not None
 
     def mouseMoveEvent(self, ev):
+        """
+        Если зажато колёсико мыши, то запускаем панорамирование.
+        deltaX, deltaY -- нормированное смещение по соответствующей координате
+        """
+        if ev.buttons() & QtCore.Qt.MiddleButton:
+            QtGui.QCursor.setPos(self.mapToGlobal(self._pan_start))
+            deltaX = - (ev.x() - self._pan_start.x()) / self.cropped_image.width() / self.scale 
+            deltaY = - (ev.y() - self._pan_start.y()) / self.cropped_image.height() / self.scale 
+            self.scrollDragRequest.emit(deltaX, QtCore.Qt.Horizontal)
+            self.scrollDragRequest.emit(deltaY, QtCore.Qt.Vertical)
+            # self._pan_start = ev.pos() # Позволяет панорамировать относительно зажатого курсора
+            ev.accept()
+            return
         """Update line with last point and current coordinates."""
         try:
             if QT5:
@@ -379,7 +393,7 @@ class Canvas(QtWidgets.QWidget):
 
     def zoomShape(self):
         """
-            "Переходит" к элементу, ч тобы добавлять элементы
+            "Переходит" к элементу, чтобы добавлять элементы
             соответствующего типа.
         """
         if len(self.selectedShapes) == 1:
@@ -389,8 +403,6 @@ class Canvas(QtWidgets.QWidget):
                 self.visible.update((k, False) for k in self.visible)    
                 self.visible.update((shape.getId(), True) for shape in self.selectedShape.getAllChildren())
                 self.cropp()
-        else:
-            print("Необходимо выбрать 1 примоугольник.")
         
     def unZoomShape(self):
         """
@@ -481,6 +493,10 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
+        elif ev.button() == QtCore.Qt.MiddleButton:
+            self._pan_start = ev.pos()  # Точка, относительно которой выполняется панорамирование
+            self.overrideCursor(CURSOR_MOVE) # Поменять курсор на сжатую ручку
+            ev.accept()
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
@@ -500,6 +516,8 @@ class Canvas(QtWidgets.QWidget):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
+        elif ev.button() == QtCore.Qt.MiddleButton:
+            self.overrideCursor(CURSOR_GRAB) # Панорамирование окончено. Возвращение курсора к обычному виду.
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -692,11 +710,11 @@ class Canvas(QtWidgets.QWidget):
         p.scale(self.scale, self.scale)
         p.translate(self.offsetToCenter())
         
-        # Сдвиг относительно. 
-        # неоходимость вознокает из-за обрезания картинки по "переходу" к элементу 
+        # Сдвиг относительно изначального изоображения 
+        # неоходимость возникает из-за обрезания картинки по "переходу" к элементу 
         p.translate(-self.image_offsets[0],-self.image_offsets[1])
      
-        p.drawPixmap(self.image_offsets[0],self.image_offsets[1], self.cropped_image)
+        p.drawPixmap(self.image_offsets[0], self.image_offsets[1], self.cropped_image)
 
         p.scale(1 / self.scale, 1 / self.scale)
 
@@ -707,18 +725,19 @@ class Canvas(QtWidgets.QWidget):
             and self.prevMovePoint
             and not self.outOfPixmap(self.prevMovePoint)
         ):
+            inf = 1000000
             p.setPen(QtGui.QColor(0, 0, 0))
             p.drawLine(
-                0,
+                -inf,
                 int(self.prevMovePoint.y() * self.scale),
-                self.width() - 1,
+                inf,
                 int(self.prevMovePoint.y() * self.scale),
             )
             p.drawLine(
                 int(self.prevMovePoint.x() * self.scale),
-                0,
+                -inf,
                 int(self.prevMovePoint.x() * self.scale),
-                self.height() - 1,
+                inf,
             )
 
         Shape.scale = self.scale
@@ -990,7 +1009,8 @@ class Canvas(QtWidgets.QWidget):
             rect = shape.getCroppBox()
             self.image_offsets = (rect.x(),rect.y())
             self.cropped_image.convertFromImage(self.full_image.copy(rect).toImage())
-            
+        point = QtCore.QPoint(0, 0)
+        self.zoomRequest.emit(0, point)
         self.update()
         
         
