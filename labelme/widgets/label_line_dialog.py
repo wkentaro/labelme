@@ -87,14 +87,15 @@ class LabelLineDialog(QtWidgets.QDialog):
 
     def validate_input(self):
         text = self.edit.text()
-        symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS
+        symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
         if not all(letter in symbol_list for letter in text):
             self.getMessageBox("Введён некорректный символ!")
-        elif text[0] in SlavicFont.DIACRITICAL_SIGNS:
-            self.getMessageBox("Диакритический знак не может быть в начале строки!") 
+        elif text[0] in SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA:
+            self.getMessageBox("Диакритический знак или титло не может быть в начале строки!") 
         else:
+            all_upper = SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
             for i in range(len(text) - 1):
-                if text[i] in SlavicFont.DIACRITICAL_SIGNS and text[i + 1] in SlavicFont.DIACRITICAL_SIGNS:
+                if text[i] in all_upper and text[i + 1] in all_upper:
                     self.getMessageBox("В строке не могут подряд идти 2 диакритических знака!")
                     return
             self.recognised_line = Literal(text)
@@ -111,11 +112,17 @@ class LabelLineDialog(QtWidgets.QDialog):
         
     def changeLabel(self):
         text = self.edit.text()
+        symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
+
         if len(text) == 0:
             self.buttonBox.button(self.buttonBox.Ok).setDisabled(True)
         else:
             self.buttonBox.button(self.buttonBox.Ok).setDisabled(False)
-        self.text_view.setText(text)
+        
+        if not all(letter in symbol_list for letter in text):
+            self.text_view.setText("")
+        else:
+            self.text_view.setText(text)
         
     def cursor_to_right(self):
         cursor = self.text_view.textCursor()     

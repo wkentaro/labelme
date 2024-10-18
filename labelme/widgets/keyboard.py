@@ -13,8 +13,7 @@ class PushButton(QPushButton):
         super(PushButton, self).__init__(text, parent)
 
         self.setText(text)
-        self.setMinimumSize(QSize(PushButton.SIZE, PushButton.SIZE))
-        self.setMaximumSize(QSize(PushButton.SIZE, PushButton.SIZE))
+        self.setFixedSize(QSize(PushButton.SIZE - 10, PushButton.SIZE - 10))
 
 """
     Окно экранной клавиатуры для вывода всех возможных символов для разметки
@@ -26,9 +25,9 @@ class Keyboard(QtWidgets.QDialog):
         if type == 'letter':
             self.symbol_list = SlavicFont.LETTERS
         elif type == 'diacritical':
-            self.symbol_list = SlavicFont.DIACRITICAL_SIGNS
+            self.symbol_list = SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
         else:
-            self.symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS
+            self.symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
 
         # Шиза с размерами клавиатуры
         min_gaps = isqrt(len(self.symbol_list))
@@ -39,8 +38,8 @@ class Keyboard(QtWidgets.QDialog):
         possible_width = QApplication.desktop().width() - 40
         possible_height = QApplication.desktop().height() - 100
         self.setMaximumSize(possible_width, possible_height)
-        grid_width = self.columns * (PushButton.SIZE + 20)
-        grid_height = self.rows * (PushButton.SIZE + 40)
+        grid_width = self.columns * (PushButton.SIZE + 28)
+        grid_height = self.rows * (PushButton.SIZE + 27)
         if grid_width < possible_width and grid_height < possible_height:
             self.setFixedSize(grid_width, grid_height)
         else:
@@ -56,9 +55,12 @@ class Keyboard(QtWidgets.QDialog):
                 letter = self.smart_keyboard(i)
                 if letter is not None:
                     letter_layout = QtWidgets.QVBoxLayout()
+                    letter_layout.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
+                    letter_layout.setContentsMargins(0, 0, 0, 0)
+                    letter_layout.setSpacing(0)
 
                     invite_label = QLabel()
-                    invite_label.setText(f"{letter}")
+                    invite_label.setText(f"{self.get_letter(letter)}")
                     invite_label.setFont(QFont('Arial', 10))
                     letter_layout.addWidget(invite_label, 0, Qt.AlignTop | Qt.AlignHCenter)
 
@@ -68,7 +70,15 @@ class Keyboard(QtWidgets.QDialog):
                     button.clicked.connect(self.click)
                     letter_layout.addWidget(button)
 
-                    self.layout.addLayout(letter_layout, row+1, column)
+                    frame = QFrame()
+                    frame.setObjectName("base_frame")
+                    frame.setFrameStyle(QFrame.Box | QFrame.Plain)
+                    frame.setLineWidth(1)
+                    frame.setFixedSize(60, 60)
+                    frame.setStyleSheet("#base_frame {border: 1px solid rgb(184, 174, 174); border-radius: 10px;}") 
+                    frame.setLayout(letter_layout)
+
+                    self.layout.addWidget(frame, row+1, column)
                 i += 1
 
         layoutH = QHBoxLayout()  
@@ -87,6 +97,12 @@ class Keyboard(QtWidgets.QDialog):
             return self.symbol_list[i]
         else:
             return None
+        
+    def get_letter(self, letter):
+        if letter == ' ':
+            return 'Пробел'
+        else:
+            return letter
         
     def click(self):
         button = QApplication.instance().sender()

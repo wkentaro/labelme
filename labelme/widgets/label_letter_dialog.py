@@ -48,7 +48,10 @@ class LabelLetterDialog(QtWidgets.QDialog):
 
         self.text_view = QLineEdit()
         if old_text is not None:
-            self.text_view.setText(old_text)
+            if old_text in SlavicFont.TITLA:
+                self.text_view.setText(" " + old_text)
+            else:
+                self.text_view.setText(old_text)
         self.text_view.setFont(SlavicFont.GetFont(22))
         self.text_view.setReadOnly(True)
         self.text_view.setMaximumHeight(45)
@@ -91,21 +94,30 @@ class LabelLetterDialog(QtWidgets.QDialog):
     
     def changeLabel(self):
         text = self.edit.text()
+        symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
+
         if len(text) == 0:
             self.buttonBox.button(self.buttonBox.Ok).setDisabled(True)
         else:
             self.buttonBox.button(self.buttonBox.Ok).setDisabled(False)
-        self.text_view.setText(text)
+
+        if not all(letter in symbol_list for letter in text):
+            self.text_view.setText("")
+        else:
+            if text in SlavicFont.TITLA:
+                self.text_view.setText(" " + text)
+            else:
+                self.text_view.setText(text)
 
     def validate_input(self):
         text = self.edit.text()
         if len(text) > 2:
             self.getMessageBox("Строка слишком длинная!")
         else:
-            if len(text) == 1 and text in SlavicFont.LETTERS:
+            if len(text) == 1 and text in SlavicFont.LETTERS + SlavicFont.TITLA:
                 self.recognised_letter = Literal(text)
                 self.close()
-            elif len(text) == 1 and text not in SlavicFont.LETTERS:
+            elif len(text) == 1 and text not in SlavicFont.LETTERS + SlavicFont.TITLA:
                 self.getMessageBox("Введённый символ некорректен!") 
             elif len(text) == 2:
                 is_correct = self.dia_letter_correct(text)
