@@ -235,8 +235,8 @@ class Canvas(QtWidgets.QWidget):
         """
         if ev.buttons() & QtCore.Qt.MiddleButton:
             QtGui.QCursor.setPos(self.mapToGlobal(self._pan_start))
-            deltaX = (ev.x() - self._pan_start.x()) / self.cropped_image.width() / self.scale 
-            deltaY = (ev.y() - self._pan_start.y()) / self.cropped_image.height() / self.scale 
+            deltaX = - (ev.x() - self._pan_start.x()) / self.cropped_image.width() / self.scale 
+            deltaY = - (ev.y() - self._pan_start.y()) / self.cropped_image.height() / self.scale 
             self.scrollDragRequest.emit(deltaX, QtCore.Qt.Horizontal)
             self.scrollDragRequest.emit(deltaY, QtCore.Qt.Vertical)
             # self._pan_start = ev.pos() # Позволяет панорамировать относительно зажатого курсора
