@@ -1711,7 +1711,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def openFile(self, _value=False):
         if not self.mayContinue():
             return
-        path = osp.dirname(str(self.filename)) if self.filename else "."
+        path = self.settings.value('lastOpenedDirectory', osp.dirname(str(self.filename)) if self.filename else '.')
         formats = [
             "*.{}".format(fmt.data().decode())
             for fmt in QtGui.QImageReader.supportedImageFormats()
@@ -1720,6 +1720,7 @@ class MainWindow(QtWidgets.QMainWindow):
             formats + ["*%s" % LabelFile.suffix]
         )
         fileDialog = FileDialogPreview(self)
+        fileDialog.setDirectory(path)
         fileDialog.setFileMode(FileDialogPreview.ExistingFile)
         fileDialog.setNameFilter(filters)
         fileDialog.setWindowTitle(
@@ -1730,6 +1731,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
+                self.settings.setValue('lastOpenedDirectory', os.path.dirname(fileName))
                 self.loadFile(fileName)
 
     def changeOutputDirDialog(self, _value=False):
@@ -1948,8 +1950,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         defaultOpenDirPath = dirpath if dirpath else "."
-        if self.lastOpenDir and osp.exists(self.lastOpenDir):
-            defaultOpenDirPath = self.lastOpenDir
+        lastDir = self.settings.value('lastOpenedDirectory', osp.dirname(self.filename) if self.filename else ".")
+        if lastDir and osp.exists(lastDir):
+            defaultOpenDirPath = lastDir
         else:
             defaultOpenDirPath = osp.dirname(self.filename) if self.filename else "."
 
@@ -1962,6 +1965,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
+        self.settings.setValue('lastOpenedDirectory', defaultOpenDirPath)
         self.importDirImages(targetDirPath)
 
     @property
