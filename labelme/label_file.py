@@ -11,6 +11,7 @@ from labelme import QT4
 from labelme import __version__
 from labelme import utils
 from labelme.logger import logger
+from labelme.shape import Shape, ShapeClass
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
@@ -65,7 +66,7 @@ class LabelFile(object):
             f.seek(0)
             return f.read()
 
-    def _loadRecursice(self,data):
+    def _loadRecursice(self, data):
         """
             Метод для рекурсивной подгрузки bbox-ов из словаря.
             
@@ -90,17 +91,44 @@ class LabelFile(object):
             "shapes",
             "shape_type",
         ]
-        shapes = [
-                dict(
-                    label=s["label"],
-                    diacritical=s["diacritical"],
-                    shapes=self._loadRecursice(s["shapes"]),
-                    points=s["points"],
-                    shape_type=s.get("shape_type", "rectangle"),
-                    other_data={k: v for k, v in s.items() if k not in shape_keys},
+
+        shapes = []
+        for s in data:
+            # Текст
+            if "label" not in s and "diacritical" not in s:
+                shapes.append(
+                    dict(
+                        shapes=self._loadRecursice(s["shapes"]),
+                        points=s["points"],
+                        shape_type=s.get("shape_type", "rectangle"),
+                        other_data={k: v for k, v in s.items() if k not in shape_keys},
+                    )
                 )
-                for s in data
-            ]
+            # Строка 
+            elif "label" in s and "diacritical" not in s:
+                shapes.append(
+                    dict(
+                        label=s["label"],
+                        shapes=self._loadRecursice(s["shapes"]),
+                        points=s["points"],
+                        shape_type=s.get("shape_type", "rectangle"),
+                        other_data={k: v for k, v in s.items() if k not in shape_keys},
+                    )
+                )
+            # Буква
+            elif "label" in s and "diacritical" in s:
+                shapes.append(
+                    dict(
+                        label=s["label"],
+                        diacritical=s["diacritical"],
+                        points=s["points"],
+                        shape_type=s.get("shape_type", "rectangle"),
+                        other_data={k: v for k, v in s.items() if k not in shape_keys},
+                    )
+                )
+            else:
+                raise Exception("error of recognision a .json file in load_recursive")
+
         return shapes
 
     def load(self, filename):

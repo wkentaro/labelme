@@ -1207,10 +1207,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
 
-    def _loadLabelsRecursive(self,inputList, shapes, parent : Shape = None):
+    def _loadLabelsRecursive(self, inputList, shapes, parent : Shape = None):
         for shape_dict in inputList:
-            label = shape_dict["label"]
-            diacritical=shape_dict["diacritical"]
+            label = shape_dict["label"] if "label" in shape_dict else ""
+            diacritical=shape_dict["diacritical"] if "diacritical" in shape_dict else ""
             points = shape_dict["points"]
             shape_type = shape_dict["shape_type"]
             other_data = shape_dict["other_data"]
@@ -1228,8 +1228,8 @@ class MainWindow(QtWidgets.QMainWindow):
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
-
-            self._loadLabelsRecursive(shape_dict["shapes"], shapes, parent = shape)
+            
+            self._loadLabelsRecursive(shape_dict["shapes"] if "shapes" in shape_dict else {}, shapes, parent = shape)
 
             default_flags = {}
             if self._config["label_flags"]:
@@ -1260,15 +1260,36 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def format_shape(s:Shape):
             data = s.other_data.copy()
-            data.update(
-                dict(
-                    label=s.label.encode("utf-8") if PY2 else s.label,
-                    diacritical=s.diacritical,
-                    shapes=[format_shape(a) for a in s.getChildren()],
-                    points=[(p.x(), p.y()) for p in s.points],
-                    shape_type=s.shape_type,
+            shape_type = s.getClass()
+            if shape_type == ShapeClass.TEXT:
+                data.update(
+                    dict(
+                        shapes=[format_shape(a) for a in s.getChildren()],
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type,
+                    )
                 )
-            )
+            elif shape_type == ShapeClass.ROW:
+                data.update(
+                    dict(
+                        label=s.label.encode("utf-8") if PY2 else s.label,
+                        shapes=[format_shape(a) for a in s.getChildren()],
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type,
+                    )
+                )
+            elif shape_type == ShapeClass.LETTER:
+                data.update(
+                    dict(
+                        label=s.label.encode("utf-8") if PY2 else s.label,
+                        diacritical=s.diacritical,
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type,
+                    )
+                )
+            else:
+                raise Exception("error in shape type in format_shape")
+            
             return data
 
         shapes = [format_shape(item.shape()) for item in self.labelList if item.shape().getClass() == ShapeClass.TEXT]
