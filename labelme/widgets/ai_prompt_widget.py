@@ -7,6 +7,7 @@ class AiPromptWidget(QtWidgets.QWidget):
 
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setSpacing(0)
+        self.setMaximumWidth(400)
 
         text_prompt_widget = _TextPromptWidget(on_submit=on_submit, parent=self)
         text_prompt_widget.setMaximumWidth(400)

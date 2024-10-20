@@ -34,6 +34,8 @@ class Canvas(QtWidgets.QWidget):
     vertexSelected = QtCore.Signal(bool)
     mouseMoved = QtCore.Signal(QtCore.QPointF)
     scrollDragRequest = QtCore.Signal(float, int) # Сигнал для панорамирования
+    parentShapeChanged = QtCore.Signal(object) # Сигнал для панорамирования
+
 
     CREATE, EDIT = 0, 1
 
@@ -93,10 +95,12 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = False
         self.snapping = True
         self.hShapeIsSelected = False
-        self.selectedShape : Shape = None
-        self._selectedShapeId : int = -1
+        self.parentShape : Shape = None
+        self._parentShapeId : int = -1
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
+        
+        self.parentShapeChanged.connect(self.cropp)
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -180,8 +184,9 @@ class Canvas(QtWidgets.QWidget):
         self.selectedShapes : List[Shape] = []
         for shape in self.shapes:
             shape.selected = False
-            if shape.getId() == self._selectedShapeId:
-                self.selectedShape = shape
+            if shape.getId() == self._parentShapeId:
+                self.parentShape = shape
+                self.parentShapeChanged.emit(self.parentShape)
         self.update()
 
     def enterEvent(self, ev):
@@ -391,34 +396,33 @@ class Canvas(QtWidgets.QWidget):
         self.prevhVertex = None
         self.movingShape = True  # Save changes
 
-    def zoomShape(self):
+    def zoomParentShape(self):
         """
             "Переходит" к элементу, чтобы добавлять элементы
             соответствующего типа.
         """
         if len(self.selectedShapes) == 1:
             if self.selectedShapes[0].getClass() != ShapeClass.LETTER:
-                self.selectedShape = self.selectedShapes[0]
-                self._selectedShapeId = self.selectedShape.getId()
+                self.parentShape = self.selectedShapes[0]
+                self._parentShapeId = self.parentShape.getId()
                 self.visible.update((k, False) for k in self.visible)    
-                self.visible.update((shape.getId(), True) for shape in self.selectedShape.getAllChildren())
-                self.cropp()
+                self.visible.update((shape.getId(), True) for shape in self.parentShape.getAllChildren())
+                self.parentShapeChanged.emit(self.parentShape)
         
-    def unZoomShape(self):
+    def unZoomParentShape(self):
         """
             "Переходит" к родителю текущего элемента.
         """
-        if self.selectedShape is not None: 
-            self.selectedShape = self.selectedShape.parent
-            
-            if self.selectedShape is not None:
-                self._selectedShapeId = self.selectedShape.getId()
+        if self.parentShape is not None: 
+            self.parentShape = self.parentShape.parent
+            if self.parentShape is not None:
+                self._parentShapeId = self.parentShape.getId()
                 self.visible.update((k, False) for k in self.visible)
-                self.visible.update((shape.getId(), True) for shape in self.selectedShape.getAllChildren())
+                self.visible.update((shape.getId(), True) for shape in self.parentShape.getAllChildren())
             else: 
-                self._selectedShapeId = -1
+                self._parentShapeId = -1
                 self.visible.update((k, True) for k in self.visible)
-            self.cropp()
+            self.parentShapeChanged.emit(self.parentShape)
 
     def mousePressEvent(self, ev):
         if QT5:
@@ -451,7 +455,7 @@ class Canvas(QtWidgets.QWidget):
                         shape_type="points"
                         if self.createMode in ["ai_polygon"]
                         else self.createMode,
-                        parent = self.selectedShape
+                        parent = self.parentShape
                     )
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
                     if (
@@ -989,21 +993,22 @@ class Canvas(QtWidgets.QWidget):
             self.drawingPolygon.emit(False)
         self.update()
 
-    def cropp(self):
+    def cropp(self,parentShape):
         """
             Образает картинку соответственно текущему выбранному элементу
         """
-        if self.selectedShape is None:
-            self.cropped_image = self.full_image.copy()
-            self.image_offsets = (0,0)
-        else:
-            shape = self.selectedShape
-            rect = shape.getCroppBox()
-            self.image_offsets = (rect.x(),rect.y())
-            self.cropped_image.convertFromImage(self.full_image.copy(rect).toImage())
-        point = QtCore.QPoint(0, 0)
-        self.zoomRequest.emit(0, point)
-        self.update()
+        if self.cropped_image:
+            if parentShape is None:
+                self.cropped_image = self.full_image.copy()
+                self.image_offsets = (0,0)
+            else:
+                shape = parentShape
+                rect = shape.getCroppBox()
+                self.image_offsets = (rect.x(),rect.y())
+                self.cropped_image.convertFromImage(self.full_image.copy(rect).toImage())
+            point = QtCore.QPoint(0, 0)
+            self.zoomRequest.emit(0, point)
+            self.update()
         
         
     def loadPixmap(self, pixmap, clear_shapes=True):
@@ -1046,8 +1051,9 @@ class Canvas(QtWidgets.QWidget):
         self.cropped_image = None
         self.shapesBackups = []
         self.shapes = []
-        self.selectedShape = None
-        self._selectedShapeId = -1
+        self.parentShape = None
+        self._parentShapeId = -1
+        self.parentShapeChanged.emit(self.parentShape)
         self.image_offsets = (0, 0)
         IdController.resetCount()
         self.visible = {}        
