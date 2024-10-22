@@ -11,6 +11,7 @@ from qtpy import QtGui
 import labelme.utils
 from labelme.logger import logger
 
+
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
@@ -19,21 +20,21 @@ class ShapeClass(Enum):
     ROW = 1
     LETTER = 2
 
-class IdController:
 
-    _count : int = 0
-    
+class IdController:
+    _count: int = 0
+
     @classmethod
     def resetCount(cls):
         cls._count = 0
-        
+
     @classmethod
     def getId(cls):
         tmp = cls._count
         cls._count += 1
         return tmp
-        
-        
+
+
 class Shape(object):
     # Render handles as squares
     P_SQUARE = 0
@@ -64,24 +65,23 @@ class Shape(object):
     scale = 1.0
 
     def __init__(
-        self,
-        id = None,
-        label=None,
-        line_color=None,
-        shape_type=None,
-        flags=None,
-        group_id=None,
-        description=None,
-        mask=None,
-        parent : "Shape" = None,
+            self,
+            id=None,
+            label=None,
+            line_color=None,
+            shape_type=None,
+            group_id=None,
+            description=None,
+            mask=None,
+            parent: "Shape" = None,
     ):
         if id is None:
-            self._id : int = IdController.getId()
+            self._id: int = IdController.getId()
         else:
             self._id = id
         self.label = label
         self.group_id = group_id
-        self.points : List[QtCore.QPoint] = []
+        self.points: List[QtCore.QPoint] = []
         self.point_labels = []
         self.shape_type = shape_type
         self._shape_raw = None
@@ -89,11 +89,10 @@ class Shape(object):
         self._shape_type_raw = None
         self.fill = False
         self.selected = False
-        self.flags = flags
         self.description = description
         self.other_data = {}
         self.mask = mask
-        
+
         # self.parent - родительский элемент по отношению к текущему.
         # В зависимости от класса родителя автоматически подбирается класс потомка
         # self._shape_class - класс элемента (текст, строка, буква)
@@ -110,7 +109,7 @@ class Shape(object):
                 raise Exception(f"Shape wrong parent shape_class: {parent.getClass()}")
             parent._addChild(self)
         # self._children - список потомков элемента
-        self._children : List[Shape] = []
+        self._children: List[Shape] = []
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
@@ -126,7 +125,7 @@ class Shape(object):
             # with an object attribute. Currently this
             # is used for drawing the pending line a different color.
             self.line_color = line_color
-    
+
     def delete(self):
         """
             Удаляет элемент и также стирает его из списка потомков родителя
@@ -134,38 +133,38 @@ class Shape(object):
         if self.parent is not None:
             self.parent._deleteChild(self)
 
-    def _addChild(self,shape:"Shape"):
+    def _addChild(self, shape: "Shape"):
         if self._shape_class == ShapeClass.LETTER:
             Exception("Letter can't be parent.")
         self._children.append(shape)
-        
-    def _deleteChild(self,shape:"Shape"):
+
+    def _deleteChild(self, shape: "Shape"):
         if shape in self._children:
             self._children.remove(shape)
-        
-    def _childrenRecursive(self,list:List["Shape"]):
+
+    def _childrenRecursive(self, list: List["Shape"]):
         for a in self._children:
             list.append(a)
         for a in self._children:
             a._childrenRecursive(list)
-    
-    def getAllChildren(self) -> List["Shape"] :
+
+    def getAllChildren(self) -> List["Shape"]:
         """
             Возвращает всех потомков
         """
         list = []
         self._childrenRecursive(list)
         return list
-    
+
     def getChildren(self):
         """
             Возвращает прямых потомков
         """
         return self._children
-    
+
     def getId(self):
         return self._id
-    
+
     def getClass(self):
         """
             Возвращает класс элемента (Текст, Строка, Буква)
@@ -212,7 +211,7 @@ class Shape(object):
         else:
             self.points.append(point)
             self.point_labels.append(label)
-            
+
     def getCroppBox(self) -> QtCore.QRect:
         """
             Находит обрамляющий прямоугольник для обрезки изоображения
@@ -223,17 +222,17 @@ class Shape(object):
             QTCore.QRect(x, y, width, height)
                 Координаты и размеры прямоугольника
         """
-        
+
         x = [100000000, 0]
         y = [100000000, 0]
         for point in self.points:
-            x[0]= min(point.x(),x[0])
-            x[1]= max(point.x(),x[1])
-            
-            y[0]= min(point.y(),y[0])
-            y[1]= max(point.y(),y[1])
-            
-        return QtCore.QRect(int(x[0]),int(y[0]),int(x[1]-x[0]),int(y[1]-y[0]))  
+            x[0] = min(point.x(), x[0])
+            x[1] = max(point.x(), x[1])
+
+            y[0] = min(point.y(), y[0])
+            y[1] = max(point.y(), y[1])
+
+        return QtCore.QRect(int(x[0]), int(y[0]), int(x[1] - x[0]), int(y[1] - y[0]))
 
     def canAddPoint(self):
         return self.shape_type in ["polygon"]
@@ -453,29 +452,26 @@ class Shape(object):
         self._highlightIndex = None
 
     def copy(self):
-        shape = Shape(parent=self.parent, id = self._id)
+        shape = Shape(parent=self.parent, id=self._id)
         shape.label = self.label
         shape.points = copy.deepcopy(self.points)
         shape.shape_type = self.shape_type
-        shape.flags = self.flags
         shape.description = self.description
-    
-    def _copyWithChildren(self, list : List["Shape"], parent : "Shape" = None):
-        shape = Shape(parent=parent,id = self._id)
+
+    def _copyWithChildren(self, list: List["Shape"], parent: "Shape" = None):
+        shape = Shape(parent=parent, id=self._id)
         shape.label = self.label
         shape.points = copy.deepcopy(self.points)
         shape.shape_type = self.shape_type
-        shape.flags = self.flags
         shape.description = self.description
         list.append(shape)
         for child in self._children:
-            child._copyWithChildren(list,shape)
-    
+            child._copyWithChildren(list, shape)
+
     def copyWithChildren(self):
-        allShapes : List[Shape] = []
+        allShapes: List[Shape] = []
         self._copyWithChildren(allShapes, None)
         return allShapes
-        
 
     def __len__(self):
         return len(self.points)

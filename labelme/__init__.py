@@ -5,7 +5,6 @@ import sys
 
 from qtpy import QT_VERSION
 
-
 __appname__ = "labelme"
 
 # Semantic Versioning 2.0.0: https://semver.org/

@@ -36,7 +36,6 @@ class LabelDialog(QtWidgets.QDialog):
         show_text_field=True,
         completion="startswith",
         fit_to_content=None,
-        flags=None,
     ):
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
@@ -47,8 +46,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setPlaceholderText(text)
         self.edit.setValidator(labelme.utils.labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
-        if flags:
-            self.edit.textChanged.connect(self.updateFlags)
         self.edit_group_id = QtWidgets.QLineEdit()
         self.edit_group_id.setPlaceholderText("Group ID")
         self.edit_group_id.setValidator(
@@ -89,14 +86,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.labelList.setFixedHeight(150)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
-        # label_flags
-        if flags is None:
-            flags = {}
-        self._flags = flags
-        self.flagsLayout = QtWidgets.QVBoxLayout()
-        self.resetFlags()
-        layout.addItem(self.flagsLayout)
-        self.edit.textChanged.connect(self.updateFlags)
         # text edit
         self.editDescription = QtWidgets.QTextEdit()
         self.editDescription.setPlaceholderText("Label description")
@@ -153,53 +142,13 @@ class LabelDialog(QtWidgets.QDialog):
             text = text.trimmed()
         self.edit.setText(text)
 
-    def updateFlags(self, label_new):
-        # keep state of shared flags
-        flags_old = self.getFlags()
-
-        flags_new = {}
-        for pattern, keys in self._flags.items():
-            if re.match(pattern, label_new):
-                for key in keys:
-                    flags_new[key] = flags_old.get(key, False)
-        self.setFlags(flags_new)
-
-    def deleteFlags(self):
-        for i in reversed(range(self.flagsLayout.count())):
-            item = self.flagsLayout.itemAt(i).widget()
-            self.flagsLayout.removeWidget(item)
-            item.setParent(None)
-
-    def resetFlags(self, label=""):
-        flags = {}
-        for pattern, keys in self._flags.items():
-            if re.match(pattern, label):
-                for key in keys:
-                    flags[key] = False
-        self.setFlags(flags)
-
-    def setFlags(self, flags):
-        self.deleteFlags()
-        for key in flags:
-            item = QtWidgets.QCheckBox(key, self)
-            item.setChecked(flags[key])
-            self.flagsLayout.addWidget(item)
-            item.show()
-
-    def getFlags(self):
-        flags = {}
-        for i in range(self.flagsLayout.count()):
-            item = self.flagsLayout.itemAt(i).widget()
-            flags[item.text()] = item.isChecked()
-        return flags
-
     def getGroupId(self):
         group_id = self.edit_group_id.text()
         if group_id:
             return int(group_id)
         return None
 
-    def popUp(self, text=None, move=True, flags=None, group_id=None, description=None):
+    def popUp(self, text=None, move=True, group_id=None, description=None):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
@@ -213,10 +162,6 @@ class LabelDialog(QtWidgets.QDialog):
         if description is None:
             description = ""
         self.editDescription.setPlainText(description)
-        if flags:
-            self.setFlags(flags)
-        else:
-            self.resetFlags(text)
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         if group_id is None:
@@ -236,9 +181,8 @@ class LabelDialog(QtWidgets.QDialog):
         if self.exec_():
             return (
                 self.edit.text(),
-                self.getFlags(),
                 self.getGroupId(),
                 self.editDescription.toPlainText(),
             )
         else:
-            return None, None, None, None
+            return None, None, None

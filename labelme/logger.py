@@ -29,7 +29,6 @@ class ColoredFormatter(logging.Formatter):
     def format(self, record):
         levelname = record.levelname
         if self.use_color and levelname in COLORS:
-
             def colored(text):
                 return termcolor.colored(
                     text,

@@ -1,11 +1,7 @@
 auto_save: true
 display_label_popup: true
-keep_prev: false
-keep_prev_scale: false
 logger_level: info
 
-flags: null
-label_flags: null
 labels: null
 file_search: null
 sort_labels: true
@@ -33,11 +29,6 @@ ai:
   default: 'EfficientSam (accuracy)'
 
 # main
-flag_dock:
-  show: true
-  closable: true
-  movable: true
-  floatable: true
 label_dock:
   show: true
   closable: true
@@ -64,7 +55,6 @@ fit_to_content:
 # canvas
 epsilon: 10.0
 canvas:
-  fill_drawing: true
   # None: do nothing
   # close: close polygon
   double_click: close
@@ -115,7 +105,6 @@ shortcuts:
   undo_last_point: Ctrl+Z
   add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
-  toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
 
   select: Ctrl+A

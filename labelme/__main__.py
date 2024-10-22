@@ -33,7 +33,7 @@ def main():
         "-O",
         "-o",
         help="output file or directory (if it ends with .json it is "
-        "recognized as file, else as directory)",
+             "recognized as file, else as directory)",
     )
     default_config_file = os.path.join(os.path.expanduser("~"), ".labelmerc")
     parser.add_argument(
@@ -67,19 +67,6 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--flags",
-        help="comma separated list of flags OR file containing flags",
-        default=argparse.SUPPRESS,
-    )
-    parser.add_argument(
-        "--labelflags",
-        dest="label_flags",
-        help=r"yaml string of label specific flags OR file containing json "
-        r"string of label specific flags (ex. {person-\d+: [male, tall], "
-        r"dog-\d+: [black, brown, white], .*: [occluded]})",  # NOQA
-        default=argparse.SUPPRESS,
-    )
-    parser.add_argument(
         "--labels",
         help="comma separated list of labels OR file containing labels",
         default=argparse.SUPPRESS,
@@ -89,12 +76,6 @@ def main():
         dest="validate_label",
         choices=["exact"],
         help="label validation types",
-        default=argparse.SUPPRESS,
-    )
-    parser.add_argument(
-        "--keep-prev",
-        action="store_true",
-        help="keep annotation of previous frame",
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -111,26 +92,12 @@ def main():
 
     logger.setLevel(getattr(logging, args.logger_level.upper()))
 
-    if hasattr(args, "flags"):
-        if os.path.isfile(args.flags):
-            with codecs.open(args.flags, "r", encoding="utf-8") as f:
-                args.flags = [line.strip() for line in f if line.strip()]
-        else:
-            args.flags = [line for line in args.flags.split(",") if line]
-
     if hasattr(args, "labels"):
         if os.path.isfile(args.labels):
             with codecs.open(args.labels, "r", encoding="utf-8") as f:
                 args.labels = [line.strip() for line in f if line.strip()]
         else:
             args.labels = [line for line in args.labels.split(",") if line]
-
-    if hasattr(args, "label_flags"):
-        if os.path.isfile(args.label_flags):
-            with codecs.open(args.label_flags, "r", encoding="utf-8") as f:
-                args.label_flags = yaml.safe_load(f)
-        else:
-            args.label_flags = yaml.safe_load(args.label_flags)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")
