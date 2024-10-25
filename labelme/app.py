@@ -1606,7 +1606,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.repaint()
 
     def saveFile(self, _value=False):
-        print(123)
         assert not self.image.isNull(), "cannot save empty image"
         if self.labelFile:
             # DL20180323 - overwrite when in directory
@@ -1616,16 +1615,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.close()
         else:
             self._saveFile(self.saveFileDialog())
-        print(234)
 
     def saveFileAs(self, _value=False):
-        print(345)
         assert not self.image.isNull(), "cannot save empty image"
         self._saveFile(self.saveFileDialog())
-        print(456)
 
     def saveFileDialog(self):
-        print(567)
         caption = self.tr("%s - Choose File") % __appname__
         filters = self.tr("Label files (*%s)") % LabelFile.suffix
         if self.output_dir:
@@ -1653,15 +1648,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if isinstance(filename, tuple):
             filename, _ = filename
-        print(678)
         return filename
 
     def _saveFile(self, filename):
-        print(789)
         if filename and self.saveLabels(filename):
             self.addRecentFile(filename)
             self.setClean()
-        print(890)
 
     def closeFile(self, _value=False):
         if not self.mayContinue():
