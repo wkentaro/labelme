@@ -1,7 +1,5 @@
 # flake8: noqa
 
-from .ai_prompt_widget import AiPromptWidget
-
 from .canvas import Canvas
 
 from .color_dialog import ColorDialog

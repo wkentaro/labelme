@@ -25,7 +25,6 @@ from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import Shape, ShapeClass
-from labelme.widgets import AiPromptWidget
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
@@ -310,13 +309,6 @@ class MainWindow(QtWidgets.QMainWindow):
             "objects",
             self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
             enabled=False,
-        )
-        createAiPolygonMode.changed.connect(
-            lambda: self.canvas.initializeAiModel(
-                name=self._selectAiModelComboBox.currentText()
-            )
-            if self.canvas.createMode == "ai_polygon"
-            else None
         )
         editMode = action(
             self.tr("Edit Polygons"),
@@ -649,42 +641,6 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        selectAiModel = QtWidgets.QWidgetAction(self)
-        selectAiModel.setDefaultWidget(QtWidgets.QWidget())
-        selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
-        #
-        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
-        selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
-        selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
-        #
-        self._selectAiModelComboBox = QtWidgets.QComboBox()
-        selectAiModel.defaultWidget().layout().addWidget(self._selectAiModelComboBox)
-        model_names = [model.name for model in MODELS]
-        self._selectAiModelComboBox.addItems(model_names)
-        if self._config["ai"]["default"] in model_names:
-            model_index = model_names.index(self._config["ai"]["default"])
-        else:
-            logger.warning(
-                "Default AI model is not found: %r",
-                self._config["ai"]["default"],
-            )
-            model_index = 0
-        self._selectAiModelComboBox.setCurrentIndex(model_index)
-        self._selectAiModelComboBox.currentIndexChanged.connect(
-            lambda: self.canvas.initializeAiModel(
-                name=self._selectAiModelComboBox.currentText()
-            )
-            if self.canvas.createMode in ["ai_polygon"]
-            else None
-        )
-        
-        
-        self._ai_prompt_widget: QtWidgets.QWidget = AiPromptWidget(
-            on_submit=self._submit_ai_prompt, parent=self
-        )
-        ai_prompt_action = QtWidgets.QWidgetAction(self)
-        ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
-
         self._markup_level_wiget: QtWidgets.QWidget = MarkupLevelWidget(parent=self)
         markup_level_widget = QtWidgets.QWidgetAction(self)
         markup_level_widget.setDefaultWidget(self._markup_level_wiget)
@@ -711,11 +667,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWindow,
             zoom,
             None,
-            selectAiModel,
-            None,
             manuscript_type_action,
-            None,
-            ai_prompt_action,
             None,
             markup_level_widget,
             None
@@ -865,66 +817,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
-
-    def _submit_ai_prompt(self, _) -> None:
-        texts = self._ai_prompt_widget.get_text_prompt().split(",")
-        boxes, scores, labels = ai.get_rectangles_from_texts(
-            model="yoloworld",
-            image=utils.img_qt_to_arr(self.image)[:, :, :3],
-            texts=texts,
-        )
-
-        for shape in self.canvas.shapes:
-            if shape.shape_type != "rectangle" or shape.label not in texts:
-                continue
-            box = np.array(
-                [
-                    shape.points[0].x(),
-                    shape.points[0].y(),
-                    shape.points[1].x(),
-                    shape.points[1].y(),
-                ],
-                dtype=np.float32,
-            )
-            boxes = np.r_[boxes, [box]]
-            scores = np.r_[scores, [1.01]]
-            labels = np.r_[labels, [texts.index(shape.label)]]
-
-        boxes, scores, labels = ai.non_maximum_suppression(
-            boxes=boxes,
-            scores=scores,
-            labels=labels,
-            iou_threshold=self._ai_prompt_widget.get_iou_threshold(),
-            score_threshold=self._ai_prompt_widget.get_score_threshold(),
-            max_num_detections=100,
-        )
-
-        keep = scores != 1.01
-        boxes = boxes[keep]
-        scores = scores[keep]
-        labels = labels[keep]
-
-        shape_dicts: list[dict] = ai.get_shapes_from_annotations(
-            boxes=boxes,
-            scores=scores,
-            labels=labels,
-            texts=texts,
-        )
-
-        shapes: list[Shape] = []
-        for shape_dict in shape_dicts:
-            shape = Shape(
-                label=shape_dict["label"],
-                shape_type=shape_dict["shape_type"],
-                description=shape_dict["description"],
-            )
-            for point in shape_dict["points"]:
-                shape.addPoint(QtCore.QPointF(*point))
-            shapes.append(shape)
-
-        self.canvas.storeShapes()
-        self.loadShapes(shapes, replace=False)
-        self.setDirty()
 
     def resetState(self):
         self.labelList.clear()
