@@ -1736,22 +1736,27 @@ class MainWindow(QtWidgets.QMainWindow):
     def mayContinue(self):
         if not self.dirty:
             return True
-        mb = QtWidgets.QMessageBox
-        msg = self.tr('Сохранить разметку для "{}" перед закрытием?').format(self.filename)
-        answer = mb.question(
-            self,
-            self.tr("Сохранить разметку?"),
-            msg,
-            mb.Save | mb.Discard | mb.Cancel,
-            mb.Save,
+        
+        messageBox = QtWidgets.QMessageBox(
+            QtWidgets.QMessageBox.Warning,
+            "Внимание",
+            self.tr('Сохранить разметку для "{}" перед закрытием?').format(self.filename)
         )
-        if answer == mb.Discard:
+        save_button = QtWidgets.QPushButton("Сохранить")
+        discard_button = QtWidgets.QPushButton("Не сохранять")
+        cancel_button = QtWidgets.QPushButton("Отменить")
+        messageBox.addButton(save_button, QtWidgets.QMessageBox.YesRole)
+        messageBox.addButton(discard_button, QtWidgets.QMessageBox.NoRole)
+        messageBox.addButton(cancel_button, QtWidgets.QMessageBox.ActionRole)
+
+        result = messageBox.exec_()
+        if result == 1:
             return True
-        elif answer == mb.Save:
+        elif result == 0:
             self.saveFile()
             return True
-        else:  # answer == mb.Cancel
-            return False
+        else:
+            return False 
 
     def errorMessage(self, title, message):
         return QtWidgets.QMessageBox.critical(
