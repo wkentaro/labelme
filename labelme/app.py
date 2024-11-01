@@ -124,28 +124,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.itemDoubleClicked.connect(self._edit_label)
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemDropped.connect(self.labelOrderChanged)
-        self.shape_dock = QtWidgets.QDockWidget(self.tr("Polygon Labels"), self)
-        self.shape_dock.setObjectName("Labels")
+        self.shape_dock = QtWidgets.QDockWidget(self.tr("Метки выделенных объектов"), self)
+        self.shape_dock.setObjectName("Метки")
         self.shape_dock.setWidget(self.labelList)
 
         self.uniqLabelList = UniqueLabelQListWidget()
-        self.uniqLabelList.setToolTip(
-            self.tr(
-                "Select label to start annotating for it. " "Press 'Esc' to deselect."
-            )
-        )
         if self._config["labels"]:
             for label in self._config["labels"]:
                 item = self.uniqLabelList.createItemFromLabel(label)
                 self.uniqLabelList.addItem(item)
                 rgb = self._get_rgb_by_label(label)
                 self.uniqLabelList.setItemLabel(item, label, rgb)
-        self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
-        self.label_dock.setObjectName("Label List")
+        self.label_dock = QtWidgets.QDockWidget(self.tr("Список меток"), self)
+        self.label_dock.setObjectName("Список меток")
         self.label_dock.setWidget(self.uniqLabelList)
 
         self.fileSearch = QtWidgets.QLineEdit()
-        self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
+        self.fileSearch.setPlaceholderText(self.tr("Поиск файла"))
         self.fileSearch.textChanged.connect(self.fileSearchChanged)
         self.fileListWidget = QtWidgets.QListWidget()
         self.fileListWidget.itemSelectionChanged.connect(self.fileSelectionChanged)
@@ -154,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListLayout.setSpacing(0)
         fileListLayout.addWidget(self.fileSearch)
         fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
+        self.file_dock = QtWidgets.QDockWidget(self.tr("Список файлов"), self)
         self.file_dock.setObjectName("Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
@@ -209,141 +204,141 @@ class MainWindow(QtWidgets.QMainWindow):
         action = functools.partial(utils.newAction, self)
         shortcuts = self._config["shortcuts"]
         quit = action(
-            self.tr("&Quit"),
+            self.tr("&Выйти"),
             self.close,
             shortcuts["quit"],
             "quit",
-            self.tr("Quit application"),
+            self.tr("Выйти из приложения"),
         )
         open_ = action(
-            self.tr("&Open\n"),
+            self.tr("&Открыть файл"),
             self.openFile,
             shortcuts["open"],
             "open",
-            self.tr("Open image or label file"),
+            self.tr("Открыть изображение или файл разметки"),
         )
         opendir = action(
-            self.tr("Open Dir"),
+            self.tr("Открыть папку"),
             self.openDirDialog,
             shortcuts["open_dir"],
             "open",
-            self.tr("Open Dir"),
+            self.tr("Открыть папку"),
         )
         openNextImg = action(
-            self.tr("&Next Image"),
+            self.tr("&Следующее изображение"),
             self.openNextImg,
             shortcuts["open_next"],
             "next",
-            self.tr("Open next (hold Ctl+Shift to copy labels)"),
+            self.tr("Следующее изображение"),
             enabled=False,
         )
         openPrevImg = action(
-            self.tr("&Prev Image"),
+            self.tr("&Предыдущее изображение"),
             self.openPrevImg,
             shortcuts["open_prev"],
             "prev",
-            self.tr("Open prev (hold Ctl+Shift to copy labels)"),
+            self.tr("Предыдущее изображение"),
             enabled=False,
         )
         save = action(
-            self.tr("&Save\n"),
+            self.tr("&Сохранить\n"),
             self.saveFile,
             shortcuts["save"],
             "save",
-            self.tr("Save labels to file"),
+            self.tr("Сохранить разметку в файл разметки"),
             enabled=False,
         )
         saveAs = action(
-            self.tr("&Save As"),
+            self.tr("&Сохранить как"),
             self.saveFileAs,
             shortcuts["save_as"],
             "save-as",
-            self.tr("Save labels to a different file"),
+            self.tr("Сохранить разметку в файл разметки (откроется проводник)"),
             enabled=False,
         )
 
         deleteFile = action(
-            self.tr("&Delete File"),
+            self.tr("&Удалить файл"),
             self.deleteFile,
             shortcuts["delete_file"],
             "delete",
-            self.tr("Delete current label file"),
+            self.tr("Удалить файл разметки"),
             enabled=False,
         )
 
         changeOutputDir = action(
-            self.tr("&Change Output Dir"),
+            self.tr("&Изменить папку для файла разметки"),
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="open",
-            tip=self.tr("Change where annotations are loaded/saved"),
+            tip=self.tr("Изменить папку, куда сохраняются и откуда читаются файлы разметки"),
         )
 
         saveAuto = action(
-            text=self.tr("Save &Automatically"),
+            text=self.tr("Сохранить &автоматически"),
             slot=lambda x: self.actions.saveAuto.setChecked(x),
             icon="save",
-            tip=self.tr("Save automatically"),
+            tip=self.tr("Сохранить автоматически"),
             checkable=True,
             enabled=True,
         )
         saveAuto.setChecked(self._config["auto_save"])
 
         close = action(
-            self.tr("&Close"),
+            self.tr("&Закрыть"),
             self.closeFile,
             shortcuts["close"],
             "close",
-            self.tr("Close current file"),
+            self.tr("Закрыть текущий файл"),
         )
 
         createRectangleMode = action(
-            self.tr("Create Rectangle"),
+            self.tr("Создать прямоугольник"),
             lambda: self.toggleDrawMode(False, createMode="rectangle"),
             shortcuts["create_rectangle"],
             "objects",
-            self.tr("Start drawing rectangles"),
+            self.tr("Создать прямоугольник для обрамления области текста/строки/символа"),
             enabled=False,
         )
         createAiPolygonMode = action(
-            self.tr("Create AI-Polygon"),
+            self.tr("Создать ИИ-прямоугольник"),
             lambda: self.toggleDrawMode(False, createMode="ai_polygon"),
             None,
             "objects",
-            self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
+            self.tr("Создать ИИ-прямоугольник"),
             enabled=False,
         )
         editMode = action(
-            self.tr("Edit Polygons"),
+            self.tr("Изменить прямоугольник"),
             self.setEditMode,
             shortcuts["edit_polygon"],
             "edit",
-            self.tr("Move and edit the selected polygons"),
+            self.tr("Передвинуть прямоугольник или изменить его метку"),
             enabled=False,
         )
 
         delete = action(
-            self.tr("Delete Polygons"),
+            self.tr("Удалить прямоугольник"),
             self.deleteSelectedShape,
             shortcuts["delete_polygon"],
             "cancel",
-            self.tr("Delete the selected polygons"),
+            self.tr("Удалить выбранный прямоугольник"),
             enabled=False,
         )
         undoLastPoint = action(
-            self.tr("Undo last point"),
+            self.tr("Изменить последнюю точку"),
             self.canvas.undoLastPoint,
             shortcuts["undo_last_point"],
             "undo",
-            self.tr("Undo last drawn point"),
+            self.tr("Изменить последнюю точку"),
             enabled=False,
         )
         removePoint = action(
-            text=self.tr("Remove Selected Point"),
+            text=self.tr("Удалить точку из прямоугольника"),
             slot=self.removeSelectedPoint,
             shortcut=shortcuts["remove_selected_point"],
             icon="edit",
-            tip=self.tr("Remove selected point from polygon"),
+            tip=self.tr("Удалить выбранную точку из прямоугольника"),
             enabled=False,
         )
 
@@ -351,125 +346,112 @@ class MainWindow(QtWidgets.QMainWindow):
         # Отвечает за "переход" к элементу, чтобы создавались его потомки
         # т.е. в тексте создавались строки, а в строках буквы
         selectShape = action(
-            text=self.tr("Select rectangle"),
+            text=self.tr("Выбрать прямоугольник"),
             slot=self.selectShape,
             shortcut=shortcuts["select"],
             icon="edit",
-            tip=self.tr("Select rectangle and zoom in"),
+            tip=self.tr("Выбрать прямоугольник для фокуса на нём и дальнейшей его разметки"),
             enabled=True,
         )
         deSelectShape = action(
-            text=self.tr("De select rectangle"),
+            text=self.tr("Снять выделение"),
             slot=self.deSelectShape,
             shortcut=shortcuts["deselect"],
             icon="edit",
-            tip=self.tr("De select rectangle and zoom out"),
+            tip=self.tr("Вернуться на уровень назад к родительской строке/области текста"),
             enabled=True,
         )
 
         undo = action(
-            self.tr("Undo\n"),
+            self.tr("Отменить\n"),
             self.undoShapeEdit,
             shortcuts["undo"],
             "undo",
-            self.tr("Undo last add and edit of shape"),
+            self.tr("Отменить последнее изменение"),
             enabled=False,
         )
 
         hideAll = action(
-            self.tr("&Hide\nPolygons"),
+            self.tr("&Скрыть\nПолигоны"),
             functools.partial(self.togglePolygons, False),
             shortcuts["hide_all_polygons"],
             icon="eye",
-            tip=self.tr("Hide all polygons"),
+            tip=self.tr("Скрыть все полигоны"),
             enabled=False,
         )
         showAll = action(
-            self.tr("&Show\nPolygons"),
+            self.tr("&Показать\nПолигоны"),
             functools.partial(self.togglePolygons, True),
             shortcuts["show_all_polygons"],
             icon="eye",
-            tip=self.tr("Show all polygons"),
+            tip=self.tr("Показать все полигоны"),
             enabled=False,
         )
         toggleAll = action(
-            self.tr("&Toggle\nPolygons"),
+            self.tr("&Переключить\nПолигоны"),
             functools.partial(self.togglePolygons, None),
             shortcuts["toggle_all_polygons"],
             icon="eye",
-            tip=self.tr("Toggle all polygons"),
+            tip=self.tr("Переключить полигоны"),
             enabled=False,
         )
 
         help = action(
-            self.tr("&Tutorial"),
+            self.tr("&Инструкция"),
             self.tutorial,
             icon="help",
-            tip=self.tr("Show tutorial page"),
+            tip=self.tr("Показать инструкцию по выполнению разметки"),
         )
 
         zoom = QtWidgets.QWidgetAction(self)
         zoomBoxLayout = QtWidgets.QVBoxLayout()
-        zoomLabel = QtWidgets.QLabel(self.tr("Zoom"))
+        zoomLabel = QtWidgets.QLabel(self.tr("Масштаб"))
         zoomLabel.setAlignment(Qt.AlignCenter)
         zoomBoxLayout.addWidget(zoomLabel)
         zoomBoxLayout.addWidget(self.zoomWidget)
         zoom.setDefaultWidget(QtWidgets.QWidget())
         zoom.defaultWidget().setLayout(zoomBoxLayout)
-        self.zoomWidget.setWhatsThis(
-            str(
-                self.tr(
-                    "Zoom in or out of the image. Also accessible with "
-                    "{} and {} from the canvas."
-                )
-            ).format(
-                utils.fmtShortcut(
-                    "{},{}".format(shortcuts["zoom_in"], shortcuts["zoom_out"])
-                ),
-                utils.fmtShortcut(self.tr("Ctrl+Wheel")),
-            )
-        )
         self.zoomWidget.setEnabled(False)
 
         zoomIn = action(
-            self.tr("Zoom &In"),
+            self.tr("Приблизиться"),
             functools.partial(self.addZoom, 1.1),
             shortcuts["zoom_in"],
             "zoom-in",
-            self.tr("Increase zoom level"),
+            self.tr("Приблизиться к изображению"),
             enabled=False,
         )
         zoomOut = action(
-            self.tr("&Zoom Out"),
+            self.tr("&Отдалиться"),
             functools.partial(self.addZoom, 0.9),
             shortcuts["zoom_out"],
             "zoom-out",
-            self.tr("Decrease zoom level"),
+            self.tr("Отдалиться от изображения"),
             enabled=False,
         )
         zoomOrg = action(
-            self.tr("&Original size"),
+            self.tr("&Оригинальный размер"),
             functools.partial(self.setZoom, 100),
             shortcuts["zoom_to_original"],
             "zoom",
-            self.tr("Zoom to original size"),
+            self.tr("Растянуть картинку до её оригинального размера"),
             enabled=False,
         )
         fitWindow = action(
-            self.tr("&Fit Window"),
+            self.tr("&Размер окна"),
             self.setFitWindow,
             shortcuts["fit_window"],
             "fit-window",
-            self.tr("Zoom follows window size"),
+            self.tr("Изменить масштаб изображения до размера окна, в котором оно открыто"),
             checkable=True,
             enabled=False,
         )
         fitWidth = action(
-            self.tr("Fit &Width"),
+            self.tr("Масштабировать & по ширине"),
             self.setFitWidth,
             shortcuts["fit_width"],
             "fit-width",
-            self.tr("Zoom follows window width"),
+            self.tr("Изменить масштаб изображения по ширине до размера окна, в котором оно открыто"),
             checkable=True,
             enabled=False,
         )
@@ -492,11 +474,11 @@ class MainWindow(QtWidgets.QMainWindow):
         }
 
         edit = action(
-            self.tr("&Edit Label"),
+            self.tr("&Изменить метку"),
             self._edit_label,
             shortcuts["edit_label"],
             "edit",
-            self.tr("Modify the label of the selected polygon"),
+            self.tr("Изменить метку выбранного прямоугольника"),
             enabled=False,
         )
 
@@ -583,11 +565,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
 
         self.menus = utils.struct(
-            file=self.menu(self.tr("&File")),
-            edit=self.menu(self.tr("&Edit")),
-            view=self.menu(self.tr("&View")),
-            help=self.menu(self.tr("&Help")),
-            recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
+            file=self.menu(self.tr("&Файл")),
+            edit=self.menu(self.tr("&Изменить")),
+            view=self.menu(self.tr("&Вид")),
+            help=self.menu(self.tr("&Помощь")),
+            recentFiles=QtWidgets.QMenu(self.tr("Открыть &недавнее")),
             labelList=labelMenu,
         )
 
@@ -676,7 +658,7 @@ class MainWindow(QtWidgets.QMainWindow):
             None
         )
 
-        self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
+        self.statusBar().showMessage(str(self.tr("%s запущен.")) % __appname__)
         self.statusBar().show()
 
         if output_file is not None and self._config["auto_save"]:
@@ -1007,8 +989,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def _update_item(self, item, text, diacritical):
         if not self.validateLabel(text):
             self.errorMessage(
-                self.tr("Invalid label"),
-                self.tr("Invalid label '{}' with validation type '{}'").format(
+                self.tr("Некорректная метка"),
+                self.tr("Некорректная метка '{}' Тип валидации '{}'").format(
                     text, self._config["validate_label"]
                 ),
             )
@@ -1243,7 +1225,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
         except LabelFileError as e:
             self.errorMessage(
-                self.tr("Error saving label data"), self.tr("<b>%s</b>") % e
+                self.tr("Ошибка сохранения файла разметки"), self.tr("<b>%s</b>") % e
             )
             return False
 
@@ -1394,12 +1376,12 @@ class MainWindow(QtWidgets.QMainWindow):
         filename = str(filename)
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
-                self.tr("Error opening file"),
-                self.tr("No such file: <b>%s</b>") % filename,
+                self.tr("Ошибка сохранения файла разметки"),
+                self.tr("Нет такого файла разметки: <b>%s</b>") % filename,
             )
             return False
         # assumes same name, but json extension
-        self.status(str(self.tr("Loading %s...")) % osp.basename(str(filename)))
+        self.status(str(self.tr("Загрузка файла разметки %s...")) % osp.basename(str(filename)))
         label_file = osp.splitext(filename)[0] + ".json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
@@ -1409,14 +1391,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.labelFile = LabelFile(label_file)
             except LabelFileError as e:
                 self.errorMessage(
-                    self.tr("Error opening file"),
+                    self.tr("Ошибка при открытии файла разметки"),
                     self.tr(
                         "<p><b>%s</b></p>"
-                        "<p>Make sure <i>%s</i> is a valid label file."
+                        "<p>Убедитесь, что <i>%s</i> является корректным файлом разметки."
                     )
                     % (e, label_file),
                 )
-                self.status(self.tr("Error reading %s") % label_file)
+                self.status(self.tr("Ошибка чтения файла разметки %s") % label_file)
                 return False
             self.imageData = self.labelFile.imageData
             self.imagePath = osp.join(
@@ -1439,13 +1421,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 for fmt in QtGui.QImageReader.supportedImageFormats()
             ]
             self.errorMessage(
-                self.tr("Error opening file"),
+                self.tr("Ошибка при открытии файла разметки"),
                 self.tr(
-                    "<p>Make sure <i>{0}</i> is a valid image file.<br/>"
-                    "Supported image formats: {1}</p>"
+                    "<p>Убедитесь, что <i>{0}</i> является корректным файлом разметки.<br/>"
+                    "Поддерживаемые расширения изображений: {1}</p>"
                 ).format(filename, ",".join(formats)),
             )
-            self.status(self.tr("Error reading %s") % filename)
+            self.status(self.tr("Ошибка чтения файла разметки %s") % filename)
             return False
         self.image = image
         self.filename = filename
@@ -1471,7 +1453,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addRecentFile(self.filename)
         self.toggleActions(True)
         self.canvas.setFocus()
-        self.status(str(self.tr("Loaded %s")) % osp.basename(str(filename)))
+        self.status(str(self.tr("Загружен %s")) % osp.basename(str(filename)))
         return True
 
     def resizeEvent(self, event):
@@ -1595,7 +1577,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "*.{}".format(fmt.data().decode())
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-        filters = self.tr("Image & Label files (%s)") % " ".join(
+        filters = self.tr("Изображения и файлы разметки (%s)") % " ".join(
             formats + ["*%s" % LabelFile.suffix]
         )
         fileDialog = FileDialogPreview(self)
@@ -1603,7 +1585,7 @@ class MainWindow(QtWidgets.QMainWindow):
         fileDialog.setFileMode(FileDialogPreview.ExistingFile)
         fileDialog.setNameFilter(filters)
         fileDialog.setWindowTitle(
-            self.tr("%s - Choose Image or Label file") % __appname__,
+            self.tr("%s - Выберите изображение или файл разметки") % __appname__,
         )
         fileDialog.setWindowFilePath(path)
         fileDialog.setViewMode(FileDialogPreview.Detail)
@@ -1622,7 +1604,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self,
-            self.tr("%s - Save/Load Annotations in Directory") % __appname__,
+            self.tr("%s - Сохранить/Загрузить разметку в папку") % __appname__,
             default_output_dir,
             QtWidgets.QFileDialog.ShowDirsOnly
             | QtWidgets.QFileDialog.DontResolveSymlinks,
@@ -1635,8 +1617,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.output_dir = output_dir
 
         self.statusBar().showMessage(
-            self.tr("%s . Annotations will be saved/loaded in %s")
-            % ("Change Annotations Dir", self.output_dir)
+            self.tr("%s . Файл разметки будет сохранён в %s")
+            % ("Изменить папку для файлов разметки", self.output_dir)
         )
         self.statusBar().show()
 
@@ -1664,8 +1646,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._saveFile(self.saveFileDialog())
 
     def saveFileDialog(self):
-        caption = self.tr("%s - Choose File") % __appname__
-        filters = self.tr("Label files (*%s)") % LabelFile.suffix
+        caption = self.tr("%s - Выбрать файл разметки") % __appname__
+        filters = self.tr("Файлы разметки (*%s)") % LabelFile.suffix
         if self.output_dir:
             dlg = QtWidgets.QFileDialog(self, caption, self.output_dir, filters)
         else:
@@ -1685,9 +1667,9 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         filename = dlg.getSaveFileName(
             self,
-            self.tr("Choose File"),
+            self.tr("Выбрать файлы разметки"),
             default_labelfile_name,
-            self.tr("Label files (*%s)") % LabelFile.suffix,
+            self.tr("Файлы разметки (*%s)") % LabelFile.suffix,
         )
         if isinstance(filename, tuple):
             filename, _ = filename
@@ -1718,9 +1700,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def deleteFile(self):
         mb = QtWidgets.QMessageBox
         msg = self.tr(
-            "You are about to permanently delete this label file, " "proceed anyway?"
+            "Вы хотите навсегда удалить файл разметки, " "уверены?"
         )
-        answer = mb.warning(self, self.tr("Attention"), msg, mb.Yes | mb.No)
+        answer = mb.warning(self, self.tr("Внимание"), msg, mb.Yes | mb.No)
         if answer != mb.Yes:
             return
 
@@ -1755,10 +1737,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.dirty:
             return True
         mb = QtWidgets.QMessageBox
-        msg = self.tr('Save annotations to "{}" before closing?').format(self.filename)
+        msg = self.tr('Сохранить разметку для "{}" перед закрытием?').format(self.filename)
         answer = mb.question(
             self,
-            self.tr("Save annotations?"),
+            self.tr("Сохранить разметку?"),
             msg,
             mb.Save | mb.Discard | mb.Cancel,
             mb.Save,
@@ -1801,10 +1783,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
-            "You are about to permanently delete {} polygons, " "proceed anyway?"
+            "Вы хотите навсегда удалить {} полигон(ов), " "уверены?"
         ).format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
-                self, self.tr("Attention"), msg, yes | no, yes
+                self, self.tr("Внимание"), msg, yes | no, yes
         ):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
@@ -1837,7 +1819,7 @@ class MainWindow(QtWidgets.QMainWindow):
         targetDirPath = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
-                self.tr("%s - Open Directory") % __appname__,
+                self.tr("%s - Открыть папку") % __appname__,
                 defaultOpenDirPath,
                 QtWidgets.QFileDialog.ShowDirsOnly
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
