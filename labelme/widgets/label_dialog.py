@@ -14,7 +14,6 @@ QT5 = QT_VERSION[0] == "5"
 # TODO(unknown):
 # - Calculate optimal position so as not to go out of screen area.
 
-
 class LabelQLineEdit(QtWidgets.QLineEdit):
     def setListWidget(self, list_widget):
         self.list_widget = list_widget
@@ -24,7 +23,6 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
             self.list_widget.keyPressEvent(e)
         else:
             super(LabelQLineEdit, self).keyPressEvent(e)
-
 
 class LabelDialog(QtWidgets.QDialog):
     def __init__(

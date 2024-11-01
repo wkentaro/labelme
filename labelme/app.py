@@ -33,6 +33,9 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from labelme.widgets import LabelLetterDialog
+from labelme.widgets import LabelLineDialog
+from labelme.widgets.label_letter_dialog import Literal
 from labelme.widgets import ManuscriptTypeWidget
 from labelme.widgets.manuscript_type_widget import ManuscriptType
 from labelme.widgets import MarkupLevelWidget
@@ -818,6 +821,66 @@ class MainWindow(QtWidgets.QMainWindow):
     def status(self, message, delay=5000):
         self.statusBar().showMessage(message, delay)
 
+    def _submit_ai_prompt(self, _) -> None:
+        texts = self._ai_prompt_widget.get_text_prompt().split(",")
+        boxes, scores, labels = ai.get_rectangles_from_texts(
+            model="yoloworld",
+            image=utils.img_qt_to_arr(self.image)[:, :, :3],
+            texts=texts,
+        )
+
+        for shape in self.canvas.shapes:
+            if shape.shape_type != "rectangle" or shape.label not in texts:
+                continue
+            box = np.array(
+                [
+                    shape.points[0].x(),
+                    shape.points[0].y(),
+                    shape.points[1].x(),
+                    shape.points[1].y(),
+                ],
+                dtype=np.float32,
+            )
+            boxes = np.r_[boxes, [box]]
+            scores = np.r_[scores, [1.01]]
+            labels = np.r_[labels, [texts.index(shape.label)]]
+
+        boxes, scores, labels = ai.non_maximum_suppression(
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            iou_threshold=self._ai_prompt_widget.get_iou_threshold(),
+            score_threshold=self._ai_prompt_widget.get_score_threshold(),
+            max_num_detections=100,
+        )
+
+        keep = scores != 1.01
+        boxes = boxes[keep]
+        scores = scores[keep]
+        labels = labels[keep]
+
+        shape_dicts: list[dict] = ai.get_shapes_from_annotations(
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            texts=texts,
+        )
+
+        shapes: list[Shape] = []
+        for shape_dict in shape_dicts:
+            shape = Shape(
+                label=shape_dict["label"],
+                diacritical=shape_dict["diacritical"],
+                shape_type=shape_dict["shape_type"],
+            )
+            for point in shape_dict["points"]:
+                shape.addPoint(QtCore.QPointF(*point))
+            shapes.append(shape)
+
+        self.canvas.storeShapes()
+        self.loadShapes(shapes, replace=False)
+        self.setDirty()
+
     def resetState(self):
         self.labelList.clear()
         self.filename = None
@@ -914,56 +977,34 @@ class MainWindow(QtWidgets.QMainWindow):
 
         shape = items[0].shape()
 
-        if len(items) == 1:
-            edit_text = True
-            edit_group_id = True
-            edit_description = True
+        state = shape.getClass()
+        
+        if state == ShapeClass.TEXT:
+            return
+        
+        old_text = shape.label + shape.diacritical
+
+        if state == ShapeClass.ROW:
+            labelLineDialog = LabelLineDialog(self, old_text=old_text)
+            text = labelLineDialog.popUp()
+        elif state == ShapeClass.LETTER:
+            labelLetterDialog = LabelLetterDialog(self, old_text=old_text)
+            text = labelLetterDialog.popUp()
         else:
-            edit_text = all(item.shape().label == shape.label for item in items[1:])
-            edit_group_id = all(
-                item.shape().group_id == shape.group_id for item in items[1:]
-            )
-            edit_description = all(
-                item.shape().description == shape.description for item in items[1:]
-            )
-
-        if not edit_text:
-            self.labelDialog.edit.setDisabled(True)
-            self.labelDialog.labelList.setDisabled(True)
-        if not edit_group_id:
-            self.labelDialog.edit_group_id.setDisabled(True)
-        if not edit_description:
-            self.labelDialog.editDescription.setDisabled(True)
-
-        text, group_id, description = self.labelDialog.popUp(
-            text=shape.label if edit_text else "",
-            group_id=shape.group_id if edit_group_id else None,
-            description=shape.description if edit_description else None,
-        )
-
-        if not edit_text:
-            self.labelDialog.edit.setDisabled(False)
-            self.labelDialog.labelList.setDisabled(False)
-        if not edit_group_id:
-            self.labelDialog.edit_group_id.setDisabled(False)
-        if not edit_description:
-            self.labelDialog.editDescription.setDisabled(False)
+            text = Literal("")
 
         if text is None:
-            assert group_id is None
-            assert description is None
             return
 
         self.canvas.storeShapes()
         for item in items:
             self._update_item(
                 item=item,
-                text=text if edit_text else None,
-                group_id=group_id if edit_group_id else None,
-                description=description if edit_description else None,
+                text=text.letter,
+                diacritical=text.diacritical if text.diacritical is not None else ""
             )
 
-    def _update_item(self, item, text, group_id, description):
+    def _update_item(self, item, text, diacritical):
         if not self.validateLabel(text):
             self.errorMessage(
                 self.tr("Invalid label"),
@@ -977,10 +1018,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if text is not None:
             shape.label = text
-        if group_id is not None:
-            shape.group_id = group_id
-        if description is not None:
-            shape.description = description
+            shape.diacritical = diacritical
 
         self._update_shape_color(shape)
         if shape.group_id is None:
@@ -1112,11 +1150,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _loadLabelsRecursive(self, inputList, shapes, parent: Shape = None):
         for shape_dict in inputList:
-            label = shape_dict["label"]
+            label = shape_dict["label"] if "label" in shape_dict else ""
+            diacritical = shape_dict["diacritical"] if "diacritical" in shape_dict else ""
             points = shape_dict["points"]
             shape_type = shape_dict["shape_type"]
-            description = shape_dict.get("description", "")
-            group_id = shape_dict["group_id"]
             other_data = shape_dict["other_data"]
 
             if not points:
@@ -1125,17 +1162,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
             shape = Shape(
                 label=label,
+                diacritical=diacritical,
                 shape_type=shape_type,
-                group_id=group_id,
-                description=description,
-                mask=shape_dict["mask"],
                 parent=parent,
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
 
-            self._loadLabelsRecursive(shape_dict["shapes"], shapes, parent=shape)
+            self._loadLabelsRecursive(shape_dict["shapes"]  if "shapes" in shape_dict else {}, shapes, parent=shape)
 
             shape.other_data = other_data
             shapes.append(shape)
@@ -1150,22 +1185,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
         def format_shape(s: Shape):
             data = s.other_data.copy()
-            data.update(
-                dict(
-                    label=s.label.encode("utf-8") if PY2 else s.label,
-                    shapes=[format_shape(a) for a in s.getChildren()],
-                    points=[(p.x(), p.y()) for p in s.points],
-                    group_id=s.group_id,
-                    description=s.description,
-                    shape_type=s.shape_type,
-                    mask=None
-                    if s.mask is None
-                    else utils.img_arr_to_b64(s.mask.astype(np.uint8)),
+            shape_type = s.getClass()
+            if shape_type == ShapeClass.TEXT:
+                data.update(
+                    dict(
+                        shapes=[format_shape(a) for a in s.getChildren()],
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type,
+                    )
                 )
-            )
+            elif shape_type == ShapeClass.ROW:
+                data.update(
+                    dict(
+                        label=s.label.encode("utf-8") if PY2 else s.label,
+                        shapes=[format_shape(a) for a in s.getChildren()],
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type,
+                    )
+                )
+            elif shape_type == ShapeClass.LETTER:
+                data.update(
+                    dict(
+                        label=s.label.encode("utf-8") if PY2 else s.label,
+                        diacritical=s.diacritical,
+                        points=[(p.x(), p.y()) for p in s.points],
+                        shape_type=s.shape_type,
+                    )
+                )
+            else:
+                raise Exception("error in shape type in format_shape")
+            
             return data
 
         shapes = [format_shape(item.shape()) for item in self.labelList if item.shape().getClass() == ShapeClass.TEXT]
+
         try:
             imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
             if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
@@ -1217,36 +1270,26 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callback functions:
 
     def newShape(self):
-        """Pop-up and give focus to the label editor.
+        shape = self.canvas.getLastShape()
+        state = shape.getClass()
 
-        position MUST be in global coordinates.
-        """
-        items = self.uniqLabelList.selectedItems()
-        text = None
-        if items:
-            text = items[0].data(Qt.UserRole)
-        group_id = None
-        description = ""
-        if self._config["display_label_popup"] or not text:
-            previous_text = self.labelDialog.edit.text()
-            tmp = self.labelDialog.popUp(text)
-            text, group_id, description = tmp[0], tmp[1], tmp[2]
-            if not text:
-                self.labelDialog.edit.setText(previous_text)
+        if state == ShapeClass.ROW:
+            labelLineDialog = LabelLineDialog(self)
+            text = labelLineDialog.popUp()
+        elif state == ShapeClass.LETTER:
+            labelLetterDialog = LabelLetterDialog(self)
+            text = labelLetterDialog.popUp()
+        else:
+            text = Literal("")
 
-        if text and not self.validateLabel(text):
-            self.errorMessage(
-                self.tr("Invalid label"),
-                self.tr("Invalid label '{}' with validation type '{}'").format(
-                    text, self._config["validate_label"]
-                ),
-            )
-            text = ""
-        if text:
+        if text is not None:
             self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text)
-            shape.group_id = group_id
-            shape.description = description
+            if text.diacritical is not None:
+                shape = self.canvas.setLastLabel(text.letter, diacritical=text.diacritical)
+            else:
+                shape = self.canvas.setLastLabel(text.letter)
+            shape.group_id = None
+            shape.description = None
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)

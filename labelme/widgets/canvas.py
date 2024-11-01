@@ -294,17 +294,6 @@ class Canvas(QtWidgets.QWidget):
             self.current.highlightClear()
             return
 
-        # Polygon copy moving.
-        if QtCore.Qt.RightButton & ev.buttons():
-            if self.selectedShapesCopy and self.prevPoint:
-                self.overrideCursor(CURSOR_MOVE)
-                self.boundedMoveShapes(self.selectedShapesCopy, pos)
-                self.repaint()
-            elif self.selectedShapes:
-                self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-                self.repaint()
-            return
-
         # Polygon/Vertex moving.
         if QtCore.Qt.LeftButton & ev.buttons():
             if self.selectedVertex():
@@ -755,7 +744,8 @@ class Canvas(QtWidgets.QWidget):
             self.line.paint(p)
         if self.selectedShapesCopy:
             for s in self.selectedShapesCopy:
-                s.paint(p)
+                if s is not None:
+                    s.paint(p)
 
         if self.createMode == "ai_polygon" and self.current is not None:
             drawing_shape = self.current.copy()
@@ -965,11 +955,18 @@ class Canvas(QtWidgets.QWidget):
 
                 self.movingShape = False
 
-    def setLastLabel(self, text):
-        assert text
+    def setLastLabel(self, text, diacritical = ""):
         self.shapes[-1].label = text
+        self.shapes[-1].diacritical = diacritical
         self.shapesBackups.pop()
         self.storeShapes()
+        return self.shapes[-1]
+    
+    
+    def getLastShape(self):
+        """
+            Возвращает последний добавленный shape
+        """
         return self.shapes[-1]
 
     def undoLastLine(self):

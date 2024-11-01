@@ -11,6 +11,7 @@ from labelme import QT4
 from labelme import __version__
 from labelme import utils
 from labelme.logger import logger
+from labelme.shape import Shape, ShapeClass
 
 from labelme.widgets.manuscript_type_widget import ManuscriptType
 
@@ -87,33 +88,53 @@ class LabelFile(object):
         """
         shape_keys = [
             "label",
+            "diacritical",
             "points",
-            "group_id",
             "shapes",
             "shape_type",
-            "description",
-            "mask",
         ]
-        shapes = [
-            dict(
-                label=s["label"],
-                shapes=self._loadRecursice(s["shapes"]),
-                points=s["points"],
-                shape_type=s.get("shape_type", "polygon"),
-                description=s.get("description"),
-                group_id=s.get("group_id"),
-                mask=utils.img_b64_to_arr(s["mask"]).astype(bool)
-                if s.get("mask")
-                else None,
-                other_data={k: v for k, v in s.items() if k not in shape_keys},
-            )
-            for s in data
-        ]
+
+        shapes = []
+        for s in data:
+            # Текст
+            if "label" not in s and "diacritical" not in s:
+                shapes.append(
+                    dict(
+                        shapes=self._loadRecursice(s["shapes"]),
+                        points=s["points"],
+                        shape_type=s.get("shape_type", "rectangle"),
+                        other_data={k: v for k, v in s.items() if k not in shape_keys},
+                    )
+                )
+            # Строка 
+            elif "label" in s and "diacritical" not in s:
+                shapes.append(
+                    dict(
+                        label=s["label"],
+                        shapes=self._loadRecursice(s["shapes"]),
+                        points=s["points"],
+                        shape_type=s.get("shape_type", "rectangle"),
+                        other_data={k: v for k, v in s.items() if k not in shape_keys},
+                    )
+                )
+            # Буква
+            elif "label" in s and "diacritical" in s:
+                shapes.append(
+                    dict(
+                        label=s["label"],
+                        diacritical=s["diacritical"],
+                        points=s["points"],
+                        shape_type=s.get("shape_type", "rectangle"),
+                        other_data={k: v for k, v in s.items() if k not in shape_keys},
+                    )
+                )
+            else:
+                raise Exception("error of recognision a .json file in load_recursive")
+
         return shapes
 
     def load(self, filename):
         keys = [
-            "version",
             "imagePath",
             "shapes",  # polygonal annotations
             "imageHeight",
@@ -126,12 +147,12 @@ class LabelFile(object):
 
             imagePath = osp.join(osp.dirname(filename), data["imagePath"])
             imageData = self.load_image_file(imagePath)
-
+            
             if data["textType"] in ManuscriptType:
                 textType = ManuscriptType(data["textType"])
             else:
                 textType = ManuscriptType.USTAV
-            
+                
             imagePath = data["imagePath"]
             self._check_image_height_and_width(
                 base64.b64encode(imageData).decode("utf-8"),
@@ -187,7 +208,6 @@ class LabelFile(object):
         if textType is None:
             textType = ManuscriptType.USTAV
         data = dict(
-            version=__version__,
             shapes=shapes,
             imagePath=imagePath,
             imageHeight=imageHeight,
