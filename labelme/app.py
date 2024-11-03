@@ -388,11 +388,11 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         toggleAll = action(
-            self.tr("&Переключить\nпрямоугольники"),
+            self.tr("&Скрыть/вернуть все\nпрямоугольники"),
             functools.partial(self.togglePolygons, None),
             shortcuts["toggle_all_polygons"],
             icon="eye",
-            tip=self.tr("Переключить прямоугольники"),
+            tip=self.tr("Скрыть/вернуть прямоугольники"),
             enabled=False,
         )
 
@@ -1351,13 +1351,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.adjustScale()
 
     def togglePolygons(self, value):
-        shapes = self.canvas.parentShape.getAllChildren()
+        checked = value
+        if self.canvas.parentShape is not None:
+            shapes = self.canvas.parentShape.getAllChildren()
+        else:
+            shapes = self.canvas.shapes
 
         for item in self.labelList:
             if not item.shape() in shapes:
                 continue
 
-            item.setCheckState(Qt.Unchecked)
+            if value is None:
+                checked = item.checkState() == Qt.Unchecked
+            item.setCheckState(Qt.Checked if checked else Qt.Unchecked)
+                
 
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""

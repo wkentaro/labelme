@@ -148,7 +148,7 @@ class LabelFile(object):
             imagePath = osp.join(osp.dirname(filename), data["imagePath"])
             imageData = self.load_image_file(imagePath)
             
-            if data["textType"] in ManuscriptType:
+            if data["textType"] in [i.value for i in ManuscriptType]:
                 textType = ManuscriptType(data["textType"])
             else:
                 textType = ManuscriptType.USTAV
