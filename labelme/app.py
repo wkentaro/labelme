@@ -166,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
         self.canvas.mouseMoved.connect(
-            lambda pos: self.status(f"Mouse is at: x={pos.x()}, y={pos.y()}")
+            lambda pos: self.status(f"Мышка на позиции: x={pos.x()}, y={pos.y()}")
         )
 
         scrollArea = QtWidgets.QScrollArea()
@@ -267,7 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         changeOutputDir = action(
-            self.tr("&Изменить папку для файла разметки"),
+            self.tr("&Изменить папку для файлов разметки"),
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="open",
@@ -275,10 +275,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         saveAuto = action(
-            text=self.tr("Сохранить &автоматически"),
+            text=self.tr("Сохранять &автоматически"),
             slot=lambda x: self.actions.saveAuto.setChecked(x),
             icon="save",
-            tip=self.tr("Сохранить автоматически"),
+            tip=self.tr("Сохранять автоматически"),
             checkable=True,
             enabled=True,
         )
@@ -372,27 +372,27 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         hideAll = action(
-            self.tr("&Скрыть\nПолигоны"),
+            self.tr("&Скрыть\nпрямоугольники"),
             functools.partial(self.togglePolygons, False),
             shortcuts["hide_all_polygons"],
             icon="eye",
-            tip=self.tr("Скрыть все полигоны"),
+            tip=self.tr("Скрыть все прямоугольники"),
             enabled=False,
         )
         showAll = action(
-            self.tr("&Показать\nПолигоны"),
+            self.tr("&Показать\nпрямоугольники"),
             functools.partial(self.togglePolygons, True),
             shortcuts["show_all_polygons"],
             icon="eye",
-            tip=self.tr("Показать все полигоны"),
+            tip=self.tr("Показать все прямоугольники"),
             enabled=False,
         )
         toggleAll = action(
-            self.tr("&Переключить\nПолигоны"),
+            self.tr("&Переключить\nпрямоугольники"),
             functools.partial(self.togglePolygons, None),
             shortcuts["toggle_all_polygons"],
             icon="eye",
-            tip=self.tr("Переключить полигоны"),
+            tip=self.tr("Переключить прямоугольники"),
             enabled=False,
         )
 
@@ -1698,12 +1698,18 @@ class MainWindow(QtWidgets.QMainWindow):
         return label_file
 
     def deleteFile(self):
-        mb = QtWidgets.QMessageBox
-        msg = self.tr(
-            "Вы хотите навсегда удалить файл разметки, " "уверены?"
+        messageBox = QtWidgets.QMessageBox(
+            QtWidgets.QMessageBox.Warning,
+            "Внимание",
+            self.tr("Вы хотите навсегда удалить файл разметки, уверены?")
         )
-        answer = mb.warning(self, self.tr("Внимание"), msg, mb.Yes | mb.No)
-        if answer != mb.Yes:
+        yes_button = QtWidgets.QPushButton("Да")
+        no_button = QtWidgets.QPushButton("Нет")
+        messageBox.addButton(yes_button, QtWidgets.QMessageBox.YesRole)
+        messageBox.addButton(no_button, QtWidgets.QMessageBox.NoRole)
+
+        result = messageBox.exec_()
+        if result != 0:
             return
 
         label_file = self.getLabelFile()
@@ -1786,13 +1792,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.update()
 
     def deleteSelectedShape(self):
-        yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
-        msg = self.tr(
-            "Вы хотите навсегда удалить {} полигон(ов), " "уверены?"
-        ).format(len(self.canvas.selectedShapes))
-        if yes == QtWidgets.QMessageBox.warning(
-                self, self.tr("Внимание"), msg, yes | no, yes
-        ):
+        messageBox = QtWidgets.QMessageBox(
+            QtWidgets.QMessageBox.Warning,
+            "Внимание",
+            self.tr(
+                "Вы хотите навсегда удалить {} прямоугольник(ов), " "уверены?"
+            ).format(len(self.canvas.selectedShapes))
+        )
+        yes_button = QtWidgets.QPushButton("Да")
+        no_button = QtWidgets.QPushButton("Нет")
+        messageBox.addButton(yes_button, QtWidgets.QMessageBox.YesRole)
+        messageBox.addButton(no_button, QtWidgets.QMessageBox.NoRole)
+
+        result = messageBox.exec_()
+        if result == 0:
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():

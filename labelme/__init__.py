@@ -5,7 +5,7 @@ import sys
 
 from qtpy import QT_VERSION
 
-__appname__ = "labelme"
+__appname__ = "Нейролаб"
 
 # Semantic Versioning 2.0.0: https://semver.org/
 # 1. MAJOR version when you make incompatible API changes;
