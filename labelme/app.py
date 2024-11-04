@@ -140,7 +140,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_dock.setWidget(self.uniqLabelList)
 
         self.fileSearch = QtWidgets.QLineEdit()
-        self.fileSearch.setPlaceholderText(self.tr("Поиск файла"))
+        self.fileSearch.setPlaceholderText(self.tr("Поиск изображений"))
         self.fileSearch.textChanged.connect(self.fileSearchChanged)
         self.fileListWidget = QtWidgets.QListWidget()
         self.fileListWidget.itemSelectionChanged.connect(self.fileSelectionChanged)
@@ -149,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListLayout.setSpacing(0)
         fileListLayout.addWidget(self.fileSearch)
         fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr("Список файлов"), self)
+        self.file_dock = QtWidgets.QDockWidget(self.tr("Список изображений"), self)
         self.file_dock.setObjectName("Files")
         fileListWidget = QtWidgets.QWidget()
         fileListWidget.setLayout(fileListLayout)
@@ -278,7 +278,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Сохранять &автоматически"),
             slot=lambda x: self.actions.saveAuto.setChecked(x),
             icon="save",
-            tip=self.tr("Сохранять автоматически"),
+            tip=self.tr("Сохранять автоматически создаваемые файлы разметки"),
             checkable=True,
             enabled=True,
         )
@@ -289,7 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.closeFile,
             shortcuts["close"],
             "close",
-            self.tr("Закрыть текущий файл"),
+            self.tr("Закрыть текущее изображение"),
         )
 
         createRectangleMode = action(
@@ -358,7 +358,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self.deSelectShape,
             shortcut=shortcuts["deselect"],
             icon="edit",
-            tip=self.tr("Вернуться на уровень назад к родительской строке/области текста"),
+            tip=self.tr("Вернуться на уровень назад к родительскому прямоугольнику"),
             enabled=True,
         )
 
@@ -434,7 +434,7 @@ class MainWindow(QtWidgets.QMainWindow):
             functools.partial(self.setZoom, 100),
             shortcuts["zoom_to_original"],
             "zoom",
-            self.tr("Растянуть картинку до её оригинального размера"),
+            self.tr("Масштабировать изображение до его оригинального размера"),
             enabled=False,
         )
         fitWindow = action(
@@ -1225,7 +1225,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
         except LabelFileError as e:
             self.errorMessage(
-                self.tr("Ошибка сохранения файла разметки"), self.tr("<b>%s</b>") % e
+                self.tr("Ошибка сохранения изображения"), self.tr("<b>%s</b>") % e
             )
             return False
 
@@ -1383,12 +1383,12 @@ class MainWindow(QtWidgets.QMainWindow):
         filename = str(filename)
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
-                self.tr("Ошибка сохранения файла разметки"),
-                self.tr("Нет такого файла разметки: <b>%s</b>") % filename,
+                self.tr("Ошибка сохранения изображения"),
+                self.tr("Нет такого изображения: <b>%s</b>") % filename,
             )
             return False
         # assumes same name, but json extension
-        self.status(str(self.tr("Загрузка файла разметки %s...")) % osp.basename(str(filename)))
+        self.status(str(self.tr("Загрузка изображения %s...")) % osp.basename(str(filename)))
         label_file = osp.splitext(filename)[0] + ".json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
@@ -1428,13 +1428,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 for fmt in QtGui.QImageReader.supportedImageFormats()
             ]
             self.errorMessage(
-                self.tr("Ошибка при открытии файла разметки"),
+                self.tr("Ошибка при открытии изображения"),
                 self.tr(
-                    "<p>Убедитесь, что <i>{0}</i> является корректным файлом разметки.<br/>"
+                    "<p>Убедитесь, что <i>{0}</i> является корректным изображения.<br/>"
                     "Поддерживаемые расширения изображений: {1}</p>"
                 ).format(filename, ",".join(formats)),
             )
-            self.status(self.tr("Ошибка чтения файла разметки %s") % filename)
+            self.status(self.tr("Ошибка чтения изображения %s") % filename)
             return False
         self.image = image
         self.filename = filename
@@ -1804,7 +1804,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "Внимание",
             self.tr(
                 "Вы хотите навсегда удалить {} прямоугольник(ов), " "уверены?"
-            ).format(len(self.canvas.selectedShapes))
+            ).format(len(self.canvas.selectedShapes) + sum([len(shape.getAllChildren()) for shape in self.canvas.selectedShapes]))
         )
         yes_button = QtWidgets.QPushButton("Да")
         no_button = QtWidgets.QPushButton("Нет")
