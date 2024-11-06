@@ -1,4 +1,5 @@
 from typing import List
+import math
 
 import copy
 from enum import Enum
@@ -189,6 +190,50 @@ class Shape(object):
             return
         self.shape_type, self.points, self.point_labels = self._shape_raw
         self._shape_raw = None
+    
+    def getBounds(self):
+        """
+            Возвращает обрамляющий прямоугольник, основываясь на вершинах фигуры.
+            
+            (xmin,ymin,xmax,ymax)
+        """
+        xmin, ymin, xmax, ymax  = math.inf, math.inf, 0, 0
+        for point in self.points:
+            xmin = min(xmin, point.x())
+            xmax = max(xmax, point.x())
+            ymin = min(ymin, point.y())
+            ymax = max(ymax, point.y())
+        return (xmin, ymin, xmax, ymax)
+        
+    def getMinimumBounds(self):
+        """
+            Вычисляет минимальный возможный размер для фигуры, основываясь на размерах вложенных фигур.
+
+            Возникает из необходимости выполнения условия того, что вложенные фигуры должны полностью содержаться в родительской.
+        """
+        
+        xmin, ymin, xmax, ymax  = math.inf, math.inf, 0, 0
+        for shape in self._children:
+            bound = shape.getBounds()
+            xmin = min(xmin,bound[0])
+            ymin = min(ymin,bound[1])
+            xmax = max(xmax,bound[2])
+            ymax = max(ymax,bound[3])
+        return (xmin, ymin, xmax, ymax)
+    
+    
+    def getMaximumBounds(self):
+        """
+            Вычисляет максимальный возможный размер для фигуры, основываясь на размерах родителя.
+
+            Возникает из необходимости выполнения условия того, что вложенные фигуры должны полностью содержаться в родительской.
+            
+            Вернёт None если родителя нет.
+        """
+        if self.parent:
+            return self.parent.getBounds()
+        else:
+            return (0, 0, math.inf, math.inf)
 
     @property
     def shape_type(self):
@@ -225,17 +270,9 @@ class Shape(object):
             QTCore.QRect(x, y, width, height)
                 Координаты и размеры прямоугольника
         """
+        bounds = self.getBounds()
 
-        x = [100000000, 0]
-        y = [100000000, 0]
-        for point in self.points:
-            x[0] = min(point.x(), x[0])
-            x[1] = max(point.x(), x[1])
-
-            y[0] = min(point.y(), y[0])
-            y[1] = max(point.y(), y[1])
-
-        return QtCore.QRect(int(x[0]), int(y[0]), int(x[1] - x[0]), int(y[1] - y[0]))
+        return QtCore.QRect(int(bounds[0]), int(bounds[1]), int(bounds[2] - bounds[0]), int(bounds[3]-bounds[1]))
 
     def canAddPoint(self):
         return self.shape_type in ["polygon"]
@@ -435,6 +472,8 @@ class Shape(object):
 
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
+        for child in self._children:
+            child.moveBy(offset)
 
     def moveVertexBy(self, i, offset):
         self.points[i] = self.points[i] + offset
