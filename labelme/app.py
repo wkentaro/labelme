@@ -1804,7 +1804,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "Внимание",
             self.tr(
                 "Вы хотите навсегда удалить {} прямоугольник(ов), " "уверены?"
-            ).format(len(self.canvas.selectedShapes) + sum([len(shape.getAllChildren()) for shape in self.canvas.selectedShapes]))
+            ).format(len(self.canvas.selectedShapes))
         )
         yes_button = QtWidgets.QPushButton("Да")
         no_button = QtWidgets.QPushButton("Нет")
