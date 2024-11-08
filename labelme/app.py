@@ -301,11 +301,11 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         createAiPolygonMode = action(
-            self.tr("Создать ИИ-прямоугольник"),
+            self.tr("Создать прямоугольник с помощью ИИ"),
             lambda: self.toggleDrawMode(False, createMode="ai_polygon"),
             None,
             "objects",
-            self.tr("Создать ИИ-прямоугольник"),
+            self.tr("Создать прямоугольник с помощью ИИ"),
             enabled=False,
         )
         editMode = action(
