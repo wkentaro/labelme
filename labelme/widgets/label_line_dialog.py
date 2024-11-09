@@ -12,13 +12,14 @@ from labelme.widgets.label_letter_dialog import Literal
 
 QT5 = QT_VERSION[0] == "5"
 
-"""
-    Окно, выдающее ту строку, которую пользователь ввёл со своей и/или с экранной клавиатуры.
-    Если пользователь нажал cancel или закрыл окно, то вернётся None
-    Если пользователь ввёл всё корректно, то вернётся строка
-    Славянская клавиатура добавляет символы в конец вводимой строки 
-"""
+
 class LabelLineDialog(QtWidgets.QDialog):
+    """
+        Окно, выдающее ту строку, которую пользователь ввёл со своей и/или с экранной клавиатуры.
+        Если пользователь нажал cancel или закрыл окно, то вернётся None
+        Если пользователь ввёл всё корректно, то вернётся строка
+        Славянская клавиатура добавляет символы в конец вводимой строки 
+    """
     def __init__(
         self,
         parent=None,
@@ -77,6 +78,8 @@ class LabelLineDialog(QtWidgets.QDialog):
         )
         bb.button(bb.Ok).setIcon(labelme.utils.newIcon("done"))
         bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
+        bb.button(bb.Ok).setText("Ок")
+        bb.button(bb.Cancel).setText("Отменить")
         if old_text is None:
             bb.button(bb.Ok).setDisabled(True)
         bb.accepted.connect(self.validate_input)

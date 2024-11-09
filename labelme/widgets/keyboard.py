@@ -15,10 +15,11 @@ class PushButton(QPushButton):
         self.setText(text)
         self.setFixedSize(QSize(PushButton.SIZE, PushButton.SIZE))
 
-"""
-    Окно экранной клавиатуры для вывода всех возможных символов для разметки
-"""
+
 class Keyboard(QtWidgets.QDialog): 
+    """
+        Окно экранной клавиатуры для вывода всех возможных символов для разметки
+    """
     SLOT_SIZE = 60
     def __init__(self, type=None):
         super(Keyboard, self).__init__()

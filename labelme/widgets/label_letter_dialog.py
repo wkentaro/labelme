@@ -23,12 +23,13 @@ class Literal:
         else:
             return self.letter + self.diacritical
 
-"""
-    Окно, выдающее ту букву, которую пользователь ввёл со своей или с экранной клавиатуры.
-    Если пользователь нажал cancel или закрыл окно, то вернётся None
-    Если пользователь ввёл всё корректно, то вернётся буква 
-"""
+
 class LabelLetterDialog(QtWidgets.QDialog):
+    """
+        Окно, выдающее ту букву, которую пользователь ввёл со своей или с экранной клавиатуры.
+        Если пользователь нажал cancel или закрыл окно, то вернётся None
+        Если пользователь ввёл всё корректно, то вернётся буква 
+    """
     def __init__(
         self,
         parent=None,
@@ -85,6 +86,8 @@ class LabelLetterDialog(QtWidgets.QDialog):
         )
         bb.button(bb.Ok).setIcon(labelme.utils.newIcon("done"))
         bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
+        bb.button(bb.Ok).setText("Ок")
+        bb.button(bb.Cancel).setText("Отменить")
         if old_text is None:
             bb.button(bb.Ok).setDisabled(True)
         bb.accepted.connect(self.validate_input)
