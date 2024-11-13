@@ -908,6 +908,9 @@ class Canvas(QtWidgets.QWidget):
                 # with Ctrl/Command key
                 # zoom
                 self.zoomRequest.emit(delta.y(), ev.pos())
+            elif QtCore.Qt.ShiftModifier == int(mods):
+                # Convert wheel y(up down) direction to horizontal scroll with Shift key
+                self.scrollRequest.emit(delta.y(), QtCore.Qt.Horizontal)
             else:
                 # scroll
                 self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
