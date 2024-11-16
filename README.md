@@ -34,11 +34,11 @@ python start.py
 # Далее ридми от разрабов:
 
 <h1 align="center">
-  <img src="labelme/icons/icon.png"><br/>labelme
+  <img src="labelme/icons/icon.png"><br/>Нейролаб
 </h1>
 
 <h4 align="center">
-  Image Polygonal Annotation with Python
+  Программа для разметки древнерусских текстов
 </h4>
 
 <div align="center">

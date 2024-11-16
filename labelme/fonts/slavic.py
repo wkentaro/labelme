@@ -13,8 +13,8 @@ class SlavicFont:
     __font = None
 
     ALL_LETTERS = ' !"#$%\'+,-.0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}ЂЃѓ…†‡€‰Љ‹ЊЌЋЏђ‘’“”•™љ›њќћџЎўЈ¤Ґ¦§Ё©®Ї°±Ііґµё№єјЅѕїАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя'
-    LETTERS = 'абвгдежзийклмнопрстуфхцчшщъыьэюяfimoptvwxzіµѕ !,.;:°'
-    DIACRITICAL_SIGNS = '123568'
+    LETTERS = 'абвгдежзийклмнопрстуфхцчшщъыьэюяufimoptvwxzіµѕ ,.;:°'
+    DIACRITICAL_SIGNS = '1268'
     TITLA = '+7=>?bcdg'
     
     @classmethod    
