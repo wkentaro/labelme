@@ -610,11 +610,47 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
 
+    def _moveVertexOutside(self,point: QtCore.QPointF, pos: QtCore.QPointF, bounds):
+        x, y = point.x(), point.y()
+        nx,ny = x, y
+        
+        if x <= bounds[0]:
+            nx = min(bounds[0],pos.x())
+        if y <= bounds[1]:
+            ny = min(bounds[1],pos.y())
+        if x >= bounds[2]:
+            nx = max(bounds[2],pos.x())
+        if y >= bounds[3]:
+            ny = max(bounds[3],pos.y())
+            
+        return QtCore.QPointF(nx, ny)
+    
+    
+    def _moveVertexInside(self, pos: QtCore.QPointF, bounds):
+        x, y = pos.x(), pos.y()
+        nx,ny = x, y
+        
+        if x <= bounds[0]:
+            nx = max(bounds[0],pos.x())
+        if y <= bounds[1]:
+            ny = max(bounds[1],pos.y())
+        if x >= bounds[2]:
+            nx = min(bounds[2],pos.x())
+        if y >= bounds[3]:
+            ny = min(bounds[3],pos.y())
+            
+        return QtCore.QPointF(nx, ny)
+
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
         point = shape[index]
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(point, pos)
+        maxBounds = shape.getMinimumBounds()
+        pos = self._moveVertexOutside(point, pos, maxBounds)
+        maxBounds = shape.getMaximumBounds()
+        pos = self._moveVertexInside(pos, maxBounds)
+        
         shape.moveVertexBy(index, pos - point)
 
     def _outOfPixmapClear(self, p : QtCore.QPointF):
@@ -622,22 +658,26 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
     def boundedMoveShapes(self, shapes : List[Shape], pos):
-        if self.outOfPixmap(pos):
-            return False  # No need to move
-        x0, y0 = self.image_offsets
-        qp = QtCore.QPointF(x0, y0)
+        """
+            Контролирует движение фигур. Контролирует, чтобы они не выходили за границы
+        """
         
-        pos -= qp
+        x0, y0 = self.image_offsets
+        w, h = self.cropped_image.width(), self.cropped_image.height()
+        pic_bounds = (x0, y0, x0 + w, y0 + h)
+        
         o1 = pos + self.offsets[0] 
-        if self._outOfPixmapClear(o1):
-            pos -= QtCore.QPointF(min(0, o1.x()), min(0, o1.y()))
+        pos -= o1 - self._moveVertexInside(o1, pic_bounds)
         o2 = pos + self.offsets[1]
-        if self._outOfPixmapClear(o2):
-            pos += QtCore.QPointF(
-                min(0, self.cropped_image.width() - o2.x()),
-                min(0, self.cropped_image.height() - o2.y()),
-            )
-        pos += qp
+        pos -= o2 - self._moveVertexInside(o2, pic_bounds)
+
+        shape = shapes[0]        
+        maxBounds = shape.getMaximumBounds()
+        
+        o1 = pos + self.offsets[0] 
+        pos -= o1 - self._moveVertexInside(o1, maxBounds)
+        o2 = pos + self.offsets[1]
+        pos -= o2 - self._moveVertexInside(o2, maxBounds)
         
         # XXX: The next line tracks the new position of the cursor
         # relative to the shape, but also resulSts in making it
@@ -663,8 +703,15 @@ class Canvas(QtWidgets.QWidget):
         deleted_shapes = []
         if self.selectedShapes:
             for shape in self.selectedShapes:
-                self.shapes.remove(shape)
-                deleted_shapes.append(shape)
+                if shape in self.shapes:
+                    self.shapes.remove(shape)
+                    deleted_shapes.append(shape)
+                children = shape.getAllChildren()
+                for child in children:
+                    if child in self.shapes:
+                        self.shapes.remove(child)
+                        deleted_shapes.append(child)
+                    child.delete()
                 shape.delete()
             self.storeShapes()
             self.selectedShapes = []
