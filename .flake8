@@ -1,3 +1,0 @@
-[flake8]
-exclude = .*/
-ignore = E203, E741, W503, W504

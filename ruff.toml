@@ -31,3 +31,8 @@ line-ending = "auto"
 
 [lint.isort]
 force-single-line = true
+
+[lint.per-file-ignores]
+"**/__init__.py" = [
+  "E402", # module level import not at top of file
+]
