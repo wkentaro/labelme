@@ -943,7 +943,7 @@ class Canvas(QtWidgets.QWidget):
                 self.current = None
                 self.drawingPolygon.emit(False)
                 self.update()
-            elif key == QtCore.Qt.Key_Return and self.canCloseShape():
+            elif key in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Space) and self.canCloseShape():
                 self.finalise()
             elif modifiers == QtCore.Qt.AltModifier:
                 self.snapping = False
