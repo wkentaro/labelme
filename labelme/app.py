@@ -397,44 +397,44 @@ class MainWindow(QtWidgets.QMainWindow):
             else None
         )
         editMode = action(
-            self.tr("Edit Polygons"),
+            self.tr("Edit Shapes"),
             self.setEditMode,
             shortcuts["edit_polygon"],
             "edit",
-            self.tr("Move and edit the selected polygons"),
+            self.tr("Move and edit the selected shapes"),
             enabled=False,
         )
 
         delete = action(
-            self.tr("Delete Polygons"),
+            self.tr("Delete Shapes"),
             self.deleteSelectedShape,
             shortcuts["delete_polygon"],
             "cancel",
-            self.tr("Delete the selected polygons"),
+            self.tr("Delete the selected shapes"),
             enabled=False,
         )
         duplicate = action(
-            self.tr("Duplicate Polygons"),
+            self.tr("Duplicate Shape"),
             self.duplicateSelectedShape,
             shortcuts["duplicate_polygon"],
             "copy",
-            self.tr("Create a duplicate of the selected polygons"),
+            self.tr("Create a duplicate of the selected shape"),
             enabled=False,
         )
         copy = action(
-            self.tr("Copy Polygons"),
+            self.tr("Copy Shape"),
             self.copySelectedShape,
             shortcuts["copy_polygon"],
             "copy_clipboard",
-            self.tr("Copy selected polygons to clipboard"),
+            self.tr("Copy selected shape(s) to clipboard"),
             enabled=False,
         )
         paste = action(
-            self.tr("Paste Polygons"),
+            self.tr("Paste Shape"),
             self.pasteSelectedShape,
             shortcuts["paste_polygon"],
             "paste",
-            self.tr("Paste copied polygons"),
+            self.tr("Paste copied shape(s)"),
             enabled=False,
         )
         undoLastPoint = action(
@@ -464,27 +464,27 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         hideAll = action(
-            self.tr("&Hide\nPolygons"),
+            self.tr("&Hide\nShapes"),
             functools.partial(self.togglePolygons, False),
             shortcuts["hide_all_polygons"],
             icon="eye",
-            tip=self.tr("Hide all polygons"),
+            tip=self.tr("Hide all shapes"),
             enabled=False,
         )
         showAll = action(
-            self.tr("&Show\nPolygons"),
+            self.tr("&Show\nShapes"),
             functools.partial(self.togglePolygons, True),
             shortcuts["show_all_polygons"],
             icon="eye",
-            tip=self.tr("Show all polygons"),
+            tip=self.tr("Show all shapes"),
             enabled=False,
         )
         toggleAll = action(
-            self.tr("&Toggle\nPolygons"),
+            self.tr("&Toggle\nShapes"),
             functools.partial(self.togglePolygons, None),
             shortcuts["toggle_all_polygons"],
             icon="eye",
-            tip=self.tr("Toggle all polygons"),
+            tip=self.tr("Toggle all shapes"),
             enabled=False,
         )
 
@@ -2104,7 +2104,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
-            "You are about to permanently delete {} polygons, " "proceed anyway?"
+            "You are about to permanently delete {} shapes, proceed anyway?"
         ).format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
             self, self.tr("Attention"), msg, yes | no, yes
