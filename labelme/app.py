@@ -186,7 +186,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
-        self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
+        self.canvas.selectionchanged.connect(self.shapeSelectionChanged)
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scrollArea)
