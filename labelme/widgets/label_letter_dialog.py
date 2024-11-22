@@ -3,8 +3,10 @@ from qtpy import QtCore
 from qtpy import QtWidgets
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QLineEdit, QTextEdit
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QEvent
 from PyQt5.QtGui import * 
+from PyQt5.QtWidgets import *
+from labelme.widgets.helper import Helper
 
 import labelme.utils
 from labelme.widgets.keyboard import Keyboard
@@ -32,11 +34,13 @@ class LabelLetterDialog(QtWidgets.QDialog):
     """
     def __init__(
         self,
+        helper,
         parent=None,
         old_text=None
     ):
         super(LabelLetterDialog, self).__init__(parent)
         self.recognised_letter = None
+        self.helper = helper
 
         self.setMinimumSize(QSize(300, 100))
     
@@ -143,14 +147,20 @@ class LabelLetterDialog(QtWidgets.QDialog):
         messageBox.exec_()
         
     def get_keyboard_letter(self):
-        letter = Keyboard(type='letter').popUp()
+        letter = Keyboard(self.helper, type='letter').popUp()
         if letter is not None:
             self.edit.setText(self.edit.text() + letter)
 
     def get_keyboard_diacritical(self):
-        sign = Keyboard(type='diacritical').popUp()
+        sign = Keyboard(self.helper, type='diacritical').popUp()
         if sign is not None:
             self.edit.setText(self.edit.text() + sign)
+
+    def event(self, event):
+        if event.type() == QEvent.EnterWhatsThisMode:
+            QWhatsThis.leaveWhatsThisMode()
+            Helper(self.helper.get_letter_helper()).popUp()
+        return QDialog.event(self, event)
 
     def popUp(self):
         self.exec_()

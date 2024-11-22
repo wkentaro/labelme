@@ -2,8 +2,10 @@ from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtWidgets
 from PyQt5.QtWidgets import QLabel, QTextEdit, QLineEdit
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QEvent
 from PyQt5.QtGui import * 
+from PyQt5.QtWidgets import *
+from labelme.widgets.helper import Helper
 
 import labelme.utils
 from labelme.widgets.keyboard import Keyboard
@@ -22,11 +24,13 @@ class LabelLineDialog(QtWidgets.QDialog):
     """
     def __init__(
         self,
+        helper,
         parent=None,
         old_text=None
     ):
         super(LabelLineDialog, self).__init__(parent)
         self.recognised_line = None
+        self.helper = helper
 
         self.setMinimumSize(QSize(600, 100))
 
@@ -49,8 +53,7 @@ class LabelLineDialog(QtWidgets.QDialog):
         self.text_view.setFont(SlavicFont.GetFont(22))
         self.text_view.setReadOnly(True)
         self.text_view.setWordWrapMode(QTextOption.NoWrap)
-        self.text_view.setMinimumHeight(75)
-        self.text_view.setMaximumHeight(75)
+        self.text_view.setFixedHeight(65)
         self.text_view.textChanged.connect(self.cursor_to_right)
         layout_slavic_text.addWidget(self.text_view, 9)
 
@@ -133,9 +136,15 @@ class LabelLineDialog(QtWidgets.QDialog):
         self.text_view.setTextCursor(cursor)
         
     def get_keyboard(self):
-        letter = Keyboard().popUp()
+        letter = Keyboard(self.helper).popUp()
         if letter is not None:
             self.edit.setText(self.edit.text() + letter)
+
+    def event(self, event):
+        if event.type() == QEvent.EnterWhatsThisMode:
+            QWhatsThis.leaveWhatsThisMode()
+            Helper(self.helper.get_line_helper()).popUp()
+        return QDialog.event(self, event)
 
     def popUp(self):
         self.exec_()

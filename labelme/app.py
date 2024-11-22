@@ -39,6 +39,7 @@ from labelme.widgets.label_letter_dialog import Literal
 from labelme.widgets import ManuscriptTypeWidget
 from labelme.widgets.manuscript_type_widget import ManuscriptType
 from labelme.widgets import MarkupLevelWidget
+from labelme.widgets.helper import Helper, HelperString
 
 
 from labelme import utils
@@ -64,6 +65,7 @@ class MainWindow(QtWidgets.QMainWindow):
             output_file=None,
             output_dir=None,
     ):
+        self.helper = HelperString()
         if output is not None:
             logger.warning("argument output is deprecated, use output_file instead")
             if output_file is None:
@@ -309,7 +311,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         editMode = action(
-            self.tr("Изменить прямоугольник"),
+            self.tr("Выделить прямоугольник"),
             self.setEditMode,
             shortcuts["edit_polygon"],
             "edit",
@@ -346,20 +348,22 @@ class MainWindow(QtWidgets.QMainWindow):
         # Отвечает за "переход" к элементу, чтобы создавались его потомки
         # т.е. в тексте создавались строки, а в строках буквы
         selectShape = action(
-            text=self.tr("Выбрать прямоугольник"),
+            text=self.tr("Перейти на\nуровень ниже"),
             slot=self.selectShape,
             shortcut=shortcuts["select"],
             icon="edit",
             tip=self.tr("Выбрать прямоугольник для фокуса на нём и дальнейшей его разметки"),
             enabled=True,
+            isBigText=True,
         )
         deSelectShape = action(
-            text=self.tr("Снять выделение"),
+            text=self.tr("Вернуться на\nуровень выше"),
             slot=self.deSelectShape,
             shortcut=shortcuts["deselect"],
             icon="edit",
             tip=self.tr("Вернуться на уровень назад к родительскому прямоугольнику"),
             enabled=True,
+            isBigText=True,
         )
 
         undo = action(
@@ -967,10 +971,10 @@ class MainWindow(QtWidgets.QMainWindow):
         old_text = shape.label + shape.diacritical
 
         if state == ShapeClass.ROW:
-            labelLineDialog = LabelLineDialog(self, old_text=old_text)
+            labelLineDialog = LabelLineDialog(helper=self.helper, old_text=old_text)
             text = labelLineDialog.popUp()
         elif state == ShapeClass.LETTER:
-            labelLetterDialog = LabelLetterDialog(self, old_text=old_text)
+            labelLetterDialog = LabelLetterDialog(helper=self.helper, old_text=old_text)
             text = labelLetterDialog.popUp()
         else:
             text = Literal("")
@@ -1256,10 +1260,10 @@ class MainWindow(QtWidgets.QMainWindow):
         state = shape.getClass()
 
         if state == ShapeClass.ROW:
-            labelLineDialog = LabelLineDialog(self)
+            labelLineDialog = LabelLineDialog(helper=self.helper)
             text = labelLineDialog.popUp()
         elif state == ShapeClass.LETTER:
-            labelLetterDialog = LabelLetterDialog(self)
+            labelLetterDialog = LabelLetterDialog(helper=self.helper)
             text = labelLetterDialog.popUp()
         else:
             text = Literal("")
