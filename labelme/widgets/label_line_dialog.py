@@ -31,6 +31,7 @@ class LabelLineDialog(QtWidgets.QDialog):
         super(LabelLineDialog, self).__init__(parent)
         self.recognised_line = None
         self.helper = helper
+        self.workWithKeyboard = False
 
         self.setMinimumSize(QSize(600, 100))
 
@@ -136,12 +137,14 @@ class LabelLineDialog(QtWidgets.QDialog):
         self.text_view.setTextCursor(cursor)
         
     def get_keyboard(self):
+        self.workWithKeyboard = True
         letter = Keyboard(self.helper).popUp()
+        self.workWithKeyboard = False
         if letter is not None:
             self.edit.setText(self.edit.text() + letter)
 
     def event(self, event):
-        if event.type() == QEvent.EnterWhatsThisMode:
+        if not self.workWithKeyboard and event.type() == QEvent.EnterWhatsThisMode:
             QWhatsThis.leaveWhatsThisMode()
             Helper(self.helper.get_line_helper()).popUp()
         return QDialog.event(self, event)

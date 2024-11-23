@@ -112,7 +112,7 @@ class Keyboard(QtWidgets.QDialog):
         button = QApplication.instance().sender()
         self.text_from_keyboard = button.text()
         self.close()
-    
+
     def event(self, event):
         if event.type() == QEvent.EnterWhatsThisMode:
             QWhatsThis.leaveWhatsThisMode()

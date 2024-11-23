@@ -41,6 +41,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
         super(LabelLetterDialog, self).__init__(parent)
         self.recognised_letter = None
         self.helper = helper
+        self.workWithKeyboard = False
 
         self.setMinimumSize(QSize(300, 100))
     
@@ -147,17 +148,21 @@ class LabelLetterDialog(QtWidgets.QDialog):
         messageBox.exec_()
         
     def get_keyboard_letter(self):
+        self.workWithKeyboard = True
         letter = Keyboard(self.helper, type='letter').popUp()
+        self.workWithKeyboard = False
         if letter is not None:
             self.edit.setText(self.edit.text() + letter)
 
     def get_keyboard_diacritical(self):
+        self.workWithKeyboard = True
         sign = Keyboard(self.helper, type='diacritical').popUp()
+        self.workWithKeyboard = False
         if sign is not None:
             self.edit.setText(self.edit.text() + sign)
 
     def event(self, event):
-        if event.type() == QEvent.EnterWhatsThisMode:
+        if not self.workWithKeyboard and event.type() == QEvent.EnterWhatsThisMode:
             QWhatsThis.leaveWhatsThisMode()
             Helper(self.helper.get_letter_helper()).popUp()
         return QDialog.event(self, event)
