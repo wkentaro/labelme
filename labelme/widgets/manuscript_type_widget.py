@@ -14,7 +14,7 @@ class ManuscriptTypeWidget(QtWidgets.QWidget):
     def __init__(self, value):
         super().__init__()
         self.setLayout(QtWidgets.QVBoxLayout())
-        self.layout().addWidget(QtWidgets.QLabel(self.tr("Тип письма:")), 0, Qt.AlignTop | Qt.AlignHCenter)
+        self.layout().addWidget(QtWidgets.QLabel(self.tr("Тип письма:")), 0, Qt.AlignHCenter)
         self.combo_box = TypeComboBox(value)
         self.combo_box.currentTextChanged.connect(self._type_changed)
         self.layout().addWidget(self.combo_box)

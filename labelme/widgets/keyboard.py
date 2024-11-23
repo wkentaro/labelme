@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import *
 from qtpy import QtWidgets
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QEvent
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import * 
 from labelme.fonts.slavic import SlavicFont
+from labelme.widgets.helper import Helper
 
 from math import isqrt, ceil
 
@@ -21,9 +22,9 @@ class Keyboard(QtWidgets.QDialog):
         Окно экранной клавиатуры для вывода всех возможных символов для разметки
     """
     SLOT_SIZE = 60
-    def __init__(self, type=None):
+    def __init__(self, helper, type=None):
         super(Keyboard, self).__init__()
-
+        self.helper = helper
         if type == 'letter':
             self.symbol_list = SlavicFont.LETTERS
         elif type == 'diacritical':
@@ -111,6 +112,12 @@ class Keyboard(QtWidgets.QDialog):
         button = QApplication.instance().sender()
         self.text_from_keyboard = button.text()
         self.close()
+
+    def event(self, event):
+        if event.type() == QEvent.EnterWhatsThisMode:
+            QWhatsThis.leaveWhatsThisMode()
+            Helper(self.helper.get_keyboard_helper()).popUp()
+        return QDialog.event(self, event)
 
     def popUp(self):
         self.exec_() 

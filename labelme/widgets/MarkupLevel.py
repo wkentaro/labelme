@@ -8,7 +8,7 @@ class MarkupLevelWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.setMaximumWidth(150)
+        self.setMinimumWidth(170)
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setSpacing(10)
         self.layout().setAlignment(Qt.AlignHCenter)

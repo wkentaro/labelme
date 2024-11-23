@@ -33,11 +33,12 @@ def newAction(
     checkable=False,
     enabled=True,
     checked=False,
+    isBigText=False,
 ):
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QtWidgets.QAction(text, parent)
     if icon is not None:
-        a.setIconText(text.replace(" ", "\n"))
+        a.setIconText(text if isBigText else text.replace(" ", "\n"))
         a.setIcon(newIcon(icon))
     if shortcut is not None:
         if isinstance(shortcut, (list, tuple)):
