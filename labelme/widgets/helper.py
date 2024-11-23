@@ -29,6 +29,8 @@ class HelperString:
                 self.letter = letter_file.read()
             with open("labelme\\widgets\\hepler_text\\line.txt", 'r', encoding='utf-8') as line_file:
                 self.line = line_file.read()
+            with open("labelme\\widgets\\hepler_text\\main.txt", 'r', encoding='utf-8') as main_file:
+                self.main = main_file.read()
         except:
             raise Exception("error in helper files loading")
         
@@ -40,3 +42,6 @@ class HelperString:
     
     def get_line_helper(self):
         return self.line 
+    
+    def get_main_helper(self):
+        return self.main

@@ -898,8 +898,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
     def tutorial(self):
-        url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
-        webbrowser.open(url)
+        Helper(self.helper.get_main_helper()).popUp()
 
     def toggleDrawMode(self, edit=True, createMode="rectangle"):
         draw_actions = {
