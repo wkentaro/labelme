@@ -60,7 +60,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
                 self.text_view.setText(old_text)
         self.text_view.setFont(SlavicFont.GetFont(22))
         self.text_view.setReadOnly(True)
-        self.text_view.setMaximumHeight(45)
+        self.text_view.setFixedHeight(60)
         
         layout.addWidget(self.text_view)
         
