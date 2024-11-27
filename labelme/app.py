@@ -962,7 +962,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.save.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = "{} - {}*".format(title, self.filename)
+            file_index = self.fileListWidget.currentRow()
+            title = f"{title} - {self.filename}* ({file_index + 1}/{self.fileListWidget.count()})"
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -978,7 +979,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.createAiMaskMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = "{} - {}".format(title, self.filename)
+            file_index = self.fileListWidget.currentRow()
+            title = f"{title} - {self.filename} ({file_index + 1}/{self.fileListWidget.count()})"
         self.setWindowTitle(title)
 
         if self.hasLabelFile():
