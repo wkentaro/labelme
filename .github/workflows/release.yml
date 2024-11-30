@@ -92,7 +92,7 @@ jobs:
         pyinstaller labelme.spec
 
     - name: Load release url file from release job
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v4.1.7
       with:
         name: release_url
 
