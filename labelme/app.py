@@ -191,17 +191,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(scrollArea)
 
-        features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
-            if self._config[dock]["closable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetClosable
-            if self._config[dock]["floatable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
-            if self._config[dock]["movable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetMovable
-            getattr(self, dock).setFeatures(features)
-            if self._config[dock]["show"] is False:
-                getattr(self, dock).setVisible(False)
+        self._configure_dock("flag_dock", self.flag_dock)
+        self._configure_dock("label_dock", self.label_dock)
+        self._configure_dock("shape_dock", self.shape_dock)
+        self._configure_dock("file_dock", self.file_dock)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
@@ -905,6 +898,24 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.firstStart = True
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
+
+    def _configure_dock(self, dock_name: str, dock_obj: QtWidgets.QDockWidget) -> None:
+        dock_config = self._config.get(dock_name, None)
+        if dock_config is None:
+            # Missing configuration? Never mind then...
+            return
+
+        features = QtWidgets.QDockWidget.DockWidgetFeatures()
+
+        if dock_config.get("closable"):
+            features = features | QtWidgets.QDockWidget.DockWidgetClosable
+        if dock_config.get("floatable"):
+            features = features | QtWidgets.QDockWidget.DockWidgetFloatable
+        if dock_config.get("movable"):
+            features = features | QtWidgets.QDockWidget.DockWidgetMovable
+        dock_obj.setFeatures(features)
+        if dock_config.get("show") is False:
+            dock_obj.setVisible(False)
 
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
