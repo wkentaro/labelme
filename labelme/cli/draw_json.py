@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
 
 import imgviz
 import matplotlib.pyplot as plt
 
 from labelme import utils
 from labelme.label_file import LabelFile
-
-PY2 = sys.version_info[0] == 2
 
 
 def main():
