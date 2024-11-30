@@ -129,21 +129,41 @@ class MainWindow(QtWidgets.QMainWindow):
         self.shape_dock.setObjectName("Labels")
         self.shape_dock.setWidget(self.labelList)
 
+        self.display_label_popup_checkbox = QtWidgets.QCheckBox(
+            self.tr("Display Label Popup"),
+        )
+        self.display_label_popup_checkbox.setChecked(
+            self._config["display_label_popup"],
+        )
+        self.display_label_popup_checkbox.setToolTip(
+            self.tr(
+                "Display label popup when creating an object (otherwise, use label selected above)"
+            )
+        )
+
         self.uniqLabelList = UniqueLabelQListWidget()
+        self.uniqLabelList.itemSelectionChanged.connect(self.uniqLabelSelectionChanged)
+
         self.uniqLabelList.setToolTip(
             self.tr(
                 "Select label to start annotating for it. " "Press 'Esc' to deselect."
             )
         )
-        if self._config["labels"]:
-            for label in self._config["labels"]:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+        for label in self._config["labels"] or ():
+            self._ensure_label_in_list(label)
+
+        label_list_layout = QtWidgets.QVBoxLayout()
+        label_list_layout.setContentsMargins(0, 0, 0, 0)
+        label_list_layout.setSpacing(0)
+        label_list_layout.addWidget(self.uniqLabelList)
+        label_list_layout.addWidget(self.display_label_popup_checkbox)
+
         self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
         self.label_dock.setObjectName("Label List")
-        self.label_dock.setWidget(self.uniqLabelList)
+        label_list_widget = QtWidgets.QWidget()
+        label_list_widget.setLayout(label_list_layout)
+        self.label_dock.setWidget(label_list_widget)
+        self.update_display_label_popup_checkbox()
 
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
@@ -1253,11 +1273,19 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setText("{} ({})".format(shape.label, shape.group_id))
             self.setDirty()
-            if self.uniqLabelList.findItemByLabel(shape.label) is None:
-                item = self.uniqLabelList.createItemFromLabel(shape.label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(shape.label)
-                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            self._ensure_label_in_list(shape.label)
+        self.update_display_label_popup_checkbox()
+
+    def uniqLabelSelectionChanged(self):
+        self.update_display_label_popup_checkbox()
+
+    def update_display_label_popup_checkbox(self):
+        has_selected_item = bool(self.uniqLabelList.selectedItems())
+        # `display_label_popup` couldn't have an effect if no item is selected,
+        # so disable and uncheck it as necessary.
+        self.display_label_popup_checkbox.setEnabled(has_selected_item)
+        if not has_selected_item:
+            self.display_label_popup_checkbox.setChecked(True)
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -1307,11 +1335,8 @@ class MainWindow(QtWidgets.QMainWindow):
             text = "{} ({})".format(shape.label, shape.group_id)
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
-        if self.uniqLabelList.findItemByLabel(shape.label) is None:
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
-            rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+        self._ensure_label_in_list(shape.label)
+        self.update_display_label_popup_checkbox()
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
@@ -1334,12 +1359,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _get_rgb_by_label(self, label):
         if self._config["shape_color"] == "auto":
-            item = self.uniqLabelList.findItemByLabel(label)
-            if item is None:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+            item = self._ensure_label_in_list(label)
             label_id = self.uniqLabelList.indexFromItem(item).row() + 1
             label_id += self._config["shift_auto_shape_color"]
             return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
@@ -1352,6 +1372,17 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self._config["default_shape_color"]:
             return self._config["default_shape_color"]
         return (0, 255, 0)
+
+    def _ensure_label_in_list(self, label: str) -> QtWidgets.QListWidgetItem:
+        """
+        Ensure that the label is in the label list, and return the item.
+        """
+        item = self.uniqLabelList.findItemByLabel(label)
+        if item is None:
+            item = self.uniqLabelList.createItemFromLabel(label)
+            self.uniqLabelList.addItem(item)
+            self.uniqLabelList.setItemLabel(item, label, self._get_rgb_by_label(label))
+        return item
 
     def remLabels(self, shapes):
         for shape in shapes:
@@ -1516,7 +1547,8 @@ class MainWindow(QtWidgets.QMainWindow):
         flags = {}
         group_id = None
         description = ""
-        if self._config["display_label_popup"] or not text:
+        display_label_popup = self.display_label_popup_checkbox.isChecked()
+        if display_label_popup or not text:
             previous_text = self.labelDialog.edit.text()
             text, flags, group_id, description = self.labelDialog.popUp(text)
             if not text:
