@@ -1,4 +1,5 @@
 import base64
+import builtins
 import contextlib
 import io
 import json
@@ -23,7 +24,7 @@ def open(name, mode):
         encoding = None
     else:
         encoding = "utf-8"
-    yield io.open(name, mode, encoding=encoding)
+    yield builtins.open(name, mode, encoding=encoding)
     return
 
 
@@ -31,7 +32,7 @@ class LabelFileError(Exception):
     pass
 
 
-class LabelFile(object):
+class LabelFile:
     suffix = ".json"
 
     def __init__(self, filename=None):
@@ -46,8 +47,8 @@ class LabelFile(object):
     def load_image_file(filename):
         try:
             image_pil = PIL.Image.open(filename)
-        except IOError:
-            logger.error("Failed opening image file: {}".format(filename))
+        except OSError:
+            logger.error("Failed opening image file: %r", filename)
             return
 
         # apply orientation to image according to exif

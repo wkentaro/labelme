@@ -12,7 +12,7 @@ from labelme.logger import logger
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-class Shape(object):
+class Shape:
     # Render handles as squares
     P_SQUARE = 0
 
@@ -112,7 +112,7 @@ class Shape(object):
             "points",
             "mask",
         ]:
-            raise ValueError("Unexpected shape_type: {}".format(value))
+            raise ValueError(f"Unexpected shape_type: {value}")
         self._shape_type = value
 
     def close(self):

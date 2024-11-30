@@ -44,7 +44,7 @@ class Canvas(QtWidgets.QWidget):
         self.double_click = kwargs.pop("double_click", "close")
         if self.double_click not in [None, "close"]:
             raise ValueError(
-                "Unexpected value for double_click event: {}".format(self.double_click)
+                f"Unexpected value for double_click event: {self.double_click}"
             )
         self.num_backups = kwargs.pop("num_backups", 10)
         self._crosshair = kwargs.pop(
@@ -60,7 +60,7 @@ class Canvas(QtWidgets.QWidget):
                 "ai_mask": False,
             },
         )
-        super(Canvas, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
         self.shapes = []
@@ -125,18 +125,18 @@ class Canvas(QtWidgets.QWidget):
             "ai_polygon",
             "ai_mask",
         ]:
-            raise ValueError("Unsupported createMode: %s" % value)
+            raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
 
     def initializeAiModel(self, name):
         if name not in [model.name for model in labelme.ai.MODELS]:
-            raise ValueError("Unsupported ai model: %s" % name)
+            raise ValueError(f"Unsupported ai model: {name}")
         model = [model for model in labelme.ai.MODELS if model.name == name][0]
 
         if self._ai_model is not None and self._ai_model.name == model.name:
-            logger.debug("AI model is already initialized: %r" % model.name)
+            logger.debug("AI model is already initialized: %r", model.name)
         else:
-            logger.debug("Initializing AI model: %r" % model.name)
+            logger.debug("Initializing AI model: %r", model.name)
             self._ai_model = model()
 
         if self.pixmap is None:
@@ -668,7 +668,7 @@ class Canvas(QtWidgets.QWidget):
 
     def paintEvent(self, event):
         if not self.pixmap:
-            return super(Canvas, self).paintEvent(event)
+            return super().paintEvent(event)
 
         p = self._painter
         p.begin(self)
@@ -780,7 +780,7 @@ class Canvas(QtWidgets.QWidget):
 
     def offsetToCenter(self):
         s = self.scale
-        area = super(Canvas, self).size()
+        area = super().size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
@@ -898,7 +898,7 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self):
         if self.pixmap:
             return self.scale * self.pixmap.size()
-        return super(Canvas, self).minimumSizeHint()
+        return super().minimumSizeHint()
 
     def wheelEvent(self, ev):
         if QT5:

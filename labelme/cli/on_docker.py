@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 
 import argparse
 import distutils.spawn
@@ -35,13 +34,13 @@ def get_ip():
 
 def labelme_on_docker(in_file, out_file):
     ip = get_ip()
-    cmd = "xhost + %s" % ip
+    cmd = f"xhost + {ip}"
     subprocess.check_output(shlex.split(cmd))
 
     if out_file:
         out_file = osp.abspath(out_file)
         if osp.exists(out_file):
-            raise RuntimeError("File exists: %s" % out_file)
+            raise RuntimeError(f"File exists: {out_file}")
         else:
             open(osp.abspath(out_file), "w")
 
@@ -63,10 +62,10 @@ def labelme_on_docker(in_file, out_file):
     if out_file:
         out_file_a = osp.abspath(out_file)
         out_file_b = osp.join("/home/developer", osp.basename(out_file))
-        cmd += " -v {0}:{1}".format(out_file_a, out_file_b)
-    cmd += " wkentaro/labelme labelme {0}".format(in_file_b)
+        cmd += f" -v {out_file_a}:{out_file_b}"
+    cmd += f" wkentaro/labelme labelme {in_file_b}"
     if out_file:
-        cmd += " -O {0}".format(out_file_b)
+        cmd += f" -O {out_file_b}"
     subprocess.call(shlex.split(cmd))
 
     if out_file:
@@ -92,7 +91,7 @@ def main():
     try:
         out_file = labelme_on_docker(args.in_file, args.output)
         if out_file:
-            print("Saved to: %s" % out_file)
+            print(f"Saved to: {out_file}")
     except RuntimeError as e:
         sys.stderr.write(e.__str__() + "\n")
         sys.exit(1)

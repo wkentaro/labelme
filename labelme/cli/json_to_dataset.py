@@ -73,7 +73,7 @@ def main():
         for lbl_name in label_names:
             f.write(lbl_name + "\n")
 
-    logger.info("Saved to: {}".format(out_dir))
+    logger.info("Saved to: %s", out_dir)
 
 
 if __name__ == "__main__":

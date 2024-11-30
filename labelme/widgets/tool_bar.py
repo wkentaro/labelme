@@ -4,7 +4,7 @@ from qtpy import QtWidgets
 
 class ToolBar(QtWidgets.QToolBar):
     def __init__(self, title):
-        super(ToolBar, self).__init__(title)
+        super().__init__(title)
         layout = self.layout()
         m = (0, 0, 0, 0)
         layout.setSpacing(0)
@@ -14,7 +14,7 @@ class ToolBar(QtWidgets.QToolBar):
 
     def addAction(self, action):
         if isinstance(action, QtWidgets.QWidgetAction):
-            return super(ToolBar, self).addAction(action)
+            return super().addAction(action)
         btn = QtWidgets.QToolButton()
         btn.setDefaultAction(action)
         btn.setToolButtonStyle(self.toolButtonStyle())

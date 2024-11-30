@@ -9,7 +9,7 @@ from qtpy.QtWidgets import QStyle
 # https://stackoverflow.com/a/2039745/4158863
 class HTMLDelegate(QtWidgets.QStyledItemDelegate):
     def __init__(self, parent=None):
-        super(HTMLDelegate, self).__init__()
+        super().__init__()
         self.doc = QtGui.QTextDocument(self)
 
     def paint(self, painter, option, index):
@@ -67,7 +67,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
 class LabelListWidgetItem(QtGui.QStandardItem):
     def __init__(self, text=None, shape=None):
-        super(LabelListWidgetItem, self).__init__()
+        super().__init__()
         self.setText(text or "")
         self.setShape(shape)
 
@@ -89,7 +89,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         return id(self)
 
     def __repr__(self):
-        return '{}("{}")'.format(self.__class__.__name__, self.text())
+        return f'{self.__class__.__name__}("{self.text()}")'
 
 
 class StandardItemModel(QtGui.QStandardItemModel):
@@ -106,7 +106,7 @@ class LabelListWidget(QtWidgets.QListView):
     itemSelectionChanged = QtCore.Signal(list, list)
 
     def __init__(self):
-        super(LabelListWidget, self).__init__()
+        super().__init__()
         self._selectedItems = []
 
         self.setWindowFlags(Qt.Window)
@@ -171,7 +171,7 @@ class LabelListWidget(QtWidgets.QListView):
             item = self.model().item(row, 0)
             if item.shape() == shape:
                 return item
-        raise ValueError("cannot find shape: {}".format(shape))
+        raise ValueError(f"cannot find shape: {shape}")
 
     def clear(self):
         self.model().clear()

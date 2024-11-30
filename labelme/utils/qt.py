@@ -11,7 +11,7 @@ here = osp.dirname(osp.abspath(__file__))
 
 def newIcon(icon):
     icons_dir = osp.join(here, "../icons")
-    return QtGui.QIcon(osp.join(":/", icons_dir, "%s.png" % icon))
+    return QtGui.QIcon(osp.join(":/", icons_dir, f"{icon}.png"))
 
 
 def newButton(text, icon=None, slot=None):
@@ -70,7 +70,7 @@ def labelValidator():
     return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
-class struct(object):
+class struct:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
@@ -95,4 +95,4 @@ def distancetoline(point, line):
 
 def fmtShortcut(text):
     mod, key = text.split("+", 1)
-    return "<b>%s</b>+<b>%s</b>" % (mod, key)
+    return f"<b>{mod}</b>+<b>{key}</b>"

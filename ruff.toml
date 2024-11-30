@@ -6,10 +6,15 @@ exclude = [
 
 line-length = 88
 indent-width = 4
+target-version = "py38"
 
 [lint]
-# Enable Pyflakes (`F`), pycodestyle (`E`), isort (`I`).
-select = ["E", "F", "I"]
+select = [
+  "E", # pycodestyle
+  "F", # pyflakes
+  "I", # isort
+  "UP", # pyupgrade
+]
 ignore = []
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

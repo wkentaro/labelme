@@ -14,7 +14,7 @@ def get_version():
     with open(filename) as f:
         match = re.search(r"""^__version__ = ['"]([^'"]*)['"]""", f.read(), re.M)
     if not match:
-        raise RuntimeError("{} doesn't contain __version__".format(filename))
+        raise RuntimeError(f"{filename} doesn't contain __version__")
     version = match.groups()[0]
     return version
 
@@ -106,13 +106,13 @@ def main():
 
         commands = [
             "git push origin main",
-            "git tag v{:s}".format(version),
+            f"git tag v{version:s}",
             "git push origin --tags",
             "python setup.py sdist",
-            "twine upload dist/labelme-{:s}.tar.gz".format(version),
+            f"twine upload dist/labelme-{version:s}.tar.gz",
         ]
         for cmd in commands:
-            print("+ {:s}".format(cmd))
+            print(f"+ {cmd:s}")
             subprocess.check_call(shlex.split(cmd))
         sys.exit(0)
 
@@ -128,6 +128,7 @@ def main():
         url="https://github.com/wkentaro/labelme",
         install_requires=get_install_requires(),
         license="GPLv3",
+        python_requires=">=3.8",
         keywords="Image Annotation, Machine Learning",
         classifiers=[
             "Development Status :: 5 - Production/Stable",
@@ -136,11 +137,11 @@ def main():
             "Natural Language :: English",
             "Operating System :: OS Independent",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 3.5",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
+            "Programming Language :: Python :: 3.12",
             "Programming Language :: Python :: 3 :: Only",
         ],
         package_data={"labelme": ["icons/*", "config/*.yaml", "translate/*"]},

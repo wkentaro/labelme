@@ -3,7 +3,7 @@ from qtpy import QtWidgets
 
 class ColorDialog(QtWidgets.QColorDialog):
     def __init__(self, parent=None):
-        super(ColorDialog, self).__init__(parent)
+        super().__init__(parent)
         self.setOption(QtWidgets.QColorDialog.ShowAlphaChannel)
         # The Mac native dialog does not support our restore button.
         self.setOption(QtWidgets.QColorDialog.DontUseNativeDialog)
