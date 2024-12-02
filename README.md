@@ -54,7 +54,7 @@ It is written in Python and uses Qt for its graphical interface.
 
 ## Starter Guide
 
-If you're new to Labelme, you can get started with [Labelme Starter](https://labelme.io/starter) (FREE), which contains:
+If you're new to Labelme, you can get started with [Labelme Starter](https://labelme.io/starter), which contains:
 
 - **Installation guides** for all platforms: Windows, macOS, and Linux 💻
 - **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
