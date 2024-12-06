@@ -4,8 +4,8 @@ import logging
 import os
 import os.path as osp
 import sys
-import yaml
 
+import yaml
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -19,15 +19,11 @@ from labelme.utils import newIcon
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--version", "-V", action="store_true", help="show version"
-    )
-    parser.add_argument(
-        "--reset-config", action="store_true", help="reset qt config"
-    )
+    parser.add_argument("--version", "-V", action="store_true", help="show version")
+    parser.add_argument("--reset-config", action="store_true", help="reset qt config")
     parser.add_argument(
         "--logger-level",
-        default="info",
+        default="debug",
         choices=["debug", "info", "warning", "fatal", "error"],
         help="logger level",
     )

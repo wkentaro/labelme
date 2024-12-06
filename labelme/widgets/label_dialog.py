@@ -5,9 +5,8 @@ from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
-from labelme.logger import logger
 import labelme.utils
-
+from labelme.logger import logger
 
 QT5 = QT_VERSION[0] == "5"
 
@@ -75,24 +74,19 @@ class LabelDialog(QtWidgets.QDialog):
         # label_list
         self.labelList = QtWidgets.QListWidget()
         if self._fit_to_content["row"]:
-            self.labelList.setHorizontalScrollBarPolicy(
-                QtCore.Qt.ScrollBarAlwaysOff
-            )
+            self.labelList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         if self._fit_to_content["column"]:
-            self.labelList.setVerticalScrollBarPolicy(
-                QtCore.Qt.ScrollBarAlwaysOff
-            )
+            self.labelList.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self._sort_labels = sort_labels
         if labels:
             self.labelList.addItems(labels)
         if self._sort_labels:
             self.labelList.sortItems()
         else:
-            self.labelList.setDragDropMode(
-                QtWidgets.QAbstractItemView.InternalMove
-            )
+            self.labelList.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.labelList.currentItemChanged.connect(self.labelSelected)
         self.labelList.itemDoubleClicked.connect(self.labelDoubleClicked)
+        self.labelList.setFixedHeight(150)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
         # label_flags
@@ -103,6 +97,11 @@ class LabelDialog(QtWidgets.QDialog):
         self.resetFlags()
         layout.addItem(self.flagsLayout)
         self.edit.textChanged.connect(self.updateFlags)
+        # text edit
+        self.editDescription = QtWidgets.QTextEdit()
+        self.editDescription.setPlaceholderText("Label description")
+        self.editDescription.setFixedHeight(50)
+        layout.addWidget(self.editDescription)
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
@@ -135,6 +134,10 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setText(item.text())
 
     def validate(self):
+        if not self.edit.isEnabled():
+            self.accept()
+            return
+
         text = self.edit.text()
         if hasattr(text, "strip"):
             text = text.strip()
@@ -200,18 +203,20 @@ class LabelDialog(QtWidgets.QDialog):
             return int(group_id)
         return None
 
-    def popUp(self, text=None, move=True, flags=None, group_id=None):
+    def popUp(self, text=None, move=True, flags=None, group_id=None, description=None):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
             )
         if self._fit_to_content["column"]:
-            self.labelList.setMinimumWidth(
-                self.labelList.sizeHintForColumn(0) + 2
-            )
+            self.labelList.setMinimumWidth(self.labelList.sizeHintForColumn(0) + 2)
         # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
+        # description is always initialized by empty text c.f., self.edit.text
+        if description is None:
+            description = ""
+        self.editDescription.setPlainText(description)
         if flags:
             self.setFlags(flags)
         else:
@@ -233,6 +238,11 @@ class LabelDialog(QtWidgets.QDialog):
         if move:
             self.move(QtGui.QCursor.pos())
         if self.exec_():
-            return self.edit.text(), self.getFlags(), self.getGroupId()
+            return (
+                self.edit.text(),
+                self.getFlags(),
+                self.getGroupId(),
+                self.editDescription.toPlainText(),
+            )
         else:
-            return None, None, None
+            return None, None, None, None

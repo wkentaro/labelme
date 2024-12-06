@@ -2,5 +2,5 @@
 
 from . import draw_json
 from . import draw_label_png
-from . import json_to_dataset
+from . import export_json
 from . import on_docker

@@ -1,8 +1,8 @@
 from qtpy import QtCore
-from qtpy.QtCore import Qt
 from qtpy import QtGui
-from qtpy.QtGui import QPalette
 from qtpy import QtWidgets
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QPalette
 from qtpy.QtWidgets import QStyle
 
 
@@ -33,9 +33,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         if option.state & QStyle.State_Selected:
             ctx.palette.setColor(
                 QPalette.Text,
-                option.palette.color(
-                    QPalette.Active, QPalette.HighlightedText
-                ),
+                option.palette.color(QPalette.Active, QPalette.HighlightedText),
             )
         else:
             ctx.palette.setColor(
@@ -62,15 +60,15 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
     def sizeHint(self, option, index):
         thefuckyourshitup_constant = 4
         return QtCore.QSize(
-            self.doc.idealWidth(),
-            self.doc.size().height() - thefuckyourshitup_constant,
+            int(self.doc.idealWidth()),
+            int(self.doc.size().height() - thefuckyourshitup_constant),
         )
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
     def __init__(self, text=None, shape=None):
         super(LabelListWidgetItem, self).__init__()
-        self.setText(text)
+        self.setText(text or "")
         self.setShape(shape)
 
         self.setCheckable(True)
@@ -95,7 +93,6 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
 
 class StandardItemModel(QtGui.QStandardItemModel):
-
     itemDropped = QtCore.Signal()
 
     def removeRows(self, *args, **kwargs):
@@ -105,7 +102,6 @@ class StandardItemModel(QtGui.QStandardItemModel):
 
 
 class LabelListWidget(QtWidgets.QListView):
-
     itemDoubleClicked = QtCore.Signal(LabelListWidgetItem)
     itemSelectionChanged = QtCore.Signal(list, list)
 
@@ -122,9 +118,7 @@ class LabelListWidget(QtWidgets.QListView):
         self.setDefaultDropAction(Qt.MoveAction)
 
         self.doubleClicked.connect(self.itemDoubleClickedEvent)
-        self.selectionModel().selectionChanged.connect(
-            self.itemSelectionChangedEvent
-        )
+        self.selectionModel().selectionChanged.connect(self.itemSelectionChangedEvent)
 
     def __len__(self):
         return self.model().rowCount()
@@ -146,9 +140,7 @@ class LabelListWidget(QtWidgets.QListView):
 
     def itemSelectionChangedEvent(self, selected, deselected):
         selected = [self.model().itemFromIndex(i) for i in selected.indexes()]
-        deselected = [
-            self.model().itemFromIndex(i) for i in deselected.indexes()
-        ]
+        deselected = [self.model().itemFromIndex(i) for i in deselected.indexes()]
         self.itemSelectionChanged.emit(selected, deselected)
 
     def itemDoubleClickedEvent(self, index):
@@ -179,6 +171,7 @@ class LabelListWidget(QtWidgets.QListView):
             item = self.model().item(row, 0)
             if item.shape() == shape:
                 return item
+        raise ValueError("cannot find shape: {}".format(shape))
 
     def clear(self):
         self.model().clear()

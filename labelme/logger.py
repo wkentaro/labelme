@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import sys
 
 import termcolor
 
@@ -10,7 +11,6 @@ if os.name == "nt":  # Windows
     colorama.init()
 
 from . import __appname__
-
 
 COLORS = {
     "WARNING": "yellow",
@@ -49,23 +49,14 @@ class ColoredFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
-class ColoredLogger(logging.Logger):
-
-    FORMAT = (
-        "[%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s - %(message2)s"
-    )
-
-    def __init__(self, name):
-        logging.Logger.__init__(self, name, logging.INFO)
-
-        color_formatter = ColoredFormatter(self.FORMAT)
-
-        console = logging.StreamHandler()
-        console.setFormatter(color_formatter)
-
-        self.addHandler(console)
-        return
-
-
-logging.setLoggerClass(ColoredLogger)
 logger = logging.getLogger(__appname__)
+logger.setLevel(logging.INFO)
+
+stream_handler = logging.StreamHandler(sys.stderr)
+handler_format = ColoredFormatter(
+    "%(asctime)s [%(levelname2)s] %(module2)s:%(funcName2)s:%(lineno2)s"
+    "- %(message2)s"
+)
+stream_handler.setFormatter(handler_format)
+
+logger.addHandler(stream_handler)

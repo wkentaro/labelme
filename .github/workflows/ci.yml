@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -13,36 +13,29 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.7', '2.7']
-        PYTEST_QT_API: [pyqt5, pyqt4v2]
-        exclude:
-          - os: macos-latest
-            PYTEST_QT_API: pyqt4v2
-          - os: windows-latest
-            PYTEST_QT_API: pyqt4v2
-          - python-version: '3.7'
-            PYTEST_QT_API: pyqt4v2
+        python-version: ['3.9']
+        PYTEST_QT_API: [pyqt5, pyside2]
 
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: true
 
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
         python-version: ${{ matrix.python-version }}
 
-    - name: Install system dependencies
-      shell: bash -l {0}
-      run: |
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          sudo apt-get install -y coreutils
-          sudo apt-get install -y xvfb herbstluftwm
-        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-          brew install coreutils
-          brew install --cask xquartz
-        fi
+    # - name: Install system dependencies
+    #   shell: bash -l {0}
+    #   run: |
+    #     if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+    #       sudo apt-get install -y coreutils
+    #       sudo apt-get install -y xvfb herbstluftwm
+    #     elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+    #       brew install coreutils
+    #       brew install --cask xquartz
+    #     fi
 
     - name: Set up Python
       shell: bash -l {0}
@@ -56,59 +49,39 @@ jobs:
       shell: bash -l {0}
       run: |
         if [ "${{ matrix.PYTEST_QT_API }}" = "pyside2" ]; then
-          if [ "${{ matrix.python-version }}" = "2.7" ]; then
-            conda install -q -y 'pyside2!=5.12.4' -c conda-forge
-          else
-            conda install -q -y pyside2 -c conda-forge
-          fi
-        elif [ "${{ matrix.PYTEST_QT_API }}" = "pyqt4v2" ]; then
-          conda install -q -y pyqt=4 -c conda-forge
-        else  # pyqt5
-          if [ "${{ matrix.os }}" = "macos-latest" -a "${{ matrix.python-version }}" = "3.7" ]; then
-            pip install pyqt5
-          else
-            conda install -q -y pyqt=5
-          fi
+          conda install -q -y pyside2 -c conda-forge
+        # should be installed via pip
+        # else
+        #   conda install -q -y pyqt=5
         fi
-        if [ "${{ matrix.os }}" != "windows-latest" ]; then
-          conda install -q -y help2man
-        fi
-        pip install hacking pytest pytest-qt
+        pip install -r requirements-dev.txt
 
     - name: Install main
       shell: bash -l {0}
       run: |
         pip install .
 
-    - name: Lint with flake8
+    - name: Run ruff
       shell: bash -l {0}
       if: matrix.os != 'windows-latest'
       run: |
-        flake8 .
-
-    - name: Black
-      shell: bash -l {0}
-      if: matrix.os != 'windows-latest' && matrix.python-version != '2.7'
-      run: |
-        pip install black
-        black --line-length 79 --check --diff labelme
+        ruff format --check
+        ruff check
 
     - name: Test with pytest
       shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
+      if: matrix.os == 'ubuntu-latest'
       env:
         PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
+        MPLBACKEND: 'agg'
       run: |
-        # open virtual display
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          export DISPLAY=:99.0
-          /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX +render -noreset
-          (herbstluftwm )&
-        else
-          (sudo Xvfb :99 -ac -screen 0 1024x768x8 )&
-        fi
-        # run test
-        MPLBACKEND='agg' pytest tests -m 'not gpu'
+        sudo apt-get update
+        sudo apt-get install -y xvfb libqt5widgets5
+
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        export DISPLAY=:99
+
+        pytest tests
 
     - name: Run examples
       shell: bash -l {0}
@@ -124,7 +97,7 @@ jobs:
         (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
         (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
 
-        pip install lxml  # for bbox_detection/labelme2voc.py
+        pip install 'lxml<5.0.0'  # for bbox_detection/labelme2voc.py
         (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
 
         pip install cython && pip install pycocotools  # for instance_segmentation/labelme2coco.py
@@ -132,7 +105,7 @@ jobs:
 
     - name: Run pyinstaller
       shell: bash -l {0}
-      if: matrix.PYTEST_QT_API == 'pyqt5' && matrix.python-version == '3.7'
+      if: matrix.PYTEST_QT_API == 'pyqt5'
       run: |
         # Build the standalone executable
         pip install pyinstaller

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Wada"
+  given-names: "Kentaro"
+  orcid: "https://orcid.org/0000-0002-6347-5156"
+title: "Labelme: Image Polygonal Annotation with Python"
+doi: 10.5281/zenodo.5711226
+url: "https://github.com/wkentaro/labelme"
+license: GPL-3

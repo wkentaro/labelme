@@ -7,18 +7,19 @@ import os.path as osp
 import imgviz
 import PIL.Image
 
-from labelme.logger import logger
 from labelme import utils
+from labelme.logger import logger
 
 
 def main():
     logger.warning(
-        "This script is aimed to demonstrate how to convert the "
-        "JSON file to a single image dataset."
+        "DEPRECATED: This script will be removed in the near future. "
+        "Please use `labelme_export_json` instead."
     )
     logger.warning(
-        "It won't handle multiple JSON files to generate a "
-        "real-use dataset."
+        "NOTE: This script is aimed to demonstrate how to convert a JSON file "
+        "to a single image dataset. so it won't handle multiple JSON files to "
+        "generate a real-use dataset."
     )
 
     parser = argparse.ArgumentParser()
@@ -54,16 +55,14 @@ def main():
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-    lbl, _ = utils.shapes_to_label(
-        img.shape, data["shapes"], label_name_to_value
-    )
+    lbl, _ = utils.shapes_to_label(img.shape, data["shapes"], label_name_to_value)
 
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
 
     lbl_viz = imgviz.label2rgb(
-        label=lbl, img=imgviz.asgray(img), label_names=label_names, loc="rb"
+        lbl, imgviz.asgray(img), label_names=label_names, loc="rb"
     )
 
     PIL.Image.fromarray(img).save(osp.join(out_dir, "img.png"))

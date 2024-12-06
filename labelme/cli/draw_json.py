@@ -6,9 +6,8 @@ import sys
 import imgviz
 import matplotlib.pyplot as plt
 
-from labelme.label_file import LabelFile
 from labelme import utils
-
+from labelme.label_file import LabelFile
 
 PY2 = sys.version_info[0] == 2
 
@@ -29,16 +28,14 @@ def main():
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-    lbl, _ = utils.shapes_to_label(
-        img.shape, label_file.shapes, label_name_to_value
-    )
+    lbl, _ = utils.shapes_to_label(img.shape, label_file.shapes, label_name_to_value)
 
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
     lbl_viz = imgviz.label2rgb(
-        label=lbl,
-        img=imgviz.asgray(img),
+        lbl,
+        imgviz.asgray(img),
         label_names=label_names,
         font_size=30,
         loc="rb",

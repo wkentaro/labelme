@@ -6,12 +6,11 @@ import os.path as osp
 
 import PIL.Image
 
-from labelme import __version__
-from labelme.logger import logger
 from labelme import PY2
 from labelme import QT4
+from labelme import __version__
 from labelme import utils
-
+from labelme.logger import logger
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
@@ -33,7 +32,6 @@ class LabelFileError(Exception):
 
 
 class LabelFile(object):
-
     suffix = ".json"
 
     def __init__(self, filename=None):
@@ -83,25 +81,12 @@ class LabelFile(object):
             "group_id",
             "shape_type",
             "flags",
+            "description",
+            "mask",
         ]
         try:
             with open(filename, "r") as f:
                 data = json.load(f)
-            version = data.get("version")
-            if version is None:
-                logger.warn(
-                    "Loading JSON file ({}) of unknown version".format(
-                        filename
-                    )
-                )
-            elif version.split(".")[0] != __version__.split(".")[0]:
-                logger.warn(
-                    "This JSON file ({}) may be incompatible with "
-                    "current labelme. version in file: {}, "
-                    "current version: {}".format(
-                        filename, version, __version__
-                    )
-                )
 
             if data["imageData"] is not None:
                 imageData = base64.b64decode(data["imageData"])
@@ -124,10 +109,12 @@ class LabelFile(object):
                     points=s["points"],
                     shape_type=s.get("shape_type", "polygon"),
                     flags=s.get("flags", {}),
+                    description=s.get("description"),
                     group_id=s.get("group_id"),
-                    other_data={
-                        k: v for k, v in s.items() if k not in shape_keys
-                    },
+                    mask=utils.img_b64_to_arr(s["mask"]).astype(bool)
+                    if s.get("mask")
+                    else None,
+                    other_data={k: v for k, v in s.items() if k not in shape_keys},
                 )
                 for s in data["shapes"]
             ]

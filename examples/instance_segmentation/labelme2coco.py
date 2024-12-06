@@ -29,9 +29,7 @@ def main():
     parser.add_argument("input_dir", help="input annotated directory")
     parser.add_argument("output_dir", help="output dataset directory")
     parser.add_argument("--labels", help="labels file", required=True)
-    parser.add_argument(
-        "--noviz", help="no visualization", action="store_true"
-    )
+    parser.add_argument("--noviz", help="no visualization", action="store_true")
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -54,7 +52,13 @@ def main():
             contributor=None,
             date_created=now.strftime("%Y-%m-%d %H:%M:%S.%f"),
         ),
-        licenses=[dict(url=None, id=0, name=None,)],
+        licenses=[
+            dict(
+                url=None,
+                id=0,
+                name=None,
+            )
+        ],
         images=[
             # license, url, file_name, height, width, date_captured, id
         ],
@@ -76,7 +80,11 @@ def main():
             continue
         class_name_to_id[class_name] = class_id
         data["categories"].append(
-            dict(supercategory=None, id=class_id, name=class_name,)
+            dict(
+                supercategory=None,
+                id=class_id,
+                name=class_name,
+            )
         )
 
     out_ann_file = osp.join(args.output_dir, "annotations.json")
@@ -110,9 +118,7 @@ def main():
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
-            mask = labelme.utils.shape_to_mask(
-                img.shape[:2], points, shape_type
-            )
+            mask = labelme.utils.shape_to_mask(img.shape[:2], points, shape_type)
 
             if group_id is None:
                 group_id = uuid.uuid1()
@@ -129,6 +135,16 @@ def main():
                 x1, x2 = sorted([x1, x2])
                 y1, y2 = sorted([y1, y2])
                 points = [x1, y1, x2, y1, x2, y2, x1, y2]
+            if shape_type == "circle":
+                (x1, y1), (x2, y2) = points
+                r = np.linalg.norm([x2 - x1, y2 - y1])
+                # r(1-cos(a/2))<x, a=2*pi/N => N>pi/arccos(1-x/r)
+                # x: tolerance of the gap between the arc and the line segment
+                n_points_circle = max(int(np.pi / np.arccos(1 - 1 / r)), 12)
+                i = np.arange(n_points_circle)
+                x = x1 + r * np.sin(2 * np.pi / n_points_circle * i)
+                y = y1 + r * np.cos(2 * np.pi / n_points_circle * i)
+                points = np.stack((x, y), axis=1).flatten().tolist()
             else:
                 points = np.asarray(points).flatten().tolist()
 
@@ -159,24 +175,24 @@ def main():
             )
 
         if not args.noviz:
-            labels, captions, masks = zip(
-                *[
-                    (class_name_to_id[cnm], cnm, msk)
-                    for (cnm, gid), msk in masks.items()
-                    if cnm in class_name_to_id
-                ]
-            )
-            viz = imgviz.instances2rgb(
-                image=img,
-                labels=labels,
-                masks=masks,
-                captions=captions,
-                font_size=15,
-                line_width=2,
-            )
-            out_viz_file = osp.join(
-                args.output_dir, "Visualization", base + ".jpg"
-            )
+            viz = img
+            if masks:
+                labels, captions, masks = zip(
+                    *[
+                        (class_name_to_id[cnm], cnm, msk)
+                        for (cnm, gid), msk in masks.items()
+                        if cnm in class_name_to_id
+                    ]
+                )
+                viz = imgviz.instances2rgb(
+                    image=img,
+                    labels=labels,
+                    masks=masks,
+                    captions=captions,
+                    font_size=15,
+                    line_width=2,
+                )
+            out_viz_file = osp.join(args.output_dir, "Visualization", base + ".jpg")
             imgviz.io.imsave(out_viz_file, viz)
 
     with open(out_ann_file, "w") as f:

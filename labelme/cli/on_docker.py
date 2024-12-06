@@ -20,7 +20,7 @@ def get_ip():
     elif dist == "Darwin":
         cmd = "ifconfig en0"
         output = subprocess.check_output(shlex.split(cmd))
-        if str != bytes:  # Python3
+        if str != bytes:  # noqa: E721
             output = output.decode("utf-8")
         for row in output.splitlines():
             cols = row.strip().split(" ")

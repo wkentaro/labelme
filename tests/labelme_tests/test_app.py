@@ -2,10 +2,11 @@ import os.path as osp
 import shutil
 import tempfile
 
+import pytest
+
 import labelme.app
 import labelme.config
 import labelme.testing
-
 
 here = osp.dirname(osp.abspath(__file__))
 data_dir = osp.join(here, "data")
@@ -21,6 +22,7 @@ def _win_show_and_wait_imageData(qtbot, win):
     qtbot.waitUntil(check_imageData)  # wait for loadFile
 
 
+@pytest.mark.gui
 def test_MainWindow_open(qtbot):
     win = labelme.app.MainWindow()
     qtbot.addWidget(win)
@@ -28,6 +30,7 @@ def test_MainWindow_open(qtbot):
     win.close()
 
 
+@pytest.mark.gui
 def test_MainWindow_open_img(qtbot):
     img_file = osp.join(data_dir, "raw/2011_000003.jpg")
     win = labelme.app.MainWindow(filename=img_file)
@@ -36,6 +39,7 @@ def test_MainWindow_open_img(qtbot):
     win.close()
 
 
+@pytest.mark.gui
 def test_MainWindow_open_json(qtbot):
     json_files = [
         osp.join(data_dir, "annotated_with_data/apc2016_obj3.json"),
@@ -50,7 +54,7 @@ def test_MainWindow_open_json(qtbot):
         win.close()
 
 
-def test_MainWindow_open_dir(qtbot):
+def create_MainWindow_with_directory(qtbot):
     directory = osp.join(data_dir, "raw")
     win = labelme.app.MainWindow(filename=directory)
     qtbot.addWidget(win)
@@ -58,16 +62,19 @@ def test_MainWindow_open_dir(qtbot):
     return win
 
 
+@pytest.mark.gui
 def test_MainWindow_openNextImg(qtbot):
-    win = test_MainWindow_open_dir(qtbot)
+    win = create_MainWindow_with_directory(qtbot)
     win.openNextImg()
 
 
+@pytest.mark.gui
 def test_MainWindow_openPrevImg(qtbot):
-    win = test_MainWindow_open_dir(qtbot)
+    win = create_MainWindow_with_directory(qtbot)
     win.openNextImg()
 
 
+@pytest.mark.gui
 def test_MainWindow_annotate_jpg(qtbot):
     tmp_dir = tempfile.mkdtemp()
     input_file = osp.join(data_dir, "raw/2011_000003.jpg")
@@ -75,7 +82,9 @@ def test_MainWindow_annotate_jpg(qtbot):
 
     config = labelme.config.get_default_config()
     win = labelme.app.MainWindow(
-        config=config, filename=input_file, output_file=out_file,
+        config=config,
+        filename=input_file,
+        output_file=out_file,
     )
     qtbot.addWidget(win)
     _win_show_and_wait_imageData(qtbot, win)
@@ -93,6 +102,7 @@ def test_MainWindow_annotate_jpg(qtbot):
             group_id=None,
             points=points,
             shape_type="polygon",
+            mask=None,
             flags={},
             other_data={},
         )

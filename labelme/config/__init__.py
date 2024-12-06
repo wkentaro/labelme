@@ -5,7 +5,6 @@ import yaml
 
 from labelme.logger import logger
 
-
 here = osp.dirname(osp.abspath(__file__))
 
 
@@ -44,9 +43,7 @@ def get_default_config():
 def validate_config_item(key, value):
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(
-            "Unexpected value for config key 'validate_label': {}".format(
-                value
-            )
+            "Unexpected value for config key 'validate_label': {}".format(value)
         )
     if key == "shape_color" and value not in [None, "auto", "manual"]:
         raise ValueError(
@@ -67,18 +64,12 @@ def get_config(config_file_or_yaml=None, config_from_args=None):
         config_from_yaml = yaml.safe_load(config_file_or_yaml)
         if not isinstance(config_from_yaml, dict):
             with open(config_from_yaml) as f:
-                logger.info(
-                    "Loading config file from: {}".format(config_from_yaml)
-                )
+                logger.info("Loading config file from: {}".format(config_from_yaml))
                 config_from_yaml = yaml.safe_load(f)
-        update_dict(
-            config, config_from_yaml, validate_item=validate_config_item
-        )
+        update_dict(config, config_from_yaml, validate_item=validate_config_item)
 
     # 3. command line argument or specified config file
     if config_from_args is not None:
-        update_dict(
-            config, config_from_args, validate_item=validate_config_item
-        )
+        update_dict(config, config_from_args, validate_item=validate_config_item)
 
     return config

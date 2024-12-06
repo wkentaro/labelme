@@ -1,3 +1,6 @@
+# MIT License
+# Copyright (c) Kentaro Wada
+
 import os.path as osp
 
 import numpy as np

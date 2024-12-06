@@ -9,6 +9,7 @@ import os.path as osp
 import sys
 
 import imgviz
+
 import labelme
 
 try:
@@ -26,9 +27,7 @@ def main():
     parser.add_argument("input_dir", help="input annotated directory")
     parser.add_argument("output_dir", help="output dataset directory")
     parser.add_argument("--labels", help="labels file", required=True)
-    parser.add_argument(
-        "--noviz", help="no visualization", action="store_true"
-    )
+    parser.add_argument("--noviz", help="no visualization", action="store_true")
     args = parser.parse_args()
 
     if osp.exists(args.output_dir):
@@ -96,8 +95,9 @@ def main():
         for shape in label_file.shapes:
             if shape["shape_type"] != "rectangle":
                 print(
-                    "Skipping shape: label={label}, "
-                    "shape_type={shape_type}".format(**shape)
+                    "Skipping shape: label={label}, " "shape_type={shape_type}".format(
+                        **shape
+                    )
                 )
                 continue
 
