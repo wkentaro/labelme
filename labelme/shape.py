@@ -266,13 +266,11 @@ class Shape(object):
 
             if self.label and self.show_labels:
                 painter.setFont(QtGui.QFont("Arial", 25))
-                label_x, label_y = self.points[0].x(), self.points[0].y()
+                label_point = self.points[0]
                 for p in self.points:
-                    if p.x() < label_x:
-                        label_x = p.x()
-                        label_y = p.y()
-                shift_y = 20 * (2 if len(self.label) > 2 else 1)
-                painter.drawText(int(label_x - 15), int(label_y - shift_y), self.label)
+                    if p.x() < label_point.x():
+                        label_point = p
+                painter.drawText(self._scale_point(label_point), self.label)
 
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
