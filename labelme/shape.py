@@ -272,7 +272,7 @@ class Shape(object):
                         label_x = p.x()
                         label_y = p.y()
                 shift_y = 20 * (2 if len(self.label) > 2 else 1)
-                painter.drawText(label_x - 15, label_y - shift_y, self.label)
+                painter.drawText(int(label_x - 15), int(label_y - shift_y), self.label)
 
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
