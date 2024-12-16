@@ -136,7 +136,7 @@ class LabelLetterDialog(QtWidgets.QDialog):
             raise Exception("error in validating text")
 
     def dia_letter_correct(self, text):
-        return text[0] in SlavicFont.LETTERS and text[1] in (SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA)
+        return text[0] in SlavicFont.LETTERS and text[1] in SlavicFont.DIACRITICAL_SIGNS
      
     def getMessageBox(self, text):
         messageBox = QtWidgets.QMessageBox(

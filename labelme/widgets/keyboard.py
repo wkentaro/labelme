@@ -26,9 +26,9 @@ class Keyboard(QtWidgets.QDialog):
         super(Keyboard, self).__init__()
         self.helper = helper
         if type == 'letter':
-            self.symbol_list = SlavicFont.LETTERS
+            self.symbol_list = SlavicFont.LETTERS + SlavicFont.TITLA
         elif type == 'diacritical':
-            self.symbol_list = SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
+            self.symbol_list = SlavicFont.DIACRITICAL_SIGNS
         else:
             self.symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
 
