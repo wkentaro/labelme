@@ -1204,11 +1204,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         shapes = [format_shape(item.shape()) for item in self.labelList if item.shape().getClass() == ShapeClass.TEXT]
 
-        empty_rows = [item for item in shapes] 
+        empty_rows = [item.shape() for item in self.labelList if item.shape().getClass() == ShapeClass.ROW and item.shape().label == ""]
+        
+        if len(empty_rows) != 0:
+            messageBox = QtWidgets.QMessageBox(
+                    QtWidgets.QMessageBox.Warning,
+                    "Ошибка",
+                    "Внимание! Выделенные строки не имеют разметки. Файл не сохранится, пока все строки не будут размечены"
+                )
+            messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
+            messageBox.exec_()
 
-        print(empty_rows[0])
-
-        if len(empty_rows) == 0:
+            self.canvas.selectShapes(empty_rows)
+        else:
             try:
                 imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
                 if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
@@ -1235,15 +1243,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.errorMessage(
                     self.tr("Ошибка сохранения изображения"), self.tr("<b>%s</b>") % e
                 )
-                return False
-        else:
-            messageBox = QtWidgets.QMessageBox(
-                    QtWidgets.QMessageBox.Warning,
-                    "Ошибка",
-                    "Ляляляляляля"
-                )
-            messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
-            messageBox.exec_()
+                return False   
 
     def labelSelectionChanged(self):
         if self._noSelectionSlot:
