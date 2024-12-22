@@ -396,6 +396,22 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.canvas.createMode == "ai_mask"
             else None
         )
+
+        createAiBatchMode = action(
+            self.tr("Create AI-Batch"),
+            lambda: self.toggleDrawMode(False, createMode="ai_batch"),
+            None,
+            "objects",
+            self.tr("Start drawing ai_batch. Ctrl+LeftClick ends creation."),
+            enabled=False,
+        )
+        createAiBatchMode.changed.connect(
+            lambda: self.canvas.initializeAiModel(
+                name=self._selectAiModelComboBox.currentText()
+            )
+            if self.canvas.createMode == "ai_batch"
+            else None
+        )
         editMode = action(
             self.tr("Edit Polygons"),
             self.setEditMode,
@@ -649,6 +665,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             createAiPolygonMode=createAiPolygonMode,
             createAiMaskMode=createAiMaskMode,
+            createAiBatchMode=createAiBatchMode,
             zoom=zoom,
             zoomIn=zoomIn,
             zoomOut=zoomOut,
@@ -687,6 +704,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 createAiPolygonMode,
                 createAiMaskMode,
+                createAiBatchMode,
                 editMode,
                 edit,
                 duplicate,
@@ -707,6 +725,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 createLineStripMode,
                 createAiPolygonMode,
                 createAiMaskMode,
+                createAiBatchMode,
                 editMode,
                 brightnessContrast,
             ),
@@ -807,7 +826,7 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.canvas.initializeAiModel(
                 name=self._selectAiModelComboBox.currentText()
             )
-            if self.canvas.createMode in ["ai_polygon", "ai_mask"]
+            if self.canvas.createMode in ["ai_polygon", "ai_mask", "ai_batch"]
             else None
         )
 
@@ -943,6 +962,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createLineStripMode,
             self.actions.createAiPolygonMode,
             self.actions.createAiMaskMode,
+            self.actions.createAiBatchMode,
             self.actions.editMode,
         )
         utils.addActions(self.menus.edit, actions + self.actions.editMenu)
@@ -976,6 +996,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.createLineStripMode.setEnabled(True)
         self.actions.createAiPolygonMode.setEnabled(True)
         self.actions.createAiMaskMode.setEnabled(True)
+        self.actions.createAiBatchMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = "{} - {}".format(title, self.filename)
@@ -1113,6 +1134,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "linestrip": self.actions.createLineStripMode,
             "ai_polygon": self.actions.createAiPolygonMode,
             "ai_mask": self.actions.createAiMaskMode,
+            "ai_batch": self.actions.createAiBatchMode,
         }
 
         self.canvas.setEditing(edit)
