@@ -15,6 +15,7 @@ a = Analysis(
     pathex=['labelme'],
     binaries=[],
     datas=[
+        ('labelme/widgets/helper_text/*', 'labelme/widgets/helper_text'),
         ('labelme/config/default_config.yaml', 'labelme/config'),
         ('labelme/icons/*', 'labelme/icons'),
         ('labelme/translate/*.qm', 'translate'),
@@ -38,7 +39,7 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    name='labelme',
+    name='neurolab_markup',
     debug=False,
     strip=False,
     upx=True,
@@ -48,7 +49,7 @@ exe = EXE(
 )
 app = BUNDLE(
     exe,
-    name='Labelme.app',
+    name='neurolab_markup.app',
     icon='labelme/icons/icon.icns',
     bundle_identifier=None,
     info_plist={'NSHighResolutionCapable': 'True'},

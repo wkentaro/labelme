@@ -1,6 +1,15 @@
+
 <h1 align="center">
-  Гайд для установки
+  <img src="labelme/icons/icon.png"><br/>Нейролаб
 </h1>
+
+<h4 align="center">
+  Программа для разметки древнерусских текстов
+</h4>
+
+<h2 align="center">
+  Гайд для установки
+</h2>
 Разрабы не смогли нормально написать что необходимо для запуска программы и какие зависимости необходимо подгрузить, так что придётся это делать мне.
 
 Для начала нужен питон с официального сайта (у меня работает на 3.11.9).
@@ -31,15 +40,27 @@ pip install -r requirements-dev.txt
 python start.py
 ```
 
+<h2 align="center">
+  Для создания exe-файла
+</h2>
+Пишем команду:
+
+```
+pyinstaller labelme.spec
+```
+<h2 align="center">
+  Для компиляции ресурсов файлов помощи
+</h2>
+После исправления файлов с помощью их надо перекомпиллировать:
+
+Открываем терминал, выполняем команды.
+
+```
+cd .\labelme\widgets\helper_text\
+pyrcc5 -o help.py help.qrc
+```
 # Далее ридми от разрабов:
 
-<h1 align="center">
-  <img src="labelme/icons/icon.png"><br/>Нейролаб
-</h1>
-
-<h4 align="center">
-  Программа для разметки древнерусских текстов
-</h4>
 
 <div align="center">
   <a href="https://pypi.python.org/pypi/labelme"><img src="https://img.shields.io/pypi/v/labelme.svg"></a>

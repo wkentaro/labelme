@@ -3,6 +3,8 @@ from qtpy import QtWidgets
 from PyQt5.QtGui import * 
 from qtpy import QtCore
 
+import labelme.widgets.helper_text.help
+
 class Helper(QtWidgets.QDialog):
     def __init__(self, text):
         super(Helper, self).__init__(None, QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
@@ -23,16 +25,24 @@ class Helper(QtWidgets.QDialog):
 class HelperString:
     def __init__(self):
         try:
-            with open("labelme\\widgets\\hepler_text\\keyboard.txt", 'r', encoding='utf-8') as keyboard_file:
-                self.keyboard = keyboard_file.read()
-            with open("labelme\\widgets\\hepler_text\\letter.txt", 'r', encoding='utf-8') as letter_file:
-                self.letter = letter_file.read()
-            with open("labelme\\widgets\\hepler_text\\line.txt", 'r', encoding='utf-8') as line_file:
-                self.line = line_file.read()
-            with open("labelme\\widgets\\hepler_text\\main.txt", 'r', encoding='utf-8') as main_file:
-                self.main = main_file.read()
+            # Прочитываем файлы из ресурсов
+            self.keyboard = self.__read_resource_file(":/keyboard.txt")
+            self.letter = self.__read_resource_file(":/letter.txt")
+            self.line = self.__read_resource_file(":/line.txt")
+            self.main = self.__read_resource_file(":/main.txt")
         except:
             raise Exception("error in helper files loading")
+        
+    def __read_resource_file(self, path):
+        f = QtCore.QFile(path)
+        if f.open(QtCore.QIODevice.ReadOnly | QtCore.QFile.Text):
+            text = QtCore.QTextStream(f)
+            text.setCodec("UTF-8")
+        result = ""
+        while not text.atEnd():
+            result += text.readLine()
+        f.close()
+        return result
         
     def get_letter_helper(self):
         return self.letter

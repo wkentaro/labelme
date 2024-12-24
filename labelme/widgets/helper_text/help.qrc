@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix='/'>
+  <file>keyboard.txt</file>
+  <file>letter.txt</file>
+  <file>line.txt</file>
+  <file>main.txt</file>
+</qresource>
+</RCC>
