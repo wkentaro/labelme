@@ -3,12 +3,14 @@
 import html
 
 from qtpy import QtWidgets
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt, QSize
 
 from .escapable_qlist_widget import EscapableQListWidget
 
 
 class UniqueLabelQListWidget(EscapableQListWidget):
+    ADDING = 10
+
     def mousePressEvent(self, event):
         super(UniqueLabelQListWidget, self).mousePressEvent(event)
         if not self.indexAt(event.pos()).isValid():
@@ -38,8 +40,8 @@ class UniqueLabelQListWidget(EscapableQListWidget):
                     html.escape(label), *color
                 )
             )
-        qlabel.setAlignment(Qt.AlignBottom)
+        qlabel.setAlignment(Qt.AlignLeft)
 
-        item.setSizeHint(qlabel.sizeHint())
+        item.setSizeHint(qlabel.sizeHint() + QSize(0, self.ADDING))
 
         self.setItemWidget(item, qlabel)

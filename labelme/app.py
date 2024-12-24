@@ -1204,33 +1204,46 @@ class MainWindow(QtWidgets.QMainWindow):
 
         shapes = [format_shape(item.shape()) for item in self.labelList if item.shape().getClass() == ShapeClass.TEXT]
 
-        try:
-            imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
-            if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
-                os.makedirs(osp.dirname(filename))
-            lf.save(
-                filename=filename,
-                shapes=shapes,
-                imagePath=imagePath,
-                imageHeight=self.image.height(),
-                imageWidth=self.image.width(),
-                otherData=self.otherData,
-                textType=self.manusctipt_type_wiget.GetCurrentValue(),
-            )
-            self.labelFile = lf
-            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)
-            if len(items) > 0:
-                if len(items) != 1:
-                    raise RuntimeError("There are duplicate files.")
-                items[0].setCheckState(Qt.Checked)
-            # disable allows next and previous image to proceed
-            # self.filename = filename
-            return True
-        except LabelFileError as e:
-            self.errorMessage(
-                self.tr("Ошибка сохранения изображения"), self.tr("<b>%s</b>") % e
-            )
-            return False
+        empty_rows = [item.shape() for item in self.labelList if item.shape().getClass() == ShapeClass.ROW and item.shape().label == ""]
+        
+        if len(empty_rows) != 0:
+            messageBox = QtWidgets.QMessageBox(
+                    QtWidgets.QMessageBox.Warning,
+                    "Ошибка",
+                    "Внимание! Выделенные строки не имеют разметки. Файл не сохранится, пока все строки не будут размечены"
+                )
+            messageBox.addButton("Ок", QtWidgets.QMessageBox.YesRole)
+            messageBox.exec_()
+
+            self.canvas.selectShapes(empty_rows)
+        else:
+            try:
+                imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
+                if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
+                    os.makedirs(osp.dirname(filename))
+                lf.save(
+                    filename=filename,
+                    shapes=shapes,
+                    imagePath=imagePath,
+                    imageHeight=self.image.height(),
+                    imageWidth=self.image.width(),
+                    otherData=self.otherData,
+                    textType=self.manusctipt_type_wiget.GetCurrentValue(),
+                )
+                self.labelFile = lf
+                items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)
+                if len(items) > 0:
+                    if len(items) != 1:
+                        raise RuntimeError("There are duplicate files.")
+                    items[0].setCheckState(Qt.Checked)
+                # disable allows next and previous image to proceed
+                # self.filename = filename
+                return True
+            except LabelFileError as e:
+                self.errorMessage(
+                    self.tr("Ошибка сохранения изображения"), self.tr("<b>%s</b>") % e
+                )
+                return False   
 
     def labelSelectionChanged(self):
         if self._noSelectionSlot:

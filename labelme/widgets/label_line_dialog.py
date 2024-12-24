@@ -84,8 +84,6 @@ class LabelLineDialog(QtWidgets.QDialog):
         bb.button(bb.Cancel).setIcon(labelme.utils.newIcon("undo"))
         bb.button(bb.Ok).setText("Ок")
         bb.button(bb.Cancel).setText("Отменить")
-        if old_text is None:
-            bb.button(bb.Ok).setDisabled(True)
         bb.accepted.connect(self.validate_input)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
@@ -95,6 +93,10 @@ class LabelLineDialog(QtWidgets.QDialog):
     def validate_input(self):
         text = self.edit.text()
         symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
+        if text == "":
+            self.recognised_line = Literal(text)
+            self.close()
+            return
         if not all(letter in symbol_list for letter in text):
             self.getMessageBox("Введён некорректный символ!")
         elif text[0] in SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA:
@@ -120,11 +122,6 @@ class LabelLineDialog(QtWidgets.QDialog):
     def changeLabel(self):
         text = self.edit.text()
         symbol_list = SlavicFont.LETTERS + SlavicFont.DIACRITICAL_SIGNS + SlavicFont.TITLA
-
-        if len(text) == 0:
-            self.buttonBox.button(self.buttonBox.Ok).setDisabled(True)
-        else:
-            self.buttonBox.button(self.buttonBox.Ok).setDisabled(False)
         
         if not all(letter in symbol_list for letter in text):
             self.text_view.setText("")
