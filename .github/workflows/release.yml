@@ -27,19 +27,15 @@ jobs:
                 "pr_template": "- #{{TITLE}} ##{{NUMBER}} (Thanks @#{{AUTHOR}})",
                 "categories": [
                     {
-                        "title": "## 🚀 Features",
+                        "title": "## Features",
                         "labels": ["feature"]
                     },
                     {
-                        "title": "## ✨ Enhancement",
-                        "labels": ["enhancement"]
-                    },
-                    {
-                        "title": "## 🐛 Fixes",
+                        "title": "## Fixes",
                         "labels": ["fix"]
                     },
                     {
-                        "title": "## 💬 Other",
+                        "title": "## Other",
                         "labels": ["other"]
                     }
                 ]
