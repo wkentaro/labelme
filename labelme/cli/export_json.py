@@ -6,9 +6,9 @@ import os.path as osp
 
 import imgviz
 import PIL.Image
+from loguru import logger
 
 from labelme import utils
-from labelme.logger import logger
 
 
 def main():

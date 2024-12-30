@@ -1,11 +1,11 @@
 import argparse
 import codecs
-import logging
 import os
 import os.path as osp
 import sys
 
 import yaml
+from loguru import logger
 from qtpy import QtCore
 from qtpy import QtWidgets
 
@@ -13,8 +13,38 @@ from labelme import __appname__
 from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_config
-from labelme.logger import logger
 from labelme.utils import newIcon
+
+
+def _setup_loguru(logger_level: str) -> None:
+    try:
+        logger.remove(handler_id=0)
+    except ValueError:
+        pass
+
+    if sys.stderr:
+        logger.add(sys.stderr, level=logger_level)
+
+    cache_dir: str
+    if os.name == "nt":
+        cache_dir = os.path.join(os.environ["LOCALAPPDATA"], "labelme")
+    else:
+        cache_dir = os.path.expanduser("~/.cache/labelme")
+
+    os.makedirs(cache_dir, exist_ok=True)
+
+    log_file = os.path.join(cache_dir, "labelme.log")
+    logger.add(
+        log_file,
+        colorize=True,
+        level="DEBUG",
+        rotation="10 MB",
+        retention="30 days",
+        compression="gz",
+        enqueue=True,
+        backtrace=True,
+        diagnose=True,
+    )
 
 
 def main():
@@ -109,7 +139,7 @@ def main():
         print("{0} {1}".format(__appname__, __version__))
         sys.exit(0)
 
-    logger.setLevel(getattr(logging, args.logger_level.upper()))
+    _setup_loguru(logger_level=args.logger_level.upper())
 
     if hasattr(args, "flags"):
         if os.path.isfile(args.flags):
@@ -177,9 +207,10 @@ def main():
         win.settings.clear()
         sys.exit(0)
 
-    win.show()
-    win.raise_()
-    sys.exit(app.exec_())
+    with logger.catch():
+        win.show()
+        win.raise_()
+        sys.exit(app.exec_())
 
 
 # this main block is required to generate executable by pyinstaller

@@ -1,12 +1,12 @@
 import re
 
+from loguru import logger
 from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
 import labelme.utils
-from labelme.logger import logger
 
 QT5 = QT_VERSION[0] == "5"
 
