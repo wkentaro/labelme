@@ -5,8 +5,8 @@ import imgviz
 import numpy as np
 import onnxruntime
 import skimage
+from loguru import logger
 
-from ..logger import logger
 from . import _utils
 
 
