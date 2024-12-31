@@ -355,12 +355,17 @@ class Canvas(QtWidgets.QWidget):
                 self.hEdge = None
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
-                self.setToolTip(
-                    self.tr(
-                        "Click & Drag to move point\n"
-                        "ALT + SHIFT + Click to delete point"
+                if shape.shape_type == "point":
+                    self.setToolTip(
+                        self.tr("Click & drag to move shape '%s'") % shape.label
                     )
-                )
+                else:
+                    self.setToolTip(
+                        self.tr(
+                            "Click & Drag to move point\n"
+                            "ALT + SHIFT + Click to delete point"
+                        )
+                    )
                 self.setStatusTip(self.toolTip())
                 self.update()
                 break
@@ -376,7 +381,15 @@ class Canvas(QtWidgets.QWidget):
                 self.setStatusTip(self.toolTip())
                 self.update()
                 break
-            elif shape.containsPoint(pos):
+            elif (
+                shape.containsPoint(pos)
+                or (shape.shape_type == "line" and index_edge is not None)
+                or (
+                    shape.shape_type == "linestrip"
+                    and len(shape.points) == 2
+                    and index_edge is not None
+                )
+            ):
                 if self.selectedVertex():
                     self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex
@@ -580,12 +593,24 @@ class Canvas(QtWidgets.QWidget):
 
     def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
-        if self.selectedVertex():  # A vertex is marked for selection.
+        if self.selectedVertex() and self.hShape.shape_type != "point":
+            # A vertex, not point shape, is marked for selection.
             index, shape = self.hVertex, self.hShape
             shape.highlightVertex(index, shape.MOVE_VERTEX)
         else:
             for shape in reversed(self.shapes):
-                if self.isVisible(shape) and shape.containsPoint(point):
+                index_vertex = shape.nearestVertex(point, self.epsilon)
+                index_edge = shape.nearestEdge(point, self.epsilon)
+                if self.isVisible(shape) and (
+                    shape.containsPoint(point)
+                    or (shape.shape_type == "point" and index_vertex is not None)
+                    or (shape.shape_type == "line" and index_edge is not None)
+                    or (
+                        shape.shape_type == "linestrip"
+                        and len(shape.points) == 2
+                        and index_edge is not None
+                    )
+                ):
                     self.setHiding()
                     if shape not in self.selectedShapes:
                         if multiple_selection_mode:
