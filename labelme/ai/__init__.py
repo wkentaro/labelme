@@ -1,6 +1,7 @@
 import gdown
 
 from .efficient_sam import EfficientSam
+from .segment_anything2_model import SegmentAnything2Model
 from .segment_anything_model import SegmentAnythingModel
 from .text_to_annotation import get_rectangles_from_texts  # NOQA: F401
 from .text_to_annotation import get_shapes_from_annotations  # NOQA: F401
@@ -86,6 +87,31 @@ class EfficientSamVitS(EfficientSam):
             ),
         )
 
+class SAM2HieraL(SegmentAnything2Model):
+    name = "SegmentAnything2 (accuracy)"
+
+    def __init__(self):
+        super().__init__(
+            encoder_path=gdown.cached_download(
+                url="https://github.com/jakep72/labelme/releases/download/SAM2/sam2_large.encoder.onnx",  # NOQA
+            ),
+            decoder_path=gdown.cached_download(
+                url="https://github.com/jakep72/labelme/releases/download/SAM2/sam2_large.decoder.onnx" # NOQA
+            ),
+        )
+
+class SAM2HieraT(SegmentAnything2Model):
+    name = "SegmentAnything2 (speed)"
+
+    def __init__(self):
+        super().__init__(
+            encoder_path=gdown.cached_download(
+                url="https://github.com/jakep72/labelme/releases/download/SAM2/sam2_hiera_tiny.encoder.onnx"  # NOQA
+            ),
+            decoder_path=gdown.cached_download(
+                url="https://github.com/jakep72/labelme/releases/download/SAM2/sam2_hiera_tiny.decoder.onnx" # NOQA
+            ),
+        )
 
 MODELS = [
     SegmentAnythingModelVitB,
@@ -93,4 +119,6 @@ MODELS = [
     SegmentAnythingModelVitH,
     EfficientSamVitT,
     EfficientSamVitS,
+    SAM2HieraT,
+    SAM2HieraL
 ]

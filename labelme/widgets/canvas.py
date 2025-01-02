@@ -11,6 +11,9 @@ import labelme.utils
 from labelme import QT5
 from labelme.shape import Shape
 
+import numpy as np
+import skimage
+
 # TODO(unknown):
 # - [maybe] Find optimal epsilon value.
 
@@ -60,6 +63,7 @@ class Canvas(QtWidgets.QWidget):
                 "linestrip": False,
                 "ai_polygon": False,
                 "ai_mask": False,
+                "ai_batch": False
             },
         )
         super(Canvas, self).__init__(*args, **kwargs)
@@ -126,6 +130,7 @@ class Canvas(QtWidgets.QWidget):
             "linestrip",
             "ai_polygon",
             "ai_mask",
+            "ai_batch",
         ]:
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
@@ -257,7 +262,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            if self.createMode in ["ai_polygon", "ai_mask"]:
+            if self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]:
                 self.line.shape_type = "points"
             else:
                 self.line.shape_type = self.createMode
@@ -285,7 +290,7 @@ class Canvas(QtWidgets.QWidget):
             if self.createMode in ["polygon", "linestrip"]:
                 self.line.points = [self.current[-1], pos]
                 self.line.point_labels = [1, 1]
-            elif self.createMode in ["ai_polygon", "ai_mask"]:
+            elif self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]:
                 self.line.points = [self.current.points[-1], pos]
                 self.line.point_labels = [
                     self.current.point_labels[-1],
@@ -445,7 +450,7 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
-                    elif self.createMode in ["ai_polygon", "ai_mask"]:
+                    elif self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]:
                         self.current.addPoint(
                             self.line.points[1],
                             label=self.line.point_labels[1],
@@ -458,14 +463,14 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(
                         shape_type="points"
-                        if self.createMode in ["ai_polygon", "ai_mask"]
+                        if self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]
                         else self.createMode
                     )
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
                     if self.createMode == "point":
                         self.finalise()
                     elif (
-                        self.createMode in ["ai_polygon", "ai_mask"]
+                        self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]
                         and ev.modifiers() & QtCore.Qt.ControlModifier
                     ):
                         self.finalise()
@@ -474,7 +479,7 @@ class Canvas(QtWidgets.QWidget):
                             self.current.shape_type = "circle"
                         self.line.points = [pos, pos]
                         if (
-                            self.createMode in ["ai_polygon", "ai_mask"]
+                            self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]
                             and is_shift_pressed
                         ):
                             self.line.point_labels = [0, 0]
@@ -561,7 +566,7 @@ class Canvas(QtWidgets.QWidget):
     def canCloseShape(self):
         return self.drawing() and (
             (self.current and len(self.current) > 2)
-            or self.createMode in ["ai_polygon", "ai_mask"]
+            or self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]
         )
 
     def mouseDoubleClickEvent(self, ev):
@@ -570,7 +575,7 @@ class Canvas(QtWidgets.QWidget):
 
         if (
             self.createMode == "polygon" and self.canCloseShape()
-        ) or self.createMode in ["ai_polygon", "ai_mask"]:
+        ) or self.createMode in ["ai_polygon", "ai_mask", "ai_batch"]:
             self.finalise()
 
     def selectShapes(self, shapes):
@@ -784,6 +789,35 @@ class Canvas(QtWidgets.QWidget):
             )
             drawing_shape.selected = True
             drawing_shape.paint(p)
+        elif self.createMode == "ai_batch" and self.current is not None:
+            drawing_shape = self.current.copy()
+            drawing_shape.addPoint(
+                point=self.line.points[1],
+                label=self.line.point_labels[1],
+            )
+            mask = self._ai_model.predict_mask_from_points(
+                points=[[point.x(), point.y()] for point in drawing_shape.points],
+                point_labels=drawing_shape.point_labels,
+            )
+            contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
+
+            for c in contours:
+                POLYGON_APPROX_TOLERANCE = 0.004
+                polygon = skimage.measure.approximate_polygon(
+                    coords=c,
+                    tolerance=np.ptp(c, axis=0).max() * POLYGON_APPROX_TOLERANCE,
+                )
+                polygon = np.clip(polygon, (0, 0), (mask.shape[0] - 1, mask.shape[1] - 1))
+                polygon = polygon[:-1] 
+
+                drawing_shape.setShapeRefined(
+                    shape_type="polygon",
+                    points=[QtCore.QPointF(point[1], point[0]) for point in polygon],
+                    point_labels=[1] * len(polygon),
+                )
+                drawing_shape.fill = self.fillDrawing()
+                drawing_shape.selected = True
+                drawing_shape.paint(p)
 
         p.end()
 
@@ -832,14 +866,50 @@ class Canvas(QtWidgets.QWidget):
                 point_labels=[1, 1],
                 mask=mask[y1 : y2 + 1, x1 : x2 + 1],
             )
-        self.current.close()
 
-        self.shapes.append(self.current)
-        self.storeShapes()
-        self.current = None
-        self.setHiding(False)
-        self.newShape.emit()
-        self.update()
+        elif self.createMode == "ai_batch":
+            # convert points to polygon by an AI model in batch mode
+            assert self.current.shape_type == "points"
+            mask = self._ai_model.predict_mask_from_points(
+                points=[[point.x(), point.y()] for point in self.current.points],
+                point_labels=self.current.point_labels,
+            )
+            contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
+
+            for c in contours:
+                POLYGON_APPROX_TOLERANCE = 0.004
+                polygon = skimage.measure.approximate_polygon(
+                    coords=c,
+                    tolerance=np.ptp(c, axis=0).max() * POLYGON_APPROX_TOLERANCE,
+                )
+                polygon = np.clip(polygon, (0, 0), (mask.shape[0] - 1, mask.shape[1] - 1))
+                polygon = polygon[:-1] 
+
+                self.current.setShapeRefined(
+                    shape_type="polygon",
+                    points=[QtCore.QPointF(point[1], point[0]) for point in polygon],
+                    point_labels=[1] * len(polygon),
+                )
+
+                self.current.close()
+                self.shapes.append(self.current)
+                self.storeShapes()
+                self.current = None
+                self.setHiding(False)
+                self.newShape.emit()
+                self.update()
+                self.current = Shape(shape_type="points")
+
+            self.current = None
+
+        if self.createMode != "ai_batch":
+            self.current.close()
+            self.shapes.append(self.current)
+            self.storeShapes()
+            self.current = None
+            self.setHiding(False)
+            self.newShape.emit()
+            self.update()
 
     def closeEnough(self, p1, p2):
         # d = distance(p1 - p2)
