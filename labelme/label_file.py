@@ -5,12 +5,12 @@ import json
 import os.path as osp
 
 import PIL.Image
+from loguru import logger
 
 from labelme import PY2
 from labelme import QT4
 from labelme import __version__
 from labelme import utils
-from labelme.logger import logger
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 

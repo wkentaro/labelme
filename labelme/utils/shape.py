@@ -7,8 +7,7 @@ import uuid
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
-
-from labelme.logger import logger
+from loguru import logger
 
 
 def polygons_to_mask(img_shape, polygons, shape_type=None):

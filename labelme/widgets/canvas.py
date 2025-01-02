@@ -1,4 +1,7 @@
+import contextlib
+
 import imgviz
+from loguru import logger
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -6,7 +9,6 @@ from qtpy import QtWidgets
 import labelme.ai
 import labelme.utils
 from labelme import QT5
-from labelme.logger import logger
 from labelme.shape import Shape
 
 import numpy as np
@@ -142,7 +144,18 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("AI model is already initialized: %r" % model.name)
         else:
             logger.debug("Initializing AI model: %r" % model.name)
-            self._ai_model = model()
+
+            class LoggerIO:
+                def write(self, message: str):
+                    if message := message.strip():
+                        logger.debug(message)
+
+                def flush(self):
+                    pass
+
+            # NOTE: gdown.download uses sys.stderr, so redirect it to logger.debug
+            with contextlib.redirect_stderr(new_target=LoggerIO()):
+                self._ai_model = model()
 
         if self.pixmap is None:
             logger.warning("Pixmap is not set yet")

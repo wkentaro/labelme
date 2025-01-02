@@ -11,6 +11,7 @@ import webbrowser
 import imgviz
 import natsort
 import numpy as np
+from loguru import logger
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -23,7 +24,6 @@ from labelme.ai import MODELS
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
-from labelme.logger import logger
 from labelme.shape import Shape
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog

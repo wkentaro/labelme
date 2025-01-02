@@ -23,6 +23,7 @@ def get_install_requires():
     install_requires = [
         "gdown",
         "imgviz>=1.7.5",
+        "loguru",
         "matplotlib",
         "natsort>=7.1.0",
         "numpy",

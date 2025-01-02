@@ -3,8 +3,7 @@ import time
 
 import numpy as np
 import osam
-
-from labelme.logger import logger
+from loguru import logger
 
 
 def get_rectangles_from_texts(
