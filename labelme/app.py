@@ -2039,23 +2039,25 @@ class MainWindow(QtWidgets.QMainWindow):
         return label_file
 
     def deleteFile(self):
-        mb = QtWidgets.QMessageBox
-        msg = self.tr(
-            "You are about to permanently delete this label file, " "proceed anyway?"
-        )
-        answer = mb.warning(self, self.tr("Attention"), msg, mb.Yes | mb.No)
-        if answer != mb.Yes:
-            return
-
-        label_file = self.getLabelFile()
-        if osp.exists(label_file):
-            os.remove(label_file)
-            logger.info("Label file is removed: {}".format(label_file))
-
-            item = self.fileListWidget.currentItem()
-            item.setCheckState(Qt.Unchecked)
-
-            self.resetState()
+        if False: # TODO: refactor and move to config option
+            mb = QtWidgets.QMessageBox
+            msg = self.tr(
+                "You are about to permanently delete this label file, " "proceed anyway?"
+            )
+            answer = mb.warning(self, self.tr("Attention"), msg, mb.Yes | mb.No)
+            if answer != mb.Yes:
+                return
+        
+        else:
+            label_file = self.getLabelFile()
+            if osp.exists(label_file):
+                os.remove(label_file)
+                logger.info("Label file is removed: {}".format(label_file))
+    
+                item = self.fileListWidget.currentItem()
+                item.setCheckState(Qt.Unchecked)
+    
+                self.resetState()
 
     # Message Dialogs. #
     def hasLabels(self):
