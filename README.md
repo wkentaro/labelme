@@ -9,15 +9,14 @@
 <div align="center">
   <a href="https://pypi.python.org/pypi/labelme"><img src="https://img.shields.io/pypi/v/labelme.svg"></a>
   <a href="https://pypi.org/project/labelme"><img src="https://img.shields.io/pypi/pyversions/labelme.svg"></a>
-  <a href="https://github.com/labelmeai/labelme/actions"><img src="https://github.com/labelmeai/labelme/workflows/ci/badge.svg?branch=main&event=push"></a>
+  <a href="https://github.com/wkentaro/labelme/actions"><img src="https://github.com/wkentaro/labelme/workflows/ci/badge.svg?branch=main&event=push"></a>
 </div>
 
 <div align="center">
-  <a href="#starter-guide"><b>Starter Guide</b></a>
-  | <a href="#installation"><b>Installation</b></a>
+  <a href="#installation"><b>Installation</b></a>
   | <a href="#usage"><b>Usage</b></a>
   | <a href="#examples"><b>Examples</b></a>
-  <!-- | <a href="https://github.com/labelmeai/labelme/discussions"><b>Community</b></a> -->
+  <!-- | <a href="https://github.com/wkentaro/labelme/discussions"><b>Community</b></a> -->
   <!-- | <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a> -->
 </div>
 
@@ -45,89 +44,31 @@ It is written in Python and uses Qt for its graphical interface.
 ## Features
 
 - [x] Image annotation for polygon, rectangle, circle, line and point. ([tutorial](examples/tutorial))
-- [x] Image flag annotation for classification and cleaning. ([#166](https://github.com/labelmeai/labelme/pull/166))
+- [x] Image flag annotation for classification and cleaning. ([#166](https://github.com/wkentaro/labelme/pull/166))
 - [x] Video annotation. ([video annotation](examples/video_annotation))
-- [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/labelmeai/labelme/pull/144))
+- [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
 - [x] Exporting VOC-format dataset for semantic/instance segmentation. ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
 - [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
 
 
-## Starter Guide
-
-If you're new to Labelme, you can get started with [Labelme Starter](https://labelme.io/starter), which contains:
-
-- **Installation guides** for all platforms: Windows, macOS, and Linux 💻
-- **Step-by-step tutorials**: first annotation to editing, exporting, and integrating with other programs 📕
-- **A compilation of valuable resources** for further exploration 🔗.
-
-
 ## Installation
 
-There are options:
+There are 2 options to install labelme:
 
-- Platform agnostic installation: [Anaconda](#anaconda)
-- Platform specific installation: [Ubuntu](#ubuntu), [macOS](#macos), [Windows](#windows)
-- Pre-build binaries from [the release section](https://github.com/labelmeai/labelme/releases)
+### Option 1: Using pip
 
-### Anaconda
-
-You need install [Anaconda](https://www.continuum.io/downloads), then run below:
+For more detail, check ["Install Labelme using Pip"](https://www.labelme.io/docs/install-labelme-pip).
 
 ```bash
-# python3
-conda create --name=labelme python=3
-source activate labelme
-# conda install -c conda-forge pyside2
-# conda install pyqt
-# pip install pyqt5  # pyqt5 can be installed via pip on python3
 pip install labelme
-# or you can install everything by conda command
-# conda install labelme -c conda-forge
 ```
 
-### Ubuntu
+### Option 2: Using standalone executable (Easiest)
 
-```bash
-sudo apt-get install labelme
+If you're willing to invest in the convenience of simple installation without any dependencies (Python, Qt),
+you can download the standalone executable from ["Install Labelme as App"](https://www.labelme.io/docs/install-labelme-app).
 
-# or
-sudo pip3 install labelme
-
-# or install standalone executable from:
-# https://github.com/labelmeai/labelme/releases
-
-# or install from source
-pip3 install git+https://github.com/labelmeai/labelme
-```
-
-### macOS
-
-```bash
-brew install pyqt  # maybe pyqt5
-pip install labelme
-
-# or install standalone executable/app from:
-# https://github.com/labelmeai/labelme/releases
-
-# or install from source
-pip3 install git+https://github.com/labelmeai/labelme
-```
-
-### Windows
-
-Install [Anaconda](https://www.continuum.io/downloads), then in an Anaconda Prompt run:
-
-```bash
-conda create --name=labelme python=3
-conda activate labelme
-pip install labelme
-
-# or install standalone executable/app from:
-# https://github.com/labelmeai/labelme/releases
-
-# or install from source
-pip3 install git+https://github.com/labelmeai/labelme
-```
+It's a one-time payment for lifetime access, and it helps us to maintain this project.
 
 
 ## Usage
@@ -178,7 +119,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 ## How to develop
 
 ```bash
-git clone https://github.com/labelmeai/labelme.git
+git clone https://github.com/wkentaro/labelme.git
 cd labelme
 
 # Install anaconda3 and labelme
