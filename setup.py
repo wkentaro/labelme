@@ -71,7 +71,8 @@ def get_install_requires():
 
 
 def get_long_description():
-    with open("README.md") as f:
+    # Requires encoding for Non-ASCII: https://github.com/wkentaro/labelme/issues/1509
+    with open("README.md", encoding="utf-8") as f:
         long_description = f.read()
     try:
         # when this package is being released
