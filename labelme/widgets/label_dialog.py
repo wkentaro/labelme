@@ -106,7 +106,7 @@ class LabelDialog(QtWidgets.QDialog):
         # completion
         completer = QtWidgets.QCompleter()
         if not QT5 and completion != "startswith":
-            logger.warn(
+            logger.warning(
                 "completion other than 'startswith' is only "
                 "supported with Qt5. Using 'startswith'"
             )

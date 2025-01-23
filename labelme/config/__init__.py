@@ -12,7 +12,7 @@ def update_dict(target_dict, new_dict, validate_item=None):
         if validate_item:
             validate_item(key, value)
         if key not in target_dict:
-            logger.warn("Skipping unexpected key in config: {}".format(key))
+            logger.warning("Skipping unexpected key in config: {}".format(key))
             continue
         if isinstance(target_dict[key], dict) and isinstance(value, dict):
             update_dict(target_dict[key], value, validate_item=validate_item)
@@ -34,7 +34,7 @@ def get_default_config():
         try:
             shutil.copy(config_file, user_config_file)
         except Exception:
-            logger.warn("Failed to save config: {}".format(user_config_file))
+            logger.warning("Failed to save config: {}".format(user_config_file))
 
     return config
 

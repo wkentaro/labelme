@@ -75,7 +75,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
 
 
 def labelme_shapes_to_label(img_shape, shapes):
-    logger.warn(
+    logger.warning(
         "labelme_shapes_to_label is deprecated, so please use " "shapes_to_label."
     )
 

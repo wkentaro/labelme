@@ -845,7 +845,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         if output_file is not None and self._config["auto_save"]:
-            logger.warn(
+            logger.warning(
                 "If `auto_save` argument is True, `output_file` argument "
                 "is ignored and output filename is automatically "
                 "set as IMAGE_BASENAME.json."
