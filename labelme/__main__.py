@@ -15,6 +15,14 @@ from labelme.app import MainWindow
 from labelme.config import get_config
 from labelme.utils import newIcon
 
+# https://doc.qt.io/qt-5/highdpi.html
+# https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5/
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+QtWidgets.QApplication.setHighDpiScaleFactorRoundingPolicy(
+        QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+)
+
 
 def _setup_loguru(logger_level: str) -> None:
     try:
