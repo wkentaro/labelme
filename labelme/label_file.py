@@ -96,6 +96,14 @@ class LabelFile(object):
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data["imagePath"])
                 imageData = self.load_image_file(imagePath)
+                if imageData is None:
+                    originalPath = imagePath
+                    # use relative path of label file and basename of imagePath
+                    imagePath = osp.join(osp.dirname(filename), osp.basename(data["imagePath"]))
+                    imageData = self.load_image_file(imagePath)
+                    if imageData is None:
+                        raise FileNotFoundError(f"Unable to load image from {originalPath} or {imagePath}")
+
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
             self._check_image_height_and_width(
