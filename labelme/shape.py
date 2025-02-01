@@ -264,6 +264,14 @@ class Shape(object):
                 if self.isClosed():
                     line_path.lineTo(self._scale_point(self.points[0]))
 
+            if self.label and self.show_labels:
+                painter.setFont(QtGui.QFont("Arial", 25))
+                label_point = self.points[0]
+                for p in self.points:
+                    if p.x() < label_point.x():
+                        label_point = p
+                painter.drawText(self._scale_point(label_point), self.label)
+
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)

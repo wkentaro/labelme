@@ -81,6 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Shape.vertex_fill_color = QtGui.QColor(
             *self._config["shape"]["vertex_fill_color"]
         )
+        Shape.show_labels = self._config["shape"]["show_labels"]
         Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
         )
@@ -818,6 +819,20 @@ class MainWindow(QtWidgets.QMainWindow):
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
         self.tools = self.toolbar("Tools")
+
+        # Menu buttons on Left
+        defaultCreateMode = createMode
+        if self._config["default_create_mode"] == "rectangle":
+            defaultCreateMode = createRectangleMode
+        elif self._config["default_create_mode"] == "circle":
+            defaultCreateMode = createCircleMode
+        elif self._config["default_create_mode"] == "line":
+            defaultCreateMode = createLineMode
+        elif self._config["default_create_mode"] == "point":
+            defaultCreateMode = createPointMode
+        elif self._config["default_create_mode"] == "linestrip":
+            defaultCreateMode = createLineStripMode
+
         self.actions.tool = (
             open_,
             opendir,
@@ -826,7 +841,7 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             None,
-            createMode,
+            defaultCreateMode,
             editMode,
             duplicate,
             delete,
@@ -2024,23 +2039,25 @@ class MainWindow(QtWidgets.QMainWindow):
         return label_file
 
     def deleteFile(self):
-        mb = QtWidgets.QMessageBox
-        msg = self.tr(
-            "You are about to permanently delete this label file, " "proceed anyway?"
-        )
-        answer = mb.warning(self, self.tr("Attention"), msg, mb.Yes | mb.No)
-        if answer != mb.Yes:
-            return
-
-        label_file = self.getLabelFile()
-        if osp.exists(label_file):
-            os.remove(label_file)
-            logger.info("Label file is removed: {}".format(label_file))
-
-            item = self.fileListWidget.currentItem()
-            item.setCheckState(Qt.Unchecked)
-
-            self.resetState()
+        if False: # TODO: refactor and move to config option
+            mb = QtWidgets.QMessageBox
+            msg = self.tr(
+                "You are about to permanently delete this label file, " "proceed anyway?"
+            )
+            answer = mb.warning(self, self.tr("Attention"), msg, mb.Yes | mb.No)
+            if answer != mb.Yes:
+                return
+        
+        else:
+            label_file = self.getLabelFile()
+            if osp.exists(label_file):
+                os.remove(label_file)
+                logger.info("Label file is removed: {}".format(label_file))
+    
+                item = self.fileListWidget.currentItem()
+                item.setCheckState(Qt.Unchecked)
+    
+                self.resetState()
 
     # Message Dialogs. #
     def hasLabels(self):
