@@ -53,7 +53,7 @@ It is written in Python and uses Qt for its graphical interface.
 
 ## Installation
 
-There are 2 options to install labelme:
+There are 3 options to install labelme:
 
 ### Option 1: Using pip
 
@@ -70,6 +70,11 @@ you can download the standalone executable from ["Install Labelme as App"](https
 
 It's a one-time payment for lifetime access, and it helps us to maintain this project.
 
+### Option 3: Using a package manager in each Linux distribution
+
+In some Linux distributions, you can install labelme via their package managers (e.g., apt, pacman). The following systems are currently available:
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/labelme.svg)](https://repology.org/project/labelme/versions)
 
 ## Usage
 
