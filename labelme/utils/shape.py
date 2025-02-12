@@ -8,6 +8,8 @@ import numpy as np
 import PIL.Image
 import PIL.ImageDraw
 from loguru import logger
+import base64
+import io
 
 
 def polygons_to_mask(img_shape, polygons, shape_type=None):
@@ -17,7 +19,7 @@ def polygons_to_mask(img_shape, polygons, shape_type=None):
     return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
 
-def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=5):
+def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=5, mask_data=None):
     mask = np.zeros(img_shape[:2], dtype=np.uint8)
     mask = PIL.Image.fromarray(mask)
     draw = PIL.ImageDraw.Draw(mask)
@@ -40,12 +42,22 @@ def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=
         cx, cy = xy[0]
         r = point_size
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
+    elif shape_type == "mask" and mask_data is not None:
+        if isinstance(mask_data, (list, np.ndarray)):
+            mask_array = np.array(mask_data)
+        else:
+            mask_img = PIL.Image.open(io.BytesIO(base64.b64decode(mask_data)))
+            mask_array = np.array(mask_img)
+        mask = PIL.Image.fromarray(mask_array)
+        x, y = map(int, points[0])
+        final_mask = PIL.Image.new('L', img_shape[:2][::-1], 0)
+        final_mask.paste(mask, (x, y))
+        return np.array(final_mask, dtype=bool)
     else:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)
     mask = np.array(mask, dtype=bool)
     return mask
-
 
 def shapes_to_label(img_shape, shapes, label_name_to_value):
     cls = np.zeros(img_shape[:2], dtype=np.int32)
@@ -58,7 +70,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         if group_id is None:
             group_id = uuid.uuid1()
         shape_type = shape.get("shape_type", None)
-
+        mask_data = shape.get("mask", None)
         cls_name = label
         instance = (cls_name, group_id)
 
@@ -67,7 +79,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
 
-        mask = shape_to_mask(img_shape[:2], points, shape_type)
+        mask = shape_to_mask(img_shape[:2], points, shape_type, mask_data=mask_data)
         cls[mask] = cls_id
         ins[mask] = ins_id
 
