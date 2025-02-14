@@ -1372,7 +1372,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label = shape["label"]
             points = shape["points"]
             shape_type = shape["shape_type"]
-            flags = shape["flags"]
+            flags: dict = shape["flags"] or {}
             description = shape.get("description", "")
             group_id = shape["group_id"]
             other_data = shape["other_data"]
