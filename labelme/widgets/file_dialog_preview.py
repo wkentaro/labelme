@@ -1,8 +1,8 @@
 import json
 
-from qtpy import QtCore
-from qtpy import QtGui
-from qtpy import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 
 class ScrollAreaPreview(QtWidgets.QScrollArea):

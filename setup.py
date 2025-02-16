@@ -31,38 +31,10 @@ def get_install_requires():
         "osam>=0.2.2",
         "Pillow>=2.8",
         "PyYAML",
-        "qtpy!=1.11.2",
         "scikit-image",
         "termcolor",
+        "PyQt5>=5.14.0",
     ]
-
-    # Find python binding for qt with priority:
-    # PyQt5 -> PySide2
-    # and PyQt5 is automatically installed on Python3.
-    QT_BINDING = None
-
-    try:
-        import PyQt5  # NOQA
-
-        QT_BINDING = "pyqt5"
-    except ImportError:
-        pass
-
-    if QT_BINDING is None:
-        try:
-            import PySide2  # NOQA
-
-            QT_BINDING = "pyside2"
-        except ImportError:
-            pass
-
-    if QT_BINDING is None:
-        # PyQt5 can be installed via pip for Python3
-        # 5.15.3, 5.15.4 won't work with PyInstaller
-        install_requires.append("PyQt5!=5.15.3,!=5.15.4")
-        QT_BINDING = "pyqt5"
-
-    del QT_BINDING
 
     if os.name == "nt":  # Windows
         install_requires.append("colorama")

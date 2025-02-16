@@ -2,8 +2,8 @@
 
 import html
 
-from qtpy import QtWidgets
-from qtpy.QtCore import Qt
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 
 from .escapable_qlist_widget import EscapableQListWidget
 

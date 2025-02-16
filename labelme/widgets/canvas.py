@@ -2,9 +2,9 @@ import contextlib
 
 import imgviz
 from loguru import logger
-from qtpy import QtCore
-from qtpy import QtGui
-from qtpy import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 import labelme.ai
 import labelme.utils
@@ -24,14 +24,14 @@ MOVE_SPEED = 5.0
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.Signal(int, QtCore.QPoint)
-    scrollRequest = QtCore.Signal(int, int)
-    newShape = QtCore.Signal()
-    selectionChanged = QtCore.Signal(list)
-    shapeMoved = QtCore.Signal()
-    drawingPolygon = QtCore.Signal(bool)
-    vertexSelected = QtCore.Signal(bool)
-    mouseMoved = QtCore.Signal(QtCore.QPointF)
+    zoomRequest = QtCore.pyqtSignal(int, QtCore.QPoint)
+    scrollRequest = QtCore.pyqtSignal(int, int)
+    newShape = QtCore.pyqtSignal()
+    selectionChanged = QtCore.pyqtSignal(list)
+    shapeMoved = QtCore.pyqtSignal()
+    drawingPolygon = QtCore.pyqtSignal(bool)
+    vertexSelected = QtCore.pyqtSignal(bool)
+    mouseMoved = QtCore.pyqtSignal(QtCore.QPointF)
 
     CREATE, EDIT = 0, 1
 
