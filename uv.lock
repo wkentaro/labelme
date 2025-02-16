@@ -889,7 +889,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.9.4" },
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=2.0.2" },
-    { name = "onnxruntime", specifier = "!=1.20.0,!=1.20.1" },
+    { name = "onnxruntime" },
     { name = "osam", specifier = ">=0.2.2" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyqt5", specifier = ">=5.14.0" },
