@@ -12,10 +12,10 @@ import imgviz
 import natsort
 import numpy as np
 from loguru import logger
-from qtpy import QtCore
-from qtpy import QtGui
-from qtpy import QtWidgets
-from qtpy.QtCore import Qt
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 
 from labelme import __appname__
 from labelme import ai

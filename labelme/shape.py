@@ -3,8 +3,8 @@ import copy
 import numpy as np
 import skimage.measure
 from loguru import logger
-from qtpy import QtCore
-from qtpy import QtGui
+from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 import labelme.utils
 
