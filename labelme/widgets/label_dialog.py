@@ -1,15 +1,11 @@
 import re
 
 from loguru import logger
-from qtpy import QT_VERSION
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
 
 import labelme.utils
-
-QT5 = QT_VERSION[0] == "5"
-
 
 # TODO(unknown):
 # - Calculate optimal position so as not to go out of screen area.
@@ -105,12 +101,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         # completion
         completer = QtWidgets.QCompleter()
-        if not QT5 and completion != "startswith":
-            logger.warning(
-                "completion other than 'startswith' is only "
-                "supported with Qt5. Using 'startswith'"
-            )
-            completion = "startswith"
         if completion == "startswith":
             completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
             # Default settings.
