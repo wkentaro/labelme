@@ -63,3 +63,6 @@ qt_api = "pyqt5"
 markers = [
   "gui: mark a test as a GUI test.",
 ]
+
+[tool.isort]
+force-single-line = true
