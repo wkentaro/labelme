@@ -14,7 +14,6 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ['3.9']
-        PYTEST_QT_API: [pyqt5]
 
     steps:
     - uses: actions/checkout@v2
@@ -53,7 +52,6 @@ jobs:
       shell: bash -l {0}
       if: matrix.os == 'ubuntu-latest'
       env:
-        PYTEST_QT_API: ${{ matrix.PYTEST_QT_API }}
         MPLBACKEND: 'agg'
       run: |
         sudo apt-get update
