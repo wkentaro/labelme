@@ -42,6 +42,14 @@ dependencies = [
 content-type = "text/markdown"
 fragments = [{ path = "README.md" }]
 
+[dependency-groups]
+dev = [
+  "pytest>=8.3.4",
+  "pytest-qt>=4.4.0",
+  "ruff==0.1.9",
+  "twine>=6.1.0",
+]
+
 [project.scripts]
 labelme = "labelme.__main__:main"
 labelme_draw_json = "labelme.cli.draw_json:main"
