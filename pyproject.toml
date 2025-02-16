@@ -57,3 +57,9 @@ labelme_draw_label_png = "labelme.cli.draw_label_png:main"
 labelme_json_to_dataset = "labelme.cli.json_to_dataset:main"
 labelme_export_json = "labelme.cli.export_json:main"
 labelme_on_docker = "labelme.cli.on_docker:main"
+
+[tool.pytest.ini_options]
+qt_api = "pyqt5"
+markers = [
+  "gui: mark a test as a GUI test.",
+]
