@@ -32,13 +32,8 @@ def get_install_requires():
         "Pillow>=2.8",
         "PyYAML",
         "scikit-image",
-        "termcolor",
         "PyQt5>=5.14.0",
     ]
-
-    if os.name == "nt":  # Windows
-        install_requires.append("colorama")
-
     return install_requires
 
 
