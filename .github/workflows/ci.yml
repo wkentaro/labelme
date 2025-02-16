@@ -12,44 +12,26 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.9']
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        python-version: [3.9]
 
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
+    - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v5
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Set up Python
-      shell: bash -l {0}
+    - shell: bash
       run: |
-        which python
-        python --version
-        pip --version
+        make setup
 
-    - name: Install dependencies
-      shell: bash -l {0}
+    - shell: bash
       run: |
-        pip install -r requirements-dev.txt
+        make check
 
-    - name: Install main
-      shell: bash -l {0}
-      run: |
-        pip install .
-
-    - name: Run ruff
-      shell: bash -l {0}
-      if: matrix.os != 'windows-latest'
-      run: |
-        ruff format --check
-        ruff check
-
-    - name: Test with pytest
-      shell: bash -l {0}
+    - name: Test
+      shell: bash
       if: matrix.os == 'ubuntu-latest'
       env:
         MPLBACKEND: 'agg'
@@ -60,10 +42,10 @@ jobs:
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         export DISPLAY=:99
 
-        pytest tests
+        make test
 
     - name: Run examples
-      shell: bash -l {0}
+      shell: bash
       if: matrix.os != 'windows-latest'
       env:
         MPLBACKEND: agg
@@ -76,8 +58,14 @@ jobs:
         (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
         (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
 
-        pip install 'lxml<5.0.0'  # for bbox_detection/labelme2voc.py
+        uv pip install 'lxml<5.0.0'  # for bbox_detection/labelme2voc.py
         (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
 
-        pip install cython && pip install pycocotools  # for instance_segmentation/labelme2coco.py
+        uv pip install cython && uv pip install pycocotools  # for instance_segmentation/labelme2coco.py
         (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
+
+    - name: Build wheel and install from it
+      shell: bash
+      run: |
+        make build
+        uv pip install dist/labelme-*.whl
