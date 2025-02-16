@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling>=1.20.0", "hatch-vcs", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "labelme"
+description = "Image Polygonal Annotation with Python"
+license = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.9"
+version = "5.6.1"
+authors = [{ name = "Kentaro Wada", email = "www.kentaro.wada@gmail.com" }]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "gdown>=5.2.0",
+  "imgviz>=1.7.5",
+  "loguru>=0.7.3",
+  "matplotlib>=3.9.4",
+  "natsort>=7.1.0",
+  "numpy>=2.0.2",
+  "onnxruntime!=1.20.0,!=1.20.1",
+  "osam>=0.2.2",
+  "pillow>=2.8",
+  "pyqt5>=5.14.0",
+  "pyyaml>=6.0.2",
+  "scikit-image>=0.24.0",
+]
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+fragments = [{ path = "README.md" }]
+
+[project.scripts]
+labelme = "labelme.__main__:main"
+labelme_draw_json = "labelme.cli.draw_json:main"
+labelme_draw_label_png = "labelme.cli.draw_label_png:main"
+labelme_json_to_dataset = "labelme.cli.json_to_dataset:main"
+labelme_export_json = "labelme.cli.export_json:main"
+labelme_on_docker = "labelme.cli.on_docker:main"
