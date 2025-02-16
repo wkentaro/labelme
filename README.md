@@ -116,18 +116,6 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 * [Instance Segmentation](examples/instance_segmentation)
 * [Video Annotation](examples/video_annotation)
 
-## How to develop
-
-```bash
-git clone https://github.com/wkentaro/labelme.git
-cd labelme
-
-# Install anaconda3 and labelme
-curl -L https://github.com/wkentaro/dotfiles/raw/main/local/bin/install_anaconda3.sh | bash -s .
-source .anaconda3/bin/activate
-pip install -e .
-```
-
 
 ### How to build standalone executable
 
