@@ -17,7 +17,6 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 from qtpy.QtCore import Qt
 
-from labelme import PY2
 from labelme import __appname__
 from labelme import ai
 from labelme.ai import MODELS
@@ -1420,7 +1419,7 @@ class MainWindow(QtWidgets.QMainWindow):
             data = s.other_data.copy()
             data.update(
                 dict(
-                    label=s.label.encode("utf-8") if PY2 else s.label,
+                    label=s.label,
                     points=[(p.x(), p.y()) for p in s.points],
                     group_id=s.group_id,
                     description=s.description,
