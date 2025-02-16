@@ -8,7 +8,6 @@ from qtpy import QtWidgets
 
 import labelme.ai
 import labelme.utils
-from labelme import QT5
 from labelme.shape import Shape
 
 # TODO(unknown):
@@ -241,10 +240,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
-            if QT5:
-                pos = self.transformPos(ev.localPos())
-            else:
-                pos = self.transformPos(ev.posF())
+            pos = self.transformPos(ev.localPos())
         except AttributeError:
             return
 
@@ -420,10 +416,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        if QT5:
-            pos = self.transformPos(ev.localPos())
-        else:
-            pos = self.transformPos(ev.posF())
+        pos = self.transformPos(ev.localPos())
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
@@ -914,32 +907,16 @@ class Canvas(QtWidgets.QWidget):
         return super(Canvas, self).minimumSizeHint()
 
     def wheelEvent(self, ev):
-        if QT5:
-            mods = ev.modifiers()
-            delta = ev.angleDelta()
-            if QtCore.Qt.ControlModifier == int(mods):
-                # with Ctrl/Command key
-                # zoom
-                self.zoomRequest.emit(delta.y(), ev.pos())
-            else:
-                # scroll
-                self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
-                self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+        mods = ev.modifiers()
+        delta = ev.angleDelta()
+        if QtCore.Qt.ControlModifier == int(mods):
+            # with Ctrl/Command key
+            # zoom
+            self.zoomRequest.emit(delta.y(), ev.pos())
         else:
-            if ev.orientation() == QtCore.Qt.Vertical:
-                mods = ev.modifiers()
-                if QtCore.Qt.ControlModifier == int(mods):
-                    # with Ctrl/Command key
-                    self.zoomRequest.emit(ev.delta(), ev.pos())
-                else:
-                    self.scrollRequest.emit(
-                        ev.delta(),
-                        QtCore.Qt.Horizontal
-                        if (QtCore.Qt.ShiftModifier == int(mods))
-                        else QtCore.Qt.Vertical,
-                    )
-            else:
-                self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
+            # scroll
+            self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
+            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
         ev.accept()
 
     def moveByKeyboard(self, offset):
