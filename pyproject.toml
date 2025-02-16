@@ -34,6 +34,8 @@ dependencies = [
   "osam>=0.2.2",
   "pillow>=2.8",
   "pyqt5>=5.14.0",
+  "pyqt5-qt5==5.15.15 ; platform_system != 'Windows'",
+  "pyqt5-qt5==5.15.2 ; platform_system == 'Windows'",
   "pyyaml>=6.0.2",
   "scikit-image>=0.24.0",
 ]
