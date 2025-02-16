@@ -147,20 +147,6 @@ dist/labelme --version
 ```
 
 
-### How to contribute
-
-Make sure below test passes on your environment.  
-See `.github/workflows/ci.yml` for more detail.
-
-```bash
-pip install -r requirements-dev.txt
-
-ruff format --check  # `ruff format` to auto-fix
-ruff check  # `ruff check --fix` to auto-fix
-MPLBACKEND='agg' pytest -vsx tests/
-```
-
-
 ## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme).
