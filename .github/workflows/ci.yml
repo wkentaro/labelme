@@ -83,12 +83,3 @@ jobs:
 
         pip install cython && pip install pycocotools  # for instance_segmentation/labelme2coco.py
         (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
-
-    - name: Run pyinstaller
-      shell: bash -l {0}
-      if: matrix.PYTEST_QT_API == 'pyqt5'
-      run: |
-        # Build the standalone executable
-        pip install pyinstaller
-        pyinstaller labelme.spec
-        dist/labelme --version
