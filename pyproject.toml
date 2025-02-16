@@ -30,7 +30,7 @@ dependencies = [
   "matplotlib>=3.9.4",
   "natsort>=7.1.0",
   "numpy>=2.0.2",
-  "onnxruntime!=1.20.0,!=1.20.1",
+  "onnxruntime",
   "osam>=0.2.2",
   "pillow>=2.8",
   "pyqt5>=5.14.0",
