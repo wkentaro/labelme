@@ -117,21 +117,22 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 * [Video Annotation](examples/video_annotation)
 
 
-### How to build standalone executable
-
-Below shows how to build the standalone executable on macOS, Linux and Windows.  
+## How to build standalone executable
 
 ```bash
-# Setup conda
-conda create --name labelme python=3.9
-conda activate labelme
-
-# Build the standalone executable
-pip install .
-pip install 'matplotlib<3.3'
-pip install pyinstaller
-pyinstaller labelme.spec
-dist/labelme --version
+LABELME_PATH=./labelme
+OSAM_PATH=$(python -c 'import os, osam; print(os.path.dirname(osam.__file__))')
+pyinstaller labelme/labelme/__main__.py \
+  --name=Labelme \
+  --windowed \
+  --noconfirm \
+  --specpath=build \
+  --add-data=$(OSAM_PATH)/_models/yoloworld/clip/bpe_simple_vocab_16e6.txt.gz:osam/_models/yoloworld/clip \
+  --add-data=$(LABELME_PATH)/config/default_config.yaml:labelme/config \
+  --add-data=$(LABELME_PATH)/icons/*:labelme/icons \
+  --add-data=$(LABELME_PATH)/translate/*:translate \
+  --icon=$(LABELME_PATH)/icons/icon.png \
+  --onedir
 ```
 
 
