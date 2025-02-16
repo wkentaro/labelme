@@ -35,11 +35,10 @@ lint:
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 
-# mypy:
-# 	$(call exec,uv run mypy --package $(PACKAGE_NAME))
+mypy:
+	$(call exec,uv run mypy --package $(PACKAGE_NAME))
 
-# check: lint mypy  # Run checks
-check: lint  # Run checks
+check: lint mypy  # Run checks
 
 test:  # Run tests
 	$(call exec,uv run pytest -v tests/)

@@ -44,10 +44,12 @@ fragments = [{ path = "README.md" }]
 
 [dependency-groups]
 dev = [
+  "mypy>=1.15.0",
   "pytest>=8.3.4",
   "pytest-qt>=4.4.0",
   "ruff==0.1.9",
   "twine>=6.1.0",
+  "types-pyyaml>=6.0.12.20241230",
 ]
 
 [project.scripts]
@@ -66,3 +68,11 @@ markers = [
 
 [tool.isort]
 force-single-line = true
+
+[tool.mypy]
+exclude = [
+  "labelme/widgets/ai_prompt_widget.py",
+  "labelme/widgets/canvas.py",
+]
+ignore_missing_imports = true
+check_untyped_defs = false
