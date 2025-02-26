@@ -56,6 +56,10 @@ LABEL_COLORMAP = imgviz.label_colormap()
 class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
+    def __del__(self):
+        super(MainWindow, self).__del__()
+        self.load_file_thread_pool.shutdown(wait=False)
+
     def __init__(
         self,
         config=None,
@@ -75,7 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config = config
 
         cpu_count = os.cpu_count()
-        if cpu_count is None and cpu_count < 2:
+        if cpu_count is None or cpu_count < 2:
             raise ValueError("CPU count is less than 2.")
         self.load_file_thread_pool = ThreadPoolExecutor(max_workers=int(cpu_count/2))
         self.imageDataCacheLock = Lock()
