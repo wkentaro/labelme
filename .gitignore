@@ -9,3 +9,6 @@
 
 .DS_Store
 .idea/
+.history
+run.py
+.vscode

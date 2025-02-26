@@ -938,19 +938,18 @@ class MainWindow(QtWidgets.QMainWindow):
             load_indexes.extend(list(range(front, current_index)))
             end = min(current_index + half_num, len(self.imageList) - 1)
             load_indexes.extend(list(range(current_index + 1, end + 1)))
-            futures = {}
             for i in load_indexes:
                 temp_filename = self.imageList[i]
                 if temp_filename in self.imageDataCache:
                     continue
-                future = self.load_file_thread_pool.submit(self.thread_fn_load_image, temp_filename)
-                pass
+                self.load_file_thread_pool.submit(self.thread_fn_load_image, temp_filename)
         if filename not in self.imageDataCache: 
             with self.imageDataCacheLock:
                 self.imageDataCache[filename] = LabelFile.load_image_file(filename)
         for _ in range(len(self.imageDataCache) - self.imgDataCacheSize):
             with self.imageDataCacheLock:
                 self.imageDataCache.popitem(last=False)
+        return self.imageDataCache.get(filename, None)
 
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)

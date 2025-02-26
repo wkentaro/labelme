@@ -573,23 +573,23 @@ class Canvas(QtWidgets.QWidget):
 
     def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
-        if self.selectedVertex():  # A vertex is marked for selection.
-            index, shape = self.hVertex, self.hShape
-            shape.highlightVertex(index, shape.MOVE_VERTEX)
-        else:
-            for shape in reversed(self.shapes):
-                if self.isVisible(shape) and shape.containsPoint(point):
-                    self.setHiding()
-                    if shape not in self.selectedShapes:
-                        if multiple_selection_mode:
-                            self.selectionChanged.emit(self.selectedShapes + [shape])
-                        else:
-                            self.selectionChanged.emit([shape])
-                        self.hShapeIsSelected = False
+        # if self.selectedVertex():  # A vertex is marked for selection.
+        #     index, shape = self.hVertex, self.hShape
+        #     shape.highlightVertex(index, shape.MOVE_VERTEX)
+        # else:
+        for shape in reversed(self.shapes):
+            if self.isVisible(shape) and shape.containsPoint(point):
+                self.setHiding()
+                if shape not in self.selectedShapes:
+                    if multiple_selection_mode:
+                        self.selectionChanged.emit(self.selectedShapes + [shape])
                     else:
-                        self.hShapeIsSelected = True
-                    self.calculateOffsets(point)
-                    return
+                        self.selectionChanged.emit([shape])
+                    self.hShapeIsSelected = False
+                else:
+                    self.hShapeIsSelected = True
+                self.calculateOffsets(point)
+                return
         self.deSelectShape()
 
     def calculateOffsets(self, point):
