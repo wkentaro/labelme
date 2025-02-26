@@ -1,9 +1,9 @@
-from qtpy import QtCore
-from qtpy import QtGui
-from qtpy import QtWidgets
-from qtpy.QtCore import Qt
-from qtpy.QtGui import QPalette
-from qtpy.QtWidgets import QStyle
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette
+from PyQt5.QtWidgets import QStyle
 
 
 # https://stackoverflow.com/a/2039745/4158863
@@ -93,7 +93,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
 
 class StandardItemModel(QtGui.QStandardItemModel):
-    itemDropped = QtCore.Signal()
+    itemDropped = QtCore.pyqtSignal()
 
     def removeRows(self, *args, **kwargs):
         ret = super().removeRows(*args, **kwargs)
@@ -102,8 +102,8 @@ class StandardItemModel(QtGui.QStandardItemModel):
 
 
 class LabelListWidget(QtWidgets.QListView):
-    itemDoubleClicked = QtCore.Signal(LabelListWidgetItem)
-    itemSelectionChanged = QtCore.Signal(list, list)
+    itemDoubleClicked = QtCore.pyqtSignal(LabelListWidgetItem)
+    itemSelectionChanged = QtCore.pyqtSignal(list, list)
 
     def __init__(self):
         super(LabelListWidget, self).__init__()

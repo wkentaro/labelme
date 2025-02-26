@@ -116,48 +116,23 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 * [Instance Segmentation](examples/instance_segmentation)
 * [Video Annotation](examples/video_annotation)
 
-## How to develop
+
+## How to build standalone executable
 
 ```bash
-git clone https://github.com/wkentaro/labelme.git
-cd labelme
-
-# Install anaconda3 and labelme
-curl -L https://github.com/wkentaro/dotfiles/raw/main/local/bin/install_anaconda3.sh | bash -s .
-source .anaconda3/bin/activate
-pip install -e .
-```
-
-
-### How to build standalone executable
-
-Below shows how to build the standalone executable on macOS, Linux and Windows.  
-
-```bash
-# Setup conda
-conda create --name labelme python=3.9
-conda activate labelme
-
-# Build the standalone executable
-pip install .
-pip install 'matplotlib<3.3'
-pip install pyinstaller
-pyinstaller labelme.spec
-dist/labelme --version
-```
-
-
-### How to contribute
-
-Make sure below test passes on your environment.  
-See `.github/workflows/ci.yml` for more detail.
-
-```bash
-pip install -r requirements-dev.txt
-
-ruff format --check  # `ruff format` to auto-fix
-ruff check  # `ruff check --fix` to auto-fix
-MPLBACKEND='agg' pytest -vsx tests/
+LABELME_PATH=./labelme
+OSAM_PATH=$(python -c 'import os, osam; print(os.path.dirname(osam.__file__))')
+pyinstaller labelme/labelme/__main__.py \
+  --name=Labelme \
+  --windowed \
+  --noconfirm \
+  --specpath=build \
+  --add-data=$(OSAM_PATH)/_models/yoloworld/clip/bpe_simple_vocab_16e6.txt.gz:osam/_models/yoloworld/clip \
+  --add-data=$(LABELME_PATH)/config/default_config.yaml:labelme/config \
+  --add-data=$(LABELME_PATH)/icons/*:labelme/icons \
+  --add-data=$(LABELME_PATH)/translate/*:translate \
+  --icon=$(LABELME_PATH)/icons/icon.png \
+  --onedir
 ```
 
 

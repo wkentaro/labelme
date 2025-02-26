@@ -7,8 +7,6 @@ import os.path as osp
 import PIL.Image
 from loguru import logger
 
-from labelme import PY2
-from labelme import QT4
 from labelme import __version__
 from labelme import utils
 
@@ -18,11 +16,7 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 @contextlib.contextmanager
 def open(name, mode):
     assert mode in ["r", "w"]
-    if PY2:
-        mode += "b"
-        encoding = None
-    else:
-        encoding = "utf-8"
+    encoding = "utf-8"
     yield io.open(name, mode, encoding=encoding)
     return
 
@@ -55,9 +49,7 @@ class LabelFile(object):
 
         with io.BytesIO() as f:
             ext = osp.splitext(filename)[1].lower()
-            if PY2 and QT4:
-                format = "PNG"
-            elif ext in [".jpg", ".jpeg"]:
+            if ext in [".jpg", ".jpeg"]:
                 format = "JPEG"
             else:
                 format = "PNG"
@@ -90,8 +82,6 @@ class LabelFile(object):
 
             if data["imageData"] is not None:
                 imageData = base64.b64decode(data["imageData"])
-                if PY2 and QT4:
-                    imageData = utils.img_data_to_png_data(imageData)
             else:
                 # relative path from label file to relative path from cwd
                 imagePath = osp.join(osp.dirname(filename), data["imagePath"])

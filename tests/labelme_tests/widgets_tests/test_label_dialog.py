@@ -1,6 +1,6 @@
 import pytest
-from qtpy import QtCore
-from qtpy import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelQLineEdit

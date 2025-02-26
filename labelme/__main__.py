@@ -6,8 +6,8 @@ import sys
 
 import yaml
 from loguru import logger
-from qtpy import QtCore
-from qtpy import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__

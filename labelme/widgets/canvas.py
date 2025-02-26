@@ -2,13 +2,12 @@ import contextlib
 
 import imgviz
 from loguru import logger
-from qtpy import QtCore
-from qtpy import QtGui
-from qtpy import QtWidgets
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 import labelme.ai
 import labelme.utils
-from labelme import QT5
 from labelme.shape import Shape
 
 import numpy as np
@@ -28,14 +27,14 @@ MOVE_SPEED = 5.0
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.Signal(int, QtCore.QPoint)
-    scrollRequest = QtCore.Signal(int, int)
-    newShape = QtCore.Signal()
-    selectionChanged = QtCore.Signal(list)
-    shapeMoved = QtCore.Signal()
-    drawingPolygon = QtCore.Signal(bool)
-    vertexSelected = QtCore.Signal(bool)
-    mouseMoved = QtCore.Signal(QtCore.QPointF)
+    zoomRequest = QtCore.pyqtSignal(int, QtCore.QPoint)
+    scrollRequest = QtCore.pyqtSignal(int, int)
+    newShape = QtCore.pyqtSignal()
+    selectionChanged = QtCore.pyqtSignal(list)
+    shapeMoved = QtCore.pyqtSignal()
+    drawingPolygon = QtCore.pyqtSignal(bool)
+    vertexSelected = QtCore.pyqtSignal(bool)
+    mouseMoved = QtCore.pyqtSignal(QtCore.QPointF)
 
     CREATE, EDIT = 0, 1
 
@@ -246,10 +245,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
-            if QT5:
-                pos = self.transformPos(ev.localPos())
-            else:
-                pos = self.transformPos(ev.posF())
+            pos = self.transformPos(ev.localPos())
         except AttributeError:
             return
 
@@ -425,10 +421,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        if QT5:
-            pos = self.transformPos(ev.localPos())
-        else:
-            pos = self.transformPos(ev.posF())
+        pos = self.transformPos(ev.localPos())
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
@@ -984,32 +977,16 @@ class Canvas(QtWidgets.QWidget):
         return super(Canvas, self).minimumSizeHint()
 
     def wheelEvent(self, ev):
-        if QT5:
-            mods = ev.modifiers()
-            delta = ev.angleDelta()
-            if QtCore.Qt.ControlModifier == int(mods):
-                # with Ctrl/Command key
-                # zoom
-                self.zoomRequest.emit(delta.y(), ev.pos())
-            else:
-                # scroll
-                self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
-                self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+        mods = ev.modifiers()
+        delta = ev.angleDelta()
+        if QtCore.Qt.ControlModifier == int(mods):
+            # with Ctrl/Command key
+            # zoom
+            self.zoomRequest.emit(delta.y(), ev.pos())
         else:
-            if ev.orientation() == QtCore.Qt.Vertical:
-                mods = ev.modifiers()
-                if QtCore.Qt.ControlModifier == int(mods):
-                    # with Ctrl/Command key
-                    self.zoomRequest.emit(ev.delta(), ev.pos())
-                else:
-                    self.scrollRequest.emit(
-                        ev.delta(),
-                        QtCore.Qt.Horizontal
-                        if (QtCore.Qt.ShiftModifier == int(mods))
-                        else QtCore.Qt.Vertical,
-                    )
-            else:
-                self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
+            # scroll
+            self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
+            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
         ev.accept()
 
     def moveByKeyboard(self, offset):
