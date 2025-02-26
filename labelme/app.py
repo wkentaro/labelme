@@ -6,7 +6,12 @@ import math
 import os
 import os.path as osp
 import re
+from typing import OrderedDict
+import collections
 import webbrowser
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
+import time
 
 import imgviz
 import natsort
@@ -47,6 +52,7 @@ from . import utils
 LABEL_COLORMAP = imgviz.label_colormap()
 
 
+
 class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
@@ -68,6 +74,13 @@ class MainWindow(QtWidgets.QMainWindow):
             config = get_config()
         self._config = config
 
+        cpu_count = os.cpu_count()
+        if cpu_count is None and cpu_count < 2:
+            raise ValueError("CPU count is less than 2.")
+        self.load_file_thread_pool = ThreadPoolExecutor(max_workers=int(cpu_count/2))
+        self.imageDataCacheLock = Lock()
+        self.imgDataCacheSize = 50
+        self.imageDataCache = collections.OrderedDict()
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
         Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
@@ -905,6 +918,36 @@ class MainWindow(QtWidgets.QMainWindow):
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
 
+    def thread_fn_load_image(self, filename):
+        imageData = LabelFile.load_image_file(filename)
+        if imageData is None:
+            return
+        with self.imageDataCacheLock:
+            self.imageDataCache[filename] = imageData
+
+    def get_image_data(self, filename):
+        if len(self.imageDataCache) < self.imgDataCacheSize:
+            current_index = self.imageList.index(filename)
+            half_num = self.imgDataCacheSize // 2
+            load_indexes = []
+            front = max(current_index - half_num, 0)
+            load_indexes.extend(list(range(front, current_index)))
+            end = min(current_index + half_num, len(self.imageList) - 1)
+            load_indexes.extend(list(range(current_index + 1, end + 1)))
+            futures = {}
+            for i in load_indexes:
+                temp_filename = self.imageList[i]
+                if temp_filename in self.imageDataCache:
+                    continue
+                future = self.load_file_thread_pool.submit(self.thread_fn_load_image, temp_filename)
+                pass
+        if filename not in self.imageDataCache: 
+            with self.imageDataCacheLock:
+                self.imageDataCache[filename] = LabelFile.load_image_file(filename)
+        for _ in range(len(self.imageDataCache) - self.imgDataCacheSize):
+            with self.imageDataCacheLock:
+                self.imageDataCache.popitem(last=False)
+
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
@@ -1665,7 +1708,16 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file = osp.join(self.output_dir, label_file_without_path)
         if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(label_file):
             try:
-                self.labelFile = LabelFile(label_file)
+                self.labelFile = LabelFile(label_file, load_img=False)
+                if self.labelFile.imageData is None and self.labelFile.imagePathAbs is None:
+                    self.errorMessage(
+                        self.tr("Error opening file"),
+                        self.tr(
+                            "<p>Make sure <i>%s</i> is a valid label file."
+                        )
+                        % label_file,
+                    )
+                    return False
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -1677,7 +1729,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 self.status(self.tr("Error reading %s") % label_file)
                 return False
-            self.imageData = self.labelFile.imageData
+            if self.labelFile.imageData is None:
+                self.imageData = self.get_image_data(filename)
+                self.labelFile.imageData = self.imageData
+            else:
+                self.imageData = self.labelFile.imageData
             self.imagePath = osp.join(
                 osp.dirname(label_file),
                 self.labelFile.imagePath,
@@ -1685,6 +1741,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.otherData = self.labelFile.otherData
         else:
             self.imageData = LabelFile.load_image_file(filename)
+            self.imageData = self.get_image_data(filename)
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None

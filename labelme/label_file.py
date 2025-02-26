@@ -28,10 +28,12 @@ class LabelFileError(Exception):
 class LabelFile(object):
     suffix = ".json"
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, load_img=True):
         self.shapes = []
         self.imagePath = None
+        self.imagePathAbs = None
         self.imageData = None
+        self.load_img = load_img
         if filename is not None:
             self.load(filename)
         self.filename = filename
@@ -80,19 +82,24 @@ class LabelFile(object):
             with open(filename, "r") as f:
                 data = json.load(f)
 
+            imageData = None
             if data["imageData"] is not None:
                 imageData = base64.b64decode(data["imageData"])
             else:
                 # relative path from label file to relative path from cwd
+                # 外面会用到
                 imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
+                self.imagePathAbs = imagePath
+                if self.load_img:
+                    imageData = self.load_image_file(imagePath)
             flags = data.get("flags") or {}
             imagePath = data["imagePath"]
-            self._check_image_height_and_width(
-                base64.b64encode(imageData).decode("utf-8"),
-                data.get("imageHeight"),
-                data.get("imageWidth"),
-            )
+            if imageData is not None:
+                self._check_image_height_and_width(
+                    base64.b64encode(imageData).decode("utf-8"),
+                    data.get("imageHeight"),
+                    data.get("imageWidth"),
+                )
             shapes = [
                 dict(
                     label=s["label"],
