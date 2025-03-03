@@ -24,20 +24,20 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "gdown>=5.2.0",
-  "imgviz>=1.7.5",
-  "loguru>=0.7.3",
-  "matplotlib>=3.9.4",
+  "gdown",
+  "imgviz",
+  "loguru",
+  "matplotlib",
   "natsort>=7.1.0",
-  "numpy>=2.0.2",
-  "onnxruntime",
+  "numpy",
+  "onnxruntime>=1.14.1,!=1.16.0,!=1.20.0,!=1.20.1",
   "osam>=0.2.2",
   "pillow>=2.8",
   "pyqt5>=5.14.0",
-  "pyqt5-qt5==5.15.15 ; platform_system != 'Windows'",
-  "pyqt5-qt5==5.15.2 ; platform_system == 'Windows'",
-  "pyyaml>=6.0.2",
-  "scikit-image>=0.24.0",
+  "pyqt5-qt5!=5.15.13 ; sys_platform == 'linux'",
+  "pyqt5-qt5!=5.15.11,!=5.15.12,!=5.15.13,!=5.15.14,!=5.15.15,!=5.15.16 ; sys_platform == 'win32'",
+  "pyyaml",
+  "scikit-image",
 ]
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
