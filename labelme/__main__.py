@@ -1,5 +1,6 @@
 import argparse
 import codecs
+import contextlib
 import os
 import os.path as osp
 import sys
@@ -14,6 +15,15 @@ from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_config
 from labelme.utils import newIcon
+
+
+class _LoggerIO:
+    def write(self, message: str):
+        if message := message.strip():
+            logger.debug(message)
+
+    def flush(self):
+        pass
 
 
 def _setup_loguru(logger_level: str) -> None:
@@ -207,7 +217,7 @@ def main():
         win.settings.clear()
         sys.exit(0)
 
-    with logger.catch():
+    with logger.catch(), contextlib.redirect_stderr(new_target=_LoggerIO()):
         win.show()
         win.raise_()
         sys.exit(app.exec_())
