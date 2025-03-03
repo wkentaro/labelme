@@ -1,5 +1,3 @@
-import contextlib
-
 import imgviz
 from loguru import logger
 from PyQt5 import QtCore
@@ -138,18 +136,7 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("AI model is already initialized: %r" % model.name)
         else:
             logger.debug("Initializing AI model: %r" % model.name)
-
-            class LoggerIO:
-                def write(self, message: str):
-                    if message := message.strip():
-                        logger.debug(message)
-
-                def flush(self):
-                    pass
-
-            # NOTE: gdown.download uses sys.stderr, so redirect it to logger.debug
-            with contextlib.redirect_stderr(new_target=LoggerIO()):
-                self._ai_model = model()
+            self._ai_model = model()
 
         if self.pixmap is None:
             logger.warning("Pixmap is not set yet")
