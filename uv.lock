@@ -904,7 +904,7 @@ dependencies = [
     { name = "osam" },
     { name = "pillow" },
     { name = "pyqt5" },
-    { name = "pyqt5-qt5", version = "5.15.12", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'win32'" },
+    { name = "pyqt5-qt5", version = "5.15.2", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'win32'" },
     { name = "pyqt5-qt5", version = "5.15.16", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'linux'" },
     { name = "pyyaml" },
     { name = "scikit-image", version = "0.24.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -934,7 +934,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyqt5", specifier = ">=5.14.0" },
     { name = "pyqt5-qt5", marker = "sys_platform == 'linux'", specifier = "!=5.15.13" },
-    { name = "pyqt5-qt5", marker = "sys_platform == 'win32'", specifier = "!=5.15.13,!=5.15.14,!=5.15.15,!=5.15.16" },
+    { name = "pyqt5-qt5", marker = "sys_platform == 'win32'", specifier = "!=5.15.11,!=5.15.12,!=5.15.13,!=5.15.14,!=5.15.15,!=5.15.16" },
     { name = "pyyaml" },
     { name = "scikit-image" },
 ]
@@ -1719,7 +1719,7 @@ name = "pyqt5"
 version = "5.15.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pyqt5-qt5", version = "5.15.12", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'win32'" },
+    { name = "pyqt5-qt5", version = "5.15.2", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'win32'" },
     { name = "pyqt5-qt5", version = "5.15.13", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32'" },
     { name = "pyqt5-qt5", version = "5.15.16", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin' or sys_platform == 'linux'" },
     { name = "pyqt5-sip" },
@@ -1735,13 +1735,17 @@ wheels = [
 
 [[package]]
 name = "pyqt5-qt5"
-version = "5.15.12"
+version = "5.15.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.10' and platform_system == 'macos' and sys_platform == 'win32'",
     "python_full_version >= '3.10' and platform_system != 'macos' and sys_platform == 'win32'",
     "python_full_version < '3.10' and platform_system == 'macos' and sys_platform == 'win32'",
     "python_full_version < '3.10' and platform_system != 'macos' and sys_platform == 'win32'",
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1c/7e/ce7c66a541a105fa98b41d6405fe84940564695e29fc7dccf6d9e8c5f898/PyQt5_Qt5-5.15.2-py3-none-win32.whl", hash = "sha256:9cc7a768b1921f4b982ebc00a318ccb38578e44e45316c7a4a850e953e1dd327", size = 43447358 },
+    { url = "https://files.pythonhosted.org/packages/37/97/5d3b222b924fa2ed4c2488925155cd0b03fd5d09ee1cfcf7c553c11c9f66/PyQt5_Qt5-5.15.2-py3-none-win_amd64.whl", hash = "sha256:750b78e4dba6bdf1607febedc08738e318ea09e9b10aea9ff0d73073f11f6962", size = 50075158 },
 ]
 
 [[package]]
