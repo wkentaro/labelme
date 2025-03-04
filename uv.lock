@@ -889,7 +889,7 @@ wheels = [
 
 [[package]]
 name = "labelme"
-version = "5.6.1"
+version = "5.7.0"
 source = { editable = "." }
 dependencies = [
     { name = "gdown" },

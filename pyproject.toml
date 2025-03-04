@@ -7,7 +7,7 @@ name = "labelme"
 description = "Image Polygonal Annotation with Python"
 license = { text = "GPL-3.0-only" }
 requires-python = ">=3.9"
-version = "5.6.1"
+version = "5.7.0"
 authors = [{ name = "Kentaro Wada", email = "www.kentaro.wada@gmail.com" }]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
