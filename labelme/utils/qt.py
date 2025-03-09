@@ -96,3 +96,13 @@ def distancetoline(point, line):
 def fmtShortcut(text):
     mod, key = text.split("+", 1)
     return "<b>%s</b>+<b>%s</b>" % (mod, key)
+
+
+def shift_and_ctrl_pressed() -> bool:
+    return QtWidgets.QApplication.keyboardModifiers() == (
+        QtCore.Qt.ControlModifier | QtCore.Qt.ShiftModifier
+    )
+
+
+def shift_pressed() -> bool:
+    return bool(QtWidgets.QApplication.keyboardModifiers() & QtCore.Qt.ShiftModifier)
