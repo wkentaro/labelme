@@ -19,7 +19,6 @@ from PyQt5.QtCore import Qt
 
 from labelme import __appname__
 from labelme import ai
-from labelme.ai import MODELS
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
@@ -375,7 +374,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createAiPolygonMode.changed.connect(
             lambda: self.canvas.initializeAiModel(
-                name=self._selectAiModelComboBox.currentText()
+                model_name=self._selectAiModelComboBox.itemData(
+                    self._selectAiModelComboBox.currentIndex()
+                )
             )
             if self.canvas.createMode == "ai_polygon"
             else None
@@ -390,7 +391,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createAiMaskMode.changed.connect(
             lambda: self.canvas.initializeAiModel(
-                name=self._selectAiModelComboBox.currentText()
+                model_name=self._selectAiModelComboBox.itemData(
+                    self._selectAiModelComboBox.currentIndex()
+                )
             )
             if self.canvas.createMode == "ai_mask"
             else None
@@ -791,10 +794,18 @@ class MainWindow(QtWidgets.QMainWindow):
         #
         self._selectAiModelComboBox = QtWidgets.QComboBox()
         selectAiModel.defaultWidget().layout().addWidget(self._selectAiModelComboBox)
-        model_names = [model.name for model in MODELS]
-        self._selectAiModelComboBox.addItems(model_names)
-        if self._config["ai"]["default"] in model_names:
-            model_index = model_names.index(self._config["ai"]["default"])
+        MODEL_NAMES: list[tuple[str, str]] = [
+            ("efficientsam:10m", "EfficientSam (speed)"),
+            ("efficientsam:latest", "EfficientSam (accuracy)"),
+            ("sam:100m", "SegmentAnything (speed)"),
+            ("sam:300m", "SegmentAnything (balanced)"),
+            ("sam:latest", "SegmentAnything (accuracy)"),
+        ]
+        for model_name, model_ui_name in MODEL_NAMES:
+            self._selectAiModelComboBox.addItem(model_ui_name, userData=model_name)
+        model_ui_names: list[str] = [model_ui_name for _, model_ui_name in MODEL_NAMES]
+        if self._config["ai"]["default"] in model_ui_names:
+            model_index = model_ui_names.index(self._config["ai"]["default"])
         else:
             logger.warning(
                 "Default AI model is not found: %r",
@@ -803,8 +814,8 @@ class MainWindow(QtWidgets.QMainWindow):
             model_index = 0
         self._selectAiModelComboBox.setCurrentIndex(model_index)
         self._selectAiModelComboBox.currentIndexChanged.connect(
-            lambda: self.canvas.initializeAiModel(
-                name=self._selectAiModelComboBox.currentText()
+            lambda index: self.canvas.initializeAiModel(
+                model_name=self._selectAiModelComboBox.itemData(index)
             )
             if self.canvas.createMode in ["ai_polygon", "ai_mask"]
             else None
