@@ -1,24 +1,27 @@
 import imgviz
 import numpy as np
+import numpy.typing as npt
 import skimage
 from loguru import logger
 
 
-def _get_contour_length(contour):
-    contour_start = contour
-    contour_end = np.r_[contour[1:], contour[0:1]]
+def _get_contour_length(contour: npt.NDArray[np.float32]) -> float:
+    contour_start: npt.NDArray[np.float32] = contour
+    contour_end: npt.NDArray[np.float32] = np.r_[contour[1:], contour[0:1]]
     return np.linalg.norm(contour_end - contour_start, axis=1).sum()
 
 
-def compute_polygon_from_mask(mask):
-    contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
+def compute_polygon_from_mask(mask: npt.NDArray[np.bool_]) -> npt.NDArray[np.float32]:
+    contours: npt.NDArray[np.float32] = skimage.measure.find_contours(
+        np.pad(mask, pad_width=1)
+    )
     if len(contours) == 0:
         logger.warning("No contour found, so returning empty polygon.")
         return np.empty((0, 2), dtype=np.float32)
 
-    contour = max(contours, key=_get_contour_length)
-    POLYGON_APPROX_TOLERANCE = 0.004
-    polygon = skimage.measure.approximate_polygon(
+    contour: npt.NDArray[np.float32] = max(contours, key=_get_contour_length)
+    POLYGON_APPROX_TOLERANCE: float = 0.004
+    polygon: npt.NDArray[np.float32] = skimage.measure.approximate_polygon(
         coords=contour,
         tolerance=np.ptp(contour, axis=0).max() * POLYGON_APPROX_TOLERANCE,
     )

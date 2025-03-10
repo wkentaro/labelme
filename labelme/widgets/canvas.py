@@ -9,8 +9,7 @@ from PyQt5 import QtWidgets
 
 import osam
 import numpy as np
-import labelme.ai
-from labelme.ai._utils import compute_polygon_from_mask
+from labelme._automation import polygon_from_mask
 import labelme.utils
 from labelme.shape import Shape
 
@@ -782,7 +781,9 @@ class Canvas(QtWidgets.QWidget):
             p.end()
             return
 
-        points = compute_polygon_from_mask(mask=response.annotations[0].mask)
+        points = polygon_from_mask.compute_polygon_from_mask(
+            mask=response.annotations[0].mask
+        )
         if len(points) < 2:
             p.end()
             return

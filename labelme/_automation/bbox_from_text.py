@@ -2,11 +2,12 @@ import json
 import time
 
 import numpy as np
+import numpy.typing as npt
 import osam
 from loguru import logger
 
 
-def get_rectangles_from_texts(
+def get_bboxes_from_texts(
     model: str, image: np.ndarray, texts: list[str]
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     request: osam.types.GenerateRequest = osam.types.GenerateRequest(
@@ -23,18 +24,18 @@ def get_rectangles_from_texts(
         f"Requesting with model={model!r}, image={(image.shape, image.dtype)}, "
         f"prompt={request.prompt!r}"
     )
-    t_start = time.time()
+    t_start: float = time.time()
     response: osam.types.GenerateResponse = osam.apis.generate(request=request)
 
-    num_annotations = len(response.annotations)
+    num_annotations: int = len(response.annotations)
     logger.debug(
         f"Response: num_annotations={num_annotations}, "
         f"elapsed_time={time.time() - t_start:.3f} [s]"
     )
 
-    boxes: np.ndarray = np.empty((num_annotations, 4), dtype=np.float32)
-    scores: np.ndarray = np.empty((num_annotations,), dtype=np.float32)
-    labels: np.ndarray = np.empty((num_annotations,), dtype=np.int32)
+    boxes: npt.NDArray[np.float32] = np.empty((num_annotations, 4), dtype=np.float32)
+    scores: npt.NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)
+    labels: npt.NDArray[np.float32] = np.empty((num_annotations,), dtype=np.int32)
     for i, annotation in enumerate(response.annotations):
         boxes[i] = [
             annotation.bounding_box.xmin,
@@ -48,7 +49,7 @@ def get_rectangles_from_texts(
     return boxes, scores, labels
 
 
-def non_maximum_suppression(
+def nms_bboxes(
     boxes: np.ndarray,
     scores: np.ndarray,
     labels: np.ndarray,
@@ -56,8 +57,10 @@ def non_maximum_suppression(
     score_threshold: float,
     max_num_detections: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    num_classes = np.max(labels) + 1
-    scores_of_all_classes = np.zeros((len(boxes), num_classes), dtype=np.float32)
+    num_classes: int = max(labels) + 1
+    scores_of_all_classes: npt.NDArray[np.float32] = np.zeros(
+        (len(boxes), num_classes), dtype=np.float32
+    )
     for i, (score, label) in enumerate(zip(scores, labels)):
         scores_of_all_classes[i, label] = score
     logger.debug(f"Input: num_boxes={len(boxes)}")
@@ -72,14 +75,14 @@ def non_maximum_suppression(
     return boxes, scores, labels
 
 
-def get_shapes_from_annotations(
+def get_shapes_from_bboxes(
     boxes: np.ndarray, scores: np.ndarray, labels: np.ndarray, texts: list[str]
 ) -> list[dict]:
     shapes: list[dict] = []
     for box, score, label in zip(boxes.tolist(), scores.tolist(), labels.tolist()):
-        text = texts[label]
+        text: str = texts[label]
         xmin, ymin, xmax, ymax = box
-        shape = {
+        shape: dict = {
             "label": text,
             "points": [[xmin, ymin], [xmax, ymax]],
             "group_id": None,

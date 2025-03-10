@@ -18,7 +18,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
 from labelme import __appname__
-from labelme import ai
+from labelme._automation import bbox_from_text
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
@@ -1011,7 +1011,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _submit_ai_prompt(self, _) -> None:
         texts = self._ai_prompt_widget.get_text_prompt().split(",")
-        boxes, scores, labels = ai.get_rectangles_from_texts(
+        boxes, scores, labels = bbox_from_text.get_bboxes_from_texts(
             model="yoloworld",
             image=utils.img_qt_to_arr(self.image)[:, :, :3],
             texts=texts,
@@ -1033,7 +1033,7 @@ class MainWindow(QtWidgets.QMainWindow):
             scores = np.r_[scores, [1.01]]
             labels = np.r_[labels, [texts.index(shape.label)]]
 
-        boxes, scores, labels = ai.non_maximum_suppression(
+        boxes, scores, labels = bbox_from_text.nms_bboxes(
             boxes=boxes,
             scores=scores,
             labels=labels,
@@ -1047,7 +1047,7 @@ class MainWindow(QtWidgets.QMainWindow):
         scores = scores[keep]
         labels = labels[keep]
 
-        shape_dicts: list[dict] = ai.get_shapes_from_annotations(
+        shape_dicts: list[dict] = bbox_from_text.get_shapes_from_bboxes(
             boxes=boxes,
             scores=scores,
             labels=labels,
