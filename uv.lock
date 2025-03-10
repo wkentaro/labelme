@@ -892,7 +892,6 @@ name = "labelme"
 version = "5.7.0"
 source = { editable = "." }
 dependencies = [
-    { name = "gdown" },
     { name = "imgviz" },
     { name = "loguru" },
     { name = "matplotlib", version = "3.9.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -900,7 +899,6 @@ dependencies = [
     { name = "natsort" },
     { name = "numpy", version = "2.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "numpy", version = "2.2.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
-    { name = "onnxruntime" },
     { name = "osam" },
     { name = "pillow" },
     { name = "pyqt5" },
@@ -923,13 +921,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "gdown" },
     { name = "imgviz" },
     { name = "loguru" },
     { name = "matplotlib" },
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy" },
-    { name = "onnxruntime", specifier = ">=1.14.1,!=1.16.0,!=1.20.0,!=1.20.1" },
     { name = "osam", specifier = ">=0.2.2" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyqt5", specifier = ">=5.14.0" },

@@ -24,13 +24,11 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "gdown",
   "imgviz",
   "loguru",
   "matplotlib",
   "natsort>=7.1.0",
   "numpy",
-  "onnxruntime>=1.14.1,!=1.16.0,!=1.20.0,!=1.20.1",
   "osam>=0.2.2",
   "pillow>=2.8",
   "pyqt5>=5.14.0",
