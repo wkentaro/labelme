@@ -46,6 +46,11 @@ def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=
     mask = np.array(mask, dtype=bool)
     return mask
 
+def mask_area_to_mask(img_shape,points,mask_ori):
+    mask = np.zeros(img_shape[:2], dtype=np.uint8)
+    mask[int(points[0][1]):int(points[1][1]+1),int(points[0][0]):int(points[1][0]+1)] = mask_ori
+    mask = np.array(mask, dtype=bool)
+    return mask
 
 def shapes_to_label(img_shape, shapes, label_name_to_value):
     cls = np.zeros(img_shape[:2], dtype=np.int32)
@@ -66,8 +71,11 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
             instances.append(instance)
         ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
-
-        mask = shape_to_mask(img_shape[:2], points, shape_type)
+        if shape_type == "mask":
+            mask_ori = shape["mask"]
+            mask = mask_area_to_mask(img_shape[:2],points,mask_ori)
+        else:
+            mask = shape_to_mask(img_shape[:2], points, shape_type)
         cls[mask] = cls_id
         ins[mask] = ins_id
 
