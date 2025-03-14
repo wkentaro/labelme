@@ -332,6 +332,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing rectangles"),
             enabled=False,
         )
+        rectangleSelectMode = action(
+            self.tr("Rectangle Select"),
+            lambda: self.toggleDrawMode(False, createMode="selrectangle"),
+            shortcuts["rectangle_select"],
+            "objects",
+            self.tr("Start selecting rectangles"),
+            enabled=False,
+        )
         createCircleMode = action(
             self.tr("Create Circle"),
             lambda: self.toggleDrawMode(False, createMode="circle"),
@@ -645,6 +653,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createMode=createMode,
             editMode=editMode,
             createRectangleMode=createRectangleMode,
+            rectangleSelectMode=rectangleSelectMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
             createPointMode=createPointMode,
@@ -683,6 +692,7 @@ class MainWindow(QtWidgets.QMainWindow):
             menu=(
                 createMode,
                 createRectangleMode,
+                rectangleSelectMode,
                 createCircleMode,
                 createLineMode,
                 createPointMode,
@@ -986,6 +996,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.createLineStripMode.setEnabled(True)
         self.actions.createAiPolygonMode.setEnabled(True)
         self.actions.createAiMaskMode.setEnabled(True)
+        self.actions.createRectangleMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = "{} - {}".format(title, self.filename)
@@ -1117,6 +1128,7 @@ class MainWindow(QtWidgets.QMainWindow):
         draw_actions = {
             "polygon": self.actions.createMode,
             "rectangle": self.actions.createRectangleMode,
+            "selrectangle": self.actions.rectangleSelectMode,
             "circle": self.actions.createCircleMode,
             "point": self.actions.createPointMode,
             "line": self.actions.createLineMode,
@@ -1133,6 +1145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             for draw_mode, draw_action in draw_actions.items():
                 draw_action.setEnabled(createMode != draw_mode)
+        self.actions.rectangleSelectMode.setEnabled(True)
         self.actions.editMode.setEnabled(not edit)
 
     def setEditMode(self):
