@@ -1,13 +1,14 @@
 import argparse
-import base64
-import json
 import os
 import os.path as osp
 
+import numpy as np
+import numpy.typing as npt
 import imgviz
 import PIL.Image
 from loguru import logger
 
+from labelme.label_file import LabelFile
 from labelme import utils
 
 
@@ -37,35 +38,29 @@ def main():
     if not osp.exists(out_dir):
         os.mkdir(out_dir)
 
-    data = json.load(open(json_file))
-    imageData = data.get("imageData")
+    label_file: LabelFile = LabelFile(filename=json_file)
 
-    if not imageData:
-        imagePath = os.path.join(os.path.dirname(json_file), data["imagePath"])
-        with open(imagePath, "rb") as f:
-            imageData = f.read()
-            imageData = base64.b64encode(imageData).decode("utf-8")
-    img = utils.img_b64_to_arr(imageData)
+    image: npt.NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {"_background_": 0}
-    for shape in sorted(data["shapes"], key=lambda x: x["label"]):
+    for shape in sorted(label_file.shapes, key=lambda x: x["label"]):
         label_name = shape["label"]
         if label_name in label_name_to_value:
             label_value = label_name_to_value[label_name]
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-    lbl, _ = utils.shapes_to_label(img.shape, data["shapes"], label_name_to_value)
+    lbl, _ = utils.shapes_to_label(image.shape, label_file.shapes, label_name_to_value)
 
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
         label_names[value] = name
 
     lbl_viz = imgviz.label2rgb(
-        lbl, imgviz.asgray(img), label_names=label_names, loc="rb"
+        lbl, imgviz.asgray(image), label_names=label_names, loc="rb"
     )
 
-    PIL.Image.fromarray(img).save(osp.join(out_dir, "img.png"))
+    PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
     utils.lblsave(osp.join(out_dir, "label.png"), lbl)
     PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, "label_viz.png"))
 
