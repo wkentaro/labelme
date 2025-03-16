@@ -3,7 +3,7 @@
 ## Annotation
 
 ```bash
-labelme apc2016_obj3.jpg -O apc2016_obj3.json
+labelme apc2016_obj3.jpg
 ```
 
 ![](.readme/annotation.jpg)
@@ -26,15 +26,15 @@ To convert the json to set of image and label, you can run following:
 
 
 ```bash
-labelme_export_json apc2016_obj3.json -o apc2016_obj3_json
+labelme_export_json apc2016_obj3.json
 ```
 
 It generates standard files from the JSON file.
 
-- [img.png](apc2016_obj3_json/img.png): Image file.
-- [label.png](apc2016_obj3_json/label.png): uint8 label file.
-- [label_viz.png](apc2016_obj3_json/label_viz.png): Visualization of `label.png`.
-- [label_names.txt](apc2016_obj3_json/label_names.txt): Label names for values in `label.png`.
+- [img.png](apc2016_obj3/img.png): Image file.
+- [label.png](apc2016_obj3/label.png): uint8 label file.
+- [label_viz.png](apc2016_obj3/label_viz.png): Visualization of `label.png`.
+- [label_names.txt](apc2016_obj3/label_names.txt): Label names for values in `label.png`.
 
 ## How to load label PNG file?
 
@@ -47,7 +47,7 @@ and please use `PIL.Image.open` to avoid unexpected behavior:
 >>> import numpy as np
 >>> import PIL.Image
 
->>> label_png = 'apc2016_obj3_json/label.png'
+>>> label_png = 'apc2016_obj3/label.png'
 >>> lbl = np.asarray(PIL.Image.open(label_png))
 >>> print(lbl.dtype)
 dtype('uint8')
@@ -60,7 +60,7 @@ array([0, 1, 2, 3], dtype=uint8)
 Also, you can see the label PNG file by:
 
 ```python
-labelme_draw_label_png apc2016_obj3_json/label.png
+labelme_draw_label_png apc2016_obj3/label.png
 ```
 
 <img src=".readme/draw_label_png.jpg" width="35%" />
