@@ -763,13 +763,21 @@ class Canvas(QtWidgets.QWidget):
             p.end()
             return
 
-        if self.createMode == "ai_mask" and response.annotations[0].bounding_box:
-            y1, x1, y2, x2 = (
-                response.annotations[0].bounding_box.ymin,
-                response.annotations[0].bounding_box.xmin,
-                response.annotations[0].bounding_box.ymax,
-                response.annotations[0].bounding_box.xmax,
-            )
+        if self.createMode == "ai_mask":
+            y1: int
+            x1: int
+            y2: int
+            x2: int
+            if response.annotations[0].bounding_box is None:
+                y1, x1, y2, x2 = imgviz.instances.mask_to_bbox(
+                    [response.annotations[0].mask]
+                )[0].astype(int)
+            else:
+                y1 = response.annotations[0].bounding_box.ymin
+                x1 = response.annotations[0].bounding_box.xmin
+                y2 = response.annotations[0].bounding_box.ymax
+                x2 = response.annotations[0].bounding_box.xmax
+
             drawing_shape.setShapeRefined(
                 shape_type="mask",
                 points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
