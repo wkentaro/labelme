@@ -105,8 +105,8 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
-        self._model: Optional[osam.types.Model] = None
-        self._image_embeddings: collections.OrderedDict[
+        self._sam: Optional[osam.types.Model] = None
+        self._sam_embedding: collections.OrderedDict[
             bytes, osam.types.ImageEmbedding
         ] = collections.OrderedDict()
 
@@ -137,11 +137,11 @@ class Canvas(QtWidgets.QWidget):
 
     def _compute_and_cache_image_embedding(self) -> None:
         image: np.ndarray = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
-        if image.tobytes() in self._image_embeddings:
+        if image.tobytes() in self._sam_embedding:
             return
 
-        logger.debug("Computing image embeddings for model {!r}", self._model.name)
-        self._image_embeddings[image.tobytes()] = self._model.encode_image(
+        logger.debug("Computing image embeddings for model {!r}", self._sam.name)
+        self._sam_embedding[image.tobytes()] = self._sam.encode_image(
             image=imgviz.asrgb(image)
         )
 
@@ -150,10 +150,10 @@ class Canvas(QtWidgets.QWidget):
             logger.warning("Pixmap is not set yet")
             return
 
-        if self._model is None or self._model.name != model_name:
+        if self._sam is None or self._sam.name != model_name:
             logger.debug("Initializing AI model {!r}", model_name)
-            self._model = osam.apis.get_model_type_by_name(model_name)()
-            self._image_embeddings.clear()
+            self._sam = osam.apis.get_model_type_by_name(model_name)()
+            self._sam_embedding.clear()
 
         self._compute_and_cache_image_embedding()
 
@@ -752,8 +752,8 @@ class Canvas(QtWidgets.QWidget):
             _update_shape_with_sam(
                 shape=drawing_shape,
                 createMode=self.createMode,
-                model_name=self._model.name,
-                image_embedding=self._image_embeddings[
+                model_name=self._sam.name,
+                image_embedding=self._sam_embedding[
                     labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
                 ],
             )
@@ -784,8 +784,8 @@ class Canvas(QtWidgets.QWidget):
         _update_shape_with_sam(
             shape=self.current,
             createMode=self.createMode,
-            model_name=self._model.name,
-            image_embedding=self._image_embeddings[
+            model_name=self._sam.name,
+            image_embedding=self._sam_embedding[
                 labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
             ],
         )
@@ -959,7 +959,7 @@ class Canvas(QtWidgets.QWidget):
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
-        if self._model:
+        if self._sam:
             self._compute_and_cache_image_embedding()
         if clear_shapes:
             self.shapes = []
