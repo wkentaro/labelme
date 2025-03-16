@@ -3,7 +3,7 @@
 ## Annotation
 
 ```bash
-labelme apc2016_obj3.jpg -O apc2016_obj3.json
+labelme apc2016_obj3.jpg
 ```
 
 ![](.readme/annotation.jpg)
@@ -26,7 +26,7 @@ To convert the json to set of image and label, you can run following:
 
 
 ```bash
-labelme_export_json apc2016_obj3.json -o apc2016_obj3
+labelme_export_json apc2016_obj3.json
 ```
 
 It generates standard files from the JSON file.
