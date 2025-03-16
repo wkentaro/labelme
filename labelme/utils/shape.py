@@ -40,9 +40,11 @@ def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=
         cx, cy = xy[0]
         r = point_size
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
-    else:
+    elif shape_type in [None, "polygon"]:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)
+    else:
+        raise ValueError(f"shape_type={shape_type!r} is not supported.")
     mask = np.array(mask, dtype=bool)
     return mask
 
