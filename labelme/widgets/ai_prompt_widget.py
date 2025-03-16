@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from loguru import logger
 
 
 class AiPromptWidget(QtWidgets.QWidget):
@@ -17,16 +18,34 @@ class AiPromptWidget(QtWidgets.QWidget):
         self.layout().addWidget(nms_params_widget)
 
     def get_text_prompt(self) -> str:
-        text_prompt_widget: QtWidgets.QWidget = self.layout().itemAt(0).widget()
-        return text_prompt_widget.get_text_prompt()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(0)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get text prompt")
+            return ""
+        return widget.get_text_prompt()
 
     def get_iou_threshold(self) -> float:
-        nms_params_widget = self.layout().itemAt(1).widget()
-        return nms_params_widget.get_iou_threshold()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(1)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get IoU threshold")
+            return _IouThresholdWidget.default_iou_threshold
+        return widget.get_iou_threshold()
 
     def get_score_threshold(self) -> float:
-        nms_params_widget = self.layout().itemAt(1).widget()
-        return nms_params_widget.get_score_threshold()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(1)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get score threshold")
+            return _ScoreThresholdWidget.default_score_threshold
+        return widget.get_score_threshold()
 
 
 class _TextPromptWidget(QtWidgets.QWidget):
@@ -48,8 +67,14 @@ class _TextPromptWidget(QtWidgets.QWidget):
         self.layout().addWidget(submit_button)
 
     def get_text_prompt(self) -> str:
-        texts_widget: QtWidgets.QWidget = self.layout().itemAt(1).widget()
-        return texts_widget.text()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(1)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get text prompt")
+            return ""
+        return widget.text()
 
 
 class _NmsParamsWidget(QtWidgets.QWidget):
@@ -62,15 +87,29 @@ class _NmsParamsWidget(QtWidgets.QWidget):
         self.layout().addWidget(_IouThresholdWidget(parent=parent))
 
     def get_score_threshold(self) -> float:
-        score_threshold_widget: QtWidgets.QWidget = self.layout().itemAt(0).widget()
-        return score_threshold_widget.get_value()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(0)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get score threshold")
+            return _ScoreThresholdWidget.default_score_threshold
+        return widget.get_value()
 
     def get_iou_threshold(self) -> float:
-        iou_threshold_widget: QtWidgets.QWidget = self.layout().itemAt(1).widget()
-        return iou_threshold_widget.get_value()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(1)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get IoU threshold")
+            return _IouThresholdWidget.default_iou_threshold
+        return widget.get_value()
 
 
 class _ScoreThresholdWidget(QtWidgets.QWidget):
+    default_score_threshold: float = 0.1
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -83,15 +122,23 @@ class _ScoreThresholdWidget(QtWidgets.QWidget):
         threshold_widget: QtWidgets.QWidget = QtWidgets.QDoubleSpinBox()
         threshold_widget.setRange(0, 1)
         threshold_widget.setSingleStep(0.05)
-        threshold_widget.setValue(0.1)
+        threshold_widget.setValue(self.default_score_threshold)
         self.layout().addWidget(threshold_widget)
 
     def get_value(self) -> float:
-        threshold_widget: QtWidgets.QWidget = self.layout().itemAt(1).widget()
-        return threshold_widget.value()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(1)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get score threshold")
+            return self.default_score_threshold
+        return widget.value()
 
 
 class _IouThresholdWidget(QtWidgets.QWidget):
+    default_iou_threshold: float = 0.5
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -104,9 +151,15 @@ class _IouThresholdWidget(QtWidgets.QWidget):
         threshold_widget: QtWidgets.QWidget = QtWidgets.QDoubleSpinBox()
         threshold_widget.setRange(0, 1)
         threshold_widget.setSingleStep(0.05)
-        threshold_widget.setValue(0.5)
+        threshold_widget.setValue(self.default_iou_threshold)
         self.layout().addWidget(threshold_widget)
 
     def get_value(self) -> float:
-        threshold_widget: QtWidgets.QWidget = self.layout().itemAt(1).widget()
-        return threshold_widget.value()
+        if (
+            (layout := self.layout()) is None
+            or (item := layout.itemAt(1)) is None
+            or (widget := item.widget()) is None
+        ):
+            logger.warning("Cannot get IoU threshold")
+            return self.default_iou_threshold
+        return widget.value()
