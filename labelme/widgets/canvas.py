@@ -17,11 +17,11 @@ from labelme.shape import Shape
 # - [maybe] Find optimal epsilon value.
 
 
-CURSOR_DEFAULT = QtCore.Qt.ArrowCursor
-CURSOR_POINT = QtCore.Qt.PointingHandCursor
-CURSOR_DRAW = QtCore.Qt.CrossCursor
-CURSOR_MOVE = QtCore.Qt.ClosedHandCursor
-CURSOR_GRAB = QtCore.Qt.OpenHandCursor
+CURSOR_DEFAULT = QtCore.Qt.ArrowCursor  # type: ignore[attr-defined]
+CURSOR_POINT = QtCore.Qt.PointingHandCursor  # type: ignore[attr-defined]
+CURSOR_DRAW = QtCore.Qt.CrossCursor  # type: ignore[attr-defined]
+CURSOR_MOVE = QtCore.Qt.ClosedHandCursor  # type: ignore[attr-defined]
+CURSOR_GRAB = QtCore.Qt.OpenHandCursor  # type: ignore[attr-defined]
 
 MOVE_SPEED = 5.0
 
@@ -105,8 +105,8 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
-        self._model: Optional[osam.types.Model] = None
-        self._image_embeddings: collections.OrderedDict[
+        self._sam: Optional[osam.types.Model] = None
+        self._sam_embedding: collections.OrderedDict[
             bytes, osam.types.ImageEmbedding
         ] = collections.OrderedDict()
 
@@ -135,24 +135,33 @@ class Canvas(QtWidgets.QWidget):
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
 
+    def _compute_and_cache_image_embedding(self) -> None:
+        if self._sam is None:
+            logger.warning("SAM model is not set yet")
+            return
+
+        sam: osam.types.Model = self._sam
+
+        image: np.ndarray = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+        if image.tobytes() in self._sam_embedding:
+            return
+
+        logger.debug("Computing image embeddings for model {!r}", sam.name)
+        self._sam_embedding[image.tobytes()] = sam.encode_image(
+            image=imgviz.asrgb(image)
+        )
+
     def initializeAiModel(self, model_name):
         if self.pixmap is None:
             logger.warning("Pixmap is not set yet")
             return
 
-        if self._model is None or self._model.name != model_name:
+        if self._sam is None or self._sam.name != model_name:
             logger.debug("Initializing AI model {!r}", model_name)
-            self._model = osam.apis.get_model_type_by_name(model_name)()
-            self._image_embeddings.clear()
-        #
-        image: np.ndarray = imgviz.asrgb(
-            labelme.utils.img_qt_to_arr(self.pixmap.toImage())
-        )
-        if image.tobytes() not in self._image_embeddings:
-            logger.debug("Computing image embeddings for model {!r}", self._model.name)
-            self._image_embeddings[image.tobytes()] = self._model.encode_image(
-                image=image
-            )
+            self._sam = osam.apis.get_model_type_by_name(model_name)()
+            self._sam_embedding.clear()
+
+        self._compute_and_cache_image_embedding()
 
     def storeShapes(self):
         shapesBackup = []
@@ -667,7 +676,7 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.update()
 
-    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+    def paintEvent(self, event: Optional[QtGui.QPaintEvent]) -> None:
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
 
@@ -745,62 +754,19 @@ class Canvas(QtWidgets.QWidget):
             point=self.line.points[1],
             label=self.line.point_labels[1],
         )
-        image: np.ndarray = imgviz.asrgb(
-            labelme.utils.img_qt_to_arr(self.pixmap.toImage())
-        )
-        response: osam.types.GenerateResponse = osam.apis.generate(
-            osam.types.GenerateRequest(
-                model=self._model.name,
-                image_embedding=self._image_embeddings[image.tobytes()],
-                prompt=osam.types.Prompt(
-                    points=[[point.x(), point.y()] for point in drawing_shape.points],
-                    point_labels=drawing_shape.point_labels,
-                ),
+        if self.createMode in ["ai_polygon", "ai_mask"]:
+            if self._sam is None:
+                logger.warning("SAM model is not set yet")
+                p.end()
+                return
+            _update_shape_with_sam(
+                shape=drawing_shape,
+                createMode=self.createMode,
+                model_name=self._sam.name,
+                image_embedding=self._sam_embedding[
+                    labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
+                ],
             )
-        )
-        if not response.annotations:
-            logger.warning("No annotations returned by AI model")
-            p.end()
-            return
-
-        if self.createMode == "ai_mask":
-            y1: int
-            x1: int
-            y2: int
-            x2: int
-            if response.annotations[0].bounding_box is None:
-                y1, x1, y2, x2 = imgviz.instances.mask_to_bbox(
-                    [response.annotations[0].mask]
-                )[0].astype(int)
-            else:
-                y1 = response.annotations[0].bounding_box.ymin
-                x1 = response.annotations[0].bounding_box.xmin
-                y2 = response.annotations[0].bounding_box.ymax
-                x2 = response.annotations[0].bounding_box.xmax
-
-            drawing_shape.setShapeRefined(
-                shape_type="mask",
-                points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
-                point_labels=[1, 1],
-                mask=response.annotations[0].mask[y1 : y2 + 1, x1 : x2 + 1],
-            )
-            drawing_shape.selected = True
-            drawing_shape.paint(p)
-            p.end()
-            return
-
-        points = polygon_from_mask.compute_polygon_from_mask(
-            mask=response.annotations[0].mask
-        )
-        if len(points) < 2:
-            p.end()
-            return
-
-        drawing_shape.setShapeRefined(
-            shape_type="polygon",
-            points=[QtCore.QPointF(point[0], point[1]) for point in points],
-            point_labels=[1] * len(points),
-        )
         drawing_shape.fill = self.fillDrawing()
         drawing_shape.selected = True
         drawing_shape.paint(p)
@@ -825,32 +791,14 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
-        if self.createMode == "ai_polygon":
-            # convert points to polygon by an AI model
-            assert self.current.shape_type == "points"
-            points = self._ai_model.predict_polygon_from_points(
-                points=[[point.x(), point.y()] for point in self.current.points],
-                point_labels=self.current.point_labels,
-            )
-            self.current.setShapeRefined(
-                points=[QtCore.QPointF(point[0], point[1]) for point in points],
-                point_labels=[1] * len(points),
-                shape_type="polygon",
-            )
-        elif self.createMode == "ai_mask":
-            # convert points to mask by an AI model
-            assert self.current.shape_type == "points"
-            mask = self._ai_model.predict_mask_from_points(
-                points=[[point.x(), point.y()] for point in self.current.points],
-                point_labels=self.current.point_labels,
-            )
-            y1, x1, y2, x2 = imgviz.instances.masks_to_bboxes([mask])[0].astype(int)
-            self.current.setShapeRefined(
-                shape_type="mask",
-                points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
-                point_labels=[1, 1],
-                mask=mask[y1 : y2 + 1, x1 : x2 + 1],
-            )
+        _update_shape_with_sam(
+            shape=self.current,
+            createMode=self.createMode,
+            model_name=self._sam.name,
+            image_embedding=self._sam_embedding[
+                labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
+            ],
+        )
         self.current.close()
 
         self.shapes.append(self.current)
@@ -1021,15 +969,8 @@ class Canvas(QtWidgets.QWidget):
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
-        if self._model:
-            image: np.ndarray = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
-            if image.tobytes() not in self._image_embeddings:
-                logger.debug(
-                    "Computing image embeddings for model {!r}", self._model.name
-                )
-                self._image_embeddings[image.tobytes()] = self._model.encode_image(
-                    image=image
-                )
+        if self._sam:
+            self._compute_and_cache_image_embedding()
         if clear_shapes:
             self.shapes = []
         self.update()
@@ -1063,3 +1004,61 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = None
         self.shapesBackups = []
         self.update()
+
+
+def _update_shape_with_sam(
+    shape: Shape,
+    createMode: str,
+    model_name: str,
+    image_embedding: osam.types.ImageEmbedding,
+) -> None:
+    if createMode not in ["ai_polygon", "ai_mask"]:
+        raise ValueError(
+            f"createMode must be 'ai_polygon' or 'ai_mask', not {createMode}"
+        )
+
+    response: osam.types.GenerateResponse = osam.apis.generate(
+        osam.types.GenerateRequest(
+            model=model_name,
+            image_embedding=image_embedding,
+            prompt=osam.types.Prompt(
+                points=[[point.x(), point.y()] for point in shape.points],
+                point_labels=shape.point_labels,
+            ),
+        )
+    )
+    if not response.annotations:
+        logger.warning("No annotations returned by model {!r}", model_name)
+        return
+
+    if createMode == "ai_mask":
+        y1: int
+        x1: int
+        y2: int
+        x2: int
+        if response.annotations[0].bounding_box is None:
+            y1, x1, y2, x2 = imgviz.instances.mask_to_bbox(
+                [response.annotations[0].mask]
+            )[0].astype(int)
+        else:
+            y1 = response.annotations[0].bounding_box.ymin
+            x1 = response.annotations[0].bounding_box.xmin
+            y2 = response.annotations[0].bounding_box.ymax
+            x2 = response.annotations[0].bounding_box.xmax
+        shape.setShapeRefined(
+            shape_type="mask",
+            points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
+            point_labels=[1, 1],
+            mask=response.annotations[0].mask[y1 : y2 + 1, x1 : x2 + 1],
+        )
+    elif createMode == "ai_polygon":
+        points = polygon_from_mask.compute_polygon_from_mask(
+            mask=response.annotations[0].mask
+        )
+        if len(points) < 2:
+            return
+        shape.setShapeRefined(
+            shape_type="polygon",
+            points=[QtCore.QPointF(point[0], point[1]) for point in points],
+            point_labels=[1] * len(points),
+        )
