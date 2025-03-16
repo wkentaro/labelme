@@ -72,7 +72,6 @@ force-single-line = true
 [tool.mypy]
 exclude = [
   "labelme/widgets/ai_prompt_widget.py",
-  "labelme/widgets/canvas.py",
 ]
 ignore_missing_imports = true
 check_untyped_defs = false

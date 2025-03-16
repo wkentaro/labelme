@@ -17,11 +17,11 @@ from labelme.shape import Shape
 # - [maybe] Find optimal epsilon value.
 
 
-CURSOR_DEFAULT = QtCore.Qt.ArrowCursor
-CURSOR_POINT = QtCore.Qt.PointingHandCursor
-CURSOR_DRAW = QtCore.Qt.CrossCursor
-CURSOR_MOVE = QtCore.Qt.ClosedHandCursor
-CURSOR_GRAB = QtCore.Qt.OpenHandCursor
+CURSOR_DEFAULT = QtCore.Qt.ArrowCursor  # type: ignore[attr-defined]
+CURSOR_POINT = QtCore.Qt.PointingHandCursor  # type: ignore[attr-defined]
+CURSOR_DRAW = QtCore.Qt.CrossCursor  # type: ignore[attr-defined]
+CURSOR_MOVE = QtCore.Qt.ClosedHandCursor  # type: ignore[attr-defined]
+CURSOR_GRAB = QtCore.Qt.OpenHandCursor  # type: ignore[attr-defined]
 
 MOVE_SPEED = 5.0
 
@@ -136,12 +136,18 @@ class Canvas(QtWidgets.QWidget):
         self._createMode = value
 
     def _compute_and_cache_image_embedding(self) -> None:
+        if self._sam is None:
+            logger.warning("SAM model is not set yet")
+            return
+
+        sam: osam.types.Model = self._sam
+
         image: np.ndarray = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
         if image.tobytes() in self._sam_embedding:
             return
 
-        logger.debug("Computing image embeddings for model {!r}", self._sam.name)
-        self._sam_embedding[image.tobytes()] = self._sam.encode_image(
+        logger.debug("Computing image embeddings for model {!r}", sam.name)
+        self._sam_embedding[image.tobytes()] = sam.encode_image(
             image=imgviz.asrgb(image)
         )
 
@@ -670,7 +676,7 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.update()
 
-    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+    def paintEvent(self, event: Optional[QtGui.QPaintEvent]) -> None:
         if not self.pixmap:
             return super(Canvas, self).paintEvent(event)
 
@@ -749,6 +755,10 @@ class Canvas(QtWidgets.QWidget):
             label=self.line.point_labels[1],
         )
         if self.createMode in ["ai_polygon", "ai_mask"]:
+            if self._sam is None:
+                logger.warning("SAM model is not set yet")
+                p.end()
+                return
             _update_shape_with_sam(
                 shape=drawing_shape,
                 createMode=self.createMode,
