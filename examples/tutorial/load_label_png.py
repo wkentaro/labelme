@@ -11,14 +11,14 @@ here = osp.dirname(osp.abspath(__file__))
 
 
 def main():
-    label_png = osp.join(here, "apc2016_obj3_json/label.png")
+    label_png = osp.join(here, "apc2016_obj3/label.png")
     print("Loading:", label_png)
     print()
 
     lbl = np.asarray(PIL.Image.open(label_png))
     labels = np.unique(lbl)
 
-    label_names_txt = osp.join(here, "apc2016_obj3_json/label_names.txt")
+    label_names_txt = osp.join(here, "apc2016_obj3/label_names.txt")
     label_names = [name.strip() for name in open(label_names_txt)]
     print("# of labels:", len(labels))
     print("# of label_names:", len(label_names))
