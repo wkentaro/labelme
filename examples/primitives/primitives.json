@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0",
+  "version": "5.7.0",
   "flags": {},
   "shapes": [
     {
@@ -15,8 +15,10 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "rectangle",
-      "flags": {}
+      "flags": {},
+      "mask": null
     },
     {
       "label": "circle",
@@ -31,8 +33,10 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "circle",
-      "flags": {}
+      "flags": {},
+      "mask": null
     },
     {
       "label": "rectangle",
@@ -47,8 +51,10 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "rectangle",
-      "flags": {}
+      "flags": {},
+      "mask": null
     },
     {
       "label": "polygon",
@@ -71,8 +77,10 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "polygon",
-      "flags": {}
+      "flags": {},
+      "mask": null
     },
     {
       "label": "line",
@@ -87,8 +95,10 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "line",
-      "flags": {}
+      "flags": {},
+      "mask": null
     },
     {
       "label": "point",
@@ -99,8 +109,10 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "point",
-      "flags": {}
+      "flags": {},
+      "mask": null
     },
     {
       "label": "line_strip",
@@ -119,8 +131,28 @@
         ]
       ],
       "group_id": null,
+      "description": null,
       "shape_type": "linestrip",
-      "flags": {}
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "octagon",
+      "points": [
+        [
+          417.39759036144574,
+          305.0
+        ],
+        [
+          516.3975903614457,
+          404.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "mask",
+      "flags": {},
+      "mask": "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAAAAABVicqIAAABd0lEQVR4nN3aUYrDMAwE0Bnd/86zdMt2aWI7TqwRJPooFGS9SE5DwSHOBV8furLoQq48CDfflY6005SJ9JOUhBxlaB2Z6VRryPRtoatlztzdGDLMIcYMk4Shw0SiyzCV6DBMJppM5BvgGEkxsCuz6QQWJUZXkBXhKcsuktkIe0hqsI24dgS+TtpIdiNsIcYIX2nuEd+2wzoubhFnI7BuPL8RayO4+y2Mz4CiYFowj4v/iLkRPGDj8R5SFEwLVeOiFeBTNh6vVsK/7SgaF+0En7LxeBDCCkSPGRdCFQjsoapbWGZBdT9GVSDeUOWzS8b6+kPsER/OjfhCv5+FT2FVIK7QF6L7dqINort2ogoEO8Q5r/CVVgPRHTtRE9H9OlEHsbUSrsJdJLEVdRFXRN9fCQ0Qj4ENktOK7CemODzMzGhGc9dN+wHzgiP3mwU4feh/ntFCnUlGq1XofqVkJkerBQ6ztLZ8JlELaydTdXnldLL1zzMvPAt+AJy8O66XXMiCAAAAAElFTkSuQmCC"
     }
   ],
   "imagePath": "primitives.jpg",

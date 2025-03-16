@@ -3,8 +3,10 @@
 
 import math
 import uuid
+from typing import Optional
 
 import numpy as np
+import numpy.typing as npt
 import PIL.Image
 import PIL.ImageDraw
 from loguru import logger
@@ -17,9 +19,14 @@ def polygons_to_mask(img_shape, polygons, shape_type=None):
     return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
 
-def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=5):
-    mask = np.zeros(img_shape[:2], dtype=np.uint8)
-    mask = PIL.Image.fromarray(mask)
+def shape_to_mask(
+    img_shape: tuple[int, ...],
+    points: list[list[float]],
+    shape_type: Optional[str] = None,
+    line_width: int = 10,
+    point_size: int = 5,
+) -> npt.NDArray[np.bool_]:
+    mask = PIL.Image.fromarray(np.zeros(img_shape[:2], dtype=np.uint8))
     draw = PIL.ImageDraw.Draw(mask)
     xy = [tuple(point) for point in points]
     if shape_type == "circle":
@@ -40,11 +47,12 @@ def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=
         cx, cy = xy[0]
         r = point_size
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
-    else:
+    elif shape_type in [None, "polygon"]:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)
-    mask = np.array(mask, dtype=bool)
-    return mask
+    else:
+        raise ValueError(f"shape_type={shape_type!r} is not supported.")
+    return np.array(mask, dtype=bool)
 
 
 def shapes_to_label(img_shape, shapes, label_name_to_value):
@@ -67,7 +75,16 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
 
-        mask = shape_to_mask(img_shape[:2], points, shape_type)
+        mask: npt.NDArray[np.bool_]
+        if shape_type == "mask":
+            if not isinstance(shape["mask"], np.ndarray):
+                raise ValueError("shape['mask'] must be numpy.ndarray")
+            mask = np.zeros(img_shape[:2], dtype=bool)
+            (x1, y1), (x2, y2) = np.asarray(points).astype(int)
+            mask[y1 : y2 + 1, x1 : x2 + 1] = shape["mask"]
+        else:
+            mask = shape_to_mask(img_shape[:2], points, shape_type)
+
         cls[mask] = cls_id
         ins[mask] = ins_id
 
