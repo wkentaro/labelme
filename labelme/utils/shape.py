@@ -3,8 +3,10 @@
 
 import math
 import uuid
+from typing import Optional
 
 import numpy as np
+import numpy.typing as npt
 import PIL.Image
 import PIL.ImageDraw
 from loguru import logger
@@ -17,9 +19,14 @@ def polygons_to_mask(img_shape, polygons, shape_type=None):
     return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
 
-def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=5):
-    mask = np.zeros(img_shape[:2], dtype=np.uint8)
-    mask = PIL.Image.fromarray(mask)
+def shape_to_mask(
+    img_shape: tuple[int, ...],
+    points: list[list[float]],
+    shape_type: Optional[str] = None,
+    line_width: int = 10,
+    point_size: int = 5,
+) -> npt.NDArray[np.bool_]:
+    mask = PIL.Image.fromarray(np.zeros(img_shape[:2], dtype=np.uint8))
     draw = PIL.ImageDraw.Draw(mask)
     xy = [tuple(point) for point in points]
     if shape_type == "circle":
@@ -45,8 +52,7 @@ def shape_to_mask(img_shape, points, shape_type=None, line_width=10, point_size=
         draw.polygon(xy=xy, outline=1, fill=1)
     else:
         raise ValueError(f"shape_type={shape_type!r} is not supported.")
-    mask = np.array(mask, dtype=bool)
-    return mask
+    return np.array(mask, dtype=bool)
 
 
 def shapes_to_label(img_shape, shapes, label_name_to_value):
