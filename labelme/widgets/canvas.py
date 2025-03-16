@@ -135,6 +135,16 @@ class Canvas(QtWidgets.QWidget):
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
 
+    def _compute_and_cache_image_embedding(self) -> None:
+        image: np.ndarray = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
+        if image.tobytes() in self._image_embeddings:
+            return
+
+        logger.debug("Computing image embeddings for model {!r}", self._model.name)
+        self._image_embeddings[image.tobytes()] = self._model.encode_image(
+            image=imgviz.asrgb(image)
+        )
+
     def initializeAiModel(self, model_name):
         if self.pixmap is None:
             logger.warning("Pixmap is not set yet")
@@ -144,15 +154,8 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("Initializing AI model {!r}", model_name)
             self._model = osam.apis.get_model_type_by_name(model_name)()
             self._image_embeddings.clear()
-        #
-        image: np.ndarray = imgviz.asrgb(
-            labelme.utils.img_qt_to_arr(self.pixmap.toImage())
-        )
-        if image.tobytes() not in self._image_embeddings:
-            logger.debug("Computing image embeddings for model {!r}", self._model.name)
-            self._image_embeddings[image.tobytes()] = self._model.encode_image(
-                image=image
-            )
+
+        self._compute_and_cache_image_embedding()
 
     def storeShapes(self):
         shapesBackup = []
@@ -1022,14 +1025,7 @@ class Canvas(QtWidgets.QWidget):
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
         if self._model:
-            image: np.ndarray = labelme.utils.img_qt_to_arr(self.pixmap.toImage())
-            if image.tobytes() not in self._image_embeddings:
-                logger.debug(
-                    "Computing image embeddings for model {!r}", self._model.name
-                )
-                self._image_embeddings[image.tobytes()] = self._model.encode_image(
-                    image=image
-                )
+            self._compute_and_cache_image_embedding()
         if clear_shapes:
             self.shapes = []
         self.update()
