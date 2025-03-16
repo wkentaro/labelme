@@ -75,7 +75,16 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
 
-        mask = shape_to_mask(img_shape[:2], points, shape_type)
+        mask: npt.NDArray[np.bool_]
+        if shape_type == "mask":
+            if not isinstance(shape["mask"], np.ndarray):
+                raise ValueError("shape['mask'] must be numpy.ndarray")
+            mask = np.zeros(img_shape[:2], dtype=bool)
+            (x1, y1), (x2, y2) = np.asarray(points).astype(int)
+            mask[y1 : y2 + 1, x1 : x2 + 1] = shape["mask"]
+        else:
+            mask = shape_to_mask(img_shape[:2], points, shape_type)
+
         cls[mask] = cls_id
         ins[mask] = ins_id
 
