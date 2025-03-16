@@ -31,7 +31,7 @@ shape:
   point_size: 8
 
 ai:
-  default: 'SAM2 (balanced)'
+  default: 'Sam2 (balanced)'
 
 # main
 flag_dock:
