@@ -53,7 +53,7 @@ jobs:
         labelme --help
         labelme --version
         (cd examples/primitives && labelme_export_json primitives.json && rm -rf primitives)
-        (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_json_to_dataset apc2016_obj3.json && python load_label_png.py && git checkout -- .)
+        (cd examples/tutorial && rm -rf apc2016_obj3_json && labelme_export_json apc2016_obj3.json && python load_label_png.py && git checkout -- .)
         (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
         (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
         (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
