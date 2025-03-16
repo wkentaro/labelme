@@ -926,7 +926,7 @@ requires-dist = [
     { name = "matplotlib" },
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy" },
-    { name = "osam", specifier = ">=0.2.2" },
+    { name = "osam", specifier = ">=0.2.3" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyqt5", specifier = ">=5.14.0" },
     { name = "pyqt5-qt5", marker = "sys_platform == 'linux'", specifier = "!=5.15.13" },
@@ -1444,7 +1444,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.2.2"
+version = "0.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1455,9 +1455,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d7/bc/638b4b7838da3335f4ff5bb4b6f063d45b22103d2a167344a2287ae01b99/osam-0.2.2.tar.gz", hash = "sha256:55197fc9b872b5e4a2fa4442191b8fb7258259c20fd1883a5b9259dafdf761d2", size = 14502355 }
+sdist = { url = "https://files.pythonhosted.org/packages/b5/74/320361b923cf36d78f4a58b0aeebb48d34370ff7f54ba8b11c1b6b55b0d1/osam-0.2.3.tar.gz", hash = "sha256:69f1422190b9b4268f1aa6bcfb9e18e1a3a9d93d0fa4b20da6193102effd060e", size = 23584323 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/69/83/10f06194103f85e4d1cb68e9119e33864905f96e8a5b7ddd1678c57cd3a8/osam-0.2.2-py3-none-any.whl", hash = "sha256:d70596f65910485ab16f88868406dcba952a15c7d8deff600b65b259d9378d3d", size = 2191953 },
+    { url = "https://files.pythonhosted.org/packages/f3/2f/17d023d31c7cea955e77c13e6a621d59e206b959d93fba6e72778bdadec9/osam-0.2.3-py3-none-any.whl", hash = "sha256:f5b7a342d2eb6d7402e3f52de574304fc76a05dea11cf69e88078c4c8c2f352e", size = 2202216 },
 ]
 
 [[package]]
