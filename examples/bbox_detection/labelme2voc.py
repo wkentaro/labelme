@@ -10,6 +10,9 @@ import sys
 
 import imgviz
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 import labelme
 
 try:
@@ -77,17 +80,17 @@ def main():
 
         maker = lxml.builder.ElementMaker()
         xml = maker.annotation(
-            maker.folder(),
+            maker.folder("VOC"),
             maker.filename(base + ".jpg"),
-            maker.database(),  # e.g., The VOC2007 Database
-            maker.annotation(),  # e.g., Pascal VOC2007
-            maker.image(),  # e.g., flickr
+            maker.database("Unknown"),  # e.g., The VOC2007 Database
+            maker.annotation("Unknown"),  # e.g., Pascal VOC2007
+            maker.image("Unknown"),  # e.g., flickr
             maker.size(
                 maker.height(str(img.shape[0])),
                 maker.width(str(img.shape[1])),
                 maker.depth(str(img.shape[2])),
             ),
-            maker.segmented(),
+            maker.segmented("0"),
         )
 
         bboxes = []
@@ -102,6 +105,10 @@ def main():
                 continue
 
             class_name = shape["label"]
+            if class_name not in class_names:
+                print(f"ignore class {class_name}")
+                continue
+
             class_id = class_names.index(class_name)
 
             (xmin, ymin), (xmax, ymax) = shape["points"]
@@ -115,9 +122,9 @@ def main():
             xml.append(
                 maker.object(
                     maker.name(shape["label"]),
-                    maker.pose(),
-                    maker.truncated(),
-                    maker.difficult(),
+                    maker.pose("Unspecified"),
+                    maker.truncated("0"),
+                    maker.difficult("0"),
                     maker.bndbox(
                         maker.xmin(str(xmin)),
                         maker.ymin(str(ymin)),
