@@ -33,6 +33,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from PIL import ImageFile
 
 from . import utils
 
@@ -44,7 +45,7 @@ from . import utils
 
 
 LABEL_COLORMAP = imgviz.label_colormap()
-
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
