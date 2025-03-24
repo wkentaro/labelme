@@ -791,14 +791,15 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
-        _update_shape_with_sam(
-            shape=self.current,
-            createMode=self.createMode,
-            model_name=self._sam.name,
-            image_embedding=self._sam_embedding[
-                labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
-            ],
-        )
+        if self._sam:
+            _update_shape_with_sam(
+                shape=self.current,
+                createMode=self.createMode,
+                model_name=self._sam.name,
+                image_embedding=self._sam_embedding[
+                    labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
+                ],
+            )
         self.current.close()
 
         self.shapes.append(self.current)
