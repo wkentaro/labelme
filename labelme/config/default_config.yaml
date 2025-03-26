@@ -19,11 +19,14 @@ shape_color: auto  # null, 'auto', 'manual'
 shift_auto_shape_color: 0
 label_colors: null
 
+default_create_mode: polygon
+
 shape:
   # drawing
   line_color: [0, 255, 0, 128]
   fill_color: [0, 0, 0, 64]
   vertex_fill_color: [0, 255, 0, 255]
+  show_labels: false
   # selecting / hovering
   select_line_color: [255, 255, 255, 255]
   select_fill_color: [0, 255, 0, 64]
