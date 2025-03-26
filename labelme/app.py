@@ -6,6 +6,7 @@ import math
 import os
 import os.path as osp
 import re
+import types
 import webbrowser
 
 import imgviz
@@ -624,7 +625,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
 
         # Store actions for further handling.
-        self.actions = utils.struct(
+        self.actions = types.SimpleNamespace(
             saveAuto=saveAuto,
             saveWithImageData=saveWithImageData,
             changeOutputDir=changeOutputDir,
@@ -717,7 +718,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
 
-        self.menus = utils.struct(
+        self.menus = types.SimpleNamespace(
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
