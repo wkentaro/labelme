@@ -72,10 +72,3 @@ force-single-line = true
 [tool.mypy]
 check_untyped_defs = true
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = [
-  "labelme.app",
-]
-check_untyped_defs = false
-disable_error_code = "annotation-unchecked"
