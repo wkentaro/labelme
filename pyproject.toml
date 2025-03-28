@@ -76,7 +76,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = [
   "labelme.app",
-  "labelme.widgets.unique_label_qlist_widget",
   "labelme.widgets.zoom_widget",
 ]
 check_untyped_defs = false
