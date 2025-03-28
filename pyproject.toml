@@ -82,7 +82,6 @@ module = [
   "labelme.cli.on_docker",
   "labelme.shape",
   "labelme.utils.image",
-  "labelme.utils.shape",
   "labelme.widgets.ai_prompt_widget",
   "labelme.widgets.brightness_contrast_dialog",
   "labelme.widgets.canvas",
