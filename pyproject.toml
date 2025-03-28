@@ -76,7 +76,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = [
   "labelme.app",
-  "labelme.widgets.zoom_widget",
 ]
 check_untyped_defs = false
 disable_error_code = "annotation-unchecked"
