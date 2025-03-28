@@ -185,16 +185,16 @@ class Shape(object):
         if self.mask is not None:
             image_to_draw = np.zeros(self.mask.shape + (4,), dtype=np.uint8)
             fill_color = (
-                self.select_fill_color.getRgb()
+                self.select_fill_color.getRgb()  # type: ignore[attr-defined]
                 if self.selected
-                else self.fill_color.getRgb()
+                else self.fill_color.getRgb()  # type: ignore[attr-defined]
             )
             image_to_draw[self.mask] = fill_color
             qimage = QtGui.QImage.fromData(labelme.utils.img_arr_to_data(image_to_draw))
             qimage = qimage.scaled(
                 qimage.size() * self.scale,
-                QtCore.Qt.IgnoreAspectRatio,
-                QtCore.Qt.SmoothTransformation,
+                QtCore.Qt.IgnoreAspectRatio,  # type: ignore[attr-defined]
+                QtCore.Qt.SmoothTransformation,  # type: ignore[attr-defined]
             )
 
             painter.drawImage(self._scale_point(point=self.points[0]), qimage)
@@ -267,7 +267,7 @@ class Shape(object):
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)
-                painter.fillPath(vrtx_path, self._vertex_fill_color)
+                painter.fillPath(vrtx_path, self._vertex_fill_color)  # type: ignore[has-type]
             if self.fill and self.mask is None:
                 color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
@@ -283,7 +283,7 @@ class Shape(object):
         point = self._scale_point(self.points[i])
         if i == self._highlightIndex:
             size, shape = self._highlightSettings[self._highlightMode]
-            d *= size
+            d *= size  # type: ignore[assignment]
         if self._highlightIndex is not None:
             self._vertex_fill_color = self.hvertex_fill_color
         else:
