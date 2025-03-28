@@ -69,5 +69,29 @@ markers = [
 force-single-line = true
 
 [tool.mypy]
+check_untyped_defs = true
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+  "labelme.__main__",
+  "labelme.app",
+  "labelme.cli.draw_json",
+  "labelme.cli.export_json",
+  "labelme.cli.on_docker",
+  "labelme.shape",
+  "labelme.utils.image",
+  "labelme.utils.shape",
+  "labelme.widgets.ai_prompt_widget",
+  "labelme.widgets.brightness_contrast_dialog",
+  "labelme.widgets.canvas",
+  "labelme.widgets.escapable_qlist_widget",
+  "labelme.widgets.file_dialog_preview",
+  "labelme.widgets.label_dialog",
+  "labelme.widgets.label_list_widget",
+  "labelme.widgets.tool_bar",
+  "labelme.widgets.unique_label_qlist_widget",
+  "labelme.widgets.zoom_widget",
+]
 check_untyped_defs = false
+disable_error_code = "annotation-unchecked"
