@@ -76,7 +76,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = [
   "labelme.app",
-  "labelme.cli.draw_json",
   "labelme.cli.export_json",
   "labelme.cli.on_docker",
   "labelme.utils.image",
