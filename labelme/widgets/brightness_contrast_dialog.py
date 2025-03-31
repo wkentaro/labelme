@@ -21,13 +21,13 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             title_label.setFixedWidth(75)
             layout.addWidget(title_label)
             #
-            slider = QtWidgets.QSlider(Qt.Horizontal)
+            slider = QtWidgets.QSlider(Qt.Horizontal)  # type: ignore[attr-defined]
             slider.setRange(0, 3 * self._base_value)
             slider.setValue(self._base_value)
             layout.addWidget(slider)
             #
             value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
-            value_label.setAlignment(Qt.AlignRight)
+            value_label.setAlignment(Qt.AlignRight)  # type: ignore[attr-defined]
             layout.addWidget(value_label)
             #
             slider.valueChanged.connect(self.onNewValue)
@@ -41,7 +41,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.slider_contrast = sliders["Contrast:"]
         del sliders
 
-        layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()  # type: ignore[assignment]
         layout.addLayout(layouts["Brightness:"])
         layout.addLayout(layouts["Contrast:"])
         del layouts

@@ -917,6 +917,7 @@ dev = [
     { name = "pytest-qt" },
     { name = "ruff" },
     { name = "twine" },
+    { name = "types-pillow" },
     { name = "types-pyyaml" },
 ]
 
@@ -943,6 +944,7 @@ dev = [
     { name = "pytest-qt", specifier = ">=4.4.0" },
     { name = "ruff", specifier = "==0.1.9" },
     { name = "twine", specifier = ">=6.1.0" },
+    { name = "types-pillow", specifier = ">=10.2.0.20240822" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
 ]
 
@@ -2385,6 +2387,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c8/a2/6df94fc5c8e2170d21d7134a565c3a8fb84f9797c1dd65a5976aaf714418/twine-6.1.0.tar.gz", hash = "sha256:be324f6272eff91d07ee93f251edf232fc647935dd585ac003539b42404a8dbd", size = 168404 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/b6/74e927715a285743351233f33ea3c684528a0d374d2e43ff9ce9585b73fe/twine-6.1.0-py3-none-any.whl", hash = "sha256:a47f973caf122930bf0fbbf17f80b83bc1602c9ce393c7845f289a3001dc5384", size = 40791 },
+]
+
+[[package]]
+name = "types-pillow"
+version = "10.2.0.20240822"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/18/4a/4495264dddaa600d65d68bcedb64dcccf9d9da61adff51f7d2ffd8e4c9ce/types-Pillow-10.2.0.20240822.tar.gz", hash = "sha256:559fb52a2ef991c326e4a0d20accb3bb63a7ba8d40eb493e0ecb0310ba52f0d3", size = 35389 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/66/23/e81a5354859831fcf54d488d33b80ba6133ea84f874a9c0ec40a4881e133/types_Pillow-10.2.0.20240822-py3-none-any.whl", hash = "sha256:d9dab025aba07aeb12fd50a6799d4eac52a9603488eca09d7662543983f16c5d", size = 54354 },
 ]
 
 [[package]]

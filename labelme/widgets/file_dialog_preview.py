@@ -45,7 +45,7 @@ class FileDialogPreview(QtWidgets.QFileDialog):
         box.addStretch()
 
         self.setFixedSize(self.width() + 300, self.height())
-        self.layout().addLayout(box, 1, 3, 1, 1)
+        self.layout().addLayout(box, 1, 3, 1, 1)  # type: ignore[union-attr]
         self.currentChanged.connect(self.onChange)
 
     def onChange(self, path):
@@ -54,7 +54,7 @@ class FileDialogPreview(QtWidgets.QFileDialog):
                 data = json.load(f)
                 self.labelPreview.setText(json.dumps(data, indent=4, sort_keys=False))
             self.labelPreview.label.setAlignment(
-                QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop
+                QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop  # type: ignore[attr-defined]
             )
             self.labelPreview.setHidden(False)
         else:
@@ -67,9 +67,9 @@ class FileDialogPreview(QtWidgets.QFileDialog):
                     pixmap.scaled(
                         self.labelPreview.width() - 30,
                         self.labelPreview.height() - 30,
-                        QtCore.Qt.KeepAspectRatio,
-                        QtCore.Qt.SmoothTransformation,
+                        QtCore.Qt.KeepAspectRatio,  # type: ignore[attr-defined]
+                        QtCore.Qt.SmoothTransformation,  # type: ignore[attr-defined]
                     )
                 )
-                self.labelPreview.label.setAlignment(QtCore.Qt.AlignCenter)
+                self.labelPreview.label.setAlignment(QtCore.Qt.AlignCenter)  # type: ignore[attr-defined]
                 self.labelPreview.setHidden(False)

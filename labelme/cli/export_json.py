@@ -44,7 +44,7 @@ def main():
 
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
-        label_names[value] = name
+        label_names[value] = name  # type: ignore[call-overload]
 
     lbl_viz = imgviz.label2rgb(
         lbl, imgviz.asgray(image), label_names=label_names, loc="rb"
@@ -56,7 +56,7 @@ def main():
 
     with open(osp.join(out_dir, "label_names.txt"), "w") as f:
         for lbl_name in label_names:
-            f.write(lbl_name + "\n")
+            f.write(lbl_name + "\n")  # type: ignore[operator]
 
     logger.info("Saved to: {}".format(out_dir))
 
