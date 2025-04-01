@@ -2,14 +2,14 @@ import argparse
 import os
 import os.path as osp
 
+import imgviz
 import numpy as np
 import numpy.typing as npt
-import imgviz
 import PIL.Image
 from loguru import logger
 
-from labelme.label_file import LabelFile
 from labelme import utils
+from labelme.label_file import LabelFile
 
 
 def main():

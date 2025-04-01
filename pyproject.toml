@@ -66,7 +66,10 @@ markers = [
   "gui: mark a test as a GUI test.",
 ]
 
-[tool.isort]
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.lint.isort]
 force-single-line = true
 
 [tool.mypy]
