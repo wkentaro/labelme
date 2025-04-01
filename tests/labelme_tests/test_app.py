@@ -3,6 +3,9 @@ import shutil
 import tempfile
 
 import pytest
+from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 import labelme.app
@@ -100,18 +103,35 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot) -> None:
         (400, 238),
         (400, 100),
     ]
-    shapes: list[dict] = [
-        dict(
-            label=label,
-            group_id=None,
-            points=points,
-            shape_type="polygon",
-            mask=None,
-            flags={},
-            other_data={},
-        )
-    ]
-    win.loadLabels(shapes)
+    win.toggleDrawMode(edit=False, createMode="polygon")
+    qtbot.wait(100)
+
+    def click(xy: tuple[float, float]) -> None:
+        qtbot.mouseMove(win.canvas, pos=QPoint(*xy))
+        qtbot.wait(100)
+        qtbot.mousePress(win.canvas, Qt.LeftButton, pos=QPoint(*xy))
+        qtbot.wait(100)
+
+    [click(xy=xy) for xy in points]
+
+    def interact() -> None:
+        qtbot.keyClicks(win.labelDialog.edit, label)
+        qtbot.wait(100)
+        qtbot.keyClick(win.labelDialog.edit, Qt.Key_Enter)
+        qtbot.wait(100)
+
+    QTimer.singleShot(300, interact)
+
+    click(xy=points[0])
+
+    assert len(win.canvas.shapes) == 1
+    assert len(win.canvas.shapes[0].points) == 4
+    assert win.canvas.shapes[0].label == "whole"
+    assert win.canvas.shapes[0].shape_type == "polygon"
+    assert win.canvas.shapes[0].group_id is None
+    assert win.canvas.shapes[0].mask is None
+    assert win.canvas.shapes[0].flags == {}
+
     win.saveFile()
 
     labelme.testing.assert_labelfile_sanity(out_file)
