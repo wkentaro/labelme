@@ -61,24 +61,27 @@ def test_MainWindow_open_json(qtbot: QtBot):
         win.close()
 
 
-def _create_window_with_directory(qtbot: QtBot) -> labelme.app.MainWindow:
+@pytest.mark.gui
+def test_MainWindow_openNextAndPrevImg(qtbot: QtBot) -> None:
     directory: str = osp.join(data_dir, "raw")
     win: labelme.app.MainWindow = labelme.app.MainWindow(filename=directory)
     qtbot.addWidget(win)
     _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    return win
 
+    first_image_name: str = "2011_000003.jpg"
+    second_image_name: str = "2011_000006.jpg"
 
-@pytest.mark.gui
-def test_MainWindow_openNextImg(qtbot: QtBot) -> None:
-    win: labelme.app.MainWindow = _create_window_with_directory(qtbot=qtbot)
+    assert osp.basename(win.imagePath) == first_image_name
+    win.openPrevImg()
+    qtbot.wait(100)
+    assert osp.basename(win.imagePath) == first_image_name
+
     win.openNextImg()
-
-
-@pytest.mark.gui
-def test_MainWindow_openPrevImg(qtbot: QtBot) -> None:
-    win: labelme.app.MainWindow = _create_window_with_directory(qtbot=qtbot)
-    win.openNextImg()
+    qtbot.wait_until(lambda: osp.basename(win.imagePath) != first_image_name)
+    assert osp.basename(win.imagePath) == second_image_name
+    win.openPrevImg()
+    qtbot.wait_until(lambda: osp.basename(win.imagePath) != second_image_name)
+    assert osp.basename(win.imagePath) == first_image_name
 
 
 @pytest.mark.gui
