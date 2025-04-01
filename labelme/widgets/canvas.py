@@ -2,15 +2,15 @@ import collections
 from typing import Optional
 
 import imgviz
+import numpy as np
+import osam
 from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
-import osam
-import numpy as np
-from labelme._automation import polygon_from_mask
 import labelme.utils
+from labelme._automation import polygon_from_mask
 from labelme.shape import Shape
 
 # TODO(unknown):

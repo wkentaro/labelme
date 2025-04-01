@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets
 from loguru import logger
+from PyQt5 import QtWidgets
 
 
 class AiPromptWidget(QtWidgets.QWidget):
