@@ -75,6 +75,8 @@ class ShapeRenderContext:
     fill: bool
     highlight: VertexHighlight | None
     rotation_highlight: VertexHighlight | None
+    show_label: bool = False
+    label_font_size: int = 16
 
 
 def render_shape(
@@ -94,6 +96,9 @@ def render_shape(
 
     if len(shape.points) > 0:
         _paint_shape_points(painter=painter, shape=shape, context=context)
+
+    if context.show_label:
+        _paint_shape_label(painter=painter, shape=shape, context=context)
 
 
 def _paint_shape_mask(
@@ -125,6 +130,26 @@ def _paint_shape_mask(
         for point in contour[1:]:
             path.lineTo(QtCore.QPointF(point[1], point[0]) * context.scale)
     painter.drawPath(path)
+
+
+def _paint_shape_label(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+) -> None:
+    if not shape.label or len(shape.points) == 0:
+        return
+    min_xy = shape.points.min(axis=0)
+    pos = QtCore.QPointF(
+        (float(min_xy[0]) + 4) * context.scale,
+        (float(min_xy[1]) + 16) * context.scale,
+    )
+    font = QtGui.QFont()
+    font.setPointSize(context.label_font_size)
+    font.setBold(True)
+    painter.setFont(font)
+    painter.drawText(pos, shape.label)
 
 
 @dataclasses.dataclass(frozen=True)

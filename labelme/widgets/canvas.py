@@ -204,6 +204,8 @@ class Canvas(QtWidgets.QWidget):
     _color_resolver: Callable[[str], tuple[int, int, int]] | None
     _point_size: int
     _point_type: Literal["square", "round"]
+    _show_label: bool
+    _label_font_size: int
     _draft_palette: Palette
     _palette_cache: dict[str, Palette]
 
@@ -257,6 +259,8 @@ class Canvas(QtWidgets.QWidget):
         self._color_resolver: Callable[[str], tuple[int, int, int]] | None = None
         self._point_size: int = 8
         self._point_type: Literal["square", "round"] = "round"
+        self._show_label: bool = False
+        self._label_font_size: int = 16
         self._draft_palette = _DEFAULT_PALETTE
         self._palette_cache = {}
         # Menus:
@@ -276,6 +280,12 @@ class Canvas(QtWidgets.QWidget):
 
     def set_point_size(self, point_size: int) -> None:
         self._point_size = point_size
+
+    def set_show_label(self, value: bool) -> None:
+        self._show_label = value
+
+    def set_label_font_size(self, value: int) -> None:
+        self._label_font_size = value
 
     def _resolve_palette(self, label: str | None) -> Palette:
         if label is None or self._color_resolver is None:
@@ -318,6 +328,8 @@ class Canvas(QtWidgets.QWidget):
             fill=selected or shape is self.hovered_shape,
             highlight=self._highlight if highlighted else None,
             rotation_highlight=self._rotation_highlight if highlighted else None,
+            show_label=self._show_label,
+            label_font_size=self._label_font_size,
         )
 
     def _draft_render_context(
@@ -337,6 +349,8 @@ class Canvas(QtWidgets.QWidget):
             fill=fill,
             highlight=highlight,
             rotation_highlight=rotation_highlight,
+            show_label=self._show_label,
+            label_font_size=self._label_font_size,
         )
 
     @property

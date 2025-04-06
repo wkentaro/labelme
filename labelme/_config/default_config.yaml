@@ -61,6 +61,10 @@ fit_to_content:
 epsilon: 10.0
 canvas:
   fill_drawing: true
+  # Show shape label text near the top-left of each shape on the canvas
+  shape_label:
+    show: false
+    font_size: 16
   # None: do nothing
   # close: close polygon
   double_click: close

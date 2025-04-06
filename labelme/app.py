@@ -1026,6 +1026,8 @@ class MainWindow(QtWidgets.QMainWindow):
             crosshair=self._config["canvas"]["crosshair"],
         )
         canvas.set_point_size(self._config["shape"]["point_size"])
+        canvas.set_show_label(self._config["canvas"]["shape_label"]["show"])
+        canvas.set_label_font_size(self._config["canvas"]["shape_label"]["font_size"])
         canvas.set_draft_palette(
             Palette(
                 line=QtGui.QColor(*self._config["shape"]["line_color"]),
