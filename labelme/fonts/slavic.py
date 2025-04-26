@@ -15,12 +15,12 @@ class SlavicFont:
     ALL_LETTERS = ' !"#$%\'+,-.0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}ЂЃѓ…†‡€‰Љ‹ЊЌЋЏђ‘’“”•™љ›њќћџЎўЈ¤Ґ¦§Ё©®Ї°±Ііґµё№єјЅѕїАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя'
     LETTERS = 'абвгдежзийклмнопрстуфхцчшщъыьэюяufimoptvwxzіµѕ ,.;:°'
     DIACRITICAL_SIGNS = '1268'
-    TITLA = '7+=>?bcdg'
+    TITLA = '57+=>?bcdg'
     
     @classmethod    
     def GetFont(cls, size):
         if cls.__font is None:
-            fontId = QFontDatabase.addApplicationFont(":/Hirmos_new.ttf")
+            fontId = QFontDatabase.addApplicationFont(":/Hirmos_with_t_titlo.ttf")
             if fontId == 0:
                 fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
                 cls.__font = QFont(fontName, size)
