@@ -745,7 +745,7 @@ class Canvas(QtWidgets.QWidget):
                 drawing_shape.fill_color.setAlpha(64)
             drawing_shape.addPoint(self.line[1])
 
-        if self.createMode not in ["ai_polygon", "ai_mask"]:
+        if not (self.createMode in ["ai_polygon", "ai_mask"] and self._sam):
             p.end()
             return
 
@@ -754,19 +754,14 @@ class Canvas(QtWidgets.QWidget):
             point=self.line.points[1],
             label=self.line.point_labels[1],
         )
-        if self.createMode in ["ai_polygon", "ai_mask"]:
-            if self._sam is None:
-                logger.warning("SAM model is not set yet")
-                p.end()
-                return
-            _update_shape_with_sam(
-                shape=drawing_shape,
-                createMode=self.createMode,
-                model_name=self._sam.name,
-                image_embedding=self._sam_embedding[
-                    labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
-                ],
-            )
+        _update_shape_with_sam(
+            shape=drawing_shape,
+            createMode=self.createMode,
+            model_name=self._sam.name,
+            image_embedding=self._sam_embedding[
+                labelme.utils.img_qt_to_arr(self.pixmap.toImage()).tobytes()
+            ],
+        )
         drawing_shape.fill = self.fillDrawing()
         drawing_shape.selected = True
         drawing_shape.paint(p)
@@ -791,7 +786,7 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
-        if self._sam:
+        if self.createMode in ["ai_polygon", "ai_mask"] and self._sam:
             _update_shape_with_sam(
                 shape=self.current,
                 createMode=self.createMode,
@@ -970,7 +965,7 @@ class Canvas(QtWidgets.QWidget):
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
-        if self._sam:
+        if self.createMode in ["ai_polygon", "ai_mask"] and self._sam:
             self._compute_and_cache_image_embedding()
         if clear_shapes:
             self.shapes = []
