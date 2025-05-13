@@ -3,12 +3,12 @@
 from __future__ import print_function
 
 import argparse
-import distutils.spawn
 import json
 import os
 import os.path as osp
 import platform
 import shlex
+import shutil
 import subprocess
 import sys
 
@@ -85,7 +85,7 @@ def main():
     parser.add_argument("-O", "--output")
     args = parser.parse_args()
 
-    if not distutils.spawn.find_executable("docker"):
+    if not shutil.which("docker"):
         print("Please install docker", file=sys.stderr)
         sys.exit(1)
 
