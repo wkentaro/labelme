@@ -61,6 +61,9 @@ For more detail, check ["Install Labelme using Pip"](https://www.labelme.io/docs
 
 ```bash
 pip install labelme
+
+# To install the latest version from GitHub:
+# pip install git+https://github.com/wkentaro/labelme.git
 ```
 
 ### Option 2: Using standalone executable (Easiest)
