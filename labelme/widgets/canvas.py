@@ -141,8 +141,6 @@ class Canvas(QtWidgets.QWidget):
             logger.debug("Initializing AI model {!r}", model_name)
             self._sam = osam.apis.get_model_type_by_name(model_name)()
 
-        _compute_image_embedding(sam=self._sam, pixmap=self.pixmap)
-
     def storeShapes(self):
         shapesBackup = []
         for shape in self.shapes:
@@ -941,8 +939,6 @@ class Canvas(QtWidgets.QWidget):
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
-        if self.createMode in ["ai_polygon", "ai_mask"] and self._sam:
-            _compute_image_embedding(sam=self._sam, pixmap=pixmap)
         if clear_shapes:
             self.shapes = []
         self.update()
