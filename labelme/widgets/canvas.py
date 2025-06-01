@@ -735,10 +735,10 @@ class Canvas(QtWidgets.QWidget):
             label=self.line.point_labels[1],
         )
         _update_shape_with_sam(
+            sam=self._sam,
+            pixmap=self.pixmap,
             shape=drawing_shape,
             createMode=self.createMode,
-            model_name=self._sam.name,
-            image_embedding=_compute_image_embedding(sam=self._sam, pixmap=self.pixmap),
         )
         drawing_shape.fill = self.fillDrawing()
         drawing_shape.selected = True
@@ -766,12 +766,10 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         if self.createMode in ["ai_polygon", "ai_mask"] and self._sam:
             _update_shape_with_sam(
+                sam=self._sam,
+                pixmap=self.pixmap,
                 shape=self.current,
                 createMode=self.createMode,
-                model_name=self._sam.name,
-                image_embedding=_compute_image_embedding(
-                    sam=self._sam, pixmap=self.pixmap
-                ),
             )
         self.current.close()
 
@@ -981,19 +979,23 @@ class Canvas(QtWidgets.QWidget):
 
 
 def _update_shape_with_sam(
+    sam: osam.types.Model,
+    pixmap: QtGui.QPixmap,
     shape: Shape,
     createMode: str,
-    model_name: str,
-    image_embedding: osam.types.ImageEmbedding,
 ) -> None:
     if createMode not in ["ai_polygon", "ai_mask"]:
         raise ValueError(
             f"createMode must be 'ai_polygon' or 'ai_mask', not {createMode}"
         )
 
+    image_embedding: osam.types.ImageEmbedding = _compute_image_embedding(
+        sam=sam, pixmap=pixmap
+    )
+
     response: osam.types.GenerateResponse = osam.apis.generate(
         osam.types.GenerateRequest(
-            model=model_name,
+            model=sam.name,
             image_embedding=image_embedding,
             prompt=osam.types.Prompt(
                 points=[[point.x(), point.y()] for point in shape.points],
@@ -1002,7 +1004,7 @@ def _update_shape_with_sam(
         )
     )
     if not response.annotations:
-        logger.warning("No annotations returned by model {!r}", model_name)
+        logger.warning("No annotations returned by model {!r}", sam)
         return
 
     if createMode == "ai_mask":
