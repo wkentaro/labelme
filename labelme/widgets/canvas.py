@@ -1,4 +1,5 @@
 import functools
+from typing import Literal
 from typing import Optional
 
 import imgviz
@@ -978,7 +979,7 @@ def _update_shape_with_sam(
     sam: osam.types.Model,
     pixmap: QtGui.QPixmap,
     shape: Shape,
-    createMode: str,
+    createMode: Literal["ai_polygon", "ai_mask"],
 ) -> None:
     if createMode not in ["ai_polygon", "ai_mask"]:
         raise ValueError(
