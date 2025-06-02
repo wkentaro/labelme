@@ -162,7 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
-        self.canvas = self.labelList.canvas = Canvas(
+        self.canvas = Canvas(
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"],
@@ -824,7 +824,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else None
         )
 
-        self._ai_prompt_widget: QtWidgets.QWidget = AiPromptWidget(
+        self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
             on_submit=self._submit_ai_prompt, parent=self
         )
         ai_prompt_action = QtWidgets.QWidgetAction(self)
@@ -1464,7 +1464,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags=flags,
             )
             self.labelFile = lf
-            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)  # type: ignore[attr-defined]
+            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)  # type: ignore[arg-type,attr-defined]
             if len(items) > 0:
                 if len(items) != 1:
                     raise RuntimeError("There are duplicate files.")
@@ -1697,7 +1697,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None
-        image = QtGui.QImage.fromData(self.imageData)
+        image = QtGui.QImage.fromData(self.imageData)  # type: ignore[arg-type]
 
         if image.isNull():
             formats = [
