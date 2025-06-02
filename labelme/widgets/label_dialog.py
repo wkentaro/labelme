@@ -1,4 +1,5 @@
 import re
+from typing import cast
 
 from loguru import logger
 from PyQt5 import QtCore
@@ -162,7 +163,7 @@ class LabelDialog(QtWidgets.QDialog):
         for i in reversed(range(self.flagsLayout.count())):
             item = self.flagsLayout.itemAt(i).widget()  # type: ignore[union-attr]
             self.flagsLayout.removeWidget(item)
-            item.setParent(None)  # type: ignore[union-attr]
+            item.setParent(QtWidgets.QWidget())
 
     def resetFlags(self, label=""):
         flags = {}
@@ -184,6 +185,7 @@ class LabelDialog(QtWidgets.QDialog):
         flags = {}
         for i in range(self.flagsLayout.count()):
             item = self.flagsLayout.itemAt(i).widget()  # type: ignore[union-attr]
+            item = cast(QtWidgets.QCheckBox, item)
             flags[item.text()] = item.isChecked()  # type: ignore[union-attr]
         return flags
 
@@ -193,7 +195,15 @@ class LabelDialog(QtWidgets.QDialog):
             return int(group_id)
         return None
 
-    def popUp(self, text=None, move=True, flags=None, group_id=None, description=None):
+    def popUp(
+        self,
+        text=None,
+        move=True,
+        flags=None,
+        group_id=None,
+        description=None,
+        flags_disabled: bool = False,
+    ):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
@@ -211,6 +221,9 @@ class LabelDialog(QtWidgets.QDialog):
             self.setFlags(flags)
         else:
             self.resetFlags(text)
+        if flags_disabled:
+            for i in range(self.flagsLayout.count()):
+                self.flagsLayout.itemAt(i).widget().setDisabled(True)
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         if group_id is None:

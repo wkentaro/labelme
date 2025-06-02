@@ -162,7 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
-        self.canvas = self.labelList.canvas = Canvas(
+        self.canvas = Canvas(
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"],
@@ -824,7 +824,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else None
         )
 
-        self._ai_prompt_widget: QtWidgets.QWidget = AiPromptWidget(
+        self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
             on_submit=self._submit_ai_prompt, parent=self
         )
         ai_prompt_action = QtWidgets.QWidgetAction(self)
@@ -1202,9 +1202,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if not edit_text:
             self.labelDialog.edit.setDisabled(True)
             self.labelDialog.labelList.setDisabled(True)
-        if not edit_flags:
-            for i in range(self.labelDialog.flagsLayout.count()):
-                self.labelDialog.flagsLayout.itemAt(i).setDisabled(True)  # type: ignore[union-attr]
         if not edit_group_id:
             self.labelDialog.edit_group_id.setDisabled(True)
         if not edit_description:
@@ -1215,14 +1212,12 @@ class MainWindow(QtWidgets.QMainWindow):
             flags=shape.flags if edit_flags else None,
             group_id=shape.group_id if edit_group_id else None,
             description=shape.description if edit_description else None,
+            flags_disabled=not edit_flags,
         )
 
         if not edit_text:
             self.labelDialog.edit.setDisabled(False)
             self.labelDialog.labelList.setDisabled(False)
-        if not edit_flags:
-            for i in range(self.labelDialog.flagsLayout.count()):
-                self.labelDialog.flagsLayout.itemAt(i).setDisabled(False)  # type: ignore[union-attr]
         if not edit_group_id:
             self.labelDialog.edit_group_id.setDisabled(False)
         if not edit_description:
@@ -1469,7 +1464,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags=flags,
             )
             self.labelFile = lf
-            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)  # type: ignore[attr-defined]
+            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)  # type: ignore[arg-type,attr-defined]
             if len(items) > 0:
                 if len(items) != 1:
                     raise RuntimeError("There are duplicate files.")
@@ -1702,7 +1697,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None
-        image = QtGui.QImage.fromData(self.imageData)
+        image = QtGui.QImage.fromData(self.imageData)  # type: ignore[arg-type]
 
         if image.isNull():
             formats = [

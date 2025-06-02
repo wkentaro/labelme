@@ -1,3 +1,5 @@
+from typing import cast
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -110,8 +112,11 @@ class LabelListWidget(QtWidgets.QListView):
         self._selectedItems = []
 
         self.setWindowFlags(Qt.Window)  # type: ignore[attr-defined]
-        self.setModel(StandardItemModel())
-        self.model().setItemPrototype(LabelListWidgetItem())  # type: ignore[union-attr]
+
+        self._model: StandardItemModel = StandardItemModel()
+        self._model.setItemPrototype(LabelListWidgetItem())  # type: ignore[union-attr]
+        self.setModel(self._model)
+
         self.setItemDelegate(HTMLDelegate())
         self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
@@ -121,10 +126,10 @@ class LabelListWidget(QtWidgets.QListView):
         self.selectionModel().selectionChanged.connect(self.itemSelectionChangedEvent)  # type: ignore[union-attr]
 
     def __len__(self):
-        return self.model().rowCount()  # type: ignore[union-attr]
+        return self._model.rowCount()  # type: ignore[union-attr]
 
     def __getitem__(self, i):
-        return self.model().item(i)  # type: ignore[union-attr]
+        return self._model.item(i)  # type: ignore[union-attr]
 
     def __iter__(self):
         for i in range(len(self)):
@@ -132,46 +137,47 @@ class LabelListWidget(QtWidgets.QListView):
 
     @property
     def itemDropped(self):
-        return self.model().itemDropped  # type: ignore[union-attr]
+        return self._model.itemDropped  # type: ignore[union-attr]
 
     @property
     def itemChanged(self):
-        return self.model().itemChanged  # type: ignore[union-attr]
+        return self._model.itemChanged  # type: ignore[union-attr]
 
     def itemSelectionChangedEvent(self, selected, deselected):
-        selected = [self.model().itemFromIndex(i) for i in selected.indexes()]  # type: ignore[union-attr]
-        deselected = [self.model().itemFromIndex(i) for i in deselected.indexes()]  # type: ignore[union-attr]
+        selected = [self._model.itemFromIndex(i) for i in selected.indexes()]  # type: ignore[union-attr]
+        deselected = [self._model.itemFromIndex(i) for i in deselected.indexes()]  # type: ignore[union-attr]
         self.itemSelectionChanged.emit(selected, deselected)
 
     def itemDoubleClickedEvent(self, index):
-        self.itemDoubleClicked.emit(self.model().itemFromIndex(index))  # type: ignore[union-attr]
+        self.itemDoubleClicked.emit(self._model.itemFromIndex(index))  # type: ignore[union-attr]
 
     def selectedItems(self):
-        return [self.model().itemFromIndex(i) for i in self.selectedIndexes()]  # type: ignore[union-attr]
+        return [self._model.itemFromIndex(i) for i in self.selectedIndexes()]  # type: ignore[union-attr]
 
     def scrollToItem(self, item):
-        self.scrollTo(self.model().indexFromItem(item))  # type: ignore[union-attr]
+        self.scrollTo(self._model.indexFromItem(item))  # type: ignore[union-attr]
 
     def addItem(self, item):
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
-        self.model().setItem(self.model().rowCount(), 0, item)  # type: ignore[union-attr]
+        self._model.setItem(self._model.rowCount(), 0, item)  # type: ignore[union-attr]
         item.setSizeHint(self.itemDelegate().sizeHint(None, None))  # type: ignore[arg-type,union-attr]
 
     def removeItem(self, item):
-        index = self.model().indexFromItem(item)  # type: ignore[union-attr]
-        self.model().removeRows(index.row(), 1)  # type: ignore[union-attr]
+        index = self._model.indexFromItem(item)  # type: ignore[union-attr]
+        self._model.removeRows(index.row(), 1)  # type: ignore[union-attr]
 
     def selectItem(self, item):
-        index = self.model().indexFromItem(item)  # type: ignore[union-attr]
+        index = self._model.indexFromItem(item)  # type: ignore[union-attr]
         self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)  # type: ignore[attr-defined,union-attr]
 
     def findItemByShape(self, shape):
-        for row in range(self.model().rowCount()):  # type: ignore[union-attr]
-            item = self.model().item(row, 0)  # type: ignore[union-attr]
+        for row in range(self._model.rowCount()):  # type: ignore[union-attr]
+            item = self._model.item(row, 0)  # type: ignore[union-attr]
+            item = cast(LabelListWidgetItem, item)
             if item.shape() == shape:
                 return item
         raise ValueError("cannot find shape: {}".format(shape))
 
     def clear(self):
-        self.model().clear()  # type: ignore[union-attr]
+        self._model.clear()  # type: ignore[union-attr]
