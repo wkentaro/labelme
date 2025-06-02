@@ -193,7 +193,15 @@ class LabelDialog(QtWidgets.QDialog):
             return int(group_id)
         return None
 
-    def popUp(self, text=None, move=True, flags=None, group_id=None, description=None):
+    def popUp(
+        self,
+        text=None,
+        move=True,
+        flags=None,
+        group_id=None,
+        description=None,
+        flags_disabled: bool = False,
+    ):
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
@@ -211,6 +219,9 @@ class LabelDialog(QtWidgets.QDialog):
             self.setFlags(flags)
         else:
             self.resetFlags(text)
+        if flags_disabled:
+            for i in range(self.flagsLayout.count()):
+                self.flagsLayout.itemAt(i).widget().setDisabled(True)
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
         if group_id is None:
