@@ -1202,9 +1202,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if not edit_text:
             self.labelDialog.edit.setDisabled(True)
             self.labelDialog.labelList.setDisabled(True)
-        if not edit_flags:
-            for i in range(self.labelDialog.flagsLayout.count()):
-                self.labelDialog.flagsLayout.itemAt(i).setDisabled(True)  # type: ignore[union-attr]
         if not edit_group_id:
             self.labelDialog.edit_group_id.setDisabled(True)
         if not edit_description:
@@ -1215,14 +1212,12 @@ class MainWindow(QtWidgets.QMainWindow):
             flags=shape.flags if edit_flags else None,
             group_id=shape.group_id if edit_group_id else None,
             description=shape.description if edit_description else None,
+            flags_disabled=not edit_flags,
         )
 
         if not edit_text:
             self.labelDialog.edit.setDisabled(False)
             self.labelDialog.labelList.setDisabled(False)
-        if not edit_flags:
-            for i in range(self.labelDialog.flagsLayout.count()):
-                self.labelDialog.flagsLayout.itemAt(i).setDisabled(False)  # type: ignore[union-attr]
         if not edit_group_id:
             self.labelDialog.edit_group_id.setDisabled(False)
         if not edit_description:
