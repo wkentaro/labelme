@@ -1,4 +1,5 @@
 import re
+from typing import cast
 
 from loguru import logger
 from PyQt5 import QtCore
@@ -162,7 +163,7 @@ class LabelDialog(QtWidgets.QDialog):
         for i in reversed(range(self.flagsLayout.count())):
             item = self.flagsLayout.itemAt(i).widget()  # type: ignore[union-attr]
             self.flagsLayout.removeWidget(item)
-            item.setParent(None)  # type: ignore[union-attr]
+            item.setParent(QtWidgets.QWidget())
 
     def resetFlags(self, label=""):
         flags = {}
@@ -184,6 +185,7 @@ class LabelDialog(QtWidgets.QDialog):
         flags = {}
         for i in range(self.flagsLayout.count()):
             item = self.flagsLayout.itemAt(i).widget()  # type: ignore[union-attr]
+            item = cast(QtWidgets.QCheckBox, item)
             flags[item.text()] = item.isChecked()  # type: ignore[union-attr]
         return flags
 
