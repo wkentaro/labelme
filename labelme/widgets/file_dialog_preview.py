@@ -1,4 +1,5 @@
 import json
+from typing import cast
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -45,7 +46,9 @@ class FileDialogPreview(QtWidgets.QFileDialog):
         box.addStretch()
 
         self.setFixedSize(self.width() + 300, self.height())
-        self.layout().addLayout(box, 1, 3, 1, 1)  # type: ignore[union-attr]
+        layout = self.layout()
+        layout = cast(QtWidgets.QGridLayout, layout)
+        layout.addLayout(box, 1, 3, 1, 1)  # type: ignore[union-attr]
         self.currentChanged.connect(self.onChange)
 
     def onChange(self, path):
