@@ -372,15 +372,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
-        createAiPolygonMode.changed.connect(
-            lambda: self.canvas.initializeAiModel(
-                model_name=self._selectAiModelComboBox.itemData(  # type: ignore[has-type]
-                    self._selectAiModelComboBox.currentIndex()  # type: ignore[has-type]
-                )
-            )
-            if self.canvas.createMode == "ai_polygon"
-            else None
-        )
         createAiMaskMode = action(
             self.tr("Create AI-Mask"),
             lambda: self.toggleDrawMode(False, createMode="ai_mask"),
@@ -388,15 +379,6 @@ class MainWindow(QtWidgets.QMainWindow):
             "objects",
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
             enabled=False,
-        )
-        createAiMaskMode.changed.connect(
-            lambda: self.canvas.initializeAiModel(
-                model_name=self._selectAiModelComboBox.itemData(  # type: ignore[has-type]
-                    self._selectAiModelComboBox.currentIndex()  # type: ignore[has-type]
-                )
-            )
-            if self.canvas.createMode == "ai_mask"
-            else None
         )
         editMode = action(
             self.tr("Edit Polygons"),
@@ -815,14 +797,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._config["ai"]["default"],
             )
             model_index = 0
-        self._selectAiModelComboBox.setCurrentIndex(model_index)
         self._selectAiModelComboBox.currentIndexChanged.connect(
-            lambda index: self.canvas.initializeAiModel(
+            lambda index: self.canvas.set_ai_model_name(
                 model_name=self._selectAiModelComboBox.itemData(index)
             )
-            if self.canvas.createMode in ["ai_polygon", "ai_mask"]
-            else None
         )
+        self._selectAiModelComboBox.setCurrentIndex(model_index)
 
         self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
             on_submit=self._submit_ai_prompt, parent=self
