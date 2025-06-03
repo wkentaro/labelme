@@ -1,6 +1,5 @@
 import functools
 from typing import Literal
-from typing import Optional
 
 import imgviz
 import numpy as np
@@ -106,7 +105,7 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)  # type: ignore[attr-defined]
 
-        self._sam: Optional[osam.types.Model] = None
+        self._ai_model_name: str = "sam2:latest"
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -133,14 +132,9 @@ class Canvas(QtWidgets.QWidget):
             raise ValueError("Unsupported createMode: %s" % value)
         self._createMode = value
 
-    def initializeAiModel(self, model_name):
-        if self.pixmap is None:
-            logger.warning("Pixmap is not set yet")
-            return
-
-        if self._sam is None or self._sam.name != model_name:
-            logger.debug("Initializing AI model {!r}", model_name)
-            self._sam = osam.apis.get_model_type_by_name(model_name)()
+    def set_ai_model_name(self, model_name: str) -> None:
+        logger.debug("Setting AI model to {!r}", model_name)
+        self._ai_model_name = model_name
 
     def storeShapes(self):
         shapesBackup = []
@@ -724,7 +718,7 @@ class Canvas(QtWidgets.QWidget):
                 drawing_shape.fill_color.setAlpha(64)
             drawing_shape.addPoint(self.line[1])
 
-        if not (self.createMode in ["ai_polygon", "ai_mask"] and self._sam):
+        if self.createMode not in ["ai_polygon", "ai_mask"]:
             p.end()
             return
 
@@ -734,7 +728,7 @@ class Canvas(QtWidgets.QWidget):
             label=self.line.point_labels[1],
         )
         _update_shape_with_sam(
-            sam=self._sam,
+            sam=_get_ai_model(model_name=self._ai_model_name),
             pixmap=self.pixmap,
             shape=drawing_shape,
             createMode=self.createMode,
@@ -763,9 +757,9 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
-        if self.createMode in ["ai_polygon", "ai_mask"] and self._sam:
+        if self.createMode in ["ai_polygon", "ai_mask"]:
             _update_shape_with_sam(
-                sam=self._sam,
+                sam=_get_ai_model(model_name=self._ai_model_name),
                 pixmap=self.pixmap,
                 shape=self.current,
                 createMode=self.createMode,
@@ -1035,6 +1029,11 @@ def _update_shape_with_sam(
             points=[QtCore.QPointF(point[0], point[1]) for point in points],
             point_labels=[1] * len(points),
         )
+
+
+@functools.lru_cache(maxsize=1)
+def _get_ai_model(model_name: str) -> osam.types.Model:
+    return osam.apis.get_model_type_by_name(name=model_name)()
 
 
 def _compute_image_embedding(
