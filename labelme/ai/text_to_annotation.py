@@ -2,7 +2,7 @@ import json
 import time
 
 import numpy as np
-import osam
+# import osam
 
 from labelme.logger import logger
 
@@ -10,22 +10,13 @@ from labelme.logger import logger
 def get_rectangles_from_texts(
     model: str, image: np.ndarray, texts: list[str]
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    request: osam.types.GenerateRequest = osam.types.GenerateRequest(
-        model=model,
-        image=image,
-        prompt=osam.types.Prompt(
-            texts=texts,
-            iou_threshold=1.0,
-            score_threshold=0.01,
-            max_annotations=1000,
-        ),
-    )
+    request = None
     logger.debug(
         f"Requesting with model={model!r}, image={(image.shape, image.dtype)}, "
         f"prompt={request.prompt!r}"
     )
     t_start = time.time()
-    response: osam.types.GenerateResponse = osam.apis.generate(request=request)
+    response = None
 
     num_annotations = len(response.annotations)
     logger.debug(
@@ -62,13 +53,7 @@ def non_maximum_suppression(
     for i, (score, label) in enumerate(zip(scores, labels)):
         scores_of_all_classes[i, label] = score
     logger.debug(f"Input: num_boxes={len(boxes)}")
-    boxes, scores, labels = osam.apis.non_maximum_suppression(
-        boxes=boxes,
-        scores=scores_of_all_classes,
-        iou_threshold=iou_threshold,
-        score_threshold=score_threshold,
-        max_num_detections=max_num_detections,
-    )
+    boxes, scores, labels = None, None, None
     logger.debug(f"Output: num_boxes={len(boxes)}")
     return boxes, scores, labels
 
