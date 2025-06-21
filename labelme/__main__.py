@@ -4,6 +4,7 @@ import contextlib
 import os
 import os.path as osp
 import sys
+import traceback
 
 import yaml
 from loguru import logger
@@ -55,6 +56,28 @@ def _setup_loguru(logger_level: str) -> None:
         backtrace=True,
         diagnose=True,
     )
+
+
+def _handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        sys.exit(0)
+
+    traceback_str: str = "".join(
+        traceback.format_exception(exc_type, exc_value, exc_traceback)
+    )
+    logger.critical(traceback_str)
+
+    traceback_html: str = traceback_str.replace("\n", "<br/>").replace(" ", "&nbsp;")
+    QtWidgets.QMessageBox.critical(
+        None,
+        "Error",
+        f"An unexpected error occurred. The application will close.<br/><br/>Please report issues following the <a href='https://labelme.io/docs/troubleshoot'>Troubleshoot</a>.<br/><br/>{traceback_html}",  # noqa: E501
+    )
+
+    if app := QtWidgets.QApplication.instance():
+        app.quit()
+    sys.exit(1)
 
 
 def main():
@@ -151,6 +174,8 @@ def main():
 
     _setup_loguru(logger_level=args.logger_level.upper())
 
+    sys.excepthook = _handle_exception
+
     if hasattr(args, "flags"):
         if os.path.isfile(args.flags):
             with codecs.open(args.flags, "r", encoding="utf-8") as f:
@@ -217,7 +242,7 @@ def main():
         win.settings.clear()
         sys.exit(0)
 
-    with logger.catch(), contextlib.redirect_stderr(new_target=_LoggerIO()):  # type: ignore[type-var]
+    with contextlib.redirect_stderr(new_target=_LoggerIO()):  # type: ignore[type-var]
         win.show()
         win.raise_()
         sys.exit(app.exec_())
