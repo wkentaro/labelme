@@ -43,6 +43,10 @@ class Canvas(QtWidgets.QWidget):
 
     _fill_drawing = False
 
+    prevPoint: QtCore.QPointF
+    prevMovePoint: QtCore.QPointF
+    offsets: tuple[QtCore.QPointF, QtCore.QPointF]
+
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
         self.double_click = kwargs.pop("double_click", "close")
@@ -78,9 +82,9 @@ class Canvas(QtWidgets.QWidget):
         #   - createMode == 'line': the line
         #   - createMode == 'point': the point
         self.line = Shape()
-        self.prevPoint = QtCore.QPoint()
-        self.prevMovePoint = QtCore.QPoint()
-        self.offsets = QtCore.QPoint(), QtCore.QPoint()
+        self.prevPoint = QtCore.QPointF()
+        self.prevMovePoint = QtCore.QPointF()
+        self.offsets = QtCore.QPointF(), QtCore.QPointF()
         self.scale = 1.0
         self.pixmap = QtGui.QPixmap()
         self.visible = {}
@@ -393,7 +397,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        pos = self.transformPos(ev.localPos())
+        pos: QtCore.QPointF = self.transformPos(ev.localPos())
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier  # type: ignore[attr-defined]
 
@@ -569,7 +573,7 @@ class Canvas(QtWidgets.QWidget):
                     return
         self.deSelectShape()
 
-    def calculateOffsets(self, point):
+    def calculateOffsets(self, point: QtCore.QPointF) -> None:
         left = self.pixmap.width() - 1
         right = 0
         top = self.pixmap.height() - 1
@@ -589,7 +593,7 @@ class Canvas(QtWidgets.QWidget):
         y1 = top - point.y()
         x2 = right - point.x()
         y2 = bottom - point.y()
-        self.offsets = QtCore.QPoint(x1, y1), QtCore.QPoint(x2, y2)
+        self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
 
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
@@ -738,11 +742,11 @@ class Canvas(QtWidgets.QWidget):
         drawing_shape.paint(p)
         p.end()
 
-    def transformPos(self, point):
+    def transformPos(self, point: QtCore.QPointF) -> QtCore.QPointF:
         """Convert from widget-logical coordinates to painter-logical ones."""
         return point / self.scale - self.offsetToCenter()
 
-    def offsetToCenter(self):
+    def offsetToCenter(self) -> QtCore.QPointF:
         s = self.scale
         area = super(Canvas, self).size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
