@@ -2,13 +2,17 @@
 requires = ["hatchling>=1.20.0", "hatch-vcs", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+# 如果代码在src目录下
+packages = ["labelme"]  
+
 [project]
-name = "labelme"
-description = "Image Polygonal Annotation with Python"
+name = "labelme-shy"
+description = "Image Polygonal Annotation with Python - Customized By Shyandsy"
 license = { text = "GPL-3.0-only" }
 requires-python = ">=3.9"
 version = "5.8.3"
-authors = [{ name = "Kentaro Wada", email = "www.kentaro.wada@gmail.com" }]
+authors = [{ name = "shyandsy", email = "shyandsy@gmail.com" }]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",

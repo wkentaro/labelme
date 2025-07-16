@@ -1,6 +1,6 @@
 /.cache/
 /.pytest_cache/
-
+/.venv
 /build/
 /dist/
 /*.egg-info/

@@ -22,7 +22,7 @@ help:
 		awk 'BEGIN {FS = ":.*?# "}; \
 		{printf "  $(BOLD_BLUE)%-20s$(NC) %s\n", $$1, $$2}'
 
-PACKAGE_NAME:=labelme
+PACKAGE_NAME:=labelme-shy
 
 setup:  # Setup the development environment
 	$(call exec,uv sync --dev)

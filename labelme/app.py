@@ -33,6 +33,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from labelme.file_list_widget_row import FileListWidget
 
 from . import utils
 
@@ -146,7 +147,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileSearch = QtWidgets.QLineEdit()
         self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
         self.fileSearch.textChanged.connect(self.fileSearchChanged)
-        self.fileListWidget = QtWidgets.QListWidget()
+        self.fileListWidget = FileListWidget()
         self.fileListWidget.itemSelectionChanged.connect(self.fileSelectionChanged)
         fileListLayout = QtWidgets.QVBoxLayout()
         fileListLayout.setContentsMargins(0, 0, 0, 0)
@@ -1263,7 +1264,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.mayContinue():
             return
 
-        currIndex = self.imageList.index(str(item.text()))
+        currIndex = self.imageList.index(item.data(Qt.UserRole))
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
             if filename:
@@ -1425,7 +1426,7 @@ class MainWindow(QtWidgets.QMainWindow):
         flags = {}
         for i in range(self.flag_widget.count()):  # type: ignore[union-attr]
             item = self.flag_widget.item(i)  # type: ignore[union-attr]
-            key = item.text()  # type: ignore[union-attr]
+            key = item.data(Qt.UserRole).text()  # type: ignore[union-attr]
             flag = item.checkState() == Qt.Checked  # type: ignore[attr-defined,union-attr]
             flags[key] = flag
         try:
@@ -2139,8 +2140,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def imageList(self):
         lst = []
         for i in range(self.fileListWidget.count()):
-            item = self.fileListWidget.item(i)
-            lst.append(item.text())  # type: ignore[union-attr]
+            item = self.fileListWidget.item(i).data(Qt.UserRole)
+            lst.append(item)
         return lst
 
     def importDroppedImageFiles(self, imageFiles):
@@ -2181,6 +2182,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lastOpenDir = dirpath
         self.filename = None
         self.fileListWidget.clear()
+        self.fileListWidget.set_base_path(dirpath)
 
         filenames = self.scanAllImages(dirpath)
         if pattern:

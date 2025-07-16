@@ -147,3 +147,19 @@ pyinstaller labelme/labelme/__main__.py \
 ## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme).
+
+
+## Customize Dev
+```
+$ python -m venv .venv
+$ source .venv/bin/activate
+$ pip install setuptools wheel twine
+
+$ curl -LsSf https://astral.sh/uv/install.sh | sh
+
+$ make setup
+```
+
+## Customized Feature
+1. show filename in file list widgt rather than full path
+2. show row # for files in file list widget
