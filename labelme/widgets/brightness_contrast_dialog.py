@@ -32,8 +32,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             #
             slider.valueChanged.connect(self.onNewValue)
             slider.valueChanged.connect(
-                lambda _, s=slider, l=value_label: l.setText(
-                    f"{s.value() / self._base_value:.2f}"
+                lambda _, _slider=slider, _label=value_label: _label.setText(
+                    f"{_slider.value() / self._base_value:.2f}"
                 )
             )
             layouts[title] = layout
