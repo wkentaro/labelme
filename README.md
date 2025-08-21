@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="labelme/icons/icon-256.png" width="128" height="128"><br/>labelme
+  <img src="labelme/icons/icon-256.png" width="200" height="200"><br/>labelme
 </h1>
 
 <h4 align="center">
