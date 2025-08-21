@@ -188,6 +188,7 @@ def main():
         sys.exit(0)
 
     _setup_loguru(logger_level=args.logger_level.upper())
+    logger.info("Starting {} {}", __appname__, __version__)
 
     sys.excepthook = _handle_exception
 
