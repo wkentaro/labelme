@@ -1,6 +1,7 @@
 # flake8: noqa
 
 import logging
+import onnxruntime
 
 
 __appname__ = "labelme"
