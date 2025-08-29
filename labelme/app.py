@@ -1611,6 +1611,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.actions.fitWidth.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
         self.actions.fitWindow.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
+        self.canvas.enableDragging(
+            enabled=value > int(self.scalers[_ZoomMode.FIT_WINDOW]() * 100)
+        )
         self.zoomWidget.setValue(value)  # triggers self._paint_canvas
         self._zoom_values[self.filename] = (self._zoom_mode, value)
 
