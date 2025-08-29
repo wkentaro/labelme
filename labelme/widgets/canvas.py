@@ -100,6 +100,7 @@ class Canvas(QtWidgets.QWidget):
         self.line = Shape()
         self.prevPoint = QPointF()
         self.prevMovePoint = QPointF()
+        self.prevDragPoint = QPointF()
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
         self.pixmap = QtGui.QPixmap()
@@ -117,6 +118,7 @@ class Canvas(QtWidgets.QWidget):
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
+        self.drag = False
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -307,6 +309,14 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = pos
 
         is_shift_pressed = ev.modifiers() & Qt.ShiftModifier
+
+        # Drag to move canvas
+        if self.drag:
+            self.overrideCursor(CURSOR_GRAB)
+            delta = pos - self.prevDragPoint
+
+            self.scrollRequest.emit(int(delta.x()), QtCore.Qt.Horizontal)  # type: ignore[attr-defined]
+            self.scrollRequest.emit(int(delta.y()), QtCore.Qt.Vertical)  # type: ignore[attr-defined]
 
         # Polygon drawing.
         if self.drawing():
@@ -563,9 +573,13 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
-        self._update_status()
+        elif ev.button() == QtCore.Qt.MiddleButton:
+            self.overrideCursor(CURSOR_GRAB)
+            self.prevDragPoint = pos
+            self.drag = True
 
     def mouseReleaseEvent(self, ev):
+        pos: QtCore.QPointF = self.transformPos(ev.localPos())
         if ev.button() == Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
@@ -583,6 +597,8 @@ class Canvas(QtWidgets.QWidget):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
+        elif ev.button() == QtCore.Qt.MiddleButton:
+            self.drag = False
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -941,8 +957,8 @@ class Canvas(QtWidgets.QWidget):
 
     def minimumSizeHint(self):
         if self.pixmap:
-            return self.scale * self.pixmap.size()
-        return super().minimumSizeHint()
+            return self.scale * self.pixmap.size() + QtCore.QSize(500, 500) # Gives the scroll area some breathing room
+        return super(Canvas, self).minimumSizeHint()
 
     def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = ev.modifiers()
