@@ -57,7 +57,7 @@ There are 3 options to install labelme:
 
 ### Option 1: Using pip
 
-For more detail, check ["Install Labelme using Pip"](https://www.labelme.io/docs/install-labelme-pip).
+For more detail, check ["Install Labelme using Terminal"](https://www.labelme.io/docs/install-labelme-terminal)
 
 ```bash
 pip install labelme
