@@ -20,9 +20,9 @@ from PyQt5.QtCore import Qt
 
 from labelme import __appname__
 from labelme._automation import bbox_from_text
+from labelme._label_file import LabelFile
+from labelme._label_file import LabelFileError
 from labelme.config import get_config
-from labelme.label_file import LabelFile
-from labelme.label_file import LabelFileError
 from labelme.shape import Shape
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog

@@ -9,7 +9,7 @@ import PIL.Image
 from loguru import logger
 
 from labelme import utils
-from labelme.label_file import LabelFile
+from labelme._label_file import LabelFile
 
 
 def main():

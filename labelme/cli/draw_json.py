@@ -6,7 +6,7 @@ import imgviz
 import matplotlib.pyplot as plt
 
 from labelme import utils
-from labelme.label_file import LabelFile
+from labelme._label_file import LabelFile
 
 
 def main():
