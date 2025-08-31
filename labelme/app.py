@@ -20,9 +20,10 @@ from PyQt5.QtCore import Qt
 
 from labelme import __appname__
 from labelme._automation import bbox_from_text
+from labelme._label_file import LabelFile
+from labelme._label_file import LabelFileError
+from labelme._label_file import ShapeDict
 from labelme.config import get_config
-from labelme.label_file import LabelFile
-from labelme.label_file import LabelFileError
 from labelme.shape import Shape
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
@@ -1355,44 +1356,33 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
 
-    def loadLabels(self, shapes):
-        s = []
-        for shape in shapes:
-            label = shape["label"]
-            points = shape["points"]
-            shape_type = shape["shape_type"]
-            flags: dict = shape["flags"] or {}
-            description = shape.get("description", "")
-            group_id = shape["group_id"]
-            other_data = shape["other_data"]
-
-            if not points:
-                # skip point-empty shape
-                continue
-
-            shape = Shape(
-                label=label,
-                shape_type=shape_type,
-                group_id=group_id,
-                description=description,
-                mask=shape["mask"],
+    def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
+        shapes: list[Shape] = []
+        shape_dict: ShapeDict
+        for shape_dict in shape_dicts:
+            shape: Shape = Shape(
+                label=shape_dict["label"],
+                shape_type=shape_dict["shape_type"],
+                group_id=shape_dict["group_id"],
+                description=shape_dict["description"],
+                mask=shape_dict["mask"],
             )
-            for x, y in points:
+            for x, y in shape_dict["points"]:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
 
             default_flags = {}
             if self._config["label_flags"]:
                 for pattern, keys in self._config["label_flags"].items():
-                    if re.match(pattern, label):
+                    if re.match(pattern, shape.label):
                         for key in keys:
                             default_flags[key] = False
             shape.flags = default_flags
-            shape.flags.update(flags)
-            shape.other_data = other_data
+            shape.flags.update(shape_dict["flags"])
+            shape.other_data = shape_dict["other_data"]
 
-            s.append(shape)
-        self.loadShapes(s)
+            shapes.append(shape)
+        self.loadShapes(shapes=shapes)
 
     def loadFlags(self, flags):
         self.flag_widget.clear()  # type: ignore[union-attr]
@@ -1701,7 +1691,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
-            self.loadLabels(self.labelFile.shapes)
+            self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)

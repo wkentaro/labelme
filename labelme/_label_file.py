@@ -3,9 +3,13 @@ import contextlib
 import io
 import json
 import os.path as osp
+from typing import Optional
+from typing import TypedDict
 
+import numpy as np
 import PIL.Image
 from loguru import logger
+from numpy.typing import NDArray
 
 from labelme import __version__
 from labelme import utils
@@ -21,11 +25,107 @@ def open(name, mode):
     return
 
 
+class ShapeDict(TypedDict):
+    label: str
+    points: list[list[float]]
+    shape_type: str
+    flags: dict[str, bool]
+    description: str
+    group_id: Optional[int]
+    mask: Optional[NDArray[np.bool]]
+    other_data: dict
+
+
+def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
+    SHAPE_KEYS: set[str] = {
+        "label",
+        "points",
+        "group_id",
+        "shape_type",
+        "flags",
+        "description",
+        "mask",
+    }
+
+    assert "label" in shape_json_obj, f"label is required: {shape_json_obj}"
+    assert isinstance(
+        shape_json_obj["label"], str
+    ), f"label must be str: {shape_json_obj['label']}"
+    label: str = shape_json_obj["label"]
+
+    assert "points" in shape_json_obj, f"points is required: {shape_json_obj}"
+    assert isinstance(
+        shape_json_obj["points"], list
+    ), f"points must be list: {shape_json_obj['points']}"
+    assert shape_json_obj["points"], f"points must be non-empty: {shape_json_obj}"
+    assert all(
+        isinstance(point, list)
+        and len(point) == 2
+        and all(isinstance(xy, (int, float)) for xy in point)
+        for point in shape_json_obj["points"]
+    ), f"points must be list of [x, y]: {shape_json_obj['points']}"
+    points: list[list[float]] = shape_json_obj["points"]
+
+    assert "shape_type" in shape_json_obj, f"shape_type is required: {shape_json_obj}"
+    assert isinstance(
+        shape_json_obj["shape_type"], str
+    ), f"shape_type must be str: {shape_json_obj['shape_type']}"
+    shape_type: str = shape_json_obj["shape_type"]
+
+    flags: dict = {}
+    if shape_json_obj.get("flags") is not None:
+        assert isinstance(
+            shape_json_obj["flags"], dict
+        ), f"flags must be dict: {shape_json_obj['flags']}"
+        assert all(
+            isinstance(k, str) and isinstance(v, bool)
+            for k, v in shape_json_obj["flags"].items()
+        ), f"flags must be dict of str to bool: {shape_json_obj['flags']}"
+        flags = shape_json_obj["flags"]
+
+    description: str = ""
+    if shape_json_obj.get("description") is not None:
+        assert isinstance(
+            shape_json_obj["description"], str
+        ), f"description must be str: {shape_json_obj['description']}"
+        description = shape_json_obj["description"]
+
+    group_id: Optional[int] = None
+    if shape_json_obj.get("group_id") is not None:
+        assert isinstance(
+            shape_json_obj["group_id"], int
+        ), f"group_id must be int: {shape_json_obj['group_id']}"
+        group_id = shape_json_obj["group_id"]
+
+    mask: Optional[NDArray[np.bool]] = None
+    if shape_json_obj.get("mask") is not None:
+        assert isinstance(
+            shape_json_obj["mask"], str
+        ), f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
+        mask = utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
+
+    other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
+
+    loaded: ShapeDict = dict(
+        label=label,
+        points=points,
+        shape_type=shape_type,
+        flags=flags,
+        description=description,
+        group_id=group_id,
+        mask=mask,
+        other_data=other_data,
+    )
+    assert set(loaded.keys()) == SHAPE_KEYS | {"other_data"}
+    return loaded
+
+
 class LabelFileError(Exception):
     pass
 
 
 class LabelFile(object):
+    shapes: list[ShapeDict]
     suffix = ".json"
 
     def __init__(self, filename=None):
@@ -67,15 +167,6 @@ class LabelFile(object):
             "imageHeight",
             "imageWidth",
         ]
-        shape_keys = [
-            "label",
-            "points",
-            "group_id",
-            "shape_type",
-            "flags",
-            "description",
-            "mask",
-        ]
         try:
             with open(filename, "r") as f:
                 data = json.load(f)
@@ -93,20 +184,8 @@ class LabelFile(object):
                 data.get("imageHeight"),
                 data.get("imageWidth"),
             )
-            shapes = [
-                dict(
-                    label=s["label"],
-                    points=s["points"],
-                    shape_type=s.get("shape_type", "polygon"),
-                    flags=s.get("flags", {}),
-                    description=s.get("description"),
-                    group_id=s.get("group_id"),
-                    mask=utils.img_b64_to_arr(s["mask"]).astype(bool)
-                    if s.get("mask")
-                    else None,
-                    other_data={k: v for k, v in s.items() if k not in shape_keys},
-                )
-                for s in data["shapes"]
+            shapes: list[ShapeDict] = [
+                _load_shape_json_obj(shape_json_obj=s) for s in data["shapes"]
             ]
         except Exception as e:
             raise LabelFileError(e)

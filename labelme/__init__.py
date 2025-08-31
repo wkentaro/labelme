@@ -12,6 +12,6 @@ __appname__ = "labelme"
 # e.g., 1.0.0a0, 1.0.0a1, 1.0.0b0, 1.0.0rc0, 1.0.0, 1.0.0.post0
 __version__ = "5.8.3"
 
-from labelme.label_file import LabelFile
+from labelme._label_file import LabelFile
 from labelme import testing
 from labelme import utils
