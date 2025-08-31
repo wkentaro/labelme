@@ -1356,7 +1356,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
 
-    def loadLabels(self, shape_dicts: list[ShapeDict]) -> None:
+    def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
         shapes: list[Shape] = []
         shape_dict: ShapeDict
         for shape_dict in shape_dicts:
@@ -1703,7 +1703,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
-            self.loadLabels(shape_dicts=self.labelFile.shapes)
+            self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
