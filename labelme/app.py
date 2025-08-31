@@ -22,6 +22,7 @@ from labelme import __appname__
 from labelme._automation import bbox_from_text
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
+from labelme._label_file import ShapeDict
 from labelme.config import get_config
 from labelme.shape import Shape
 from labelme.widgets import AiPromptWidget
@@ -1355,27 +1356,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self._noSelectionSlot = False
         self.canvas.loadShapes(shapes, replace=replace)
 
-    def loadLabels(self, shapes):
-        s = []
-        for shape in shapes:
-            label = shape["label"]
-            points = shape["points"]
-            shape_type = shape["shape_type"]
-            flags: dict = shape["flags"] or {}
-            description = shape.get("description", "")
-            group_id = shape["group_id"]
-            other_data = shape["other_data"]
+    def loadLabels(self, shape_dicts: list[ShapeDict]) -> None:
+        shapes: list[Shape] = []
+        shape_dict: ShapeDict
+        for shape_dict in shape_dicts:
+            label = shape_dict["label"]
+            points = shape_dict["points"]
+            shape_type = shape_dict["shape_type"]
+            flags: dict = shape_dict["flags"] or {}
+            description = shape_dict.get("description", "")
+            group_id = shape_dict["group_id"]
+            other_data = shape_dict["other_data"]
 
             if not points:
                 # skip point-empty shape
                 continue
 
-            shape = Shape(
+            shape: Shape = Shape(
                 label=label,
                 shape_type=shape_type,
                 group_id=group_id,
                 description=description,
-                mask=shape["mask"],
+                mask=shape_dict["mask"],
             )
             for x, y in points:
                 shape.addPoint(QtCore.QPointF(x, y))
@@ -1391,8 +1393,8 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.flags.update(flags)
             shape.other_data = other_data
 
-            s.append(shape)
-        self.loadShapes(s)
+            shapes.append(shape)
+        self.loadShapes(shapes=shapes)
 
     def loadFlags(self, flags):
         self.flag_widget.clear()  # type: ignore[union-attr]
@@ -1701,7 +1703,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
-            self.loadLabels(self.labelFile.shapes)
+            self.loadLabels(shape_dicts=self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
