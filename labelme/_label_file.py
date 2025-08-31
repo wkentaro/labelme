@@ -73,7 +73,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     shape_type: str = shape_json_obj["shape_type"]
 
     flags: dict = {}
-    if shape_json_obj.get("flags"):
+    if shape_json_obj.get("flags") is not None:
         assert isinstance(
             shape_json_obj["flags"], dict
         ), f"flags must be dict: {shape_json_obj['flags']}"
@@ -84,21 +84,21 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         flags = shape_json_obj["flags"]
 
     description: str = ""
-    if shape_json_obj.get("description"):
+    if shape_json_obj.get("description") is not None:
         assert isinstance(
             shape_json_obj["description"], str
         ), f"description must be str: {shape_json_obj['description']}"
         description = shape_json_obj["description"]
 
     group_id: Optional[int] = None
-    if shape_json_obj.get("group_id"):
+    if shape_json_obj.get("group_id") is not None:
         assert isinstance(
             shape_json_obj["group_id"], int
         ), f"group_id must be int: {shape_json_obj['group_id']}"
         group_id = shape_json_obj["group_id"]
 
     mask: Optional[NDArray[np.bool]] = None
-    if shape_json_obj.get("mask"):
+    if shape_json_obj.get("mask") is not None:
         assert isinstance(
             shape_json_obj["mask"], str
         ), f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
