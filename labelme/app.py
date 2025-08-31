@@ -1360,38 +1360,26 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes: list[Shape] = []
         shape_dict: ShapeDict
         for shape_dict in shape_dicts:
-            label = shape_dict["label"]
-            points = shape_dict["points"]
-            shape_type = shape_dict["shape_type"]
-            flags: dict = shape_dict["flags"] or {}
-            description = shape_dict.get("description", "")
-            group_id = shape_dict["group_id"]
-            other_data = shape_dict["other_data"]
-
-            if not points:
-                # skip point-empty shape
-                continue
-
             shape: Shape = Shape(
-                label=label,
-                shape_type=shape_type,
-                group_id=group_id,
-                description=description,
+                label=shape_dict["label"],
+                shape_type=shape_dict["shape_type"],
+                group_id=shape_dict["group_id"],
+                description=shape_dict["description"],
                 mask=shape_dict["mask"],
             )
-            for x, y in points:
+            for x, y in shape_dict["points"]:
                 shape.addPoint(QtCore.QPointF(x, y))
             shape.close()
 
             default_flags = {}
             if self._config["label_flags"]:
                 for pattern, keys in self._config["label_flags"].items():
-                    if re.match(pattern, label):
+                    if re.match(pattern, shape.label):
                         for key in keys:
                             default_flags[key] = False
             shape.flags = default_flags
-            shape.flags.update(flags)
-            shape.other_data = other_data
+            shape.flags.update(shape_dict["flags"])
+            shape.other_data = shape_dict["other_data"]
 
             shapes.append(shape)
         self.loadShapes(shapes=shapes)
