@@ -80,11 +80,11 @@ def get_shapes_from_bboxes(
 ) -> list[dict]:
     shapes: list[dict] = []
     for box, score, label in zip(boxes.tolist(), scores.tolist(), labels.tolist()):
-        text: str = texts[label]
-        xmin, ymin, xmax, ymax = box
+        text: str = texts[label]  # type: ignore
+        xmin, ymin, xmax, ymax = box  # type: ignore
         shape: dict = {
             "label": text,
-            "points": [[xmin, ymin], [xmax, ymax]],
+            "points": [[xmin, ymin], [xmax, ymax]],  # type: ignore
             "group_id": None,
             "shape_type": "rectangle",
             "flags": {},
