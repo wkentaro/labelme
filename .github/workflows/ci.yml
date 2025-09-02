@@ -23,14 +23,13 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: astral-sh/setup-uv@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.9"
 
     - shell: bash
       run: |
