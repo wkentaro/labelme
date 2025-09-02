@@ -704,41 +704,38 @@ class Canvas(QtWidgets.QWidget):
             for s in self.selectedShapesCopy:
                 s.paint(p)
 
-        if not self.current:
+        if not self.current or self.createMode not in [
+            "polygon",
+            "ai_polygon",
+            "ai_mask",
+        ]:
             p.end()
             return
 
-        if (
-            self.createMode == "polygon"
-            and self.fillDrawing()
-            and len(self.current.points) >= 2
-        ):
-            drawing_shape = self.current.copy()
-            if drawing_shape.fill_color.getRgb()[3] == 0:
-                logger.warning(
-                    "fill_drawing=true, but fill_color is transparent,"
-                    " so forcing to be opaque."
-                )
-                drawing_shape.fill_color.setAlpha(64)
-            drawing_shape.addPoint(self.line[1])
-
-        if self.createMode not in ["ai_polygon", "ai_mask"]:
-            p.end()
-            return
-
-        drawing_shape = self.current.copy()
-        drawing_shape.addPoint(
-            point=self.line.points[1],
-            label=self.line.point_labels[1],
-        )
-        _update_shape_with_sam(
-            sam=_get_ai_model(model_name=self._ai_model_name),
-            pixmap=self.pixmap,
-            shape=drawing_shape,
-            createMode=self.createMode,
-        )
+        drawing_shape: Shape = self.current.copy()
+        if self.createMode == "polygon":
+            if self.fillDrawing() and len(self.current.points) >= 2:
+                assert drawing_shape.fill_color is not None
+                if drawing_shape.fill_color.getRgb()[3] == 0:
+                    logger.warning(
+                        "fill_drawing=true, but fill_color is transparent,"
+                        " so forcing to be opaque."
+                    )
+                    drawing_shape.fill_color.setAlpha(64)
+                drawing_shape.addPoint(self.line[1])
+        elif self.createMode in ["ai_polygon", "ai_mask"]:
+            drawing_shape.addPoint(
+                point=self.line.points[1],
+                label=self.line.point_labels[1],
+            )
+            _update_shape_with_sam(
+                sam=_get_ai_model(model_name=self._ai_model_name),
+                pixmap=self.pixmap,
+                shape=drawing_shape,
+                createMode=self.createMode,
+            )
         drawing_shape.fill = self.fillDrawing()
-        drawing_shape.selected = True
+        drawing_shape.selected = self.fillDrawing()
         drawing_shape.paint(p)
         p.end()
 
