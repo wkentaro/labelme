@@ -268,7 +268,12 @@ class Shape(object):
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)
                 painter.fillPath(vrtx_path, self._vertex_fill_color)  # type: ignore[has-type]
-            if self.fill and self.mask is None:
+            if self.fill and self.shape_type not in [
+                "line",
+                "linestrip",
+                "points",
+                "mask",
+            ]:
                 color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
 
@@ -323,7 +328,9 @@ class Shape(object):
                 post_i = i
         return post_i
 
-    def containsPoint(self, point):
+    def containsPoint(self, point) -> bool:
+        if self.shape_type in ["line", "linestrip", "points"]:
+            return False
         if self.mask is not None:
             y = np.clip(
                 int(round(point.y() - self.points[0].y())),
