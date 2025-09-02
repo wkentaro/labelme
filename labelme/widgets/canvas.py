@@ -753,7 +753,7 @@ class Canvas(QtWidgets.QWidget):
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
-        return QtCore.QPointF(x, y)
+        return QtCore.QPointF(int(x), int(y))
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
