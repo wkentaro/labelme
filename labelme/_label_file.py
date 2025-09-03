@@ -48,15 +48,15 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     }
 
     assert "label" in shape_json_obj, f"label is required: {shape_json_obj}"
-    assert isinstance(
-        shape_json_obj["label"], str
-    ), f"label must be str: {shape_json_obj['label']}"
+    assert isinstance(shape_json_obj["label"], str), (
+        f"label must be str: {shape_json_obj['label']}"
+    )
     label: str = shape_json_obj["label"]
 
     assert "points" in shape_json_obj, f"points is required: {shape_json_obj}"
-    assert isinstance(
-        shape_json_obj["points"], list
-    ), f"points must be list: {shape_json_obj['points']}"
+    assert isinstance(shape_json_obj["points"], list), (
+        f"points must be list: {shape_json_obj['points']}"
+    )
     assert shape_json_obj["points"], f"points must be non-empty: {shape_json_obj}"
     assert all(
         isinstance(point, list)
@@ -67,16 +67,16 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     points: list[list[float]] = shape_json_obj["points"]
 
     assert "shape_type" in shape_json_obj, f"shape_type is required: {shape_json_obj}"
-    assert isinstance(
-        shape_json_obj["shape_type"], str
-    ), f"shape_type must be str: {shape_json_obj['shape_type']}"
+    assert isinstance(shape_json_obj["shape_type"], str), (
+        f"shape_type must be str: {shape_json_obj['shape_type']}"
+    )
     shape_type: str = shape_json_obj["shape_type"]
 
     flags: dict = {}
     if shape_json_obj.get("flags") is not None:
-        assert isinstance(
-            shape_json_obj["flags"], dict
-        ), f"flags must be dict: {shape_json_obj['flags']}"
+        assert isinstance(shape_json_obj["flags"], dict), (
+            f"flags must be dict: {shape_json_obj['flags']}"
+        )
         assert all(
             isinstance(k, str) and isinstance(v, bool)
             for k, v in shape_json_obj["flags"].items()
@@ -85,23 +85,23 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
     description: str = ""
     if shape_json_obj.get("description") is not None:
-        assert isinstance(
-            shape_json_obj["description"], str
-        ), f"description must be str: {shape_json_obj['description']}"
+        assert isinstance(shape_json_obj["description"], str), (
+            f"description must be str: {shape_json_obj['description']}"
+        )
         description = shape_json_obj["description"]
 
     group_id: Optional[int] = None
     if shape_json_obj.get("group_id") is not None:
-        assert isinstance(
-            shape_json_obj["group_id"], int
-        ), f"group_id must be int: {shape_json_obj['group_id']}"
+        assert isinstance(shape_json_obj["group_id"], int), (
+            f"group_id must be int: {shape_json_obj['group_id']}"
+        )
         group_id = shape_json_obj["group_id"]
 
     mask: Optional[NDArray[np.bool]] = None
     if shape_json_obj.get("mask") is not None:
-        assert isinstance(
-            shape_json_obj["mask"], str
-        ), f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
+        assert isinstance(shape_json_obj["mask"], str), (
+            f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
+        )
         mask = utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}

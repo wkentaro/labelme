@@ -95,7 +95,7 @@ def main():
         for shape in label_file.shapes:
             if shape["shape_type"] != "rectangle":
                 print(
-                    "Skipping shape: label={label}, " "shape_type={shape_type}".format(
+                    "Skipping shape: label={label}, shape_type={shape_type}".format(
                         **shape
                     )
                 )
