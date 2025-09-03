@@ -14,7 +14,7 @@ from loguru import logger
 
 def polygons_to_mask(img_shape, polygons, shape_type=None):
     logger.warning(
-        "The 'polygons_to_mask' function is deprecated, " "use 'shape_to_mask' instead."
+        "The 'polygons_to_mask' function is deprecated, use 'shape_to_mask' instead."
     )
     return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
@@ -93,7 +93,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
 
 def labelme_shapes_to_label(img_shape, shapes):
     logger.warning(
-        "labelme_shapes_to_label is deprecated, so please use " "shapes_to_label."
+        "labelme_shapes_to_label is deprecated, so please use shapes_to_label."
     )
 
     label_name_to_value = {"_background_": 0}
