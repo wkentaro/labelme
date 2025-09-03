@@ -193,8 +193,8 @@ class Shape(object):
             qimage = QtGui.QImage.fromData(labelme.utils.img_arr_to_data(image_to_draw))
             qimage = qimage.scaled(
                 qimage.size() * self.scale,
-                QtCore.Qt.IgnoreAspectRatio,  # type: ignore[attr-defined]
-                QtCore.Qt.SmoothTransformation,  # type: ignore[attr-defined]
+                QtCore.Qt.IgnoreAspectRatio,
+                QtCore.Qt.SmoothTransformation,
             )
 
             painter.drawImage(self._scale_point(point=self.points[0]), qimage)

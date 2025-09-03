@@ -12,7 +12,7 @@ class ZoomWidget(QtWidgets.QSpinBox):
         self.setValue(value)
         self.setToolTip("Zoom Level")
         self.setStatusTip(self.toolTip())
-        self.setAlignment(QtCore.Qt.AlignCenter)  # type: ignore[attr-defined]
+        self.setAlignment(QtCore.Qt.AlignCenter)
 
     def minimumSizeHint(self):
         height = super(ZoomWidget, self).minimumSizeHint().height()
