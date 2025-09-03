@@ -51,6 +51,11 @@ LABEL_COLORMAP = imgviz.label_colormap()
 class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
+    # NB: this tells Mypy etc. that `actions` here
+    #     is a different type cf. the parent class
+    #     (where it is Callable[[QWidget], list[QAction]]).
+    actions: types.SimpleNamespace  # type: ignore[assignment]
+
     def __init__(
         self,
         config=None,
@@ -608,7 +613,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
 
         # Store actions for further handling.
-        self.actions = types.SimpleNamespace(  # type: ignore[assignment,method-assign]
+        self.actions = types.SimpleNamespace(
             saveAuto=saveAuto,
             saveWithImageData=saveWithImageData,
             changeOutputDir=changeOutputDir,
