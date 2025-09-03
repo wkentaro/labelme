@@ -17,12 +17,9 @@ def get_ip():
     if dist == "Linux":
         return ""
     elif dist == "Darwin":
-        cmd = "ifconfig en0"
-        output = subprocess.check_output(shlex.split(cmd))
-        if str != bytes:  # noqa: E721
-            output = output.decode("utf-8")  # type: ignore[assignment]
+        output = subprocess.check_output("ifconfig en0", encoding="utf-8")
         for row in output.splitlines():
-            cols = row.strip().split(" ")  # type: ignore[arg-type]
+            cols = row.strip().split(" ")
             if cols[0] == "inet":
                 ip = cols[1]
                 return ip

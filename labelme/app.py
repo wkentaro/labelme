@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import functools
 import html
 import math
@@ -848,8 +850,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Application state.
         self.image = QtGui.QImage()
-        self.imagePath = None
-        self.recentFiles = []  # type: ignore[var-annotated]
+        self.labelFile: LabelFile | None = None
+        self.imagePath: str | None = None
+        self.recentFiles: list[str] = []
         self.maxRecent = 7
         self.otherData = None
         self.zoom_level = 100
@@ -944,8 +947,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Even if we autosave the file, we keep the ability to undo
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
-        if self._config["auto_save"] or self.actions.saveAuto.isChecked():  # type: ignore[attr-defined]
-            label_file = f"{osp.splitext(self.imagePath)[0]}.json"  # type: ignore[arg-type]
+        if self._config["auto_save"] or self.actions.saveAuto.isChecked():
+            assert self.imagePath
+            label_file = f"{osp.splitext(self.imagePath)[0]}.json"
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self.output_dir, label_file_without_path)
@@ -1430,7 +1434,8 @@ class MainWindow(QtWidgets.QMainWindow):
             flag = item.checkState() == Qt.Checked
             flags[key] = flag
         try:
-            imagePath = osp.relpath(self.imagePath, osp.dirname(filename))  # type: ignore[arg-type]
+            assert self.imagePath
+            imagePath = osp.relpath(self.imagePath, osp.dirname(filename))
             imageData = self.imageData if self._config["store_data"] else None
             if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
                 os.makedirs(osp.dirname(filename))
@@ -1445,7 +1450,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags=flags,
             )
             self.labelFile = lf
-            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)  # type: ignore[arg-type,attr-defined]
+            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)
             if len(items) > 0:
                 if len(items) != 1:
                     raise RuntimeError("There are duplicate files.")
@@ -1683,10 +1688,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 self.status(self.tr("Error reading %s") % label_file)
                 return False
+            assert self.labelFile is not None
             self.imageData = self.labelFile.imageData
+            assert self.labelFile.imagePath
             self.imagePath = osp.join(
                 osp.dirname(label_file),
-                self.labelFile.imagePath,  # type: ignore[arg-type]
+                self.labelFile.imagePath,
             )
             self.otherData = self.labelFile.otherData
         else:
@@ -1694,7 +1701,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None
-        image = QtGui.QImage.fromData(self.imageData)  # type: ignore[arg-type]
+        assert self.imageData is not None
+        image = QtGui.QImage.fromData(self.imageData)
 
         if image.isNull():
             formats = [
@@ -1980,7 +1988,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Label files (*%s)") % LabelFile.suffix,
         )
         if isinstance(filename, tuple):
-            filename, _ = filename  # type: ignore[assignment]
+            return filename[0]
         return filename
 
     def _saveFile(self, filename):
@@ -2076,11 +2084,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def removeSelectedPoint(self):
         self.canvas.removeSelectedPoint()
         self.canvas.update()
-        if not self.canvas.hShape.points:  # type: ignore[union-attr]
+        if self.canvas.hShape and not self.canvas.hShape.points:
             self.canvas.deleteShape(self.canvas.hShape)
             self.remLabels([self.canvas.hShape])
             if self.noShapes():
-                for action in self.actions.onShapesPresent:  # type: ignore[attr-defined]
+                for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
         self.setDirty()
 
@@ -2131,11 +2139,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.importDirImages(targetDirPath)
 
     @property
-    def imageList(self):
+    def imageList(self) -> list[str]:
         lst = []
         for i in range(self.fileListWidget.count()):
             item = self.fileListWidget.item(i)
-            lst.append(item.text())  # type: ignore[union-attr]
+            assert item
+            lst.append(item.text())
         return lst
 
     def importDroppedImageFiles(self, imageFiles):
