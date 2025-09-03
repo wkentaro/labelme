@@ -7,10 +7,10 @@ class ToolBar(QtWidgets.QToolBar):
         super(ToolBar, self).__init__(title)
         layout = self.layout()
         m = (0, 0, 0, 0)
-        layout.setSpacing(0)  # type: ignore[union-attr]
-        layout.setContentsMargins(*m)  # type: ignore[union-attr]
+        layout.setSpacing(0)
+        layout.setContentsMargins(*m)
         self.setContentsMargins(*m)
-        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)  # type: ignore[attr-defined]
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
 
     def addAction(self, action):  # type: ignore[override]
         if isinstance(action, QtWidgets.QWidgetAction):
@@ -21,6 +21,6 @@ class ToolBar(QtWidgets.QToolBar):
         self.addWidget(btn)
 
         # center align
-        for i in range(self.layout().count()):  # type: ignore[union-attr]
-            if isinstance(self.layout().itemAt(i).widget(), QtWidgets.QToolButton):  # type: ignore[union-attr]
-                self.layout().itemAt(i).setAlignment(QtCore.Qt.AlignCenter)  # type: ignore[attr-defined,union-attr]
+        for i in range(self.layout().count()):
+            if isinstance(self.layout().itemAt(i).widget(), QtWidgets.QToolButton):
+                self.layout().itemAt(i).setAlignment(QtCore.Qt.AlignCenter)

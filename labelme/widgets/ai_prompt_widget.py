@@ -6,15 +6,15 @@ class AiPromptWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.setLayout(QtWidgets.QVBoxLayout())
-        self.layout().setSpacing(0)  # type: ignore[union-attr]
+        self.layout().setSpacing(0)
 
         self._text_prompt_widget = _TextPromptWidget(on_submit=on_submit, parent=self)
         self._text_prompt_widget.setMaximumWidth(400)
-        self.layout().addWidget(self._text_prompt_widget)  # type: ignore[union-attr]
+        self.layout().addWidget(self._text_prompt_widget)
 
         self._nms_params_widget = _NmsParamsWidget(parent=self)
         self._nms_params_widget.setMaximumWidth(400)
-        self.layout().addWidget(self._nms_params_widget)  # type: ignore[union-attr]
+        self.layout().addWidget(self._nms_params_widget)
 
     def get_text_prompt(self) -> str:
         return self._text_prompt_widget.get_text_prompt()
@@ -31,18 +31,18 @@ class _TextPromptWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)  # type: ignore[union-attr]
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("AI Prompt"))
         self.layout().addWidget(label)
 
         self._texts_widget = QtWidgets.QLineEdit()
         self._texts_widget.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
-        self.layout().addWidget(self._texts_widget)  # type: ignore[union-attr]
+        self.layout().addWidget(self._texts_widget)
 
         submit_button = QtWidgets.QPushButton(text="Submit", parent=self)
         submit_button.clicked.connect(slot=on_submit)
-        self.layout().addWidget(submit_button)  # type: ignore[union-attr]
+        self.layout().addWidget(submit_button)
 
     def get_text_prompt(self) -> str:
         return self._texts_widget.text()
@@ -53,7 +53,7 @@ class _NmsParamsWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)  # type: ignore[union-attr]
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         self._score_threshold_widget: _ScoreThresholdWidget = _ScoreThresholdWidget(
             parent=parent
@@ -79,16 +79,16 @@ class _ScoreThresholdWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)  # type: ignore[union-attr]
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("Score Threshold"))
-        self.layout().addWidget(label)  # type: ignore[union-attr]
+        self.layout().addWidget(label)
 
         self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
         self._threshold_widget.setRange(0, 1)
         self._threshold_widget.setSingleStep(0.05)
         self._threshold_widget.setValue(self.default_score_threshold)
-        self.layout().addWidget(self._threshold_widget)  # type: ignore[union-attr]
+        self.layout().addWidget(self._threshold_widget)
 
     def get_value(self) -> float:
         return self._threshold_widget.value()
@@ -101,16 +101,16 @@ class _IouThresholdWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)  # type: ignore[union-attr]
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("IoU Threshold"))
-        self.layout().addWidget(label)  # type: ignore[union-attr]
+        self.layout().addWidget(label)
 
         self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
         self._threshold_widget.setRange(0, 1)
         self._threshold_widget.setSingleStep(0.05)
         self._threshold_widget.setValue(self.default_iou_threshold)
-        self.layout().addWidget(self._threshold_widget)  # type: ignore[union-attr]
+        self.layout().addWidget(self._threshold_widget)
 
     def get_value(self) -> float:
         return self._threshold_widget.value()

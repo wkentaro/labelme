@@ -17,11 +17,11 @@ from labelme.shape import Shape
 # - [maybe] Find optimal epsilon value.
 
 
-CURSOR_DEFAULT = QtCore.Qt.ArrowCursor  # type: ignore[attr-defined]
-CURSOR_POINT = QtCore.Qt.PointingHandCursor  # type: ignore[attr-defined]
-CURSOR_DRAW = QtCore.Qt.CrossCursor  # type: ignore[attr-defined]
-CURSOR_MOVE = QtCore.Qt.ClosedHandCursor  # type: ignore[attr-defined]
-CURSOR_GRAB = QtCore.Qt.OpenHandCursor  # type: ignore[attr-defined]
+CURSOR_DEFAULT = QtCore.Qt.ArrowCursor
+CURSOR_POINT = QtCore.Qt.PointingHandCursor
+CURSOR_DRAW = QtCore.Qt.CrossCursor
+CURSOR_MOVE = QtCore.Qt.ClosedHandCursor
+CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 
 MOVE_SPEED = 5.0
 
@@ -107,7 +107,7 @@ class Canvas(QtWidgets.QWidget):
         self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
         # Set widget options.
         self.setMouseTracking(True)
-        self.setFocusPolicy(QtCore.Qt.WheelFocus)  # type: ignore[attr-defined]
+        self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
         self._ai_model_name: str = "sam2:latest"
 
@@ -230,7 +230,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = pos
         self.restoreCursor()
 
-        is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier  # type: ignore[attr-defined]
+        is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
         # Polygon drawing.
         if self.drawing():
@@ -290,7 +290,7 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon copy moving.
-        if QtCore.Qt.RightButton & ev.buttons():  # type: ignore[attr-defined]
+        if QtCore.Qt.RightButton & ev.buttons():
             if self.selectedShapesCopy and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
@@ -301,7 +301,7 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon/Vertex moving.
-        if QtCore.Qt.LeftButton & ev.buttons():  # type: ignore[attr-defined]
+        if QtCore.Qt.LeftButton & ev.buttons():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
                 self.repaint()
@@ -399,9 +399,9 @@ class Canvas(QtWidgets.QWidget):
     def mousePressEvent(self, ev):
         pos: QtCore.QPointF = self.transformPos(ev.localPos())
 
-        is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier  # type: ignore[attr-defined]
+        is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
-        if ev.button() == QtCore.Qt.LeftButton:  # type: ignore[attr-defined]
+        if ev.button() == QtCore.Qt.LeftButton:
             if self.drawing():
                 if self.current:
                     # Add point to existing shape.
@@ -417,7 +417,7 @@ class Canvas(QtWidgets.QWidget):
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
-                        if int(ev.modifiers()) == QtCore.Qt.ControlModifier:  # type: ignore[attr-defined]
+                        if int(ev.modifiers()) == QtCore.Qt.ControlModifier:
                             self.finalise()
                     elif self.createMode in ["ai_polygon", "ai_mask"]:
                         self.current.addPoint(
@@ -426,7 +426,7 @@ class Canvas(QtWidgets.QWidget):
                         )
                         self.line.points[0] = self.current.points[-1]
                         self.line.point_labels[0] = self.current.point_labels[-1]
-                        if ev.modifiers() & QtCore.Qt.ControlModifier:  # type: ignore[attr-defined]
+                        if ev.modifiers() & QtCore.Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
@@ -440,7 +440,7 @@ class Canvas(QtWidgets.QWidget):
                         self.finalise()
                     elif (
                         self.createMode in ["ai_polygon", "ai_mask"]
-                        and ev.modifiers() & QtCore.Qt.ControlModifier  # type: ignore[attr-defined]
+                        and ev.modifiers() & QtCore.Qt.ControlModifier
                     ):
                         self.finalise()
                     else:
@@ -458,19 +458,19 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             elif self.editing():
-                if self.selectedEdge() and ev.modifiers() == QtCore.Qt.AltModifier:  # type: ignore[attr-defined]
+                if self.selectedEdge() and ev.modifiers() == QtCore.Qt.AltModifier:
                     self.addPointToEdge()
                 elif self.selectedVertex() and ev.modifiers() == (
-                    QtCore.Qt.AltModifier | QtCore.Qt.ShiftModifier  # type: ignore[attr-defined]
+                    QtCore.Qt.AltModifier | QtCore.Qt.ShiftModifier
                 ):
                     self.removeSelectedPoint()
 
-                group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier  # type: ignore[attr-defined]
+                group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
-        elif ev.button() == QtCore.Qt.RightButton and self.editing():  # type: ignore[attr-defined]
-            group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier  # type: ignore[attr-defined]
+        elif ev.button() == QtCore.Qt.RightButton and self.editing():
+            group_mode = int(ev.modifiers()) == QtCore.Qt.ControlModifier
             if not self.selectedShapes or (
                 self.hShape is not None and self.hShape not in self.selectedShapes
             ):
@@ -479,14 +479,14 @@ class Canvas(QtWidgets.QWidget):
             self.prevPoint = pos
 
     def mouseReleaseEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:  # type: ignore[attr-defined]
+        if ev.button() == QtCore.Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
             if not menu.exec_(self.mapToGlobal(ev.pos())) and self.selectedShapesCopy:
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
-        elif ev.button() == QtCore.Qt.LeftButton:  # type: ignore[attr-defined]
+        elif ev.button() == QtCore.Qt.LeftButton:
             if self.editing():
                 if (
                     self.hShape is not None
@@ -849,14 +849,14 @@ class Canvas(QtWidgets.QWidget):
     def wheelEvent(self, ev):
         mods = ev.modifiers()
         delta = ev.angleDelta()
-        if QtCore.Qt.ControlModifier == int(mods):  # type: ignore[attr-defined]
+        if QtCore.Qt.ControlModifier == int(mods):
             # with Ctrl/Command key
             # zoom
             self.zoomRequest.emit(delta.y(), ev.pos())
         else:
             # scroll
-            self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)  # type: ignore[attr-defined]
-            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)  # type: ignore[attr-defined]
+            self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
+            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
         ev.accept()
 
     def moveByKeyboard(self, offset):
@@ -869,22 +869,22 @@ class Canvas(QtWidgets.QWidget):
         modifiers = ev.modifiers()
         key = ev.key()
         if self.drawing():
-            if key == QtCore.Qt.Key_Escape and self.current:  # type: ignore[attr-defined]
+            if key == QtCore.Qt.Key_Escape and self.current:
                 self.current = None
                 self.drawingPolygon.emit(False)
                 self.update()
-            elif key == QtCore.Qt.Key_Return and self.canCloseShape():  # type: ignore[attr-defined]
+            elif key == QtCore.Qt.Key_Return and self.canCloseShape():
                 self.finalise()
-            elif modifiers == QtCore.Qt.AltModifier:  # type: ignore[attr-defined]
+            elif modifiers == QtCore.Qt.AltModifier:
                 self.snapping = False
         elif self.editing():
-            if key == QtCore.Qt.Key_Up:  # type: ignore[attr-defined]
+            if key == QtCore.Qt.Key_Up:
                 self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED))
-            elif key == QtCore.Qt.Key_Down:  # type: ignore[attr-defined]
+            elif key == QtCore.Qt.Key_Down:
                 self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED))
-            elif key == QtCore.Qt.Key_Left:  # type: ignore[attr-defined]
+            elif key == QtCore.Qt.Key_Left:
                 self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0))
-            elif key == QtCore.Qt.Key_Right:  # type: ignore[attr-defined]
+            elif key == QtCore.Qt.Key_Right:
                 self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
 
     def keyReleaseEvent(self, ev):

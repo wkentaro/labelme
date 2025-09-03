@@ -121,5 +121,4 @@ def masks_to_bboxes(masks):
         where = np.argwhere(mask)
         (y1, x1), (y2, x2) = where.min(0), where.max(0) + 1
         bboxes.append((y1, x1, y2, x2))
-    bboxes = np.asarray(bboxes, dtype=np.float32)  # type: ignore[assignment]
-    return bboxes
+    return np.asarray(bboxes, dtype=np.float32)
