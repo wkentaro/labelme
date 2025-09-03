@@ -277,6 +277,20 @@ class Shape(object):
                 color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
 
+            # added by jia.huang 2025-04-05
+            if self.label:
+                font = QtGui.QFont()
+                font.setPointSize(16)
+                font.setBold(True)
+                painter.setFont(font)
+                x_coords = [p.x() for p in self.points]
+                y_coords = [p.y() for p in self.points]
+                min_x = min(x_coords)
+                min_y = min(y_coords)
+                point = self._scale_point(QtCore.QPointF(min_x + 4, min_y + 16))
+                painter.drawText(point, self.label)
+            # added end
+
             pen.setColor(QtGui.QColor(255, 0, 0, 255))
             painter.setPen(pen)
             painter.drawPath(negative_vrtx_path)

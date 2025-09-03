@@ -1234,14 +1234,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape.description = description
 
             self._update_shape_color(shape)
+            # modified by jia.huang 2025.04.05
             if shape.group_id is None:
-                item.setText(
-                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                        html.escape(shape.label), *shape.fill_color.getRgb()[:3]
-                    )
-                )
+                item_text = shape.label
             else:
-                item.setText("{} ({})".format(shape.label, shape.group_id))
+                item_text = "{} ({})".format(shape.label, shape.group_id)
+            flags_part = ""
+            if shape.flags:
+                true_flags = [k for k, v in shape.flags.items() if v]
+                if true_flags:
+                    flags_part += f'<font color="gray">{', '.join(true_flags)}</font>'
+            color_part = '<font color="#{:02x}{:02x}{:02x}">●</font>'.format(*shape.fill_color.getRgb()[:3])
+            item.setText(' '.join([html.escape(item_text), color_part, flags_part]))
+            # modified end
             self.setDirty()
             if self.uniqLabelList.findItemByLabel(shape.label) is None:
                 item = self.uniqLabelList.createItemFromLabel(shape.label)
@@ -1307,11 +1312,15 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
-        label_list_item.setText(
-            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                html.escape(text), *shape.fill_color.getRgb()[:3]
-            )
-        )
+        # modified by jia.huang 2025.04.05
+        flags_part = ""
+        if shape.flags:
+            true_flags = [k for k, v in shape.flags.items() if v]
+            if true_flags:
+                flags_part += f'<font color="gray">{', '.join(true_flags)}</font>'
+        color_part = '<font color="#{:02x}{:02x}{:02x}">●</font>'.format(*shape.fill_color.getRgb()[:3])
+        label_list_item.setText(' '.join([html.escape(text), color_part, flags_part]))
+        # modified end
 
     def _update_shape_color(self, shape):
         r, g, b = self._get_rgb_by_label(shape.label)
