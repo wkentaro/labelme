@@ -94,7 +94,7 @@ def main():
         if out_file:
             print("Saved to: %s" % out_file)
     except RuntimeError as e:
-        sys.stderr.write(e.__str__() + "\n")
+        sys.stderr.write(f"{e}\n")
         sys.exit(1)
 
 
