@@ -12,7 +12,7 @@ import labelme.utils
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
-class Shape(object):
+class Shape:
     # Render handles as squares
     P_SQUARE = 0
 

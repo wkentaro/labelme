@@ -46,7 +46,7 @@ def main():
         logger.info(
             "Label names: {}".format(
                 [
-                    "{}:{}".format(label_value, label_names[label_value])
+                    f"{label_value}:{label_names[label_value]}"
                     for label_value in unique_label_values
                 ]
             )

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import functools
 import html
 import math

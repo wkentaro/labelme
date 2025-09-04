@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import html
 
 from PyQt5 import QtWidgets
