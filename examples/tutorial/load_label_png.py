@@ -28,7 +28,7 @@ def main():
 
     print("label: label_name")
     for label, label_name in zip(labels, label_names):
-        print("%d: %s" % (label, label_name))
+        print(f"{label}: {label_name}")
 
 
 if __name__ == "__main__":

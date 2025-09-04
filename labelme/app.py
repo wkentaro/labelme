@@ -1134,7 +1134,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i, f in enumerate(files):
             icon = utils.newIcon("labels")
             action = QtWidgets.QAction(
-                icon, "&%d %s" % (i + 1, QtCore.QFileInfo(f).fileName()), self
+                icon, f"&{i + 1} {QtCore.QFileInfo(f).fileName()}", self
             )
             action.triggered.connect(functools.partial(self.loadRecent, f))
             menu.addAction(action)
