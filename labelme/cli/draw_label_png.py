@@ -40,8 +40,8 @@ def main():
 
     unique_label_values = np.unique(label)
 
-    logger.info("Label image shape: {}".format(label.shape))
-    logger.info("Label values: {}".format(unique_label_values.tolist()))
+    logger.info(f"Label image shape: {label.shape}")
+    logger.info(f"Label values: {unique_label_values.tolist()}")
     if label_names is not None:
         logger.info(
             "Label names: {}".format(
@@ -74,7 +74,7 @@ def main():
             label_names=label_names,
             font_size=label.shape[1] // 30,
         )
-        plt.title("{}\n{}".format(args.label_png, args.image))
+        plt.title(f"{args.label_png}\n{args.image}")
         plt.imshow(label_viz_with_overlay)
 
     plt.tight_layout()

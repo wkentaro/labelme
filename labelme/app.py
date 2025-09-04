@@ -910,7 +910,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toolbar(self, title, actions=None):
         toolbar = ToolBar(title)
-        toolbar.setObjectName("%sToolBar" % title)
+        toolbar.setObjectName(f"{title}ToolBar")
         # toolbar.setOrientation(Qt.Vertical)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         if actions:
@@ -958,7 +958,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.save.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = "{} - {}*".format(title, self.filename)
+            title = f"{title} - {self.filename}*"
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -974,7 +974,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.createAiMaskMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = "{} - {}".format(title, self.filename)
+            title = f"{title} - {self.filename}"
         self.setWindowTitle(title)
 
         if self.hasLabelFile():
@@ -1242,7 +1242,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f'<font color="#{r:02x}{g:02x}{b:02x}">●</font>'
                 )
             else:
-                item.setText("{} ({})".format(shape.label, shape.group_id))
+                item.setText(f"{shape.label} ({shape.group_id})")
             self.setDirty()
             if self.uniqLabelList.findItemByLabel(shape.label) is None:
                 item = self.uniqLabelList.createItemFromLabel(shape.label)
@@ -1295,7 +1295,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if shape.group_id is None:
             text = shape.label
         else:
-            text = "{} ({})".format(shape.label, shape.group_id)
+            text = f"{shape.label} ({shape.group_id})"
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
         if self.uniqLabelList.findItemByLabel(shape.label) is None:
@@ -1672,7 +1672,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if image.isNull():
             formats = [
-                "*.{}".format(fmt.data().decode())
+                f"*.{fmt.data().decode()}"
                 for fmt in QtGui.QImageReader.supportedImageFormats()
             ]
             self.errorMessage(
@@ -1800,7 +1800,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def dragEnterEvent(self, event):
         extensions = [
-            ".%s" % fmt.data().decode().lower()
+            f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         if event.mimeData().hasUrls():
@@ -1881,11 +1881,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         path = osp.dirname(str(self.filename)) if self.filename else "."
         formats = [
-            "*.{}".format(fmt.data().decode())
+            f"*.{fmt.data().decode()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         filters = self.tr("Image & Label files (%s)") % " ".join(
-            formats + ["*%s" % LabelFile.suffix]
+            formats + [f"*{LabelFile.suffix}"]
         )
         fileDialog = FileDialogPreview(self)
         fileDialog.setFileMode(FileDialogPreview.ExistingFile)
@@ -2014,7 +2014,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_file = self.getLabelFile()
         if osp.exists(label_file):
             os.remove(label_file)
-            logger.info("Label file is removed: {}".format(label_file))
+            logger.info(f"Label file is removed: {label_file}")
 
             item = self.fileListWidget.currentItem()
             if item:
@@ -2061,7 +2061,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def errorMessage(self, title, message):
         return QtWidgets.QMessageBox.critical(
-            self, title, "<p><b>%s</b></p>%s" % (title, message)
+            self, title, f"<p><b>{title}</b></p>{message}"
         )
 
     def currentPath(self):
@@ -2137,7 +2137,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def importDroppedImageFiles(self, imageFiles):
         extensions = [
-            ".%s" % fmt.data().decode().lower()
+            f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
 
@@ -2196,7 +2196,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def scanAllImages(self, folderPath):
         extensions = [
-            ".%s" % fmt.data().decode().lower()
+            f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
 

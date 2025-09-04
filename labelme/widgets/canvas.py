@@ -52,7 +52,7 @@ class Canvas(QtWidgets.QWidget):
         self.double_click = kwargs.pop("double_click", "close")
         if self.double_click not in [None, "close"]:
             raise ValueError(
-                "Unexpected value for double_click event: {}".format(self.double_click)
+                f"Unexpected value for double_click event: {self.double_click}"
             )
         self.num_backups = kwargs.pop("num_backups", 10)
         self._crosshair = kwargs.pop(
@@ -133,7 +133,7 @@ class Canvas(QtWidgets.QWidget):
             "ai_polygon",
             "ai_mask",
         ]:
-            raise ValueError("Unsupported createMode: %s" % value)
+            raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
 
     def set_ai_model_name(self, model_name: str) -> None:
