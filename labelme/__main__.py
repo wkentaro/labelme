@@ -238,7 +238,7 @@ def main():
     translator = QtCore.QTranslator()
     translator.load(
         QtCore.QLocale.system().name(),
-        osp.dirname(osp.abspath(__file__)) + "/translate",
+        f"{osp.dirname(osp.abspath(__file__))}/translate",
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName(__appname__)
