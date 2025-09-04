@@ -1234,10 +1234,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self._update_shape_color(shape)
             if shape.group_id is None:
+                r, g, b = shape.fill_color.getRgb()[:3]
                 item.setText(
-                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                        html.escape(shape.label), *shape.fill_color.getRgb()[:3]
-                    )
+                    f"{html.escape(shape.label)} "
+                    f'<font color="#{r:02x}{g:02x}{b:02x}">●</font>'
                 )
             else:
                 item.setText(f"{shape.label} ({shape.group_id})")
@@ -1306,10 +1306,9 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
+        r, g, b = shape.fill_color.getRgb()[:3]
         label_list_item.setText(
-            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                html.escape(text), *shape.fill_color.getRgb()[:3]
-            )
+            f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
         )
 
     def _update_shape_color(self, shape):

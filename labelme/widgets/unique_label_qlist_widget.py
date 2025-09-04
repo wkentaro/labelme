@@ -31,10 +31,9 @@ class UniqueLabelQListWidget(EscapableQListWidget):
         if color is None:
             qlabel.setText(f"{label}")
         else:
+            r, g, b = color
             qlabel.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    html.escape(label), *color
-                )
+                f'{html.escape(label)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
             )
         qlabel.setAlignment(Qt.AlignBottom)
 
