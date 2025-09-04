@@ -499,9 +499,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     "{} and {} from the canvas."
                 )
             ).format(
-                utils.fmtShortcut(
-                    "{},{}".format(shortcuts["zoom_in"], shortcuts["zoom_out"])
-                ),
+                utils.fmtShortcut(f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"),
                 utils.fmtShortcut(self.tr("Ctrl+Wheel")),
             )
         )
@@ -912,7 +910,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toolbar(self, title, actions=None):
         toolbar = ToolBar(title)
-        toolbar.setObjectName("%sToolBar" % title)
+        toolbar.setObjectName(f"{title}ToolBar")
         # toolbar.setOrientation(Qt.Vertical)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         if actions:
@@ -950,7 +948,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
         if self._config["auto_save"] or self.actions.saveAuto.isChecked():  # type: ignore[attr-defined]
-            label_file = osp.splitext(self.imagePath)[0] + ".json"  # type: ignore[arg-type]
+            label_file = f"{osp.splitext(self.imagePath)[0]}.json"  # type: ignore[arg-type]
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self.output_dir, label_file_without_path)
@@ -960,7 +958,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.save.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = "{} - {}*".format(title, self.filename)
+            title = f"{title} - {self.filename}*"
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -976,7 +974,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.createAiMaskMode.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = "{} - {}".format(title, self.filename)
+            title = f"{title} - {self.filename}"
         self.setWindowTitle(title)
 
         if self.hasLabelFile():
@@ -1238,13 +1236,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self._update_shape_color(shape)
             if shape.group_id is None:
+                r, g, b = shape.fill_color.getRgb()[:3]
                 item.setText(
-                    '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                        html.escape(shape.label), *shape.fill_color.getRgb()[:3]
-                    )
+                    f"{html.escape(shape.label)} "
+                    f'<font color="#{r:02x}{g:02x}{b:02x}">●</font>'
                 )
             else:
-                item.setText("{} ({})".format(shape.label, shape.group_id))
+                item.setText(f"{shape.label} ({shape.group_id})")
             self.setDirty()
             if self.uniqLabelList.findItemByLabel(shape.label) is None:
                 item = self.uniqLabelList.createItemFromLabel(shape.label)
@@ -1297,7 +1295,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if shape.group_id is None:
             text = shape.label
         else:
-            text = "{} ({})".format(shape.label, shape.group_id)
+            text = f"{shape.label} ({shape.group_id})"
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
         if self.uniqLabelList.findItemByLabel(shape.label) is None:
@@ -1310,10 +1308,9 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
+        r, g, b = shape.fill_color.getRgb()[:3]
         label_list_item.setText(
-            '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                html.escape(text), *shape.fill_color.getRgb()[:3]
-            )
+            f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
         )
 
     def _update_shape_color(self, shape):
@@ -1643,7 +1640,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         # assumes same name, but json extension
         self.status(str(self.tr("Loading %s...")) % osp.basename(str(filename)))
-        label_file = osp.splitext(filename)[0] + ".json"
+        label_file = f"{osp.splitext(filename)[0]}.json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
             label_file = osp.join(self.output_dir, label_file_without_path)
@@ -1675,7 +1672,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if image.isNull():
             formats = [
-                "*.{}".format(fmt.data().decode())
+                f"*.{fmt.data().decode()}"
                 for fmt in QtGui.QImageReader.supportedImageFormats()
             ]
             self.errorMessage(
@@ -1803,7 +1800,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def dragEnterEvent(self, event):
         extensions = [
-            ".%s" % fmt.data().decode().lower()
+            f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         if event.mimeData().hasUrls():
@@ -1884,11 +1881,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         path = osp.dirname(str(self.filename)) if self.filename else "."
         formats = [
-            "*.{}".format(fmt.data().decode())
+            f"*.{fmt.data().decode()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
         filters = self.tr("Image & Label files (%s)") % " ".join(
-            formats + ["*%s" % LabelFile.suffix]
+            formats + [f"*{LabelFile.suffix}"]
         )
         fileDialog = FileDialogPreview(self)
         fileDialog.setFileMode(FileDialogPreview.ExistingFile)
@@ -2001,7 +1998,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.filename.lower().endswith(".json"):
             label_file = self.filename
         else:
-            label_file = osp.splitext(self.filename)[0] + ".json"
+            label_file = f"{osp.splitext(self.filename)[0]}.json"
 
         return label_file
 
@@ -2017,7 +2014,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_file = self.getLabelFile()
         if osp.exists(label_file):
             os.remove(label_file)
-            logger.info("Label file is removed: {}".format(label_file))
+            logger.info(f"Label file is removed: {label_file}")
 
             item = self.fileListWidget.currentItem()
             if item:
@@ -2064,7 +2061,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def errorMessage(self, title, message):
         return QtWidgets.QMessageBox.critical(
-            self, title, "<p><b>%s</b></p>%s" % (title, message)
+            self, title, f"<p><b>{title}</b></p>{message}"
         )
 
     def currentPath(self):
@@ -2140,7 +2137,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def importDroppedImageFiles(self, imageFiles):
         extensions = [
-            ".%s" % fmt.data().decode().lower()
+            f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
 
@@ -2148,7 +2145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for file in imageFiles:
             if file in self.imageList or not file.lower().endswith(tuple(extensions)):
                 continue
-            label_file = osp.splitext(file)[0] + ".json"
+            label_file = f"{osp.splitext(file)[0]}.json"
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self.output_dir, label_file_without_path)
@@ -2184,7 +2181,7 @@ class MainWindow(QtWidgets.QMainWindow):
             except re.error:
                 pass
         for filename in filenames:
-            label_file = osp.splitext(filename)[0] + ".json"
+            label_file = f"{osp.splitext(filename)[0]}.json"
             if self.output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self.output_dir, label_file_without_path)
@@ -2199,7 +2196,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def scanAllImages(self, folderPath):
         extensions = [
-            ".%s" % fmt.data().decode().lower()
+            f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
 

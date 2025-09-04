@@ -65,11 +65,11 @@ def main():
         label_file = labelme.LabelFile(filename=filename)
 
         base = osp.splitext(osp.basename(filename))[0]
-        out_img_file = osp.join(args.output_dir, "JPEGImages", base + ".jpg")
-        out_xml_file = osp.join(args.output_dir, "Annotations", base + ".xml")
+        out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
+        out_xml_file = osp.join(args.output_dir, "Annotations", f"{base}.xml")
         if not args.noviz:
             out_viz_file = osp.join(
-                args.output_dir, "AnnotationsVisualization", base + ".jpg"
+                args.output_dir, "AnnotationsVisualization", f"{base}.jpg"
             )
 
         img = labelme.utils.img_data_to_arr(label_file.imageData)
@@ -78,7 +78,7 @@ def main():
         maker = lxml.builder.ElementMaker()
         xml = maker.annotation(
             maker.folder(),
-            maker.filename(base + ".jpg"),
+            maker.filename(f"{base}.jpg"),
             maker.database(),  # e.g., The VOC2007 Database
             maker.annotation(),  # e.g., Pascal VOC2007
             maker.image(),  # e.g., flickr

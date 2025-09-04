@@ -83,31 +83,31 @@ def main():
         label_file = labelme.LabelFile(filename=filename)
 
         base = osp.splitext(osp.basename(filename))[0]
-        out_img_file = osp.join(args.output_dir, "JPEGImages", base + ".jpg")
-        out_clsp_file = osp.join(args.output_dir, "SegmentationClass", base + ".png")
+        out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
+        out_clsp_file = osp.join(args.output_dir, "SegmentationClass", f"{base}.png")
         if not args.nonpy:
             out_cls_file = osp.join(
-                args.output_dir, "SegmentationClassNpy", base + ".npy"
+                args.output_dir, "SegmentationClassNpy", f"{base}.npy"
             )
         if not args.noviz:
             out_clsv_file = osp.join(
                 args.output_dir,
                 "SegmentationClassVisualization",
-                base + ".jpg",
+                f"{base}.jpg",
             )
         if not args.noobject:
             out_insp_file = osp.join(
-                args.output_dir, "SegmentationObject", base + ".png"
+                args.output_dir, "SegmentationObject", f"{base}.png"
             )
             if not args.nonpy:
                 out_ins_file = osp.join(
-                    args.output_dir, "SegmentationObjectNpy", base + ".npy"
+                    args.output_dir, "SegmentationObjectNpy", f"{base}.npy"
                 )
             if not args.noviz:
                 out_insv_file = osp.join(
                     args.output_dir,
                     "SegmentationObjectVisualization",
-                    base + ".jpg",
+                    f"{base}.jpg",
                 )
 
         img = labelme.utils.img_data_to_arr(label_file.imageData)

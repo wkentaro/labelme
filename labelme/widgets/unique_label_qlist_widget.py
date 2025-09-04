@@ -22,7 +22,7 @@ class UniqueLabelQListWidget(EscapableQListWidget):
 
     def createItemFromLabel(self, label):
         if self.findItemByLabel(label):
-            raise ValueError("Item for label '{}' already exists".format(label))
+            raise ValueError(f"Item for label '{label}' already exists")
 
         item = QtWidgets.QListWidgetItem()
         item.setData(Qt.UserRole, label)
@@ -31,12 +31,11 @@ class UniqueLabelQListWidget(EscapableQListWidget):
     def setItemLabel(self, item, label, color=None):
         qlabel = QtWidgets.QLabel()
         if color is None:
-            qlabel.setText("{}".format(label))
+            qlabel.setText(f"{label}")
         else:
+            r, g, b = color
             qlabel.setText(
-                '{} <font color="#{:02x}{:02x}{:02x}">●</font>'.format(
-                    html.escape(label), *color
-                )
+                f'{html.escape(label)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
             )
         qlabel.setAlignment(Qt.AlignBottom)
 

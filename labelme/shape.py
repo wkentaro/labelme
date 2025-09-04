@@ -112,7 +112,7 @@ class Shape(object):
             "points",
             "mask",
         ]:
-            raise ValueError("Unexpected shape_type: {}".format(value))
+            raise ValueError(f"Unexpected shape_type: {value}")
         self._shape_type = value
 
     def close(self):

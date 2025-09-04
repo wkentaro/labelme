@@ -28,10 +28,12 @@ setup:  # Setup the development environment
 	$(call exec,uv sync --dev)
 
 format:  # Format code
+	$(call exec,uv run flynt .)
 	$(call exec,uv run ruff format)
 	$(call exec,uv run ruff check --fix)
 
 lint:
+	$(call exec,uv run flynt . --fail-on-change)
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 
