@@ -9,7 +9,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
     _base_value = 50
 
     def __init__(self, img, callback, parent=None):
-        super(BrightnessContrastDialog, self).__init__(parent)
+        super().__init__(parent)
         self.setModal(True)
         self.setWindowTitle("Brightness/Contrast")
 

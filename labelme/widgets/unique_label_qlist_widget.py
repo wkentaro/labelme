@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import html
 
 from PyQt5 import QtWidgets
@@ -10,7 +8,7 @@ from .escapable_qlist_widget import EscapableQListWidget
 
 class UniqueLabelQListWidget(EscapableQListWidget):
     def mousePressEvent(self, event):
-        super(UniqueLabelQListWidget, self).mousePressEvent(event)
+        super().mousePressEvent(event)
         if not self.indexAt(event.pos()).isValid():
             self.clearSelection()
 

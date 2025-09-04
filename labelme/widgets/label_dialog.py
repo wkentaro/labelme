@@ -20,7 +20,7 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
         if e.key() in [QtCore.Qt.Key_Up, QtCore.Qt.Key_Down]:
             self.list_widget.keyPressEvent(e)
         else:
-            super(LabelQLineEdit, self).keyPressEvent(e)
+            super().keyPressEvent(e)
 
 
 class LabelDialog(QtWidgets.QDialog):
@@ -39,7 +39,7 @@ class LabelDialog(QtWidgets.QDialog):
             fit_to_content = {"row": False, "column": True}
         self._fit_to_content = fit_to_content
 
-        super(LabelDialog, self).__init__(parent)
+        super().__init__(parent)
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
         self.edit.setValidator(labelme.utils.labelValidator())

@@ -458,18 +458,6 @@ wheels = [
 ]
 
 [[package]]
-name = "flynt"
-version = "1.0.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "tomli", marker = "python_full_version < '3.11'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/23/ea/be0bd620182b18af37cc784c6f0e1766246982084776702cd1b5649b6885/flynt-1.0.6.tar.gz", hash = "sha256:471b7ff00756678e2912d4261dcbcd8fc1395129b66bf6977f88a3b3ad220c90", size = 25907, upload-time = "2025-07-29T06:12:46.808Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/80/14dc476cf6b6897a613f242beda253ba380f0e25d6355cb299e6b95f2aee/flynt-1.0.6-py3-none-any.whl", hash = "sha256:4e837c9597036b634a347855a89acf1483c4f8b73daa82c49372b10b6e1d1778", size = 36663, upload-time = "2025-07-29T06:12:45.386Z" },
-]
-
-[[package]]
 name = "fonttools"
 version = "4.56.0"
 source = { registry = "https://pypi.org/simple" }
@@ -924,7 +912,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "flynt" },
     { name = "mypy" },
     { name = "pyqt5-stubs" },
     { name = "pytest" },
@@ -953,7 +940,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "flynt", specifier = ">=1.0.6" },
     { name = "mypy", specifier = ">=1.15.0" },
     { name = "pyqt5-stubs", specifier = ">=5.15.6.0" },
     { name = "pytest", specifier = ">=8.3.4" },
