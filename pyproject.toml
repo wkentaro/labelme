@@ -44,7 +44,6 @@ fragments = [{ path = "README.md" }]
 
 [dependency-groups]
 dev = [
-  "flynt>=1.0.6",
   "mypy>=1.15.0",
   "pyqt5-stubs>=5.15.6.0",
   "pytest>=8.3.4",
