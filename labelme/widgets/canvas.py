@@ -68,7 +68,7 @@ class Canvas(QtWidgets.QWidget):
                 "ai_mask": False,
             },
         )
-        super(Canvas, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT
         self.shapes = []
@@ -655,7 +655,7 @@ class Canvas(QtWidgets.QWidget):
 
     def paintEvent(self, event: QtGui.QPaintEvent) -> None:
         if not self.pixmap:
-            return super(Canvas, self).paintEvent(event)
+            return super().paintEvent(event)
 
         p = self._painter
         p.begin(self)
@@ -745,7 +745,7 @@ class Canvas(QtWidgets.QWidget):
 
     def offsetToCenter(self) -> QtCore.QPointF:
         s = self.scale
-        area = super(Canvas, self).size()
+        area = super().size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
@@ -844,7 +844,7 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self):
         if self.pixmap:
             return self.scale * self.pixmap.size()
-        return super(Canvas, self).minimumSizeHint()
+        return super().minimumSizeHint()
 
     def wheelEvent(self, ev):
         mods = ev.modifiers()

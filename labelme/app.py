@@ -91,7 +91,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Set point size from config file
         Shape.point_size = self._config["shape"]["point_size"]
 
-        super(MainWindow, self).__init__()
+        super().__init__()
         self.setWindowTitle(__appname__)
 
         # Whether we need to save or not.
@@ -1750,7 +1750,7 @@ class MainWindow(QtWidgets.QMainWindow):
             and self.zoomMode != self.MANUAL_ZOOM
         ):
             self.adjustScale()
-        super(MainWindow, self).resizeEvent(event)
+        super().resizeEvent(event)
 
     def paintCanvas(self):
         assert not self.image.isNull(), "cannot paint null image"
