@@ -17,6 +17,16 @@ jobs:
     - run: make setup
     - run: make check
 
+    - name: check translation files are up-to-date
+      run: |
+        pylupdate5 labelme/*.py labelme/widgets/*.py -ts labelme/translate/zh_CN.ts
+        git diff --exit-code labelme/translate/zh_CN.ts
+
+        sudo apt-get update
+        sudo apt-get install -y qttools5-dev
+        lrelease labelme/translate/zh_CN.ts -qm labelme/translate/zh_CN.qm
+        git diff --exit-code labelme/translate/zh_CN.qm
+
   build:
 
     runs-on: ${{ matrix.os }}
