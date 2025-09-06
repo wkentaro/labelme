@@ -324,8 +324,8 @@ class Canvas(QtWidgets.QWidget):
             index = shape.nearestVertex(pos, self.epsilon)
             index_edge = shape.nearestEdge(pos, self.epsilon)
             if index is not None:
-                if self.selectedVertex():
-                    self.hShape.highlightClear()  # type: ignore[union-attr]
+                if self.selectedVertex() and self.hShape:
+                    self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex = index
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge
@@ -342,8 +342,8 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
             elif index_edge is not None and shape.canAddPoint():
-                if self.selectedVertex():
-                    self.hShape.highlightClear()  # type: ignore[union-attr]
+                if self.selectedVertex() and self.hShape:
+                    self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex
                 self.hVertex = None
                 self.prevhShape = self.hShape = shape
@@ -354,8 +354,8 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
             elif shape.containsPoint(pos):
-                if self.selectedVertex():
-                    self.hShape.highlightClear()  # type: ignore[union-attr]
+                if self.selectedVertex() and self.hShape:
+                    self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex
                 self.hVertex = None
                 self.prevhShape = self.hShape = shape
@@ -555,8 +555,8 @@ class Canvas(QtWidgets.QWidget):
     def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
         if self.selectedVertex():  # A vertex is marked for selection.
-            index, shape = self.hVertex, self.hShape
-            shape.highlightVertex(index, shape.MOVE_VERTEX)  # type: ignore[union-attr]
+            if shape := self.hShape:
+                shape.highlightVertex(self.hVertex, Shape.MOVE_VERTEX)
         else:
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
@@ -596,11 +596,13 @@ class Canvas(QtWidgets.QWidget):
         self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
 
     def boundedMoveVertex(self, pos):
-        index, shape = self.hVertex, self.hShape
-        point = shape[index]  # type: ignore[index]
-        if self.outOfPixmap(pos):
-            pos = self.intersectionPoint(point, pos)
-        shape.moveVertexBy(index, pos - point)  # type: ignore[union-attr]
+        if shape := self.hShape:
+            index = self.hVertex
+            assert index is not None
+            point = shape[index]
+            if self.outOfPixmap(pos):
+                pos = self.intersectionPoint(point, pos)
+            shape.moveVertexBy(index, pos - point)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
@@ -965,7 +967,7 @@ class Canvas(QtWidgets.QWidget):
 
     def resetState(self):
         self.restoreCursor()
-        self.pixmap = None  # type: ignore[assignment]
+        self.pixmap = QtGui.QPixmap()
         self.shapesBackups = []
         self.update()
 

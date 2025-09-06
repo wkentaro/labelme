@@ -129,24 +129,22 @@ class LabelDialog(QtWidgets.QDialog):
             self.accept()
             return
 
+        if self._get_stripped_text():
+            self.accept()
+
+    def _get_stripped_text(self) -> str:
         text = self.edit.text()
         if hasattr(text, "strip"):
-            text = text.strip()
-        else:
-            text = text.trimmed()  # type: ignore[attr-defined]
-        if text:
-            self.accept()
+            return str(text.strip())
+        if hasattr(text, "trimmed"):
+            return str(text.trimmed())
+        return str(text)
 
     def labelDoubleClicked(self, item):
         self.validate()
 
     def postProcess(self):
-        text = self.edit.text()
-        if hasattr(text, "strip"):
-            text = text.strip()
-        else:
-            text = text.trimmed()  # type: ignore[attr-defined]
-        self.edit.setText(text)
+        self.edit.setText(self._get_stripped_text())
 
     def updateFlags(self, label_new):
         # keep state of shared flags
@@ -236,8 +234,8 @@ class LabelDialog(QtWidgets.QDialog):
                 logger.warning(f"Label list has duplicate '{text}'")
             self.labelList.setCurrentItem(items[0])
             row = self.labelList.row(items[0])
-            self.edit.completer().setCurrentRow(row)  # type: ignore[union-attr]
-        self.edit.setFocus(QtCore.Qt.PopupFocusReason)  # type: ignore[attr-defined]
+            self.edit.completer().setCurrentRow(row)
+        self.edit.setFocus(QtCore.Qt.PopupFocusReason)
         if move:
             self.move(QtGui.QCursor.pos())
         if self.exec_():

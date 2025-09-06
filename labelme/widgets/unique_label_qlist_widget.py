@@ -15,7 +15,7 @@ class UniqueLabelQListWidget(EscapableQListWidget):
     def findItemByLabel(self, label):
         for row in range(self.count()):
             item = self.item(row)
-            if item.data(Qt.UserRole) == label:  # type: ignore[attr-defined,union-attr]
+            if item and item.data(Qt.UserRole) == label:
                 return item
 
     def createItemFromLabel(self, label):
