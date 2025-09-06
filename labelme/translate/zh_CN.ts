@@ -179,7 +179,7 @@
     </message>
     <message>
         <location filename="../app.py" line="315"/>
-        <source>Create Polygons</source>
+        <source>Create Shapes</source>
         <translation>创建多边形</translation>
     </message>
     <message>
@@ -259,52 +259,52 @@
     </message>
     <message>
         <location filename="../app.py" line="393"/>
-        <source>Edit Polygons</source>
+        <source>Edit Shapes</source>
         <translation>编辑多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="393"/>
-        <source>Move and edit the selected polygons</source>
+        <source>Move and edit the selected shapes</source>
         <translation>移动、编辑选中的多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="402"/>
-        <source>Delete Polygons</source>
+        <source>Delete Shapes</source>
         <translation>删除多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="402"/>
-        <source>Delete the selected polygons</source>
+        <source>Delete the selected shapes</source>
         <translation>删除选中的多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="410"/>
-        <source>Duplicate Polygons</source>
+        <source>Duplicate Shapes</source>
         <translation>复制多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="410"/>
-        <source>Create a duplicate of the selected polygons</source>
+        <source>Create a duplicate of the selected shapes</source>
         <translation>为选中的多边形创建副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="418"/>
-        <source>Copy Polygons</source>
+        <source>Copy Shapes</source>
         <translation>复制多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="418"/>
-        <source>Copy selected polygons to clipboard</source>
+        <source>Copy selected shapes to clipboard</source>
         <translation>复制选中多边形到剪贴板</translation>
     </message>
     <message>
         <location filename="../app.py" line="426"/>
-        <source>Paste Polygons</source>
+        <source>Paste Shapes</source>
         <translation>粘贴多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="426"/>
-        <source>Paste copied polygons</source>
+        <source>Paste copied shape(s)</source>
         <translation>粘贴已复制的多边形</translation>
     </message>
     <message>
@@ -341,34 +341,34 @@
     <message>
         <location filename="../app.py" line="460"/>
         <source>&amp;Hide
-Polygons</source>
+Shapes</source>
         <translation>隐藏多边形(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="460"/>
-        <source>Hide all polygons</source>
+        <source>Hide all shapes</source>
         <translation>隐藏所有多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="468"/>
         <source>&amp;Show
-Polygons</source>
+Shapes</source>
         <translation>显示多边形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="468"/>
-        <source>Show all polygons</source>
+        <source>Show all shapes</source>
         <translation>显示所有多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="476"/>
         <source>&amp;Toggle
-Polygons</source>
+Shapes</source>
         <translation>开关多边形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="476"/>
-        <source>Toggle all polygons</source>
+        <source>Toggle all shapes</source>
         <translation>开关所有多边形</translation>
     </message>
     <message>
@@ -633,7 +633,7 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="1984"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
         <translation>即将永久性删除多边形{}。还要继续吗?</translation>
     </message>
     <message>
