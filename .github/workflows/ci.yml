@@ -23,11 +23,8 @@ jobs:
         version: 1.0
     - name: check translation files are up-to-date
       run: |
-        pylupdate5 labelme/*.py labelme/widgets/*.py -ts labelme/translate/zh_CN.ts
-        git diff --exit-code labelme/translate/zh_CN.ts
-        #
-        lrelease labelme/translate/zh_CN.ts -qm labelme/translate/zh_CN.qm
-        git diff --exit-code labelme/translate/zh_CN.qm
+        make update-translate
+        git diff --exit-code labelme/translate/
 
   build:
 
