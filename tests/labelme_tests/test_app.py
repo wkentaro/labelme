@@ -8,17 +8,15 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
-import labelme.app
-import labelme.config
-import labelme.testing
+from labelme.app import MainWindow
+from labelme.config import get_default_config
+from labelme.testing import assert_labelfile_sanity
 
 here = osp.dirname(osp.abspath(__file__))
 data_dir = osp.join(here, "data")
 
 
-def _show_window_and_wait_for_imagedata(
-    qtbot: QtBot, win: labelme.app.MainWindow
-) -> None:
+def _show_window_and_wait_for_imagedata(qtbot: QtBot, win) -> None:
     win.show()
 
     def check_imageData():
@@ -30,7 +28,7 @@ def _show_window_and_wait_for_imagedata(
 
 @pytest.mark.gui
 def test_MainWindow_open(qtbot: QtBot) -> None:
-    win: labelme.app.MainWindow = labelme.app.MainWindow()
+    win = MainWindow()
     qtbot.addWidget(win)
     win.show()
     win.close()
@@ -39,7 +37,7 @@ def test_MainWindow_open(qtbot: QtBot) -> None:
 @pytest.mark.gui
 def test_MainWindow_open_img(qtbot: QtBot) -> None:
     img_file: str = osp.join(data_dir, "raw/2011_000003.jpg")
-    win: labelme.app.MainWindow = labelme.app.MainWindow(filename=img_file)
+    win = MainWindow(filename=img_file)
     qtbot.addWidget(win)
     _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     win.close()
@@ -53,9 +51,9 @@ def test_MainWindow_open_json(qtbot: QtBot):
     ]
     json_file: str
     for json_file in json_files:
-        labelme.testing.assert_labelfile_sanity(json_file)
+        assert_labelfile_sanity(json_file)
 
-        win: labelme.app.MainWindow = labelme.app.MainWindow(filename=json_file)
+        win = MainWindow(filename=json_file)
         qtbot.addWidget(win)
         _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
         win.close()
@@ -64,7 +62,7 @@ def test_MainWindow_open_json(qtbot: QtBot):
 @pytest.mark.gui
 def test_MainWindow_openNextAndPrevImg(qtbot: QtBot) -> None:
     directory: str = osp.join(data_dir, "raw")
-    win: labelme.app.MainWindow = labelme.app.MainWindow(filename=directory)
+    win = MainWindow(filename=directory)
     qtbot.addWidget(win)
     _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
@@ -90,9 +88,8 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot) -> None:
     input_file: str = osp.join(data_dir, "raw/2011_000003.jpg")
     out_file: str = osp.join(tmp_dir, "2011_000003.json")
 
-    config: dict = labelme.config.get_default_config()
-    win: labelme.app.MainWindow = labelme.app.MainWindow(
-        config=config,
+    win = MainWindow(
+        config=get_default_config(),
         filename=input_file,
         output_file=out_file,
     )
@@ -137,5 +134,5 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot) -> None:
 
     win.saveFile()
 
-    labelme.testing.assert_labelfile_sanity(out_file)
+    assert_labelfile_sanity(out_file)
     shutil.rmtree(tmp_dir)

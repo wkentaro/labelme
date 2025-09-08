@@ -1,8 +1,8 @@
 import json
 import os.path as osp
 
-from labelme.utils import image as image_module
-from labelme.utils import shape as shape_module
+from labelme.utils.image import img_b64_to_arr
+from labelme.utils.shape import shapes_to_label
 
 here = osp.dirname(osp.abspath(__file__))
 data_dir = osp.join(here, "../data")
@@ -13,7 +13,7 @@ def get_img_and_data():
     with open(json_file) as f:
         data = json.load(f)
     img_b64 = data["imageData"]
-    img = image_module.img_b64_to_arr(img_b64)
+    img = img_b64_to_arr(img_b64)
     return img, data
 
 
@@ -31,7 +31,5 @@ def get_img_and_lbl():
     for label_name, label_value in label_name_to_value.items():
         label_names[label_value] = label_name
 
-    lbl, _ = shape_module.shapes_to_label(
-        img.shape, data["shapes"], label_name_to_value
-    )
+    lbl, _ = shapes_to_label(img.shape, data["shapes"], label_name_to_value)
     return img, lbl, label_names
