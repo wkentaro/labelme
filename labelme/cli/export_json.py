@@ -8,8 +8,10 @@ import numpy.typing as npt
 import PIL.Image
 from loguru import logger
 
-from labelme import utils
 from labelme._label_file import LabelFile
+from labelme.utils.image import img_data_to_arr
+from labelme.utils.labels import lblsave
+from labelme.utils.shape import shapes_to_label
 
 
 def main():
@@ -30,7 +32,7 @@ def main():
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
-    image: npt.NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
+    image: npt.NDArray[np.uint8] = img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):
@@ -40,7 +42,7 @@ def main():
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-    lbl, _ = utils.shapes_to_label(image.shape, label_file.shapes, label_name_to_value)
+    lbl, _ = shapes_to_label(image.shape, label_file.shapes, label_name_to_value)
 
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
@@ -51,7 +53,7 @@ def main():
     )
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
-    utils.lblsave(osp.join(out_dir, "label.png"), lbl)
+    lblsave(osp.join(out_dir, "label.png"), lbl)
     PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, "label_viz.png"))
 
     with open(osp.join(out_dir, "label_names.txt"), "w") as f:

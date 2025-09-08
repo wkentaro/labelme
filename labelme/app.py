@@ -23,6 +23,13 @@ from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
 from labelme.config import get_config
 from labelme.shape import Shape
+from labelme.utils.image import img_arr_to_b64
+from labelme.utils.image import img_data_to_pil
+from labelme.utils.image import img_qt_to_arr
+from labelme.utils.qt import addActions
+from labelme.utils.qt import fmtShortcut
+from labelme.utils.qt import newAction
+from labelme.utils.qt import newIcon
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
@@ -33,8 +40,6 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
-
-from . import utils
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -210,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
         # Actions
-        action = functools.partial(utils.newAction, self)
+        action = functools.partial(newAction, self)
         shortcuts = self._config["shortcuts"]
         quit = action(
             self.tr("&Quit"),
@@ -497,8 +502,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     "{} and {} from the canvas."
                 )
             ).format(
-                utils.fmtShortcut(f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"),
-                utils.fmtShortcut(self.tr("Ctrl+Wheel")),
+                fmtShortcut(f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"),
+                fmtShortcut(self.tr("Ctrl+Wheel")),
             )
         )
         self.zoomWidget.setEnabled(False)
@@ -602,7 +607,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Label list context menu.
         labelMenu = QtWidgets.QMenu()
-        utils.addActions(labelMenu, (edit, delete))
+        addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
         self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
 
@@ -709,7 +714,7 @@ class MainWindow(QtWidgets.QMainWindow):
             labelList=labelMenu,
         )
 
-        utils.addActions(
+        addActions(
             self.menus.file,
             (
                 open_,
@@ -728,8 +733,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 quit,
             ),
         )
-        utils.addActions(self.menus.help, (help,))
-        utils.addActions(
+        addActions(self.menus.help, (help,))
+        addActions(
             self.menus.view,
             (
                 self.flag_dock.toggleViewAction(),
@@ -758,8 +763,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        utils.addActions(self.canvas.menus[0], self.actions.menu)
-        utils.addActions(
+        addActions(self.canvas.menus[0], self.actions.menu)
+        addActions(
             self.canvas.menus[1],
             (
                 action("&Copy here", self.copyShape),
@@ -903,7 +908,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
-            utils.addActions(menu, actions)
+            addActions(menu, actions)
         return menu
 
     def toolbar(self, title, actions=None):
@@ -912,7 +917,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # toolbar.setOrientation(Qt.Vertical)
         toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         if actions:
-            utils.addActions(toolbar, actions)
+            addActions(toolbar, actions)
         self.addToolBar(Qt.TopToolBarArea, toolbar)
         return toolbar
 
@@ -924,9 +929,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def populateModeActions(self):
         tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
-        utils.addActions(self.tools, tool)
+        addActions(self.tools, tool)
         self.canvas.menus[0].clear()
-        utils.addActions(self.canvas.menus[0], menu)
+        addActions(self.canvas.menus[0], menu)
         self.menus.edit.clear()
         actions = (
             self.actions.createMode,
@@ -939,7 +944,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.createAiMaskMode,
             self.actions.editMode,
         )
-        utils.addActions(self.menus.edit, actions + self.actions.editMenu)
+        addActions(self.menus.edit, actions + self.actions.editMenu)
 
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
@@ -997,7 +1002,7 @@ class MainWindow(QtWidgets.QMainWindow):
         texts = self._ai_prompt_widget.get_text_prompt().split(",")
         boxes, scores, labels = bbox_from_text.get_bboxes_from_texts(
             model="yoloworld",
-            image=utils.img_qt_to_arr(self.image)[:, :, :3],
+            image=img_qt_to_arr(self.image)[:, :, :3],
             texts=texts,
         )
 
@@ -1132,7 +1137,7 @@ class MainWindow(QtWidgets.QMainWindow):
         menu.clear()
         files = [f for f in self.recentFiles if f != current and exists(f)]
         for i, f in enumerate(files):
-            icon = utils.newIcon("labels")
+            icon = newIcon("labels")
             action = QtWidgets.QAction(
                 icon, f"&{i + 1} {QtCore.QFileInfo(f).fileName()}", self
             )
@@ -1405,7 +1410,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     flags=s.flags,
                     mask=None
                     if s.mask is None
-                    else utils.img_arr_to_b64(s.mask.astype(np.uint8)),
+                    else img_arr_to_b64(s.mask.astype(np.uint8)),
                 )
             )
             return data
@@ -1591,7 +1596,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def brightnessContrast(self, value):
         dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData),
+            img_data_to_pil(self.imageData),
             self.onNewBrightnessContrast,
             parent=self,
         )
@@ -1714,7 +1719,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
         # set brightness contrast values
         dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData),
+            img_data_to_pil(self.imageData),
             self.onNewBrightnessContrast,
             parent=self,
         )

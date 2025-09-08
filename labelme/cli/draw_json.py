@@ -5,8 +5,9 @@ import argparse
 import imgviz
 import matplotlib.pyplot as plt
 
-from labelme import utils
 from labelme._label_file import LabelFile
+from labelme.utils.image import img_data_to_arr
+from labelme.utils.shape import shapes_to_label
 
 
 def main():
@@ -15,7 +16,7 @@ def main():
     args = parser.parse_args()
 
     label_file = LabelFile(args.json_file)
-    img = utils.img_data_to_arr(label_file.imageData)
+    img = img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):
@@ -25,7 +26,7 @@ def main():
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-    lbl, _ = utils.shapes_to_label(img.shape, label_file.shapes, label_name_to_value)
+    lbl, _ = shapes_to_label(img.shape, label_file.shapes, label_name_to_value)
 
     label_names = [None] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():
