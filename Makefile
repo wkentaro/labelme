@@ -45,3 +45,7 @@ test:  # Run tests
 
 build:  # Build the package
 	$(call exec,uv build)
+
+update-translate:
+	pylupdate5 labelme/*.py labelme/widgets/*.py -ts labelme/translate/zh_CN.ts
+	lrelease labelme/translate/zh_CN.ts -qm labelme/translate/zh_CN.qm
