@@ -30,16 +30,16 @@ from labelme.utils.qt import addActions
 from labelme.utils.qt import fmtShortcut
 from labelme.utils.qt import newAction
 from labelme.utils.qt import newIcon
-from labelme.widgets import AiPromptWidget
-from labelme.widgets import BrightnessContrastDialog
-from labelme.widgets import Canvas
-from labelme.widgets import FileDialogPreview
-from labelme.widgets import LabelDialog
-from labelme.widgets import LabelListWidget
-from labelme.widgets import LabelListWidgetItem
-from labelme.widgets import ToolBar
-from labelme.widgets import UniqueLabelQListWidget
-from labelme.widgets import ZoomWidget
+from labelme.widgets.ai_prompt_widget import AiPromptWidget
+from labelme.widgets.brightness_contrast_dialog import BrightnessContrastDialog
+from labelme.widgets.canvas import Canvas
+from labelme.widgets.file_dialog_preview import FileDialogPreview
+from labelme.widgets.label_dialog import LabelDialog
+from labelme.widgets.label_list_widget import LabelListWidget
+from labelme.widgets.label_list_widget import LabelListWidgetItem
+from labelme.widgets.tool_bar import ToolBar
+from labelme.widgets.unique_label_qlist_widget import UniqueLabelQListWidget
+from labelme.widgets.zoom_widget import ZoomWidget
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
