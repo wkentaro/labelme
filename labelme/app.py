@@ -1,9 +1,13 @@
 import functools
 import html
+import json
 import math
 import os
 import os.path as osp
 import re
+import shutil
+import subprocess
+import tempfile
 import types
 import webbrowser
 
@@ -299,6 +303,24 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Save image data in label file"),
             checkable=True,
             checked=self._config["store_data"],
+        )
+
+        exportYOLO = action(
+            self.tr("Export to &YOLO Format"),
+            self.exportToYOLO,
+            None,  # No shortcut for now
+            "export",
+            self.tr("Export annotations to YOLO format"),
+            enabled=False,
+        )
+
+        importYOLO = action(
+            self.tr("Import from &YOLO Format"),
+            self.importFromYOLO,
+            None,  # No shortcut for now
+            "import",
+            self.tr("Import YOLO format annotations"),
+            enabled=True,
         )
 
         close = action(
@@ -613,6 +635,8 @@ class MainWindow(QtWidgets.QMainWindow):
             changeOutputDir=changeOutputDir,
             save=save,
             saveAs=saveAs,
+            exportYOLO=exportYOLO,
+            importYOLO=importYOLO,
             open=open_,
             close=close,
             deleteFile=deleteFile,
@@ -695,7 +719,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 editMode,
                 brightnessContrast,
             ),
-            onShapesPresent=(saveAs, hideAll, showAll, toggleAll),
+            onShapesPresent=(saveAs, exportYOLO, hideAll, showAll, toggleAll),
         )
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
@@ -722,6 +746,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 saveAuto,
                 changeOutputDir,
                 saveWithImageData,
+                None,
+                exportYOLO,
+                importYOLO,
+                None,
                 close,
                 deleteFile,
                 None,
@@ -1983,6 +2011,181 @@ class MainWindow(QtWidgets.QMainWindow):
             self.addRecentFile(filename)
             self.setClean()
 
+    def exportToYOLO(self):
+        """Export current image annotations to YOLO format."""
+        if not self.filename:
+            self.errorMessage(
+                self.tr("Error"),
+                self.tr("Please save the current file first.")
+            )
+            return
+
+        if not self.filename.lower().endswith('.json'):
+            self.errorMessage(
+                self.tr("Error"),
+                self.tr("Please save as JSON format first.")
+            )
+            return
+
+        # Get output directory
+        output_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Select YOLO Export Directory"),
+            self.currentPath()
+        )
+        if not output_dir:
+            return
+        
+        try:
+            # Use simple built-in converter
+            success = self._convert_labelme_to_yolo(self.filename, output_dir)
+            
+            if success:
+                self.informationMessage(
+                    self.tr("Export Complete"),
+                    self.tr("Successfully exported current image to YOLO format:\n%s") % output_dir
+                )
+            else:
+                self.errorMessage(
+                    self.tr("Export Failed"),
+                    self.tr("Failed to convert annotations. Please check that the file contains valid annotations.")
+                )
+            
+        except Exception as e:
+            self.errorMessage(
+                self.tr("Export Error"),
+                self.tr("An error occurred during export:\n%s") % str(e)
+            )
+
+    def _convert_labelme_to_yolo(self, json_path: str, output_dir: str) -> bool:
+        """Convert a single LabelMe JSON file to YOLO format.
+        
+        Args:
+            json_path: Path to LabelMe JSON file
+            output_dir: Output directory for YOLO files
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Read JSON file
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Get image dimensions
+            image_height = data.get('imageHeight', 0)
+            image_width = data.get('imageWidth', 0)
+            
+            if image_height == 0 or image_width == 0:
+                logger.warning("Invalid image dimensions in JSON file")
+                return False
+            
+            # Extract shapes and convert to YOLO format
+            yolo_annotations = []
+            class_names = set()
+            
+            for shape in data.get('shapes', []):
+                label = shape.get('label', '')
+                shape_type = shape.get('shape_type', '')
+                points = shape.get('points', [])
+                
+                if shape_type == 'rectangle' and len(points) == 2:
+                    # Convert rectangle to YOLO format
+                    x1, y1 = points[0]
+                    x2, y2 = points[1]
+                    
+                    # Calculate center, width, height (normalized)
+                    center_x = (x1 + x2) / 2.0 / image_width
+                    center_y = (y1 + y2) / 2.0 / image_height
+                    width = abs(x2 - x1) / image_width
+                    height = abs(y2 - y1) / image_height
+                    
+                    class_names.add(label)
+                    class_id = sorted(class_names).index(label)
+                    
+                    yolo_annotations.append(f"{class_id} {center_x:.6f} {center_y:.6f} {width:.6f} {height:.6f}")
+                    
+                elif shape_type == 'polygon' and len(points) >= 3:
+                    # Convert polygon to YOLO segmentation format
+                    normalized_points = []
+                    for x, y in points:
+                        normalized_points.extend([x / image_width, y / image_height])
+                    
+                    class_names.add(label)
+                    class_id = sorted(class_names).index(label)
+                    
+                    points_str = ' '.join([f"{p:.6f}" for p in normalized_points])
+                    yolo_annotations.append(f"{class_id} {points_str}")
+            
+            # Create output files
+            base_name = osp.splitext(osp.basename(json_path))[0]
+            
+            # Write YOLO annotation file
+            txt_path = osp.join(output_dir, f"{base_name}.txt")
+            with open(txt_path, 'w', encoding='utf-8') as f:
+                for annotation in yolo_annotations:
+                    f.write(annotation + '\n')
+            
+            # Write classes file
+            classes_path = osp.join(output_dir, "classes.txt")
+            with open(classes_path, 'w', encoding='utf-8') as f:
+                for class_name in sorted(class_names):
+                    f.write(class_name + '\n')
+            
+            logger.info(f"Converted {len(yolo_annotations)} annotations to YOLO format")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error converting {json_path}: {e}")
+            return False
+
+    def importFromYOLO(self):
+        """Import YOLO format annotations."""
+        # Get YOLO dataset directory
+        yolo_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Select YOLO Dataset Directory"),
+            self.currentPath()
+        )
+        if not yolo_dir:
+            return
+
+        # Get output directory for LabelMe files
+        output_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Select LabelMe Output Directory"),
+            self.currentPath()
+        )
+        if not output_dir:
+            return
+
+        try:
+            # Use yolo2labelme module directly
+            from yolo2labelme import yolo2labelme
+            
+            # Call the conversion function
+            yolo2labelme(
+                data=yolo_dir,
+                out=output_dir,
+                skip=False
+            )
+            
+            self.informationMessage(
+                self.tr("Import Complete"),
+                self.tr("Successfully imported from YOLO format:\n%s") % output_dir
+            )
+            
+        except ImportError:
+            self.errorMessage(
+                self.tr("Import Failed"),
+                self.tr("yolo2labelme module not available.\nPlease install with: pip install yolo2labelme")
+            )
+        except Exception as e:
+            self.errorMessage(
+                self.tr("Import Error"),
+                self.tr("An error occurred during import:\n%s") % str(e)
+            )
+
     def closeFile(self, _value=False):
         if not self.mayContinue():
             return
@@ -2059,6 +2262,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def errorMessage(self, title, message):
         return QtWidgets.QMessageBox.critical(
+            self, title, f"<p><b>{title}</b></p>{message}"
+        )
+
+    def informationMessage(self, title, message):
+        return QtWidgets.QMessageBox.information(
             self, title, f"<p><b>{title}</b></p>{message}"
         )
 
