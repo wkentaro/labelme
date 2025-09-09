@@ -1,105 +1,94 @@
-#!/usr/bin/env python3
-"""Export LabelMe annotations to YOLO format."""
+#!/usr/bin/env python
 
 import argparse
+import json
 import os
-import subprocess
-import sys
-from pathlib import Path
-
-from loguru import logger
+import os.path as osp
 
 
 def main():
-    """Main entry point for YOLO export."""
-    parser = argparse.ArgumentParser(
-        description="Export LabelMe JSON files to YOLO format"
-    )
-    parser.add_argument(
-        "json_dir",
-        help="Directory containing LabelMe JSON files"
-    )
-    parser.add_argument(
-        "-o", "--output",
-        default="yolo_dataset",
-        help="Output directory for YOLO dataset (default: yolo_dataset)"
-    )
-    parser.add_argument(
-        "--mode",
-        choices=["detection", "segmentation"],
-        default="detection",
-        help="Export mode: detection (bbox) or segmentation (polygon)"
-    )
-    parser.add_argument(
-        "--val-size",
-        type=float,
-        default=0.2,
-        help="Validation set proportion (default: 0.2)"
-    )
-    parser.add_argument(
-        "--test-size",
-        type=float,
-        default=0.0,
-        help="Test set proportion (default: 0.0)"
-    )
-    parser.add_argument(
-        "--labels",
-        nargs="*",
-        help="Specific labels to include (optional)"
-    )
-    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("json_file", help="LabelMe JSON file")
+    parser.add_argument("-o", "--output", help="Output directory")
     args = parser.parse_args()
+
+    json_file = args.json_file
     
-    # Validate input directory
-    if not Path(args.json_dir).exists():
-        logger.error(f"Input directory does not exist: {args.json_dir}")
-        return 1
-    
-    # Build labelme2yolo command
-    cmd = [
-        "labelme2yolo",
-        "--json_dir", args.json_dir,
-        "--val_size", str(args.val_size),
-        "--test_size", str(args.test_size),
-    ]
-    
-    # Set output format
-    if args.mode == "segmentation":
-        cmd.extend(["--output_format", "polygon"])
+    if args.output is None:
+        output_dir = osp.splitext(osp.basename(json_file))[0] + "_yolo"
+        output_dir = osp.join(osp.dirname(json_file), output_dir)
     else:
-        cmd.extend(["--output_format", "bbox"])
+        output_dir = args.output
     
-    # Add labels if specified
-    if args.labels:
-        cmd.extend(args.labels)
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Read JSON file
+    with open(json_file, encoding='utf-8') as f:
+        data = json.load(f)
+
+    # Get image dimensions
+    image_height = data.get('imageHeight', 0)
+    image_width = data.get('imageWidth', 0)
     
-    logger.info(f"Exporting to YOLO format: {' '.join(cmd)}")
-    
-    # Create output directory
-    os.makedirs(args.output, exist_ok=True)
-    
-    # Change to output directory and run conversion
-    original_cwd = os.getcwd()
-    try:
-        os.chdir(args.output)
-        result = subprocess.run(cmd, text=True)
-        
-        if result.returncode == 0:
-            logger.info(f"Export completed successfully to: {Path(args.output).absolute()}")
-            return 0
-        else:
-            logger.error("Export failed")
-            return 1
-            
-    except KeyboardInterrupt:
-        logger.info("Export cancelled by user")
-        return 130
-    except Exception as e:
-        logger.error(f"Export error: {e}")
-        return 1
-    finally:
-        os.chdir(original_cwd)
+    if image_height == 0 or image_width == 0:
+        print("Error: Invalid image dimensions")
+        return
+
+    # Convert annotations
+    yolo_annotations = []
+    class_names = set()
+
+    for shape in data.get('shapes', []):
+        label = shape.get('label', '')
+        shape_type = shape.get('shape_type', '')
+        points = shape.get('points', [])
+
+        if shape_type == 'rectangle' and len(points) == 2:
+            # Convert rectangle to YOLO format
+            x1, y1 = points[0]
+            x2, y2 = points[1]
+
+            center_x = (x1 + x2) / 2.0 / image_width
+            center_y = (y1 + y2) / 2.0 / image_height
+            width = abs(x2 - x1) / image_width
+            height = abs(y2 - y1) / image_height
+
+            class_names.add(label)
+            class_id = sorted(class_names).index(label)
+
+            yolo_annotations.append(
+                f"{class_id} {center_x:.6f} {center_y:.6f} {width:.6f} {height:.6f}"
+            )
+
+        elif shape_type == 'polygon' and len(points) >= 3:
+            # Convert polygon to YOLO segmentation format
+            normalized_points = []
+            for x, y in points:
+                normalized_points.extend([x / image_width, y / image_height])
+
+            class_names.add(label)
+            class_id = sorted(class_names).index(label)
+
+            points_str = ' '.join([f"{p:.6f}" for p in normalized_points])
+            yolo_annotations.append(f"{class_id} {points_str}")
+
+    # Write output files
+    base_name = osp.splitext(osp.basename(json_file))[0]
+
+    # Write YOLO annotation file
+    txt_path = osp.join(output_dir, f"{base_name}.txt")
+    with open(txt_path, 'w', encoding='utf-8') as f:
+        for annotation in yolo_annotations:
+            f.write(annotation + '\n')
+
+    # Write classes file
+    classes_path = osp.join(output_dir, "classes.txt")
+    with open(classes_path, 'w', encoding='utf-8') as f:
+        for class_name in sorted(class_names):
+            f.write(class_name + '\n')
+
+    print(f"Exported {len(yolo_annotations)} annotations to: {output_dir}")
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

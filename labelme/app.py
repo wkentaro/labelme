@@ -5,9 +5,6 @@ import math
 import os
 import os.path as osp
 import re
-import shutil
-import subprocess
-import tempfile
 import types
 import webbrowser
 
@@ -2037,18 +2034,22 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         
         try:
-            # Use simple built-in converter
-            success = self._convert_labelme_to_yolo(self.filename, output_dir)
+            # Use the same conversion logic as CLI
+            success = self._export_to_yolo(self.filename, output_dir)
             
             if success:
                 self.informationMessage(
                     self.tr("Export Complete"),
-                    self.tr("Successfully exported current image to YOLO format:\n%s") % output_dir
+                    self.tr("Successfully exported current image to YOLO format:\n%s")
+                    % output_dir
                 )
             else:
                 self.errorMessage(
                     self.tr("Export Failed"),
-                    self.tr("Failed to convert annotations. Please check that the file contains valid annotations.")
+                    self.tr(
+                        "Failed to convert annotations. "
+                        "Please check that the file contains valid annotations."
+                    ),
                 )
             
         except Exception as e:
@@ -2057,7 +2058,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("An error occurred during export:\n%s") % str(e)
             )
 
-    def _convert_labelme_to_yolo(self, json_path: str, output_dir: str) -> bool:
+    def _export_to_yolo(self, json_path: str, output_dir: str) -> bool:
         """Convert a single LabelMe JSON file to YOLO format.
         
         Args:
@@ -2069,7 +2070,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         try:
             # Read JSON file
-            with open(json_path, 'r', encoding='utf-8') as f:
+            with open(json_path, encoding='utf-8') as f:
                 data = json.load(f)
             
             # Get image dimensions
@@ -2103,7 +2104,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     class_names.add(label)
                     class_id = sorted(class_names).index(label)
                     
-                    yolo_annotations.append(f"{class_id} {center_x:.6f} {center_y:.6f} {width:.6f} {height:.6f}")
+                    yolo_annotations.append(
+                        f"{class_id} {center_x:.6f} {center_y:.6f} {width:.6f} {height:.6f}"
+                    )
                     
                 elif shape_type == 'polygon' and len(points) >= 3:
                     # Convert polygon to YOLO segmentation format
@@ -2175,11 +2178,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("Successfully imported from YOLO format:\n%s") % output_dir
             )
             
-        except ImportError:
-            self.errorMessage(
-                self.tr("Import Failed"),
-                self.tr("yolo2labelme module not available.\nPlease install with: pip install yolo2labelme")
-            )
         except Exception as e:
             self.errorMessage(
                 self.tr("Import Error"),
