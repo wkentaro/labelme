@@ -2032,11 +2032,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if not output_dir:
             return
-        
+
         try:
             # Use the same conversion logic as CLI
             success = self._export_to_yolo(self.filename, output_dir)
-            
+
             if success:
                 self.informationMessage(
                     self.tr("Export Complete"),
@@ -2051,7 +2051,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         "Please check that the file contains valid annotations."
                     ),
                 )
-            
+
         except Exception as e:
             self.errorMessage(
                 self.tr("Export Error"),
@@ -2060,11 +2060,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _export_to_yolo(self, json_path: str, output_dir: str) -> bool:
         """Convert a single LabelMe JSON file to YOLO format.
-        
+
         Args:
             json_path: Path to LabelMe JSON file
             output_dir: Output directory for YOLO files
-            
+
         Returns:
             bool: True if successful, False otherwise
         """
@@ -2072,117 +2072,228 @@ class MainWindow(QtWidgets.QMainWindow):
             # Read JSON file
             with open(json_path, encoding='utf-8') as f:
                 data = json.load(f)
-            
+
             # Get image dimensions
             image_height = data.get('imageHeight', 0)
             image_width = data.get('imageWidth', 0)
-            
+
             if image_height == 0 or image_width == 0:
                 logger.warning("Invalid image dimensions in JSON file")
                 return False
-            
+
             # Extract shapes and convert to YOLO format
             yolo_annotations = []
             class_names = set()
-            
+
             for shape in data.get('shapes', []):
                 label = shape.get('label', '')
                 shape_type = shape.get('shape_type', '')
                 points = shape.get('points', [])
-                
+
                 if shape_type == 'rectangle' and len(points) == 2:
                     # Convert rectangle to YOLO format
                     x1, y1 = points[0]
                     x2, y2 = points[1]
-                    
+
                     # Calculate center, width, height (normalized)
                     center_x = (x1 + x2) / 2.0 / image_width
                     center_y = (y1 + y2) / 2.0 / image_height
                     width = abs(x2 - x1) / image_width
                     height = abs(y2 - y1) / image_height
-                    
+
                     class_names.add(label)
                     class_id = sorted(class_names).index(label)
-                    
+
                     yolo_annotations.append(
                         f"{class_id} {center_x:.6f} {center_y:.6f} {width:.6f} {height:.6f}"
                     )
-                    
+
                 elif shape_type == 'polygon' and len(points) >= 3:
                     # Convert polygon to YOLO segmentation format
                     normalized_points = []
                     for x, y in points:
                         normalized_points.extend([x / image_width, y / image_height])
-                    
+
                     class_names.add(label)
                     class_id = sorted(class_names).index(label)
-                    
+
                     points_str = ' '.join([f"{p:.6f}" for p in normalized_points])
                     yolo_annotations.append(f"{class_id} {points_str}")
-            
+
             # Create output files
             base_name = osp.splitext(osp.basename(json_path))[0]
-            
+
             # Write YOLO annotation file
             txt_path = osp.join(output_dir, f"{base_name}.txt")
             with open(txt_path, 'w', encoding='utf-8') as f:
                 for annotation in yolo_annotations:
                     f.write(annotation + '\n')
-            
+
             # Write classes file
             classes_path = osp.join(output_dir, "classes.txt")
             with open(classes_path, 'w', encoding='utf-8') as f:
                 for class_name in sorted(class_names):
                     f.write(class_name + '\n')
-            
+
             logger.info(f"Converted {len(yolo_annotations)} annotations to YOLO format")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error converting {json_path}: {e}")
             return False
 
     def importFromYOLO(self):
-        """Import YOLO format annotations."""
-        # Get YOLO dataset directory
-        yolo_dir = QtWidgets.QFileDialog.getExistingDirectory(
-            self,
-            self.tr("Select YOLO Dataset Directory"),
-            self.currentPath()
-        )
-        if not yolo_dir:
+        """Import YOLO annotations for the current image."""
+        if not self.filename:
+            self.errorMessage(
+                self.tr("Error"),
+                self.tr("Please open an image first.")
+            )
             return
 
-        # Get output directory for LabelMe files
-        output_dir = QtWidgets.QFileDialog.getExistingDirectory(
+        # Get YOLO annotation file
+        yolo_file, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("Select LabelMe Output Directory"),
-            self.currentPath()
+            self.tr("Select YOLO Annotation File (.txt)"),
+            self.currentPath(),
+            self.tr("YOLO files (*.txt)")
         )
-        if not output_dir:
+        if not yolo_file:
+            return
+
+        # Get classes file
+        classes_file, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr("Select Classes File (classes.txt)"),
+            osp.dirname(yolo_file),
+            self.tr("Text files (*.txt)")
+        )
+        if not classes_file:
             return
 
         try:
-            # Use yolo2labelme module directly
-            from yolo2labelme import yolo2labelme
-            
-            # Call the conversion function
-            yolo2labelme(
-                data=yolo_dir,
-                out=output_dir,
-                skip=False
-            )
-            
-            self.informationMessage(
-                self.tr("Import Complete"),
-                self.tr("Successfully imported from YOLO format:\n%s") % output_dir
-            )
-            
+            # Import YOLO annotations into current image
+            success = self._import_yolo_to_current_image(yolo_file, classes_file)
+
+            if success:
+                self.informationMessage(
+                    self.tr("Import Complete"),
+                    self.tr("Successfully imported YOLO annotations into current image.")
+                )
+            else:
+                self.errorMessage(
+                    self.tr("Import Failed"),
+                    self.tr("No valid annotations found in the YOLO file.")
+                )
+
         except Exception as e:
             self.errorMessage(
                 self.tr("Import Error"),
                 self.tr("An error occurred during import:\n%s") % str(e)
             )
+
+    def _import_yolo_to_current_image(self, yolo_file: str, classes_file: str) -> bool:
+        """Import YOLO annotations into the current image.
+
+        Args:
+            yolo_file: Path to YOLO .txt file
+            classes_file: Path to classes.txt file
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Read classes
+            with open(classes_file, encoding='utf-8') as f:
+                class_names = [line.strip() for line in f.readlines() if line.strip()]
+
+            # Read YOLO annotations
+            if not osp.exists(yolo_file):
+                return False
+
+            with open(yolo_file, encoding='utf-8') as f:
+                yolo_lines = [line.strip() for line in f.readlines() if line.strip()]
+
+            if not yolo_lines:
+                return False
+
+            # Get image dimensions
+            if self.image is None:
+                return False
+
+            image_height = self.image.height()
+            image_width = self.image.width()
+
+            # Clear existing shapes
+            self.loadShapes([])
+
+            # Convert YOLO annotations to LabelMe shapes
+            shapes = []
+            for line in yolo_lines:
+                parts = line.split()
+                if len(parts) < 5:
+                    continue
+
+                class_id = int(parts[0])
+                if class_id >= len(class_names):
+                    continue
+
+                label = class_names[class_id]
+
+                if len(parts) == 5:
+                    # Bounding box format: class_id center_x center_y width height
+                    center_x, center_y, width, height = map(float, parts[1:5])
+
+                    # Convert normalized coordinates to pixel coordinates
+                    x1 = (center_x - width / 2) * image_width
+                    y1 = (center_y - height / 2) * image_height
+                    x2 = (center_x + width / 2) * image_width
+                    y2 = (center_y + height / 2) * image_height
+
+                    shape = Shape(
+                        label=label,
+                        shape_type='rectangle',
+                        group_id=None
+                    )
+                    shape.addPoint(QtCore.QPointF(x1, y1))
+                    shape.addPoint(QtCore.QPointF(x2, y2))
+                    shape.close()
+                    shapes.append(shape)
+
+                elif len(parts) > 5 and len(parts) % 2 == 1:
+                    # Polygon format: class_id x1 y1 x2 y2 ... xn yn
+                    coords = list(map(float, parts[1:]))
+                    points = []
+
+                    # Convert normalized coordinates to pixel coordinates
+                    for i in range(0, len(coords), 2):
+                        if i + 1 < len(coords):
+                            x = coords[i] * image_width
+                            y = coords[i + 1] * image_height
+                            points.append([x, y])
+
+                    if len(points) >= 3:  # Valid polygon
+                        shape = Shape(
+                            label=label,
+                            shape_type='polygon',
+                            group_id=None
+                        )
+                        for x, y in points:
+                            shape.addPoint(QtCore.QPointF(x, y))
+                        shape.close()
+                        shapes.append(shape)
+
+            # Load shapes into the interface
+            if shapes:
+                self.loadShapes(shapes)
+                self.setDirty()
+                logger.info(f"Imported {len(shapes)} shapes from YOLO file")
+
+            return len(shapes) > 0
+
+        except Exception as e:
+            logger.error(f"Error importing YOLO file {yolo_file}: {e}")
+            return False
 
     def closeFile(self, _value=False):
         if not self.mayContinue():
