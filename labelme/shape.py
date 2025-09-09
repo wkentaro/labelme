@@ -281,6 +281,57 @@ class Shape:
             painter.setPen(pen)
             painter.drawPath(negative_vrtx_path)
             painter.fillPath(negative_vrtx_path, QtGui.QColor(255, 0, 0, 255))
+        
+        # Draw score text for any shape that has it
+        if self.points and len(self.points) >= 2 and self.other_data.get('score_text'):
+            self._draw_score_text(painter)
+
+    def _draw_score_text(self, painter):
+        """Draw score text in the upper-left corner of shape's bounding box."""
+        score_text = self.other_data.get('score_text', '')
+        if not score_text:
+            return
+            
+        # Calculate bounding box of the shape
+        if not self.points:
+            return
+            
+        min_x = min(p.x() for p in self.points) * self.scale
+        min_y = min(p.y() for p in self.points) * self.scale
+        
+        # Save current pen
+        old_pen = painter.pen()
+        
+        # Set up text drawing
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        painter.setFont(font)
+        
+        # Calculate text position (upper-left corner with padding)
+        padding = 3
+        text_x = min_x + padding
+        text_y = min_y + padding
+        
+        # Draw background for better readability
+        metrics = QtGui.QFontMetrics(font)
+        text_rect = metrics.boundingRect(score_text)
+        bg_rect = QtCore.QRectF(
+            text_x - 2,
+            text_y - metrics.ascent() - 2, 
+            text_rect.width() + 4,
+            text_rect.height() + 4
+        )
+        
+        # Draw semi-transparent background
+        painter.fillRect(bg_rect, QtGui.QColor(255, 255, 255, 200))
+        
+        # Draw text with contrasting color
+        painter.setPen(QtGui.QPen(QtGui.QColor(0, 0, 0)))
+        painter.drawText(QtCore.QPointF(text_x, text_y), score_text)
+        
+        # Restore original pen
+        painter.setPen(old_pen)
 
     def drawVertex(self, path, i):
         d = self.point_size
