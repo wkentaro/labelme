@@ -38,7 +38,10 @@ lint:
 mypy:
 	$(call exec,uv run mypy --package $(PACKAGE_NAME))
 
-check: lint mypy  # Run checks
+check_ts_files:
+	$(call exec,tools/check_ts_files.sh)
+
+check: lint mypy check_ts_files # Run checks
 
 test:  # Run tests
 	$(call exec,uv run pytest -v tests/)
