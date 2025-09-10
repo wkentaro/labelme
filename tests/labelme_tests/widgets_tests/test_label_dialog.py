@@ -2,8 +2,8 @@ import pytest
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from labelme.widgets import LabelDialog
-from labelme.widgets import LabelQLineEdit
+from labelme.widgets.label_dialog import LabelDialog
+from labelme.widgets.label_dialog import LabelQLineEdit
 
 
 @pytest.mark.gui

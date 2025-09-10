@@ -13,7 +13,8 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from labelme import __version__
-from labelme import utils
+from labelme.utils.image import apply_exif_orientation
+from labelme.utils.image import img_b64_to_arr
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
@@ -103,7 +104,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         assert isinstance(shape_json_obj["mask"], str), (
             f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
         )
-        mask = utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
+        mask = img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
 
@@ -146,7 +147,7 @@ class LabelFile:
             return
 
         # apply orientation to image according to exif
-        image_pil = utils.apply_exif_orientation(image_pil)
+        image_pil = apply_exif_orientation(image_pil)
 
         with io.BytesIO() as f:
             ext = osp.splitext(filename)[1].lower()
@@ -206,7 +207,7 @@ class LabelFile:
 
     @staticmethod
     def _check_image_height_and_width(imageData, imageHeight, imageWidth):
-        img_arr = utils.img_b64_to_arr(imageData)
+        img_arr = img_b64_to_arr(imageData)
         if imageHeight is not None and img_arr.shape[0] != imageHeight:
             logger.error(
                 "imageHeight does not match with imageData or imagePath, "

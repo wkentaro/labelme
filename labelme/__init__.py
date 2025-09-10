@@ -1,5 +1,3 @@
-import logging
-
 __appname__ = "labelme"
 
 # Semantic Versioning 2.0.0: https://semver.org/
@@ -9,6 +7,5 @@ __appname__ = "labelme"
 # e.g., 1.0.0a0, 1.0.0a1, 1.0.0b0, 1.0.0rc0, 1.0.0, 1.0.0.post0
 __version__ = "5.8.3"
 
-from labelme import testing
-from labelme import utils
-from labelme._label_file import LabelFile
+# Needs to be re-exported for e.g. pickle compatibility
+from labelme._label_file import LabelFile as LabelFile

@@ -10,7 +10,10 @@ import sys
 import imgviz
 import numpy as np
 
-import labelme
+from labelme import LabelFile
+from labelme.utils.image import img_data_to_arr
+from labelme.utils.labels import lblsave
+from labelme.utils.shape import shapes_to_label
 
 
 def main():
@@ -79,7 +82,7 @@ def main():
     for filename in sorted(glob.glob(osp.join(args.input_dir, "*.json"))):
         print("Generating dataset from:", filename)
 
-        label_file = labelme.LabelFile(filename=filename)
+        label_file = LabelFile(filename=filename)
 
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
@@ -109,10 +112,10 @@ def main():
                     f"{base}.jpg",
                 )
 
-        img = labelme.utils.img_data_to_arr(label_file.imageData)
+        img = img_data_to_arr(label_file.imageData)
         imgviz.io.imsave(out_img_file, img)
 
-        cls, ins = labelme.utils.shapes_to_label(
+        cls, ins = shapes_to_label(
             img_shape=img.shape,
             shapes=label_file.shapes,
             label_name_to_value=class_name_to_id,
@@ -120,7 +123,7 @@ def main():
         ins[cls == -1] = 0  # ignore it.
 
         # class label
-        labelme.utils.lblsave(out_clsp_file, cls)
+        lblsave(out_clsp_file, cls)
         if not args.nonpy:
             np.save(out_cls_file, cls)
         if not args.noviz:
@@ -135,7 +138,7 @@ def main():
 
         if not args.noobject:
             # instance label
-            labelme.utils.lblsave(out_insp_file, ins)
+            lblsave(out_insp_file, ins)
             if not args.nonpy:
                 np.save(out_ins_file, ins)
             if not args.noviz:

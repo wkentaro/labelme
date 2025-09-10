@@ -3,7 +3,7 @@ import os.path as osp
 
 import imgviz
 
-import labelme.utils
+from labelme.utils.image import img_b64_to_arr
 
 
 def assert_labelfile_sanity(filename):
@@ -19,7 +19,7 @@ def assert_labelfile_sanity(filename):
         assert osp.exists(img_file)
         img = imgviz.io.imread(img_file)
     else:
-        img = labelme.utils.img_b64_to_arr(imageData)
+        img = img_b64_to_arr(imageData)
 
     H, W = img.shape[:2]
     assert H == data["imageHeight"]

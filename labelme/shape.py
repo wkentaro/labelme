@@ -6,7 +6,9 @@ from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 
-import labelme.utils
+from labelme.utils.image import img_arr_to_data
+from labelme.utils.qt import distance
+from labelme.utils.qt import distancetoline
 
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
@@ -190,7 +192,7 @@ class Shape:
                 else self.fill_color.getRgb()  # type: ignore[attr-defined]
             )
             image_to_draw[self.mask] = fill_color
-            qimage = QtGui.QImage.fromData(labelme.utils.img_arr_to_data(image_to_draw))
+            qimage = QtGui.QImage.fromData(img_arr_to_data(image_to_draw))
             qimage = qimage.scaled(
                 qimage.size() * self.scale,
                 QtCore.Qt.IgnoreAspectRatio,
@@ -231,7 +233,7 @@ class Shape:
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
-                    raidus = labelme.utils.distance(
+                    raidus = distance(
                         self._scale_point(self.points[0] - self.points[1])
                     )
                     line_path.addEllipse(
@@ -306,7 +308,7 @@ class Shape:
         point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
         for i, p in enumerate(self.points):
             p = QtCore.QPointF(p.x() * self.scale, p.y() * self.scale)
-            dist = labelme.utils.distance(p - point)
+            dist = distance(p - point)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 min_i = i
@@ -322,7 +324,7 @@ class Shape:
             start = QtCore.QPointF(start.x() * self.scale, start.y() * self.scale)
             end = QtCore.QPointF(end.x() * self.scale, end.y() * self.scale)
             line = [start, end]
-            dist = labelme.utils.distancetoline(point, line)
+            dist = distancetoline(point, line)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 post_i = i
@@ -353,7 +355,7 @@ class Shape:
         elif self.shape_type == "circle":
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
-                raidus = labelme.utils.distance(self.points[0] - self.points[1])
+                raidus = distance(self.points[0] - self.points[1])
                 path.addEllipse(self.points[0], raidus, raidus)
         else:
             path = QtGui.QPainterPath(self.points[0])
