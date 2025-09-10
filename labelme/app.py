@@ -73,18 +73,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config = config
 
         # set default shape colors
-        Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])  # type: ignore[assignment]
-        Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])  # type: ignore[assignment]
-        Shape.select_line_color = QtGui.QColor(  # type: ignore[assignment]
+        Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
+        Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
+        Shape.select_line_color = QtGui.QColor(
             *self._config["shape"]["select_line_color"]
         )
-        Shape.select_fill_color = QtGui.QColor(  # type: ignore[assignment]
+        Shape.select_fill_color = QtGui.QColor(
             *self._config["shape"]["select_fill_color"]
         )
-        Shape.vertex_fill_color = QtGui.QColor(  # type: ignore[assignment]
+        Shape.vertex_fill_color = QtGui.QColor(
             *self._config["shape"]["vertex_fill_color"]
         )
-        Shape.hvertex_fill_color = QtGui.QColor(  # type: ignore[assignment]
+        Shape.hvertex_fill_color = QtGui.QColor(
             *self._config["shape"]["hvertex_fill_color"]
         )
 

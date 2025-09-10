@@ -28,12 +28,13 @@ class Shape:
     PEN_WIDTH = 2
 
     # The following class variables influence the drawing of all shape objects.
-    line_color = None
-    fill_color = None
-    select_line_color = None
-    select_fill_color = None
-    vertex_fill_color = None
-    hvertex_fill_color = None
+    line_color: QtGui.QColor = QtGui.QColor(0, 255, 0, 128)
+    fill_color: QtGui.QColor = QtGui.QColor(0, 0, 0, 64)
+    vertex_fill_color: QtGui.QColor = QtGui.QColor(0, 255, 0, 255)
+    select_line_color: QtGui.QColor = QtGui.QColor(255, 255, 255, 255)
+    select_fill_color: QtGui.QColor = QtGui.QColor(0, 255, 0, 64)
+    hvertex_fill_color: QtGui.QColor = QtGui.QColor(255, 255, 255, 255)
+
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
