@@ -90,7 +90,7 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot) -> None:
     input_file: str = osp.join(data_dir, "raw/2011_000003.jpg")
     out_file: str = osp.join(tmp_dir, "2011_000003.json")
 
-    config: dict = labelme.config.get_default_config()
+    config: dict = labelme.config._get_default_config_and_create_labelmerc()
     win: labelme.app.MainWindow = labelme.app.MainWindow(
         config=config,
         filename=input_file,
