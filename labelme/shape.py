@@ -28,12 +28,15 @@ class Shape:
     PEN_WIDTH = 2
 
     # The following class variables influence the drawing of all shape objects.
-    line_color = None
-    fill_color = None
-    select_line_color = None
-    select_fill_color = None
-    vertex_fill_color = None
-    hvertex_fill_color = None
+    # These are reassigned during application startup to the user's preferences.
+    line_color = QtGui.QColor(0, 255, 0)
+    fill_color = QtGui.QColor(255, 255, 0)
+    select_line_color = QtGui.QColor(0, 255, 255)
+    select_fill_color = QtGui.QColor(255, 0, 255)
+    vertex_fill_color = QtGui.QColor(0, 255, 0)
+    hvertex_fill_color = QtGui.QColor(255, 255, 0)
+    _vertex_fill_color: QtGui.QColor
+
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -185,9 +188,9 @@ class Shape:
         if self.mask is not None:
             image_to_draw = np.zeros(self.mask.shape + (4,), dtype=np.uint8)
             fill_color = (
-                self.select_fill_color.getRgb()  # type: ignore[attr-defined]
+                self.select_fill_color.getRgb()
                 if self.selected
-                else self.fill_color.getRgb()  # type: ignore[attr-defined]
+                else self.fill_color.getRgb()
             )
             image_to_draw[self.mask] = fill_color
             qimage = QtGui.QImage.fromData(labelme.utils.img_arr_to_data(image_to_draw))
@@ -267,7 +270,7 @@ class Shape:
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)
-                painter.fillPath(vrtx_path, self._vertex_fill_color)  # type: ignore[has-type]
+                painter.fillPath(vrtx_path, self._vertex_fill_color)
             if self.fill and self.shape_type not in [
                 "line",
                 "linestrip",

@@ -45,11 +45,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.slider_contrast = sliders["Contrast:"]
         del sliders
 
-        layout = QtWidgets.QVBoxLayout()  # type: ignore[assignment]
-        layout.addLayout(layouts["Brightness:"])
-        layout.addLayout(layouts["Contrast:"])
+        v_layout = QtWidgets.QVBoxLayout()
+        v_layout.addLayout(layouts["Brightness:"])
+        v_layout.addLayout(layouts["Contrast:"])
         del layouts
-        self.setLayout(layout)
+        self.setLayout(v_layout)
 
         assert isinstance(img, PIL.Image.Image)
         self.img = img
