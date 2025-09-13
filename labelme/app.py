@@ -1323,14 +1323,20 @@ class MainWindow(QtWidgets.QMainWindow):
     def _get_rgb_by_label(self, label: str) -> tuple[int, int, int]:
         if self._config["shape_color"] == "auto":
             item = self.uniqLabelList.findItemByLabel(label)
-            if item is None:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
-            label_id = self.uniqLabelList.indexFromItem(item).row() + 1
-            label_id += self._config["shift_auto_shape_color"]
-            return tuple(LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist())
+            item_index: int = (
+                self.uniqLabelList.indexFromItem(item).row()
+                if item
+                else self.uniqLabelList.count()
+            )
+            label_id: int = (
+                1  # skip black color by default
+                + item_index
+                + self._config["shift_auto_shape_color"]
+            )
+            rgb: tuple[int, int, int] = tuple(
+                LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
+            )
+            return rgb
         elif (
             self._config["shape_color"] == "manual"
             and self._config["label_colors"]
