@@ -228,7 +228,6 @@ class Canvas(QtWidgets.QWidget):
         self.mouseMoved.emit(pos)
 
         self.prevMovePoint = pos
-        self.restoreCursor()
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
@@ -957,7 +956,6 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def overrideCursor(self, cursor):
-        self.restoreCursor()
         self._cursor = cursor
         QtWidgets.QApplication.setOverrideCursor(cursor)
 
