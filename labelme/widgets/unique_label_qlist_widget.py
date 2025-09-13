@@ -4,11 +4,17 @@ from typing import Optional
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
-from .escapable_qlist_widget import EscapableQListWidget
 from .label_list_widget import HTMLDelegate
 
 
-class UniqueLabelQListWidget(EscapableQListWidget):
+class _EscapableQListWidget(QtWidgets.QListWidget):
+    def keyPressEvent(self, event):
+        super().keyPressEvent(event)
+        if event.key() == Qt.Key_Escape:
+            self.clearSelection()
+
+
+class UniqueLabelQListWidget(_EscapableQListWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setItemDelegate(HTMLDelegate(parent=self))
