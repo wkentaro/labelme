@@ -11,6 +11,7 @@ import imgviz
 import natsort
 import numpy as np
 from loguru import logger
+from numpy.typing import NDArray
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -43,7 +44,7 @@ from . import utils
 # - Zoom is too "steppy".
 
 
-LABEL_COLORMAP = imgviz.label_colormap()
+LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -138,10 +139,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if self._config["labels"]:
             for label in self._config["labels"]:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+                self.uniqLabelList.add_label_item(
+                    label=label, color=self._get_rgb_by_label(label=label)
+                )
         self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
         self.label_dock.setObjectName("Label List")
         self.label_dock.setWidget(self.uniqLabelList)
@@ -1242,11 +1242,10 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setText(f"{shape.label} ({shape.group_id})")
             self.setDirty()
-            if self.uniqLabelList.findItemByLabel(shape.label) is None:
-                item = self.uniqLabelList.createItemFromLabel(shape.label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(shape.label)
-                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            if self.uniqLabelList.find_label_item(shape.label) is None:
+                self.uniqLabelList.add_label_item(
+                    label=shape.label, color=self._get_rgb_by_label(label=shape.label)
+                )
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -1296,11 +1295,10 @@ class MainWindow(QtWidgets.QMainWindow):
             text = f"{shape.label} ({shape.group_id})"
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
-        if self.uniqLabelList.findItemByLabel(shape.label) is None:
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
-            rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+        if self.uniqLabelList.find_label_item(shape.label) is None:
+            self.uniqLabelList.add_label_item(
+                label=shape.label, color=self._get_rgb_by_label(label=shape.label)
+            )
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)
@@ -1320,23 +1318,37 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.select_line_color = QtGui.QColor(255, 255, 255)
         shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
-    def _get_rgb_by_label(self, label):
+    def _get_rgb_by_label(self, label: str) -> tuple[int, int, int]:
         if self._config["shape_color"] == "auto":
-            item = self.uniqLabelList.findItemByLabel(label)
-            if item is None:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
-            label_id = self.uniqLabelList.indexFromItem(item).row() + 1
-            label_id += self._config["shift_auto_shape_color"]
-            return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
+            item = self.uniqLabelList.find_label_item(label)
+            item_index: int = (
+                self.uniqLabelList.indexFromItem(item).row()
+                if item
+                else self.uniqLabelList.count()
+            )
+            label_id: int = (
+                1  # skip black color by default
+                + item_index
+                + self._config["shift_auto_shape_color"]
+            )
+            rgb: tuple[int, int, int] = tuple(
+                LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
+            )
+            return rgb
         elif (
             self._config["shape_color"] == "manual"
             and self._config["label_colors"]
             and label in self._config["label_colors"]
         ):
-            return self._config["label_colors"][label]
+            if not (
+                len(self._config["label_colors"][label]) == 3
+                and all(0 <= c <= 255 for c in self._config["label_colors"][label])
+            ):
+                raise ValueError(
+                    "Color for label must be 0-255 RGB tuple, but got: "
+                    f"{self._config['label_colors'][label]}"
+                )
+            return tuple(self._config["label_colors"][label])
         elif self._config["default_shape_color"]:
             return self._config["default_shape_color"]
         return (0, 255, 0)
