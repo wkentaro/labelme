@@ -4,9 +4,14 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
 from .escapable_qlist_widget import EscapableQListWidget
+from .label_list_widget import HTMLDelegate
 
 
 class UniqueLabelQListWidget(EscapableQListWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setItemDelegate(HTMLDelegate(parent=self))
+
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         if not self.indexAt(event.pos()).isValid():
@@ -23,17 +28,9 @@ class UniqueLabelQListWidget(EscapableQListWidget):
             raise ValueError(f"Item for label '{label}' already exists")
 
         item = QtWidgets.QListWidgetItem()
-        item.setData(Qt.UserRole, label)
-
-        self.addItem(item)
-
-        qlabel = QtWidgets.QLabel()
-        qlabel.setText(
+        item.setData(Qt.UserRole, label)  # for findItemByLabel
+        item.setText(
             f"{html.escape(label)} "
             f"<font color='#{color[0]:02x}{color[1]:02x}{color[2]:02x}'>●</font>"
         )
-        qlabel.setAlignment(Qt.AlignBottom)
-
-        item.setSizeHint(qlabel.sizeHint())
-
-        self.setItemWidget(item, qlabel)
+        self.addItem(item)
