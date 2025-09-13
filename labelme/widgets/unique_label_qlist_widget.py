@@ -1,4 +1,5 @@
 import html
+from typing import Optional
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -17,18 +18,19 @@ class UniqueLabelQListWidget(EscapableQListWidget):
         if not self.indexAt(event.pos()).isValid():
             self.clearSelection()
 
-    def findItemByLabel(self, label):
+    def find_label_item(self, label: str) -> Optional[QtWidgets.QListWidgetItem]:
         for row in range(self.count()):
             item = self.item(row)
             if item.data(Qt.UserRole) == label:  # type: ignore[attr-defined,union-attr]
                 return item
+        return None
 
-    def addItemForLabel(self, label: str, color: tuple[int, int, int]) -> None:
-        if self.findItemByLabel(label):
+    def add_label_item(self, label: str, color: tuple[int, int, int]) -> None:
+        if self.find_label_item(label):
             raise ValueError(f"Item for label '{label}' already exists")
 
         item = QtWidgets.QListWidgetItem()
-        item.setData(Qt.UserRole, label)  # for findItemByLabel
+        item.setData(Qt.UserRole, label)  # for find_label_item
         item.setText(
             f"{html.escape(label)} "
             f"<font color='#{color[0]:02x}{color[1]:02x}{color[2]:02x}'>●</font>"
