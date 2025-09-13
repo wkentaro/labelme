@@ -11,6 +11,7 @@ import imgviz
 import natsort
 import numpy as np
 from loguru import logger
+from numpy.typing import NDArray
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -43,7 +44,7 @@ from . import utils
 # - Zoom is too "steppy".
 
 
-LABEL_COLORMAP = imgviz.label_colormap()
+LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
 
 class MainWindow(QtWidgets.QMainWindow):
