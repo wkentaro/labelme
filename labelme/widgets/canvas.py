@@ -1,5 +1,6 @@
 import functools
 from typing import Literal
+from typing import Optional
 
 import imgviz
 import numpy as np
@@ -48,6 +49,9 @@ class Canvas(QtWidgets.QWidget):
     prevPoint: QPointF
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
+
+    hVertex: Optional[int]
+    hShape: Optional[Shape]
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
@@ -556,10 +560,11 @@ class Canvas(QtWidgets.QWidget):
 
     def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
-        if self.selectedVertex():  # A vertex is marked for selection.
-            index, shape = self.hVertex, self.hShape
-            shape.highlightVertex(index, shape.MOVE_VERTEX)  # type: ignore[union-attr]
+        if self.hVertex is not None:
+            assert self.hShape is not None
+            self.hShape.highlightVertex(i=self.hVertex, action=self.hShape.MOVE_VERTEX)
         else:
+            shape: Shape
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
                     self.setHiding()
