@@ -8,6 +8,7 @@ from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QPointF
 
 import labelme.utils
 from labelme._automation import polygon_from_mask
@@ -34,7 +35,7 @@ class Canvas(QtWidgets.QWidget):
     shapeMoved = QtCore.pyqtSignal()
     drawingPolygon = QtCore.pyqtSignal(bool)
     vertexSelected = QtCore.pyqtSignal(bool)
-    mouseMoved = QtCore.pyqtSignal(QtCore.QPointF)
+    mouseMoved = QtCore.pyqtSignal(QPointF)
 
     CREATE, EDIT = 0, 1
 
@@ -43,9 +44,9 @@ class Canvas(QtWidgets.QWidget):
 
     _fill_drawing = False
 
-    prevPoint: QtCore.QPointF
-    prevMovePoint: QtCore.QPointF
-    offsets: tuple[QtCore.QPointF, QtCore.QPointF]
+    prevPoint: QPointF
+    prevMovePoint: QPointF
+    offsets: tuple[QPointF, QPointF]
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
@@ -82,9 +83,9 @@ class Canvas(QtWidgets.QWidget):
         #   - createMode == 'line': the line
         #   - createMode == 'point': the point
         self.line = Shape()
-        self.prevPoint = QtCore.QPointF()
-        self.prevMovePoint = QtCore.QPointF()
-        self.offsets = QtCore.QPointF(), QtCore.QPointF()
+        self.prevPoint = QPointF()
+        self.prevMovePoint = QPointF()
+        self.offsets = QPointF(), QPointF()
         self.scale = 1.0
         self.pixmap = QtGui.QPixmap()
         self.visible = {}
@@ -397,7 +398,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        pos: QtCore.QPointF = self.transformPos(ev.localPos())
+        pos: QPointF = self.transformPos(ev.localPos())
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
@@ -573,7 +574,7 @@ class Canvas(QtWidgets.QWidget):
                     return
         self.deSelectShape()
 
-    def calculateOffsets(self, point: QtCore.QPointF) -> None:
+    def calculateOffsets(self, point: QPointF) -> None:
         left = self.pixmap.width() - 1
         right = 0
         top = self.pixmap.height() - 1
@@ -593,7 +594,7 @@ class Canvas(QtWidgets.QWidget):
         y1 = top - point.y()
         x2 = right - point.x()
         y2 = bottom - point.y()
-        self.offsets = QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)
+        self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
     def boundedMoveVertex(self, pos):
         index, shape = self.hVertex, self.hShape
@@ -607,10 +608,10 @@ class Canvas(QtWidgets.QWidget):
             return False  # No need to move
         o1 = pos + self.offsets[0]
         if self.outOfPixmap(o1):
-            pos -= QtCore.QPointF(min(0, o1.x()), min(0, o1.y()))
+            pos -= QPointF(min(0, o1.x()), min(0, o1.y()))
         o2 = pos + self.offsets[1]
         if self.outOfPixmap(o2):
-            pos += QtCore.QPointF(
+            pos += QPointF(
                 min(0, self.pixmap.width() - o2.x()),
                 min(0, self.pixmap.height() - o2.y()),
             )
@@ -739,18 +740,18 @@ class Canvas(QtWidgets.QWidget):
         drawing_shape.paint(p)
         p.end()
 
-    def transformPos(self, point: QtCore.QPointF) -> QtCore.QPointF:
+    def transformPos(self, point: QPointF) -> QPointF:
         """Convert from widget-logical coordinates to painter-logical ones."""
         return point / self.scale - self.offsetToCenter()
 
-    def offsetToCenter(self) -> QtCore.QPointF:
+    def offsetToCenter(self) -> QPointF:
         s = self.scale
         area = super().size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
         aw, ah = area.width(), area.height()
         x = (aw - w) / (2 * s) if aw > w else 0
         y = (ah - h) / (2 * s) if ah > h else 0
-        return QtCore.QPointF(x, y)
+        return QPointF(x, y)
 
     def outOfPixmap(self, p):
         w, h = self.pixmap.width(), self.pixmap.height()
@@ -802,10 +803,10 @@ class Canvas(QtWidgets.QWidget):
         if (x, y) == (x1, y1):
             # Handle cases where previous point is on one of the edges.
             if x3 == x4:
-                return QtCore.QPointF(x3, min(max(0, y2), max(y3, y4)))
+                return QPointF(x3, min(max(0, y2), max(y3, y4)))
             else:  # y3 == y4
-                return QtCore.QPointF(min(max(0, x2), max(x3, x4)), y3)
-        return QtCore.QPointF(x, y)
+                return QPointF(min(max(0, x2), max(x3, x4)), y3)
+        return QPointF(x, y)
 
     def intersectingEdges(self, point1, point2, points):
         """Find intersecting edges.
@@ -832,8 +833,8 @@ class Canvas(QtWidgets.QWidget):
             if 0 <= ua <= 1 and 0 <= ub <= 1:
                 x = x1 + ua * (x2 - x1)
                 y = y1 + ua * (y2 - y1)
-                m = QtCore.QPointF((x3 + x4) / 2, (y3 + y4) / 2)
-                d = labelme.utils.distance(m - QtCore.QPointF(x2, y2))
+                m = QPointF((x3 + x4) / 2, (y3 + y4) / 2)
+                d = labelme.utils.distance(m - QPointF(x2, y2))
                 yield d, i, (x, y)
 
     # These two, along with a call to adjustSize are required for the
@@ -879,13 +880,13 @@ class Canvas(QtWidgets.QWidget):
                 self.snapping = False
         elif self.editing():
             if key == QtCore.Qt.Key_Up:
-                self.moveByKeyboard(QtCore.QPointF(0.0, -MOVE_SPEED))
+                self.moveByKeyboard(QPointF(0.0, -MOVE_SPEED))
             elif key == QtCore.Qt.Key_Down:
-                self.moveByKeyboard(QtCore.QPointF(0.0, MOVE_SPEED))
+                self.moveByKeyboard(QPointF(0.0, MOVE_SPEED))
             elif key == QtCore.Qt.Key_Left:
-                self.moveByKeyboard(QtCore.QPointF(-MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QPointF(-MOVE_SPEED, 0.0))
             elif key == QtCore.Qt.Key_Right:
-                self.moveByKeyboard(QtCore.QPointF(MOVE_SPEED, 0.0))
+                self.moveByKeyboard(QPointF(MOVE_SPEED, 0.0))
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()
@@ -1014,7 +1015,7 @@ def _update_shape_with_sam(
             x2 = response.annotations[0].bounding_box.xmax
         shape.setShapeRefined(
             shape_type="mask",
-            points=[QtCore.QPointF(x1, y1), QtCore.QPointF(x2, y2)],
+            points=[QPointF(x1, y1), QPointF(x2, y2)],
             point_labels=[1, 1],
             mask=response.annotations[0].mask[y1 : y2 + 1, x1 : x2 + 1],
         )
@@ -1026,7 +1027,7 @@ def _update_shape_with_sam(
             return
         shape.setShapeRefined(
             shape_type="polygon",
-            points=[QtCore.QPointF(point[0], point[1]) for point in points],
+            points=[QPointF(point[0], point[1]) for point in points],
             point_labels=[1] * len(points),
         )
 
