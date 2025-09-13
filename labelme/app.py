@@ -1320,7 +1320,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.select_line_color = QtGui.QColor(255, 255, 255)
         shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
-    def _get_rgb_by_label(self, label):
+    def _get_rgb_by_label(self, label: str) -> tuple[int, int, int]:
         if self._config["shape_color"] == "auto":
             item = self.uniqLabelList.findItemByLabel(label)
             if item is None:
@@ -1330,13 +1330,21 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.uniqLabelList.setItemLabel(item, label, rgb)
             label_id = self.uniqLabelList.indexFromItem(item).row() + 1
             label_id += self._config["shift_auto_shape_color"]
-            return LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)]
+            return tuple(LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist())
         elif (
             self._config["shape_color"] == "manual"
             and self._config["label_colors"]
             and label in self._config["label_colors"]
         ):
-            return self._config["label_colors"][label]
+            if not (
+                len(self._config["label_colors"][label]) == 3
+                and all(0 <= c <= 255 for c in self._config["label_colors"][label])
+            ):
+                raise ValueError(
+                    "Color for label must be 0-255 RGB tuple, but got: "
+                    f"{self._config['label_colors'][label]}"
+                )
+            return tuple(self._config["label_colors"][label])
         elif self._config["default_shape_color"]:
             return self._config["default_shape_color"]
         return (0, 255, 0)
