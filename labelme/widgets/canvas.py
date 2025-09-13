@@ -228,7 +228,6 @@ class Canvas(QtWidgets.QWidget):
         self.mouseMoved.emit(pos)
 
         self.prevMovePoint = pos
-        self.restoreCursor()
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier
 
@@ -369,6 +368,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
         else:  # Nothing found, clear highlights, reset state.
+            self.restoreCursor()
             self.unHighlight()
         self.vertexSelected.emit(self.hVertex is not None)
 
@@ -956,12 +956,11 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def overrideCursor(self, cursor):
-        self.restoreCursor()
         self._cursor = cursor
         QtWidgets.QApplication.setOverrideCursor(cursor)
 
     def restoreCursor(self):
-        QtWidgets.QApplication.restoreOverrideCursor()
+        self.overrideCursor(CURSOR_DEFAULT)
 
     def resetState(self):
         self.restoreCursor()
