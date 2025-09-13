@@ -369,6 +369,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
         else:  # Nothing found, clear highlights, reset state.
+            self.restoreCursor()
             self.unHighlight()
         self.vertexSelected.emit(self.hVertex is not None)
 
