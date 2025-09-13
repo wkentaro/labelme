@@ -138,10 +138,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if self._config["labels"]:
             for label in self._config["labels"]:
-                item = self.uniqLabelList.createItemFromLabel(label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(label)
-                self.uniqLabelList.setItemLabel(item, label, rgb)
+                self.uniqLabelList.addItemForLabel(
+                    label=label, color=self._get_rgb_by_label(label=label)
+                )
         self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
         self.label_dock.setObjectName("Label List")
         self.label_dock.setWidget(self.uniqLabelList)
@@ -1243,10 +1242,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setText(f"{shape.label} ({shape.group_id})")
             self.setDirty()
             if self.uniqLabelList.findItemByLabel(shape.label) is None:
-                item = self.uniqLabelList.createItemFromLabel(shape.label)
-                self.uniqLabelList.addItem(item)
-                rgb = self._get_rgb_by_label(shape.label)
-                self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+                self.uniqLabelList.addItemForLabel(
+                    label=shape.label, color=self._get_rgb_by_label(label=shape.label)
+                )
 
     def fileSearchChanged(self):
         self.importDirImages(
@@ -1297,10 +1295,9 @@ class MainWindow(QtWidgets.QMainWindow):
         label_list_item = LabelListWidgetItem(text, shape)
         self.labelList.addItem(label_list_item)
         if self.uniqLabelList.findItemByLabel(shape.label) is None:
-            item = self.uniqLabelList.createItemFromLabel(shape.label)
-            self.uniqLabelList.addItem(item)
-            rgb = self._get_rgb_by_label(shape.label)
-            self.uniqLabelList.setItemLabel(item, shape.label, rgb)
+            self.uniqLabelList.addItemForLabel(
+                label=shape.label, color=self._get_rgb_by_label(label=shape.label)
+            )
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.actions.onShapesPresent:
             action.setEnabled(True)

@@ -18,23 +18,20 @@ class UniqueLabelQListWidget(EscapableQListWidget):
             if item.data(Qt.UserRole) == label:  # type: ignore[attr-defined,union-attr]
                 return item
 
-    def createItemFromLabel(self, label):
+    def addItemForLabel(self, label: str, color: tuple[int, int, int]) -> None:
         if self.findItemByLabel(label):
             raise ValueError(f"Item for label '{label}' already exists")
 
         item = QtWidgets.QListWidgetItem()
         item.setData(Qt.UserRole, label)
-        return item
 
-    def setItemLabel(self, item, label, color=None):
+        self.addItem(item)
+
         qlabel = QtWidgets.QLabel()
-        if color is None:
-            qlabel.setText(f"{label}")
-        else:
-            r, g, b = color
-            qlabel.setText(
-                f'{html.escape(label)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
-            )
+        qlabel.setText(
+            f"{html.escape(label)} "
+            f"<font color='#{color[0]:02x}{color[1]:02x}{color[2]:02x}'>●</font>"
+        )
         qlabel.setAlignment(Qt.AlignBottom)
 
         item.setSizeHint(qlabel.sizeHint())
