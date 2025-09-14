@@ -94,7 +94,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         return f'{self.__class__.__name__}("{self.text()}")'
 
 
-class StandardItemModel(QtGui.QStandardItemModel):
+class _ItemModel(QtGui.QStandardItemModel):
     itemDropped = QtCore.pyqtSignal()
 
     def removeRows(self, *args, **kwargs):
@@ -129,7 +129,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self.setWindowFlags(Qt.Window)
 
-        self._model: StandardItemModel = StandardItemModel()
+        self._model: _ItemModel = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
