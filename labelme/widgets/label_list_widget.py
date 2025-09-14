@@ -94,13 +94,29 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         return f'{self.__class__.__name__}("{self.text()}")'
 
 
-class StandardItemModel(QtGui.QStandardItemModel):
+class _ItemModel(QtGui.QStandardItemModel):
     itemDropped = QtCore.pyqtSignal()
 
     def removeRows(self, *args, **kwargs):
         ret = super().removeRows(*args, **kwargs)
         self.itemDropped.emit()
         return ret
+
+    def dropMimeData(self, data, action, row: int, column: int, parent):
+        # NOTE: By default, PyQt will overwrite items when dropped on them, so we need
+        # to adjust the row/parent to insert after the item instead.
+
+        # If row is -1, we're dropping on an item (which would overwrite)
+        # Instead, we want to insert after it
+        if row == -1 and parent.isValid():
+            row = parent.row() + 1
+            parent = parent.parent()
+
+        # If still -1, append to end
+        if row == -1:
+            row = self.rowCount(parent)
+
+        return super().dropMimeData(data, action, row, column, parent)
 
 
 class LabelListWidget(QtWidgets.QListView):
@@ -113,7 +129,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self.setWindowFlags(Qt.Window)
 
-        self._model: StandardItemModel = StandardItemModel()
+        self._model: _ItemModel = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
