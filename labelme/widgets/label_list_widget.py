@@ -102,6 +102,22 @@ class StandardItemModel(QtGui.QStandardItemModel):
         self.itemDropped.emit()
         return ret
 
+    def dropMimeData(self, data, action, row, column, parent):
+        # NOTE: By default, PyQt will overwrite items when dropped on them, so we need
+        # to adjust the row/parent to insert after the item instead.
+
+        # If row is -1, we're dropping on an item (which would overwrite)
+        # Instead, we want to insert after it
+        if row == -1 and parent.isValid():
+            row = parent.row() + 1
+            parent = parent.parent()
+
+        # If still -1, append to end
+        if row == -1:
+            row = self.rowCount(parent)
+
+        return super().dropMimeData(data, action, row, column, parent)
+
 
 class LabelListWidget(QtWidgets.QListView):
     itemDoubleClicked = QtCore.pyqtSignal(LabelListWidgetItem)
