@@ -9,6 +9,7 @@ from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 
@@ -30,7 +31,7 @@ MOVE_SPEED = 5.0
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.pyqtSignal(int, QtCore.QPoint)
+    zoomRequest = QtCore.pyqtSignal(int, QPoint)
     scrollRequest = QtCore.pyqtSignal(int, int)
     newShape = QtCore.pyqtSignal()
     selectionChanged = QtCore.pyqtSignal(list)
