@@ -102,7 +102,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         self.itemDropped.emit()
         return ret
 
-    def dropMimeData(self, data, action, row, column, parent):
+    def dropMimeData(self, data, action, row: int, column: int, parent):
         # NOTE: By default, PyQt will overwrite items when dropped on them, so we need
         # to adjust the row/parent to insert after the item instead.
 
