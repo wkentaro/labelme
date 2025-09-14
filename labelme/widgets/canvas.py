@@ -1,5 +1,6 @@
 import functools
 from typing import Literal
+from typing import Optional
 
 import imgviz
 import numpy as np
@@ -8,6 +9,7 @@ from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 
@@ -29,7 +31,7 @@ MOVE_SPEED = 5.0
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.pyqtSignal(int, QtCore.QPoint)
+    zoomRequest = QtCore.pyqtSignal(int, QPoint)
     scrollRequest = QtCore.pyqtSignal(int, int)
     newShape = QtCore.pyqtSignal()
     selectionChanged = QtCore.pyqtSignal(list)
@@ -48,6 +50,9 @@ class Canvas(QtWidgets.QWidget):
     prevPoint: QPointF
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
+
+    hVertex: Optional[int]
+    hShape: Optional[Shape]
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
@@ -556,10 +561,11 @@ class Canvas(QtWidgets.QWidget):
 
     def selectShapePoint(self, point, multiple_selection_mode):
         """Select the first shape created which contains this point."""
-        if self.selectedVertex():  # A vertex is marked for selection.
-            index, shape = self.hVertex, self.hShape
-            shape.highlightVertex(index, shape.MOVE_VERTEX)  # type: ignore[union-attr]
+        if self.hVertex is not None:
+            assert self.hShape is not None
+            self.hShape.highlightVertex(i=self.hVertex, action=self.hShape.MOVE_VERTEX)
         else:
+            shape: Shape
             for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
                     self.setHiding()
@@ -597,12 +603,16 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
-    def boundedMoveVertex(self, pos):
-        index, shape = self.hVertex, self.hShape
-        point = shape[index]  # type: ignore[index]
+    def boundedMoveVertex(self, pos: QPointF) -> None:
+        if self.hVertex is None:
+            logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
+            return
+        assert self.hShape is not None
+
+        point: QPointF = self.hShape[self.hVertex]
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(point, pos)
-        shape.moveVertexBy(index, pos - point)  # type: ignore[union-attr]
+        self.hShape.moveVertexBy(i=self.hVertex, offset=pos - point)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
@@ -754,7 +764,7 @@ class Canvas(QtWidgets.QWidget):
         y = (ah - h) / (2 * s) if ah > h else 0
         return QPointF(x, y)
 
-    def outOfPixmap(self, p):
+    def outOfPixmap(self, p: QPointF) -> bool:
         w, h = self.pixmap.width(), self.pixmap.height()
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
@@ -783,7 +793,7 @@ class Canvas(QtWidgets.QWidget):
         # divide by scale to allow more precision when zoomed in
         return labelme.utils.distance(p1 - p2) < (self.epsilon / self.scale)
 
-    def intersectionPoint(self, p1, p2):
+    def intersectionPoint(self, p1: QPointF, p2: QPointF) -> QPointF:
         # Cycle through each image edge in clockwise fashion,
         # and find the one intersecting the current line segment.
         # http://paulbourke.net/geometry/lineline2d/
@@ -848,9 +858,9 @@ class Canvas(QtWidgets.QWidget):
             return self.scale * self.pixmap.size()
         return super().minimumSizeHint()
 
-    def wheelEvent(self, ev):
-        mods = ev.modifiers()
-        delta = ev.angleDelta()
+    def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
+        mods: Qt.KeyboardModifiers = ev.modifiers()
+        delta: QPoint = ev.angleDelta()
         if Qt.ControlModifier == int(mods):
             # with Ctrl/Command key
             # zoom
