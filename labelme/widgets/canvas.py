@@ -858,9 +858,9 @@ class Canvas(QtWidgets.QWidget):
             return self.scale * self.pixmap.size()
         return super().minimumSizeHint()
 
-    def wheelEvent(self, ev):
-        mods = ev.modifiers()
-        delta = ev.angleDelta()
+    def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
+        mods: Qt.KeyboardModifiers = ev.modifiers()
+        delta: QPoint = ev.angleDelta()
         if Qt.ControlModifier == int(mods):
             # with Ctrl/Command key
             # zoom
