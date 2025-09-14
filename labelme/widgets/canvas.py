@@ -602,12 +602,16 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
-    def boundedMoveVertex(self, pos):
-        index, shape = self.hVertex, self.hShape
-        point = shape[index]  # type: ignore[index]
+    def boundedMoveVertex(self, pos: QPointF) -> None:
+        if self.hVertex is None:
+            logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
+            return
+        assert self.hShape is not None
+
+        point: QPointF = self.hShape[self.hVertex]
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(point, pos)
-        shape.moveVertexBy(index, pos - point)  # type: ignore[union-attr]
+        self.hShape.moveVertexBy(i=self.hVertex, offset=pos - point)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
@@ -759,7 +763,7 @@ class Canvas(QtWidgets.QWidget):
         y = (ah - h) / (2 * s) if ah > h else 0
         return QPointF(x, y)
 
-    def outOfPixmap(self, p):
+    def outOfPixmap(self, p: QPointF) -> bool:
         w, h = self.pixmap.width(), self.pixmap.height()
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
@@ -788,7 +792,7 @@ class Canvas(QtWidgets.QWidget):
         # divide by scale to allow more precision when zoomed in
         return labelme.utils.distance(p1 - p2) < (self.epsilon / self.scale)
 
-    def intersectionPoint(self, p1, p2):
+    def intersectionPoint(self, p1: QPointF, p2: QPointF) -> QPointF:
         # Cycle through each image edge in clockwise fashion,
         # and find the one intersecting the current line segment.
         # http://paulbourke.net/geometry/lineline2d/
