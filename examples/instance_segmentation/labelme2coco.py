@@ -115,6 +115,11 @@ def main():
         segmentations = collections.defaultdict(list)  # for segmentation
         for shape in label_file.shapes:
             points = shape["points"]
+            if len(shape["points"])==2:
+                if points[0][0] > points[1][0]:
+                    points[0][0], points[1][0] = points[1][0], points[0][0]
+                if points[0][1] > points[1][1]:
+                    points[0][1], points[1][1] = points[1][1], points[0][1]
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
