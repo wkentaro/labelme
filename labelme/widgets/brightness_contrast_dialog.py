@@ -8,7 +8,9 @@ from PyQt5.QtGui import QImage
 class BrightnessContrastDialog(QtWidgets.QDialog):
     _base_value = 50
 
-    def __init__(self, img, callback, parent=None):
+    img: PIL.Image.Image
+
+    def __init__(self, img: PIL.Image.Image, callback, parent=None):
         super().__init__(parent)
         self.setModal(True)
         self.setWindowTitle("Brightness/Contrast")
@@ -51,7 +53,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         del layouts
         self.setLayout(layout)
 
-        assert isinstance(img, PIL.Image.Image)
+        if img.mode != "RGB":
+            raise ValueError("Image mode must be RGB")
         self.img = img
         self.callback = callback
 
@@ -59,7 +62,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         brightness = self.slider_brightness.value() / self._base_value
         contrast = self.slider_contrast.value() / self._base_value
 
-        img = self.img
+        img: PIL.Image.Image = self.img
         if brightness != 1:
             img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
         if contrast != 1:
