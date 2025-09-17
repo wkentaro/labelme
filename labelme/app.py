@@ -1601,23 +1601,40 @@ class MainWindow(QtWidgets.QMainWindow):
     def onNewBrightnessContrast(self, qimage):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage), clear_shapes=False)
 
-    def brightnessContrast(self, value):
+    def brightnessContrast(self, value: bool, is_initial_load: bool = False):
+        del value
+
         dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData),
+            utils.img_data_to_pil(self.imageData).convert("RGB"),
             self.onNewBrightnessContrast,
             parent=self,
         )
+
         brightness, contrast = self.brightnessContrast_values.get(
             self.filename, (None, None)
         )
+        if is_initial_load:
+            prev_filename: str = self.recentFiles[0] if self.recentFiles else ""
+            if self._config["keep_prev_brightness"] and prev_filename:
+                brightness, _ = self.brightnessContrast_values.get(
+                    prev_filename, (None, None)
+                )
+            if self._config["keep_prev_contrast"] and prev_filename:
+                _, contrast = self.brightnessContrast_values.get(
+                    prev_filename, (None, None)
+                )
         if brightness is not None:
             dialog.slider_brightness.setValue(brightness)
         if contrast is not None:
             dialog.slider_contrast.setValue(contrast)
-        dialog.exec_()
 
-        brightness = dialog.slider_brightness.value()
-        contrast = dialog.slider_contrast.value()
+        if is_initial_load:
+            dialog.onNewValue(None)
+        else:
+            dialog.exec_()
+            brightness = dialog.slider_brightness.value()
+            contrast = dialog.slider_contrast.value()
+
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
 
     def togglePolygons(self, value):
@@ -1724,30 +1741,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.setScroll(
                     orientation, self.scroll_values[orientation][self.filename]
                 )
-        # set brightness contrast values
-        dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData),
-            self.onNewBrightnessContrast,
-            parent=self,
-        )
-        brightness, contrast = self.brightnessContrast_values.get(
-            self.filename, (None, None)
-        )
-        if self._config["keep_prev_brightness"] and self.recentFiles:
-            brightness, _ = self.brightnessContrast_values.get(
-                self.recentFiles[0], (None, None)
-            )
-        if self._config["keep_prev_contrast"] and self.recentFiles:
-            _, contrast = self.brightnessContrast_values.get(
-                self.recentFiles[0], (None, None)
-            )
-        if brightness is not None:
-            dialog.slider_brightness.setValue(brightness)
-        if contrast is not None:
-            dialog.slider_contrast.setValue(contrast)
-        self.brightnessContrast_values[self.filename] = (brightness, contrast)
-        if brightness is not None or contrast is not None:
-            dialog.onNewValue(None)
+        self.brightnessContrast(value=False, is_initial_load=True)
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
