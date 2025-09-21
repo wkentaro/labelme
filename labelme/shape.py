@@ -39,6 +39,8 @@ class Shape:
     point_size = 8
     scale = 1.0
 
+    _vertex_fill_color: QtGui.QColor
+
     def __init__(
         self,
         label=None,
@@ -268,7 +270,7 @@ class Shape:
             painter.drawPath(line_path)
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)
-                painter.fillPath(vrtx_path, self._vertex_fill_color)  # type: ignore[has-type]
+                painter.fillPath(vrtx_path, self._vertex_fill_color)
             if self.fill and self.shape_type not in [
                 "line",
                 "linestrip",
