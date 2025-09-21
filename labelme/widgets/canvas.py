@@ -330,8 +330,8 @@ class Canvas(QtWidgets.QWidget):
             index = shape.nearestVertex(pos, self.epsilon)
             index_edge = shape.nearestEdge(pos, self.epsilon)
             if index is not None:
-                if self.selectedVertex():
-                    self.hShape.highlightClear()  # type: ignore[union-attr]
+                if self.selectedVertex() and self.hShape:
+                    self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex = index
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge
@@ -348,8 +348,8 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
             elif index_edge is not None and shape.canAddPoint():
-                if self.selectedVertex():
-                    self.hShape.highlightClear()  # type: ignore[union-attr]
+                if self.selectedVertex() and self.hShape:
+                    self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex
                 self.hVertex = None
                 self.prevhShape = self.hShape = shape
@@ -360,8 +360,8 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 break
             elif shape.containsPoint(pos):
-                if self.selectedVertex():
-                    self.hShape.highlightClear()  # type: ignore[union-attr]
+                if self.selectedVertex() and self.hShape:
+                    self.hShape.highlightClear()
                 self.prevhVertex = self.hVertex
                 self.hVertex = None
                 self.prevhShape = self.hShape = shape
@@ -976,7 +976,7 @@ class Canvas(QtWidgets.QWidget):
 
     def resetState(self):
         self.restoreCursor()
-        self.pixmap = None  # type: ignore[assignment]
+        self.pixmap = QtGui.QPixmap()
         self.shapesBackups = []
         self.update()
 

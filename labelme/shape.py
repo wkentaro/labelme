@@ -188,9 +188,9 @@ class Shape:
         if self.mask is not None:
             image_to_draw = np.zeros(self.mask.shape + (4,), dtype=np.uint8)
             fill_color = (
-                self.select_fill_color.getRgb()  # type: ignore[attr-defined]
+                self.select_fill_color.getRgb()
                 if self.selected
-                else self.fill_color.getRgb()  # type: ignore[attr-defined]
+                else self.fill_color.getRgb()
             )
             image_to_draw[self.mask] = fill_color
             qimage = QtGui.QImage.fromData(labelme.utils.img_arr_to_data(image_to_draw))

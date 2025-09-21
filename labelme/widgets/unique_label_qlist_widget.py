@@ -27,7 +27,7 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
     def find_label_item(self, label: str) -> Optional[QtWidgets.QListWidgetItem]:
         for row in range(self.count()):
             item = self.item(row)
-            if item.data(Qt.UserRole) == label:  # type: ignore[attr-defined,union-attr]
+            if item and item.data(Qt.UserRole) == label:
                 return item
         return None
 

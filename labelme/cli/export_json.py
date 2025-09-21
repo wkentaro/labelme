@@ -56,7 +56,7 @@ def main():
 
     with open(osp.join(out_dir, "label_names.txt"), "w") as f:
         for lbl_name in label_names:
-            f.write(f"{lbl_name}\n")  # type: ignore[operator]
+            f.write(f"{lbl_name}\n")
 
     logger.info(f"Saved to: {out_dir}")
 
