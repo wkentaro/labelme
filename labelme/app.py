@@ -177,6 +177,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.mouseMoved.connect(
             lambda pos: self.status_right.setText(f"x={pos.x():.3f}, y={pos.y():.3f}")
         )
+        self.canvas.statusRequest.connect(lambda text: self.status_left.setText(text))
 
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)

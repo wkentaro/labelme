@@ -6,12 +6,12 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Image</source>
-        <translation>图像</translation>
+        <translation type="obsolete">图像</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation type="obsolete">点击并拖拽以移动控制点</translation>
+        <translation type="unfinished">点击并拖拽以移动控制点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -20,13 +20,27 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click &amp; Drag to move point
-ALT + SHIFT + Click to delete point</source>
+        <source>ESC to cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>ALT + Click to create point</source>
+        <source>Enter or Space to close shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + SHIFT + Click to delete point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + Click to create point on shape &apos;%s&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Right-click &amp; drag to copy shape</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
