@@ -142,32 +142,33 @@ class Shape:
         self.points.insert(i, point)
         self.point_labels.insert(i, label)
 
-    def removePoint(self, i):
+    def canRemovePoint(self) -> bool:
         if not self.canAddPoint():
-            logger.warning(
-                "Cannot remove point from: shape_type=%r",
-                self.shape_type,
-            )
-            return
+            return False
 
         if self.shape_type == "polygon" and len(self.points) <= 3:
-            logger.warning(
-                "Cannot remove point from: shape_type=%r, len(points)=%d",
-                self.shape_type,
-                len(self.points),
-            )
-            return
+            return False
 
         if self.shape_type == "linestrip" and len(self.points) <= 2:
+            return False
+
+        return True
+
+    def removePoint(self, i) -> bool:
+        """
+        Try to remove point at index `i`. If successful, return True.
+        """
+        if not self.canRemovePoint():
             logger.warning(
                 "Cannot remove point from: shape_type=%r, len(points)=%d",
                 self.shape_type,
                 len(self.points),
             )
-            return
+            return False
 
         self.points.pop(i)
         self.point_labels.pop(i)
+        return True
 
     def isClosed(self):
         return self._closed
