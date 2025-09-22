@@ -175,7 +175,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
         self.canvas.mouseMoved.connect(
-            lambda pos: self.status(f"Mouse is at: x={pos.x()}, y={pos.y()}")
+            lambda pos: self.status_right.setText(f"x={pos.x():.3f}, y={pos.y():.3f}")
         )
 
         scrollArea = QtWidgets.QScrollArea()
@@ -836,7 +836,10 @@ class MainWindow(QtWidgets.QMainWindow):
             ai_prompt_action,
         )
 
-        self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
+        self.status_left = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
+        self.status_right = QtWidgets.QLabel("")
+        self.statusBar().addWidget(self.status_left, 1)
+        self.statusBar().addWidget(self.status_right, 0)
         self.statusBar().show()
 
         if output_file is not None and self._config["auto_save"]:
@@ -993,7 +996,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def queueEvent(self, function):
         QtCore.QTimer.singleShot(0, function)
 
-    def status(self, message, delay=5000):
+    def show_status_message(self, message, delay=2000):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
@@ -1670,7 +1673,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
         # assumes same name, but json extension
-        self.status(str(self.tr("Loading %s...")) % osp.basename(str(filename)))
+        self.show_status_message(self.tr("Loading %s...") % osp.basename(str(filename)))
         label_file = f"{osp.splitext(filename)[0]}.json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
@@ -1686,7 +1689,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     )
                     % (e, label_file),
                 )
-                self.status(self.tr("Error reading %s") % label_file)
+                self.show_status_message(self.tr("Error reading %s") % label_file)
                 return False
             assert self.labelFile is not None
             self.imageData = self.labelFile.imageData
@@ -1716,7 +1719,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Supported image formats: {1}</p>"
                 ).format(filename, ",".join(formats)),
             )
-            self.status(self.tr("Error reading %s") % filename)
+            self.show_status_message(self.tr("Error reading %s") % filename)
             return False
         self.image = image
         self.filename = filename
@@ -1753,7 +1756,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addRecentFile(self.filename)
         self.toggleActions(True)
         self.canvas.setFocus()
-        self.status(str(self.tr("Loaded %s")) % osp.basename(str(filename)))
+        self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
         return True
 
     def resizeEvent(self, event):
