@@ -144,8 +144,9 @@ class Canvas(QtWidgets.QWidget):
         self._createMode = value
 
     def set_ai_model_name(self, model_name: str) -> None:
-        logger.debug("Setting AI model to {!r}", model_name)
-        self._ai_model_name = model_name
+        if self._ai_model_name != model_name:
+            logger.debug("Setting AI model to {!r}", model_name)
+            self._ai_model_name = model_name
 
     def storeShapes(self):
         shapesBackup = []
