@@ -164,6 +164,10 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListWidget.setLayout(fileListLayout)
         self.file_dock.setWidget(fileListWidget)
 
+        self.ai_dock = QtWidgets.QDockWidget(self.tr("AI"), self)
+        self.ai_dock.setWidget(self.configure_ai_dock())
+        self.ai_dock.setObjectName("AI")
+
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
@@ -194,22 +198,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(scrollArea)
 
-        features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
-            if self._config[dock]["closable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetClosable
-            if self._config[dock]["floatable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
-            if self._config[dock]["movable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetMovable
-            getattr(self, dock).setFeatures(features)
-            if self._config[dock]["show"] is False:
-                getattr(self, dock).setVisible(False)
+        self._configure_dock("flag_dock", self.flag_dock)
+        self._configure_dock("label_dock", self.label_dock)
+        self._configure_dock("shape_dock", self.shape_dock)
+        self._configure_dock("file_dock", self.file_dock)
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.ai_dock)
 
         # Actions
         action = functools.partial(utils.newAction, self)
@@ -376,6 +374,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
+        createAiPolygonMode.changed.connect(self._initialize_ai_model_if_needed)
         createAiMaskMode = action(
             self.tr("Create AI-Mask"),
             lambda: self.toggleDrawMode(False, createMode="ai_mask"),
@@ -384,6 +383,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
+        createAiMaskMode.changed.connect(self._initialize_ai_model_if_needed)
         editMode = action(
             self.tr("Edit Polygons"),
             self.setEditMode,
@@ -562,15 +562,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
-        # Group zoom controls into a list for easier toggling.
-        zoomActions = (
-            self.zoomWidget,
-            zoomIn,
-            zoomOut,
-            zoomOrg,
-            fitWindow,
-            fitWidth,
-        )
         self.zoomMode = self.FIT_WINDOW
         fitWindow.setChecked(Qt.Checked)
         self.scalers = {
@@ -643,60 +634,78 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWindow=fitWindow,
             fitWidth=fitWidth,
             brightnessContrast=brightnessContrast,
-            zoomActions=zoomActions,
             openNextImg=openNextImg,
             openPrevImg=openPrevImg,
-            fileMenuActions=(open_, opendir, save, saveAs, close, quit),
-            tool=(),
-            # XXX: need to add some actions here to activate the shortcut
-            editMenu=(
-                edit,
-                duplicate,
-                copy,
-                paste,
-                delete,
-                None,
-                undo,
-                undoLastPoint,
-                None,
-                removePoint,
-                None,
-                toggle_keep_prev_mode,
-            ),
-            # menu shown at right click
-            menu=(
-                createMode,
-                createRectangleMode,
-                createCircleMode,
-                createLineMode,
-                createPointMode,
-                createLineStripMode,
-                createAiPolygonMode,
-                createAiMaskMode,
-                editMode,
-                edit,
-                duplicate,
-                copy,
-                paste,
-                delete,
-                undo,
-                undoLastPoint,
-                removePoint,
-            ),
-            onLoadActive=(
-                close,
-                createMode,
-                createRectangleMode,
-                createCircleMode,
-                createLineMode,
-                createPointMode,
-                createLineStripMode,
-                createAiPolygonMode,
-                createAiMaskMode,
-                editMode,
-                brightnessContrast,
-            ),
-            onShapesPresent=(saveAs, hideAll, showAll, toggleAll),
+        )
+        self.on_shapes_present_actions = (saveAs, hideAll, showAll, toggleAll)
+
+        self.draw_actions = {
+            "polygon": createMode,
+            "rectangle": createRectangleMode,
+            "circle": createCircleMode,
+            "point": createPointMode,
+            "line": createLineMode,
+            "linestrip": createLineStripMode,
+            "ai_polygon": createAiPolygonMode,
+            "ai_mask": createAiMaskMode,
+        }
+
+        # Group zoom controls into a list for easier toggling.
+        self.zoom_actions = (
+            self.zoomWidget,
+            zoomIn,
+            zoomOut,
+            zoomOrg,
+            fitWindow,
+            fitWidth,
+        )
+        self.on_load_active_actions = (
+            close,
+            createMode,
+            createRectangleMode,
+            createCircleMode,
+            createLineMode,
+            createPointMode,
+            createLineStripMode,
+            createAiPolygonMode,
+            createAiMaskMode,
+            editMode,
+            brightnessContrast,
+        )
+        # menu shown at right click
+        self.context_menu_actions = (
+            createMode,
+            createRectangleMode,
+            createCircleMode,
+            createLineMode,
+            createPointMode,
+            createLineStripMode,
+            createAiPolygonMode,
+            createAiMaskMode,
+            editMode,
+            edit,
+            duplicate,
+            copy,
+            paste,
+            delete,
+            undo,
+            undoLastPoint,
+            removePoint,
+        )
+        # XXX: need to add some actions here to activate the shortcut
+        self.edit_menu_actions = (
+            edit,
+            duplicate,
+            copy,
+            paste,
+            delete,
+            None,
+            undo,
+            undoLastPoint,
+            None,
+            removePoint,
+            None,
+            toggle_keep_prev_mode,
         )
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
@@ -759,7 +768,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        utils.addActions(self.canvas.menus[0], self.actions.menu)
+        utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         utils.addActions(
             self.canvas.menus[1],
             (
@@ -768,52 +777,8 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        selectAiModel = QtWidgets.QWidgetAction(self)
-        selectAiModel.setDefaultWidget(QtWidgets.QWidget())
-        selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
-        #
-        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
-        selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
-        selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
-        #
-        self._selectAiModelComboBox = QtWidgets.QComboBox()
-        selectAiModel.defaultWidget().layout().addWidget(self._selectAiModelComboBox)
-        MODEL_NAMES: list[tuple[str, str]] = [
-            ("efficientsam:10m", "EfficientSam (speed)"),
-            ("efficientsam:latest", "EfficientSam (accuracy)"),
-            ("sam:100m", "SegmentAnything (speed)"),
-            ("sam:300m", "SegmentAnything (balanced)"),
-            ("sam:latest", "SegmentAnything (accuracy)"),
-            ("sam2:small", "Sam2 (speed)"),
-            ("sam2:latest", "Sam2 (balanced)"),
-            ("sam2:large", "Sam2 (accuracy)"),
-        ]
-        for model_name, model_ui_name in MODEL_NAMES:
-            self._selectAiModelComboBox.addItem(model_ui_name, userData=model_name)
-        model_ui_names: list[str] = [model_ui_name for _, model_ui_name in MODEL_NAMES]
-        if self._config["ai"]["default"] in model_ui_names:
-            model_index = model_ui_names.index(self._config["ai"]["default"])
-        else:
-            logger.warning(
-                "Default AI model is not found: %r",
-                self._config["ai"]["default"],
-            )
-            model_index = 0
-        self._selectAiModelComboBox.currentIndexChanged.connect(
-            lambda index: self.canvas.set_ai_model_name(
-                model_name=self._selectAiModelComboBox.itemData(index)
-            )
-        )
-        self._selectAiModelComboBox.setCurrentIndex(model_index)
-
-        self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
-            on_submit=self._submit_ai_prompt, parent=self
-        )
-        ai_prompt_action = QtWidgets.QWidgetAction(self)
-        ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
-
         self.tools = self.toolbar("Tools")
-        self.actions.tool = (
+        self.toolbar_actions = (
             open_,
             opendir,
             openPrevImg,
@@ -821,19 +786,17 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             None,
-            createMode,
+            undo,
+            None,
+            *self.draw_actions.values(),
+            None,
             editMode,
             duplicate,
             delete,
-            undo,
-            brightnessContrast,
             None,
+            brightnessContrast,
             fitWindow,
             zoom,
-            None,
-            selectAiModel,
-            None,
-            ai_prompt_action,
         )
 
         self.statusBar().showMessage(str(self.tr("%s started.")) % __appname__)
@@ -902,6 +865,66 @@ class MainWindow(QtWidgets.QMainWindow):
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
 
+    def _configure_dock(self, dock_name: str, dock_obj: QtWidgets.QDockWidget) -> None:
+        dock_config = self._config.get(dock_name, None)
+        if dock_config is None:
+            # Missing configuration? Never mind then...
+            return
+
+        features = QtWidgets.QDockWidget.DockWidgetFeatures()
+
+        if dock_config.get("closable"):
+            features = features | QtWidgets.QDockWidget.DockWidgetClosable
+        if dock_config.get("floatable"):
+            features = features | QtWidgets.QDockWidget.DockWidgetFloatable
+        if dock_config.get("movable"):
+            features = features | QtWidgets.QDockWidget.DockWidgetMovable
+        dock_obj.setFeatures(features)
+        if dock_config.get("show") is False:
+            dock_obj.setVisible(False)
+
+    def configure_ai_dock(self) -> QtWidgets.QWidget:
+        ai_model_combobox = QtWidgets.QComboBox()
+        MODEL_NAMES: list[tuple[str, str]] = [
+            ("efficientsam:10m", "EfficientSam (speed)"),
+            ("efficientsam:latest", "EfficientSam (accuracy)"),
+            ("sam:100m", "SegmentAnything (speed)"),
+            ("sam:300m", "SegmentAnything (balanced)"),
+            ("sam:latest", "SegmentAnything (accuracy)"),
+            ("sam2:small", "Sam2 (speed)"),
+            ("sam2:latest", "Sam2 (balanced)"),
+            ("sam2:large", "Sam2 (accuracy)"),
+        ]
+        default_model = self._config["ai"]["default"]
+        model_index = None
+        for index, (model_name, model_ui_name) in enumerate(MODEL_NAMES):
+            ai_model_combobox.addItem(model_ui_name, userData=model_name)
+            if model_name == default_model:
+                model_index = index
+        if model_index is None:
+            logger.warning("Default AI model is not found: %r", default_model)
+            model_index = 0
+        ai_model_combobox.currentIndexChanged.connect(
+            lambda _index: self._initialize_ai_model_if_needed
+        )
+        ai_model_combobox.setCurrentIndex(model_index)
+        ai_prompt_widget = AiPromptWidget(on_submit=self._submit_ai_prompt, parent=self)
+
+        ai_dock_layout = QtWidgets.QVBoxLayout()
+        ai_dock_widget = QtWidgets.QWidget()
+        ai_dock_widget.setLayout(ai_dock_layout)
+        ai_dock_layout.addWidget(QtWidgets.QLabel(self.tr("AI Mask Model")))
+        ai_dock_layout.addWidget(ai_model_combobox)
+        ai_dock_layout.addWidget(ai_prompt_widget)
+        self._selectAiModelComboBox = ai_model_combobox
+        self._ai_prompt_widget = ai_prompt_widget
+        return ai_dock_widget
+
+    def _initialize_ai_model_if_needed(self) -> None:
+        if not hasattr(self, "canvas"):  # If not quite initialized yet
+            return
+        self.canvas.set_ai_model_name(self._selectAiModelComboBox.currentData())
+
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
@@ -924,24 +947,17 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self.labelList)
 
     def populateModeActions(self):
-        tool, menu = self.actions.tool, self.actions.menu
         self.tools.clear()
-        utils.addActions(self.tools, tool)
+        utils.addActions(self.tools, self.toolbar_actions)
         self.canvas.menus[0].clear()
-        utils.addActions(self.canvas.menus[0], menu)
+        utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         self.menus.edit.clear()
         actions = (
-            self.actions.createMode,
-            self.actions.createRectangleMode,
-            self.actions.createCircleMode,
-            self.actions.createLineMode,
-            self.actions.createPointMode,
-            self.actions.createLineStripMode,
-            self.actions.createAiPolygonMode,
-            self.actions.createAiMaskMode,
+            *self.draw_actions.values(),
             self.actions.editMode,
+            *self.edit_menu_actions,
         )
-        utils.addActions(self.menus.edit, actions + self.actions.editMenu)
+        utils.addActions(self.menus.edit, actions)
 
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
@@ -965,14 +981,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        self.actions.createMode.setEnabled(True)
-        self.actions.createRectangleMode.setEnabled(True)
-        self.actions.createCircleMode.setEnabled(True)
-        self.actions.createLineMode.setEnabled(True)
-        self.actions.createPointMode.setEnabled(True)
-        self.actions.createLineStripMode.setEnabled(True)
-        self.actions.createAiPolygonMode.setEnabled(True)
-        self.actions.createAiMaskMode.setEnabled(True)
+        for action in self.draw_actions.values():
+            action.setEnabled(True)
         title = __appname__
         if self.filename is not None:
             title = f"{title} - {self.filename}"
@@ -985,9 +995,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleActions(self, value=True):
         """Enable/Disable widgets which depend on an opened image."""
-        for z in self.actions.zoomActions:
+        for z in self.zoom_actions:
             z.setEnabled(value)
-        for action in self.actions.onLoadActive:
+        for action in self.on_load_active_actions:
             action.setEnabled(value)
 
     def queueEvent(self, function):
@@ -1101,24 +1111,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.delete.setEnabled(not drawing)
 
     def toggleDrawMode(self, edit=True, createMode="polygon"):
-        draw_actions = {
-            "polygon": self.actions.createMode,
-            "rectangle": self.actions.createRectangleMode,
-            "circle": self.actions.createCircleMode,
-            "point": self.actions.createPointMode,
-            "line": self.actions.createLineMode,
-            "linestrip": self.actions.createLineStripMode,
-            "ai_polygon": self.actions.createAiPolygonMode,
-            "ai_mask": self.actions.createAiMaskMode,
-        }
-
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
         if edit:
-            for draw_action in draw_actions.values():
+            for draw_action in self.draw_actions.values():
                 draw_action.setEnabled(True)
         else:
-            for draw_mode, draw_action in draw_actions.items():
+            for draw_mode, draw_action in self.draw_actions.items():
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
 
@@ -1303,7 +1302,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 label=shape.label, color=self._get_rgb_by_label(label=shape.label)
             )
         self.labelDialog.addLabelHistory(shape.label)
-        for action in self.actions.onShapesPresent:
+        for action in self.on_shapes_present_actions:
             action.setEnabled(True)
 
         self._update_shape_color(shape)
@@ -2088,7 +2087,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.deleteShape(self.canvas.hShape)
             self.remLabels([self.canvas.hShape])
             if self.noShapes():
-                for action in self.actions.onShapesPresent:
+                for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
         self.setDirty()
 
@@ -2103,7 +2102,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
-                for action in self.actions.onShapesPresent:
+                for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
 
     def copyShape(self):
