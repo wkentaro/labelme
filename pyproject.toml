@@ -59,6 +59,8 @@ labelme = "labelme.__main__:main"
 labelme_draw_json = "labelme.cli.draw_json:main"
 labelme_draw_label_png = "labelme.cli.draw_label_png:main"
 labelme_export_json = "labelme.cli.export_json:main"
+labelme_export_yolo = "labelme.cli.export_yolo:main"
+labelme_import_yolo = "labelme.cli.import_yolo:main"
 labelme_on_docker = "labelme.cli.on_docker:main"
 
 [tool.pytest.ini_options]
