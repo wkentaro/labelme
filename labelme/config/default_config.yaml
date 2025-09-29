@@ -54,6 +54,11 @@ file_dock:
   closable: true
   movable: true
   floatable: true
+ai_dock:
+  show: true
+  closable: true
+  movable: true
+  floatable: true
 
 # label_dialog
 show_label_text_field: true
