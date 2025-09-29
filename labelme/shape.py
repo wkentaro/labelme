@@ -114,6 +114,7 @@ class Shape:
             "linestrip",
             "points",
             "mask",
+            "selrectangle"
         ]:
             raise ValueError(f"Unexpected shape_type: {value}")
         self._shape_type = value
@@ -220,7 +221,7 @@ class Shape:
             vrtx_path = QtGui.QPainterPath()
             negative_vrtx_path = QtGui.QPainterPath()
 
-            if self.shape_type in ["rectangle", "mask"]:
+            if self.shape_type in ["rectangle", "mask","selrectangle"]:
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
                     rectangle = QtCore.QRectF(
@@ -229,6 +230,9 @@ class Shape:
                     )
                     line_path.addRect(rectangle)
                 if self.shape_type == "rectangle":
+                    for i in range(len(self.points)):
+                        self.drawVertex(vrtx_path, i)
+                if self.shape_type == "selrectangle":
                     for i in range(len(self.points)):
                         self.drawVertex(vrtx_path, i)
             elif self.shape_type == "circle":
