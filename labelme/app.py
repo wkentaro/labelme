@@ -2231,6 +2231,6 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             images = os_sorted(images)
         except Exception as e:
-            logger.warning(f"natsort's sort failed, falling back to the custom sort method: {e}")
+            logger.debug(f"natsort's sort failed, falling back to the custom sort method: {e}")
             images = self.custom_natsorted(images)
         return images
