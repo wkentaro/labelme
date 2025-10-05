@@ -10,7 +10,7 @@ import types
 import webbrowser
 
 import imgviz
-import natsort
+from natsort import os_sorted
 import numpy as np
 from loguru import logger
 from numpy.typing import NDArray
@@ -2206,6 +2206,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
 
+    def custom_natsorted(self, items):
+        """
+        custom sort function for file path with @ symbol
+        """
+        def key_func(item):
+            # @ symbol to separate other characters
+            return tuple(int(c) if c.isdigit() else c for c in re.split(r'(@)', str(item)))
+
+        return sorted(items, key=key_func)
+
     def scanAllImages(self, folderPath):
         extensions = [
             f".{fmt.data().decode().lower()}"
@@ -2218,5 +2228,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 if file.lower().endswith(tuple(extensions)):
                     relativePath = os.path.normpath(osp.join(root, file))
                     images.append(relativePath)
-        images = natsort.os_sorted(images)
+        try:
+            images = os_sorted(images)
+        except Exception as e:
+            logger.warning(f"natsort's sort failed, falling back to the custom sort method: {e}")
+            images = self.custom_natsorted(images)
         return images
