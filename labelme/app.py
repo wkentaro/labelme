@@ -639,16 +639,16 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.on_shapes_present_actions = (saveAs, hideAll, showAll, toggleAll)
 
-        self.draw_actions = {
-            "polygon": createMode,
-            "rectangle": createRectangleMode,
-            "circle": createCircleMode,
-            "point": createPointMode,
-            "line": createLineMode,
-            "linestrip": createLineStripMode,
-            "ai_polygon": createAiPolygonMode,
-            "ai_mask": createAiMaskMode,
-        }
+        self.draw_actions: list[tuple[str, QtWidgets.QAction]] = [
+            ("polygon", createMode),
+            ("rectangle", createRectangleMode),
+            ("circle", createCircleMode),
+            ("point", createPointMode),
+            ("line", createLineMode),
+            ("linestrip", createLineStripMode),
+            ("ai_polygon", createAiPolygonMode),
+            ("ai_mask", createAiMaskMode),
+        ]
 
         # Group zoom controls into a list for easier toggling.
         self.zoom_actions = (
@@ -939,7 +939,7 @@ class MainWindow(QtWidgets.QMainWindow):
         utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         self.menus.edit.clear()
         actions = (
-            *self.draw_actions.values(),
+            *[draw_action for _, draw_action in self.draw_actions],
             self.actions.editMode,
             *self.edit_menu_actions,
         )
@@ -967,7 +967,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
-        for action in self.draw_actions.values():
+        for _, action in self.draw_actions:
             action.setEnabled(True)
         title = __appname__
         if self.filename is not None:
@@ -1100,10 +1100,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
         if edit:
-            for draw_action in self.draw_actions.values():
+            for _, draw_action in self.draw_actions:
                 draw_action.setEnabled(True)
         else:
-            for draw_mode, draw_action in self.draw_actions.items():
+            for draw_mode, draw_action in self.draw_actions:
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
 
