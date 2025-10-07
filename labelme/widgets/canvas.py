@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import functools
 from typing import Literal
-from typing import Optional
 
 import imgviz
 import numpy as np
@@ -51,8 +52,8 @@ class Canvas(QtWidgets.QWidget):
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
 
-    hVertex: Optional[int]
-    hShape: Optional[Shape]
+    hVertex: int | None
+    hShape: Shape | None
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
