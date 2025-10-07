@@ -1042,7 +1042,7 @@ class Canvas(QtWidgets.QWidget):
         QtWidgets.QApplication.setOverrideCursor(cursor)
 
     def restoreCursor(self):
-        self.overrideCursor(CURSOR_DEFAULT)
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def resetState(self):
         self.restoreCursor()
