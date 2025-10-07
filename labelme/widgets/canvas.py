@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import functools
 from typing import Literal
-from typing import Optional
 
 import imgviz
 import numpy as np
@@ -39,6 +40,7 @@ class Canvas(QtWidgets.QWidget):
     drawingPolygon = QtCore.pyqtSignal(bool)
     vertexSelected = QtCore.pyqtSignal(bool)
     mouseMoved = QtCore.pyqtSignal(QPointF)
+    statusUpdated = QtCore.pyqtSignal(str)
 
     CREATE, EDIT = 0, 1
 
@@ -51,8 +53,8 @@ class Canvas(QtWidgets.QWidget):
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
 
-    hVertex: Optional[int]
-    hShape: Optional[Shape]
+    hVertex: int | None
+    hShape: Shape | None
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
@@ -183,13 +185,16 @@ class Canvas(QtWidgets.QWidget):
 
     def enterEvent(self, ev):
         self.overrideCursor(self._cursor)
+        self._update_status()
 
     def leaveEvent(self, ev):
         self.unHighlight()
         self.restoreCursor()
+        self._update_status()
 
     def focusOutEvent(self, ev):
         self.restoreCursor()
+        self._update_status()
 
     def isVisible(self, shape):  # type: ignore[override]
         return self.visible.get(shape, True)
@@ -225,6 +230,57 @@ class Canvas(QtWidgets.QWidget):
     def selectedEdge(self):
         return self.hEdge is not None
 
+    def _update_status(self, extra_messages: list[str] | None = None) -> None:
+        messages: list[str] = []
+        if self.drawing():
+            messages.append(self.tr("Creating %r") % self.createMode)
+            messages.append(self._get_create_mode_message())
+            if self.current:
+                messages.append(self.tr("ESC to cancel"))
+            if self.canCloseShape():
+                messages.append(self.tr("Enter or Space to finalize"))
+        else:
+            assert self.editing()
+            messages.append(self.tr("Editing shapes"))
+        if extra_messages:
+            messages.extend(extra_messages)
+        self.statusUpdated.emit(" ー ".join(messages))
+
+    def _get_create_mode_message(self) -> str:
+        assert self.drawing()
+        isNew: bool = self.current is None
+        if self.createMode == "ai_polygon":
+            return self.tr(
+                "Click points to include or Shift+Click to exclude for ai_polygon"
+            )
+        if self.createMode == "ai_mask":
+            return self.tr(
+                "Click points to include or Shift+Click to exclude for ai_mask"
+            )
+        if self.createMode == "line":
+            if isNew:
+                return self.tr("Click start point for line")
+            else:
+                return self.tr("Click end point for line")
+        if self.createMode == "linestrip":
+            if isNew:
+                return self.tr("Click start point for linestrip")
+            else:
+                return self.tr(
+                    "Click next point or finish by Ctrl/Cmd+Click for linestrip"
+                )
+        if self.createMode == "circle":
+            if isNew:
+                return self.tr("Click center point for circle")
+            else:
+                return self.tr("Click point on circumference for circle")
+        if self.createMode == "rectangle":
+            if isNew:
+                return self.tr("Click first corner for rectangle")
+            else:
+                return self.tr("Click opposite corner for rectangle")
+        return self.tr("Click to add point")
+
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
@@ -248,6 +304,7 @@ class Canvas(QtWidgets.QWidget):
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
                 self.repaint()  # draw crosshair
+                self._update_status()
                 return
 
             if self.outOfPixmap(pos):
@@ -293,6 +350,7 @@ class Canvas(QtWidgets.QWidget):
             assert len(self.line.points) == len(self.line.point_labels)
             self.repaint()
             self.current.highlightClear()
+            self._update_status()
             return
 
         # Polygon copy moving.
@@ -304,6 +362,7 @@ class Canvas(QtWidgets.QWidget):
             elif self.selectedShapes:
                 self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
                 self.repaint()
+            self._update_status()
             return
 
         # Polygon/Vertex moving.
@@ -323,7 +382,7 @@ class Canvas(QtWidgets.QWidget):
         # - Highlight shapes
         # - Highlight vertex
         # Update shape/vertex fill and tooltip value accordingly.
-        self.setToolTip(self.tr("Image"))
+        status_messages: list[str] = []
         for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
             # Look for a nearby vertex to highlight. If that fails,
             # check if we happen to be inside a shape.
@@ -338,13 +397,11 @@ class Canvas(QtWidgets.QWidget):
                 self.hEdge = None
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
-                self.setToolTip(
-                    self.tr(
-                        "Click & Drag to move point\n"
-                        "ALT + SHIFT + Click to delete point"
+                status_messages.append(self.tr("Click & drag to move point"))
+                if shape.canRemovePoint():
+                    status_messages.append(
+                        self.tr("ALT + SHIFT + Click to delete point")
                     )
-                )
-                self.setStatusTip(self.toolTip())
                 self.update()
                 break
             elif index_edge is not None and shape.canAddPoint():
@@ -355,8 +412,7 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge = index_edge
                 self.overrideCursor(CURSOR_POINT)
-                self.setToolTip(self.tr("ALT + Click to create point"))
-                self.setStatusTip(self.toolTip())
+                status_messages.append(self.tr("ALT + Click to create point on shape"))
                 self.update()
                 break
             elif shape.containsPoint(pos):
@@ -367,10 +423,12 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge
                 self.hEdge = None
-                self.setToolTip(
-                    self.tr("Click & drag to move shape '%s'") % shape.label
+                status_messages.extend(
+                    [
+                        self.tr("Click & drag to move shape"),
+                        self.tr("Right-click & drag to copy shape"),
+                    ]
                 )
-                self.setStatusTip(self.toolTip())
                 self.overrideCursor(CURSOR_GRAB)
                 self.update()
                 break
@@ -378,6 +436,7 @@ class Canvas(QtWidgets.QWidget):
             self.restoreCursor()
             self.unHighlight()
         self.vertexSelected.emit(self.hVertex is not None)
+        self._update_status(extra_messages=status_messages)
 
     def addPointToEdge(self):
         shape = self.prevhShape
@@ -484,6 +543,7 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
+        self._update_status()
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == Qt.RightButton:
@@ -511,6 +571,7 @@ class Canvas(QtWidgets.QWidget):
                 self.shapeMoved.emit()
 
             self.movingShape = False
+        self._update_status()
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
@@ -539,11 +600,16 @@ class Canvas(QtWidgets.QWidget):
     def setHiding(self, enable=True):
         self._hideBackround = self.hideBackround if enable else False
 
-    def canCloseShape(self):
-        return self.drawing() and (
-            (self.current and len(self.current) > 2)
-            or self.createMode in ["ai_polygon", "ai_mask"]
-        )
+    def canCloseShape(self) -> bool:
+        if not self.drawing():
+            return False
+        if not self.current:
+            return False
+        if self.createMode in ["ai_polygon", "ai_mask"]:
+            return True
+        if self.createMode == "linestrip":
+            return len(self.current) >= 2
+        return len(self.current) >= 3
 
     def mouseDoubleClickEvent(self, ev):
         if self.double_click != "close":
@@ -901,6 +967,7 @@ class Canvas(QtWidgets.QWidget):
                 self.moveByKeyboard(QPointF(-MOVE_SPEED, 0.0))
             elif key == Qt.Key_Right:
                 self.moveByKeyboard(QPointF(MOVE_SPEED, 0.0))
+        self._update_status()
 
     def keyReleaseEvent(self, ev):
         modifiers = ev.modifiers()

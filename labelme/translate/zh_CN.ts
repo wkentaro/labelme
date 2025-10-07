@@ -5,29 +5,103 @@
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Image</source>
-        <translation>图像</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation type="obsolete">点击并拖拽以移动控制点</translation>
+        <translation>点击并拖拽以移动控制点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click &amp; drag to move shape &apos;%s&apos;</source>
-        <translation>点击并拖拽以移动形状'%s'</translation>
+        <source>Click &amp; drag to move shape</source>
+        <translation>点击并拖拽以移动形状</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click &amp; Drag to move point
-ALT + SHIFT + Click to delete point</source>
-        <translation type="unfinished"></translation>
+        <source>Creating %r</source>
+        <translation>正在创建 %r</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>ALT + Click to create point</source>
-        <translation type="unfinished"></translation>
+        <source>ESC to cancel</source>
+        <translation>按 ESC 取消</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Enter or Space to finalize</source>
+        <translation>按 Enter 或空格键完成</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Editing shapes</source>
+        <translation>编辑形状</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
+        <translation>点击以包含点或 Shift+点击以排除点(AI多边形)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
+        <translation>点击以包含点或 Shift+点击以排除点(AI蒙版)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click start point for line</source>
+        <translation>点击线段起点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click end point for line</source>
+        <translation>点击线段终点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click start point for linestrip</source>
+        <translation>点击折线起点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
+        <translation>点击下一个点或 Ctrl/Cmd+点击完成折线</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click center point for circle</source>
+        <translation>点击圆形中心点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click point on circumference for circle</source>
+        <translation>点击圆周上的点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for rectangle</source>
+        <translation>点击矩形第一个角</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle</source>
+        <translation>点击矩形对角</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click to add point</source>
+        <translation>点击以添加点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + SHIFT + Click to delete point</source>
+        <translation>ALT + SHIFT + 点击以删除点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + Click to create point on shape</source>
+        <translation>ALT + 点击在形状上创建点</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Right-click &amp; drag to copy shape</source>
+        <translation>右键点击并拖拽以复制形状</translation>
     </message>
 </context>
 <context>
