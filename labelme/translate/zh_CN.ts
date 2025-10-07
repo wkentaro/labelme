@@ -5,11 +5,6 @@
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Image</source>
-        <translation>图像</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
         <translation type="obsolete">点击并拖拽以移动控制点</translation>
     </message>
