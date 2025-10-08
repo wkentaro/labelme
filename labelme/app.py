@@ -19,6 +19,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
+
 from labelme import __appname__
 from labelme._automation import bbox_from_text
 from labelme._label_file import LabelFile
@@ -1255,9 +1256,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.mayContinue():
             return
 
-        currIndex = self.imageList.index(str(item.text()))
-        if currIndex < len(self.imageList):
-            filename = self.imageList[currIndex]
+        currIndex = self.fileListWidget.row(item)
+
+        if currIndex < self.fileListWidget.count():
+            filename = item.text()
             if filename:
                 self.loadFile(filename)
 
@@ -1640,10 +1642,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def loadFile(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
-        if filename in self.imageList and (
-            self.fileListWidget.currentRow() != self.imageList.index(filename)
+        filenames = self.fileListWidget.findItems(filename, Qt.MatchExactly)
+        if filenames and (
+            self.fileListWidget.currentRow() != self.fileListWidget.row(filenames[0])
         ):
-            self.fileListWidget.setCurrentRow(self.imageList.index(filename))
+            self.fileListWidget.setCurrentRow(self.fileListWidget.row(filenames[0]))
             self.fileListWidget.repaint()
             return
 
@@ -1833,15 +1836,16 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.mayContinue():
             return
 
-        if len(self.imageList) <= 0:
+        if self.fileListWidget.count() <= 0:
             return
 
         if self.filename is None:
             return
 
-        currIndex = self.imageList.index(self.filename)
+        currIndex = self.findListRow(self.filename)
+
         if currIndex - 1 >= 0:
-            filename = self.imageList[currIndex - 1]
+            filename = self.fileListWidget.item(currIndex - 1).text()
             if filename:
                 self.loadFile(filename)
 
@@ -1857,18 +1861,19 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.mayContinue():
             return
 
-        if len(self.imageList) <= 0:
+        if self.fileListWidget.count() <= 0:
             return
 
         filename = None
         if self.filename is None:
-            filename = self.imageList[0]
+            filename = self.fileListWidget.item(0).text()
         else:
-            currIndex = self.imageList.index(self.filename)
-            if currIndex + 1 < len(self.imageList):
-                filename = self.imageList[currIndex + 1]
+            currIndex = self.findListRow(self.filename)
+            count = self.fileListWidget.count()
+            if currIndex + 1 < count:
+                filename = self.fileListWidget.item(currIndex + 1).text()
             else:
-                filename = self.imageList[-1]
+                filename = self.fileListWidget.item(count - 1).text()
         self.filename = filename
 
         if self.filename and load:
@@ -1930,9 +1935,9 @@ class MainWindow(QtWidgets.QMainWindow):
         current_filename = self.filename
         self.importDirImages(self.lastOpenDir, load=False)
 
-        if current_filename in self.imageList:
+        if self.fileListWidget.findItems(current_filename, Qt.MatchExactly):
             # retain currently selected file
-            self.fileListWidget.setCurrentRow(self.imageList.index(current_filename))
+            self.fileListWidget.setCurrentRow(self.findListRow(current_filename))
             self.fileListWidget.repaint()
 
     def saveFile(self, _value=False):
@@ -2136,6 +2141,18 @@ class MainWindow(QtWidgets.QMainWindow):
             lst.append(item.text())
         return lst
 
+    def findListRow(self, text: str) -> int:
+        for i in range(self.fileListWidget.count()):
+            item = self.fileListWidget.item(i)
+            if item and item.text() == text:
+                return i
+
+    def findListRow(self, text: str) -> int:
+        for i in range(self.fileListWidget.count()):
+            item = self.fileListWidget.item(i)
+            if item and item.text() == text:
+                return i
+
     def importDroppedImageFiles(self, imageFiles):
         extensions = [
             f".{fmt.data().decode().lower()}"
@@ -2143,8 +2160,10 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
 
         self.filename = None
+
         for file in imageFiles:
-            if file in self.imageList or not file.lower().endswith(tuple(extensions)):
+            fileItems = self.fileListWidget.findItems(file, Qt.MatchExactly)
+            if fileItems or not file.lower().endswith(tuple(extensions)):
                 continue
             label_file = f"{osp.splitext(file)[0]}.json"
             if self.output_dir:
@@ -2158,7 +2177,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Unchecked)
             self.fileListWidget.addItem(item)
 
-        if len(self.imageList) > 1:
+        if self.fileListWidget.count() > 1:
             self.actions.openNextImg.setEnabled(True)
             self.actions.openPrevImg.setEnabled(True)
 
