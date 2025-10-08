@@ -4,6 +4,7 @@ import tempfile
 
 import pytest
 from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from pytestqt.qtbot import QtBot
@@ -100,11 +101,12 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot) -> None:
     _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     label: str = "whole"
+    canvas_size: QSize = win.canvas.size()
     points: list[tuple[float, float]] = [
-        (100, 100),
-        (100, 238),
-        (400, 238),
-        (400, 100),
+        (canvas_size.width() * 0.25, canvas_size.height() * 0.25),
+        (canvas_size.width() * 0.75, canvas_size.height() * 0.25),
+        (canvas_size.width() * 0.75, canvas_size.height() * 0.75),
+        (canvas_size.width() * 0.25, canvas_size.height() * 0.75),
     ]
     win.toggleDrawMode(edit=False, createMode="polygon")
     qtbot.wait(100)
