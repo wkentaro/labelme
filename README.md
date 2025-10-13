@@ -128,6 +128,8 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 ## How to build standalone executable
 
+### Linux
+
 ```bash
 LABELME_PATH=./labelme
 OSAM_PATH=$(python -c 'import os, osam; print(os.path.dirname(osam.__file__))')
@@ -142,6 +144,24 @@ pyinstaller labelme/labelme/__main__.py \
   --add-data=$(LABELME_PATH)/translate/*:translate \
   --icon=$(LABELME_PATH)/icons/icon.png \
   --onedir
+```
+
+### Windows
+
+```cmd
+set "LABELME_PATH=%cd%\labelme"
+for /f "delims=" %i in ('python -c "import os, osam; print(os.path.dirname(osam.__file__))"') do set "OSAM_PATH=%i"
+pyinstaller "%LABELME_PATH%\__main__.py" ^
+  --name=Labelme ^
+  --windowed ^
+  --noconfirm ^
+  --specpath="build" ^
+  --add-data="%OSAM_PATH%\_models\yoloworld\clip\bpe_simple_vocab_16e6.txt.gz;osam\_models\yoloworld\clip" ^
+  --add-data="%LABELME_PATH%\config\default_config.yaml;labelme\config" ^
+  --add-data="%LABELME_PATH%\icons\*;labelme\icons" ^
+  --add-data="%LABELME_PATH%\translate\*;translate" ^
+  --icon="%LABELME_PATH%\icons\icon.png" ^
+  --onefile
 ```
 
 
