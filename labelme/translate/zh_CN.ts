@@ -737,6 +737,11 @@ Polygons</source>
         <source>AI Mask Model</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>_IouThresholdWidget</name>

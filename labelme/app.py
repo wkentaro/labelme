@@ -26,6 +26,8 @@ from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
 from labelme.config import get_config
 from labelme.shape import Shape
+from labelme.utils.qt import shift_and_ctrl_pressed
+from labelme.utils.qt import shift_pressed
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
@@ -399,7 +401,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.deleteSelectedShape,
             shortcuts["delete_polygon"],
             "cancel",
-            self.tr("Delete the selected polygons"),
+            "{} {}".format(
+                self.tr("Delete the selected polygons"),
+                self.tr("(Hold Shift to skip confirmation)"),
+            ),
             enabled=False,
         )
         duplicate = action(
@@ -1825,9 +1830,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openPrevImg(self, _value=False):
         keep_prev = self._config["keep_prev"]
-        if QtWidgets.QApplication.keyboardModifiers() == (
-            Qt.ControlModifier | Qt.ShiftModifier
-        ):
+        if shift_and_ctrl_pressed():
             self._config["keep_prev"] = True
 
         if not self.mayContinue():
@@ -1849,9 +1852,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def openNextImg(self, _value=False, load=True):
         keep_prev = self._config["keep_prev"]
-        if QtWidgets.QApplication.keyboardModifiers() == (
-            Qt.ControlModifier | Qt.ShiftModifier
-        ):
+        if shift_and_ctrl_pressed():
             self._config["keep_prev"] = True
 
         if not self.mayContinue():
@@ -2086,8 +2087,12 @@ class MainWindow(QtWidgets.QMainWindow):
         msg = self.tr(
             "You are about to permanently delete {} polygons, proceed anyway?"
         ).format(len(self.canvas.selectedShapes))
-        if yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes
+
+        if shift_pressed() or (
+            yes
+            == QtWidgets.QMessageBox.warning(
+                self, self.tr("Attention"), msg, yes | no, yes
+            )
         ):
             self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
