@@ -1066,8 +1066,8 @@ def _update_shape_with_sam(
         sam=sam, pixmap=pixmap
     )
 
-    response: osam.types.GenerateResponse = osam.apis.generate(
-        osam.types.GenerateRequest(
+    response: osam.types.GenerateResponse = sam.generate(
+        request=osam.types.GenerateRequest(
             model=sam.name,
             image_embedding=image_embedding,
             prompt=osam.types.Prompt(
