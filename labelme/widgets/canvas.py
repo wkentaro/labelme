@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import types
 from typing import Literal
 
 import imgviz
@@ -10,9 +11,14 @@ from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QObject
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
+from PyQt5.QtCore import QRunnable
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QProgressDialog
 
 import labelme.utils
 from labelme._automation import polygon_from_mask
@@ -150,13 +156,53 @@ class Canvas(QtWidgets.QWidget):
         logger.debug("Setting AI model to {!r}", model_name)
         self._ai_model_name = model_name
 
+    def _download_ai_model(self) -> bool:
+        model_type = osam.apis.get_model_type_by_name(self._ai_model_name)
+
+        if _is_already_downloaded := model_type.get_size() is not None:
+            return True
+
+        dialog: QProgressDialog = QProgressDialog(
+            "Downloading AI model...\n(requires internet connection)",
+            None,  # cancelButtonText
+            0,
+            0,
+            self,
+        )  # type: ignore[call-overload]
+        dialog.setWindowModality(Qt.WindowModal)
+        dialog.setMinimumDuration(0)
+
+        signals: _AiModelDownloadSignals = _AiModelDownloadSignals()
+        worker: _AiModelDownloadWorker = _AiModelDownloadWorker(model_type, signals)
+        pool = QThreadPool.globalInstance()
+
+        handle_error_attrs = types.SimpleNamespace(e=None)
+
+        def handle_error(e: Exception):
+            logger.error("Exception occurred: {}", e)
+            handle_error_attrs.e = e
+            #
+            QtWidgets.QApplication.setOverrideCursor(CURSOR_DEFAULT)
+            dialog.setRange(0, 1)  # pause busy mode
+            dialog.setLabelText(
+                "Failed to download AI model.\n(check internet connection)"
+            )
+            dialog.setCancelButtonText("Close")
+
+        signals.finished.connect(dialog.close)
+        signals.error.connect(handle_error)
+
+        dialog.show()
+        pool.start(worker)
+        dialog.exec_()
+
+        return handle_error_attrs.e is None
+
     def _get_ai_model(self) -> osam.types.Model:
         if self._ai_model_cache and self._ai_model_cache.name == self._ai_model_name:
             return self._ai_model_cache
 
         model_type = osam.apis.get_model_type_by_name(self._ai_model_name)
-        if model_type.get_size() is None:
-            model_type.pull()
 
         self._ai_model_cache = model_type()
         return self._ai_model_cache
@@ -507,6 +553,10 @@ class Canvas(QtWidgets.QWidget):
                         if ev.modifiers() & Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
+                    if self.createMode in ["ai_polygon", "ai_mask"]:
+                        if not self._download_ai_model():
+                            return
+
                     # Create new shape.
                     self.current = Shape(
                         shape_type="points"
@@ -1152,3 +1202,22 @@ def __compute_image_embedding(
     logger.debug("Computing image embeddings for model {!r}", sam.name)
     image: np.ndarray = labelme.utils.img_qt_to_arr(pixmap.toImage())
     return sam.encode_image(image=imgviz.asrgb(image))
+
+
+class _AiModelDownloadSignals(QObject):
+    finished = pyqtSignal()
+    error = pyqtSignal(Exception)
+
+
+class _AiModelDownloadWorker(QRunnable):
+    def __init__(self, model_type, signals: _AiModelDownloadSignals):
+        super().__init__()
+        self.model_type = model_type
+        self.signals = signals
+
+    def run(self):
+        try:
+            self.model_type.pull()
+            self.signals.finished.emit()
+        except Exception as e:
+            self.signals.error.emit(e)
