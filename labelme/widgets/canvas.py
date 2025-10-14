@@ -56,6 +56,9 @@ class Canvas(QtWidgets.QWidget):
     hVertex: int | None
     hShape: Shape | None
 
+    _ai_model_name: str = "sam2:latest"
+    _ai_model_cache: osam.types.Model | None = None
+
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
         self.double_click = kwargs.pop("double_click", "close")
@@ -118,8 +121,6 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
 
-        self._ai_model_name: str = "sam2:latest"
-
     def fillDrawing(self):
         return self._fill_drawing
 
@@ -148,6 +149,17 @@ class Canvas(QtWidgets.QWidget):
     def set_ai_model_name(self, model_name: str) -> None:
         logger.debug("Setting AI model to {!r}", model_name)
         self._ai_model_name = model_name
+
+    def _get_ai_model(self) -> osam.types.Model:
+        if self._ai_model_cache and self._ai_model_cache.name == self._ai_model_name:
+            return self._ai_model_cache
+
+        model_type = osam.apis.get_model_type_by_name(self._ai_model_name)
+        if model_type.get_size() is None:
+            model_type.pull()
+
+        self._ai_model_cache = model_type()
+        return self._ai_model_cache
 
     def storeShapes(self):
         shapesBackup = []
@@ -807,7 +819,7 @@ class Canvas(QtWidgets.QWidget):
                 label=self.line.point_labels[1],
             )
             _update_shape_with_sam(
-                sam=_get_ai_model(model_name=self._ai_model_name),
+                sam=self._get_ai_model(),
                 pixmap=self.pixmap,
                 shape=drawing_shape,
                 createMode=self.createMode,
@@ -838,7 +850,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.current
         if self.createMode in ["ai_polygon", "ai_mask"]:
             _update_shape_with_sam(
-                sam=_get_ai_model(model_name=self._ai_model_name),
+                sam=self._get_ai_model(),
                 pixmap=self.pixmap,
                 shape=self.current,
                 createMode=self.createMode,
@@ -1111,11 +1123,6 @@ def _update_shape_with_sam(
             points=[QPointF(point[0], point[1]) for point in points],
             point_labels=[1] * len(points),
         )
-
-
-@functools.lru_cache(maxsize=1)
-def _get_ai_model(model_name: str) -> osam.types.Model:
-    return osam.apis.get_model_type_by_name(name=model_name)()
 
 
 def _compute_image_embedding(
