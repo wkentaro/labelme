@@ -12,6 +12,7 @@ import webbrowser
 import imgviz
 import natsort
 import numpy as np
+import osam
 from loguru import logger
 from numpy.typing import NDArray
 from PyQt5 import QtCore
@@ -36,6 +37,7 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+from labelme.widgets import download_ai_model
 
 from . import utils
 
@@ -1008,8 +1010,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _submit_ai_prompt(self, _) -> None:
         texts = self._ai_prompt_widget.get_text_prompt().split(",")
+
+        model_name: str = "yoloworld"
+        model_type = osam.apis.get_model_type_by_name(model_name)
+        if not (_is_already_downloaded := model_type.get_size() is not None):
+            if not download_ai_model(model_name=model_name, parent=self):
+                return
+
         boxes, scores, labels = bbox_from_text.get_bboxes_from_texts(
-            model="yoloworld",
+            model=model_name,
             image=utils.img_qt_to_arr(self.image)[:, :, :3],
             texts=texts,
         )
