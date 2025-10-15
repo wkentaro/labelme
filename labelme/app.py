@@ -1608,12 +1608,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if is_initial_load:
             prev_filename: str = self.recentFiles[0] if self.recentFiles else ""
-            if self._config["keep_prev_brightness"] and prev_filename:
-                brightness, _ = self.brightnessContrast_values.get(
-                    prev_filename, (None, None)
-                )
-            if self._config["keep_prev_contrast"] and prev_filename:
-                _, contrast = self.brightnessContrast_values.get(
+            if self._config["keep_prev_brightness_contrast"] and prev_filename:
+                brightness, contrast = self.brightnessContrast_values.get(
                     prev_filename, (None, None)
                 )
         if brightness is not None:
