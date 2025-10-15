@@ -737,6 +737,11 @@ Polygons</source>
         <source>AI Mask Model</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Keep Previous Brightness/Contrast</source>
+        <translation>保留之前的亮度/对比度</translation>
+    </message>
 </context>
 <context>
     <name>_IouThresholdWidget</name>
