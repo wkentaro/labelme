@@ -140,7 +140,7 @@ pyinstaller labelme/labelme/__main__.py \
   --add-data=$(LABELME_PATH)/config/default_config.yaml:labelme/config \
   --add-data=$(LABELME_PATH)/icons/*:labelme/icons \
   --add-data=$(LABELME_PATH)/translate/*:translate \
-  --icon=$(LABELME_PATH)/icons/icon.png \
+  --icon=$(LABELME_PATH)/icons/icon-256.png \
   --onedir
 ```
 
