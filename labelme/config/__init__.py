@@ -48,6 +48,19 @@ def validate_config_item(key, value):
         raise ValueError(f"Duplicates are detected for config key 'labels': {value}")
 
 
+def _migrate_config_from_file(config_from_yaml: dict) -> None:
+    keep_prev_brightness: bool = config_from_yaml.pop("keep_prev_brightness", False)
+    keep_prev_contrast: bool = config_from_yaml.pop("keep_prev_contrast", False)
+    if keep_prev_brightness or keep_prev_contrast:
+        logger.info(
+            "Migrating old config: keep_prev_brightness={} or keep_prev_contrast={} "
+            "-> keep_prev_brightness_contrast=True",
+            keep_prev_brightness,
+            keep_prev_contrast,
+        )
+        config_from_yaml["keep_prev_brightness_contrast"] = True
+
+
 def get_config(config_file_or_yaml=None, config_from_args=None):
     # 1. default config
     config = _get_default_config_and_create_labelmerc()
@@ -59,6 +72,7 @@ def get_config(config_file_or_yaml=None, config_from_args=None):
             with open(config_from_yaml) as f:
                 logger.info(f"Loading config file from: {config_from_yaml}")
                 config_from_yaml = yaml.safe_load(f)
+        _migrate_config_from_file(config_from_yaml=config_from_yaml)
         update_dict(config, config_from_yaml, validate_item=validate_config_item)
 
     # 3. command line argument or specified config file

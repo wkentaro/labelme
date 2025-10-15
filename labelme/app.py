@@ -610,6 +610,15 @@ class MainWindow(QtWidgets.QMainWindow):
             close=close,
             deleteFile=deleteFile,
             toggleKeepPrevMode=toggle_keep_prev_mode,
+            toggle_keep_prev_brightness_contrast=action(
+                text=self.tr("Keep Previous Brightness/Contrast"),
+                slot=lambda: self._config.__setitem__(
+                    "keep_prev_brightness_contrast",
+                    not self._config["keep_prev_brightness_contrast"],
+                ),
+                checkable=True,
+                checked=self._config["keep_prev_brightness_contrast"],
+            ),
             delete=delete,
             edit=edit,
             duplicate=duplicate,
@@ -763,6 +772,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWidth,
                 None,
                 brightnessContrast,
+                self.actions.toggle_keep_prev_brightness_contrast,
             ),
         )
 
@@ -1608,12 +1618,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if is_initial_load:
             prev_filename: str = self.recentFiles[0] if self.recentFiles else ""
-            if self._config["keep_prev_brightness"] and prev_filename:
-                brightness, _ = self.brightnessContrast_values.get(
-                    prev_filename, (None, None)
-                )
-            if self._config["keep_prev_contrast"] and prev_filename:
-                _, contrast = self.brightnessContrast_values.get(
+            if self._config["keep_prev_brightness_contrast"] and prev_filename:
+                brightness, contrast = self.brightnessContrast_values.get(
                     prev_filename, (None, None)
                 )
         if brightness is not None:
