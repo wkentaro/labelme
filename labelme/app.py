@@ -610,6 +610,15 @@ class MainWindow(QtWidgets.QMainWindow):
             close=close,
             deleteFile=deleteFile,
             toggleKeepPrevMode=toggle_keep_prev_mode,
+            toggle_keep_prev_brightness_contrast=action(
+                text=self.tr("Keep Previous Brightness/Contrast"),
+                slot=lambda: self._config.__setitem__(
+                    "keep_prev_brightness_contrast",
+                    not self._config["keep_prev_brightness_contrast"],
+                ),
+                checkable=True,
+                checked=self._config["keep_prev_brightness_contrast"],
+            ),
             delete=delete,
             edit=edit,
             duplicate=duplicate,
@@ -763,6 +772,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWidth,
                 None,
                 brightnessContrast,
+                self.actions.toggle_keep_prev_brightness_contrast,
             ),
         )
 
