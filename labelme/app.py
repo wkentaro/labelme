@@ -19,8 +19,10 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 
 from labelme import __appname__
+from labelme import __version__
 from labelme._automation import bbox_from_text
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
@@ -603,6 +605,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Store actions for further handling.
         self.actions = types.SimpleNamespace(
+            about=action(
+                text=f"&About {__appname__}",
+                slot=functools.partial(
+                    QMessageBox.about,
+                    self,
+                    f"About {__appname__}",
+                    f"""
+<h3>{__appname__}</h3>
+<p>Image Polygonal Annotation with Python</p>
+<p>Version: {__version__}</p>
+<p>Author: Kentaro Wada</p>
+<p>
+    <a href="https://labelme.io">Homepage</a> |
+    <a href="https://labelme.io/docs">Documentation</a> |
+    <a href="https://labelme.io/docs/troubleshoot">Troubleshooting</a>
+</p>
+<p>
+    <a href="https://github.com/wkentaro/labelme">GitHub</a> |
+    <a href="https://x.com/labelmeai">Twitter/X</a>
+</p>
+""",
+                ),
+            ),
             saveAuto=saveAuto,
             saveWithImageData=saveWithImageData,
             changeOutputDir=changeOutputDir,
@@ -750,7 +775,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 quit,
             ),
         )
-        utils.addActions(self.menus.help, (help,))
+        utils.addActions(self.menus.help, (help, self.actions.about))
         utils.addActions(
             self.menus.view,
             (
