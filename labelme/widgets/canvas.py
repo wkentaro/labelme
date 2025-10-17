@@ -61,6 +61,8 @@ class Canvas(QtWidgets.QWidget):
     _ai_model_name: str = "sam2:latest"
     _ai_model_cache: osam.types.Model | None = None
 
+    _cursor: QtCore.Qt.CursorShape
+
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
         self.double_click = kwargs.pop("double_click", "close")
@@ -1056,10 +1058,14 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def overrideCursor(self, cursor):
+        if cursor == self._cursor:
+            return
+        self.restoreCursor()
         self._cursor = cursor
         QtWidgets.QApplication.setOverrideCursor(cursor)
 
     def restoreCursor(self):
+        self._cursor = CURSOR_DEFAULT
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def resetState(self):
