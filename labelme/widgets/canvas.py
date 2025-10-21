@@ -119,6 +119,7 @@ class Canvas(QtWidgets.QWidget):
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
         self.drag = False
+        self.enableDragBuffer = False
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -857,7 +858,10 @@ class Canvas(QtWidgets.QWidget):
         """Convert from widget-logical coordinates to painter-logical ones."""
         return point / self.scale - self.offsetToCenter()
 
-    def offsetToCenter(self) -> QPointF:
+    def setEnableDragBuffer(self, enabled: bool):
+        self.enableDragBuffer = enabled
+
+    def offsetToCenter(self) -> QtCore.QPointF:
         s = self.scale
         area = super().size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
@@ -957,7 +961,13 @@ class Canvas(QtWidgets.QWidget):
 
     def minimumSizeHint(self):
         if self.pixmap:
-            return self.scale * self.pixmap.size() + QtCore.QSize(500, 500) # Gives the scroll area some breathing room
+            min_size = self.scale * self.pixmap.size()
+            if self.enableDragBuffer:
+                # When drag buffer should be enabled, add a bit of buffer around the image
+                # This lets dragging the image around have a bit of give on the edges
+                min_size = 1.167 * min_size
+
+            return min_size
         return super(Canvas, self).minimumSizeHint()
 
     def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
