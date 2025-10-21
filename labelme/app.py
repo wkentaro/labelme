@@ -1624,7 +1624,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setOriginalSize(self, value=True):
         if value:
-            self.actions.zoomOrg.setChecked(False)  # type: ignore[attr-defined]
+            self.actions.zoomOrg.setChecked(False)
         self.canvas.setEnableDragBuffer(False)
         self.setZoom(100)
 

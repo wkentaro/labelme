@@ -316,8 +316,8 @@ class Canvas(QtWidgets.QWidget):
             self.overrideCursor(CURSOR_GRAB)
             delta = pos - self.prevDragPoint
 
-            self.scrollRequest.emit(int(delta.x()), QtCore.Qt.Horizontal)  # type: ignore[attr-defined]
-            self.scrollRequest.emit(int(delta.y()), QtCore.Qt.Vertical)  # type: ignore[attr-defined]
+            self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
+            self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
 
         # Polygon drawing.
         if self.drawing():
@@ -574,13 +574,13 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
-        elif ev.button() == QtCore.Qt.MiddleButton:
+        elif ev.button() == Qt.MiddleButton:
             self.overrideCursor(CURSOR_GRAB)
             self.prevDragPoint = pos
             self.drag = True
 
     def mouseReleaseEvent(self, ev):
-        pos: QtCore.QPointF = self.transformPos(ev.localPos())
+        pos: QPointF = self.transformPos(ev.localPos())
         if ev.button() == Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
@@ -598,7 +598,7 @@ class Canvas(QtWidgets.QWidget):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
-        elif ev.button() == QtCore.Qt.MiddleButton:
+        elif ev.button() == Qt.MiddleButton:
             self.drag = False
 
         if self.movingShape and self.hShape:
@@ -861,7 +861,7 @@ class Canvas(QtWidgets.QWidget):
     def setEnableDragBuffer(self, enabled: bool):
         self.enableDragBuffer = enabled
 
-    def offsetToCenter(self) -> QtCore.QPointF:
+    def offsetToCenter(self) -> QPointF:
         s = self.scale
         area = super().size()
         w, h = self.pixmap.width() * s, self.pixmap.height() * s
