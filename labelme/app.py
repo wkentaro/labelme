@@ -1025,7 +1025,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def queueEvent(self, function):
         QtCore.QTimer.singleShot(0, function)
 
-    def show_status_message(self, message, delay=2000):
+    def show_status_message(self, message, delay=500):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
