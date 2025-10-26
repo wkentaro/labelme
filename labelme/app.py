@@ -179,9 +179,7 @@ class MainWindow(QtWidgets.QMainWindow):
             crosshair=self._config["canvas"]["crosshair"],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
-        self.canvas.mouseMoved.connect(
-            lambda pos: self.status_right.setText(f"x={pos.x():6.1f}, y={pos.y():6.1f}")
-        )
+        self.canvas.mouseMoved.connect(self._update_status_stats)
         self.canvas.statusUpdated.connect(lambda text: self.status_left.setText(text))
 
         scrollArea = QtWidgets.QScrollArea()
@@ -2246,3 +2244,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     images.append(relativePath)
         images = natsort.os_sorted(images)
         return images
+
+    def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
+        stats: list[str] = []
+        stats.append(f"mode={self.canvas.mode.name}")
+        stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
+        self.status_right.setText(" | ".join(stats))
