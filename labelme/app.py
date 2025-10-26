@@ -327,7 +327,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         createMode = action(
             self.tr("Create Polygons"),
-            lambda: self._switch_canvas_mode(False, createMode="polygon"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
             shortcuts["create_polygon"],
             "objects",
             self.tr("Start drawing polygons"),
@@ -335,7 +335,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createRectangleMode = action(
             self.tr("Create Rectangle"),
-            lambda: self._switch_canvas_mode(False, createMode="rectangle"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
             shortcuts["create_rectangle"],
             "objects",
             self.tr("Start drawing rectangles"),
@@ -343,7 +343,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createCircleMode = action(
             self.tr("Create Circle"),
-            lambda: self._switch_canvas_mode(False, createMode="circle"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
             shortcuts["create_circle"],
             "objects",
             self.tr("Start drawing circles"),
@@ -351,7 +351,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createLineMode = action(
             self.tr("Create Line"),
-            lambda: self._switch_canvas_mode(False, createMode="line"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="line"),
             shortcuts["create_line"],
             "objects",
             self.tr("Start drawing lines"),
@@ -359,7 +359,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createPointMode = action(
             self.tr("Create Point"),
-            lambda: self._switch_canvas_mode(False, createMode="point"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="point"),
             shortcuts["create_point"],
             "objects",
             self.tr("Start drawing points"),
@@ -367,7 +367,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createLineStripMode = action(
             self.tr("Create LineStrip"),
-            lambda: self._switch_canvas_mode(False, createMode="linestrip"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
             shortcuts["create_linestrip"],
             "objects",
             self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
@@ -375,7 +375,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createAiPolygonMode = action(
             self.tr("Create AI-Polygon"),
-            lambda: self._switch_canvas_mode(False, createMode="ai_polygon"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="ai_polygon"),
             None,
             "objects",
             self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
@@ -383,7 +383,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createAiMaskMode = action(
             self.tr("Create AI-Mask"),
-            lambda: self._switch_canvas_mode(False, createMode="ai_mask"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="ai_mask"),
             None,
             "objects",
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
@@ -391,7 +391,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         editMode = action(
             self.tr("Edit Polygons"),
-            self._switch_canvas_mode,
+            lambda: self._switch_canvas_mode(edit=True),
             shortcuts["edit_polygon"],
             "edit",
             self.tr("Move and edit the selected polygons"),
@@ -1140,7 +1140,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
 
-    def _switch_canvas_mode(self, edit=True, createMode="polygon"):
+    def _switch_canvas_mode(self, edit: bool = True, createMode="polygon") -> None:
         self.canvas.setEditing(edit)
         self.canvas.createMode = createMode
         if edit:
