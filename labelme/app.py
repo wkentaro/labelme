@@ -36,6 +36,7 @@ from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
+from labelme.widgets import StatusStats
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
@@ -179,7 +180,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
         self.canvas.mouseMoved.connect(
-            lambda pos: self.status_right.setText(f"x={pos.x():.3f}, y={pos.y():.3f}")
+            lambda pos: self.status_right.setText(f"x={pos.x():6.1f}, y={pos.y():6.1f}")
         )
         self.canvas.statusUpdated.connect(lambda text: self.status_left.setText(text))
 
@@ -884,7 +885,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.status_left = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
-        self.status_right = QtWidgets.QLabel("")
+        self.status_right = StatusStats()
         self.statusBar().addWidget(self.status_left, 1)
         self.statusBar().addWidget(self.status_right, 0)
         self.statusBar().show()
