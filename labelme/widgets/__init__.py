@@ -1,3 +1,4 @@
+from ._status import StatusStats
 from .ai_prompt_widget import AiPromptWidget
 from .brightness_contrast_dialog import BrightnessContrastDialog
 from .canvas import Canvas
