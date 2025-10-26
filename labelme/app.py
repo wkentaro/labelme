@@ -391,7 +391,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         editMode = action(
             self.tr("Edit Polygons"),
-            self.setEditMode,
+            self.toggleDrawMode,
             shortcuts["edit_polygon"],
             "edit",
             self.tr("Move and edit the selected polygons"),
@@ -1150,9 +1150,6 @@ class MainWindow(QtWidgets.QMainWindow):
             for draw_mode, draw_action in self.draw_actions:
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
-
-    def setEditMode(self):
-        self.toggleDrawMode(True)
 
     def updateFileMenu(self):
         current = self.filename
