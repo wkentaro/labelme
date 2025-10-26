@@ -108,7 +108,7 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot) -> None:
         (canvas_size.width() * 0.75, canvas_size.height() * 0.75),
         (canvas_size.width() * 0.25, canvas_size.height() * 0.75),
     ]
-    win.toggleDrawMode(edit=False, createMode="polygon")
+    win._switch_canvas_mode(edit=False, createMode="polygon")
     qtbot.wait(100)
 
     def click(xy: tuple[float, float]) -> None:
