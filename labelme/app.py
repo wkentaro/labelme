@@ -948,10 +948,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.populateModeActions()
 
-        # self.firstStart = True
-        # if self.firstStart:
-        #    QWhatsThis.enterWhatsThisMode()
-
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
         if actions:
