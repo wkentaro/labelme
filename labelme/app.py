@@ -705,7 +705,6 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode,
             createAiPolygonMode,
             createAiMaskMode,
-            editMode,
             brightnessContrast,
         )
         # menu shown at right click
