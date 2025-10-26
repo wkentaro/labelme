@@ -1140,9 +1140,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.undo.setEnabled(not drawing)
         self.actions.delete.setEnabled(not drawing)
 
-    def _switch_canvas_mode(self, edit: bool = True, createMode="polygon") -> None:
+    def _switch_canvas_mode(
+        self, edit: bool = True, createMode: str | None = None
+    ) -> None:
         self.canvas.setEditing(edit)
-        self.canvas.createMode = createMode
+        if createMode is not None:
+            self.canvas.createMode = createMode
         if edit:
             for _, draw_action in self.draw_actions:
                 draw_action.setEnabled(True)
