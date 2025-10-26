@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import functools
 from typing import Literal
 
@@ -33,6 +34,11 @@ CURSOR_GRAB = Qt.OpenHandCursor
 MOVE_SPEED = 5.0
 
 
+class CanvasMode(enum.Enum):
+    CREATE = enum.auto()
+    EDIT = enum.auto()
+
+
 class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.pyqtSignal(int, QPoint)
     scrollRequest = QtCore.pyqtSignal(int, int)
@@ -44,7 +50,7 @@ class Canvas(QtWidgets.QWidget):
     mouseMoved = QtCore.pyqtSignal(QPointF)
     statusUpdated = QtCore.pyqtSignal(str)
 
-    CREATE, EDIT = 0, 1
+    mode: CanvasMode = CanvasMode.EDIT
 
     # polygon, rectangle, line, or point
     _createMode = "polygon"
@@ -86,7 +92,6 @@ class Canvas(QtWidgets.QWidget):
         )
         super().__init__(*args, **kwargs)
         # Initialise local state.
-        self.mode = self.EDIT
         self.shapes = []
         self.shapesBackups = []
         self.current = None
@@ -214,14 +219,14 @@ class Canvas(QtWidgets.QWidget):
         return self.visible.get(shape, True)
 
     def drawing(self):
-        return self.mode == self.CREATE
+        return self.mode == CanvasMode.CREATE
 
     def editing(self):
-        return self.mode == self.EDIT
+        return self.mode == CanvasMode.EDIT
 
     def setEditing(self, value=True):
-        self.mode = self.EDIT if value else self.CREATE
-        if self.mode == self.EDIT:
+        self.mode = CanvasMode.EDIT if value else CanvasMode.CREATE
+        if self.mode == CanvasMode.EDIT:
             # CREATE -> EDIT
             self.repaint()  # clear crosshair
         else:
