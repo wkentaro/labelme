@@ -829,9 +829,9 @@ class MainWindow(QtWidgets.QMainWindow):
         MODEL_NAMES: list[tuple[str, str]] = [
             ("efficientsam:10m", "EfficientSam (speed)"),
             ("efficientsam:latest", "EfficientSam (accuracy)"),
-            ("sam:100m", "SegmentAnything (speed)"),
-            ("sam:300m", "SegmentAnything (balanced)"),
-            ("sam:latest", "SegmentAnything (accuracy)"),
+            ("sam:100m", "Sam (speed)"),
+            ("sam:300m", "Sam (balanced)"),
+            ("sam:latest", "Sam (accuracy)"),
             ("sam2:small", "Sam2 (speed)"),
             ("sam2:latest", "Sam2 (balanced)"),
             ("sam2:large", "Sam2 (accuracy)"),

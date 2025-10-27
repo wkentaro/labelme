@@ -1,4 +1,5 @@
 import os.path as osp
+import re
 import shutil
 
 import yaml
@@ -59,6 +60,17 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
             keep_prev_contrast,
         )
         config_from_yaml["keep_prev_brightness_contrast"] = True
+
+    if (model_name := config_from_yaml.get("ai", {}).get("default")) and (
+        m := re.match("^SegmentAnything \((.*)\)$", model_name)
+    ):
+        model_name_new: str = f"Sam ({m.group(1)})"
+        logger.info(
+            "Migrating old config: ai.default={!r} -> ai.default={!r}",
+            model_name,
+            model_name_new,
+        )
+        config_from_yaml["ai"]["default"] = model_name_new
 
 
 def get_config(config_file_or_yaml=None, config_from_args=None):
