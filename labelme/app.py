@@ -41,7 +41,7 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 from labelme.widgets import download_ai_model
-from labelme.widgets.ai_prompt_widget import _set_font_size
+from labelme.widgets import set_font_size
 
 from . import utils
 
@@ -491,7 +491,7 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom = QtWidgets.QWidgetAction(self)
         zoomBoxLayout = QtWidgets.QVBoxLayout()
         zoomLabel = QtWidgets.QLabel(self.tr("Zoom"))
-        _set_font_size(zoomLabel, 11)
+        set_font_size(zoomLabel, 11)
         zoomLabel.setAlignment(Qt.AlignCenter)
         zoomBoxLayout.addWidget(zoomLabel)
         zoomBoxLayout.addWidget(self.zoomWidget)
@@ -820,7 +820,7 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
         #
         selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
-        _set_font_size(selectAiModelLabel, 11)
+        set_font_size(selectAiModelLabel, 11)
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
         #

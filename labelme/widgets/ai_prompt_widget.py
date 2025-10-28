@@ -1,10 +1,6 @@
 from PyQt5 import QtWidgets
 
-
-def _set_font_size(widget: QtWidgets.QWidget, point_size: int) -> None:
-    font = widget.font()
-    font.setPointSize(point_size)
-    widget.setFont(font)
+from ._utils import set_font_size
 
 
 class AiPromptWidget(QtWidgets.QWidget):
@@ -40,7 +36,7 @@ class _TextPromptWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("AI Prompt"))
-        _set_font_size(label, 11)
+        set_font_size(label, 11)
         self.layout().addWidget(label)
 
         self._texts_widget = QtWidgets.QLineEdit()
@@ -89,7 +85,7 @@ class _ScoreThresholdWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("Score Threshold"))
-        _set_font_size(label, 11)
+        set_font_size(label, 11)
         self.layout().addWidget(label)
 
         self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
@@ -113,7 +109,7 @@ class _IouThresholdWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("IoU Threshold"))
-        _set_font_size(label, 11)
+        set_font_size(label, 11)
         self.layout().addWidget(label)
 
         self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
