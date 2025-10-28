@@ -81,8 +81,9 @@ class Shape:
             # is used for drawing the pending line a different color.
             self.line_color = line_color
 
-    def _scale_point(self, point: QtCore.QPointF) -> QtCore.QPointF:
-        return QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
+    def _scale_point(self, point: QtCore.QPointF, scale=None) -> QtCore.QPointF:
+        scale = scale if scale is not None else self.scale
+        return QtCore.QPointF(point.x() * scale, point.y() * scale)
 
     def setShapeRefined(self, shape_type, points, point_labels, mask=None):
         self._shape_raw = (self.shape_type, self.points, self.point_labels)
@@ -281,6 +282,59 @@ class Shape:
             painter.setPen(pen)
             painter.drawPath(negative_vrtx_path)
             painter.fillPath(negative_vrtx_path, QtGui.QColor(255, 0, 0, 255))
+
+    def adjustScale(self, scale_factor, img_width, img_height):
+        if scale_factor == 1:
+            return
+        if self.shape_type == "point":
+            assert len(self.points) == 1
+            if scale_factor > 0.0 or (
+                self.points[0].x() >= img_width or self.points[0].y() > img_height
+            ):
+                self.points[0] = self._scale_point(
+                    point=self.points[0], scale=scale_factor
+                )
+        elif len(self.points) == 2:
+            if scale_factor > 0.0:
+                for i in range(len(self.points)):
+                    self.points[i] = self._scale_point(
+                        point=self.points[i], scale=scale_factor
+                    )
+            else:
+                if self.shape_type == "rectangle":
+                    if self.points[0].x() > self.points[1].x():
+                        i_x_lower = 1
+                        i_x_higher = 0
+                    else:
+                        i_x_lower = 0
+                        i_x_higher = 1
+
+                    if self.points[0].y() > self.points[1].y():
+                        i_y_lower = 1
+                        i_y_higher = 0
+                    else:
+                        i_y_lower = 0
+                        i_y_higher = 1
+
+                    self.points[i_x_higher].setX(
+                        self.points[i_x_higher].x() - self.points[i_x_lower].x()
+                    )
+                    self.points[i_y_higher].setY(
+                        self.points[i_y_higher].y() - self.points[i_y_lower].y()
+                    )
+                    self.points[i_x_lower].setX(0)
+                    self.points[i_y_lower].setY(0)
+                elif self.shape_type == "circle":
+                    direction_distance = self.points[0] - self.points[1]
+                    raidus = labelme.utils.distance(direction_distance)
+                    if (
+                        self.points[0].x() + raidus >= img_width
+                        or self.points[0].y() + raidus >= img_height
+                        or self.points[0].x() - raidus < 0
+                        or self.points[0].y() - raidus < 0
+                    ):
+                        self.points[0] = QtCore.QPointF(raidus, raidus)
+                        self.points[1] = self.points[0] - direction_distance
 
     def drawVertex(self, path, i):
         d = self.point_size

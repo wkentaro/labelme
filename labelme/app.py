@@ -1391,9 +1391,14 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.labelList.findItemByShape(shape)
             self.labelList.removeItem(item)
 
-    def loadShapes(self, shapes, replace=True):
+    def loadShapes(self, shapes, replace=True, scale_factor=1):
         self._noSelectionSlot = True
         for shape in shapes:
+            shape.adjustScale(
+                scale_factor=scale_factor,
+                img_width=self.image.width(),
+                img_height=self.image.height(),
+            )
             self.addLabel(shape)
         self.labelList.clearSelection()
         self._noSelectionSlot = False
@@ -1744,10 +1749,19 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self.show_status_message(self.tr("Error reading %s") % filename)
             return False
-        self.image = image
-        self.filename = filename
         if self._config["keep_prev"]:
             prev_shapes = self.canvas.shapes
+            if (
+                self.image.height()
+                and self.image.width()
+                and image.height() / self.image.height()
+                == image.width() / self.image.width()
+            ):
+                scale_factor = image.height() / self.image.height()
+            else:
+                scale_factor = 0
+        self.image = image
+        self.filename = filename
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
@@ -1756,7 +1770,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
         if self._config["keep_prev"] and self.noShapes():
-            self.loadShapes(prev_shapes, replace=False)
+            self.loadShapes(prev_shapes, replace=False, scale_factor=scale_factor)
             self.setDirty()
         else:
             self.setClean()
