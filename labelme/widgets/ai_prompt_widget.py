@@ -1,5 +1,7 @@
 from PyQt5 import QtWidgets
 
+from ._utils import set_font_size
+
 
 class AiPromptWidget(QtWidgets.QWidget):
     def __init__(self, on_submit, parent=None):
@@ -9,11 +11,11 @@ class AiPromptWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
 
         self._text_prompt_widget = _TextPromptWidget(on_submit=on_submit, parent=self)
-        self._text_prompt_widget.setMaximumWidth(400)
+        self._text_prompt_widget.setMaximumWidth(300)
         self.layout().addWidget(self._text_prompt_widget)
 
         self._nms_params_widget = _NmsParamsWidget(parent=self)
-        self._nms_params_widget.setMaximumWidth(400)
+        self._nms_params_widget.setMaximumWidth(300)
         self.layout().addWidget(self._nms_params_widget)
 
     def get_text_prompt(self) -> str:
@@ -34,13 +36,14 @@ class _TextPromptWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("AI Prompt"))
+        set_font_size(label, 11)
         self.layout().addWidget(label)
 
         self._texts_widget = QtWidgets.QLineEdit()
         self._texts_widget.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
         self.layout().addWidget(self._texts_widget)
 
-        submit_button = QtWidgets.QPushButton(text="Submit", parent=self)
+        submit_button = QtWidgets.QPushButton(text="Run", parent=self)
         submit_button.clicked.connect(slot=on_submit)
         self.layout().addWidget(submit_button)
 
@@ -82,12 +85,14 @@ class _ScoreThresholdWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("Score Threshold"))
+        set_font_size(label, 11)
         self.layout().addWidget(label)
 
         self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
         self._threshold_widget.setRange(0, 1)
         self._threshold_widget.setSingleStep(0.05)
         self._threshold_widget.setValue(self.default_score_threshold)
+        self._threshold_widget.setMinimumWidth(50)
         self.layout().addWidget(self._threshold_widget)
 
     def get_value(self) -> float:
@@ -104,12 +109,14 @@ class _IouThresholdWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         label = QtWidgets.QLabel(self.tr("IoU Threshold"))
+        set_font_size(label, 11)
         self.layout().addWidget(label)
 
         self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
         self._threshold_widget.setRange(0, 1)
         self._threshold_widget.setSingleStep(0.05)
         self._threshold_widget.setValue(self.default_iou_threshold)
+        self._threshold_widget.setMinimumWidth(50)
         self.layout().addWidget(self._threshold_widget)
 
     def get_value(self) -> float:

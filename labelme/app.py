@@ -41,6 +41,7 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 from labelme.widgets import download_ai_model
+from labelme.widgets import set_font_size
 
 from . import utils
 
@@ -490,6 +491,7 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom = QtWidgets.QWidgetAction(self)
         zoomBoxLayout = QtWidgets.QVBoxLayout()
         zoomLabel = QtWidgets.QLabel(self.tr("Zoom"))
+        set_font_size(zoomLabel, 11)
         zoomLabel.setAlignment(Qt.AlignCenter)
         zoomBoxLayout.addWidget(zoomLabel)
         zoomBoxLayout.addWidget(self.zoomWidget)
@@ -818,6 +820,7 @@ class MainWindow(QtWidgets.QMainWindow):
         selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
         #
         selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
+        set_font_size(selectAiModelLabel, 11)
         selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
         selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
         #
@@ -826,9 +829,9 @@ class MainWindow(QtWidgets.QMainWindow):
         MODEL_NAMES: list[tuple[str, str]] = [
             ("efficientsam:10m", "EfficientSam (speed)"),
             ("efficientsam:latest", "EfficientSam (accuracy)"),
-            ("sam:100m", "SegmentAnything (speed)"),
-            ("sam:300m", "SegmentAnything (balanced)"),
-            ("sam:latest", "SegmentAnything (accuracy)"),
+            ("sam:100m", "Sam (speed)"),
+            ("sam:300m", "Sam (balanced)"),
+            ("sam:latest", "Sam (accuracy)"),
             ("sam2:small", "Sam2 (speed)"),
             ("sam2:latest", "Sam2 (balanced)"),
             ("sam2:large", "Sam2 (accuracy)"),
