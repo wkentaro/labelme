@@ -92,7 +92,7 @@ class _ScoreThresholdWidget(QtWidgets.QWidget):
         self._threshold_widget.setRange(0, 1)
         self._threshold_widget.setSingleStep(0.05)
         self._threshold_widget.setValue(self.default_score_threshold)
-        self._threshold_widget.setFixedWidth(50)
+        self._threshold_widget.setMinimumWidth(50)
         self.layout().addWidget(self._threshold_widget)
 
     def get_value(self) -> float:
@@ -116,7 +116,7 @@ class _IouThresholdWidget(QtWidgets.QWidget):
         self._threshold_widget.setRange(0, 1)
         self._threshold_widget.setSingleStep(0.05)
         self._threshold_widget.setValue(self.default_iou_threshold)
-        self._threshold_widget.setFixedWidth(50)
+        self._threshold_widget.setMinimumWidth(50)
         self.layout().addWidget(self._threshold_widget)
 
     def get_value(self) -> float:
