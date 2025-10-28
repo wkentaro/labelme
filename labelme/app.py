@@ -528,7 +528,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOrg = action(
             self.tr("&Original size"),
-            functools.partial(self.setZoom, 100),
+            self.setOriginalSize,
             shortcuts["zoom_to_original"],
             "zoom",
             self.tr("Zoom to original size"),
@@ -1579,8 +1579,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scroll_values[orientation][self.filename] = value
 
     def setZoom(self, value):
+        self.actions.zoomOrg.setChecked(False)
         self.actions.fitWidth.setChecked(False)
         self.actions.fitWindow.setChecked(False)
+        self.canvas.setEnableDragBuffer(value > 100)
         self.zoomMode = self.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
@@ -1599,6 +1601,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if delta < 0:
             units = 0.9
         self.addZoom(units)
+        self.canvas.adjustSize()
 
         canvas_width_new = self.canvas.width()
         if canvas_width_old != canvas_width_new:
@@ -1616,16 +1619,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.scrollBars[Qt.Vertical].value() + y_shift,
             )
 
+    def setOriginalSize(self, value=True):
+        if value:
+            self.actions.zoomOrg.setChecked(False)
+        self.canvas.setEnableDragBuffer(False)
+        self.setZoom(100)
+
     def setFitWindow(self, value=True):
         if value:
             self.actions.fitWidth.setChecked(False)
         self.zoomMode = self.FIT_WINDOW if value else self.MANUAL_ZOOM
+        self.canvas.setEnableDragBuffer(False)
         self.adjustScale()
 
     def setFitWidth(self, value=True):
         if value:
             self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
+        self.canvas.setEnableDragBuffer(False)
         self.adjustScale()
 
     def enableKeepPrevScale(self, enabled):
