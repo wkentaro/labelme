@@ -1,9 +1,20 @@
+from __future__ import annotations
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
+
+from .. import utils
 
 
 class ToolBar(QtWidgets.QToolBar):
-    def __init__(self, title):
+    def __init__(
+        self,
+        title: str,
+        actions: list[QtWidgets.QAction | None],
+        orientation: Qt.Orientation = Qt.Horizontal,
+        button_style: Qt.ToolButtonStyle = Qt.ToolButtonTextUnderIcon,
+    ) -> None:
         super().__init__(title)
         layout = self.layout()
         m = (0, 0, 0, 0)
@@ -11,6 +22,11 @@ class ToolBar(QtWidgets.QToolBar):
         layout.setContentsMargins(*m)
         self.setContentsMargins(*m)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
+
+        self.setObjectName(f"{title}ToolBar")
+        self.setOrientation(orientation)
+        self.setToolButtonStyle(button_style)
+        utils.addActions(widget=self, actions=actions)
 
     def addAction(self, action):  # type: ignore[override]
         if isinstance(action, QtWidgets.QWidgetAction):

@@ -867,28 +867,33 @@ class MainWindow(QtWidgets.QMainWindow):
         ai_prompt_action = QtWidgets.QWidgetAction(self)
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
-        self.tools = self.toolbar("Tools")
-        self.toolbar_actions = (
-            open_,
-            opendir,
-            openPrevImg,
-            openNextImg,
-            save,
-            deleteFile,
-            None,
-            createMode,
-            editMode,
-            duplicate,
-            delete,
-            undo,
-            brightnessContrast,
-            None,
-            fitWindow,
-            zoom,
-            None,
-            selectAiModel,
-            None,
-            ai_prompt_action,
+        self.addToolBar(
+            Qt.TopToolBarArea,
+            ToolBar(
+                title="Tools",
+                actions=[
+                    open_,
+                    opendir,
+                    openPrevImg,
+                    openNextImg,
+                    save,
+                    deleteFile,
+                    None,
+                    createMode,
+                    editMode,
+                    duplicate,
+                    delete,
+                    undo,
+                    brightnessContrast,
+                    None,
+                    fitWindow,
+                    zoom,
+                    None,
+                    selectAiModel,
+                    None,
+                    ai_prompt_action,
+                ],
+            ),
         )
 
         self.status_left = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -962,24 +967,12 @@ class MainWindow(QtWidgets.QMainWindow):
             utils.addActions(menu, actions)
         return menu
 
-    def toolbar(self, title, actions=None):
-        toolbar = ToolBar(title)
-        toolbar.setObjectName(f"{title}ToolBar")
-        # toolbar.setOrientation(Qt.Vertical)
-        toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        if actions:
-            utils.addActions(toolbar, actions)
-        self.addToolBar(Qt.TopToolBarArea, toolbar)
-        return toolbar
-
     # Support Functions
 
     def noShapes(self):
         return not len(self.labelList)
 
     def populateModeActions(self):
-        self.tools.clear()
-        utils.addActions(self.tools, self.toolbar_actions)
         self.canvas.menus[0].clear()
         utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         self.menus.edit.clear()
