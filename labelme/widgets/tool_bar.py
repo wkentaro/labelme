@@ -22,6 +22,8 @@ class ToolBar(QtWidgets.QToolBar):
         layout.setContentsMargins(*m)
         self.setContentsMargins(*m)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
+        self.setMovable(False)
+        self.setFloatable(False)
 
         self.setObjectName(f"{title}ToolBar")
         self.setOrientation(orientation)
