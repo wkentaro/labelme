@@ -718,14 +718,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         # menu shown at right click
         self.context_menu_actions = (
-            createMode,
-            createRectangleMode,
-            createCircleMode,
-            createLineMode,
-            createPointMode,
-            createLineStripMode,
-            createAiPolygonMode,
-            createAiMaskMode,
+            *[draw_action for _, draw_action in self.draw_actions],
             editMode,
             edit,
             duplicate,
