@@ -336,7 +336,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Polygons"),
             lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
             shortcuts["create_polygon"],
-            "objects",
+            "polygon.svg",
             self.tr("Start drawing polygons"),
             enabled=False,
         )
@@ -344,7 +344,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Rectangle"),
             lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
             shortcuts["create_rectangle"],
-            "objects",
+            "rectangle.svg",
             self.tr("Start drawing rectangles"),
             enabled=False,
         )
@@ -352,7 +352,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Circle"),
             lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
             shortcuts["create_circle"],
-            "objects",
+            "circle.svg",
             self.tr("Start drawing circles"),
             enabled=False,
         )
@@ -360,7 +360,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Line"),
             lambda: self._switch_canvas_mode(edit=False, createMode="line"),
             shortcuts["create_line"],
-            "objects",
+            "line-segment.svg",
             self.tr("Start drawing lines"),
             enabled=False,
         )
@@ -368,7 +368,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Point"),
             lambda: self._switch_canvas_mode(edit=False, createMode="point"),
             shortcuts["create_point"],
-            "objects",
+            "circles-three.svg",
             self.tr("Start drawing points"),
             enabled=False,
         )
@@ -376,7 +376,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create LineStrip"),
             lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
             shortcuts["create_linestrip"],
-            "objects",
+            "line-segments.svg",
             self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -384,7 +384,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create AI-Polygon"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_polygon"),
             None,
-            "objects",
+            "ai-polygon.svg",
             self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -392,7 +392,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create AI-Mask"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_mask"),
             None,
-            "objects",
+            "ai-mask.svg",
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
