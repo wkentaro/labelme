@@ -872,7 +872,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     save,
                     deleteFile,
                     None,
-                    createMode,
                     editMode,
                     duplicate,
                     delete,
@@ -886,6 +885,15 @@ class MainWindow(QtWidgets.QMainWindow):
                     None,
                     ai_prompt_action,
                 ],
+            ),
+        )
+        self.addToolBar(
+            Qt.LeftToolBarArea,
+            ToolBar(
+                title="CreateShapeTools",
+                actions=[a for _, a in self.draw_actions],
+                orientation=Qt.Vertical,
+                button_style=Qt.ToolButtonTextUnderIcon,
             ),
         )
 
