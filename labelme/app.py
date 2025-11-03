@@ -51,6 +51,13 @@ from . import utils
 # TODO(unknown):
 # - Zoom is too "steppy".
 
+# handle high-dpi scaling issue
+# https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5
+if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
 
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
