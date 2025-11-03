@@ -44,6 +44,11 @@ def main():
         ts_path.write_text(new_ts_content)
         logger.info("updated .ts file: {}", ts_path)
 
+        lrelease_version: str = (
+            subprocess.check_output(["lrelease", "-version"]).decode().split()[-1]
+        )
+        logger.info("using lrelease version: {}", lrelease_version)
+
         qm_path: pathlib.Path = labelme_translate_path / f"{lang}.qm"
         subprocess.check_call(
             ["lrelease", ts_path, "-qm", qm_path],
