@@ -42,7 +42,7 @@ def main():
         new_ts_content: str = re.sub(r'line="\d+"', 'line="0"', ts_content)
         assert ts_content.strip() != new_ts_content.strip()
         ts_path.write_text(new_ts_content)
-        logger.info("Updated .ts file: {}", ts_path)
+        logger.info("updated .ts file: {}", ts_path)
 
         qm_path: pathlib.Path = labelme_translate_path / f"{lang}.qm"
         subprocess.check_call(
@@ -51,7 +51,7 @@ def main():
             stderr=subprocess.DEVNULL,
         )
         assert qm_path.exists()
-        logger.info("Updated .qm file: {}", qm_path)
+        logger.info("updated .qm file: {}", qm_path)
 
 
 if __name__ == "__main__":
