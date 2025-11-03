@@ -336,7 +336,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Polygons"),
             lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
             shortcuts["create_polygon"],
-            "objects",
+            "polygon.svg",
             self.tr("Start drawing polygons"),
             enabled=False,
         )
@@ -344,7 +344,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Rectangle"),
             lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
             shortcuts["create_rectangle"],
-            "objects",
+            "rectangle.svg",
             self.tr("Start drawing rectangles"),
             enabled=False,
         )
@@ -352,7 +352,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Circle"),
             lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
             shortcuts["create_circle"],
-            "objects",
+            "circle.svg",
             self.tr("Start drawing circles"),
             enabled=False,
         )
@@ -360,7 +360,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Line"),
             lambda: self._switch_canvas_mode(edit=False, createMode="line"),
             shortcuts["create_line"],
-            "objects",
+            "line-segment.svg",
             self.tr("Start drawing lines"),
             enabled=False,
         )
@@ -368,7 +368,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Point"),
             lambda: self._switch_canvas_mode(edit=False, createMode="point"),
             shortcuts["create_point"],
-            "objects",
+            "circles-three.svg",
             self.tr("Start drawing points"),
             enabled=False,
         )
@@ -376,7 +376,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create LineStrip"),
             lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
             shortcuts["create_linestrip"],
-            "objects",
+            "line-segments.svg",
             self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -384,7 +384,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create AI-Polygon"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_polygon"),
             None,
-            "objects",
+            "ai-polygon.svg",
             self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -392,7 +392,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create AI-Mask"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_mask"),
             None,
-            "objects",
+            "ai-mask.svg",
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -718,14 +718,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         # menu shown at right click
         self.context_menu_actions = (
-            createMode,
-            createRectangleMode,
-            createCircleMode,
-            createLineMode,
-            createPointMode,
-            createLineStripMode,
-            createAiPolygonMode,
-            createAiMaskMode,
+            *[draw_action for _, draw_action in self.draw_actions],
             editMode,
             edit,
             duplicate,
@@ -867,28 +860,41 @@ class MainWindow(QtWidgets.QMainWindow):
         ai_prompt_action = QtWidgets.QWidgetAction(self)
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
-        self.tools = self.toolbar("Tools")
-        self.toolbar_actions = (
-            open_,
-            opendir,
-            openPrevImg,
-            openNextImg,
-            save,
-            deleteFile,
-            None,
-            createMode,
-            editMode,
-            duplicate,
-            delete,
-            undo,
-            brightnessContrast,
-            None,
-            fitWindow,
-            zoom,
-            None,
-            selectAiModel,
-            None,
-            ai_prompt_action,
+        self.addToolBar(
+            Qt.TopToolBarArea,
+            ToolBar(
+                title="Tools",
+                actions=[
+                    open_,
+                    opendir,
+                    openPrevImg,
+                    openNextImg,
+                    save,
+                    deleteFile,
+                    None,
+                    editMode,
+                    duplicate,
+                    delete,
+                    undo,
+                    brightnessContrast,
+                    None,
+                    fitWindow,
+                    zoom,
+                    None,
+                    selectAiModel,
+                    None,
+                    ai_prompt_action,
+                ],
+            ),
+        )
+        self.addToolBar(
+            Qt.LeftToolBarArea,
+            ToolBar(
+                title="CreateShapeTools",
+                actions=[a for _, a in self.draw_actions],
+                orientation=Qt.Vertical,
+                button_style=Qt.ToolButtonTextUnderIcon,
+            ),
         )
 
         self.status_left = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -935,7 +941,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
         self.recentFiles = self.settings.value("recentFiles", []) or []
-        size = self.settings.value("window/size", QtCore.QSize(600, 500))
+        size = self.settings.value("window/size", QtCore.QSize(900, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
         state = self.settings.value("window/state", QtCore.QByteArray())
         self.resize(size)
@@ -962,24 +968,12 @@ class MainWindow(QtWidgets.QMainWindow):
             utils.addActions(menu, actions)
         return menu
 
-    def toolbar(self, title, actions=None):
-        toolbar = ToolBar(title)
-        toolbar.setObjectName(f"{title}ToolBar")
-        # toolbar.setOrientation(Qt.Vertical)
-        toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        if actions:
-            utils.addActions(toolbar, actions)
-        self.addToolBar(Qt.TopToolBarArea, toolbar)
-        return toolbar
-
     # Support Functions
 
     def noShapes(self):
         return not len(self.labelList)
 
     def populateModeActions(self):
-        self.tools.clear()
-        utils.addActions(self.tools, self.toolbar_actions)
         self.canvas.menus[0].clear()
         utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         self.menus.edit.clear()

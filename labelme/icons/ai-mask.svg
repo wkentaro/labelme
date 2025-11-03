@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <rect x="0" y="0" width="24" height="24" style="fill:none;"/>
+    <g transform="matrix(1.09149,0,0,1.09149,0.258829,-1.57441)">
+        <path d="M13.103,3.152C15.533,2.42 19.986,2.856 20.589,5.168C21.191,7.48 19.146,16.29 16.716,17.022C14.286,17.754 6.612,11.872 6.01,9.56C5.408,7.249 10.673,3.884 13.103,3.152Z" style="fill:url(#_Linear1);stroke:black;stroke-width:1.83px;"/>
+    </g>
+    <g transform="matrix(0.722554,0,0,0.722554,0.711726,23.3884)">
+        <text x="0px" y="0px" style="font-family:'Roboto-Black', 'Roboto';font-weight:900;font-size:16px;">AI</text>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(14.7328,0,0,14.2574,5.96211,9.95617)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="1" style="stop-color:rgb(76,76,76);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>
