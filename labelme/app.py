@@ -941,7 +941,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
         self.recentFiles = self.settings.value("recentFiles", []) or []
-        size = self.settings.value("window/size", QtCore.QSize(600, 500))
+        size = self.settings.value("window/size", QtCore.QSize(900, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
         state = self.settings.value("window/state", QtCore.QByteArray())
         self.resize(size)
