@@ -48,7 +48,7 @@ def main():
             subprocess.check_output(["lrelease", "-version"]).decode().split()[-1]
         )
         logger.info("using lrelease version: {}", lrelease_version)
-        if lrelease_version.split(".")[:2] != ("5", "15"):
+        if lrelease_version.split(".")[:2] != ["5", "15"]:
             logger.warning(
                 "lrelease version is not 5.15.x, skipping .qm generation: lang={!r}",
                 lang,
