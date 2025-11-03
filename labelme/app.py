@@ -999,7 +999,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.save.setEnabled(True)
         title = __appname__
         if self.filename is not None:
-            title = f"{title} - {self.filename}*"
+            title = f"{title} - {self.filename}"
+            if hasattr(self, 'imageList') and self.imageList:
+                total = len(self.imageList)
+                index = self.imageList.index(self.imagePath) + 1 if self.imagePath in self.imageList else 0
+                title = f"{title} ({index}/{total})"
         self.setWindowTitle(title)
 
     def setClean(self):
@@ -1010,6 +1014,10 @@ class MainWindow(QtWidgets.QMainWindow):
         title = __appname__
         if self.filename is not None:
             title = f"{title} - {self.filename}"
+            if hasattr(self, 'imageList') and self.imageList:
+                total = len(self.imageList)
+                index = self.imageList.index(self.imagePath) + 1 if self.imagePath in self.imageList else 0
+                title = f"{title} ({index}/{total})"
         self.setWindowTitle(title)
 
         if self.hasLabelFile():
