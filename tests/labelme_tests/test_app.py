@@ -1,9 +1,11 @@
 import os.path as osp
+import pathlib
 import shutil
 import tempfile
 
 import pytest
 from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
@@ -15,6 +17,18 @@ import labelme.testing
 
 here = osp.dirname(osp.abspath(__file__))
 data_dir = osp.join(here, "data")
+
+
+@pytest.fixture(autouse=True)
+def _isolated_qtsettings(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    settings_file = tmp_path / "qtsettings.ini"
+    settings: QSettings = QSettings(str(settings_file), QSettings.IniFormat)
+    monkeypatch.setattr(
+        labelme.app.QtCore, "QSettings", lambda *args, **kwargs: settings
+    )
+    yield
 
 
 def _show_window_and_wait_for_imagedata(
