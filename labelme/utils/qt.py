@@ -9,9 +9,11 @@ from PyQt5 import QtWidgets
 here = osp.dirname(osp.abspath(__file__))
 
 
-def newIcon(icon):
-    icons_dir = osp.join(here, "../icons")
-    return QtGui.QIcon(osp.join(":/", icons_dir, f"{icon}.png"))
+def newIcon(icon_file_name: str) -> QtGui.QIcon:
+    if osp.splitext(icon_file_name)[1] == "":
+        icon_file_name = f"{icon_file_name}.png"  # XXX: convention
+    icons_dir: str = osp.join(here, "../icons")
+    return QtGui.QIcon(osp.join(":/", icons_dir, icon_file_name))
 
 
 def newButton(text, icon=None, slot=None):
