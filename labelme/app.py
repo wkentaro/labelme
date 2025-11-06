@@ -984,6 +984,20 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         utils.addActions(self.menus.edit, actions)
 
+    def _get_window_title(self, dirty: bool) -> str:
+        window_title: str = __appname__
+        if self.imagePath:
+            window_title = f"{window_title} - {self.imagePath}"
+        if self.imageList:
+            assert self.imagePath
+            window_title = (
+                f"{window_title} "
+                f"[{self.imageList.index(self.imagePath) + 1}/{len(self.imageList)}]"
+            )
+        if dirty:
+            window_title = f"{window_title}*"
+        return window_title
+
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
@@ -998,20 +1012,14 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
-        title = __appname__
-        if self.filename is not None:
-            title = f"{title} - {self.filename}*"
-        self.setWindowTitle(title)
+        self.setWindowTitle(self._get_window_title(dirty=True))
 
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
         for _, action in self.draw_actions:
             action.setEnabled(True)
-        title = __appname__
-        if self.filename is not None:
-            title = f"{title} - {self.filename}"
-        self.setWindowTitle(title)
+        self.setWindowTitle(self._get_window_title(dirty=False))
 
         if self.hasLabelFile():
             self.actions.deleteFile.setEnabled(True)
