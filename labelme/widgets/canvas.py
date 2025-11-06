@@ -402,7 +402,9 @@ class Canvas(QtWidgets.QWidget):
         # - Highlight vertex
         # Update shape/vertex fill and tooltip value accordingly.
         status_messages: list[str] = []
-        for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
+        for shape in ([self.hShape] if self.hShape else []) + [
+            s for s in reversed(self.shapes) if self.isVisible(s) and s != self.hShape
+        ]:
             # Look for a nearby vertex to highlight. If that fails,
             # check if we happen to be inside a shape.
             index = shape.nearestVertex(pos, self.epsilon)
@@ -1076,6 +1078,7 @@ class Canvas(QtWidgets.QWidget):
     def resetState(self):
         self.restoreCursor()
         self.pixmap = QtGui.QPixmap()
+        self.shapes = []
         self.shapesBackups = []
         self.update()
 
