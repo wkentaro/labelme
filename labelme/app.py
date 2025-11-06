@@ -1685,6 +1685,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.repaint()
             return
 
+        prev_shapes: list[Shape] = (
+            self.canvas.shapes if self._config["keep_prev"] else []
+        )
         self.resetState()
         self.canvas.setEnabled(False)
         if filename is None:
@@ -1747,8 +1750,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         self.image = image
         self.filename = filename
-        if self._config["keep_prev"]:
-            prev_shapes = self.canvas.shapes
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
@@ -1756,7 +1757,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
-        if self._config["keep_prev"] and self.noShapes():
+        if prev_shapes and self.noShapes():
             self.loadShapes(prev_shapes, replace=False)
             self.setDirty()
         else:
