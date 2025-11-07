@@ -71,9 +71,14 @@ class _ZoomMode(enum.Enum):
 
 class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
+    _config: dict
+    _is_changed: bool = False
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
+    _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
+    _prev_opened_dir: str | None
+    _other_data: dict | None
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -82,16 +87,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(
         self,
-        config=None,
-        filename=None,
-        output=None,
-        output_file=None,
-        output_dir=None,
-    ):
+        config: dict | None = None,
+        filename: str | None = None,
+        output: str | None = None,
+        output_file: str | None = None,
+        output_dir: str | None = None,
+    ) -> None:
         if output is not None:
             logger.warning("argument output is deprecated, use output_file instead")
             if output_file is None:
                 output_file = output
+        del output
 
         # see labelme/config/default_config.yaml for valid configuration
         if config is None:
@@ -120,9 +126,6 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.setWindowTitle(__appname__)
 
-        # Whether we need to save or not.
-        self.dirty = False
-
         self._noSelectionSlot = False
 
         self._copied_shapes = []
@@ -139,7 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.labelList = LabelListWidget()
-        self.lastOpenDir = None
+        self._prev_opened_dir = None
 
         self.flag_dock = self.flag_widget = None
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
@@ -928,11 +931,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imagePath: str | None = None
         self.recentFiles: list[str] = []
         self.maxRecent = 7
-        self.otherData = None
+        self._other_data = None
         self.zoom_level = 100
         self.fit_window = False
         self._zoom_values = {}
-        self.brightnessContrast_values = {}
+        self._brightness_contrast_values = {}
         self.scroll_values = {  # type: ignore[var-annotated]
             Qt.Horizontal: {},
             Qt.Vertical: {},
@@ -1020,12 +1023,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_file = osp.join(self.output_dir, label_file_without_path)
             self.saveLabels(label_file)
             return
-        self.dirty = True
+        self._is_changed = True
         self.actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
 
     def setClean(self):
-        self.dirty = False
+        self._is_changed = False
         self.actions.save.setEnabled(False)
         for _, action in self.draw_actions:
             action.setEnabled(True)
@@ -1122,7 +1125,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imagePath = None
         self.imageData = None
         self.labelFile = None
-        self.otherData = None
+        self._other_data = None
         self.canvas.resetState()
 
     def currentItem(self):
@@ -1301,7 +1304,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def fileSearchChanged(self):
         self._import_images_from_dir(
-            root_dir=self.lastOpenDir, pattern=self.fileSearch.text()
+            root_dir=self._prev_opened_dir, pattern=self.fileSearch.text()
         )
 
     def fileSelectionChanged(self):
@@ -1496,7 +1499,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 imageData=imageData,
                 imageHeight=self.image.height(),
                 imageWidth=self.image.width(),
-                otherData=self.otherData,
+                otherData=self._other_data,
                 flags=flags,
             )
             self.labelFile = lf
@@ -1656,7 +1659,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage), clear_shapes=False)
 
     def brightnessContrast(self, value: bool, is_initial_load: bool = False):
-        del value
+        if self.filename is None:
+            logger.warning("filename is None, cannot set brightness/contrast")
+            return
 
         dialog = BrightnessContrastDialog(
             utils.img_data_to_pil(self.imageData).convert("RGB"),
@@ -1664,13 +1669,15 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self,
         )
 
-        brightness, contrast = self.brightnessContrast_values.get(
+        brightness: int | None
+        contrast: int | None
+        brightness, contrast = self._brightness_contrast_values.get(
             self.filename, (None, None)
         )
         if is_initial_load:
             prev_filename: str = self.recentFiles[0] if self.recentFiles else ""
             if self._config["keep_prev_brightness_contrast"] and prev_filename:
-                brightness, contrast = self.brightnessContrast_values.get(
+                brightness, contrast = self._brightness_contrast_values.get(
                     prev_filename, (None, None)
                 )
         if brightness is not None:
@@ -1685,7 +1692,7 @@ class MainWindow(QtWidgets.QMainWindow):
             brightness = dialog.slider_brightness.value()
             contrast = dialog.slider_contrast.value()
 
-        self.brightnessContrast_values[self.filename] = (brightness, contrast)
+        self._brightness_contrast_values[self.filename] = (brightness, contrast)
 
     def togglePolygons(self, value):
         flag = value
@@ -1748,7 +1755,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 osp.dirname(label_file),
                 self.labelFile.imagePath,
             )
-            self.otherData = self.labelFile.otherData
+            self._other_data = self.labelFile.otherData
         else:
             self.imageData = LabelFile.load_image_file(filename)
             if self.imageData:
@@ -1963,7 +1970,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self._import_images_from_dir(root_dir=self.lastOpenDir)
+        self._import_images_from_dir(root_dir=self._prev_opened_dir)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2077,7 +2084,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return osp.exists(label_file)
 
     def _can_continue(self) -> bool:
-        if not self.dirty:
+        if not self._is_changed:
             return True
         mb = QtWidgets.QMessageBox
         msg = self.tr('Save annotations to "{}" before closing?').format(self.filename)
@@ -2148,8 +2155,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         defaultOpenDirPath: str
-        if self.lastOpenDir and osp.exists(self.lastOpenDir):
-            defaultOpenDirPath = self.lastOpenDir
+        if self._prev_opened_dir and osp.exists(self._prev_opened_dir):
+            defaultOpenDirPath = self._prev_opened_dir
         else:
             defaultOpenDirPath = osp.dirname(self.filename) if self.filename else "."
 
@@ -2211,7 +2218,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue() or not root_dir:
             return
 
-        self.lastOpenDir = root_dir
+        self._prev_opened_dir = root_dir
         self.filename = None
         self.fileListWidget.clear()
 
