@@ -65,6 +65,8 @@ LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
+    filename: str | None
+
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
     #     (where it is Callable[[QWidget], list[QAction]]).
@@ -249,7 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         openNextImg = action(
             self.tr("&Next Image"),
-            self.openNextImg,
+            self._open_next_image,
             shortcuts["open_next"],
             "next",
             self.tr("Open next (hold Ctl+Shift to copy labels)"),
@@ -257,7 +259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         openPrevImg = action(
             self.tr("&Prev Image"),
-            self.openPrevImg,
+            self._open_prev_image,
             shortcuts["open_prev"],
             "prev",
             self.tr("Open prev (hold Ctl+Shift to copy labels)"),
@@ -928,11 +930,6 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Vertical: {},
         }  # key=filename, value=scroll_value
 
-        if filename is not None and osp.isdir(filename):
-            self.importDirImages(filename, load=False)
-        else:
-            self.filename = filename
-
         if config["file_search"]:
             self.fileSearch.setText(config["file_search"])
             self.fileSearchChanged()
@@ -947,15 +944,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(size)
         self.move(position)
         # or simply:
-        # self.restoreGeometry(settings['window/geometry']
+        # self.restoreGeometry(settings['window/geometry'])
         self.restoreState(state)
+
+        if filename:
+            if osp.isdir(filename):
+                self._import_images_from_dir(root_dir=filename)
+                self._open_next_image()
+            else:
+                self.loadFile(filename=filename)
+        else:
+            self.filename = None
 
         # Populate the File menu dynamically.
         self.updateFileMenu()
-        # Since loading the file may take some time,
-        # make sure it runs in the background.
-        if self.filename is not None:
-            self.queueEvent(functools.partial(self.loadFile, self.filename))
 
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
@@ -1290,10 +1292,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
 
     def fileSearchChanged(self):
-        self.importDirImages(
-            self.lastOpenDir,
-            pattern=self.fileSearch.text(),
-            load=False,
+        self._import_images_from_dir(
+            root_dir=self.lastOpenDir, pattern=self.fileSearch.text()
         )
 
     def fileSelectionChanged(self):
@@ -1694,7 +1694,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         prev_shapes: list[Shape] = (
-            self.canvas.shapes if self._config["keep_prev"] else []
+            self.canvas.shapes
+            if self._config["keep_prev"]
+            or QtWidgets.QApplication.keyboardModifiers()
+            == (Qt.ControlModifier | Qt.ShiftModifier)
+            else []
         )
         self.resetState()
         self.canvas.setEnabled(False)
@@ -1790,6 +1794,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toggleActions(True)
         self.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
+        logger.debug("loaded file: {!r}", filename)
         return True
 
     def resizeEvent(self, event):
@@ -1870,58 +1875,25 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.mayContinue():
             self.loadFile(filename)
 
-    def openPrevImg(self, _value=False):
-        keep_prev = self._config["keep_prev"]
-        if QtWidgets.QApplication.keyboardModifiers() == (
-            Qt.ControlModifier | Qt.ShiftModifier
-        ):
-            self._config["keep_prev"] = True
-
-        if not self.mayContinue():
+    def _open_prev_image(self, _value=False) -> None:
+        row_prev: int = self.fileListWidget.currentRow() - 1
+        if row_prev < 0:
+            logger.debug("there is no prev image")
             return
 
-        if len(self.imageList) <= 0:
+        logger.debug("setting current row to {:d}", row_prev)
+        self.fileListWidget.setCurrentRow(row_prev)
+        self.fileListWidget.repaint()
+
+    def _open_next_image(self, _value=False) -> None:
+        row_next: int = self.fileListWidget.currentRow() + 1
+        if row_next >= self.fileListWidget.count():
+            logger.debug("there is no next image")
             return
 
-        if self.filename is None:
-            return
-
-        currIndex = self.imageList.index(self.filename)
-        if currIndex - 1 >= 0:
-            filename = self.imageList[currIndex - 1]
-            if filename:
-                self.loadFile(filename)
-
-        self._config["keep_prev"] = keep_prev
-
-    def openNextImg(self, _value=False, load=True):
-        keep_prev = self._config["keep_prev"]
-        if QtWidgets.QApplication.keyboardModifiers() == (
-            Qt.ControlModifier | Qt.ShiftModifier
-        ):
-            self._config["keep_prev"] = True
-
-        if not self.mayContinue():
-            return
-
-        if len(self.imageList) <= 0:
-            return
-
-        filename = None
-        if self.filename is None:
-            filename = self.imageList[0]
-        else:
-            currIndex = self.imageList.index(self.filename)
-            if currIndex + 1 < len(self.imageList):
-                filename = self.imageList[currIndex + 1]
-            else:
-                filename = self.imageList[-1]
-        self.filename = filename
-
-        if self.filename and load:
-            self.loadFile(self.filename)
-
-        self._config["keep_prev"] = keep_prev
+        logger.debug("setting current row to {:d}", row_next)
+        self.fileListWidget.setCurrentRow(row_next)
+        self.fileListWidget.repaint()
 
     def openFile(self, _value=False):
         if not self.mayContinue():
@@ -1975,7 +1947,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self.importDirImages(self.lastOpenDir, load=False)
+        self._import_images_from_dir(root_dir=self.lastOpenDir)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -1998,6 +1970,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._saveFile(self.saveFileDialog())
 
     def saveFileDialog(self):
+        assert self.filename is not None
         caption = self.tr("%s - Choose File") % __appname__
         filters = self.tr("Label files (*%s)") % LabelFile.suffix
         if self.output_dir:
@@ -2042,6 +2015,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.saveAs.setEnabled(False)
 
     def getLabelFile(self):
+        assert self.filename is not None
         if self.filename.lower().endswith(".json"):
             label_file = self.filename
         else:
@@ -2172,7 +2146,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self.importDirImages(targetDirPath)
+        self._import_images_from_dir(root_dir=targetDirPath)
+        self._open_next_image()
 
     @property
     def imageList(self) -> list[str]:
@@ -2209,20 +2184,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.openNextImg.setEnabled(True)
             self.actions.openPrevImg.setEnabled(True)
 
-        self.openNextImg()
+        self._open_next_image()
 
-    def importDirImages(self, dirpath, pattern=None, load=True):
+    def _import_images_from_dir(
+        self, root_dir: str | None, pattern: str | None = None
+    ) -> None:
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not dirpath:
+        if not self.mayContinue() or not root_dir:
             return
 
-        self.lastOpenDir = dirpath
+        self.lastOpenDir = root_dir
         self.filename = None
         self.fileListWidget.clear()
 
-        filenames = self.scanAllImages(dirpath)
+        filenames = _scan_image_files(root_dir=root_dir)
         if pattern:
             try:
                 filenames = [f for f in filenames if re.search(pattern, f)]
@@ -2240,25 +2217,26 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setCheckState(Qt.Unchecked)
             self.fileListWidget.addItem(item)
-        self.openNextImg(load=load)
-
-    def scanAllImages(self, folderPath):
-        extensions = [
-            f".{fmt.data().decode().lower()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
-
-        images = []
-        for root, dirs, files in os.walk(folderPath):
-            for file in files:
-                if file.lower().endswith(tuple(extensions)):
-                    relativePath = os.path.normpath(osp.join(root, file))
-                    images.append(relativePath)
-        images = natsort.os_sorted(images)
-        return images
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
         stats.append(f"mode={self.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self.status_right.setText(" | ".join(stats))
+
+
+def _scan_image_files(root_dir: str) -> list[str]:
+    extensions: list[str] = [
+        f".{fmt.data().decode().lower()}"
+        for fmt in QtGui.QImageReader.supportedImageFormats()
+    ]
+
+    images: list[str] = []
+    for root, dirs, files in os.walk(root_dir):
+        for file in files:
+            if file.lower().endswith(tuple(extensions)):
+                relativePath = os.path.normpath(osp.join(root, file))
+                images.append(relativePath)
+
+    logger.debug("found {:d} images in {!r}", len(images), root_dir)
+    return natsort.os_sorted(images)
