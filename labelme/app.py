@@ -85,16 +85,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(
         self,
-        config=None,
-        filename=None,
-        output=None,
-        output_file=None,
-        output_dir=None,
-    ):
+        config: dict | None = None,
+        filename: str | None = None,
+        output: str | None = None,
+        output_file: str | None = None,
+        output_dir: str | None = None,
+    ) -> None:
         if output is not None:
             logger.warning("argument output is deprecated, use output_file instead")
             if output_file is None:
                 output_file = output
+        del output
 
         # see labelme/config/default_config.yaml for valid configuration
         if config is None:
