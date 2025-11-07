@@ -66,6 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
     filename: str | None
+    _copied_shapes: list[Shape]
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -117,7 +118,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._noSelectionSlot = False
 
-        self._copied_shapes = None
+        self._copied_shapes = []
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
