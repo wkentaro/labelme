@@ -72,6 +72,7 @@ class _ZoomMode(enum.Enum):
 class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _config: dict
+    _is_changed: bool = False
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
@@ -124,9 +125,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super().__init__()
         self.setWindowTitle(__appname__)
-
-        # Whether we need to save or not.
-        self.dirty = False
 
         self._noSelectionSlot = False
 
@@ -1025,12 +1023,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_file = osp.join(self.output_dir, label_file_without_path)
             self.saveLabels(label_file)
             return
-        self.dirty = True
+        self._is_changed = True
         self.actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
 
     def setClean(self):
-        self.dirty = False
+        self._is_changed = False
         self.actions.save.setEnabled(False)
         for _, action in self.draw_actions:
             action.setEnabled(True)
@@ -2086,7 +2084,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return osp.exists(label_file)
 
     def _can_continue(self) -> bool:
-        if not self.dirty:
+        if not self._is_changed:
             return True
         mb = QtWidgets.QMessageBox
         msg = self.tr('Save annotations to "{}" before closing?').format(self.filename)
