@@ -66,6 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
     filename: str | None
+    _copied_shapes: list[Shape]
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -117,7 +118,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._noSelectionSlot = False
 
-        self._copied_shapes = None
+        self._copied_shapes = []
 
         # Main widgets and related state.
         self.labelDialog = LabelDialog(
@@ -138,7 +139,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setObjectName("Flags")
         self.flag_widget = QtWidgets.QListWidget()
         if config["flags"]:
-            self.loadFlags({k: False for k in config["flags"]})
+            self._load_flags(flags={k: False for k in config["flags"]})
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
@@ -237,14 +238,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_ = action(
             self.tr("&Open\n"),
-            self.openFile,
+            self._open_file_with_dialog,
             shortcuts["open"],
             "open",
             self.tr("Open image or label file"),
         )
         opendir = action(
             self.tr("Open Dir"),
-            self.openDirDialog,
+            self._open_dir_with_dialog,
             shortcuts["open_dir"],
             "open",
             self.tr("Open Dir"),
@@ -952,7 +953,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._import_images_from_dir(root_dir=filename)
                 self._open_next_image()
             else:
-                self.loadFile(filename=filename)
+                self._load_file(filename=filename)
         else:
             self.filename = None
 
@@ -1105,7 +1106,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shapes.append(shape)
 
         self.canvas.storeShapes()
-        self.loadShapes(shapes, replace=False)
+        self._load_shapes(shapes, replace=False)
         self.setDirty()
 
     def resetState(self):
@@ -1135,7 +1136,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def undoShapeEdit(self):
         self.canvas.restoreShape()
         self.labelList.clear()
-        self.loadShapes(self.canvas.shapes)
+        self._load_shapes(self.canvas.shapes)
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
     def tutorial(self):
@@ -1302,14 +1303,14 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         item = items[0]
 
-        if not self.mayContinue():
+        if not self._can_continue():
             return
 
         currIndex = self.imageList.index(str(item.text()))
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
             if filename:
-                self.loadFile(filename)
+                self._load_file(filename)
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes):
@@ -1400,13 +1401,14 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.labelList.findItemByShape(shape)
             self.labelList.removeItem(item)
 
-    def loadShapes(self, shapes, replace=True):
+    def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
         self._noSelectionSlot = True
+        shape: Shape
         for shape in shapes:
             self.addLabel(shape)
         self.labelList.clearSelection()
         self._noSelectionSlot = False
-        self.canvas.loadShapes(shapes, replace=replace)
+        self.canvas.loadShapes(shapes=shapes, replace=replace)
 
     def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
         shapes: list[Shape] = []
@@ -1434,12 +1436,14 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.other_data = shape_dict["other_data"]
 
             shapes.append(shape)
-        self.loadShapes(shapes=shapes)
+        self._load_shapes(shapes=shapes)
 
-    def loadFlags(self, flags):
+    def _load_flags(self, flags: dict[str, bool]) -> None:
         self.flag_widget.clear()  # type: ignore[union-attr]
+        key: str
+        flag: bool
         for key, flag in flags.items():
-            item = QtWidgets.QListWidgetItem(key)
+            item: QtWidgets.QListWidgetItem = QtWidgets.QListWidgetItem(key)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             self.flag_widget.addItem(item)  # type: ignore[union-attr]
@@ -1508,7 +1512,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pasteSelectedShape()
 
     def pasteSelectedShape(self):
-        self.loadShapes(self._copied_shapes, replace=False)
+        self._load_shapes(shapes=self._copied_shapes, replace=False)
         self.setDirty()
 
     def copySelectedShape(self):
@@ -1683,7 +1687,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
-    def loadFile(self, filename=None):
+    def _load_file(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
         if filename in self.imageList and (
@@ -1768,9 +1772,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
-        self.loadFlags(flags)
+        self._load_flags(flags=flags)
         if prev_shapes and self.noShapes():
-            self.loadShapes(prev_shapes, replace=False)
+            self._load_shapes(shapes=prev_shapes, replace=False)
             self.setDirty()
         else:
             self.setClean()
@@ -1840,7 +1844,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.saveWithImageData.setChecked(enabled)
 
     def closeEvent(self, event):
-        if not self.mayContinue():
+        if not self._can_continue():
             event.ignore()
         self.settings.setValue("filename", self.filename if self.filename else "")
         self.settings.setValue("window/size", self.size())
@@ -1863,7 +1867,7 @@ class MainWindow(QtWidgets.QMainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        if not self.mayContinue():
+        if not self._can_continue():
             event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
@@ -1872,8 +1876,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # User Dialogs #
 
     def loadRecent(self, filename):
-        if self.mayContinue():
-            self.loadFile(filename)
+        if self._can_continue():
+            self._load_file(filename)
 
     def _open_prev_image(self, _value=False) -> None:
         row_prev: int = self.fileListWidget.currentRow() - 1
@@ -1895,8 +1899,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.setCurrentRow(row_next)
         self.fileListWidget.repaint()
 
-    def openFile(self, _value=False):
-        if not self.mayContinue():
+    def _open_file_with_dialog(self, _value: bool = False) -> None:
+        if not self._can_continue():
             return
         path = osp.dirname(str(self.filename)) if self.filename else "."
         formats = [
@@ -1917,7 +1921,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
-                self.loadFile(fileName)
+                self._load_file(fileName)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
@@ -2006,7 +2010,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setClean()
 
     def closeFile(self, _value=False):
-        if not self.mayContinue():
+        if not self._can_continue():
             return
         self.resetState()
         self.setClean()
@@ -2060,7 +2064,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_file = self.getLabelFile()
         return osp.exists(label_file)
 
-    def mayContinue(self):
+    def _can_continue(self) -> bool:
         if not self.dirty:
             return True
         mb = QtWidgets.QMessageBox
@@ -2127,11 +2131,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.endMove(copy=False)
         self.setDirty()
 
-    def openDirDialog(self, _value=False, dirpath=None):
-        if not self.mayContinue():
+    def _open_dir_with_dialog(self, _value: bool = False) -> None:
+        if not self._can_continue():
             return
 
-        defaultOpenDirPath = dirpath if dirpath else "."
+        defaultOpenDirPath: str
         if self.lastOpenDir and osp.exists(self.lastOpenDir):
             defaultOpenDirPath = self.lastOpenDir
         else:
@@ -2192,7 +2196,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not root_dir:
+        if not self._can_continue() or not root_dir:
             return
 
         self.lastOpenDir = root_dir
