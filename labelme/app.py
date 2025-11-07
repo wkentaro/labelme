@@ -138,7 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock.setObjectName("Flags")
         self.flag_widget = QtWidgets.QListWidget()
         if config["flags"]:
-            self.loadFlags({k: False for k in config["flags"]})
+            self._load_flags(flags={k: False for k in config["flags"]})
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
@@ -1436,10 +1436,12 @@ class MainWindow(QtWidgets.QMainWindow):
             shapes.append(shape)
         self.loadShapes(shapes=shapes)
 
-    def loadFlags(self, flags):
+    def _load_flags(self, flags: dict[str, bool]) -> None:
         self.flag_widget.clear()  # type: ignore[union-attr]
+        key: str
+        flag: bool
         for key, flag in flags.items():
-            item = QtWidgets.QListWidgetItem(key)
+            item: QtWidgets.QListWidgetItem = QtWidgets.QListWidgetItem(key)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             self.flag_widget.addItem(item)  # type: ignore[union-attr]
@@ -1768,7 +1770,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
-        self.loadFlags(flags)
+        self._load_flags(flags=flags)
         if prev_shapes and self.noShapes():
             self.loadShapes(prev_shapes, replace=False)
             self.setDirty()
