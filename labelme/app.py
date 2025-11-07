@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import functools
 import html
 import math
@@ -62,11 +63,17 @@ if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
 
-class MainWindow(QtWidgets.QMainWindow):
-    FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
+class _ZoomMode(enum.Enum):
+    FIT_WINDOW = enum.auto()
+    FIT_WIDTH = enum.auto()
+    MANUAL_ZOOM = enum.auto()
 
+
+class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _copied_shapes: list[Shape]
+    _zoom_mode: _ZoomMode
+    _zoom_values: dict[str, tuple[_ZoomMode, int]]
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -189,7 +196,7 @@ class MainWindow(QtWidgets.QMainWindow):
             num_backups=self._config["canvas"]["num_backups"],
             crosshair=self._config["canvas"]["crosshair"],
         )
-        self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.zoomRequest.connect(self._zoom_requested)
         self.canvas.mouseMoved.connect(self._update_status_stats)
         self.canvas.statusUpdated.connect(lambda text: self.status_left.setText(text))
 
@@ -522,7 +529,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         zoomIn = action(
             self.tr("Zoom &In"),
-            functools.partial(self.addZoom, 1.1),
+            functools.partial(self._add_zoom, 1.1),
             shortcuts["zoom_in"],
             "zoom-in",
             self.tr("Increase zoom level"),
@@ -530,7 +537,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOut = action(
             self.tr("&Zoom Out"),
-            functools.partial(self.addZoom, 0.9),
+            functools.partial(self._add_zoom, 0.9),
             shortcuts["zoom_out"],
             "zoom-out",
             self.tr("Decrease zoom level"),
@@ -538,7 +545,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOrg = action(
             self.tr("&Original size"),
-            functools.partial(self.setZoom, 100),
+            functools.partial(self._set_zoom, 100),
             shortcuts["zoom_to_original"],
             "zoom",
             self.tr("Zoom to original size"),
@@ -578,13 +585,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
-        self.zoomMode = self.FIT_WINDOW
+        self._zoom_mode = _ZoomMode.FIT_WINDOW
         fitWindow.setChecked(Qt.Checked)
         self.scalers = {
-            self.FIT_WINDOW: self.scaleFitWindow,
-            self.FIT_WIDTH: self.scaleFitWidth,
+            _ZoomMode.FIT_WINDOW: self.scaleFitWindow,
+            _ZoomMode.FIT_WIDTH: self.scaleFitWidth,
             # Set to one to scale to 100% when loading files.
-            self.MANUAL_ZOOM: lambda: 1,
+            _ZoomMode.MANUAL_ZOOM: lambda: 1,
         }
 
         edit = action(
@@ -924,7 +931,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
-        self.zoom_values = {}  # key=filename, value=(zoom_mode, zoom_value)
+        self._zoom_values = {}
         self.brightnessContrast_values = {}
         self.scroll_values = {  # type: ignore[var-annotated]
             Qt.Horizontal: {},
@@ -1591,29 +1598,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
 
-    def setZoom(self, value):
+    def _set_zoom(self, value: int) -> None:
+        if self.filename is None:
+            logger.warning("filename is None, cannot set zoom")
+            return
         self.actions.fitWidth.setChecked(False)
         self.actions.fitWindow.setChecked(False)
-        self.zoomMode = self.MANUAL_ZOOM
+        self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = (self.zoomMode, value)
+        self._zoom_values[self.filename] = (self._zoom_mode, value)
 
-    def addZoom(self, increment=1.1):
-        zoom_value = self.zoomWidget.value() * increment
+    def _add_zoom(self, increment: float = 1.1) -> None:
+        zoom_value: int
         if increment > 1:
-            zoom_value = math.ceil(zoom_value)
+            zoom_value = math.ceil(self.zoomWidget.value() * increment)
         else:
-            zoom_value = math.floor(zoom_value)
-        self.setZoom(zoom_value)
+            zoom_value = math.floor(self.zoomWidget.value() * increment)
+        self._set_zoom(value=zoom_value)
 
-    def zoomRequest(self, delta, pos):
-        canvas_width_old = self.canvas.width()
-        units = 1.1
-        if delta < 0:
-            units = 0.9
-        self.addZoom(units)
+    def _zoom_requested(self, delta: int, pos: QtCore.QPoint) -> None:
+        canvas_width_old: int = self.canvas.width()
+        self._add_zoom(increment=1.1 if delta > 0 else 0.9)
 
-        canvas_width_new = self.canvas.width()
+        canvas_width_new: int = self.canvas.width()
         if canvas_width_old != canvas_width_new:
             canvas_scale_factor = canvas_width_new / canvas_width_old
 
@@ -1632,14 +1639,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def setFitWindow(self, value=True):
         if value:
             self.actions.fitWidth.setChecked(False)
-        self.zoomMode = self.FIT_WINDOW if value else self.MANUAL_ZOOM
-        self.adjustScale()
+        self._zoom_mode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
+        self._adjust_scale()
 
     def setFitWidth(self, value=True):
         if value:
             self.actions.fitWindow.setChecked(False)
-        self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
-        self.adjustScale()
+        self._zoom_mode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
+        self._adjust_scale()
 
     def enableKeepPrevScale(self, enabled):
         self._config["keep_prev_scale"] = enabled
@@ -1780,12 +1787,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setClean()
         self.canvas.setEnabled(True)
         # set zoom values
-        is_initial_load = not self.zoom_values
-        if self.filename in self.zoom_values:
-            self.zoomMode = self.zoom_values[self.filename][0]
-            self.setZoom(self.zoom_values[self.filename][1])
+        is_initial_load = not self._zoom_values
+        if self.filename in self._zoom_values:
+            self._zoom_mode = self._zoom_values[self.filename][0]
+            self._set_zoom(self._zoom_values[self.filename][1])
         elif is_initial_load or not self._config["keep_prev_scale"]:
-            self.adjustScale(initial=True)
+            self._adjust_scale(initial=True)
         # set scroll values
         for orientation in self.scroll_values:
             if self.filename in self.scroll_values[orientation]:
@@ -1805,9 +1812,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if (
             self.canvas
             and not self.image.isNull()
-            and self.zoomMode != self.MANUAL_ZOOM
+            and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
-            self.adjustScale()
+            self._adjust_scale()
         super().resizeEvent(event)
 
     def _paint_canvas(self) -> None:
@@ -1818,11 +1825,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.adjustSize()
         self.canvas.update()
 
-    def adjustScale(self, initial=False):
-        value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
+    def _adjust_scale(self, initial: bool = False) -> None:
+        if self.filename is None:
+            logger.warning("filename is None, cannot adjust scale")
+            return
+        value = self.scalers[_ZoomMode.FIT_WINDOW if initial else self._zoom_mode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = (self.zoomMode, value)
+        self._zoom_values[self.filename] = (self._zoom_mode, value)
 
     def scaleFitWindow(self):
         """Figure out the size of the pixmap to fit the main widget."""
