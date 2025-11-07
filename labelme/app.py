@@ -75,6 +75,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _zoom_mode: _ZoomMode
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
     _prev_opened_dir: str | None
+    _other_data: dict | None
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -929,7 +930,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imagePath: str | None = None
         self.recentFiles: list[str] = []
         self.maxRecent = 7
-        self.otherData = None
+        self._other_data = None
         self.zoom_level = 100
         self.fit_window = False
         self._zoom_values = {}
@@ -1123,7 +1124,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imagePath = None
         self.imageData = None
         self.labelFile = None
-        self.otherData = None
+        self._other_data = None
         self.canvas.resetState()
 
     def currentItem(self):
@@ -1497,7 +1498,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 imageData=imageData,
                 imageHeight=self.image.height(),
                 imageWidth=self.image.width(),
-                otherData=self.otherData,
+                otherData=self._other_data,
                 flags=flags,
             )
             self.labelFile = lf
@@ -1749,7 +1750,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 osp.dirname(label_file),
                 self.labelFile.imagePath,
             )
-            self.otherData = self.labelFile.otherData
+            self._other_data = self.labelFile.otherData
         else:
             self.imageData = LabelFile.load_image_file(filename)
             if self.imageData:
