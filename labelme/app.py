@@ -1106,7 +1106,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shapes.append(shape)
 
         self.canvas.storeShapes()
-        self.loadShapes(shapes, replace=False)
+        self._load_shapes(shapes, replace=False)
         self.setDirty()
 
     def resetState(self):
@@ -1136,7 +1136,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def undoShapeEdit(self):
         self.canvas.restoreShape()
         self.labelList.clear()
-        self.loadShapes(self.canvas.shapes)
+        self._load_shapes(self.canvas.shapes)
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
     def tutorial(self):
@@ -1401,13 +1401,14 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.labelList.findItemByShape(shape)
             self.labelList.removeItem(item)
 
-    def loadShapes(self, shapes, replace=True):
+    def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
         self._noSelectionSlot = True
+        shape: Shape
         for shape in shapes:
             self.addLabel(shape)
         self.labelList.clearSelection()
         self._noSelectionSlot = False
-        self.canvas.loadShapes(shapes, replace=replace)
+        self.canvas.loadShapes(shapes=shapes, replace=replace)
 
     def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
         shapes: list[Shape] = []
@@ -1435,7 +1436,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.other_data = shape_dict["other_data"]
 
             shapes.append(shape)
-        self.loadShapes(shapes=shapes)
+        self._load_shapes(shapes=shapes)
 
     def _load_flags(self, flags: dict[str, bool]) -> None:
         self.flag_widget.clear()  # type: ignore[union-attr]
@@ -1511,7 +1512,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pasteSelectedShape()
 
     def pasteSelectedShape(self):
-        self.loadShapes(self._copied_shapes, replace=False)
+        self._load_shapes(shapes=self._copied_shapes, replace=False)
         self.setDirty()
 
     def copySelectedShape(self):
@@ -1773,7 +1774,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags.update(self.labelFile.flags)
         self._load_flags(flags=flags)
         if prev_shapes and self.noShapes():
-            self.loadShapes(prev_shapes, replace=False)
+            self._load_shapes(shapes=prev_shapes, replace=False)
             self.setDirty()
         else:
             self.setClean()
