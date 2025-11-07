@@ -929,7 +929,7 @@ class MainWindow(QtWidgets.QMainWindow):
         }  # key=filename, value=scroll_value
 
         if filename is not None and osp.isdir(filename):
-            self.importDirImages(filename, load=False)
+            self.importDirImages(dirpath=filename, load=False)
         else:
             self.filename = filename
 
@@ -1291,7 +1291,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def fileSearchChanged(self):
         self.importDirImages(
-            self.lastOpenDir,
+            dirpath=self.lastOpenDir,
             pattern=self.fileSearch.text(),
             load=False,
         )
@@ -1975,7 +1975,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self.importDirImages(self.lastOpenDir, load=False)
+        self.importDirImages(dirpath=self.lastOpenDir, load=False)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2172,7 +2172,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self.importDirImages(targetDirPath)
+        self.importDirImages(dirpath=targetDirPath)
 
     @property
     def imageList(self) -> list[str]:
@@ -2211,7 +2211,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.openNextImg()
 
-    def importDirImages(self, dirpath, pattern=None, load=True):
+    def importDirImages(
+        self, dirpath: str | None, pattern: str | None = None, load: bool = True
+    ) -> None:
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
