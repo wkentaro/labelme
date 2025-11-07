@@ -944,7 +944,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(size)
         self.move(position)
         # or simply:
-        # self.restoreGeometry(settings['window/geometry']
+        # self.restoreGeometry(settings['window/geometry'])
         self.restoreState(state)
 
         if filename:
