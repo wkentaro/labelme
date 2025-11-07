@@ -1694,7 +1694,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         prev_shapes: list[Shape] = (
-            self.canvas.shapes if self._config["keep_prev"] else []
+            self.canvas.shapes
+            if self._config["keep_prev"]
+            or QtWidgets.QApplication.keyboardModifiers()
+            == (Qt.ControlModifier | Qt.ShiftModifier)
+            else []
         )
         self.resetState()
         self.canvas.setEnabled(False)
@@ -1876,17 +1880,9 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.debug("there is no prev image")
             return
 
-        keep_prev = self._config["keep_prev"]
-        if QtWidgets.QApplication.keyboardModifiers() == (
-            Qt.ControlModifier | Qt.ShiftModifier
-        ):
-            self._config["keep_prev"] = True
-
         logger.debug("setting current row to {:d}", row_prev)
         self.fileListWidget.setCurrentRow(row_prev)
         self.fileListWidget.repaint()
-
-        self._config["keep_prev"] = keep_prev
 
     def _open_next_image(self, _value=False) -> None:
         row_next: int = self.fileListWidget.currentRow() + 1
@@ -1894,17 +1890,9 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.debug("there is no next image")
             return
 
-        keep_prev: bool = self._config["keep_prev"]
-        if QtWidgets.QApplication.keyboardModifiers() == (
-            Qt.ControlModifier | Qt.ShiftModifier
-        ):
-            self._config["keep_prev"] = True
-
         logger.debug("setting current row to {:d}", row_next)
         self.fileListWidget.setCurrentRow(row_next)
         self.fileListWidget.repaint()
-
-        self._config["keep_prev"] = keep_prev
 
     def openFile(self, _value=False):
         if not self.mayContinue():
