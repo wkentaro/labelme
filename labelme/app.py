@@ -522,7 +522,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         zoomIn = action(
             self.tr("Zoom &In"),
-            functools.partial(self.addZoom, 1.1),
+            functools.partial(self._add_zoom, 1.1),
             shortcuts["zoom_in"],
             "zoom-in",
             self.tr("Increase zoom level"),
@@ -530,7 +530,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOut = action(
             self.tr("&Zoom Out"),
-            functools.partial(self.addZoom, 0.9),
+            functools.partial(self._add_zoom, 0.9),
             shortcuts["zoom_out"],
             "zoom-out",
             self.tr("Decrease zoom level"),
@@ -1598,20 +1598,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
 
-    def addZoom(self, increment=1.1):
-        zoom_value = self.zoomWidget.value() * increment
+    def _add_zoom(self, increment: float = 1.1) -> None:
+        zoom_value: int
         if increment > 1:
-            zoom_value = math.ceil(zoom_value)
+            zoom_value = math.ceil(self.zoomWidget.value() * increment)
         else:
-            zoom_value = math.floor(zoom_value)
-        self.setZoom(zoom_value)
+            zoom_value = math.floor(self.zoomWidget.value() * increment)
+        self.setZoom(value=zoom_value)
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
         units = 1.1
         if delta < 0:
             units = 0.9
-        self.addZoom(units)
+        self._add_zoom(increment=units)
 
         canvas_width_new = self.canvas.width()
         if canvas_width_old != canvas_width_new:
