@@ -237,14 +237,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_ = action(
             self.tr("&Open\n"),
-            self.openFile,
+            self._open_file_with_dialog,
             shortcuts["open"],
             "open",
             self.tr("Open image or label file"),
         )
         opendir = action(
             self.tr("Open Dir"),
-            self.openDirDialog,
+            self._open_dir_with_dialog,
             shortcuts["open_dir"],
             "open",
             self.tr("Open Dir"),
@@ -1895,7 +1895,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.setCurrentRow(row_next)
         self.fileListWidget.repaint()
 
-    def openFile(self, _value=False):
+    def _open_file_with_dialog(self, _value: bool = False) -> None:
         if not self.mayContinue():
             return
         path = osp.dirname(str(self.filename)) if self.filename else "."
@@ -2127,7 +2127,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.endMove(copy=False)
         self.setDirty()
 
-    def openDirDialog(self, _value=False):
+    def _open_dir_with_dialog(self, _value: bool = False) -> None:
         if not self.mayContinue():
             return
 
