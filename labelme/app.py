@@ -259,7 +259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         openPrevImg = action(
             self.tr("&Prev Image"),
-            self.openPrevImg,
+            self._open_prev_image,
             shortcuts["open_prev"],
             "prev",
             self.tr("Open prev (hold Ctl+Shift to copy labels)"),
@@ -1870,7 +1870,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.mayContinue():
             self.loadFile(filename)
 
-    def openPrevImg(self, _value=False):
+    def _open_prev_image(self, _value=False):
         keep_prev = self._config["keep_prev"]
         if QtWidgets.QApplication.keyboardModifiers() == (
             Qt.ControlModifier | Qt.ShiftModifier

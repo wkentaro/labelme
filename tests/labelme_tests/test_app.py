@@ -87,14 +87,14 @@ def test_MainWindow_openNextAndPrevImg(qtbot: QtBot) -> None:
     second_image_name: str = "2011_000006.jpg"
 
     assert osp.basename(win.imagePath) == first_image_name
-    win.openPrevImg()
+    win._open_prev_image()
     qtbot.wait(100)
     assert osp.basename(win.imagePath) == first_image_name
 
     win._open_next_image()
     qtbot.wait_until(lambda: osp.basename(win.imagePath) != first_image_name)
     assert osp.basename(win.imagePath) == second_image_name
-    win.openPrevImg()
+    win._open_prev_image()
     qtbot.wait_until(lambda: osp.basename(win.imagePath) != second_image_name)
     assert osp.basename(win.imagePath) == first_image_name
 
