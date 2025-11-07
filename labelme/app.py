@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import functools
 import html
 import math
@@ -62,11 +63,16 @@ if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
 
-class MainWindow(QtWidgets.QMainWindow):
-    FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
+class _ZoomMode(enum.Enum):
+    FIT_WINDOW = enum.auto()
+    FIT_WIDTH = enum.auto()
+    MANUAL_ZOOM = enum.auto()
 
+
+class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _copied_shapes: list[Shape]
+    zoomMode: _ZoomMode
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -578,13 +584,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
-        self.zoomMode = self.FIT_WINDOW
+        self.zoomMode = _ZoomMode.FIT_WINDOW
         fitWindow.setChecked(Qt.Checked)
         self.scalers = {
-            self.FIT_WINDOW: self.scaleFitWindow,
-            self.FIT_WIDTH: self.scaleFitWidth,
+            _ZoomMode.FIT_WINDOW: self.scaleFitWindow,
+            _ZoomMode.FIT_WIDTH: self.scaleFitWidth,
             # Set to one to scale to 100% when loading files.
-            self.MANUAL_ZOOM: lambda: 1,
+            _ZoomMode.MANUAL_ZOOM: lambda: 1,
         }
 
         edit = action(
@@ -1594,7 +1600,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _set_zoom(self, value: int) -> None:
         self.actions.fitWidth.setChecked(False)
         self.actions.fitWindow.setChecked(False)
-        self.zoomMode = self.MANUAL_ZOOM
+        self.zoomMode = _ZoomMode.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
 
@@ -1629,13 +1635,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def setFitWindow(self, value=True):
         if value:
             self.actions.fitWidth.setChecked(False)
-        self.zoomMode = self.FIT_WINDOW if value else self.MANUAL_ZOOM
+        self.zoomMode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self.adjustScale()
 
     def setFitWidth(self, value=True):
         if value:
             self.actions.fitWindow.setChecked(False)
-        self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
+        self.zoomMode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
         self.adjustScale()
 
     def enableKeepPrevScale(self, enabled):
@@ -1802,7 +1808,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if (
             self.canvas
             and not self.image.isNull()
-            and self.zoomMode != self.MANUAL_ZOOM
+            and self.zoomMode != _ZoomMode.MANUAL_ZOOM
         ):
             self.adjustScale()
         super().resizeEvent(event)
@@ -1816,7 +1822,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.update()
 
     def adjustScale(self, initial=False):
-        value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()
+        value = self.scalers[_ZoomMode.FIT_WINDOW if initial else self.zoomMode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
