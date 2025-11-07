@@ -961,7 +961,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.updateFileMenu()
 
         # Callbacks:
-        self.zoomWidget.valueChanged.connect(self.paintCanvas)
+        self.zoomWidget.valueChanged.connect(self._paint_canvas)
 
         self.populateModeActions()
 
@@ -1793,7 +1793,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     orientation, self.scroll_values[orientation][self.filename]
                 )
         self.brightnessContrast(value=False, is_initial_load=True)
-        self.paintCanvas()
+        self._paint_canvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
         self.canvas.setFocus()
@@ -1810,7 +1810,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.adjustScale()
         super().resizeEvent(event)
 
-    def paintCanvas(self):
+    def _paint_canvas(self) -> None:
         if self.image.isNull():
             logger.warning("image is null, cannot paint canvas")
             return
