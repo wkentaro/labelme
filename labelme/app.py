@@ -929,7 +929,7 @@ class MainWindow(QtWidgets.QMainWindow):
         }  # key=filename, value=scroll_value
 
         if filename is not None and osp.isdir(filename):
-            self.importDirImages(dirpath=filename, load=False)
+            self.importDirImages(root_dir=filename, load=False)
         else:
             self.filename = filename
 
@@ -1291,7 +1291,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def fileSearchChanged(self):
         self.importDirImages(
-            dirpath=self.lastOpenDir,
+            root_dir=self.lastOpenDir,
             pattern=self.fileSearch.text(),
             load=False,
         )
@@ -1975,7 +1975,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self.importDirImages(dirpath=self.lastOpenDir, load=False)
+        self.importDirImages(root_dir=self.lastOpenDir, load=False)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2172,7 +2172,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self.importDirImages(dirpath=targetDirPath)
+        self.importDirImages(root_dir=targetDirPath)
 
     @property
     def imageList(self) -> list[str]:
@@ -2212,19 +2212,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openNextImg()
 
     def importDirImages(
-        self, dirpath: str | None, pattern: str | None = None, load: bool = True
+        self, root_dir: str | None, pattern: str | None = None, load: bool = True
     ) -> None:
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not dirpath:
+        if not self.mayContinue() or not root_dir:
             return
 
-        self.lastOpenDir = dirpath
+        self.lastOpenDir = root_dir
         self.filename = None
         self.fileListWidget.clear()
 
-        filenames = _scan_image_files(root_dir=dirpath)
+        filenames = _scan_image_files(root_dir=root_dir)
         if pattern:
             try:
                 filenames = [f for f in filenames if re.search(pattern, f)]
