@@ -1640,13 +1640,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if value:
             self.actions.fitWidth.setChecked(False)
         self._zoom_mode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
-        self.adjustScale()
+        self._adjust_scale()
 
     def setFitWidth(self, value=True):
         if value:
             self.actions.fitWindow.setChecked(False)
         self._zoom_mode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
-        self.adjustScale()
+        self._adjust_scale()
 
     def enableKeepPrevScale(self, enabled):
         self._config["keep_prev_scale"] = enabled
@@ -1792,7 +1792,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._zoom_mode = self._zoom_values[self.filename][0]
             self._set_zoom(self._zoom_values[self.filename][1])
         elif is_initial_load or not self._config["keep_prev_scale"]:
-            self.adjustScale(initial=True)
+            self._adjust_scale(initial=True)
         # set scroll values
         for orientation in self.scroll_values:
             if self.filename in self.scroll_values[orientation]:
@@ -1814,7 +1814,7 @@ class MainWindow(QtWidgets.QMainWindow):
             and not self.image.isNull()
             and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
-            self.adjustScale()
+            self._adjust_scale()
         super().resizeEvent(event)
 
     def _paint_canvas(self) -> None:
@@ -1825,7 +1825,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.adjustSize()
         self.canvas.update()
 
-    def adjustScale(self, initial=False):
+    def _adjust_scale(self, initial: bool = False) -> None:
         if self.filename is None:
             logger.warning("filename is None, cannot adjust scale")
             return
