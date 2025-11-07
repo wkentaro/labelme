@@ -984,6 +984,54 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         utils.addActions(self.menus.edit, actions)
 
+    def _get_window_title(self, dirty: bool = False) -> str:
+        title = __appname__
+        if self.filename is not None:
+            title = f"{title} - {self.filename}"
+        elif getattr(self, "imagePath", None):
+            title = f"{title} - {self.imagePath}"
+
+        index = None
+        total = 0
+        try:
+            total = len(self.imageList)
+        except Exception:
+            total = 0
+
+        candidates = []
+        if getattr(self, "filename", None):
+            candidates.append(self.filename)
+        if getattr(self, "imagePath", None):
+            candidates.append(self.imagePath)
+
+        for cand in candidates:
+            if cand is None:
+                continue
+            try:
+                index0 = self.imageList.index(cand)
+                index = index0 + 1
+                break
+            except ValueError:
+                try:
+                    norm_cand = osp.normpath(cand)
+                    for i, p in enumerate(self.imageList):
+                        if osp.normpath(p) == norm_cand:
+                            index = i + 1
+                            break
+                    if index is not None:
+                        break
+                except Exception:
+                    pass
+
+        if total > 0 and index is not None:
+            title = f"{title} ({index}/{total})"
+
+        if dirty:
+            if title.endswith("*"):
+                return title
+            return f"{title}*"
+        return title
+        
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
@@ -998,28 +1046,14 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.dirty = True
         self.actions.save.setEnabled(True)
-        title = __appname__
-        if self.filename is not None:
-            title = f"{title} - {self.filename}"
-            if hasattr(self, 'imageList') and self.imageList:
-                total = len(self.imageList)
-                index = self.imageList.index(self.imagePath) + 1 if self.imagePath in self.imageList else 0
-                title = f"{title} ({index}/{total})"
-        self.setWindowTitle(title)
+        self.setWindowTitle(self._get_window_title(dirty=True))
 
     def setClean(self):
         self.dirty = False
         self.actions.save.setEnabled(False)
         for _, action in self.draw_actions:
             action.setEnabled(True)
-        title = __appname__
-        if self.filename is not None:
-            title = f"{title} - {self.filename}"
-            if hasattr(self, 'imageList') and self.imageList:
-                total = len(self.imageList)
-                index = self.imageList.index(self.imagePath) + 1 if self.imagePath in self.imageList else 0
-                title = f"{title} ({index}/{total})"
-        self.setWindowTitle(title)
+        self.setWindowTitle(self._get_window_title(dirty=False))
 
         if self.hasLabelFile():
             self.actions.deleteFile.setEnabled(True)
