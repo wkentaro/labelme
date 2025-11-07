@@ -538,7 +538,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOrg = action(
             self.tr("&Original size"),
-            functools.partial(self.setZoom, 100),
+            functools.partial(self._set_zoom, 100),
             shortcuts["zoom_to_original"],
             "zoom",
             self.tr("Zoom to original size"),
@@ -1591,7 +1591,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
 
-    def setZoom(self, value):
+    def _set_zoom(self, value: int) -> None:
         self.actions.fitWidth.setChecked(False)
         self.actions.fitWindow.setChecked(False)
         self.zoomMode = self.MANUAL_ZOOM
@@ -1604,7 +1604,7 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom_value = math.ceil(self.zoomWidget.value() * increment)
         else:
             zoom_value = math.floor(self.zoomWidget.value() * increment)
-        self.setZoom(value=zoom_value)
+        self._set_zoom(value=zoom_value)
 
     def _zoom_requested(self, delta: int, pos: QtCore.QPoint) -> None:
         canvas_width_old: int = self.canvas.width()
@@ -1780,7 +1780,7 @@ class MainWindow(QtWidgets.QMainWindow):
         is_initial_load = not self.zoom_values
         if self.filename in self.zoom_values:
             self.zoomMode = self.zoom_values[self.filename][0]
-            self.setZoom(self.zoom_values[self.filename][1])
+            self._set_zoom(self.zoom_values[self.filename][1])
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self.adjustScale(initial=True)
         # set scroll values
