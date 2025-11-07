@@ -1870,56 +1870,39 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.mayContinue():
             self.loadFile(filename)
 
-    def _open_prev_image(self, _value=False):
+    def _open_prev_image(self, _value=False) -> None:
+        row_prev: int = self.fileListWidget.currentRow() - 1
+        if row_prev < 0:
+            logger.debug("there is no prev image")
+            return
+
         keep_prev = self._config["keep_prev"]
         if QtWidgets.QApplication.keyboardModifiers() == (
             Qt.ControlModifier | Qt.ShiftModifier
         ):
             self._config["keep_prev"] = True
 
-        if not self.mayContinue():
-            return
-
-        if len(self.imageList) <= 0:
-            return
-
-        if self.filename is None:
-            return
-
-        currIndex = self.imageList.index(self.filename)
-        if currIndex - 1 >= 0:
-            filename = self.imageList[currIndex - 1]
-            if filename:
-                self.loadFile(filename)
+        logger.debug("setting current row to {:d}", row_prev)
+        self.fileListWidget.setCurrentRow(row_prev)
+        self.fileListWidget.repaint()
 
         self._config["keep_prev"] = keep_prev
 
-    def _open_next_image(self, _value=False):
-        keep_prev = self._config["keep_prev"]
+    def _open_next_image(self, _value=False) -> None:
+        row_next: int = self.fileListWidget.currentRow() + 1
+        if row_next >= self.fileListWidget.count():
+            logger.debug("there is no next image")
+            return
+
+        keep_prev: bool = self._config["keep_prev"]
         if QtWidgets.QApplication.keyboardModifiers() == (
             Qt.ControlModifier | Qt.ShiftModifier
         ):
             self._config["keep_prev"] = True
 
-        if not self.mayContinue():
-            return
-
-        if len(self.imageList) <= 0:
-            return
-
-        filename = None
-        if self.filename is None:
-            filename = self.imageList[0]
-        else:
-            currIndex = self.imageList.index(self.filename)
-            if currIndex + 1 < len(self.imageList):
-                filename = self.imageList[currIndex + 1]
-            else:
-                filename = self.imageList[-1]
-        self.filename = filename
-
-        if self.filename:
-            self.loadFile(self.filename)
+        logger.debug("setting current row to {:d}", row_next)
+        self.fileListWidget.setCurrentRow(row_next)
+        self.fileListWidget.repaint()
 
         self._config["keep_prev"] = keep_prev
 
