@@ -2127,11 +2127,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.endMove(copy=False)
         self.setDirty()
 
-    def openDirDialog(self, _value=False, dirpath=None):
+    def openDirDialog(self, _value=False):
         if not self.mayContinue():
             return
 
-        defaultOpenDirPath = dirpath if dirpath else "."
+        defaultOpenDirPath: str
         if self.lastOpenDir and osp.exists(self.lastOpenDir):
             defaultOpenDirPath = self.lastOpenDir
         else:
