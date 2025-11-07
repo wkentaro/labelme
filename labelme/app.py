@@ -251,7 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         openNextImg = action(
             self.tr("&Next Image"),
-            self.openNextImg,
+            self._open_next_image,
             shortcuts["open_next"],
             "next",
             self.tr("Open next (hold Ctl+Shift to copy labels)"),
@@ -950,7 +950,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if filename:
             if osp.isdir(filename):
                 self._import_images_from_dir(root_dir=filename)
-                self.openNextImg()
+                self._open_next_image()
             else:
                 self.loadFile(filename=filename)
         else:
@@ -1894,7 +1894,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._config["keep_prev"] = keep_prev
 
-    def openNextImg(self, _value=False):
+    def _open_next_image(self, _value=False):
         keep_prev = self._config["keep_prev"]
         if QtWidgets.QApplication.keyboardModifiers() == (
             Qt.ControlModifier | Qt.ShiftModifier
@@ -2175,7 +2175,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
         self._import_images_from_dir(root_dir=targetDirPath)
-        self.openNextImg()
+        self._open_next_image()
 
     @property
     def imageList(self) -> list[str]:
@@ -2212,7 +2212,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.openNextImg.setEnabled(True)
             self.actions.openPrevImg.setEnabled(True)
 
-        self.openNextImg()
+        self._open_next_image()
 
     def _import_images_from_dir(
         self, root_dir: str | None, pattern: str | None = None
