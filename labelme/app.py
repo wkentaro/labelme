@@ -74,6 +74,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
+    _prev_opened_dir: str | None
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -139,7 +140,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.labelList = LabelListWidget()
-        self.lastOpenDir = None
+        self._prev_opened_dir = None
 
         self.flag_dock = self.flag_widget = None
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
@@ -1301,7 +1302,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def fileSearchChanged(self):
         self._import_images_from_dir(
-            root_dir=self.lastOpenDir, pattern=self.fileSearch.text()
+            root_dir=self._prev_opened_dir, pattern=self.fileSearch.text()
         )
 
     def fileSelectionChanged(self):
@@ -1963,7 +1964,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self._import_images_from_dir(root_dir=self.lastOpenDir)
+        self._import_images_from_dir(root_dir=self._prev_opened_dir)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2148,8 +2149,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         defaultOpenDirPath: str
-        if self.lastOpenDir and osp.exists(self.lastOpenDir):
-            defaultOpenDirPath = self.lastOpenDir
+        if self._prev_opened_dir and osp.exists(self._prev_opened_dir):
+            defaultOpenDirPath = self._prev_opened_dir
         else:
             defaultOpenDirPath = osp.dirname(self.filename) if self.filename else "."
 
@@ -2211,7 +2212,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue() or not root_dir:
             return
 
-        self.lastOpenDir = root_dir
+        self._prev_opened_dir = root_dir
         self.filename = None
         self.fileListWidget.clear()
 
