@@ -71,6 +71,7 @@ class _ZoomMode(enum.Enum):
 
 class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
+    _config: dict
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
