@@ -65,6 +65,8 @@ LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 class MainWindow(QtWidgets.QMainWindow):
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
 
+    filename: str | None
+
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
     #     (where it is Callable[[QWidget], list[QAction]]).
@@ -1998,6 +2000,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._saveFile(self.saveFileDialog())
 
     def saveFileDialog(self):
+        assert self.filename is not None
         caption = self.tr("%s - Choose File") % __appname__
         filters = self.tr("Label files (*%s)") % LabelFile.suffix
         if self.output_dir:
@@ -2042,6 +2045,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.saveAs.setEnabled(False)
 
     def getLabelFile(self):
+        assert self.filename is not None
         if self.filename.lower().endswith(".json"):
             label_file = self.filename
         else:
