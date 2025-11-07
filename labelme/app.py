@@ -126,8 +126,6 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.setWindowTitle(__appname__)
 
-        self._noSelectionSlot = False
-
         self._copied_shapes = []
 
         # Main widgets and related state.
@@ -1324,7 +1322,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes):
-        self._noSelectionSlot = True
+        self.labelList.itemSelectionChanged.disconnect(self.labelSelectionChanged)
         for shape in self.canvas.selectedShapes:
             shape.selected = False
         self.labelList.clearSelection()
@@ -1334,7 +1332,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.labelList.findItemByShape(shape)
             self.labelList.selectItem(item)
             self.labelList.scrollToItem(item)
-        self._noSelectionSlot = False
+        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
         self.actions.duplicate.setEnabled(n_selected)
@@ -1412,12 +1410,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.labelList.removeItem(item)
 
     def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
-        self._noSelectionSlot = True
+        self.labelList.itemSelectionChanged.disconnect(self.labelSelectionChanged)
         shape: Shape
         for shape in shapes:
             self.addLabel(shape)
         self.labelList.clearSelection()
-        self._noSelectionSlot = False
+        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
         self.canvas.loadShapes(shapes=shapes, replace=replace)
 
     def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
@@ -1530,8 +1528,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
     def labelSelectionChanged(self):
-        if self._noSelectionSlot:
-            return
         if self.canvas.editing():
             selected_shapes = []
             for item in self.labelList.selectedItems():
