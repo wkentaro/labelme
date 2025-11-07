@@ -189,7 +189,7 @@ class MainWindow(QtWidgets.QMainWindow):
             num_backups=self._config["canvas"]["num_backups"],
             crosshair=self._config["canvas"]["crosshair"],
         )
-        self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.zoomRequest.connect(self._zoom_requested)
         self.canvas.mouseMoved.connect(self._update_status_stats)
         self.canvas.statusUpdated.connect(lambda text: self.status_left.setText(text))
 
@@ -1606,14 +1606,11 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom_value = math.floor(self.zoomWidget.value() * increment)
         self.setZoom(value=zoom_value)
 
-    def zoomRequest(self, delta, pos):
-        canvas_width_old = self.canvas.width()
-        units = 1.1
-        if delta < 0:
-            units = 0.9
-        self._add_zoom(increment=units)
+    def _zoom_requested(self, delta: int, pos: QtCore.QPoint) -> None:
+        canvas_width_old: int = self.canvas.width()
+        self._add_zoom(increment=1.1 if delta > 0 else 0.9)
 
-        canvas_width_new = self.canvas.width()
+        canvas_width_new: int = self.canvas.width()
         if canvas_width_old != canvas_width_new:
             canvas_scale_factor = canvas_width_new / canvas_width_old
 
