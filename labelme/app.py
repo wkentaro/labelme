@@ -1302,7 +1302,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         item = items[0]
 
-        if not self.mayContinue():
+        if not self._can_continue():
             return
 
         currIndex = self.imageList.index(str(item.text()))
@@ -1840,7 +1840,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.saveWithImageData.setChecked(enabled)
 
     def closeEvent(self, event):
-        if not self.mayContinue():
+        if not self._can_continue():
             event.ignore()
         self.settings.setValue("filename", self.filename if self.filename else "")
         self.settings.setValue("window/size", self.size())
@@ -1863,7 +1863,7 @@ class MainWindow(QtWidgets.QMainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        if not self.mayContinue():
+        if not self._can_continue():
             event.ignore()
             return
         items = [i.toLocalFile() for i in event.mimeData().urls()]
@@ -1872,7 +1872,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # User Dialogs #
 
     def loadRecent(self, filename):
-        if self.mayContinue():
+        if self._can_continue():
             self._load_file(filename)
 
     def _open_prev_image(self, _value=False) -> None:
@@ -1896,7 +1896,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.repaint()
 
     def _open_file_with_dialog(self, _value: bool = False) -> None:
-        if not self.mayContinue():
+        if not self._can_continue():
             return
         path = osp.dirname(str(self.filename)) if self.filename else "."
         formats = [
@@ -2006,7 +2006,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setClean()
 
     def closeFile(self, _value=False):
-        if not self.mayContinue():
+        if not self._can_continue():
             return
         self.resetState()
         self.setClean()
@@ -2060,7 +2060,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_file = self.getLabelFile()
         return osp.exists(label_file)
 
-    def mayContinue(self):
+    def _can_continue(self) -> bool:
         if not self.dirty:
             return True
         mb = QtWidgets.QMessageBox
@@ -2128,7 +2128,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
 
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
-        if not self.mayContinue():
+        if not self._can_continue():
             return
 
         defaultOpenDirPath: str
@@ -2192,7 +2192,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
 
-        if not self.mayContinue() or not root_dir:
+        if not self._can_continue() or not root_dir:
             return
 
         self.lastOpenDir = root_dir
