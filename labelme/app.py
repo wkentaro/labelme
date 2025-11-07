@@ -1894,7 +1894,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._config["keep_prev"] = keep_prev
 
-    def openNextImg(self, _value=False, load=True):
+    def openNextImg(self, _value=False):
         keep_prev = self._config["keep_prev"]
         if QtWidgets.QApplication.keyboardModifiers() == (
             Qt.ControlModifier | Qt.ShiftModifier
@@ -1918,7 +1918,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 filename = self.imageList[-1]
         self.filename = filename
 
-        if self.filename and load:
+        if self.filename:
             self.loadFile(self.filename)
 
         self._config["keep_prev"] = keep_prev
