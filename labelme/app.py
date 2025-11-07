@@ -952,7 +952,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._import_images_from_dir(root_dir=filename)
                 self._open_next_image()
             else:
-                self.loadFile(filename=filename)
+                self._load_file(filename=filename)
         else:
             self.filename = None
 
@@ -1309,7 +1309,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if currIndex < len(self.imageList):
             filename = self.imageList[currIndex]
             if filename:
-                self.loadFile(filename)
+                self._load_file(filename)
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes):
@@ -1683,7 +1683,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
-    def loadFile(self, filename=None):
+    def _load_file(self, filename=None):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
         if filename in self.imageList and (
@@ -1873,7 +1873,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def loadRecent(self, filename):
         if self.mayContinue():
-            self.loadFile(filename)
+            self._load_file(filename)
 
     def _open_prev_image(self, _value=False) -> None:
         row_prev: int = self.fileListWidget.currentRow() - 1
@@ -1917,7 +1917,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
-                self.loadFile(fileName)
+                self._load_file(fileName)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self.output_dir
