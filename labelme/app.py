@@ -73,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
+    zoom_values: dict[str, tuple[_ZoomMode, int]]
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -930,7 +931,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
-        self.zoom_values = {}  # key=filename, value=(zoom_mode, zoom_value)
+        self.zoom_values = {}
         self.brightnessContrast_values = {}
         self.scroll_values = {  # type: ignore[var-annotated]
             Qt.Horizontal: {},
@@ -1598,6 +1599,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scroll_values[orientation][self.filename] = value
 
     def _set_zoom(self, value: int) -> None:
+        if self.filename is None:
+            logger.warning("filename is None, cannot set zoom")
+            return
         self.actions.fitWidth.setChecked(False)
         self.actions.fitWindow.setChecked(False)
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
@@ -1822,6 +1826,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.update()
 
     def adjustScale(self, initial=False):
+        if self.filename is None:
+            logger.warning("filename is None, cannot adjust scale")
+            return
         value = self.scalers[_ZoomMode.FIT_WINDOW if initial else self._zoom_mode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
