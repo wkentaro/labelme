@@ -73,7 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
-    zoom_values: dict[str, tuple[_ZoomMode, int]]
+    _zoom_values: dict[str, tuple[_ZoomMode, int]]
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -931,7 +931,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.otherData = None
         self.zoom_level = 100
         self.fit_window = False
-        self.zoom_values = {}
+        self._zoom_values = {}
         self.brightnessContrast_values = {}
         self.scroll_values = {  # type: ignore[var-annotated]
             Qt.Horizontal: {},
@@ -1606,7 +1606,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.fitWindow.setChecked(False)
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = (self._zoom_mode, value)
+        self._zoom_values[self.filename] = (self._zoom_mode, value)
 
     def _add_zoom(self, increment: float = 1.1) -> None:
         zoom_value: int
@@ -1787,10 +1787,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setClean()
         self.canvas.setEnabled(True)
         # set zoom values
-        is_initial_load = not self.zoom_values
-        if self.filename in self.zoom_values:
-            self._zoom_mode = self.zoom_values[self.filename][0]
-            self._set_zoom(self.zoom_values[self.filename][1])
+        is_initial_load = not self._zoom_values
+        if self.filename in self._zoom_values:
+            self._zoom_mode = self._zoom_values[self.filename][0]
+            self._set_zoom(self._zoom_values[self.filename][1])
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self.adjustScale(initial=True)
         # set scroll values
@@ -1832,7 +1832,7 @@ class MainWindow(QtWidgets.QMainWindow):
         value = self.scalers[_ZoomMode.FIT_WINDOW if initial else self._zoom_mode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = (self._zoom_mode, value)
+        self._zoom_values[self.filename] = (self._zoom_mode, value)
 
     def scaleFitWindow(self):
         """Figure out the size of the pixmap to fit the main widget."""
