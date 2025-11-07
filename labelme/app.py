@@ -72,7 +72,7 @@ class _ZoomMode(enum.Enum):
 class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _copied_shapes: list[Shape]
-    zoomMode: _ZoomMode
+    _zoom_mode: _ZoomMode
 
     # NB: this tells Mypy etc. that `actions` here
     #     is a different type cf. the parent class
@@ -584,7 +584,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
-        self.zoomMode = _ZoomMode.FIT_WINDOW
+        self._zoom_mode = _ZoomMode.FIT_WINDOW
         fitWindow.setChecked(Qt.Checked)
         self.scalers = {
             _ZoomMode.FIT_WINDOW: self.scaleFitWindow,
@@ -1600,9 +1600,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _set_zoom(self, value: int) -> None:
         self.actions.fitWidth.setChecked(False)
         self.actions.fitWindow.setChecked(False)
-        self.zoomMode = _ZoomMode.MANUAL_ZOOM
+        self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = (self.zoomMode, value)
+        self.zoom_values[self.filename] = (self._zoom_mode, value)
 
     def _add_zoom(self, increment: float = 1.1) -> None:
         zoom_value: int
@@ -1635,13 +1635,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def setFitWindow(self, value=True):
         if value:
             self.actions.fitWidth.setChecked(False)
-        self.zoomMode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
+        self._zoom_mode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self.adjustScale()
 
     def setFitWidth(self, value=True):
         if value:
             self.actions.fitWindow.setChecked(False)
-        self.zoomMode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
+        self._zoom_mode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
         self.adjustScale()
 
     def enableKeepPrevScale(self, enabled):
@@ -1785,7 +1785,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # set zoom values
         is_initial_load = not self.zoom_values
         if self.filename in self.zoom_values:
-            self.zoomMode = self.zoom_values[self.filename][0]
+            self._zoom_mode = self.zoom_values[self.filename][0]
             self._set_zoom(self.zoom_values[self.filename][1])
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self.adjustScale(initial=True)
@@ -1808,7 +1808,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if (
             self.canvas
             and not self.image.isNull()
-            and self.zoomMode != _ZoomMode.MANUAL_ZOOM
+            and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
             self.adjustScale()
         super().resizeEvent(event)
@@ -1822,10 +1822,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.update()
 
     def adjustScale(self, initial=False):
-        value = self.scalers[_ZoomMode.FIT_WINDOW if initial else self.zoomMode]()
+        value = self.scalers[_ZoomMode.FIT_WINDOW if initial else self._zoom_mode]()
         value = int(100 * value)
         self.zoomWidget.setValue(value)
-        self.zoom_values[self.filename] = (self.zoomMode, value)
+        self.zoom_values[self.filename] = (self._zoom_mode, value)
 
     def scaleFitWindow(self):
         """Figure out the size of the pixmap to fit the main widget."""
