@@ -2222,7 +2222,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.filename = None
         self.fileListWidget.clear()
 
-        filenames = self.scanAllImages(dirpath)
+        filenames = _scan_image_files(root_dir=dirpath)
         if pattern:
             try:
                 filenames = [f for f in filenames if re.search(pattern, f)]
@@ -2242,23 +2242,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.addItem(item)
         self.openNextImg(load=load)
 
-    def scanAllImages(self, folderPath):
-        extensions = [
-            f".{fmt.data().decode().lower()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
-
-        images = []
-        for root, dirs, files in os.walk(folderPath):
-            for file in files:
-                if file.lower().endswith(tuple(extensions)):
-                    relativePath = os.path.normpath(osp.join(root, file))
-                    images.append(relativePath)
-        images = natsort.os_sorted(images)
-        return images
-
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
         stats.append(f"mode={self.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self.status_right.setText(" | ".join(stats))
+
+
+def _scan_image_files(root_dir: str) -> list[str]:
+    extensions: list[str] = [
+        f".{fmt.data().decode().lower()}"
+        for fmt in QtGui.QImageReader.supportedImageFormats()
+    ]
+
+    images: list[str] = []
+    for root, dirs, files in os.walk(root_dir):
+        for file in files:
+            if file.lower().endswith(tuple(extensions)):
+                relativePath = os.path.normpath(osp.join(root, file))
+                images.append(relativePath)
+
+    logger.debug("found {:d} images in {!r}", len(images), root_dir)
+    return natsort.os_sorted(images)
