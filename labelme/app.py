@@ -930,11 +930,6 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Vertical: {},
         }  # key=filename, value=scroll_value
 
-        if filename is not None and osp.isdir(filename):
-            self._import_images_from_dir(root_dir=filename, load=False)
-        else:
-            self.filename = filename
-
         if config["file_search"]:
             self.fileSearch.setText(config["file_search"])
             self.fileSearchChanged()
@@ -952,12 +947,17 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.restoreGeometry(settings['window/geometry']
         self.restoreState(state)
 
+        if filename:
+            if osp.isdir(filename):
+                self._import_images_from_dir(root_dir=filename)
+                self.openNextImg()
+            else:
+                self.loadFile(filename=filename)
+        else:
+            self.filename = None
+
         # Populate the File menu dynamically.
         self.updateFileMenu()
-        # Since loading the file may take some time,
-        # make sure it runs in the background.
-        if self.filename is not None:
-            self.queueEvent(functools.partial(self.loadFile, self.filename))
 
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
@@ -1293,9 +1293,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def fileSearchChanged(self):
         self._import_images_from_dir(
-            root_dir=self.lastOpenDir,
-            pattern=self.fileSearch.text(),
-            load=False,
+            root_dir=self.lastOpenDir, pattern=self.fileSearch.text()
         )
 
     def fileSelectionChanged(self):
@@ -1977,7 +1975,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
         current_filename = self.filename
-        self._import_images_from_dir(root_dir=self.lastOpenDir, load=False)
+        self._import_images_from_dir(root_dir=self.lastOpenDir)
 
         if current_filename in self.imageList:
             # retain currently selected file
@@ -2177,6 +2175,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
         self._import_images_from_dir(root_dir=targetDirPath)
+        self.openNextImg()
 
     @property
     def imageList(self) -> list[str]:
@@ -2216,7 +2215,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.openNextImg()
 
     def _import_images_from_dir(
-        self, root_dir: str | None, pattern: str | None = None, load: bool = True
+        self, root_dir: str | None, pattern: str | None = None
     ) -> None:
         self.actions.openNextImg.setEnabled(True)
         self.actions.openPrevImg.setEnabled(True)
@@ -2246,7 +2245,6 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setCheckState(Qt.Unchecked)
             self.fileListWidget.addItem(item)
-        self.openNextImg(load=load)
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
