@@ -2034,6 +2034,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setClean()
         self.toggleActions(False)
         self.canvas.setEnabled(False)
+        self.fileListWidget.setFocus()
         self.actions.saveAs.setEnabled(False)
 
     def getLabelFile(self):
