@@ -1853,8 +1853,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return w1 / w2 if a2 >= a1 else h1 / h2
 
     def scaleFitWidth(self):
-        # The epsilon does not seem to work too well here.
-        w = self.centralWidget().width() - 2.0
+        EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
+        w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
         return w / self.canvas.pixmap.width()
 
     def enableSaveImageWithData(self, enabled):
