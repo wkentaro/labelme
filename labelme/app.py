@@ -241,53 +241,53 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Quit"),
             self.close,
             shortcuts["quit"],
-            "quit",
-            self.tr("Quit application"),
+            icon=None,
+            tip=self.tr("Quit application"),
         )
         open_ = action(
             self.tr("&Open\n"),
             self._open_file_with_dialog,
             shortcuts["open"],
-            "open",
-            self.tr("Open image or label file"),
+            icon="folder-open.svg",
+            tip=self.tr("Open image or label file"),
         )
         opendir = action(
             self.tr("Open Dir"),
             self._open_dir_with_dialog,
             shortcuts["open_dir"],
-            "open",
-            self.tr("Open Dir"),
+            icon="folder-open.svg",
+            tip=self.tr("Open Dir"),
         )
         openNextImg = action(
             self.tr("&Next Image"),
             self._open_next_image,
             shortcuts["open_next"],
-            "next",
-            self.tr("Open next (hold Ctl+Shift to copy labels)"),
+            icon="arrow-fat-right.svg",
+            tip=self.tr("Open next (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         openPrevImg = action(
             self.tr("&Prev Image"),
             self._open_prev_image,
             shortcuts["open_prev"],
-            "prev",
-            self.tr("Open prev (hold Ctl+Shift to copy labels)"),
+            icon="arrow-fat-left.svg",
+            tip=self.tr("Open prev (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         save = action(
             self.tr("&Save\n"),
             self.saveFile,
             shortcuts["save"],
-            "save",
-            self.tr("Save labels to file"),
+            icon="floppy-disk.svg",
+            tip=self.tr("Save labels to file"),
             enabled=False,
         )
         saveAs = action(
             self.tr("&Save As"),
             self.saveFileAs,
             shortcuts["save_as"],
-            "save-as",
-            self.tr("Save labels to a different file"),
+            icon="floppy-disk.svg",
+            tip=self.tr("Save labels to a different file"),
             enabled=False,
         )
 
@@ -295,8 +295,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Delete File"),
             self.deleteFile,
             shortcuts["delete_file"],
-            "delete",
-            self.tr("Delete current label file"),
+            icon="file-x.svg",
+            tip=self.tr("Delete current label file"),
             enabled=False,
         )
 
@@ -304,7 +304,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Change Output Dir"),
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
-            icon="open",
+            icon="folders.svg",
             tip=self.tr("Change where annotations are loaded/saved"),
         )
 
@@ -329,8 +329,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Close"),
             self.closeFile,
             shortcuts["close"],
-            "close",
-            self.tr("Close current file"),
+            icon="x-circle.svg",
+            tip=self.tr("Close current file"),
         )
 
         toggle_keep_prev_mode = action(
@@ -379,8 +379,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Create Point"),
             lambda: self._switch_canvas_mode(edit=False, createMode="point"),
             shortcuts["create_point"],
-            "circles-three.svg",
-            self.tr("Start drawing points"),
+            icon="circles-four.svg",
+            tip=self.tr("Start drawing points"),
             enabled=False,
         )
         createLineStripMode = action(
@@ -411,8 +411,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Edit Polygons"),
             lambda: self._switch_canvas_mode(edit=True),
             shortcuts["edit_polygon"],
-            "edit",
-            self.tr("Move and edit the selected polygons"),
+            icon="note-pencil.svg",
+            tip=self.tr("Move and edit the selected polygons"),
             enabled=False,
         )
 
@@ -420,16 +420,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Delete Polygons"),
             self.deleteSelectedShape,
             shortcuts["delete_polygon"],
-            "cancel",
-            self.tr("Delete the selected polygons"),
+            icon="trash.svg",
+            tip=self.tr("Delete the selected polygons"),
             enabled=False,
         )
         duplicate = action(
             self.tr("Duplicate Polygons"),
             self.duplicateSelectedShape,
             shortcuts["duplicate_polygon"],
-            "copy",
-            self.tr("Create a duplicate of the selected polygons"),
+            icon="copy.svg",
+            tip=self.tr("Create a duplicate of the selected polygons"),
             enabled=False,
         )
         copy = action(
@@ -452,15 +452,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Undo last point"),
             self.canvas.undoLastPoint,
             shortcuts["undo_last_point"],
-            "undo",
-            self.tr("Undo last drawn point"),
+            icon="arrow-u-up-left.svg",
+            tip=self.tr("Undo last drawn point"),
             enabled=False,
         )
         removePoint = action(
             text=self.tr("Remove Selected Point"),
             slot=self.removeSelectedPoint,
             shortcut=shortcuts["remove_selected_point"],
-            icon="edit",
+            icon="trash.svg",
             tip=self.tr("Remove selected point from polygon"),
             enabled=False,
         )
@@ -469,8 +469,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Undo\n"),
             self.undoShapeEdit,
             shortcuts["undo"],
-            "undo",
-            self.tr("Undo last add and edit of shape"),
+            icon="arrow-u-up-left.svg",
+            tip=self.tr("Undo last add and edit of shape"),
             enabled=False,
         )
 
@@ -478,7 +478,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Hide\nPolygons"),
             functools.partial(self.togglePolygons, False),
             shortcuts["hide_all_polygons"],
-            icon="eye",
+            icon="eye.svg",
             tip=self.tr("Hide all polygons"),
             enabled=False,
         )
@@ -486,7 +486,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Show\nPolygons"),
             functools.partial(self.togglePolygons, True),
             shortcuts["show_all_polygons"],
-            icon="eye",
+            icon="eye.svg",
             tip=self.tr("Show all polygons"),
             enabled=False,
         )
@@ -494,7 +494,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Toggle\nPolygons"),
             functools.partial(self.togglePolygons, None),
             shortcuts["toggle_all_polygons"],
-            icon="eye",
+            icon="eye.svg",
             tip=self.tr("Toggle all polygons"),
             enabled=False,
         )
@@ -502,7 +502,7 @@ class MainWindow(QtWidgets.QMainWindow):
         help = action(
             self.tr("&Tutorial"),
             self.tutorial,
-            icon="help",
+            icon="question.svg",
             tip=self.tr("Show tutorial page"),
         )
 
@@ -532,24 +532,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Zoom &In"),
             functools.partial(self._add_zoom, 1.1),
             shortcuts["zoom_in"],
-            "zoom-in",
-            self.tr("Increase zoom level"),
+            icon="magnifying-glass-minus.svg",
+            tip=self.tr("Increase zoom level"),
             enabled=False,
         )
         zoomOut = action(
             self.tr("&Zoom Out"),
             functools.partial(self._add_zoom, 0.9),
             shortcuts["zoom_out"],
-            "zoom-out",
-            self.tr("Decrease zoom level"),
+            icon="magnifying-glass-plus.svg",
+            tip=self.tr("Decrease zoom level"),
             enabled=False,
         )
         zoomOrg = action(
             self.tr("&Original size"),
             functools.partial(self._set_zoom, 100),
             shortcuts["zoom_to_original"],
-            "zoom",
-            self.tr("Zoom to original size"),
+            icon="image-square.svg",
+            tip=self.tr("Zoom to original size"),
             enabled=False,
         )
         keepPrevScale = action(
@@ -564,8 +564,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Fit Window"),
             self.setFitWindow,
             shortcuts["fit_window"],
-            "fit-window",
-            self.tr("Zoom follows window size"),
+            icon="frame-corners.svg",
+            tip=self.tr("Zoom follows window size"),
             checkable=True,
             enabled=False,
         )
@@ -573,8 +573,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Fit &Width"),
             self.setFitWidth,
             shortcuts["fit_width"],
-            "fit-width",
-            self.tr("Zoom follows window width"),
+            icon="frame-arrows-horizontal.svg",
+            tip=self.tr("Zoom follows window width"),
             checkable=True,
             enabled=False,
         )
@@ -582,7 +582,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Brightness Contrast"),
             self.brightnessContrast,
             None,
-            "color",
+            "brightness-contrast.svg",
             self.tr("Adjust brightness and contrast"),
             enabled=False,
         )
@@ -599,8 +599,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Edit Label"),
             self._edit_label,
             shortcuts["edit_label"],
-            "edit",
-            self.tr("Modify the label of the selected polygon"),
+            icon="note-pencil.svg",
+            tip=self.tr("Modify the label of the selected polygon"),
             enabled=False,
         )
 
@@ -608,8 +608,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Fill Drawing Polygon"),
             self.canvas.setFillDrawing,
             None,
-            "color",
-            self.tr("Fill polygon while drawing"),
+            icon="paint-bucket.svg",
+            tip=self.tr("Fill polygon while drawing"),
             checkable=True,
             enabled=True,
         )
