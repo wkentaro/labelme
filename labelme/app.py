@@ -241,8 +241,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Quit"),
             self.close,
             shortcuts["quit"],
-            "quit",
-            self.tr("Quit application"),
+            icon=None,
+            tip=self.tr("Quit application"),
         )
         open_ = action(
             self.tr("&Open\n"),
