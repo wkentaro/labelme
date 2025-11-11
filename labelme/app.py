@@ -1604,13 +1604,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.filename is None:
             logger.warning("filename is None, cannot set zoom")
             return
-        self.actions.fitWidth.setChecked(False)
-        self.actions.fitWindow.setChecked(False)
-        self._zoom_mode = _ZoomMode.MANUAL_ZOOM
+        self.actions.fitWidth.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
+        self.actions.fitWindow.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
         self.zoomWidget.setValue(value)
         self._zoom_values[self.filename] = (self._zoom_mode, value)
 
     def _set_zoom_to_original(self):
+        self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=100)
 
     def _add_zoom(self, increment: float = 1.1) -> None:
@@ -1619,6 +1619,7 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom_value = math.ceil(self.zoomWidget.value() * increment)
         else:
             zoom_value = math.floor(self.zoomWidget.value() * increment)
+        self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value)
 
     def _zoom_requested(self, delta: int, pos: QtCore.QPoint) -> None:
@@ -1836,13 +1837,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.update()
 
     def _adjust_scale(self) -> None:
-        if self.filename is None:
-            logger.warning("filename is None, cannot adjust scale")
-            return
-        value = self.scalers[self._zoom_mode]()
-        value = int(100 * value)
-        self.zoomWidget.setValue(value)
-        self._zoom_values[self.filename] = (self._zoom_mode, value)
+        self._set_zoom(value=int(self.scalers[self._zoom_mode]() * 100))
 
     def scaleFitWindow(self) -> float:
         EPSILON_TO_HIDE_SCROLLBAR: float = 2.0
