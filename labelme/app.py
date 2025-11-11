@@ -1840,21 +1840,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget.setValue(value)
         self._zoom_values[self.filename] = (self._zoom_mode, value)
 
-    def scaleFitWindow(self):
-        """Figure out the size of the pixmap to fit the main widget."""
-        e = 2.0  # So that no scrollbars are generated.
-        w1 = self.centralWidget().width() - e
-        h1 = self.centralWidget().height() - e
-        a1 = w1 / h1
-        # Calculate a new scale value based on the pixmap's aspect ratio.
-        w2 = self.canvas.pixmap.width() - 0.0
-        h2 = self.canvas.pixmap.height() - 0.0
-        a2 = w2 / h2
+    def scaleFitWindow(self) -> float:
+        EPSILON_TO_HIDE_SCROLLBAR: float = 2.0
+        w1: float = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
+        h1: float = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
+        a1: float = w1 / h1
+
+        w2: float = self.canvas.pixmap.width()
+        h2: float = self.canvas.pixmap.height()
+        a2: float = w2 / h2
+
         return w1 / w2 if a2 >= a1 else h1 / h2
 
     def scaleFitWidth(self):
-        # The epsilon does not seem to work too well here.
-        w = self.centralWidget().width() - 2.0
+        EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
+        w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
         return w / self.canvas.pixmap.width()
 
     def enableSaveImageWithData(self, enabled):
