@@ -546,7 +546,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOrg = action(
             self.tr("&Original size"),
-            functools.partial(self._set_zoom, 100),
+            self._set_zoom_to_original,
             shortcuts["zoom_to_original"],
             icon="image-square.svg",
             tip=self.tr("Zoom to original size"),
@@ -1609,6 +1609,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
         self._zoom_values[self.filename] = (self._zoom_mode, value)
+
+    def _set_zoom_to_original(self):
+        self._set_zoom(value=100)
 
     def _add_zoom(self, increment: float = 1.1) -> None:
         zoom_value: int
