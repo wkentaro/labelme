@@ -1600,47 +1600,52 @@ class MainWindow(QtWidgets.QMainWindow):
         self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
 
-    def _set_zoom(self, value: int) -> None:
+    def _set_zoom(self, value: int, pos: QtCore.QPointF | None = None) -> None:
         if self.filename is None:
             logger.warning("filename is None, cannot set zoom")
             return
+
+        if pos is None:
+            pos = QtCore.QPointF(
+                self.canvas.size().width() / 2, self.canvas.size().height() / 2
+            )
+        canvas_width_old: int = self.canvas.width()
+
         self.actions.fitWidth.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
         self.actions.fitWindow.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
-        self.zoomWidget.setValue(value)
+        self.zoomWidget.setValue(value)  # triggers self._paint_canvas
         self._zoom_values[self.filename] = (self._zoom_mode, value)
+
+        canvas_width_new: int = self.canvas.width()
+        if canvas_width_old == canvas_width_new:
+            return
+        canvas_scale_factor = canvas_width_new / canvas_width_old
+        x_shift: float = pos.x() * canvas_scale_factor - pos.x()
+        y_shift: float = pos.y() * canvas_scale_factor - pos.y()
+        self.setScroll(
+            Qt.Horizontal,
+            self.scrollBars[Qt.Horizontal].value() + x_shift,
+        )
+        self.setScroll(
+            Qt.Vertical,
+            self.scrollBars[Qt.Vertical].value() + y_shift,
+        )
 
     def _set_zoom_to_original(self):
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=100)
 
-    def _add_zoom(self, increment: float = 1.1) -> None:
+    def _add_zoom(self, increment: float, pos: QtCore.QPointF | None = None) -> None:
         zoom_value: int
         if increment > 1:
             zoom_value = math.ceil(self.zoomWidget.value() * increment)
         else:
             zoom_value = math.floor(self.zoomWidget.value() * increment)
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
-        self._set_zoom(value=zoom_value)
+        self._set_zoom(value=zoom_value, pos=pos)
 
     def _zoom_requested(self, delta: int, pos: QtCore.QPointF) -> None:
-        canvas_width_old: int = self.canvas.width()
-        self._add_zoom(increment=1.1 if delta > 0 else 0.9)
-
-        canvas_width_new: int = self.canvas.width()
-        if canvas_width_old != canvas_width_new:
-            canvas_scale_factor = canvas_width_new / canvas_width_old
-
-            x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
-            y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
-
-            self.setScroll(
-                Qt.Horizontal,
-                self.scrollBars[Qt.Horizontal].value() + x_shift,
-            )
-            self.setScroll(
-                Qt.Vertical,
-                self.scrollBars[Qt.Vertical].value() + y_shift,
-            )
+        self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
 
     def setFitWindow(self, value=True):
         if value:
