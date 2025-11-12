@@ -1606,9 +1606,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         if pos is None:
-            pos = QtCore.QPointF(
-                self.canvas.size().width() / 2, self.canvas.size().height() / 2
-            )
+            pos = QtCore.QPointF(self.canvas.visibleRegion().boundingRect().center())
         canvas_width_old: int = self.canvas.width()
 
         self.actions.fitWidth.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
