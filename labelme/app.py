@@ -530,7 +530,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         zoomIn = action(
             self.tr("Zoom &In"),
-            functools.partial(self._add_zoom, 1.1),
+            lambda _: self._add_zoom(increment=1.1),
             shortcuts["zoom_in"],
             icon="magnifying-glass-minus.svg",
             tip=self.tr("Increase zoom level"),
@@ -538,7 +538,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoomOut = action(
             self.tr("&Zoom Out"),
-            functools.partial(self._add_zoom, 0.9),
+            lambda _: self._add_zoom(increment=0.9),
             shortcuts["zoom_out"],
             icon="magnifying-glass-plus.svg",
             tip=self.tr("Decrease zoom level"),
