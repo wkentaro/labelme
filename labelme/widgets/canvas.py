@@ -61,6 +61,10 @@ class Canvas(QtWidgets.QWidget):
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
 
+    _dragging_start_pos: QPointF
+    _is_dragging: bool
+    _is_dragging_enabled: bool
+
     hVertex: int | None
     hShape: Shape | None
 
@@ -122,6 +126,9 @@ class Canvas(QtWidgets.QWidget):
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
         self._cursor = CURSOR_DEFAULT
+        self._dragging_start_pos = QPointF()
+        self._is_dragging = False
+        self._is_dragging_enabled = False
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -312,6 +319,13 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = pos
 
         is_shift_pressed = ev.modifiers() & Qt.ShiftModifier
+
+        if self._is_dragging:
+            self.overrideCursor(CURSOR_GRAB)
+            delta: QPointF = pos - self._dragging_start_pos
+            self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
+            self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
+            return
 
         # Polygon drawing.
         if self.drawing():
@@ -570,6 +584,10 @@ class Canvas(QtWidgets.QWidget):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
+        elif ev.button() == Qt.MiddleButton and self._is_dragging_enabled:
+            self.overrideCursor(CURSOR_GRAB)
+            self._dragging_start_pos = pos
+            self._is_dragging = True
         self._update_status()
 
     def mouseReleaseEvent(self, ev):
@@ -590,6 +608,9 @@ class Canvas(QtWidgets.QWidget):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
+        elif ev.button() == Qt.MiddleButton:
+            self._is_dragging = False
+            self.restoreCursor()
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -848,6 +869,9 @@ class Canvas(QtWidgets.QWidget):
         """Convert from widget-logical coordinates to painter-logical ones."""
         return point / self.scale - self.offsetToCenter()
 
+    def enableDragging(self, enabled: bool):
+        self._is_dragging_enabled = enabled
+
     def offsetToCenter(self) -> QPointF:
         s = self.scale
         area = super().size()
@@ -947,9 +971,15 @@ class Canvas(QtWidgets.QWidget):
         return self.minimumSizeHint()
 
     def minimumSizeHint(self):
-        if self.pixmap:
-            return self.scale * self.pixmap.size()
-        return super().minimumSizeHint()
+        if not self.pixmap:
+            return super().minimumSizeHint()
+
+        min_size = self.scale * self.pixmap.size()
+        if self._is_dragging_enabled:
+            # When drag buffer should be enabled, add a bit of buffer around the image
+            # This lets dragging the image around have a bit of give on the edges
+            min_size = 1.167 * min_size
+        return min_size
 
     def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = ev.modifiers()
