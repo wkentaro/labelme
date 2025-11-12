@@ -1622,7 +1622,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value)
 
-    def _zoom_requested(self, delta: int, pos: QtCore.QPoint) -> None:
+    def _zoom_requested(self, delta: int, pos: QtCore.QPointF) -> None:
         canvas_width_old: int = self.canvas.width()
         self._add_zoom(increment=1.1 if delta > 0 else 0.9)
 
