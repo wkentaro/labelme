@@ -40,7 +40,7 @@ class CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
-    zoomRequest = QtCore.pyqtSignal(int, QPoint)
+    zoomRequest = QtCore.pyqtSignal(int, QPointF)
     scrollRequest = QtCore.pyqtSignal(int, int)
     newShape = QtCore.pyqtSignal()
     selectionChanged = QtCore.pyqtSignal(list)
@@ -957,7 +957,7 @@ class Canvas(QtWidgets.QWidget):
         if Qt.ControlModifier == int(mods):
             # with Ctrl/Command key
             # zoom
-            self.zoomRequest.emit(delta.y(), ev.pos())
+            self.zoomRequest.emit(delta.y(), ev.posF())
         else:
             # scroll
             self.scrollRequest.emit(delta.x(), Qt.Horizontal)
