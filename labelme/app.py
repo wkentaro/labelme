@@ -999,11 +999,11 @@ class MainWindow(QtWidgets.QMainWindow):
         window_title: str = __appname__
         if self.imagePath:
             window_title = f"{window_title} - {self.imagePath}"
-            if self.imageList:
+            if self.fileListWidget.count() and self.fileListWidget.currentItem():
                 window_title = (
                     f"{window_title} "
-                    f"[{self.imageList.index(self.imagePath) + 1}"
-                    f"/{len(self.imageList)}]"
+                    f"[{self.fileListWidget.currentRow() + 1}"
+                    f"/{self.fileListWidget.count()}]"
                 )
         if dirty:
             window_title = f"{window_title}*"

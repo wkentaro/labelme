@@ -1,4 +1,5 @@
 import pathlib
+from typing import Literal
 
 import pytest
 from PyQt5.QtCore import QPoint
@@ -71,9 +72,24 @@ def test_MainWindow_open_json(qtbot: QtBot, data_path: pathlib.Path) -> None:
 
 
 @pytest.mark.gui
-def test_MainWindow_openNextAndPrevImg(qtbot: QtBot, data_path: pathlib.Path) -> None:
-    directory: str = str(data_path / "raw")
-    win: labelme.app.MainWindow = labelme.app.MainWindow(filename=directory)
+@pytest.mark.parametrize("scenario", ["raw", "annotated", "annotated_nested"])
+def test_MainWindow_open_dir(
+    qtbot: QtBot,
+    scenario: Literal["raw", "annotated", "annotated_nested"],
+    data_path: pathlib.Path,
+) -> None:
+    directory: str
+    output_dir: str | None
+    if scenario == "annotated_nested":
+        directory = str(data_path / "annotated_nested" / "images")
+        output_dir = str(data_path / "annotated_nested" / "annotations")
+    else:
+        directory = str(data_path / scenario)
+        output_dir = None
+
+    win: labelme.app.MainWindow = labelme.app.MainWindow(
+        filename=directory, output_dir=output_dir
+    )
     qtbot.addWidget(win)
     _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
@@ -91,6 +107,14 @@ def test_MainWindow_openNextAndPrevImg(qtbot: QtBot, data_path: pathlib.Path) ->
     win._open_prev_image()
     qtbot.wait_until(lambda: pathlib.Path(win.imagePath).name != second_image_name)
     assert pathlib.Path(win.imagePath).name == first_image_name
+
+    assert win.fileListWidget.count() == 3
+    expected_check_state = (
+        Qt.Checked if scenario.startswith("annotated") else Qt.Unchecked
+    )
+    for index in range(win.fileListWidget.count()):
+        item = win.fileListWidget.item(index)
+        assert item.checkState() == expected_check_state
 
 
 @pytest.mark.gui
