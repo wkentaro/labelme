@@ -1124,6 +1124,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imageData = None
         self.labelFile = None
         self._other_data = None
+        self.canvas.selectedShapes.clear()
         self.canvas.resetState()
 
     def currentItem(self):
