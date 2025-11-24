@@ -270,7 +270,7 @@ class Canvas(QtWidgets.QWidget):
             messages.append(self.tr("Editing shapes"))
         if extra_messages:
             messages.extend(extra_messages)
-        self.statusUpdated.emit(" ー ".join(messages))
+        self.statusUpdated.emit(" • ".join(messages))
 
     def _get_create_mode_message(self) -> str:
         assert self.drawing()
