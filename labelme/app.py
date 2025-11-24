@@ -62,6 +62,8 @@ if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
 
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
+EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
+
 
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
@@ -1846,7 +1848,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_zoom(value=int(self.scalers[self._zoom_mode]() * 100))
 
     def scaleFitWindow(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: float = 2.0
         w1: float = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
         h1: float = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
         a1: float = w1 / h1
@@ -1858,7 +1859,6 @@ class MainWindow(QtWidgets.QMainWindow):
         return w1 / w2 if a2 >= a1 else h1 / h2
 
     def scaleFitWidth(self):
-        EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
         w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
         return w / self.canvas.pixmap.width()
 
