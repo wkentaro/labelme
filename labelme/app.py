@@ -893,6 +893,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     None,
                     ai_prompt_action,
                 ],
+                font_base=self.font(),
             ),
         )
         self.addToolBar(
@@ -902,6 +903,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 actions=[a for _, a in self.draw_actions],
                 orientation=Qt.Vertical,
                 button_style=Qt.ToolButtonTextUnderIcon,
+                font_base=self.font(),
             ),
         )
 

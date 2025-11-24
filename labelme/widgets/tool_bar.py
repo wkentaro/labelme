@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
@@ -14,8 +15,15 @@ class ToolBar(QtWidgets.QToolBar):
         actions: list[QtWidgets.QAction | None],
         orientation: Qt.Orientation = Qt.Horizontal,
         button_style: Qt.ToolButtonStyle = Qt.ToolButtonTextUnderIcon,
+        font_base: QtGui.QFont | None = None,
     ) -> None:
         super().__init__(title)
+
+        if font_base:
+            font = QtGui.QFont(font_base)
+            font.setPointSizeF(font_base.pointSizeF() * 0.875)
+            self.setFont(font)
+
         layout = self.layout()
         m = (0, 0, 0, 0)
         layout.setSpacing(0)
