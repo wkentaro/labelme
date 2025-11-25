@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import collections
 import enum
-import functools
 from typing import Literal
 
 import imgviz
@@ -70,6 +70,7 @@ class Canvas(QtWidgets.QWidget):
 
     _ai_model_name: str = "sam2:latest"
     _ai_model_cache: osam.types.Model | None = None
+    _ai_image_embedding_cache: collections.deque[tuple[str, osam.types.ImageEmbedding]]
 
     _cursor: QtCore.Qt.CursorShape
 
@@ -112,6 +113,7 @@ class Canvas(QtWidgets.QWidget):
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
         self.pixmap = QtGui.QPixmap()
+        self._ai_image_embedding_cache = collections.deque(maxlen=3)
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
@@ -174,6 +176,28 @@ class Canvas(QtWidgets.QWidget):
 
         self._ai_model_cache = model_type()
         return self._ai_model_cache
+
+    def _get_ai_image_embedding(self) -> osam.types.ImageEmbedding:
+        qimage: QtGui.QImage = self.pixmap.toImage()
+
+        def pixmap_hash() -> int:
+            bits = qimage.constBits()
+            if bits is None:
+                return hash(None)
+            return hash(bits.asstring(qimage.sizeInBytes()))
+
+        cache_key: str = f"{self._ai_model_name}_{pixmap_hash()}"
+        key: str
+        image_embedding: osam.types.ImageEmbedding
+        for key, image_embedding in self._ai_image_embedding_cache:
+            if key == cache_key:
+                return image_embedding
+
+        image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=qimage)
+        image_embedding = self._get_ai_model().encode_image(image=imgviz.asrgb(image))
+        self._ai_image_embedding_cache.append((cache_key, image_embedding))
+        logger.debug("cached image embedding for key: {!r}", cache_key)
+        return image_embedding
 
     def storeShapes(self):
         shapesBackup = []
@@ -856,7 +880,7 @@ class Canvas(QtWidgets.QWidget):
             )
             _update_shape_with_sam(
                 sam=self._get_ai_model(),
-                pixmap=self.pixmap,
+                image_embedding=self._get_ai_image_embedding(),
                 shape=drawing_shape,
                 createMode=self.createMode,
             )
@@ -890,7 +914,7 @@ class Canvas(QtWidgets.QWidget):
         if self.createMode in ["ai_polygon", "ai_mask"]:
             _update_shape_with_sam(
                 sam=self._get_ai_model(),
-                pixmap=self.pixmap,
+                image_embedding=self._get_ai_image_embedding(),
                 shape=self.current,
                 createMode=self.createMode,
             )
@@ -1115,7 +1139,7 @@ class Canvas(QtWidgets.QWidget):
 
 def _update_shape_with_sam(
     sam: osam.types.Model,
-    pixmap: QtGui.QPixmap,
+    image_embedding: osam.types.ImageEmbedding,
     shape: Shape,
     createMode: Literal["ai_polygon", "ai_mask"],
 ) -> None:
@@ -1123,10 +1147,6 @@ def _update_shape_with_sam(
         raise ValueError(
             f"createMode must be 'ai_polygon' or 'ai_mask', not {createMode}"
         )
-
-    image_embedding: osam.types.ImageEmbedding = _compute_image_embedding(
-        sam=sam, pixmap=pixmap
-    )
 
     response: osam.types.GenerateResponse = sam.generate(
         request=osam.types.GenerateRequest(
@@ -1173,32 +1193,3 @@ def _update_shape_with_sam(
             points=[QPointF(point[0], point[1]) for point in points],
             point_labels=[1] * len(points),
         )
-
-
-def _compute_image_embedding(
-    sam: osam.types.Model, pixmap: QtGui.QPixmap
-) -> osam.types.ImageEmbedding:
-    return __compute_image_embedding(sam=sam, pixmap=_QPixmapForLruCache(pixmap))
-
-
-class _QPixmapForLruCache(QtGui.QPixmap):
-    def __hash__(self) -> int:
-        qimage: QtGui.QImage = self.toImage()
-        bits = qimage.constBits()
-        if bits is None:
-            return hash(None)
-        return hash(bits.asstring(qimage.sizeInBytes()))
-
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, _QPixmapForLruCache):
-            return False
-        return self.__hash__() == other.__hash__()
-
-
-@functools.lru_cache(maxsize=3)
-def __compute_image_embedding(
-    sam: osam.types.Model, pixmap: _QPixmapForLruCache
-) -> osam.types.ImageEmbedding:
-    logger.debug("Computing image embeddings for model {!r}", sam.name)
-    image: np.ndarray = labelme.utils.img_qt_to_arr(pixmap.toImage())
-    return sam.encode_image(image=imgviz.asrgb(image))

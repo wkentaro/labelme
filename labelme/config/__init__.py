@@ -62,7 +62,7 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         config_from_yaml["keep_prev_brightness_contrast"] = True
 
     if (model_name := config_from_yaml.get("ai", {}).get("default")) and (
-        m := re.match("^SegmentAnything \((.*)\)$", model_name)
+        m := re.match(r"^SegmentAnything \((.*)\)$", model_name)
     ):
         model_name_new: str = f"Sam ({m.group(1)})"
         logger.info(
