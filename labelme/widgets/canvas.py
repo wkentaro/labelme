@@ -40,6 +40,21 @@ class CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
+    pixmap: QtGui.QPixmap
+    _cursor: QtCore.Qt.CursorShape
+    shapes: list[Shape]
+    shapesBackups: list[list[Shape]]
+    movingShape: bool
+    selectedShapes: list[Shape]
+    selectedShapesCopy: list[Shape]
+    current: Shape | None
+    hShape: Shape | None
+    prevhShape: Shape | None
+    hVertex: int | None
+    prevhVertex: int | None
+    hEdge: int | None
+    prevhEdge: int | None
+
     zoomRequest = QtCore.pyqtSignal(int, QPointF)
     scrollRequest = QtCore.pyqtSignal(int, int)
     newShape = QtCore.pyqtSignal()
@@ -65,14 +80,9 @@ class Canvas(QtWidgets.QWidget):
     _is_dragging: bool
     _is_dragging_enabled: bool
 
-    hVertex: int | None
-    hShape: Shape | None
-
     _ai_model_name: str = "sam2:latest"
     _ai_model_cache: osam.types.Model | None = None
     _ai_image_embedding_cache: collections.deque[tuple[str, osam.types.ImageEmbedding]]
-
-    _cursor: QtCore.Qt.CursorShape
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
@@ -96,12 +106,9 @@ class Canvas(QtWidgets.QWidget):
             },
         )
         super().__init__(*args, **kwargs)
-        # Initialise local state.
-        self.shapes = []
-        self.shapesBackups = []
-        self.current = None
-        self.selectedShapes = []  # save the selected shapes here
-        self.selectedShapesCopy = []
+
+        self.resetState()
+
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
         #   - createMode == 'rectangle': diagonal line of the rectangle
@@ -112,22 +119,13 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = QPointF()
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
-        self.pixmap = QtGui.QPixmap()
         self._ai_image_embedding_cache = collections.deque(maxlen=3)
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
-        self.hShape = None
-        self.prevhShape = None
-        self.hVertex = None
-        self.prevhVertex = None
-        self.hEdge = None
-        self.prevhEdge = None
-        self.movingShape = False
         self.snapping = True
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
-        self._cursor = CURSOR_DEFAULT
         self._dragging_start_pos = QPointF()
         self._is_dragging = False
         self._is_dragging_enabled = False
@@ -1134,7 +1132,16 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap()
         self.shapes = []
         self.shapesBackups = []
+        self.movingShape = False
         self.selectedShapes = []
+        self.selectedShapesCopy = []
+        self.current = None
+        self.hShape = None
+        self.prevhShape = None
+        self.hVertex = None
+        self.prevhVertex = None
+        self.hEdge = None
+        self.prevhEdge = None
         self.update()
 
 
