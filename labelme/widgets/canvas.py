@@ -1134,6 +1134,7 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap()
         self.shapes = []
         self.shapesBackups = []
+        self.selectedShapes = []
         self.update()
 
 
