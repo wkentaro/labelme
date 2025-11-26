@@ -1057,10 +1057,25 @@ class Canvas(QtWidgets.QWidget):
                 self.snapping = True
         elif self.editing():
             if self.movingShape and self.selectedShapes:
-                index = self.shapes.index(self.selectedShapes[0])
-                if self.shapesBackups[-1][index].points != self.shapes[index].points:
-                    self.storeShapes()
-                    self.shapeMoved.emit()
+                try:
+                    index = self.shapes.index(self.selectedShapes[0])
+                except ValueError:
+                    # Had this occur when pressing the down arrow in the file
+                    # list.  Got that the selected shape was not in the list.
+                    # not sure exactly why this happened.
+                    # To reproduce:
+                    #     * click a polygon
+                    #     * select image in file list
+                    #     * press down arrow
+                    #     * press up arrow
+                    # This patch prevents the crash, but the up arrow does not
+                    # respond. However, if you just click on another image the
+                    # program recovers gracefully.
+                    ...
+                else:
+                    if self.shapesBackups[-1][index].points != self.shapes[index].points:
+                        self.storeShapes()
+                        self.shapeMoved.emit()
 
                 self.movingShape = False
 
