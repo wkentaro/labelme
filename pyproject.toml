@@ -30,6 +30,7 @@ dependencies = [
   "natsort>=7.1.0",
   "numpy",
   "osam>=0.2.5",
+  "onnxruntime<1.21 ; sys_platform == 'win32'",
   "pillow>=2.8",
   "pyqt5>=5.14.0",
   "pyqt5-qt5!=5.15.13 ; sys_platform == 'linux'",
