@@ -8,6 +8,7 @@ import os
 import os.path as osp
 import re
 import types
+import typing
 import webbrowser
 
 import imgviz
@@ -1054,6 +1055,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         model_name: str = "yoloworld"
         model_type = osam.apis.get_model_type_by_name(model_name)
+        model_type = typing.cast(type[osam.types.Model], model_type)
         if not (_is_already_downloaded := model_type.get_size() is not None):
             if not download_ai_model(model_name=model_name, parent=self):
                 return
@@ -1435,6 +1437,9 @@ class MainWindow(QtWidgets.QMainWindow):
             default_flags = {}
             if self._config["label_flags"]:
                 for pattern, keys in self._config["label_flags"].items():
+                    if not isinstance(shape.label, str):
+                        logger.warning("shape.label is not str: {}", shape.label)
+                        continue
                     if re.match(pattern, shape.label):
                         for key in keys:
                             default_flags[key] = False
@@ -1824,14 +1829,14 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("loaded file: {!r}", filename)
         return True
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         if (
             self.canvas
             and not self.image.isNull()
             and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
             self._adjust_scale()
-        super().resizeEvent(event)
+        super().resizeEvent(a0)
 
     def _paint_canvas(self) -> None:
         if self.image.isNull():
@@ -1865,9 +1870,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["store_data"] = enabled
         self.actions.saveWithImageData.setChecked(enabled)
 
-    def closeEvent(self, event):
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if not self._can_continue():
-            event.ignore()
+            a0.ignore()
         self.settings.setValue("filename", self.filename if self.filename else "")
         self.settings.setValue("window/size", self.size())
         self.settings.setValue("window/position", self.pos())
@@ -1876,23 +1881,23 @@ class MainWindow(QtWidgets.QMainWindow):
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
         extensions = [
             f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-        if event.mimeData().hasUrls():
-            items = [i.toLocalFile() for i in event.mimeData().urls()]
+        if a0.mimeData().hasUrls():
+            items = [i.toLocalFile() for i in a0.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
-                event.accept()
+                a0.accept()
         else:
-            event.ignore()
+            a0.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, a0: QtGui.QDropEvent) -> None:
         if not self._can_continue():
-            event.ignore()
+            a0.ignore()
             return
-        items = [i.toLocalFile() for i in event.mimeData().urls()]
+        items = [i.toLocalFile() for i in a0.mimeData().urls()]
         self.importDroppedImageFiles(items)
 
     # User Dialogs #
