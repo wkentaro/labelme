@@ -231,16 +231,16 @@ class Canvas(QtWidgets.QWidget):
             shape.selected = False
         self.update()
 
-    def enterEvent(self, ev):
+    def enterEvent(self, a0: QtCore.QEvent) -> None:
         self.overrideCursor(self._cursor)
         self._update_status()
 
-    def leaveEvent(self, ev):
+    def leaveEvent(self, a0: QtCore.QEvent) -> None:
         self.unHighlight()
         self.restoreCursor()
         self._update_status()
 
-    def focusOutEvent(self, ev):
+    def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
         self.restoreCursor()
         self._update_status()
 
@@ -329,10 +329,10 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click opposite corner for rectangle")
         return self.tr("Click to add point")
 
-    def mouseMoveEvent(self, ev):
+    def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         """Update line with last point and current coordinates."""
         try:
-            pos = self.transformPos(ev.localPos())
+            pos = self.transformPos(a0.localPos())
         except AttributeError:
             return
 
@@ -340,7 +340,7 @@ class Canvas(QtWidgets.QWidget):
 
         self.prevMovePoint = pos
 
-        is_shift_pressed = ev.modifiers() & Qt.ShiftModifier
+        is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
         if self._is_dragging:
             self.overrideCursor(CURSOR_GRAB)
@@ -409,8 +409,8 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon copy moving.
-        if Qt.RightButton & ev.buttons():
-            if self.selectedShapesCopy and self.prevPoint:
+        if Qt.RightButton & a0.buttons():
+            if self.selectedShapesCopy and self.prevPoint is not None:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
                 self.repaint()
@@ -421,12 +421,12 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon/Vertex moving.
-        if Qt.LeftButton & ev.buttons():
+        if Qt.LeftButton & a0.buttons():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
                 self.repaint()
                 self.movingShape = True
-            elif self.selectedShapes and self.prevPoint:
+            elif self.selectedShapes and self.prevPoint is not None:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapes, pos)
                 self.repaint()
@@ -519,12 +519,12 @@ class Canvas(QtWidgets.QWidget):
         self.prevhVertex = None
         self.movingShape = True  # Save changes
 
-    def mousePressEvent(self, ev):
-        pos: QPointF = self.transformPos(ev.localPos())
+    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+        pos: QPointF = self.transformPos(a0.localPos())
 
-        is_shift_pressed = ev.modifiers() & Qt.ShiftModifier
+        is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
-        if ev.button() == Qt.LeftButton:
+        if a0.button() == Qt.LeftButton:
             if self.drawing():
                 if self.current:
                     # Add point to existing shape.
@@ -540,7 +540,7 @@ class Canvas(QtWidgets.QWidget):
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
-                        if int(ev.modifiers()) == Qt.ControlModifier:
+                        if int(a0.modifiers()) == Qt.ControlModifier:
                             self.finalise()
                     elif self.createMode in ["ai_polygon", "ai_mask"]:
                         self.current.addPoint(
@@ -549,7 +549,7 @@ class Canvas(QtWidgets.QWidget):
                         )
                         self.line.points[0] = self.current.points[-1]
                         self.line.point_labels[0] = self.current.point_labels[-1]
-                        if ev.modifiers() & Qt.ControlModifier:
+                        if a0.modifiers() & Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     if self.createMode in ["ai_polygon", "ai_mask"]:
@@ -569,7 +569,7 @@ class Canvas(QtWidgets.QWidget):
                         self.finalise()
                     elif (
                         self.createMode in ["ai_polygon", "ai_mask"]
-                        and ev.modifiers() & Qt.ControlModifier
+                        and a0.modifiers() & Qt.ControlModifier
                     ):
                         self.finalise()
                     else:
@@ -587,40 +587,40 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             elif self.editing():
-                if self.selectedEdge() and ev.modifiers() == Qt.AltModifier:
+                if self.selectedEdge() and a0.modifiers() == Qt.AltModifier:
                     self.addPointToEdge()
-                elif self.selectedVertex() and ev.modifiers() == (
+                elif self.selectedVertex() and a0.modifiers() == (
                     Qt.AltModifier | Qt.ShiftModifier
                 ):
                     self.removeSelectedPoint()
 
-                group_mode = int(ev.modifiers()) == Qt.ControlModifier
+                group_mode = int(a0.modifiers()) == Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
-        elif ev.button() == Qt.RightButton and self.editing():
-            group_mode = int(ev.modifiers()) == Qt.ControlModifier
+        elif a0.button() == Qt.RightButton and self.editing():
+            group_mode = int(a0.modifiers()) == Qt.ControlModifier
             if not self.selectedShapes or (
                 self.hShape is not None and self.hShape not in self.selectedShapes
             ):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
-        elif ev.button() == Qt.MiddleButton and self._is_dragging_enabled:
+        elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
             self.overrideCursor(CURSOR_GRAB)
             self._dragging_start_pos = pos
             self._is_dragging = True
         self._update_status()
 
-    def mouseReleaseEvent(self, ev):
-        if ev.button() == Qt.RightButton:
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
+        if a0.button() == Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos())) and self.selectedShapesCopy:
+            if not menu.exec_(self.mapToGlobal(a0.pos())) and self.selectedShapesCopy:  # type: ignore
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
-        elif ev.button() == Qt.LeftButton:
+        elif a0.button() == Qt.LeftButton:
             if self.editing():
                 if (
                     self.hShape is not None
@@ -630,7 +630,7 @@ class Canvas(QtWidgets.QWidget):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
-        elif ev.button() == Qt.MiddleButton:
+        elif a0.button() == Qt.MiddleButton:
             self._is_dragging = False
             self.restoreCursor()
 
@@ -681,7 +681,7 @@ class Canvas(QtWidgets.QWidget):
             return len(self.current) >= 2
         return len(self.current) >= 3
 
-    def mouseDoubleClickEvent(self, ev):
+    def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent) -> None:
         if self.double_click != "close":
             return
 
@@ -801,9 +801,9 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.update()
 
-    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
         if not self.pixmap:
-            return super().paintEvent(event)
+            return super().paintEvent(a0)
 
         p = self._painter
         p.begin(self)
@@ -822,7 +822,7 @@ class Canvas(QtWidgets.QWidget):
         if (
             self._crosshair[self._createMode]
             and self.drawing()
-            and self.prevMovePoint
+            and self.prevMovePoint is not None
             and not self.outOfPixmap(self.prevMovePoint)
         ):
             p.setPen(QtGui.QColor(0, 0, 0))
@@ -1003,18 +1003,18 @@ class Canvas(QtWidgets.QWidget):
             min_size = 1.167 * min_size
         return min_size
 
-    def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
-        mods: Qt.KeyboardModifiers = ev.modifiers()
-        delta: QPoint = ev.angleDelta()
+    def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
+        mods: Qt.KeyboardModifiers = a0.modifiers()
+        delta: QPoint = a0.angleDelta()
         if Qt.ControlModifier == int(mods):
             # with Ctrl/Command key
             # zoom
-            self.zoomRequest.emit(delta.y(), ev.posF())
+            self.zoomRequest.emit(delta.y(), a0.posF())
         else:
             # scroll
             self.scrollRequest.emit(delta.x(), Qt.Horizontal)
             self.scrollRequest.emit(delta.y(), Qt.Vertical)
-        ev.accept()
+        a0.accept()
 
     def moveByKeyboard(self, offset):
         if self.selectedShapes:
@@ -1022,9 +1022,9 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()
             self.movingShape = True
 
-    def keyPressEvent(self, ev):
-        modifiers = ev.modifiers()
-        key = ev.key()
+    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        modifiers = a0.modifiers()
+        key = a0.key()
         if self.drawing():
             if key == Qt.Key_Escape and self.current:
                 self.current = None
@@ -1048,8 +1048,8 @@ class Canvas(QtWidgets.QWidget):
                 self.moveByKeyboard(QPointF(MOVE_SPEED, 0.0))
         self._update_status()
 
-    def keyReleaseEvent(self, ev):
-        modifiers = ev.modifiers()
+    def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
+        modifiers = a0.modifiers()
         if self.drawing():
             if int(modifiers) == 0:
                 self.snapping = True
@@ -1161,8 +1161,8 @@ def _update_shape_with_sam(
             model=sam.name,
             image_embedding=image_embedding,
             prompt=osam.types.Prompt(
-                points=[[point.x(), point.y()] for point in shape.points],
-                point_labels=shape.point_labels,
+                points=np.array([[point.x(), point.y()] for point in shape.points]),
+                point_labels=np.array(shape.point_labels),
             ),
         )
     )
