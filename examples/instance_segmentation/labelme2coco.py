@@ -16,7 +16,7 @@ import numpy as np
 import labelme
 
 try:
-    import pycocotools.mask
+    import pycocotools.mask  # type: ignore
 except ImportError:
     print("Please install pycocotools:\n\n    pip install pycocotools\n")
     sys.exit(1)
@@ -59,17 +59,13 @@ def main():
                 name=None,
             )
         ],
-        images=[
-            # license, url, file_name, height, width, date_captured, id
-        ],
         type="instances",
-        annotations=[
-            # segmentation, area, iscrowd, image_id, bbox, category_id, id
-        ],
-        categories=[
-            # supercategory, id, name
-        ],
     )
+    data["images"] = []  # license, url, file_name, height, width, date_captured, id
+    data["categories"] = []  # supercategory, id, name
+    data[
+        "annotations"
+    ] = []  # segmentation, area, iscrowd, image_id, bbox, category_id, id
 
     class_name_to_id = {}
     for i, line in enumerate(open(args.labels).readlines()):
@@ -114,7 +110,7 @@ def main():
         masks = {}  # for area
         segmentations = collections.defaultdict(list)  # for segmentation
         for shape in label_file.shapes:
-            points = shape["points"]
+            points: list[list[int | float]] = shape["points"]
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
@@ -130,11 +126,12 @@ def main():
             else:
                 masks[instance] = mask
 
+            points_coco: list[int | float]
             if shape_type == "rectangle":
                 (x1, y1), (x2, y2) = points
                 x1, x2 = sorted([x1, x2])
                 y1, y2 = sorted([y1, y2])
-                points = [x1, y1, x2, y1, x2, y2, x1, y2]
+                points_coco = [x1, y1, x2, y1, x2, y2, x1, y2]
             if shape_type == "circle":
                 (x1, y1), (x2, y2) = points
                 r = np.linalg.norm([x2 - x1, y2 - y1])
@@ -144,11 +141,11 @@ def main():
                 i = np.arange(n_points_circle)
                 x = x1 + r * np.sin(2 * np.pi / n_points_circle * i)
                 y = y1 + r * np.cos(2 * np.pi / n_points_circle * i)
-                points = np.stack((x, y), axis=1).flatten().tolist()
+                points_coco = np.stack((x, y), axis=1).flatten().tolist()
             else:
-                points = np.asarray(points).flatten().tolist()
+                points_coco = np.asarray(points).flatten().tolist()
 
-            segmentations[instance].append(points)
+            segmentations[instance].append(points_coco)
         segmentations = dict(segmentations)
 
         for instance, mask in masks.items():
