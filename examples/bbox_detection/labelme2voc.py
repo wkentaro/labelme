@@ -12,8 +12,8 @@ import imgviz
 import labelme
 
 try:
-    import lxml.builder
-    import lxml.etree
+    import lxml.builder  # type: ignore
+    import lxml.etree  # type: ignore
 except ImportError:
     print("Please install lxml:\n\n    pip install lxml\n")
     sys.exit(1)

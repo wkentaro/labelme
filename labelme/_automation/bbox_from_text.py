@@ -37,6 +37,12 @@ def get_bboxes_from_texts(
     scores: npt.NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)
     labels: npt.NDArray[np.float32] = np.empty((num_annotations,), dtype=np.int32)
     for i, annotation in enumerate(response.annotations):
+        if annotation.bounding_box is None:
+            raise ValueError("Bounding box is missing in the annotation.")
+        if annotation.text not in texts:
+            raise ValueError(
+                f"Unexpected text {annotation.text!r} found in the response."
+            )
         boxes[i] = [
             annotation.bounding_box.xmin,
             annotation.bounding_box.ymin,

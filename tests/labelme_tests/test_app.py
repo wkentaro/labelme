@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 import pathlib
+from collections.abc import Generator
 from typing import Literal
 
 import pytest
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QSize
@@ -17,7 +21,7 @@ import labelme.testing
 @pytest.fixture(autouse=True)
 def _isolated_qtsettings(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+) -> Generator[None, None, None]:
     settings_file = tmp_path / "qtsettings.ini"
     settings: QSettings = QSettings(str(settings_file), QSettings.IniFormat)
     monkeypatch.setattr(
@@ -96,16 +100,17 @@ def test_MainWindow_open_dir(
     first_image_name: str = "2011_000003.jpg"
     second_image_name: str = "2011_000006.jpg"
 
+    assert win.imagePath
     assert pathlib.Path(win.imagePath).name == first_image_name
     win._open_prev_image()
     qtbot.wait(100)
     assert pathlib.Path(win.imagePath).name == first_image_name
 
     win._open_next_image()
-    qtbot.wait_until(lambda: pathlib.Path(win.imagePath).name != first_image_name)
+    qtbot.wait(100)
     assert pathlib.Path(win.imagePath).name == second_image_name
     win._open_prev_image()
-    qtbot.wait_until(lambda: pathlib.Path(win.imagePath).name != second_image_name)
+    qtbot.wait(100)
     assert pathlib.Path(win.imagePath).name == first_image_name
 
     assert win.fileListWidget.count() == 3
@@ -113,7 +118,8 @@ def test_MainWindow_open_dir(
         Qt.Checked if scenario.startswith("annotated") else Qt.Unchecked
     )
     for index in range(win.fileListWidget.count()):
-        item = win.fileListWidget.item(index)
+        item: QtWidgets.QListWidgetItem | None = win.fileListWidget.item(index)
+        assert item
         assert item.checkState() == expected_check_state
 
 
