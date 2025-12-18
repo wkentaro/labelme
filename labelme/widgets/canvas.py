@@ -7,6 +7,7 @@ import osam
 from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
+from qtpy.QtCore import QPointF
 from PyQt5 import QtWidgets
 
 import labelme.utils
@@ -73,6 +74,27 @@ class Canvas(QtWidgets.QWidget):
         self.mode = self.EDIT
         self.shapes = []
         self.shapesBackups = []
+        #EDITED REDO
+        self.pointRedoStack = []
+        self.shapeRedoStack = []
+        self.maxHistory = 50 
+        #END
+
+        #EDITED GHOST FLIP
+        self.flip_horizontal = False
+        self.flip_vertical = False
+
+        self._flip_debug = True
+        #END
+
+        #EDITED SHOW OG
+        self.show_original = False
+        #END
+
+        #EDITED FREEHAND DISTANCE
+        self.lasso_step = 2.0
+        #END
+        
         self.current = None
         self.selectedShapes = []  # save the selected shapes here
         self.selectedShapesCopy = []
@@ -111,6 +133,10 @@ class Canvas(QtWidgets.QWidget):
 
         self._ai_model_name: str = "sam2:latest"
 
+        #EDITED FREEHAND
+        self._is_freehand_drawing = False
+        #END
+
     def fillDrawing(self):
         return self._fill_drawing
 
@@ -148,7 +174,11 @@ class Canvas(QtWidgets.QWidget):
             self.shapesBackups = self.shapesBackups[-self.num_backups - 1 :]
         self.shapesBackups.append(shapesBackup)
 
-    @property
+        #EDITED REDO
+        self.pointRedoStack.clear()
+        #END
+
+    # @property
     def isShapeRestorable(self):
         # We save the state AFTER each edit (not before) so for an
         # edit to be undoable, we expect the CURRENT and the PREVIOUS state
@@ -156,23 +186,6 @@ class Canvas(QtWidgets.QWidget):
         if len(self.shapesBackups) < 2:
             return False
         return True
-
-    def restoreShape(self):
-        # This does _part_ of the job of restoring shapes.
-        # The complete process is also done in app.py::undoShapeEdit
-        # and app.py::loadShapes and our own Canvas::loadShapes function.
-        if not self.isShapeRestorable:
-            return
-        self.shapesBackups.pop()  # latest
-
-        # The application will eventually call Canvas.loadShapes which will
-        # push this right back onto the stack.
-        shapesBackup = self.shapesBackups.pop()
-        self.shapes = shapesBackup
-        self.selectedShapes = []
-        for shape in self.shapes:
-            shape.selected = False
-        self.update()
 
     def enterEvent(self, ev):
         self.overrideCursor(self._cursor)
@@ -221,14 +234,33 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
-            pos = self.transformPos(ev.localPos())
+            #EDITED GHOST FLIP
+            pos = self.imagePosFromEvent(ev)
+            #END
+            # pos = self.transformPos(ev.localPos())
         except AttributeError:
-            return
-
+            return      
+        
         self.mouseMoved.emit(pos)
-
         self.prevMovePoint = pos
         self.restoreCursor()
+
+        #EDITED FREEHAND
+        # pos: QtCore.QPointF = self.transformPos(ev.localPos())
+
+        if self._is_freehand_drawing and self.current is not None:
+            # optional: limit number of points
+            step = getattr(self, "lasso_step", .0)
+            if (self.current[-1] - pos).manhattanLength() > step:
+                self.current.addPoint(pos)
+
+                self.line.points = [self.current[-1], pos]
+                # this line is crucial
+                self.line.point_labels = [1, 1]
+
+                self.update()
+            return
+        #END
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier  # type: ignore[attr-defined]
 
@@ -397,7 +429,57 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, ev):
-        pos: QtCore.QPointF = self.transformPos(ev.localPos())
+        #EDITED GHOST FLIP
+        try:
+            pos = self.imagePosFromEvent(ev)
+        except Exception:
+            return
+        #END
+        # pos: QtCore.QPointF = self.transformPos(ev.localPos())
+
+        #EDITED FREEHAND
+        #LASSO
+        if (
+            ev.button() == QtCore.Qt.LeftButton
+            and ev.modifiers() & QtCore.Qt.ShiftModifier
+            and self.createMode in ["polygon", "linestrip"]
+        ):
+            self._is_freehand_drawing = True
+
+            if self.current is None or not self.current.points:
+                # start new shape
+                self.current = Shape(shape_type=self.createMode)
+                self.current.addPoint(pos)
+                self.line.points = [pos, pos]
+                self.line.point_labels = [1, 1]
+                self.setHiding()
+                self.drawingPolygon.emit(True)
+            else:
+                # continue drawing from last point
+                self.line.points = [self.current[-1], pos]
+                self.line.point_labels = [1, 1]
+
+            self.update()
+            return
+        
+        # Ctrl+LeftClick to finalise manually
+        if (
+            ev.button() == QtCore.Qt.LeftButton
+            and ev.modifiers() & QtCore.Qt.ControlModifier
+            and self.current is not None
+        ):
+            if self.current.shape_type == "polygon":
+                self.current.close()
+            self.shapes.append(self.current)
+            self.finalise()
+
+            #EDITED REDO
+            self.pointRedoStack.clear()
+            #END
+
+            self.current = None
+            self.update()
+            return
 
         is_shift_pressed = ev.modifiers() & QtCore.Qt.ShiftModifier  # type: ignore[attr-defined]
 
@@ -410,15 +492,24 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
+                        #EDITED REDO
+                        self.pointRedoStack.clear()
+                        #END
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
+                        #EDITED REDO
+                        self.pointRedoStack.clear()
+                        #END
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
                         if int(ev.modifiers()) == QtCore.Qt.ControlModifier:  # type: ignore[attr-defined]
                             self.finalise()
+                        #EDITED REDO
+                        self.pointRedoStack.clear()
+                        #END
                     elif self.createMode in ["ai_polygon", "ai_mask"]:
                         self.current.addPoint(
                             self.line.points[1],
@@ -428,6 +519,9 @@ class Canvas(QtWidgets.QWidget):
                         self.line.point_labels[0] = self.current.point_labels[-1]
                         if ev.modifiers() & QtCore.Qt.ControlModifier:  # type: ignore[attr-defined]
                             self.finalise()
+                        #EDITED REDO
+                        self.pointRedoStack.clear()
+                        #END
                 elif not self.outOfPixmap(pos):
                     # Create new shape.
                     self.current = Shape(
@@ -479,6 +573,14 @@ class Canvas(QtWidgets.QWidget):
             self.prevPoint = pos
 
     def mouseReleaseEvent(self, ev):
+        #EDITED FREEHAND
+        #LASSO
+        if self._is_freehand_drawing:
+            self._is_freehand_drawing = False
+            self.update()
+            return
+        #END
+        
         if ev.button() == QtCore.Qt.RightButton:  # type: ignore[attr-defined]
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
@@ -666,81 +768,231 @@ class Canvas(QtWidgets.QWidget):
         p.scale(self.scale, self.scale)
         p.translate(self.offsetToCenter())
 
-        p.drawPixmap(0, 0, self.pixmap)
+        #EDITED SHOW OG
+        # --- Determine if we're in "show original" mode ---
+        show_original = getattr(self, "show_original", False)
 
+        # --- Draw image ---
+        if show_original and hasattr(self, "pixmap_original"):
+            # Draw the original, unflipped image
+            p.drawPixmap(0, 0, self.pixmap_original)
+        else:
+            p.save()
+            # Apply ghost flips to image
+            flip_h = getattr(self, "flip_horizontal", False)
+            flip_v = getattr(self, "flip_vertical", False)
+            img_w = self.pixmap.width()
+            img_h = self.pixmap.height()
+
+            if flip_h or flip_v:
+                tx = img_w if flip_h else 0
+                ty = img_h if flip_v else 0
+                p.translate(tx, ty)
+                sx = -1 if flip_h else 1
+                sy = -1 if flip_v else 1
+                p.scale(sx, sy)
+
+            p.drawPixmap(0, 0, self.pixmap)
+
+            if flip_h or flip_v:
+                sx = -1 if flip_h else 1
+                sy = -1 if flip_v else 1
+                p.scale(sx, sy)
+                tx = img_w if flip_h else 0
+                ty = img_h if flip_v else 0
+                p.translate(-tx, -ty)
+
+            p.restore()
+        
         p.scale(1 / self.scale, 1 / self.scale)
 
-        # draw crosshair
-        if (
-            self._crosshair[self._createMode]
-            and self.drawing()
-            and self.prevMovePoint
-            and not self.outOfPixmap(self.prevMovePoint)
-        ):
-            p.setPen(QtGui.QColor(0, 0, 0))
-            p.drawLine(
-                0,
-                int(self.prevMovePoint.y() * self.scale),
-                self.width() - 1,
-                int(self.prevMovePoint.y() * self.scale),
-            )
-            p.drawLine(
-                int(self.prevMovePoint.x() * self.scale),
-                0,
-                int(self.prevMovePoint.x() * self.scale),
-                self.height() - 1,
-            )
-
+        # --- Draw shapes ---
         Shape.scale = self.scale
+
+        # Check if "show original" toggle is active (you should have set this somewhere)
+        show_original = getattr(self, "show_original", False)
+
         for shape in self.shapes:
             if (shape.selected or not self._hideBackround) and self.isVisible(shape):
-                shape.fill = shape.selected or shape == self.hShape
-                shape.paint(p)
+                if show_original:
+                    self._paint_shape_maybe_flipped(p, shape, flip_h=False, flip_v=False)
+                else:
+                    self._paint_shape_maybe_flipped(p, shape)
+
         if self.current:
-            self.current.paint(p)
-            assert len(self.line.points) == len(self.line.point_labels)
-            self.line.paint(p)
+            if show_original:
+                self._paint_shape_maybe_flipped(p, self.current, flip_h=False, flip_v=False)
+            else:
+                self._paint_shape_maybe_flipped(p, self.current)
+
         if self.selectedShapesCopy:
             for s in self.selectedShapesCopy:
-                s.paint(p)
+                if show_original:
+                    self._paint_shape_maybe_flipped(p, s, flip_h=False, flip_v=False)
+                else:
+                    self._paint_shape_maybe_flipped(p, s)
 
-        if not self.current:
-            p.end()
-            return
-
-        if (
-            self.createMode == "polygon"
-            and self.fillDrawing()
-            and len(self.current.points) >= 2
-        ):
-            drawing_shape = self.current.copy()
-            if drawing_shape.fill_color.getRgb()[3] == 0:
-                logger.warning(
-                    "fill_drawing=true, but fill_color is transparent,"
-                    " so forcing to be opaque."
-                )
-                drawing_shape.fill_color.setAlpha(64)
-            drawing_shape.addPoint(self.line[1])
-
-        if self.createMode not in ["ai_polygon", "ai_mask"]:
-            p.end()
-            return
-
-        drawing_shape = self.current.copy()
-        drawing_shape.addPoint(
-            point=self.line.points[1],
-            label=self.line.point_labels[1],
-        )
-        _update_shape_with_sam(
-            sam=_get_ai_model(model_name=self._ai_model_name),
-            pixmap=self.pixmap,
-            shape=drawing_shape,
-            createMode=self.createMode,
-        )
-        drawing_shape.fill = self.fillDrawing()
-        drawing_shape.selected = True
-        drawing_shape.paint(p)
         p.end()
+        #END 
+        # #EDITED GHOST FLIP
+        #     p.save()
+
+        #     flip_h = getattr(self, "flip_horizontal", False)
+        #     flip_v = getattr(self, "flip_vertical", False)
+        #     img_w = self.pixmap.width()
+        #     img_h = self.pixmap.height()
+
+        #     # Apply flips by translating then scaling
+        #     if flip_h or flip_v:
+        #         # Translate based on which axes are flipped
+        #         tx = img_w if flip_h else 0
+        #         ty = img_h if flip_v else 0
+        #         p.translate(tx, ty)
+        #         sx = -1 if flip_h else 1
+        #         sy = -1 if flip_v else 1
+        #         p.scale(sx, sy)
+
+        #     # Draw the image with the flipped transform applied
+        #     p.drawPixmap(0, 0, self.pixmap)
+
+        #     # Undo the flips so shapes are drawn in their correct (unflipped) coordinates
+        #     if flip_h or flip_v:
+        #         sx = -1 if flip_h else 1
+        #         sy = -1 if flip_v else 1
+        #         p.scale(sx, sy)
+        #         tx = img_w if flip_h else 0
+        #         ty = img_h if flip_v else 0
+        #         p.translate(-tx, -ty)
+
+        #     p.restore()  # back to unflipped transform (still scaled + translated)
+
+        # # --- reset scale so subsequent drawing uses device coords like before ---
+        # p.scale(1 / self.scale, 1 / self.scale)
+
+        # # --- crosshair ---
+        # if (
+        #     self._crosshair[self._createMode]
+        #     and self.drawing()
+        #     and self.prevMovePoint
+        #     and not self.outOfPixmap(self.prevMovePoint)
+        # ):
+        #     disp_x = float(self.prevMovePoint.x())
+        #     disp_y = float(self.prevMovePoint.y())
+
+        #     # Apply visual flip mapping for display crosshair
+        #     if flip_h:
+        #         disp_x = img_w - disp_x
+        #     if flip_v:
+        #         disp_y = img_h - disp_y
+
+        #     off = self.offsetToCenter()
+        #     ox, oy = float(off.x()), float(off.y())
+
+        #     device_x = int((disp_x + ox) * self.scale)
+        #     device_y = int((disp_y + oy) * self.scale)
+
+        #     p.setPen(QtGui.QColor(0, 0, 0))
+        #     p.drawLine(0, device_y, self.width() - 1, device_y)
+        #     p.drawLine(device_x, 0, device_x, self.height() - 1)
+
+        #     if getattr(self, "_flip_debug", False):
+        #         text = f"img({self.prevMovePoint.x():.1f},{self.prevMovePoint.y():.1f}) disp({disp_x:.1f},{disp_y:.1f}) dev({device_x},{device_y})"
+        #         p.resetTransform()
+        #         p.setPen(QtGui.QColor(255, 0, 0))
+        #         p.drawText(10, 20, text)
+        #         p.scale(self.scale, self.scale)
+        #         p.translate(self.offsetToCenter())
+
+        # # --- draw shapes exactly like before, but display-flip them by temporarily swapping points ---
+        # Shape.scale = self.scale
+
+        # for shape in self.shapes:
+        #     if (shape.selected or not self._hideBackround) and self.isVisible(shape):
+        #         self._paint_shape_maybe_flipped(p, shape)
+
+        # if self.current:
+        #     self._paint_shape_maybe_flipped(p, self.current)
+
+        # if self.selectedShapesCopy:
+        #     for s in self.selectedShapesCopy:
+        #         self._paint_shape_maybe_flipped(p, s)
+        # #END
+
+        # p.drawPixmap(0, 0, self.pixmap)
+        # p.scale(1 / self.scale, 1 / self.scale)
+
+        # # draw crosshair
+        # if (
+        #     self._crosshair[self._createMode]
+        #     and self.drawing()
+        #     and self.prevMovePoint
+        #     and not self.outOfPixmap(self.prevMovePoint)
+        # ):
+        #     p.setPen(QtGui.QColor(0, 0, 0))
+        #     p.drawLine(
+        #         0,
+        #         int(self.prevMovePoint.y() * self.scale),
+        #         self.width() - 1,
+        #         int(self.prevMovePoint.y() * self.scale),
+        #     )
+        #     p.drawLine(
+        #         int(self.prevMovePoint.x() * self.scale),
+        #         0,
+        #         int(self.prevMovePoint.x() * self.scale),
+        #         self.height() - 1,
+        #     )
+
+        # Shape.scale = self.scale
+        # for shape in self.shapes:
+        #     if (shape.selected or not self._hideBackround) and self.isVisible(shape):
+        #         shape.fill = shape.selected or shape == self.hShape
+        #         shape.paint(p)
+        # if self.current:
+        #     self.current.paint(p)
+        #     assert len(self.line.points) == len(self.line.point_labels)
+        #     self.line.paint(p)
+        # if self.selectedShapesCopy:
+        #     for s in self.selectedShapesCopy:
+        #         s.paint(p)
+
+        # if not self.current:
+        #     p.end()
+        #     return
+
+        # if (
+        #     self.createMode == "polygon"
+        #     and self.fillDrawing()
+        #     and len(self.current.points) >= 2
+        # ):
+        #     drawing_shape = self.current.copy()
+        #     if drawing_shape.fill_color.getRgb()[3] == 0:
+        #         logger.warning(
+        #             "fill_drawing=true, but fill_color is transparent,"
+        #             " so forcing to be opaque."
+        #         )
+        #         drawing_shape.fill_color.setAlpha(64)
+        #     drawing_shape.addPoint(self.line[1])
+
+
+        # if self.createMode not in ["ai_polygon", "ai_mask"]:
+        #     p.end()
+        #     return
+
+        # drawing_shape = self.current.copy()
+        # drawing_shape.addPoint(
+        #     point=self.line.points[1],
+        #     label=self.line.point_labels[1],
+        # )
+        # _update_shape_with_sam(
+        #     sam=_get_ai_model(model_name=self._ai_model_name),
+        #     pixmap=self.pixmap,
+        #     shape=drawing_shape,
+        #     createMode=self.createMode,
+        # )
+        # drawing_shape.fill = self.fillDrawing()
+        # drawing_shape.selected = True
+        # drawing_shape.paint(p)
+        # p.end()
 
     def transformPos(self, point: QtCore.QPointF) -> QtCore.QPointF:
         """Convert from widget-logical coordinates to painter-logical ones."""
@@ -760,7 +1012,8 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
     def finalise(self):
-        assert self.current
+        if not self.current:
+            return
         if self.createMode in ["ai_polygon", "ai_mask"]:
             _update_shape_with_sam(
                 sam=_get_ai_model(model_name=self._ai_model_name),
@@ -852,14 +1105,16 @@ class Canvas(QtWidgets.QWidget):
     def wheelEvent(self, ev):
         mods = ev.modifiers()
         delta = ev.angleDelta()
-        if QtCore.Qt.ControlModifier == int(mods):  # type: ignore[attr-defined]
-            # with Ctrl/Command key
-            # zoom
+
+        if mods & QtCore.Qt.ControlModifier:  # Ctrl + Wheel = zoom
             self.zoomRequest.emit(delta.y(), ev.pos())
-        else:
-            # scroll
-            self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)  # type: ignore[attr-defined]
-            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)  # type: ignore[attr-defined]
+
+        elif mods & QtCore.Qt.ShiftModifier:  # Shift + Wheel = horizontal scroll
+            self.scrollRequest.emit(delta.y(), QtCore.Qt.Horizontal)
+
+        else:  # Plain Wheel = vertical scroll
+            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+
         ev.accept()
 
     def moveByKeyboard(self, offset):
@@ -925,18 +1180,188 @@ class Canvas(QtWidgets.QWidget):
             self.current = None
         self.drawingPolygon.emit(True)
 
+    # def undoLastPoint(self):
+    #     if not self.current or self.current.isClosed():
+    #         return
+    #     self.current.popPoint()
+    #     if len(self.current) > 0:
+    #         self.line[0] = self.current[-1]
+    #     else:
+    #         self.current = None
+    #         self.drawingPolygon.emit(False)
+    #     self.update()
+
+    #EDITED REDO
     def undoLastPoint(self):
-        if not self.current or self.current.isClosed():
+        if not self.current or self.current.isClosed() or len(self.current) == 0:
             return
+
+        # Store a deep copy of the current polygon in redo stack
+        self.pointRedoStack.append(self.current.copy())
+
+        # Remove last point
         self.current.popPoint()
         if len(self.current) > 0:
             self.line[0] = self.current[-1]
         else:
-            self.current = None
-            self.drawingPolygon.emit(False)
+            self.drawingPolygon.emit(False)  # polygon empty, still keep self.current
         self.update()
 
+    def redoLastPoint(self):
+        if not self.pointRedoStack:
+            return
+
+        # Restore the last undone polygon
+        self.current = self.pointRedoStack.pop().copy()
+        if self.current.points:
+            self.line[0] = self.current[-1]
+            self.line[1] = self.current[-1]
+        self.drawingPolygon.emit(True)
+        self.update()
+
+    def _backupShapes(self, target_stack):
+        # Make a deep copy of current shapes
+        backup = [s.copy() for s in self.shapes]
+
+        # Only append if the stack is empty OR the new state is different from the last one
+        if not target_stack or backup != target_stack[-1]:
+            target_stack.append(backup)
+            if len(target_stack) > self.maxHistory:
+                target_stack.pop(0)
+
+
+    def undoShapeAction(self):
+        if not self.shapesBackups:
+            return
+        # Push current state to redo stack
+        # self._backupShapes(self.shapeRedoStack)
+        # Restore from undo stack
+        last_state = self.shapesBackups.pop()
+        self.shapes = [s.copy() for s in last_state]
+        self.repaint()
+
+    def redoShapeAction(self):
+        if not self.shapeRedoStack:
+            return
+        next_state = self.shapeRedoStack.pop()
+        self.shapes = [s.copy() for s in next_state]
+        self.repaint()
+    #END
+
+    #EDITED GHOST FLIP
+
+    #EDITED SHOW OG
+    def _paint_shape_maybe_flipped(self, painter, shape, flip_h=None, flip_v=None):
+        """Temporarily flip shape points for display, but not data. Allows override for 'show original' mode."""
+        # Fallback to self's flip settings if not explicitly provided
+        if flip_h is None:
+            flip_h = getattr(self, "flip_horizontal", False)
+        if flip_v is None:
+            flip_v = getattr(self, "flip_vertical", False)
+
+        # If no flips are active, paint normally
+        if not (flip_h or flip_v):
+            shape.paint(painter)
+            return
+
+        # Flip points temporarily for drawing
+        flipped_points = []
+        for pt in shape.points:
+            x = (self.pixmap.width() - pt.x()) if flip_h else pt.x()
+            y = (self.pixmap.height() - pt.y()) if flip_v else pt.y()
+            flipped_points.append(QtCore.QPointF(x, y))
+
+        original_points = shape.points
+        shape.points = flipped_points
+        shape.paint(painter)
+        shape.points = original_points
+
+    #END
+
+
+    # def _paint_shape_maybe_flipped(self, painter, shape):
+    #     """Temporarily flip shape points for display, but not data."""
+    #     if not (getattr(self, "flip_horizontal", False) or getattr(self, "flip_vertical", False)):
+    #         shape.paint(painter)
+    #         return
+
+    #     flipped_points = []
+    #     for pt in shape.points:
+    #         x = (self.pixmap.width() - pt.x()) if getattr(self, "flip_horizontal", False) else pt.x()
+    #         y = (self.pixmap.height() - pt.y()) if getattr(self, "flip_vertical", False) else pt.y()
+    #         flipped_points.append(QtCore.QPointF(x, y))
+
+    #     original_points = shape.points
+    #     shape.points = flipped_points
+    #     shape.paint(painter)
+    #     shape.points = original_points
+       
+    def imagePosFromEvent(self, ev) -> QtCore.QPointF:
+        pos = self.transformPos(ev.localPos())
+
+        if getattr(self, "pixmap", None) is not None:
+            w = float(self.pixmap.width())
+            h = float(self.pixmap.height())
+
+            # horizontal flip
+            if getattr(self, "flip_horizontal", False):
+                pos = QtCore.QPointF(w - float(pos.x()), float(pos.y()))
+
+            # vertical flip
+            if getattr(self, "flip_vertical", False):
+                pos = QtCore.QPointF(float(pos.x()), h - float(pos.y()))
+
+        # optional debug
+        if getattr(self, "_flip_debug", False):
+            try:
+                dev = ev.localPos()
+            except Exception:
+                dev = "<no device pos>"
+            # print(
+            #     "imagePosFromEvent:",
+            #     "dev:", dev,
+            #     "-> image:", pos,
+            #     "flip_h:", getattr(self, "flip_horizontal", False),
+            #     "flip_v:", getattr(self, "flip_vertical", False),
+            # )
+
+        return pos
+    #END
+
+    def restoreShape(self):
+        if not self.isShapeRestorable():
+            return
+
+        # Move the last state to redo stack
+        latest = self.shapesBackups.pop()
+        self.shapeRedoStack.append(latest)
+
+        # Restore the previous state
+        shapesBackup = self.shapesBackups[-1]  # don't pop if you want redo to work multiple times
+        self.shapes = shapesBackup
+        self.selectedShapes = []
+        for shape in self.shapes:
+            shape.selected = False
+        self.update()
+
+    # def redoShape(self):
+    #     if not self.shapeRedoStack:
+    #         return
+
+    #     shapesBackup = self.shapeRedoStack.pop()
+    #     self.shapesBackups.append(shapesBackup)
+    #     self.shapes = shapesBackup
+    #     self.selectedShapes = []
+    #     for shape in self.shapes:
+    #         shape.selected = False
+    #     self.update()
+
     def loadPixmap(self, pixmap, clear_shapes=True):
+        #EDITED SHOW OG
+        if not hasattr(self, "pixmap_original") or clear_shapes:
+            self.pixmap_original = QtGui.QPixmap(pixmap)
+        #END
+
         self.pixmap = pixmap
         if clear_shapes:
             self.shapes = []

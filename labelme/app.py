@@ -17,6 +17,10 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
+#EDITED FREEHAND DISTANCE
+from PyQt5.QtWidgets import QDoubleSpinBox, QLabel
+#END
+
 from labelme import __appname__
 from labelme._automation import bbox_from_text
 from labelme.config import get_config
@@ -33,6 +37,10 @@ from labelme.widgets import LabelListWidgetItem
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
+
+#EDITED SHOW OG
+from PyQt5.QtCore import QTimer
+#END
 
 from . import utils
 
@@ -161,6 +169,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
+
+        #EDITED ZOOM
+        self._last_global_zoom = None
+        self._last_global_zoom_mode = None
+        #END
 
         self.canvas = Canvas(
             epsilon=self._config["epsilon"],
@@ -307,7 +320,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         toggle_keep_prev_mode = action(
-            self.tr("Keep Previous Annotation"),
+            self.tr("Previous\nAnnotation"),
             self.toggleKeepPrevMode,
             shortcuts["toggle_keep_prev_mode"],
             None,
@@ -421,20 +434,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Paste copied polygons"),
             enabled=False,
         )
-        undoLastPoint = action(
-            self.tr("Undo last point"),
-            self.canvas.undoLastPoint,
-            shortcuts["undo_last_point"],
-            "undo",
-            self.tr("Undo last drawn point"),
-            enabled=False,
-        )
+        
         removePoint = action(
             text=self.tr("Remove Selected Point"),
             slot=self.removeSelectedPoint,
             shortcut=shortcuts["remove_selected_point"],
             icon="edit",
             tip=self.tr("Remove selected point from polygon"),
+            enabled=False,
+        )
+
+        undoLastPoint = action(
+            self.tr("Undo last point"),
+            self.canvas.undoLastPoint,
+            shortcuts["undo_last_point"],
+            "undo",
+            self.tr("Undo last drawn point"),
             enabled=False,
         )
 
@@ -446,6 +461,59 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Undo last add and edit of shape"),
             enabled=False,
         )
+
+        #EDITED REDO
+        redoLastPoint = action(
+            self.tr("Redo last point"),
+            self.canvas.redoLastPoint,  # make sure this method exists in Canvas
+            shortcuts.get("redo_last_point", "Ctrl+Shift+Y"),
+            "redo_point",
+            self.tr("Redo last undone point"),
+            enabled=False,
+        )
+
+        # --- Redo last shape edit (shape-level redo) ---
+        redoShape = action(
+            self.tr("Redo shape edit"),
+            self.redoShapeEdit,  # make sure this method exists in MainWindow
+            shortcuts.get("redo_shape", "Ctrl+Y"),
+            "redo",
+            self.tr("Redo last undone shape edit (flip, move, delete, add)"),
+            enabled=False,
+        )
+        #END
+
+        #EDITED GHOST FLIP
+        flip_horizontal = action(
+            self.tr("&Flip Horizontal View"),
+            self.toggleFlipHorizontal,
+            "H",  # shortcut key
+            "flip",  # icon name if you want to add a custom one later
+            self.tr("Flip the image horizontally for easier annotation"),
+            checkable=True  # allows toggling on/off
+        )
+        flip_vertical = action(
+            self.tr("&Flip Vertical View"),
+            self.toggleFlipVertical,
+            "V",  # shortcut key
+            "flip_vertical",  # icon name (optional — you can use same "flip" if no vertical icon)
+            self.tr("Flip the image vertically for easier annotation"),
+            checkable=True
+        )
+        
+        #END
+
+        #EDITED SHOW OG
+        showOriginal = action(
+            self.tr("&Show Original"),
+            self.toggleShowOriginal,       # <-- we'll define this below
+            "B",                           # shortcut key
+            "reset",                       # icon name (you can change this to any existing icon name)
+            self.tr("Temporarily show the original image without flips or adjustments"),
+            checkable=True,                # ✅ make it a toggle button
+            enabled=True,
+        )
+        #END
 
         hideAll = action(
             self.tr("&Hide\nPolygons"),
@@ -502,6 +570,26 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.zoomWidget.setEnabled(False)
 
+        #EDITED FREEHAND DISTANCE
+        lasso = QtWidgets.QWidgetAction(self)
+        lassoBoxLayout = QtWidgets.QVBoxLayout()
+
+        lassoLabel = QtWidgets.QLabel(self.tr("Lasso Step"))
+        lassoLabel.setAlignment(Qt.AlignCenter)
+        self.lassoSpin = QtWidgets.QDoubleSpinBox()
+        self.lassoSpin.setRange(0.1, 5.0)
+        self.lassoSpin.setSingleStep(0.1)
+        self.lassoSpin.setValue(2.0)
+        self.lassoSpin.setToolTip(self.tr("Distance between lasso points in freehand mode"))
+        self.lassoSpin.valueChanged.connect(self.updateLassoStep)
+
+        lassoBoxLayout.addWidget(lassoLabel)
+        lassoBoxLayout.addWidget(self.lassoSpin)
+
+        lasso.setDefaultWidget(QtWidgets.QWidget())
+        lasso.defaultWidget().setLayout(lassoBoxLayout)
+        #END
+
         zoomIn = action(
             self.tr("Zoom &In"),
             functools.partial(self.addZoom, 1.1),
@@ -527,7 +615,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         keepPrevScale = action(
-            self.tr("&Keep Previous Scale"),
+            self.tr("&Previous\nScale"),
             self.enableKeepPrevScale,
             tip=self.tr("Keep previous zoom scale"),
             checkable=True,
@@ -596,6 +684,25 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
             enabled=True,
         )
+
+        #EDITED FLIPPING
+        flip_polygon_horizontal = action(
+            self.tr("&Flip Polygon Horizontally"),
+            self.flipPolygonHorizontal,
+            "Ctrl+Shift+H",   # you can also add to shortcuts[] if you prefer
+            "flip_horizontal",
+            self.tr("Flip the selected polygon horizontally across the image"),
+        )
+
+        flip_polygon_vertical = action(
+            self.tr("&Flip Polygon Vertically"),
+            self.flipPolygonVertical,
+            "Ctrl+Shift+V",
+            "flip_vertical",
+            self.tr("Flip the selected polygon vertically across the image"),
+        )
+        #END
+
         if self._config["canvas"]["fill_drawing"]:
             fill_drawing.trigger()
 
@@ -623,6 +730,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             undoLastPoint=undoLastPoint,
             undo=undo,
+            redoShape=redoShape,
             removePoint=removePoint,
             createMode=createMode,
             editMode=editMode,
@@ -656,6 +764,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 undo,
                 undoLastPoint,
+                #EDITED REDO
+                None,
+                redoShape,
+                redoLastPoint,
+                #END
                 None,
                 removePoint,
                 None,
@@ -750,6 +863,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWindow,
                 fitWidth,
                 None,
+                #EDITED FLIPPING
+                flip_polygon_horizontal,
+                flip_polygon_vertical,
+                None,
+                #END
+                #EDITED GHOST FLIP
+                flip_horizontal,
+                flip_vertical,
+                None,
+                showOriginal,
+                None,
+                #end
                 brightnessContrast,
             ),
         )
@@ -825,7 +950,23 @@ class MainWindow(QtWidgets.QMainWindow):
             delete,
             undo,
             brightnessContrast,
+            #EDITED FLIPPING
             None,
+            flip_polygon_horizontal,
+            flip_polygon_vertical,
+            #END
+            #EDITED GHOST FLIP
+            flip_horizontal,
+            flip_vertical,
+            #END
+            #EDITED FREEHAND DISTANCE
+            None,
+            lasso,
+            #END
+            None,
+            keepPrevScale,
+            toggle_keep_prev_mode,
+            showOriginal,
             fitWindow,
             zoom,
             None,
@@ -942,7 +1083,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setDirty(self):
         # Even if we autosave the file, we keep the ability to undo
-        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)  # type: ignore[attr-defined]
+        self.actions.undo.setEnabled(self.canvas.isShapeRestorable())  # type: ignore[attr-defined]
 
         if self._config["auto_save"] or self.actions.saveAuto.isChecked():  # type: ignore[attr-defined]
             label_file = osp.splitext(self.imagePath)[0] + ".json"  # type: ignore[arg-type]
@@ -1076,11 +1217,167 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Callbacks
 
+    #EDITED REDO
     def undoShapeEdit(self):
+        if not self.canvas.isShapeRestorable():
+            return
+        # self.canvas._backupShapes(self.canvas.shapeRedoStack)
         self.canvas.restoreShape()
         self.labelList.clear()
-        self.loadShapes(self.canvas.shapes)
-        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)  # type: ignore[attr-defined]
+        if self.canvas.shapes is None:
+            self.canvas.shapes = []
+        self.loadShapes(self.canvas.shapes, replace=True)
+
+        self.actions.undo.setEnabled(self.canvas.isShapeRestorable())
+        self.actions.redoShape.setEnabled(bool(self.canvas.shapeRedoStack))
+
+    def redoShapeEdit(self):
+        if not self.canvas.shapeRedoStack:
+            return  # nothing to redo
+
+        # self.canvas._backupShapes(self.canvas.shapesBackups)
+
+        next_state = self.canvas.shapeRedoStack.pop()
+        self.canvas.shapes = [s.copy() for s in next_state]
+
+        self.labelList.clear()
+        if self.canvas.shapes is None:
+            self.canvas.shapes = []
+            
+        self.loadShapes(self.canvas.shapes, replace=True)
+        self.actions.undo.setEnabled(bool(self.canvas.shapesBackups))
+        self.actions.redoShape.setEnabled(bool(self.canvas.shapeRedoStack))
+        self.canvas.update()
+    #END
+
+    # def undoShapeEdit(self):
+    #     self.canvas.restoreShape()
+    #     self.labelList.clear()
+    #     if self.canvas.shapes is None:
+    #         self.canvas.shapes = ""
+    #     self.loadShapes(self.canvas.shapes)
+    #     self.actions.undo.setEnabled(self.canvas.isShapeRestorable())
+    #     self.actions.redo.setEnabled(bool(self.canvas.shapeRedoStack))
+
+    # def redoShapeEdit(self):
+    #     self.canvas.redoShape()
+    #     self.labelList.clear()
+    #     if self.canvas.shapes is None:
+    #         self.canvas.shapes = ""
+    #     self.loadShapes(self.canvas.shapes)
+    #     self.actions.undo.setEnabled(self.canvas.isShapeRestorable())
+    #     self.actions.redo.setEnabled(bool(self.canvas.shapeRedoStack))
+
+    #EDITED FLIPPING
+    def flipPolygonHorizontal(self):
+        # Flip horizontally all selected shapes
+        if not self.canvas.selectedShapes:
+            return
+
+        img = self.image
+        if img is None:
+            return
+
+        img_width = img.width()
+
+        #EDITED REDO
+        self.canvas._backupShapes(self.canvas.shapesBackups)
+        self.canvas.shapeRedoStack.clear()
+        #END
+
+        for shape in self.canvas.selectedShapes:
+            flipped_points = []
+            for p in shape.points:
+                flipped_x = img_width - p.x()
+                flipped_points.append(QtCore.QPointF(flipped_x, p.y()))
+            shape.points = flipped_points
+
+        # Redraw canvas & mark as modified
+        self.canvas.update()
+        self.setDirty()
+
+
+    def flipPolygonVertical(self):
+        # Flip vertically all selected shapes
+        if not self.canvas.selectedShapes:
+            return
+
+        img = self.image
+        if img is None:
+            return
+
+        img_height = img.height()
+
+        #EDITED REDO
+        self.canvas._backupShapes(self.canvas.shapesBackups)
+        self.canvas.shapeRedoStack.clear()
+        #END
+
+        for shape in self.canvas.selectedShapes:
+            flipped_points = []
+            for p in shape.points:
+                flipped_y = img_height - p.y()
+                flipped_points.append(QtCore.QPointF(p.x(), flipped_y))
+            shape.points = flipped_points
+
+        # Redraw canvas & mark as modified
+        self.canvas.update()
+        self.setDirty()
+    #END
+
+    #EDITED GHSOT FLIP
+    def toggleFlipHorizontal(self, checked=None):
+        if checked is None:
+            # When triggered by shortcut, Qt passes no checked state
+            checked = not getattr(self.canvas, "flip_horizontal", False)
+        self.canvas.flip_horizontal = checked
+        self.canvas.update()
+
+    def toggleFlipVertical(self, checked=None):
+        if checked is None:
+            checked = not getattr(self.canvas, "flip_vertical", False)
+        self.canvas.flip_vertical = checked
+        self.canvas.update()
+    #END
+
+    #EDITED SHOW OG
+    def toggleShowOriginal(self, checked):
+        self.canvas.show_original = checked
+        if checked:
+            # Save previous zoom only
+            self._prev_zoom_state = (self.zoomMode, self.canvas.scale)
+            try:
+                self.setFitWindow(True)
+            except ZeroDivisionError:
+                # Fail silently if image hasn't fully initialized
+                pass
+        else:
+            # Restore zoom
+            if hasattr(self, "_prev_zoom_state"):
+                prev_mode, prev_scale = self._prev_zoom_state
+                self.zoomMode = prev_mode
+                factor = prev_scale / self.canvas.scale
+                if factor != 1.0:
+                    self.addZoom(factor)
+                if prev_mode == self.FIT_WINDOW:
+                    try:
+                        self.setFitWindow(True)
+                    except ZeroDivisionError:
+                        # Fail silently if image hasn't fully initialized
+                        pass
+                elif prev_mode == self.FIT_WIDTH:
+                    self.setFitWidth(True)
+                del self._prev_zoom_state
+
+        # Just repaint — don’t touch flips or brightness here
+        self.canvas.update()
+    #END
+
+    #EDITED FREEHAND DISTANCE
+    def updateLassoStep(self, value):
+        if hasattr(self, "canvas"):
+            self.canvas.lasso_step = value
+    #END
 
     def tutorial(self):
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
@@ -1527,6 +1824,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.editMode.setEnabled(True)  # type: ignore[attr-defined]
             self.actions.undoLastPoint.setEnabled(False)  # type: ignore[attr-defined]
             self.actions.undo.setEnabled(True)  # type: ignore[attr-defined]
+            self.canvas.shapeRedoStack.clear()
+            self.canvas.pointRedoStack.clear()
             self.setDirty()
         else:
             self.canvas.undoLastLine()
@@ -1548,6 +1847,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomMode = self.MANUAL_ZOOM
         self.zoomWidget.setValue(value)
         self.zoom_values[self.filename] = (self.zoomMode, value)
+
+        #EDITED ZOOM
+        if self._config.get("keep_prev_scale"):
+            # 🟡 Store this zoom globally, not per image
+            self._last_global_zoom = value
+            self._last_global_zoom_mode = self.zoomMode
+        #END
 
     def addZoom(self, increment=1.1):
         zoom_value = self.zoomWidget.value() * increment
@@ -1586,20 +1892,47 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomMode = self.FIT_WINDOW if value else self.MANUAL_ZOOM
         self.adjustScale()
 
+        #EDITED ZOOM
+        # ✅ Update global zoom memory when "Keep Previous Zoom" is active
+        if getattr(self, "_config", None) and self._config.get("keep_prev_scale"):
+            self._last_global_zoom = self.zoomWidget.value()
+            self._last_global_zoom_mode = self.zoomMode
+        #END
+
     def setFitWidth(self, value=True):
         if value:
             self.actions.fitWindow.setChecked(False)  # type: ignore[attr-defined]
         self.zoomMode = self.FIT_WIDTH if value else self.MANUAL_ZOOM
         self.adjustScale()
 
+        #EDITED ZOOM
+        # ✅ Update global zoom memory when "Keep Previous Zoom" is active
+        if getattr(self, "_config", None) and self._config.get("keep_prev_scale"):
+            self._last_global_zoom = self.zoomWidget.value()
+            self._last_global_zoom_mode = self.zoomMode
+        #END
+
     def enableKeepPrevScale(self, enabled):
         self._config["keep_prev_scale"] = enabled
         self.actions.keepPrevScale.setChecked(enabled)  # type: ignore[attr-defined]
 
     def onNewBrightnessContrast(self, qimage):
-        self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage), clear_shapes=False)
+        #EDITED BRIGHTNESS
+        if qimage is None or qimage.isNull():
+                return  # Prevent crash if brightness dialog returns invalid image
+        pixmap = QtGui.QPixmap.fromImage(qimage)
+        if pixmap.isNull():
+            return
+        self.canvas.loadPixmap(pixmap, clear_shapes=False)
+        #END
+
+        # self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage), clear_shapes=False)
 
     def brightnessContrast(self, value):
+        #EDITED BRIGHTNESS
+        if self.imageData is None:
+            return
+        #END
         dialog = BrightnessContrastDialog(
             utils.img_data_to_pil(self.imageData),
             self.onNewBrightnessContrast,
@@ -1710,43 +2043,99 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.setClean()
         self.canvas.setEnabled(True)
+
+        #EDITED ZOOM
         # set zoom values
         is_initial_load = not self.zoom_values
-        if self.filename in self.zoom_values:
-            self.zoomMode = self.zoom_values[self.filename][0]
-            self.setZoom(self.zoom_values[self.filename][1])
-        elif is_initial_load or not self._config["keep_prev_scale"]:
+
+        if self._config.get("keep_prev_scale") and self._last_global_zoom is not None:
+            # 🟢 Apply the last global zoom value
+            self.zoomMode = self._last_global_zoom_mode
+            self.setZoom(self._last_global_zoom)
+        elif self.filename in self.zoom_values:
+            self.zoomMode, zoom_value = self.zoom_values[self.filename]
+            self.setZoom(zoom_value)
+        elif is_initial_load or not self._config.get("keep_prev_scale"):
             self.adjustScale(initial=True)
+        #END
+
+        # set zoom values
+        # is_initial_load = not self.zoom_values
+        # if self.filename in self.zoom_values:
+        #     self.zoomMode = self.zoom_values[self.filename][0]
+        #     self.setZoom(self.zoom_values[self.filename][1])
+        # elif is_initial_load or not self._config["keep_prev_scale"]:
+        #     self.adjustScale(initial=True)
+
         # set scroll values
         for orientation in self.scroll_values:
             if self.filename in self.scroll_values[orientation]:
                 self.setScroll(
                     orientation, self.scroll_values[orientation][self.filename]
                 )
+
+        #EDITED BRIGHTNESS
         # set brightness contrast values
-        dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData),
-            self.onNewBrightnessContrast,
-            parent=self,
-        )
+        if not hasattr(self, "brightnessContrastDialog") or self.brightnessContrastDialog is None:
+            self.brightnessContrastDialog = BrightnessContrastDialog(
+                utils.img_data_to_pil(self.imageData),
+                self.onNewBrightnessContrast,
+                parent=self,
+            )
+        else:
+            # Update the dialog with the new image
+            self.brightnessContrastDialog.setImage(utils.img_data_to_pil(self.imageData))
+
+        # Restore brightness/contrast values if they exist
         brightness, contrast = self.brightnessContrast_values.get(
             self.filename, (None, None)
         )
-        if self._config["keep_prev_brightness"] and self.recentFiles:
+        if self._config.get("keep_prev_brightness") and self.recentFiles:
             brightness, _ = self.brightnessContrast_values.get(
-                self.recentFiles[0], (None, None)
+                self.recentFiles[0], (brightness, contrast)
             )
-        if self._config["keep_prev_contrast"] and self.recentFiles:
+        if self._config.get("keep_prev_contrast") and self.recentFiles:
             _, contrast = self.brightnessContrast_values.get(
-                self.recentFiles[0], (None, None)
+                self.recentFiles[0], (brightness, contrast)
             )
+
         if brightness is not None:
-            dialog.slider_brightness.setValue(brightness)
+            self.brightnessContrastDialog.slider_brightness.setValue(brightness)
         if contrast is not None:
-            dialog.slider_contrast.setValue(contrast)
+            self.brightnessContrastDialog.slider_contrast.setValue(contrast)
+
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
-        if brightness is not None or contrast is not None:
-            dialog.onNewValue(None)
+
+        # 👇 Apply the filter right away after sliders are set
+        self.brightnessContrastDialog.onNewValue()
+
+
+        #END
+
+        # set brightness contrast values
+        # dialog = BrightnessContrastDialog(
+        #     utils.img_data_to_pil(self.imageData),
+        #     self.onNewBrightnessContrast,
+        #     parent=self,
+        # )
+        # brightness, contrast = self.brightnessContrast_values.get(
+        #     self.filename, (None, None)
+        # )
+        # if self._config["keep_prev_brightness"] and self.recentFiles:
+        #     brightness, _ = self.brightnessContrast_values.get(
+        #         self.recentFiles[0], (None, None)
+        #     )
+        # if self._config["keep_prev_contrast"] and self.recentFiles:
+        #     _, contrast = self.brightnessContrast_values.get(
+        #         self.recentFiles[0], (None, None)
+        #     )
+        # if brightness is not None:
+        #     dialog.slider_brightness.setValue(brightness)
+        # if contrast is not None:
+        #     dialog.slider_contrast.setValue(contrast)
+        # self.brightnessContrast_values[self.filename] = (brightness, contrast)
+        # if brightness is not None or contrast is not None:
+        #     dialog.onNewValue(None)
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)
@@ -2097,7 +2486,24 @@ class MainWindow(QtWidgets.QMainWindow):
         if yes == QtWidgets.QMessageBox.warning(
             self, self.tr("Attention"), msg, yes | no, yes
         ):
-            self.remLabels(self.canvas.deleteSelected())
+
+            #EDITED REDO
+            if self.canvas.selectedShapes:
+                # ✅ Backup before any modification
+                self.canvas._backupShapes(self.canvas.shapesBackups)
+                self.canvas.shapeRedoStack.clear()
+
+                # 🔸 Manually delete the shapes
+                for shape in list(self.canvas.selectedShapes):
+                    if shape in self.canvas.shapes:
+                        self.canvas.shapes.remove(shape)
+                        self.remLabels([shape])
+
+                self.canvas.selectedShapes.clear()
+                self.canvas.update()
+            #END
+
+            # self.remLabels(self.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
                 for action in self.actions.onShapesPresent:  # type: ignore[attr-defined]
@@ -2111,6 +2517,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
 
     def moveShape(self):
+        #EDITED REDO
+        self.canvas._backupShapes(self.canvas.shapesBackups)
+        self.canvas.shapeRedoStack.clear()
+        #END
+
         self.canvas.endMove(copy=False)
         self.setDirty()
 

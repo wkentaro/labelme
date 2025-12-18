@@ -30,10 +30,20 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             value_label.setAlignment(Qt.AlignRight)  # type: ignore[attr-defined]
             layout.addWidget(value_label)
             #
-            slider.valueChanged.connect(self.onNewValue)
+
+            #EDITED BRIGHTNESS
             slider.valueChanged.connect(
-                lambda: value_label.setText(f"{slider.value() / self._base_value:.2f}")
+                lambda value, s=slider, l=value_label: l.setText(f"{s.value() / self._base_value:.2f}")
             )
+            slider.sliderReleased.connect(self.onNewValue)
+    
+            #END
+
+            # slider.valueChanged.connect(self.onNewValue)
+            # slider.valueChanged.connect(
+            #     lambda: value_label.setText(f"{slider.value() / self._base_value:.2f}")
+            # )
+
             layouts[title] = layout
             sliders[title] = slider
 
@@ -45,23 +55,63 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         layout.addLayout(layouts["Brightness:"])
         layout.addLayout(layouts["Contrast:"])
         del layouts
+
+        #EDITED BRIGHTNESS
+        # Add Reset button
+        button_layout = QtWidgets.QHBoxLayout()
+        reset_button = QtWidgets.QPushButton("Reset")
+        reset_button.clicked.connect(self.resetValues)
+        button_layout.addStretch()
+        button_layout.addWidget(reset_button)
+        layout.addLayout(button_layout)
+        #END
+
         self.setLayout(layout)
 
         assert isinstance(img, PIL.Image.Image)
         self.img = img
         self.callback = callback
 
-    def onNewValue(self, _):
+    def onNewValue(self, _=None):
         brightness = self.slider_brightness.value() / self._base_value
         contrast = self.slider_contrast.value() / self._base_value
 
-        img = self.img
+        #EDITED BRIGHTNESS
+        img = self.img.copy()
+        #END
+
+        # img = self.img
         if brightness != 1:
             img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
         if contrast != 1:
             img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
 
+        #EDITED BRIGHTNESS
+        img = img.convert("RGB")
+        #END
+
         qimage = QImage(
             img.tobytes(), img.width, img.height, img.width * 3, QImage.Format_RGB888
         )
         self.callback(qimage)
+
+    #EDITED BRIGHTNESS
+    def resetValues(self):
+        self.slider_brightness.setValue(self._base_value)
+        self.slider_contrast.setValue(self._base_value)
+
+        # Reset image to original
+        img = self.img.copy().convert("RGB")
+        qimage = QImage(
+            img.tobytes(), img.width, img.height, img.width * 3, QImage.Format_RGB888
+        )
+        if not qimage.isNull():
+            self.callback(qimage)
+
+    def setImage(self, img):
+        """Called when a new image is loaded — updates the dialog's base image."""
+        self.img = img
+        # Re-apply current brightness/contrast to the new image
+        self.onNewValue()
+
+    #END
