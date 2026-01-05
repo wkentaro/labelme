@@ -8,7 +8,6 @@ import os
 import os.path as osp
 import re
 import types
-import typing
 import webbrowser
 
 import imgviz
@@ -407,6 +406,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
+        createBrushMode = action(
+            self.tr("Create Brush"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="brush"),
+            shortcuts["create_brush"],
+            "note-pencil.svg",
+            self.tr("Start painting with brush. Enter/Space to confirm."),
+            enabled=False,
+        )
         editMode = action(
             self.tr("Edit Polygons"),
             lambda: self._switch_canvas_mode(edit=True),
@@ -681,6 +688,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             createAiPolygonMode=createAiPolygonMode,
             createAiMaskMode=createAiMaskMode,
+            createBrushMode=createBrushMode,
             zoom=zoom,
             zoomIn=zoomIn,
             zoomOut=zoomOut,
@@ -703,6 +711,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("linestrip", createLineStripMode),
             ("ai_polygon", createAiPolygonMode),
             ("ai_mask", createAiMaskMode),
+            ("brush", createBrushMode),
         ]
 
         # Group zoom controls into a list for easier toggling.
@@ -724,6 +733,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode,
             createAiPolygonMode,
             createAiMaskMode,
+            createBrushMode,
             brightnessContrast,
         )
         # menu shown at right click
@@ -1055,7 +1065,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         model_name: str = "yoloworld"
         model_type = osam.apis.get_model_type_by_name(model_name)
-        model_type = typing.cast(type[osam.types.Model], model_type)
         if not (_is_already_downloaded := model_type.get_size() is not None):
             if not download_ai_model(model_name=model_name, parent=self):
                 return
@@ -1437,9 +1446,6 @@ class MainWindow(QtWidgets.QMainWindow):
             default_flags = {}
             if self._config["label_flags"]:
                 for pattern, keys in self._config["label_flags"].items():
-                    if not isinstance(shape.label, str):
-                        logger.warning("shape.label is not str: {}", shape.label)
-                        continue
                     if re.match(pattern, shape.label):
                         for key in keys:
                             default_flags[key] = False
@@ -1829,14 +1835,14 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("loaded file: {!r}", filename)
         return True
 
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+    def resizeEvent(self, event):
         if (
             self.canvas
             and not self.image.isNull()
             and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
             self._adjust_scale()
-        super().resizeEvent(a0)
+        super().resizeEvent(event)
 
     def _paint_canvas(self) -> None:
         if self.image.isNull():
@@ -1870,9 +1876,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["store_data"] = enabled
         self.actions.saveWithImageData.setChecked(enabled)
 
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+    def closeEvent(self, event):
         if not self._can_continue():
-            a0.ignore()
+            event.ignore()
         self.settings.setValue("filename", self.filename if self.filename else "")
         self.settings.setValue("window/size", self.size())
         self.settings.setValue("window/position", self.pos())
@@ -1881,23 +1887,23 @@ class MainWindow(QtWidgets.QMainWindow):
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
-    def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
+    def dragEnterEvent(self, event):
         extensions = [
             f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-        if a0.mimeData().hasUrls():
-            items = [i.toLocalFile() for i in a0.mimeData().urls()]
+        if event.mimeData().hasUrls():
+            items = [i.toLocalFile() for i in event.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
-                a0.accept()
+                event.accept()
         else:
-            a0.ignore()
+            event.ignore()
 
-    def dropEvent(self, a0: QtGui.QDropEvent) -> None:
+    def dropEvent(self, event):
         if not self._can_continue():
-            a0.ignore()
+            event.ignore()
             return
-        items = [i.toLocalFile() for i in a0.mimeData().urls()]
+        items = [i.toLocalFile() for i in event.mimeData().urls()]
         self.importDroppedImageFiles(items)
 
     # User Dialogs #

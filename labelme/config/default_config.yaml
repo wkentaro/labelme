@@ -80,6 +80,7 @@ canvas:
     linestrip: false
     ai_polygon: false
     ai_mask: false
+    brush: false
 
 shortcuts:
   close: Ctrl+W
@@ -106,6 +107,7 @@ shortcuts:
   create_line: null
   create_point: null
   create_linestrip: null
+  create_brush: null
   edit_polygon: Ctrl+J
   delete_polygon: Delete
   duplicate_polygon: Ctrl+D
