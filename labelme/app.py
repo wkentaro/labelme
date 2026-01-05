@@ -879,6 +879,34 @@ class MainWindow(QtWidgets.QMainWindow):
         ai_prompt_action = QtWidgets.QWidgetAction(self)
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
+        # Brush size control
+        brushSizeAction = QtWidgets.QWidgetAction(self)
+        brushSizeAction.setDefaultWidget(QtWidgets.QWidget())
+        brushSizeAction.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
+        #
+        brushSizeLabel = QtWidgets.QLabel(self.tr("Brush Size"))
+        brushSizeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        brushSizeAction.defaultWidget().layout().addWidget(brushSizeLabel)
+        #
+        self._brushSizeSlider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self._brushSizeSlider.setMinimum(2)
+        self._brushSizeSlider.setMaximum(40)
+        self._brushSizeSlider.setValue(20)  # Default brush size
+        self._brushSizeSlider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self._brushSizeSlider.setTickInterval(5)
+        self._brushSizeSlider.setToolTip(self.tr("Brush Size: 2-40 pixels"))
+        brushSizeAction.defaultWidget().layout().addWidget(self._brushSizeSlider)
+        #
+        self._brushSizeLabel = QtWidgets.QLabel("20")
+        self._brushSizeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        brushSizeAction.defaultWidget().layout().addWidget(self._brushSizeLabel)
+        #
+        self._brushSizeSlider.valueChanged.connect(
+            lambda value: self._on_brush_size_changed(value)
+        )
+        # Initialize brush size
+        self.canvas.set_brush_size(20)
+
         self.addToolBar(
             Qt.TopToolBarArea,
             ToolBar(
@@ -903,6 +931,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     selectAiModel,
                     None,
                     ai_prompt_action,
+                    None,
+                    brushSizeAction,
                 ],
                 font_base=self.font(),
             ),
@@ -1059,6 +1089,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def show_status_message(self, message, delay=500):
         self.statusBar().showMessage(message, delay)
+
+    def _on_brush_size_changed(self, value: int) -> None:
+        """Handle brush size slider value change"""
+        self.canvas.set_brush_size(value)
+        self._brushSizeLabel.setText(str(value))
 
     def _submit_ai_prompt(self, _) -> None:
         texts = self._ai_prompt_widget.get_text_prompt().split(",")

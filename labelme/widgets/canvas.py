@@ -137,6 +137,7 @@ class Canvas(QtWidgets.QWidget):
         self._brush_size: int = 20  # brush size
         self._is_painting: bool = False
         self._last_brush_pos: QPointF | None = None
+        self._brush_press_pos: QPointF | None = None  # Record the position when mouse is pressed
         self._brush_confirm_button: QtWidgets.QPushButton | None = None
         self._brush_confirm_pos: QPointF | None = None
         # Menus:
@@ -177,11 +178,18 @@ class Canvas(QtWidgets.QWidget):
             self._brush_image = None
             self._is_painting = False
             self._last_brush_pos = None
+            self._brush_press_pos = None
             self._hide_brush_confirm_button()
 
     def set_ai_model_name(self, model_name: str) -> None:
         logger.debug("Setting AI model to {!r}", model_name)
         self._ai_model_name = model_name
+
+    def set_brush_size(self, size: int) -> None:
+        """Set the brush size (2-40 pixels)"""
+        size = max(2, min(40, size))  # Clamp between 2 and 40
+        self._brush_size = size
+        logger.debug("Setting brush size to {!r}", size)
 
     def _get_ai_model(self) -> osam.types.Model:
         if self._ai_model_cache and self._ai_model_cache.name == self._ai_model_name:
@@ -571,14 +579,16 @@ class Canvas(QtWidgets.QWidget):
                             # Clicked outside the button area, hide the button and restart painting
                             self._hide_brush_confirm_button()
                             self._brush_image = None
+                            self._brush_press_pos = None
                     
                     if not self.outOfPixmap(pos):
                         if self._brush_image is None:
                             # Initialize the brush image
                             self._init_brush_image()
                         self._is_painting = True
-                        self._last_brush_pos = pos
-                        self._paint_brush_stroke(pos)
+                        self._brush_press_pos = pos  # Record the press position
+                        self._last_brush_pos = None  # Reset to ensure a circle is drawn on first press
+                        self._paint_brush_stroke(pos)  # Draw a circle at the press position
                         self.repaint()
                     return
                 
@@ -680,7 +690,18 @@ class Canvas(QtWidgets.QWidget):
             # End brush painting, display the confirmation button
             if self.drawing() and self.createMode == "brush":
                 self._is_painting = False
+                # Check if it's a single click (no movement or very small movement)
+                release_pos = self.transformPos(ev.localPos())
+                if self._brush_press_pos is not None:
+                    distance = labelme.utils.distance(self._brush_press_pos - release_pos)
+                    # If it's a single click (movement less than 2 pixels), ensure a circle is drawn
+                    if distance < 2 and self._brush_image is not None:
+                        # Draw a circle at the release position if no movement occurred
+                        self._last_brush_pos = None
+                        self._paint_brush_stroke(release_pos)
+                        self.repaint()
                 self._last_brush_pos = None
+                self._brush_press_pos = None
                 # If there is painting content, display the confirmation button
                 if self._brush_image is not None:
                     self._show_brush_confirm_button(ev.pos())
@@ -983,6 +1004,7 @@ class Canvas(QtWidgets.QWidget):
             self._brush_image = None
             self._is_painting = False
             self._last_brush_pos = None
+            self._brush_press_pos = None
             self._hide_brush_confirm_button()
             self.setHiding(False)
             self.newShape.emit()
@@ -1112,6 +1134,7 @@ class Canvas(QtWidgets.QWidget):
                 self._brush_image = None
                 self._is_painting = False
                 self._last_brush_pos = None
+                self._brush_press_pos = None
                 self._hide_brush_confirm_button()
                 self.update()
                 self._update_status()
@@ -1226,6 +1249,7 @@ class Canvas(QtWidgets.QWidget):
         self._brush_image = None
         self._is_painting = False
         self._last_brush_pos = None
+        self._brush_press_pos = None
         self._hide_brush_confirm_button()
         self.update()
 
@@ -1295,14 +1319,16 @@ class Canvas(QtWidgets.QWidget):
                 painter.drawLine(last_pos, pos)
         else:
             # For the first drawing, draw a circular dot.
+            # Make single click circle smaller than brush size (about 70% of brush size)
             green_color = QtGui.QColor(0, 255, 0, 25)
             painter.setBrush(QtGui.QBrush(green_color))
-            radius = self._brush_size / 2
+            click_size = max(2, int(self._brush_size * 0.5))  # Single click size is 70% of brush size, minimum 2
+            radius = click_size / 2
             painter.drawEllipse(
                 pos.x() - radius,
                 pos.y() - radius,
-                self._brush_size,
-                self._brush_size
+                click_size,
+                click_size
             )
 
         painter.end()
@@ -1353,6 +1379,7 @@ class Canvas(QtWidgets.QWidget):
         if self._brush_image is not None:
             self._convert_brush_to_polygon()
             self._brush_image = None
+            self._brush_press_pos = None
             self._hide_brush_confirm_button()
             self.setHiding(False)
             self.newShape.emit()
