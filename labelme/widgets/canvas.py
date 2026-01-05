@@ -140,6 +140,7 @@ class Canvas(QtWidgets.QWidget):
         self._last_brush_pos: QPointF | None = None
         self._brush_press_pos: QPointF | None = None  # Record the position when mouse is pressed
         self._brush_confirm_button: QtWidgets.QPushButton | None = None
+        self._brush_delete_button: QtWidgets.QPushButton | None = None
         self._brush_confirm_pos: QPointF | None = None
         # Menus:
         # 0: right-click without selection and dragging of shapes
@@ -571,16 +572,19 @@ class Canvas(QtWidgets.QWidget):
             if self.drawing():
                 # Brush painting mode
                 if self.createMode == "brush":
-                    # If the confirmation button is clicked, do not process (let the button handle it)
-                    if self._brush_confirm_button and self._brush_confirm_button.isVisible():
-                        button_rect = self._brush_confirm_button.geometry()
-                        if button_rect.contains(ev.pos()):
-                            return  # Let the button handle the click
-                        else:
-                            # Clicked outside the button area, hide the button and restart painting
-                            self._hide_brush_confirm_button()
-                            self._brush_image = None
-                            self._brush_press_pos = None
+                    # If the confirmation or delete button is clicked, do not process (let the button handle it)
+                    if (self._brush_confirm_button and self._brush_confirm_button.isVisible() and 
+                        self._brush_confirm_button.geometry().contains(ev.pos())):
+                        return  # Let the button handle the click
+                    if (self._brush_delete_button and self._brush_delete_button.isVisible() and 
+                        self._brush_delete_button.geometry().contains(ev.pos())):
+                        return  # Let the button handle the click
+                    # Clicked outside the button area, hide the buttons and restart painting
+                    if (self._brush_confirm_button and self._brush_confirm_button.isVisible()) or \
+                       (self._brush_delete_button and self._brush_delete_button.isVisible()):
+                        self._hide_brush_confirm_button()
+                        self._brush_image = None
+                        self._brush_press_pos = None
                     
                     if not self.outOfPixmap(pos):
                         if self._brush_image is None:
@@ -1339,7 +1343,8 @@ class Canvas(QtWidgets.QWidget):
         self._last_brush_pos = pos
 
     def _show_brush_confirm_button(self, pos: QPoint):
-        """ Display confirmation button """
+        """ Display confirmation and delete buttons """
+        # Create Save button if not exists
         if self._brush_confirm_button is None:
             self._brush_confirm_button = QtWidgets.QPushButton(self.tr("Save"), self)
             self._brush_confirm_button.setStyleSheet(
@@ -1362,21 +1367,64 @@ class Canvas(QtWidgets.QWidget):
             )
             self._brush_confirm_button.clicked.connect(self._on_brush_confirm_clicked)
         
-        # Set the button position (near the mouse position)
-        button_size = self._brush_confirm_button.sizeHint()
-        # Ensure the button does not exceed the canvas range
-        x = min(max(pos.x(), 10), self.width() - button_size.width() - 10)
-        y = min(max(pos.y() - button_size.height() - 10, 10), self.height() - button_size.height() - 10)
+        # Create Delete button if not exists
+        if self._brush_delete_button is None:
+            self._brush_delete_button = QtWidgets.QPushButton(self)
+            self._brush_delete_button.setIcon(labelme.utils.newIcon("x-circle.svg"))
+            self._brush_delete_button.setToolTip(self.tr("Cancel"))
+            self._brush_delete_button.setStyleSheet(
+                """
+                QPushButton {
+                    background-color: #f44336;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 6px;
+                    min-width: 32px;
+                    min-height: 32px;
+                }
+                QPushButton:hover {
+                    background-color: #da190b;
+                }
+                QPushButton:pressed {
+                    background-color: #c62828;
+                }
+                """
+            )
+            self._brush_delete_button.clicked.connect(self._on_brush_delete_clicked)
+        
+        # Set button positions (Save button on the left, Delete button on the right)
+        save_button_size = self._brush_confirm_button.sizeHint()
+        delete_button_size = self._brush_delete_button.sizeHint()
+        button_spacing = 5  # Space between buttons
+        
+        # Calculate total width needed
+        total_width = save_button_size.width() + button_spacing + delete_button_size.width()
+        
+        # Ensure buttons do not exceed the canvas range
+        x = min(max(pos.x() - total_width // 2, 10), self.width() - total_width - 10)
+        y = min(max(pos.y() - save_button_size.height() - 10, 10), self.height() - save_button_size.height() - 10)
+        
+        # Position Save button
         self._brush_confirm_button.move(x, y)
         self._brush_confirm_button.show()
         self._brush_confirm_button.raise_()
+        
+        # Position Delete button next to Save button
+        delete_x = x + save_button_size.width() + button_spacing
+        self._brush_delete_button.move(delete_x, y)
+        self._brush_delete_button.show()
+        self._brush_delete_button.raise_()
+        
         self._brush_confirm_pos = QPointF(x, y)
 
     def _hide_brush_confirm_button(self):
-        """ Hide the confirmation button """
+        """ Hide the confirmation and delete buttons """
         if self._brush_confirm_button is not None:
             self._brush_confirm_button.hide()
-            self._brush_confirm_pos = None
+        if self._brush_delete_button is not None:
+            self._brush_delete_button.hide()
+        self._brush_confirm_pos = None
 
     def _on_brush_confirm_clicked(self):
         """ Handle the confirmation button click """
@@ -1388,6 +1436,16 @@ class Canvas(QtWidgets.QWidget):
             self.setHiding(False)
             self.newShape.emit()
             self.update()
+
+    def _on_brush_delete_clicked(self):
+        """ Handle the delete button click - cancel the current brush annotation """
+        self._brush_image = None
+        self._is_painting = False
+        self._last_brush_pos = None
+        self._brush_press_pos = None
+        self._hide_brush_confirm_button()
+        self.update()
+        self._update_status()
 
     def _convert_brush_to_polygon(self):
         """ Convert the brush painting area to a polygon """
