@@ -13,6 +13,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
+from PyQt5.QtCore import QRectF
 from PyQt5.QtCore import Qt
 
 import labelme.utils
@@ -1323,12 +1324,15 @@ class Canvas(QtWidgets.QWidget):
             green_color = QtGui.QColor(0, 255, 0, 25)
             painter.setBrush(QtGui.QBrush(green_color))
             click_size = max(2, int(self._brush_size * 0.5))  # Single click size is 70% of brush size, minimum 2
-            radius = click_size / 2
+            radius = click_size / 2.0
+            # Use QRectF for drawEllipse to handle float coordinates
             painter.drawEllipse(
-                pos.x() - radius,
-                pos.y() - radius,
-                click_size,
-                click_size
+                QRectF(
+                    pos.x() - radius,
+                    pos.y() - radius,
+                    click_size,
+                    click_size
+                )
             )
 
         painter.end()
