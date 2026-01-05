@@ -1372,16 +1372,17 @@ class Canvas(QtWidgets.QWidget):
             self._brush_delete_button = QtWidgets.QPushButton(self)
             self._brush_delete_button.setIcon(labelme.utils.newIcon("x-circle.svg"))
             self._brush_delete_button.setToolTip(self.tr("Cancel"))
+            # Set fixed size for circular button (smaller than Save button)
+            button_size = 28
+            self._brush_delete_button.setFixedSize(button_size, button_size)
             self._brush_delete_button.setStyleSheet(
                 """
                 QPushButton {
                     background-color: #f44336;
                     color: white;
                     border: none;
-                    border-radius: 4px;
-                    padding: 6px;
-                    min-width: 32px;
-                    min-height: 32px;
+                    border-radius: 14px;
+                    padding: 0px;
                 }
                 QPushButton:hover {
                     background-color: #da190b;
@@ -1395,11 +1396,11 @@ class Canvas(QtWidgets.QWidget):
         
         # Set button positions (Save button on the left, Delete button on the right)
         save_button_size = self._brush_confirm_button.sizeHint()
-        delete_button_size = self._brush_delete_button.sizeHint()
+        delete_button_size = 28  # Fixed size for circular delete button (smaller than Save)
         button_spacing = 5  # Space between buttons
         
         # Calculate total width needed
-        total_width = save_button_size.width() + button_spacing + delete_button_size.width()
+        total_width = save_button_size.width() + button_spacing + delete_button_size
         
         # Ensure buttons do not exceed the canvas range
         x = min(max(pos.x() - total_width // 2, 10), self.width() - total_width - 10)
@@ -1410,9 +1411,11 @@ class Canvas(QtWidgets.QWidget):
         self._brush_confirm_button.show()
         self._brush_confirm_button.raise_()
         
-        # Position Delete button next to Save button
+        # Position Delete button next to Save button, vertically centered
         delete_x = x + save_button_size.width() + button_spacing
-        self._brush_delete_button.move(delete_x, y)
+        # Center the smaller delete button vertically with the save button
+        delete_y = y + (save_button_size.height() - delete_button_size) // 2
+        self._brush_delete_button.move(delete_x, delete_y)
         self._brush_delete_button.show()
         self._brush_delete_button.raise_()
         
