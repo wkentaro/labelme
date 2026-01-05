@@ -1269,6 +1269,39 @@ class Canvas(QtWidgets.QWidget):
         )
         self._brush_image.fill(QtCore.Qt.transparent)
 
+    def _get_brush_color(self, pos: QPointF) -> QtGui.QColor:
+        """Get brush color based on background color. Use red if background is green."""
+        if self.pixmap.isNull():
+            return QtGui.QColor(0, 255, 0, 25)  # Default green
+        
+        # Sample background color at the position
+        x = int(max(0, min(pos.x(), self.pixmap.width() - 1)))
+        y = int(max(0, min(pos.y(), self.pixmap.height() - 1)))
+        
+        # Convert pixmap to image to access pixel data
+        image = self.pixmap.toImage()
+        if x < 0 or y < 0 or x >= image.width() or y >= image.height():
+            return QtGui.QColor(0, 255, 0, 25)  # Default green
+        
+        pixel_color = QtGui.QColor(image.pixel(x, y))
+        r, g, b = pixel_color.red(), pixel_color.green(), pixel_color.blue()
+        
+        # Check if the background is green (green channel is dominant)
+        # Consider it green if green is significantly higher than red and blue
+        green_threshold = 50  # Threshold for green detection
+        is_green_background = (
+            g > r + green_threshold and 
+            g > b + green_threshold and 
+            g > 100  # Ensure it's actually green, not just dark
+        )
+        
+        if is_green_background:
+            # Use red color for visibility on green background
+            return QtGui.QColor(255, 0, 0, 25)  # Red with transparency
+        else:
+            # Use green color for other backgrounds
+            return QtGui.QColor(0, 255, 0, 25)  # Green with transparency
+
     def _paint_brush_stroke(self, pos: QPointF):
         """Draw the brush stroke, following the mouse movement"""
         if self._brush_image is None:
@@ -1283,8 +1316,9 @@ class Canvas(QtWidgets.QWidget):
 
         painter = QtGui.QPainter(self._brush_image)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        green_color = QtGui.QColor(0, 255, 0, 25)
-        pen = QtGui.QPen(green_color, self._brush_size)
+        # Get brush color based on background
+        brush_color = self._get_brush_color(pos)
+        pen = QtGui.QPen(brush_color, self._brush_size)
         pen.setCapStyle(QtCore.Qt.RoundCap)
         pen.setJoinStyle(QtCore.Qt.RoundJoin)
         painter.setPen(pen)
@@ -1325,8 +1359,9 @@ class Canvas(QtWidgets.QWidget):
         else:
             # For the first drawing, draw a circular dot.
             # Make single click circle smaller than brush size (about 70% of brush size)
-            green_color = QtGui.QColor(0, 255, 0, 25)
-            painter.setBrush(QtGui.QBrush(green_color))
+            # Use the same color detection for the circle
+            brush_color = self._get_brush_color(pos)
+            painter.setBrush(QtGui.QBrush(brush_color))
             click_size = max(2, int(self._brush_size * 0.5))  # Single click size is 70% of brush size, minimum 2
             radius = click_size / 2.0
             # Use QRectF for drawEllipse to handle float coordinates
