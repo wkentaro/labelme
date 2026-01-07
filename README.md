@@ -44,12 +44,15 @@ It is written in Python and uses Qt for its graphical interface.
 
 ## Features
 
-- [x] Image annotation for polygon, rectangle, circle, line and point. ([tutorial](examples/tutorial))
-- [x] Image flag annotation for classification and cleaning. ([#166](https://github.com/wkentaro/labelme/pull/166))
-- [x] Video annotation. ([video annotation](examples/video_annotation))
-- [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc). ([#144](https://github.com/wkentaro/labelme/pull/144))
-- [x] Exporting VOC-format dataset for semantic/instance segmentation. ([semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation))
-- [x] Exporting COCO-format dataset for instance segmentation. ([instance segmentation](examples/instance_segmentation))
+- [x] Image annotation for polygon, rectangle, circle, line and point ([tutorial](examples/tutorial))
+- [x] Image flag annotation for classification and cleaning ([#166](https://github.com/wkentaro/labelme/pull/166))
+- [x] Video annotation ([video annotation](examples/video_annotation))
+- [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc) ([#144](https://github.com/wkentaro/labelme/pull/144))
+- [x] Exporting VOC-format dataset for [semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation)
+- [x] Exporting COCO-format dataset for [instance segmentation](examples/instance_segmentation)
+- [x] Multi-language support: English, Chinese (Simplified/Traditional) `LANG=zh_CN.UTF-8 labelme`
+- [x] Point-to-polygon/mask annotation using SAM models
+- [x] Text-to-rectangle annotation using YOLO-world models
 
 
 ## Installation
