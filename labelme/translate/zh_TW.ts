@@ -90,16 +90,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click and drag to paint, Enter/Space to confirm</source>
-        <translation type="obsolete">點擊並拖拽進行塗繪，按 Enter 或空格鍵確認</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Continue painting or Enter/Space to confirm</source>
-        <translation type="obsolete">繼續塗繪或按 Enter 或空格鍵確認</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + 點擊以刪除點</translation>
     </message>
@@ -112,11 +102,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>右鍵點擊並拖拽以複製形狀</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Save</source>
-        <translation type="obsolete">保存</translation>
     </message>
 </context>
 <context>
@@ -185,7 +170,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打開下一幅 (按Ctl+Shift拷貝標籤)</translation>
+        <translation>打開下一幅（按 Ctrl+Shift 複製標籤）</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -195,7 +180,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打開上一幅 (按Ctl+Shift拷貝標籤)</translation>
+        <translation>打開上一幅（按 Ctrl+Shift 複製標籤）</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -256,7 +241,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
-        <translation>将圖像數據保存到標籤文件中</translation>
+        <translation>將圖像數據保存到標籤文件中</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -271,12 +256,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
-        <translation>保留最後的標註</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep pevious annotation&quot; mode</source>
-        <translation type="obsolete">開關“保留最後的標註”模式</translation>
+        <translation>保留上一個標註</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -311,12 +291,12 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>創建直线</translation>
+        <translation>創建直線</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>開始創建直线</translation>
+        <translation>開始繪製直線</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -336,7 +316,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>開始繪製折線。Ctrl+单击左键结束繪製。</translation>
+        <translation>開始繪製折線。Ctrl+單擊左鍵結束繪製。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -346,7 +326,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>開始繪製AI多邊形。Ctrl+单击左键结束繪製。</translation>
+        <translation>開始繪製AI多邊形。Ctrl+單擊左鍵結束繪製。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -356,17 +336,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>開始繪製AI蒙版。Ctrl+单击左键结束繪製。</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Brush</source>
-        <translation type="obsolete">創建畫筆</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start painting with brush. Enter/Space to confirm.</source>
-        <translation type="obsolete">開始使用畫筆塗繪。按 Enter 或空格鍵確認。</translation>
+        <translation>開始繪製AI蒙版。Ctrl+單擊左鍵結束繪製。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,7 +366,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected polygons</source>
-        <translation>为選中的多邊形創建副本</translation>
+        <translation>為選中的多邊形創建副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -436,7 +406,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
-        <translation>从多邊形中移除選中的控制點</translation>
+        <translation>從多邊形中移除選中的控制點</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -500,7 +470,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom in or out of the image. Also accessible with {} and {} from the canvas.</source>
-        <translation>縮放圖像。亦可从畫布的{}和{}訪問</translation>
+        <translation>縮放圖像。亦可從畫布的{}和{}訪問</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -540,12 +510,12 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>保留最後的比例(&amp;K)</translation>
+        <translation>保留上一個比例(&amp;K)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>保留最後的縮放比例</translation>
+        <translation>保留上一個縮放比例</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,7 +580,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
-        <translation>视图(&amp;V)</translation>
+        <translation>視圖(&amp;V)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -624,13 +594,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI Model</source>
-        <translation type="obsolete">AI模型</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s 啟動完了</translation>
+        <translation>%s 已啟動</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -670,7 +635,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请確認&lt;i&gt;%s&lt;/i&gt;是一个合法的標籤文件。</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;請確認&lt;i&gt;%s&lt;/i&gt;是一個合法的標籤文件。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -680,7 +645,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;Make sure &lt;i&gt;{0}&lt;/i&gt; is a valid image file.&lt;br/&gt;Supported image formats: {1}&lt;/p&gt;</source>
-        <translation>lt;p&gt;请確認&lt;i&gt;{0}&lt;/i&gt;是一个合法的圖像文件。&lt;br/&gt;支持的格式包括: {1}&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;請確認&lt;i&gt;{0}&lt;/i&gt;是一個合法的圖像文件。&lt;br/&gt;支援的格式包括: {1}&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -700,12 +665,12 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 保存和加载批注的路徑</translation>
+        <translation>%s - 保存和載入批註的路徑</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 批注會被加载和保存在 %s</translation>
+        <translation>%s . 批註會被載入和保存在 %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -725,7 +690,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete this label file, proceed anyway?</source>
-        <translation>即将永久性刪除此標籤文件。還要繼續吗?</translation>
+        <translation>即將永久性刪除此標籤文件。還要繼續嗎?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -735,17 +700,17 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>關閉前保存批注到&quot;{}&quot;吗?</translation>
+        <translation>關閉前保存批註到&quot;{}&quot;嗎?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
-        <translation>保存批注吗?</translation>
+        <translation>保存批註嗎?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>即将永久性刪除多邊形{}。還要繼續吗?</translation>
+        <translation>即將永久性刪除多邊形{}。還要繼續嗎?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -755,12 +720,12 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation type="unfinished"></translation>
+        <translation>開關「保留上一個標註」模式</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>AI Mask Model</source>
-        <translation type="unfinished"></translation>
+        <translation>AI蒙版模型</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -773,7 +738,7 @@ Polygons</source>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>IoU Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>IoU閾值</translation>
     </message>
 </context>
 <context>
@@ -781,7 +746,7 @@ Polygons</source>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>Score Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>分數閾值</translation>
     </message>
 </context>
 <context>
@@ -789,12 +754,12 @@ Polygons</source>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>AI Prompt</source>
-        <translation type="unfinished"></translation>
+        <translation>AI提示</translation>
     </message>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
-        <translation type="unfinished"></translation>
+        <translation>例如：狗,貓,鳥</translation>
     </message>
 </context>
 </TS>
