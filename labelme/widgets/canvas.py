@@ -179,11 +179,13 @@ class Canvas(QtWidgets.QWidget):
         self._createMode = value
         # Reset the brush state
         if value != "brush":
-            self._brush_image = None
-            self._is_painting = False
-            self._last_brush_pos = None
-            self._brush_press_pos = None
-            self._hide_brush_confirm_button()
+            if self._brush_image is not None:
+                self._brush_image = None
+                self._is_painting = False
+                self._last_brush_pos = None
+                self._brush_press_pos = None
+                self._hide_brush_confirm_button()
+                self.update()  # Repaint to clear brush drawing
 
     def set_ai_model_name(self, model_name: str) -> None:
         logger.debug("Setting AI model to {!r}", model_name)
@@ -286,6 +288,13 @@ class Canvas(QtWidgets.QWidget):
         self.mode = CanvasMode.EDIT if value else CanvasMode.CREATE
         if self.mode == CanvasMode.EDIT:
             # CREATE -> EDIT
+            # Clear brush painting if switching away from brush mode
+            if self._brush_image is not None:
+                self._brush_image = None
+                self._is_painting = False
+                self._last_brush_pos = None
+                self._brush_press_pos = None
+                self._hide_brush_confirm_button()
             self.repaint()  # clear crosshair
         else:
             # EDIT -> CREATE
