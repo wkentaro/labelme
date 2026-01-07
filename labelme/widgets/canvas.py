@@ -138,7 +138,9 @@ class Canvas(QtWidgets.QWidget):
         self._brush_size: int = 20  # brush size
         self._is_painting: bool = False
         self._last_brush_pos: QPointF | None = None
-        self._brush_press_pos: QPointF | None = None  # Record the position when mouse is pressed
+        self._brush_press_pos: QPointF | None = (
+            None  # Record the position when mouse is pressed
+        )
         self._brush_confirm_button: QtWidgets.QPushButton | None = None
         self._brush_delete_button: QtWidgets.QPushButton | None = None
         self._brush_confirm_pos: QPointF | None = None  # Position in image coordinates
@@ -573,30 +575,45 @@ class Canvas(QtWidgets.QWidget):
                 # Brush painting mode
                 if self.createMode == "brush":
                     # If the confirmation or delete button is clicked, do not process (let the button handle it)
-                    if (self._brush_confirm_button and self._brush_confirm_button.isVisible() and 
-                        self._brush_confirm_button.geometry().contains(ev.pos())):
+                    if (
+                        self._brush_confirm_button
+                        and self._brush_confirm_button.isVisible()
+                        and self._brush_confirm_button.geometry().contains(ev.pos())
+                    ):
                         return  # Let the button handle the click
-                    if (self._brush_delete_button and self._brush_delete_button.isVisible() and 
-                        self._brush_delete_button.geometry().contains(ev.pos())):
+                    if (
+                        self._brush_delete_button
+                        and self._brush_delete_button.isVisible()
+                        and self._brush_delete_button.geometry().contains(ev.pos())
+                    ):
                         return  # Let the button handle the click
                     # Clicked outside the button area, hide the buttons and restart painting
-                    if (self._brush_confirm_button and self._brush_confirm_button.isVisible()) or \
-                       (self._brush_delete_button and self._brush_delete_button.isVisible()):
+                    if (
+                        self._brush_confirm_button
+                        and self._brush_confirm_button.isVisible()
+                    ) or (
+                        self._brush_delete_button
+                        and self._brush_delete_button.isVisible()
+                    ):
                         self._hide_brush_confirm_button()
                         self._brush_image = None
                         self._brush_press_pos = None
-                    
+
                     if not self.outOfPixmap(pos):
                         if self._brush_image is None:
                             # Initialize the brush image
                             self._init_brush_image()
                         self._is_painting = True
                         self._brush_press_pos = pos  # Record the press position
-                        self._last_brush_pos = None  # Reset to ensure a circle is drawn on first press
-                        self._paint_brush_stroke(pos)  # Draw a circle at the press position
+                        self._last_brush_pos = (
+                            None  # Reset to ensure a circle is drawn on first press
+                        )
+                        self._paint_brush_stroke(
+                            pos
+                        )  # Draw a circle at the press position
                         self.repaint()
                     return
-                
+
                 if self.current:
                     # Add point to existing shape.
                     if self.createMode == "polygon":
@@ -698,7 +715,9 @@ class Canvas(QtWidgets.QWidget):
                 # Check if it's a single click (no movement or very small movement)
                 release_pos = self.transformPos(ev.localPos())
                 if self._brush_press_pos is not None:
-                    distance = labelme.utils.distance(self._brush_press_pos - release_pos)
+                    distance = labelme.utils.distance(
+                        self._brush_press_pos - release_pos
+                    )
                     # If it's a single click (movement less than 2 pixels), ensure a circle is drawn
                     if distance < 2 and self._brush_image is not None:
                         # Draw a circle at the release position if no movement occurred
@@ -909,9 +928,9 @@ class Canvas(QtWidgets.QWidget):
         if self.createMode == "brush" and self._brush_image is not None:
             p.drawImage(0, 0, self._brush_image)
         p.scale(1 / self.scale, 1 / self.scale)
-        
+
         # Update brush button positions if they are visible
-        if (self._brush_confirm_button and self._brush_confirm_button.isVisible()):
+        if self._brush_confirm_button and self._brush_confirm_button.isVisible():
             self._update_brush_button_positions()
 
         # draw crosshair
@@ -1139,7 +1158,11 @@ class Canvas(QtWidgets.QWidget):
         key = ev.key()
         if self.drawing():
             # Handle brush mode cancellation
-            if key == Qt.Key_Escape and self.createMode == "brush" and self._brush_image is not None:
+            if (
+                key == Qt.Key_Escape
+                and self.createMode == "brush"
+                and self._brush_image is not None
+            ):
                 self._brush_image = None
                 self._is_painting = False
                 self._last_brush_pos = None
@@ -1277,28 +1300,28 @@ class Canvas(QtWidgets.QWidget):
         """Get brush color based on background color. Use red if background is green."""
         if self.pixmap.isNull():
             return QtGui.QColor(0, 255, 0, 25)  # Default green
-        
+
         # Sample background color at the position
         x = int(max(0, min(pos.x(), self.pixmap.width() - 1)))
         y = int(max(0, min(pos.y(), self.pixmap.height() - 1)))
-        
+
         # Convert pixmap to image to access pixel data
         image = self.pixmap.toImage()
         if x < 0 or y < 0 or x >= image.width() or y >= image.height():
             return QtGui.QColor(0, 255, 0, 25)  # Default green
-        
+
         pixel_color = QtGui.QColor(image.pixel(x, y))
         r, g, b = pixel_color.red(), pixel_color.green(), pixel_color.blue()
-        
+
         # Check if the background is green (green channel is dominant)
         # Consider it green if green is significantly higher than red and blue
         green_threshold = 50  # Threshold for green detection
         is_green_background = (
-            g > r + green_threshold and 
-            g > b + green_threshold and 
-            g > 100  # Ensure it's actually green, not just dark
+            g > r + green_threshold
+            and g > b + green_threshold
+            and g > 100  # Ensure it's actually green, not just dark
         )
-        
+
         if is_green_background:
             # Use red color for visibility on green background
             return QtGui.QColor(255, 0, 0, 25)  # Red with transparency
@@ -1313,10 +1336,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Ensure the coordinates are within the image range
         w, h = self.pixmap.width(), self.pixmap.height()
-        pos = QPointF(
-            max(0, min(pos.x(), w - 1)),
-            max(0, min(pos.y(), h - 1))
-        )
+        pos = QPointF(max(0, min(pos.x(), w - 1)), max(0, min(pos.y(), h - 1)))
 
         painter = QtGui.QPainter(self._brush_image)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -1331,29 +1351,29 @@ class Canvas(QtWidgets.QWidget):
             # Ensure the previous point is also within the image range
             last_pos = QPointF(
                 max(0, min(self._last_brush_pos.x(), w - 1)),
-                max(0, min(self._last_brush_pos.y(), h - 1))
+                max(0, min(self._last_brush_pos.y(), h - 1)),
             )
-            
+
             # Calculate the distance between the two points
             distance = labelme.utils.distance(last_pos - pos)
-            
+
             # If the distance is too large, insert points in the middle to ensure smooth drawing
             if distance > self._brush_size / 4:
                 # Calculate the number of points to insert (ensuring each segment does not exceed the brush radius)
                 num_segments = max(2, int(distance / (self._brush_size / 4)))
                 prev_point = last_pos
-                
+
                 # Draw multiple line segments by interpolating between the two points
                 for i in range(1, num_segments + 1):
                     t = i / num_segments
                     current_point = QPointF(
                         last_pos.x() + (pos.x() - last_pos.x()) * t,
-                        last_pos.y() + (pos.y() - last_pos.y()) * t
+                        last_pos.y() + (pos.y() - last_pos.y()) * t,
                     )
                     # Ensure the interpolation point is also within range.
                     current_point = QPointF(
                         max(0, min(current_point.x(), w - 1)),
-                        max(0, min(current_point.y(), h - 1))
+                        max(0, min(current_point.y(), h - 1)),
                     )
                     painter.drawLine(prev_point, current_point)
                     prev_point = current_point
@@ -1366,16 +1386,13 @@ class Canvas(QtWidgets.QWidget):
             # Use the same color detection for the circle
             brush_color = self._get_brush_color(pos)
             painter.setBrush(QtGui.QBrush(brush_color))
-            click_size = max(2, int(self._brush_size * 0.5))  # Single click size is 70% of brush size, minimum 2
+            click_size = max(
+                2, int(self._brush_size * 0.5)
+            )  # Single click size is 70% of brush size, minimum 2
             radius = click_size / 2.0
             # Use QRectF for drawEllipse to handle float coordinates
             painter.drawEllipse(
-                QRectF(
-                    pos.x() - radius,
-                    pos.y() - radius,
-                    click_size,
-                    click_size
-                )
+                QRectF(pos.x() - radius, pos.y() - radius, click_size, click_size)
             )
 
         painter.end()
@@ -1389,27 +1406,39 @@ class Canvas(QtWidgets.QWidget):
             return
         if not self._brush_confirm_button.isVisible():
             return
-        
+
         # Convert image coordinates to widget coordinates
         image_pos = self._brush_confirm_pos
         widget_pos = self._image_to_widget_coords(image_pos)
-        
+
         # Set button positions (Save button on the left, Delete button on the right)
         save_button_size = self._brush_confirm_button.sizeHint()
-        delete_button_size = 28  # Fixed size for circular delete button (smaller than Save)
+        delete_button_size = (
+            28  # Fixed size for circular delete button (smaller than Save)
+        )
         button_spacing = 5  # Space between buttons
-        
+
         # Calculate total width needed
         total_width = save_button_size.width() + button_spacing + delete_button_size
-        
+
         # Ensure buttons do not exceed the canvas range
-        x = int(min(max(widget_pos.x() - total_width // 2, 10), self.width() - total_width - 10))
-        y = int(min(max(widget_pos.y() - save_button_size.height() - 10, 10), self.height() - save_button_size.height() - 10))
-        
+        x = int(
+            min(
+                max(widget_pos.x() - total_width // 2, 10),
+                self.width() - total_width - 10,
+            )
+        )
+        y = int(
+            min(
+                max(widget_pos.y() - save_button_size.height() - 10, 10),
+                self.height() - save_button_size.height() - 10,
+            )
+        )
+
         # Position Save button
         self._brush_confirm_button.move(x, y)
         self._brush_confirm_button.raise_()
-        
+
         # Position Delete button next to Save button, vertically centered
         delete_x = x + save_button_size.width() + button_spacing
         # Center the smaller delete button vertically with the save button
@@ -1422,15 +1451,15 @@ class Canvas(QtWidgets.QWidget):
         offset = self.offsetToCenter()
         widget_pos = QPointF(
             (image_pos.x() + offset.x()) * self.scale,
-            (image_pos.y() + offset.y()) * self.scale
+            (image_pos.y() + offset.y()) * self.scale,
         )
         return widget_pos
 
     def _show_brush_confirm_button(self, pos: QPoint):
-        """ Display confirmation and delete buttons """
+        """Display confirmation and delete buttons"""
         # Convert widget coordinates to image coordinates
         image_pos = self.transformPos(QPointF(pos))
-        
+
         # Create Save button if not exists
         if self._brush_confirm_button is None:
             self._brush_confirm_button = QtWidgets.QPushButton(self.tr("Save"), self)
@@ -1453,7 +1482,7 @@ class Canvas(QtWidgets.QWidget):
                 """
             )
             self._brush_confirm_button.clicked.connect(self._on_brush_confirm_clicked)
-        
+
         # Create Delete button if not exists
         if self._brush_delete_button is None:
             self._brush_delete_button = QtWidgets.QPushButton(self)
@@ -1480,19 +1509,19 @@ class Canvas(QtWidgets.QWidget):
                 """
             )
             self._brush_delete_button.clicked.connect(self._on_brush_delete_clicked)
-        
+
         # Save position in image coordinates
         self._brush_confirm_pos = image_pos
-        
+
         # Update button positions
         self._update_brush_button_positions()
-        
+
         # Show buttons
         self._brush_confirm_button.show()
         self._brush_delete_button.show()
 
     def _hide_brush_confirm_button(self):
-        """ Hide the confirmation and delete buttons """
+        """Hide the confirmation and delete buttons"""
         if self._brush_confirm_button is not None:
             self._brush_confirm_button.hide()
         if self._brush_delete_button is not None:
@@ -1500,7 +1529,7 @@ class Canvas(QtWidgets.QWidget):
         self._brush_confirm_pos = None
 
     def _on_brush_confirm_clicked(self):
-        """ Handle the confirmation button click """
+        """Handle the confirmation button click"""
         if self._brush_image is not None:
             self._convert_brush_to_polygon()
             self._brush_image = None
@@ -1511,7 +1540,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()
 
     def _on_brush_delete_clicked(self):
-        """ Handle the delete button click - cancel the current brush annotation """
+        """Handle the delete button click - cancel the current brush annotation"""
         self._brush_image = None
         self._is_painting = False
         self._last_brush_pos = None
@@ -1521,7 +1550,7 @@ class Canvas(QtWidgets.QWidget):
         self._update_status()
 
     def _convert_brush_to_polygon(self):
-        """ Convert the brush painting area to a polygon """
+        """Convert the brush painting area to a polygon"""
         if self._brush_image is None:
             return
 
