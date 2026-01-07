@@ -23,9 +23,12 @@ def main():
     labelme_path: pathlib.Path = here / ".." / "labelme"
     labelme_files: list[pathlib.Path] = list(labelme_path.rglob("*.py"))
 
-    LANGUAGES: list[str] = ["zh_CN"]
     labelme_translate_path: pathlib.Path = labelme_path / "translate"
-    for lang in LANGUAGES:
+
+    languages: list[str] = sorted(
+        [ts_file.stem for ts_file in labelme_translate_path.glob("*.ts")]
+    )
+    for lang in languages:
         ts_path: pathlib.Path = labelme_translate_path / f"{lang}.ts"
         subprocess.check_call(
             [
