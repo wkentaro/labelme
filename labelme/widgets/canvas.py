@@ -1590,15 +1590,13 @@ class Canvas(QtWidgets.QWidget):
             logger.warning("Polygon has less than 3 points")
             return
 
-        # Create a new Shape object
+        # Create a new Shape object (don't add to shapes yet, wait for label confirmation)
         self.current = Shape(shape_type="polygon")
         for point in polygon_points:
             self.current.addPoint(QPointF(point[0], point[1]))
         self.current.close()
 
-        self.shapes.append(self.current)
-        self.storeShapes()
-        self.current = None
+        # Note: storeShapes() will be called in newShape() after adding to shapes
 
 
 def _update_shape_with_sam(

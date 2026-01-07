@@ -1623,17 +1623,30 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ""
         if text:
             self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text, flags)
+            # For brush mode, shape is in self.current, not yet in shapes
+            if self.canvas.current is not None and self.canvas.createMode == "brush":
+                # Add the shape to shapes first
+                self.canvas.shapes.append(self.canvas.current)
+                self.canvas.storeShapes()
+                shape = self.canvas.setLastLabel(text, flags)
+            else:
+                shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
             shape.description = description
             self.addLabel(shape)
+            self.canvas.current = None  # Clear current after adding to shapes
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()
         else:
-            self.canvas.undoLastLine()
-            self.canvas.shapesBackups.pop()
+            # User cancelled, remove the shape that was created
+            if self.canvas.current is not None and self.canvas.createMode == "brush":
+                # For brush mode, just clear current
+                self.canvas.current = None
+            else:
+                self.canvas.undoLastLine()
+                self.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta, orientation):
         units = -delta * 0.1  # natural scroll
