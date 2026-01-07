@@ -574,7 +574,6 @@ class Canvas(QtWidgets.QWidget):
             if self.drawing():
                 # Brush painting mode
                 if self.createMode == "brush":
-                    # If the confirmation or delete button is clicked, do not process (let the button handle it)
                     if (
                         self._brush_confirm_button
                         and self._brush_confirm_button.isVisible()
@@ -587,7 +586,6 @@ class Canvas(QtWidgets.QWidget):
                         and self._brush_delete_button.geometry().contains(ev.pos())
                     ):
                         return  # Let the button handle the click
-                    # Clicked outside the button area, hide the buttons and restart painting
                     if (
                         self._brush_confirm_button
                         and self._brush_confirm_button.isVisible()
@@ -718,7 +716,7 @@ class Canvas(QtWidgets.QWidget):
                     distance = labelme.utils.distance(
                         self._brush_press_pos - release_pos
                     )
-                    # If it's a single click (movement less than 2 pixels), ensure a circle is drawn
+
                     if distance < 2 and self._brush_image is not None:
                         # Draw a circle at the release position if no movement occurred
                         self._last_brush_pos = None
@@ -1357,9 +1355,7 @@ class Canvas(QtWidgets.QWidget):
             # Calculate the distance between the two points
             distance = labelme.utils.distance(last_pos - pos)
 
-            # If the distance is too large, insert points in the middle to ensure smooth drawing
             if distance > self._brush_size / 4:
-                # Calculate the number of points to insert (ensuring each segment does not exceed the brush radius)
                 num_segments = max(2, int(distance / (self._brush_size / 4)))
                 prev_point = last_pos
 
