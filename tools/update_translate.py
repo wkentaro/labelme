@@ -25,6 +25,25 @@ def main():
 
     labelme_translate_path: pathlib.Path = labelme_path / "translate"
 
+    pylupdate_version: str = (
+        subprocess.check_output(["pylupdate5", "-version"], stderr=subprocess.STDOUT)
+        .decode()
+        .split()[-1]
+        .lstrip("v")
+    )
+    logger.info("using pylupdate5 version: {}", pylupdate_version)
+    if pylupdate_version.split(".")[:2] != ["5", "15"]:
+        logger.warning("pylupdate5 version is not 5.15.x, skipping .ts generation")
+        return
+
+    lrelease_version: str = (
+        subprocess.check_output(["lrelease", "-version"]).decode().split()[-1]
+    )
+    logger.info("using lrelease version: {}", lrelease_version)
+    if lrelease_version.split(".")[:2] != ["5", "15"]:
+        logger.warning("lrelease version is not 5.15.x, skipping .qm generation")
+        return
+
     languages: list[str] = sorted(
         [ts_file.stem for ts_file in labelme_translate_path.glob("*.ts")]
     )
@@ -46,17 +65,6 @@ def main():
         assert ts_content.strip() != new_ts_content.strip()
         ts_path.write_text(new_ts_content)
         logger.info("updated .ts file: {}", ts_path)
-
-        lrelease_version: str = (
-            subprocess.check_output(["lrelease", "-version"]).decode().split()[-1]
-        )
-        logger.info("using lrelease version: {}", lrelease_version)
-        if lrelease_version.split(".")[:2] != ["5", "15"]:
-            logger.warning(
-                "lrelease version is not 5.15.x, skipping .qm generation: lang={!r}",
-                lang,
-            )
-            continue
 
         qm_path: pathlib.Path = labelme_translate_path / f"{lang}.qm"
         subprocess.check_call(
