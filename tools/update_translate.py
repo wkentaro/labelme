@@ -29,6 +29,22 @@ def main():
         [ts_file.stem for ts_file in labelme_translate_path.glob("*.ts")]
     )
     for lang in languages:
+        pylupdate_version: str = (
+            subprocess.check_output(
+                ["pylupdate5", "-version"], stderr=subprocess.STDOUT
+            )
+            .decode()
+            .split()[-1]
+            .lstrip("v")
+        )
+        logger.info("using pylupdate5 version: {}", pylupdate_version)
+        if pylupdate_version.split(".")[:2] != ["5", "15"]:
+            logger.warning(
+                "pylupdate5 version is not 5.15.x, skipping .ts generation: lang={!r}",
+                lang,
+            )
+            continue
+
         ts_path: pathlib.Path = labelme_translate_path / f"{lang}.ts"
         subprocess.check_call(
             [
