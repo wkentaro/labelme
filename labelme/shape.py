@@ -231,11 +231,11 @@ class Shape:
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
-                    raidus = labelme.utils.distance(
+                    radius = labelme.utils.distance(
                         self._scale_point(self.points[0] - self.points[1])
                     )
                     line_path.addEllipse(
-                        self._scale_point(self.points[0]), raidus, raidus
+                        self._scale_point(self.points[0]), radius, radius
                     )
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
