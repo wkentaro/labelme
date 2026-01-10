@@ -8,7 +8,6 @@ import os
 import os.path as osp
 import re
 import types
-import typing
 import webbrowser
 
 import imgviz
@@ -407,6 +406,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
+        createBrushMode = action(
+            self.tr("Create Brush"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="brush"),
+            shortcuts["create_brush"],
+            "note-pencil.svg",
+            self.tr("Start painting with brush. Enter/Space to confirm."),
+            enabled=False,
+        )
         editMode = action(
             self.tr("Edit Polygons"),
             lambda: self._switch_canvas_mode(edit=True),
@@ -681,6 +688,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             createAiPolygonMode=createAiPolygonMode,
             createAiMaskMode=createAiMaskMode,
+            createBrushMode=createBrushMode,
             zoom=zoom,
             zoomIn=zoomIn,
             zoomOut=zoomOut,
@@ -703,6 +711,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("linestrip", createLineStripMode),
             ("ai_polygon", createAiPolygonMode),
             ("ai_mask", createAiMaskMode),
+            ("brush", createBrushMode),
         ]
 
         # Group zoom controls into a list for easier toggling.
@@ -724,6 +733,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode,
             createAiPolygonMode,
             createAiMaskMode,
+            createBrushMode,
             brightnessContrast,
         )
         # menu shown at right click
@@ -869,6 +879,34 @@ class MainWindow(QtWidgets.QMainWindow):
         ai_prompt_action = QtWidgets.QWidgetAction(self)
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
+        # Brush size control
+        brushSizeAction = QtWidgets.QWidgetAction(self)
+        brushSizeAction.setDefaultWidget(QtWidgets.QWidget())
+        brushSizeAction.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
+        #
+        brushSizeLabel = QtWidgets.QLabel(self.tr("Brush Size"))
+        brushSizeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        brushSizeAction.defaultWidget().layout().addWidget(brushSizeLabel)
+        #
+        self._brushSizeSlider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self._brushSizeSlider.setMinimum(2)
+        self._brushSizeSlider.setMaximum(40)
+        self._brushSizeSlider.setValue(20)  # Default brush size
+        self._brushSizeSlider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self._brushSizeSlider.setTickInterval(5)
+        self._brushSizeSlider.setToolTip(self.tr("Brush Size: 2-40 pixels"))
+        brushSizeAction.defaultWidget().layout().addWidget(self._brushSizeSlider)
+        #
+        self._brushSizeLabel = QtWidgets.QLabel("20")
+        self._brushSizeLabel.setAlignment(QtCore.Qt.AlignCenter)
+        brushSizeAction.defaultWidget().layout().addWidget(self._brushSizeLabel)
+        #
+        self._brushSizeSlider.valueChanged.connect(
+            lambda value: self._on_brush_size_changed(value)
+        )
+        # Initialize brush size
+        self.canvas.set_brush_size(20)
+
         self.addToolBar(
             Qt.TopToolBarArea,
             ToolBar(
@@ -893,6 +931,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     selectAiModel,
                     None,
                     ai_prompt_action,
+                    None,
+                    brushSizeAction,
                 ],
                 font_base=self.font(),
             ),
@@ -1050,12 +1090,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_status_message(self, message, delay=500):
         self.statusBar().showMessage(message, delay)
 
+    def _on_brush_size_changed(self, value: int) -> None:
+        """Handle brush size slider value change"""
+        self.canvas.set_brush_size(value)
+        self._brushSizeLabel.setText(str(value))
+
     def _submit_ai_prompt(self, _) -> None:
         texts = self._ai_prompt_widget.get_text_prompt().split(",")
 
         model_name: str = "yoloworld"
         model_type = osam.apis.get_model_type_by_name(model_name)
-        model_type = typing.cast(type[osam.types.Model], model_type)
         if not (_is_already_downloaded := model_type.get_size() is not None):
             if not download_ai_model(model_name=model_name, parent=self):
                 return
@@ -1437,9 +1481,6 @@ class MainWindow(QtWidgets.QMainWindow):
             default_flags = {}
             if self._config["label_flags"]:
                 for pattern, keys in self._config["label_flags"].items():
-                    if not isinstance(shape.label, str):
-                        logger.warning("shape.label is not str: {}", shape.label)
-                        continue
                     if re.match(pattern, shape.label):
                         for key in keys:
                             default_flags[key] = False
@@ -1582,17 +1623,30 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ""
         if text:
             self.labelList.clearSelection()
-            shape = self.canvas.setLastLabel(text, flags)
+            # For brush mode, shape is in self.current, not yet in shapes
+            if self.canvas.current is not None and self.canvas.createMode == "brush":
+                # Add the shape to shapes first
+                self.canvas.shapes.append(self.canvas.current)
+                self.canvas.storeShapes()
+                shape = self.canvas.setLastLabel(text, flags)
+            else:
+                shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
             shape.description = description
             self.addLabel(shape)
+            self.canvas.current = None  # Clear current after adding to shapes
             self.actions.editMode.setEnabled(True)
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()
         else:
-            self.canvas.undoLastLine()
-            self.canvas.shapesBackups.pop()
+            # User cancelled, remove the shape that was created
+            if self.canvas.current is not None and self.canvas.createMode == "brush":
+                # For brush mode, just clear current
+                self.canvas.current = None
+            else:
+                self.canvas.undoLastLine()
+                self.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta, orientation):
         units = -delta * 0.1  # natural scroll
@@ -1829,14 +1883,14 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("loaded file: {!r}", filename)
         return True
 
-    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+    def resizeEvent(self, event):
         if (
             self.canvas
             and not self.image.isNull()
             and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
             self._adjust_scale()
-        super().resizeEvent(a0)
+        super().resizeEvent(event)
 
     def _paint_canvas(self) -> None:
         if self.image.isNull():
@@ -1870,9 +1924,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["store_data"] = enabled
         self.actions.saveWithImageData.setChecked(enabled)
 
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+    def closeEvent(self, event):
         if not self._can_continue():
-            a0.ignore()
+            event.ignore()
         self.settings.setValue("filename", self.filename if self.filename else "")
         self.settings.setValue("window/size", self.size())
         self.settings.setValue("window/position", self.pos())
@@ -1881,23 +1935,23 @@ class MainWindow(QtWidgets.QMainWindow):
         # ask the use for where to save the labels
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
-    def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
+    def dragEnterEvent(self, event):
         extensions = [
             f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-        if a0.mimeData().hasUrls():
-            items = [i.toLocalFile() for i in a0.mimeData().urls()]
+        if event.mimeData().hasUrls():
+            items = [i.toLocalFile() for i in event.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
-                a0.accept()
+                event.accept()
         else:
-            a0.ignore()
+            event.ignore()
 
-    def dropEvent(self, a0: QtGui.QDropEvent) -> None:
+    def dropEvent(self, event):
         if not self._can_continue():
-            a0.ignore()
+            event.ignore()
             return
-        items = [i.toLocalFile() for i in a0.mimeData().urls()]
+        items = [i.toLocalFile() for i in event.mimeData().urls()]
         self.importDroppedImageFiles(items)
 
     # User Dialogs #
