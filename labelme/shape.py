@@ -108,6 +108,7 @@ class Shape:
         if value not in [
             "polygon",
             "rectangle",
+            "oriented rectangle",
             "point",
             "line",
             "circle",
@@ -152,6 +153,8 @@ class Shape:
         if self.shape_type == "linestrip" and len(self.points) <= 2:
             return False
 
+        if self.shape_type == "oriented rectangle":
+            return False
         return True
 
     def removePoint(self, i: int):
@@ -228,6 +231,19 @@ class Shape:
                 if self.shape_type == "rectangle":
                     for i in range(len(self.points)):
                         self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "oriented rectangle":
+                assert len(self.points) in [1, 2, 3, 4]
+                line_path.moveTo(self._scale_point(self.points[0]))
+                if self.isClosed():
+                    for i, p in enumerate(self.points):
+                        line_path.lineTo(self._scale_point(p))
+                        self.drawVertex(vrtx_path, i)
+                    line_path.lineTo(self._scale_point(self.points[0]))
+                elif len(self.points) > 1:
+                    # Draw a preview of the shape.
+                    self.drawVertex(vrtx_path, 0)
+                    line_path.lineTo(self._scale_point(self.points[1]))
+                    self.drawVertex(vrtx_path, 1)
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
