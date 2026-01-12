@@ -50,7 +50,7 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc) ([#144](https://github.com/wkentaro/labelme/pull/144))
 - [x] Exporting VOC-format dataset for [semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation)
 - [x] Exporting COCO-format dataset for [instance segmentation](examples/instance_segmentation)
-- [x] Multi-language support `zh_CN`, `zh_TW`, `fr_FR`, `ja_JP`, `de_DE`, `hu_HU`, `ko_KR` (`LANG=zh_CN.UTF-8 labelme`)
+- [x] Multi-language support `zh_CN`, `zh_TW`, `fr_FR`, `ja_JP`, `de_DE`, `hu_HU`, `ko_KR`, `es_ES` (`LANG=zh_CN.UTF-8 labelme`)
 - [x] Point-to-polygon/mask annotation using SAM models
 - [x] Text-to-rectangle annotation using YOLO-world models
 
