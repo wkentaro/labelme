@@ -372,6 +372,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing rectangles"),
             enabled=False,
         )
+        createOrientedRectangleMode = action(
+            self.tr("Create Oriented Rectangle"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="oriented rectangle"),
+            shortcuts["create_oriented_rectangle"],
+            "rectangle.svg",
+            self.tr("Start drawing oriented rectangles"),
+            enabled=False,
+        )
         createCircleMode = action(
             self.tr("Create Circle"),
             lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
@@ -688,6 +696,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createMode=createMode,
             editMode=editMode,
             createRectangleMode=createRectangleMode,
+            createOrientedRectangleMode=createOrientedRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
             createPointMode=createPointMode,
@@ -710,6 +719,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.draw_actions: list[tuple[str, QtWidgets.QAction]] = [
             ("polygon", createMode),
             ("rectangle", createRectangleMode),
+            ("oriented rectangle", createOrientedRectangleMode),
             ("circle", createCircleMode),
             ("point", createPointMode),
             ("line", createLineMode),
@@ -731,6 +741,7 @@ class MainWindow(QtWidgets.QMainWindow):
             close,
             createMode,
             createRectangleMode,
+            createOrientedRectangleMode,
             createCircleMode,
             createLineMode,
             createPointMode,

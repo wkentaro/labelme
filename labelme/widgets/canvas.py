@@ -97,6 +97,7 @@ class Canvas(QtWidgets.QWidget):
             {
                 "polygon": False,
                 "rectangle": True,
+                "oriented rectangle": False,
                 "circle": False,
                 "line": False,
                 "point": False,
@@ -152,6 +153,7 @@ class Canvas(QtWidgets.QWidget):
         if value not in [
             "polygon",
             "rectangle",
+            "oriented rectangle",
             "circle",
             "line",
             "point",
@@ -319,6 +321,11 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click first corner for rectangle")
             else:
                 return self.tr("Click opposite corner for rectangle")
+        if self.createMode == "oriented rectangle":
+            if isNew:
+                return self.tr("Click first corner for rectangle")
+            else:
+                return self.tr("Click opposite corner for rectangle") #TODO: better tooltip.
         return self.tr("Click to add point")
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
@@ -382,6 +389,10 @@ class Canvas(QtWidgets.QWidget):
                 self.line.points = [self.current[0], pos]
                 self.line.point_labels = [1, 1]
                 self.line.close()
+            elif self.createMode == "oriented rectangle":
+                origin_pt = self.current[0] if len(self.current.points) == 1 else self.current[1]
+                self.line.points = [origin_pt, pos]
+                self.line.point_labels = [1, 1]
             elif self.createMode == "circle":
                 self.line.points = [self.current[0], pos]
                 self.line.point_labels = [1, 1]
@@ -525,6 +536,15 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
+                    elif self.createMode == "oriented rectangle":
+                        if self.current.isClosed():
+                            self.finalise()
+                        else:
+                            self.current.addPoint(self.line[1])
+                            self.line[0] = self.current[-1]
+                            # Build a preview shape.
+                            # This point will be updated based on the position of 'self.line' during the mouseMoveEvent.
+                            self.current.addPoint(self.line[1])
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -1063,7 +1083,7 @@ class Canvas(QtWidgets.QWidget):
         self.current = self.shapes.pop()
         self.current.setOpen()
         self.current.restoreShapeRaw()
-        if self.createMode in ["polygon", "linestrip"]:
+        if self.createMode in ["polygon", "linestrip", "oriented rectangle"]:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ["rectangle", "line", "circle"]:
             self.current.points = self.current.points[0:1]
