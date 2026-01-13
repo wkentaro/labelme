@@ -108,6 +108,7 @@ class Shape:
         if value not in [
             "polygon",
             "rectangle",
+            "square",
             "point",
             "line",
             "circle",
@@ -217,7 +218,7 @@ class Shape:
             vrtx_path = QtGui.QPainterPath()
             negative_vrtx_path = QtGui.QPainterPath()
 
-            if self.shape_type in ["rectangle", "mask"]:
+            if self.shape_type in ["rectangle", "square", "mask"]:
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
                     rectangle = QtCore.QRectF(
@@ -225,7 +226,7 @@ class Shape:
                         self._scale_point(self.points[1]),
                     )
                     line_path.addRect(rectangle)
-                if self.shape_type == "rectangle":
+                if self.shape_type in ["rectangle", "square"]:
                     for i in range(len(self.points)):
                         self.drawVertex(vrtx_path, i)
             elif self.shape_type == "circle":
@@ -346,7 +347,7 @@ class Shape:
         return self.makePath().contains(point)
 
     def makePath(self):
-        if self.shape_type in ["rectangle", "mask"]:
+        if self.shape_type in ["rectangle", "square", "mask"]:
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
                 path.addRect(QtCore.QRectF(self.points[0], self.points[1]))

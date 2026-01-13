@@ -359,6 +359,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Start drawing rectangles"),
             enabled=False,
         )
+        createSquareMode = action(
+            self.tr("Create Square"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="square"),
+            shortcuts.get("create_square"),
+            "draw-square.svg",
+            self.tr("Start drawing squares"),
+            enabled=False,
+        )
         createCircleMode = action(
             self.tr("Create Circle"),
             lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
@@ -697,6 +705,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.draw_actions: list[tuple[str, QtWidgets.QAction]] = [
             ("polygon", createMode),
             ("rectangle", createRectangleMode),
+            ("square", createSquareMode),
             ("circle", createCircleMode),
             ("point", createPointMode),
             ("line", createLineMode),
@@ -718,6 +727,7 @@ class MainWindow(QtWidgets.QMainWindow):
             close,
             createMode,
             createRectangleMode,
+            createSquareMode,
             createCircleMode,
             createLineMode,
             createPointMode,
