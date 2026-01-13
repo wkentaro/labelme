@@ -25,7 +25,7 @@ help:
 PACKAGE_NAME:=labelme
 
 setup:  # Setup the development environment
-	$(call exec,uv sync --dev)
+	$(call exec,uv sync)
 
 format:  # Format code
 	$(call exec,uv run ruff format)
