@@ -36,9 +36,6 @@ lint:
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
 
-mypy:
-	$(call exec,uv run mypy --package $(PACKAGE_NAME))
-
 check_translate: update_translate
 	$(call exec,git diff --exit-code labelme/translate)
 

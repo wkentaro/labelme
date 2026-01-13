@@ -21,7 +21,6 @@ jobs:
     - run: make setup
     - run: |
         make check
-        make mypy  # just in case as 'ty' is still experimental
 
   build:
 

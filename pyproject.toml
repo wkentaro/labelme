@@ -43,7 +43,6 @@ fragments = [{ path = "README.md" }]
 
 [dependency-groups]
 dev = [
-  "mypy>=1.15.0",
   "pyqt5-stubs>=5.15.6.0",
   "pytest>=8.3.4",
   "pytest-qt>=4.4.0",
@@ -80,7 +79,3 @@ force-single-line = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-
-[tool.mypy]
-check_untyped_defs = true
-ignore_missing_imports = true
