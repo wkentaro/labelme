@@ -79,5 +79,5 @@ jobs:
     - name: Build wheel and install from it
       shell: bash
       run: |
-        make build
+        uv build
         uv pip install dist/labelme-*.whl
