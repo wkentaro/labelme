@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import types
-import typing
 
 import osam
 from loguru import logger
@@ -35,7 +34,6 @@ class _AiModelDownloadWorker(QRunnable):
 
 def download_ai_model(model_name: str, parent: QtWidgets.QWidget) -> bool:
     model_type = osam.apis.get_model_type_by_name(model_name)
-    model_type = typing.cast(type[osam.types.Model], model_type)
 
     if _is_already_downloaded := model_type.get_size() is not None:
         return True

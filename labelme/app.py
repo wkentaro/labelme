@@ -8,7 +8,6 @@ import os
 import os.path as osp
 import re
 import types
-import typing
 import webbrowser
 
 import imgviz
@@ -1057,7 +1056,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         model_name: str = self._ai_prompt_widget.get_model_name()
         model_type = osam.apis.get_model_type_by_name(model_name)
-        model_type = typing.cast(type[osam.types.Model], model_type)
         if not (_is_already_downloaded := model_type.get_size() is not None):
             if not download_ai_model(model_name=model_name, parent=self):
                 return
