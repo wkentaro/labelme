@@ -42,7 +42,7 @@ def newAction(
         a.setIconText(text.replace(" ", "\n"))
         a.setIcon(newIcon(icon))
     if shortcut is not None:
-        if isinstance(shortcut, (list, tuple)):
+        if isinstance(shortcut, list | tuple):
             a.setShortcuts(shortcut)
         else:
             a.setShortcut(shortcut)
