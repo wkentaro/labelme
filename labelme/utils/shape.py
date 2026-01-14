@@ -3,7 +3,6 @@
 
 import math
 import uuid
-from typing import Optional
 
 import numpy as np
 import numpy.typing as npt
@@ -22,7 +21,7 @@ def polygons_to_mask(img_shape, polygons, shape_type=None):
 def shape_to_mask(
     img_shape: tuple[int, ...],
     points: list[list[float]],
-    shape_type: Optional[str] = None,
+    shape_type: str | None = None,
     line_width: int = 10,
     point_size: int = 5,
 ) -> npt.NDArray[np.bool_]:
