@@ -97,6 +97,7 @@ class Canvas(QtWidgets.QWidget):
             {
                 "polygon": False,
                 "rectangle": True,
+                "square": True,
                 "circle": False,
                 "line": False,
                 "point": False,
@@ -152,6 +153,7 @@ class Canvas(QtWidgets.QWidget):
         if value not in [
             "polygon",
             "rectangle",
+            "square",
             "circle",
             "line",
             "point",
@@ -324,9 +326,14 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click point on circumference for circle")
         if self.createMode == "rectangle":
             if isNew:
-                return self.tr("Click first corner for rectangle")
+                return self.tr("Click first corner for rectangle (Shift+drag for square)")
             else:
-                return self.tr("Click opposite corner for rectangle")
+                return self.tr("Click opposite corner for rectangle (Shift+drag for square)")
+        if self.createMode == "square":
+            if isNew:
+                return self.tr("Click first corner for square")
+            else:
+                return self.tr("Click opposite corner for square")
         return self.tr("Click to add point")
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
@@ -387,7 +394,35 @@ class Canvas(QtWidgets.QWidget):
                     0 if is_shift_pressed else 1,
                 ]
             elif self.createMode == "rectangle":
-                self.line.points = [self.current[0], pos]
+                if is_shift_pressed:
+
+                    start_point = self.current[0]
+                    dx = pos.x() - start_point.x()
+                    dy = pos.y() - start_point.y()
+                    side_length = min(abs(dx), abs(dy))
+                    
+                    square_x = start_point.x() + (side_length if dx >= 0 else -side_length)
+                    square_y = start_point.y() + (side_length if dy >= 0 else -side_length)
+                    
+                    square_pos = QPointF(square_x, square_y)
+                    self.line.points = [start_point, square_pos]
+                else:
+                    self.line.points = [self.current[0], pos]
+                self.line.point_labels = [1, 1]
+                self.line.close()
+            elif self.createMode == "square":
+                # Always draw square: use the smaller side length
+                start_point = self.current[0]
+                dx = pos.x() - start_point.x()
+                dy = pos.y() - start_point.y()
+                side_length = min(abs(dx), abs(dy))
+                
+                # Preserve direction, calculate the opposite corner of the square
+                square_x = start_point.x() + (side_length if dx >= 0 else -side_length)
+                square_y = start_point.y() + (side_length if dy >= 0 else -side_length)
+                
+                square_pos = QPointF(square_x, square_y)
+                self.line.points = [start_point, square_pos]
                 self.line.point_labels = [1, 1]
                 self.line.close()
             elif self.createMode == "circle":
@@ -533,7 +568,7 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
-                    elif self.createMode in ["rectangle", "circle", "line"]:
+                    elif self.createMode in ["rectangle", "square", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
@@ -559,11 +594,8 @@ class Canvas(QtWidgets.QWidget):
                             return
 
                     # Create new shape.
-                    self.current = Shape(
-                        shape_type="points"
-                        if self.createMode in ["ai_polygon", "ai_mask"]
-                        else self.createMode
-                    )
+                    shape_type = "points" if self.createMode in ["ai_polygon", "ai_mask"] else self.createMode
+                    self.current = Shape(shape_type=shape_type)
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
                     if self.createMode == "point":
                         self.finalise()
@@ -818,7 +850,7 @@ class Canvas(QtWidgets.QWidget):
 
         # draw crosshair
         if (
-            self._crosshair[self._createMode]
+            self._crosshair.get(self._createMode, False)
             and self.drawing()
             and self.prevMovePoint is not None
             and not self.outOfPixmap(self.prevMovePoint)
@@ -1075,7 +1107,7 @@ class Canvas(QtWidgets.QWidget):
         self.current.restoreShapeRaw()
         if self.createMode in ["polygon", "linestrip"]:
             self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in ["rectangle", "line", "circle"]:
+        elif self.createMode in ["rectangle", "square", "line", "circle"]:
             self.current.points = self.current.points[0:1]
         elif self.createMode == "point":
             self.current = None
