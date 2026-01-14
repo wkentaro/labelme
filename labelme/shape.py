@@ -50,6 +50,7 @@ class Shape:
     scale = 1.0
 
     _current_vertex_fill_color: QtGui.QColor
+    _current_rotation_point_fill_color: QtGui.QColor
 
     def __init__(
         self,
@@ -65,7 +66,6 @@ class Shape:
         self.group_id = group_id
         self.points = []
         self.point_labels = []
-        self.rotation_points = []
         self.shape_type = shape_type
         self._shape_raw = None
         self._points_raw = []
@@ -139,13 +139,6 @@ class Shape:
         if self.shape_type == "oriented rectangle":
             self.points.append(point)
             self.point_labels.append(label)
-            if len(self.points) == 3:
-                # Complete the shape automatically.
-                self.points.append(labelme.utils.rectangleFourthPoint(*self.points))
-                self.point_labels.append(label)
-            if len(self.points) == 4:
-                self.updateRotationPoints()
-                self.close()
         elif self.points and point == self.points[0]:
             self.close()
         else:
@@ -241,6 +234,7 @@ class Shape:
         if self.points:
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
+            rotation_points_path = QtGui.QPainterPath()
             orientation_arrow_path = QtGui.QPainterPath()
             negative_vrtx_path = QtGui.QPainterPath()
 
@@ -266,8 +260,7 @@ class Shape:
                     angle = self.getRotationRad()
                     self.drawArrow(orientation_arrow_path, center, angle)
                     line_path.lineTo(self._scale_point(self.points[0]))
-                    for i, p in enumerate(self.rotation_points):
-                        self.drawRotationPoint(vrtx_path, i)
+                    self.drawRotationPoints(rotation_points_path)
                 elif len(self.points) > 1:
                     # Draw a preview of the shape.
                     self.drawVertex(vrtx_path, 0)
@@ -313,6 +306,9 @@ class Shape:
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)
                 painter.fillPath(vrtx_path, self._current_vertex_fill_color)
+            if rotation_points_path.length() > 0:
+                painter.drawPath(rotation_points_path)
+                painter.fillPath(rotation_points_path, self._current_rotation_point_fill_color)
             if self.fill and self.shape_type not in [
                 "line",
                 "linestrip",
@@ -323,12 +319,13 @@ class Shape:
                 painter.fillPath(line_path, color)
             
             if orientation_arrow_path.length() > 0:
-                painter.drawPath(orientation_arrow_path)
                 if self._highlight_orientation_arrow:
-                    arrow_fill_color = self.hvertex_fill_color
+                    arrow_highlight_color = self.hvertex_fill_color
                 else:
-                    arrow_fill_color = self.vertex_fill_color
-                painter.fillPath(orientation_arrow_path, arrow_fill_color)
+                    arrow_highlight_color = self.vertex_fill_color
+                pen.setColor(arrow_highlight_color)
+                painter.setPen(pen)
+                painter.drawPath(orientation_arrow_path)
 
             pen.setColor(QtGui.QColor(255, 0, 0, 255))
             painter.setPen(pen)
@@ -366,12 +363,18 @@ class Shape:
         else:
             assert False, "unsupported vertex shape"
 
-    def drawRotationPoint(self, path: QtGui.QPainterPath, i):
-        d = self.point_size
-        point = self._scale_point(self.rotation_points[i])
-        if i == self._highlight_rotation_point_index:
-            pass
-        path.addEllipse(point, d / 2.0, d / 2.0)
+    def drawRotationPoints(self, path: QtGui.QPainterPath):
+        if self._highlight_rotation_point_index is not None:
+            self._current_rotation_point_fill_color = self.hvertex_fill_color
+        else:
+            self._current_rotation_point_fill_color = self.vertex_fill_color
+
+        for i, p in enumerate(self.getRotationPoints()):
+            d = self.point_size
+            point = self._scale_point(p)
+            if i == self._highlight_rotation_point_index:
+                pass
+            path.addEllipse(point, d / 2.0, d / 2.0)
 
     def drawArrow(self, path: QtGui.QPainterPath, position: QtCore.QPointF, angle_rad: float):
         transformed_points = np.add(labelme.utils.rotateMany(self.arrow_points, angle_rad), [position.x(), position.y()])
@@ -458,14 +461,12 @@ class Shape:
         min_distance = float("inf")
         min_i = None
         point = self._scale_point(point)
-        for i, p in enumerate(self.rotation_points):
+        for i, p in enumerate(self.getRotationPoints()):
             p = self._scale_point(p)
             dist = labelme.utils.distance(p - point)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 min_i = i
-        if min_i is not None:
-            return min_i
         return min_i
 
     def containsPoint(self, point) -> bool:
@@ -485,10 +486,12 @@ class Shape:
             return self.mask[y, x]
         return self.makePath().contains(point)
 
-    def updateRotationPoints(self):
-        self.rotation_points.clear()
-        for i, p in enumerate(self.points):
-            self.rotation_points.append((p + self.points[i-1])/2)
+    def getRotationPoints(self):
+        rotation_points = []
+        if self.shape_type == "oriented rectangle":
+            for i, p in enumerate(self.points):
+                rotation_points.append((p + self.points[i-1])/2)
+        return rotation_points
 
     def makePath(self):
         if self.shape_type in ["rectangle", "mask"]:
@@ -511,18 +514,9 @@ class Shape:
 
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
-        self.rotation_points = [p + offset for p in self.rotation_points]
 
     def moveVertexBy(self, i, offset):
-        if self.shape_type == "oriented rectangle":
-            self.points[i] = offset
-
-            if self.isClosed():
-                self.points[i-3] = labelme.utils.projectPointAtRightAngle(self.points[i-1], self.points[i-2], self.points[i])
-                self.points[i-1] = labelme.utils.rectangleFourthPoint(self.points[i-2], self.points[i-3], self.points[i])
-                self.updateRotationPoints()
-        else:
-            self.points[i] = offset
+        self.points[i] = self.points[i] + offset
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action
@@ -534,18 +528,23 @@ class Shape:
         """
         self._highlightIndex = i
         self._highlightMode = action
+        self._highlight_rotation_point_index = None
 
     def highlightRotationPoint(self, i, action):
         self._highlight_rotation_point_index = i
+        self._highlightIndex = None
         #TODO
 
     def highlightOrientationArrow(self):
         self._highlight_orientation_arrow = True
+        self._highlightIndex = None
+        self._highlight_rotation_point_index = None
 
     def highlightClear(self):
         """Clear the highlighted point"""
         self._highlightIndex = None
         self._highlight_orientation_arrow = False
+        self._highlight_rotation_point_index = None
 
     def copy(self):
         return copy.deepcopy(self)
