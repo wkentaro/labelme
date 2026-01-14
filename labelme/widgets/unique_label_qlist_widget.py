@@ -1,5 +1,4 @@
 import html
-from typing import Optional
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -24,7 +23,7 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
         if not self.indexAt(event.pos()).isValid():
             self.clearSelection()
 
-    def find_label_item(self, label: str) -> Optional[QtWidgets.QListWidgetItem]:
+    def find_label_item(self, label: str) -> QtWidgets.QListWidgetItem | None:
         for row in range(self.count()):
             item = self.item(row)
             if item and item.data(Qt.UserRole) == label:

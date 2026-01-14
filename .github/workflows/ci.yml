@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: astral-sh/setup-uv@v5
       with:
-        python-version: "3.9"
+        python-version: "3.10"
     - uses: awalsh128/cache-apt-pkgs-action@v1
       with:
         packages: qttools5-dev
@@ -21,7 +21,6 @@ jobs:
     - run: make setup
     - run: |
         make check
-        make mypy  # just in case as 'ty' is still experimental
 
   build:
 
@@ -35,7 +34,7 @@ jobs:
 
     - uses: astral-sh/setup-uv@v5
       with:
-        python-version: "3.9"
+        python-version: "3.10"
 
     - shell: bash
       run: |
@@ -80,5 +79,5 @@ jobs:
     - name: Build wheel and install from it
       shell: bash
       run: |
-        make build
+        uv build
         uv pip install dist/labelme-*.whl

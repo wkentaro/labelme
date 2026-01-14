@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "labelme"
 description = "Image Polygonal Annotation with Python"
 license = { text = "GPL-3.0-only" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 version = "5.10.0"
 authors = [{ name = "Kentaro Wada", email = "www.kentaro.wada@gmail.com" }]
 classifiers = [
@@ -17,7 +17,6 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -44,7 +43,6 @@ fragments = [{ path = "README.md" }]
 
 [dependency-groups]
 dev = [
-  "mypy>=1.15.0",
   "pyqt5-stubs>=5.15.6.0",
   "pytest>=8.3.4",
   "pytest-qt>=4.4.0",
@@ -81,7 +79,3 @@ force-single-line = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-
-[tool.mypy]
-check_untyped_defs = true
-ignore_missing_imports = true

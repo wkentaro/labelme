@@ -4,7 +4,6 @@ import contextlib
 import io
 import json
 import os.path as osp
-from typing import Optional
 from typing import TypedDict
 
 import numpy as np
@@ -34,6 +33,8 @@ class ShapeDict(TypedDict):
     description: str
     group_id: Optional[int]
     mask: Optional[NDArray[np.bool_]]
+    group_id: int | None
+    mask: NDArray[np.bool] | None
     other_data: dict
 
 
@@ -62,7 +63,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     assert all(
         isinstance(point, list)
         and len(point) == 2
-        and all(isinstance(xy, (int, float)) for xy in point)
+        and all(isinstance(xy, int | float) for xy in point)
         for point in shape_json_obj["points"]
     ), f"points must be list of [x, y]: {shape_json_obj['points']}"
     points: list[list[float]] = shape_json_obj["points"]
@@ -91,7 +92,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         )
         description = shape_json_obj["description"]
 
-    group_id: Optional[int] = None
+    group_id: int | None = None
     if shape_json_obj.get("group_id") is not None:
         assert isinstance(shape_json_obj["group_id"], int), (
             f"group_id must be int: {shape_json_obj['group_id']}"
@@ -99,6 +100,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         group_id = shape_json_obj["group_id"]
 
     mask: Optional[NDArray[np.bool_]] = None
+    mask: NDArray[np.bool] | None = None
     if shape_json_obj.get("mask") is not None:
         assert isinstance(shape_json_obj["mask"], str), (
             f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
