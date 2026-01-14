@@ -361,25 +361,9 @@ class Canvas(QtWidgets.QWidget):
                 self._update_status()
                 return
 
-            if self.createMode == "oriented rectangle" and len(self.current.points) != 1:
-                #self.boundedMoveVertex(self.current, -1, pos)
-                # Project the third editing point at a right angle.
-                pos = labelme.utils.projectPointAtRightAngle(self.current.points[0], self.current.points[1], pos)
-                if self.outOfPixmap(pos):
-                    # Don't allow the user to draw outside the pixmap.
-                    # Project the point to the pixmap's edges.
-                    pos = self.intersectionPoint(self.current[-1], pos)
-
-                # Prevent the completed shape from being drawn outside the pixmap.
-                p4 = labelme.utils.rectangleFourthPoint(self.current.points[0], self.current.points[1], pos)
-                if self.outOfPixmap(p4):
-                    # Project the point to the pixmap's edges.
-                    pos = self.intersectionPoint(self.current[0], p4)
-                    # Fix p1,p2,p4 and derive p3.
-                    pos = labelme.utils.rectangleFourthPoint(pos, self.current.points[0], self.current.points[1])
-                if self.current.isClosed():
-                    # Update the shape preview.
-                    self.current[2] = pos
+            if self.createMode == "oriented rectangle" and self.current.isClosed():
+                self.boundedMoveVertex(self.current, 2, pos)
+                pos = self.current[2]
             elif self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
@@ -446,6 +430,7 @@ class Canvas(QtWidgets.QWidget):
         if Qt.LeftButton & a0.buttons():
             if self.selectedVertex():
                 if self.hVertex is not None:
+                    assert self.hShape is not None
                     self.boundedMoveVertex(self.hShape, self.hVertex, pos)
                 else:
                     logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
@@ -508,18 +493,6 @@ class Canvas(QtWidgets.QWidget):
                 shape.highlightRotationPoint(index_rotation_point, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to rotate the shape"))
-                self.update()
-                break
-            elif shape.isHoveringOrientationArrow(pos, self.epsilon):
-                if self.selectedVertex() and self.hShape:
-                    self.hShape.highlightClear()
-                self.prevhVertex = self.hVertex
-                self.hVertex = None
-                self.prevhShape = self.hShape = shape
-                self.prevhEdge = self.hEdge
-                self.hEdge = None
-                shape.highlightOrientationArrow()
-                status_messages.append(self.tr("Click to change the shape's orientation"))
                 self.update()
                 break
             elif shape.containsPoint(pos):
@@ -587,11 +560,12 @@ class Canvas(QtWidgets.QWidget):
                         if self.current.isClosed():
                             self.finalise()
                         else:
+                            # Build the full shape.
                             self.current.addPoint(self.line[1])
-                            self.line[0] = self.current[-1]
-                            # Build a preview shape.
-                            # This point will be updated based on the position of 'self.line' during the mouseMoveEvent.
                             self.current.addPoint(self.line[1])
+                            self.current.addPoint(self.line[0])
+                            self.line[0] = self.line[1]
+                            self.current.close()
                     elif self.createMode in ["rectangle", "circle", "line"]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -798,26 +772,36 @@ class Canvas(QtWidgets.QWidget):
 
 
     def boundedMoveVertex(self, shape: Shape, vertex_index: int, pos: QPointF) -> None:
-        assert shape is not None
-
         if shape.shape_type == "oriented rectangle":
+            assert shape.isClosed()
             # Project the third editing point at a right angle.
-            pos = labelme.utils.projectPointAtRightAngle(shape[vertex_index-2], shape[vertex_index-1], pos)
-            if self.outOfPixmap(pos):
-                # Don't allow the user to draw outside the pixmap.
-                # Project the point to the pixmap's edges.
-                pos = self.intersectionPoint(shape[vertex_index-3], pos)
+            p1 = shape[vertex_index-2]
+            p2 = shape[vertex_index-1]
+            p3 = pos
+            p4 = labelme.utils.projectPointAtRightAngle(p2, p1, p3)
+            p2 = labelme.utils.rectangleFourthPoint(p1, p4, p3)
 
-            # Prevent the completed shape from being drawn outside the pixmap.
-            p4 = labelme.utils.rectangleFourthPoint(shape[vertex_index-2], shape[vertex_index-1], pos)
+            if self.outOfPixmap(p3):
+                # Don't allow the user to draw outside the pixmap.
+                # Perform two intersections to get a line along the pixmap edge.
+                intersect_1 = self.intersectionPoint(p4, p3)
+                intersect_2 = self.intersectionPoint(p2, p3)
+                p3 = labelme.utils.projectPointOnLine(intersect_1, intersect_2, p3)
+                # Rebuild the rectangle.
+                p4 = labelme.utils.projectPointAtRightAngle(p2, p1, p3)
+                p2 = labelme.utils.rectangleFourthPoint(p1, p4, p3)
+
             if self.outOfPixmap(p4):
-                # Project the point to the pixmap's edges.
-                pos = self.intersectionPoint(shape[0], p4)
-                # Fix p1,p2,p4 and derive p3.
-                pos = labelme.utils.rectangleFourthPoint(pos, shape[vertex_index-1], shape[vertex_index-2])
-            if shape.isClosed():
-                # Update the shape preview.
-                shape[vertex_index-3] = pos
+                p4 = self.intersectionPoint(p1, p4)
+                p3 = labelme.utils.rectangleFourthPoint(p4, p1, p2)
+            
+            if self.outOfPixmap(p2):
+                p2 = self.intersectionPoint(p1, p2)
+                p3 = labelme.utils.rectangleFourthPoint(p4, p1, p2)
+            
+            shape[vertex_index] = p3
+            shape[vertex_index-3] = p4
+            shape[vertex_index-1] = p2
         else:
             point: QPointF = shape[vertex_index]
             if self.outOfPixmap(pos):

@@ -18,6 +18,7 @@ from .qt import newAction
 from .qt import newButton
 from .qt import newIcon
 from .qt import projectPointAtRightAngle
+from .qt import projectPointOnLine
 from .qt import rectangleFourthPoint
 from .qt import rotate
 from .qt import rotateMany
