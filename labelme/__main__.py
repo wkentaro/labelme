@@ -243,6 +243,7 @@ def main():
         f"{osp.dirname(osp.abspath(__file__))}/translate",
     )
     app = QtWidgets.QApplication(sys.argv)
+    app.setStyle("Fusion")  # for consistent appearance across platforms
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("icon"))
     app.installTranslator(translator)
