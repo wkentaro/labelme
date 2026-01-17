@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets
 from ._info_button import InfoButton
 
 
-class AiassistedAnnotationWidget(QtWidgets.QWidget):
+class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     _available_models: list[tuple[str, str]] = [
         ("efficientsam:10m", "EfficientSam (speed)"),
         ("efficientsam:latest", "EfficientSam (accuracy)"),

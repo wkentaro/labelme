@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI Assisted Annotation</source>
+        <translation>KI-gestützte Annotation</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
+    </message>
+</context>
+<context>
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
@@ -32,19 +45,6 @@
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
         <translation>Wählen Sie den Modus 'Rechteck erstellen', um AI Prompt zu aktivieren</translation>
-    </message>
-</context>
-<context>
-    <name>AiassistedAnnotationWidget</name>
-    <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI Assisted Annotation</source>
-        <translation>KI-gestützte Annotation</translation>
-    </message>
-    <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
     </message>
 </context>
 <context>
