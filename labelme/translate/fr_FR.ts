@@ -35,6 +35,14 @@
     </message>
 </context>
 <context>
+    <name>AiassistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <source>AI-assisted annotation</source>
+        <translation>Annotation assistée par IA</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -770,11 +778,6 @@ les polygones</translation>
         <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>Activer/désactiver le mode &quot;conserver l'annotation précédente&quot;</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>Modèle de masque IA</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

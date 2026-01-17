@@ -35,6 +35,14 @@
     </message>
 </context>
 <context>
+    <name>AiassistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <source>AI-assisted annotation</source>
+        <translation>حاشیه‌نویسی با کمک هوش مصنوعی</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -754,11 +762,6 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>تغییر وضعیت حالت &quot;نگه داشتن حاشیه‌نویسی قبلی&quot;</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>مدل ماسک هوش مصنوعی</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

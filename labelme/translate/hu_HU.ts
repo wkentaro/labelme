@@ -35,6 +35,14 @@
     </message>
 </context>
 <context>
+    <name>AiassistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <source>AI-assisted annotation</source>
+        <translation>MI-támogatott annotáció</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -640,11 +648,6 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
         <translation>&amp;Legutóbbi megnyitása</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>AI maszk modell</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

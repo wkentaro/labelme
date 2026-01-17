@@ -35,6 +35,14 @@
     </message>
 </context>
 <context>
+    <name>AiassistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <source>AI-assisted annotation</source>
+        <translation>KI-gestützte Annotation</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -640,11 +648,6 @@ Polygone</translation>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
         <translation>&amp;Zuletzt geöffnet</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>KI-Maskenmodell</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
