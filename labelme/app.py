@@ -31,6 +31,7 @@ from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
 from labelme.config import get_config
 from labelme.shape import Shape
+from labelme.widgets import AiassistedAnnotationWidget
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
@@ -827,42 +828,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         selectAiModel = QtWidgets.QWidgetAction(self)
-        selectAiModel.setDefaultWidget(QtWidgets.QWidget())
-        selectAiModel.defaultWidget().setLayout(QtWidgets.QVBoxLayout())
-        #
-        selectAiModelLabel = QtWidgets.QLabel(self.tr("AI Mask Model"))
-        selectAiModelLabel.setAlignment(QtCore.Qt.AlignCenter)
-        selectAiModel.defaultWidget().layout().addWidget(selectAiModelLabel)
-        #
-        self._selectAiModelComboBox = QtWidgets.QComboBox()
-        selectAiModel.defaultWidget().layout().addWidget(self._selectAiModelComboBox)
-        MODEL_NAMES: list[tuple[str, str]] = [
-            ("efficientsam:10m", "EfficientSam (speed)"),
-            ("efficientsam:latest", "EfficientSam (accuracy)"),
-            ("sam:100m", "Sam (speed)"),
-            ("sam:300m", "Sam (balanced)"),
-            ("sam:latest", "Sam (accuracy)"),
-            ("sam2:small", "Sam2 (speed)"),
-            ("sam2:latest", "Sam2 (balanced)"),
-            ("sam2:large", "Sam2 (accuracy)"),
-        ]
-        for model_name, model_ui_name in MODEL_NAMES:
-            self._selectAiModelComboBox.addItem(model_ui_name, userData=model_name)
-        model_ui_names: list[str] = [model_ui_name for _, model_ui_name in MODEL_NAMES]
-        if self._config["ai"]["default"] in model_ui_names:
-            model_index = model_ui_names.index(self._config["ai"]["default"])
-        else:
-            logger.warning(
-                "Default AI model is not found: %r",
-                self._config["ai"]["default"],
-            )
-            model_index = 0
-        self._selectAiModelComboBox.currentIndexChanged.connect(
-            lambda index: self.canvas.set_ai_model_name(
-                model_name=self._selectAiModelComboBox.itemData(index)
+        selectAiModel.setDefaultWidget(
+            AiassistedAnnotationWidget(
+                default_model=self._config["ai"]["default"],
+                on_model_changed=self.canvas.set_ai_model_name,
+                parent=self,
             )
         )
-        self._selectAiModelComboBox.setCurrentIndex(model_index)
 
         self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
             on_submit=self._submit_ai_prompt, parent=self
