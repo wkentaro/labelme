@@ -1,8 +1,9 @@
 from collections.abc import Callable
 
 from loguru import logger
-from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+
+from ._info_button import InfoButton
 
 
 class AiassistedAnnotationWidget(QtWidgets.QWidget):
@@ -34,9 +35,18 @@ class AiassistedAnnotationWidget(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         self.setLayout(layout)
 
+        header_layout = QtWidgets.QHBoxLayout()
+        header_layout.addStretch()
         label = QtWidgets.QLabel(self.tr("AI-assisted annotation"))
-        label.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(label)
+        header_layout.addWidget(label)
+        info_button = InfoButton(
+            tooltip=self.tr(
+                "AI suggests annotation in 'AI-Polygon' and 'AI-Mask' modes"
+            )
+        )
+        header_layout.addWidget(info_button)
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
 
         self._model_combo = QtWidgets.QComboBox()
         for model_id, model_display in self._available_models:
@@ -55,4 +65,4 @@ class AiassistedAnnotationWidget(QtWidgets.QWidget):
         )
         self._model_combo.setCurrentIndex(model_index)
 
-        self.setMaximumWidth(320)
+        self.setMaximumWidth(200)
