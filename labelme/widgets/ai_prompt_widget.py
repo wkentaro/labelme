@@ -1,118 +1,110 @@
+from collections.abc import Callable
+
+from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 
 class AiPromptWidget(QtWidgets.QWidget):
-    def __init__(self, on_submit, parent=None):
+    _available_models: list[tuple[str, str]] = [
+        # ("sam3:latest", "SAM3 (smart)"),
+        ("yoloworld:latest", "YOLO-World (fast)"),
+    ]
+    _default_model_name: str = "yoloworld:latest"
+    _default_score_threshold: float = 0.1
+    _default_iou_threshold: float = 0.5
+
+    _text_input: QtWidgets.QLineEdit
+    _model_combo: QtWidgets.QComboBox
+    _score_spinbox: QtWidgets.QDoubleSpinBox
+    _iou_spinbox: QtWidgets.QDoubleSpinBox
+
+    def __init__(self, on_submit, parent: QtWidgets.QWidget | None = None):
         super().__init__(parent=parent)
+        self._init_ui(on_submit)
 
-        self.setLayout(QtWidgets.QVBoxLayout())
-        self.layout().setSpacing(0)
-
-        self._text_prompt_widget = _TextPromptWidget(on_submit=on_submit, parent=self)
-        self._text_prompt_widget.setMaximumWidth(300)
-        self.layout().addWidget(self._text_prompt_widget)
-
-        self._nms_params_widget = _NmsParamsWidget(parent=self)
-        self._nms_params_widget.setMaximumWidth(300)
-        self.layout().addWidget(self._nms_params_widget)
-
-    def get_text_prompt(self) -> str:
-        return self._text_prompt_widget.get_text_prompt()
-
-    def get_iou_threshold(self) -> float:
-        return self._nms_params_widget.get_iou_threshold()
-
-    def get_score_threshold(self) -> float:
-        return self._nms_params_widget.get_score_threshold()
-
-
-class _TextPromptWidget(QtWidgets.QWidget):
-    def __init__(self, on_submit, parent=None):
-        super().__init__(parent=parent)
-
-        self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
+    def _init_ui(self, on_submit: Callable[[], None]) -> None:
+        layout = QtWidgets.QVBoxLayout()
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(2)
+        self.setLayout(layout)
 
         label = QtWidgets.QLabel(self.tr("AI Prompt"))
-        self.layout().addWidget(label)
+        label.setAlignment(QtCore.Qt.AlignCenter)
+        layout.addWidget(label)
 
-        self._texts_widget = QtWidgets.QLineEdit()
-        self._texts_widget.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
-        self.layout().addWidget(self._texts_widget)
+        grid = QtWidgets.QGridLayout()
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setSpacing(2)
 
-        submit_button = QtWidgets.QPushButton(text="Run", parent=self)
-        submit_button.clicked.connect(slot=on_submit)
-        self.layout().addWidget(submit_button)
+        text_input = QtWidgets.QLineEdit()
+        text_input.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
+        text_input.setFixedHeight(24)
+        grid.addWidget(text_input, 0, 0)
+        self._text_input = text_input
+
+        run_button = QtWidgets.QToolButton()
+        run_button.setText(self.tr("Run"))
+        run_button.setFixedHeight(24)
+        run_button.setCursor(QtCore.Qt.PointingHandCursor)
+        run_button.clicked.connect(on_submit)
+        grid.addWidget(run_button, 0, 1)
+
+        settings_layout = QtWidgets.QHBoxLayout()
+        settings_layout.setContentsMargins(0, 0, 0, 0)
+        settings_layout.setSpacing(4)
+
+        self._model_combo = model_combo = QtWidgets.QComboBox()
+        for model_id, model_display in self._available_models:
+            model_combo.addItem(model_display, model_id)
+        model_index = next(
+            (
+                i
+                for i, (mid, _) in enumerate(self._available_models)
+                if mid == self._default_model_name
+            ),
+            0,
+        )
+        model_combo.setCurrentIndex(model_index)
+        settings_layout.addWidget(model_combo, stretch=1)
+
+        score_label = QtWidgets.QLabel(self.tr("Score"))
+        score_label.setStyleSheet("color: gray; font-size: 10px;")
+        settings_layout.addWidget(score_label)
+        #
+        self._score_spinbox = score_spinbox = QtWidgets.QDoubleSpinBox()
+        score_spinbox.setStyleSheet("font-size: 10px;")
+        score_spinbox.setFixedWidth(50)
+        score_spinbox.setRange(0, 1)
+        score_spinbox.setSingleStep(0.05)
+        score_spinbox.setValue(self._default_score_threshold)
+        settings_layout.addWidget(score_spinbox)
+
+        iou_label = QtWidgets.QLabel(self.tr("IoU"))
+        iou_label.setStyleSheet("color: gray; font-size: 10px;")
+        settings_layout.addWidget(iou_label)
+        #
+        self._iou_spinbox = iou_spinbox = QtWidgets.QDoubleSpinBox()
+        iou_spinbox.setStyleSheet("font-size: 10px;")
+        iou_spinbox.setFixedWidth(50)
+        iou_spinbox.setRange(0, 1)
+        iou_spinbox.setSingleStep(0.05)
+        iou_spinbox.setValue(self._default_iou_threshold)
+        settings_layout.addWidget(iou_spinbox)
+
+        grid.addLayout(settings_layout, 1, 0, 1, 2)
+
+        layout.addLayout(grid)
+
+        self.setMaximumWidth(320)
 
     def get_text_prompt(self) -> str:
-        return self._texts_widget.text()
+        return self._text_input.text()
 
-
-class _NmsParamsWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-        self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        self._score_threshold_widget: _ScoreThresholdWidget = _ScoreThresholdWidget(
-            parent=parent
-        )
-        self.layout().addWidget(self._score_threshold_widget)
-
-        self._iou_threshold_widget: _IouThresholdWidget = _IouThresholdWidget(
-            parent=parent
-        )
-        self.layout().addWidget(self._iou_threshold_widget)
+    def get_model_name(self) -> str:
+        return self._model_combo.currentData()
 
     def get_score_threshold(self) -> float:
-        return self._score_threshold_widget.get_value()
+        return self._score_spinbox.value()
 
     def get_iou_threshold(self) -> float:
-        return self._iou_threshold_widget.get_value()
-
-
-class _ScoreThresholdWidget(QtWidgets.QWidget):
-    default_score_threshold: float = 0.1
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-        self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        label = QtWidgets.QLabel(self.tr("Score Threshold"))
-        self.layout().addWidget(label)
-
-        self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
-        self._threshold_widget.setRange(0, 1)
-        self._threshold_widget.setSingleStep(0.05)
-        self._threshold_widget.setValue(self.default_score_threshold)
-        self._threshold_widget.setMinimumWidth(50)
-        self.layout().addWidget(self._threshold_widget)
-
-    def get_value(self) -> float:
-        return self._threshold_widget.value()
-
-
-class _IouThresholdWidget(QtWidgets.QWidget):
-    default_iou_threshold: float = 0.5
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-        self.setLayout(QtWidgets.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        label = QtWidgets.QLabel(self.tr("IoU Threshold"))
-        self.layout().addWidget(label)
-
-        self._threshold_widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
-        self._threshold_widget.setRange(0, 1)
-        self._threshold_widget.setSingleStep(0.05)
-        self._threshold_widget.setValue(self.default_iou_threshold)
-        self._threshold_widget.setMinimumWidth(50)
-        self.layout().addWidget(self._threshold_widget)
-
-    def get_value(self) -> float:
-        return self._threshold_widget.value()
+        return self._iou_spinbox.value()

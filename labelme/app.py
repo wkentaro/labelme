@@ -1053,7 +1053,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _submit_ai_prompt(self, _) -> None:
         texts = self._ai_prompt_widget.get_text_prompt().split(",")
 
-        model_name: str = "yoloworld"
+        model_name: str = self._ai_prompt_widget.get_model_name()
         model_type = osam.apis.get_model_type_by_name(model_name)
         model_type = typing.cast(type[osam.types.Model], model_type)
         if not (_is_already_downloaded := model_type.get_size() is not None):
