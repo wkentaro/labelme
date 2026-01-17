@@ -9,8 +9,7 @@ jobs:
   notify:
     if: |
       github.event.pull_request.merged == true &&
-      (contains(github.event.pull_request.labels.*.name, 'feature') ||
-       contains(github.event.pull_request.labels.*.name, 'ui'))
+      contains(github.event.pull_request.labels.*.name, 'feature')
     runs-on: ubuntu-latest
     steps:
       - name: Send to Discord
@@ -24,13 +23,8 @@ jobs:
             exit 1
           fi
 
-          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'feature') }}" == "true" ]]; then
-            TYPE="🎉 **New feature merged!** Try it in the next release"
-            COLOR=3066993
-          else
-            TYPE="✨ **UI improvement merged!** Try it in the next release"
-            COLOR=3447003
-          fi
+          TYPE="🎉 **New feature merged!** Try it in the next release"
+          COLOR=3066993
 
           MILESTONE="${{ github.event.pull_request.milestone.title }}"
           if [[ -z "$MILESTONE" ]]; then
