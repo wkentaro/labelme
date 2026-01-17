@@ -866,6 +866,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
             on_submit=self._submit_ai_prompt, parent=self
         )
+        self._ai_prompt_widget.setEnabled(False)
         ai_prompt_action = QtWidgets.QWidgetAction(self)
         ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
 
@@ -1175,6 +1176,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for draw_mode, draw_action in self.draw_actions:
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
+        self._ai_prompt_widget.setEnabled(not edit and createMode == "rectangle")
 
     def updateFileMenu(self):
         current = self.filename
