@@ -50,7 +50,7 @@ jobs:
                 \"color\": $COLOR,
                 \"fields\": [
                   {
-                    \"name\": \"PR\",
+                    \"name\": \"Pull request\",
                     \"value\": \"[#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})\",
                     \"inline\": true
                   },
