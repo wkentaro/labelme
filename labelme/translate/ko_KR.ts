@@ -41,6 +41,11 @@
         <source>AI-assisted annotation</source>
         <translation>AI 지원 주석</translation>
     </message>
+    <message>
+        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>AI가 'AI-Polygon' 및 'AI-Mask' 모드에서 주석을 제안합니다</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

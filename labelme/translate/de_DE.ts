@@ -41,6 +41,11 @@
         <source>AI-assisted annotation</source>
         <translation>KI-gestützte Annotation</translation>
     </message>
+    <message>
+        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
