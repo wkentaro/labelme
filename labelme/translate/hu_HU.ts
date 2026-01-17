@@ -46,6 +46,11 @@
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
         <translation>Válassza a 'Téglalap létrehozása' módot az AI Text-to-Annotation engedélyezéséhez</translation>
     </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates rectangle annotations from the text prompt</source>
+        <translation>Az AI téglalap annotációkat hoz létre a szöveges promptból</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

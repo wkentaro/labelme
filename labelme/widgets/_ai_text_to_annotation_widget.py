@@ -4,6 +4,8 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+from ._info_button import InfoButton
+
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _available_models: list[tuple[str, str]] = [
@@ -30,9 +32,16 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         layout.setSpacing(2)
         self.setLayout(layout)
 
+        header_layout = QtWidgets.QHBoxLayout()
+        header_layout.addStretch()
         label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
-        label.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(label)
+        header_layout.addWidget(label)
+        info_button = InfoButton(
+            tooltip=self.tr("AI creates rectangle annotations from the text prompt")
+        )
+        header_layout.addWidget(info_button)
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
 
         self._body = body = QtWidgets.QWidget()
         body.installEventFilter(self)

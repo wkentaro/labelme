@@ -46,6 +46,11 @@
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
         <translation>「矩形を作成」モードを選択してAIプロンプトを有効化</translation>
     </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates rectangle annotations from the text prompt</source>
+        <translation>AIがテキストプロンプトから矩形アノテーションを作成</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

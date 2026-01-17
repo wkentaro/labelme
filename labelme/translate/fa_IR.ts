@@ -46,6 +46,11 @@
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
         <translation>برای فعال کردن AI Text-to-Annotation، حالت «ایجاد مستطیل» را انتخاب کنید</translation>
     </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates rectangle annotations from the text prompt</source>
+        <translation>هوش مصنوعی حاشیه‌نویسی‌های مستطیلی را از متن ایجاد می‌کند</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
