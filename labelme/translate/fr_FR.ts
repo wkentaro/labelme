@@ -28,6 +28,11 @@
         <source>IoU</source>
         <translation>IoU</translation>
     </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
+        <translation>Sélectionnez le mode 'Créer un rectangle' pour activer AI Prompt</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
