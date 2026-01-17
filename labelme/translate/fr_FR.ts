@@ -5,7 +5,7 @@
     <name>AiAssistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI Assisted Annotation</source>
+        <source>AI-Assisted Annotation</source>
         <translation>Annotation assistée par IA</translation>
     </message>
     <message>
@@ -15,36 +15,41 @@
     </message>
 </context>
 <context>
-    <name>AiPromptWidget</name>
+    <name>AiTextToAnnotationWidget</name>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI Text-to-Annotation</source>
         <translation>Invite IA</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
         <translation>ex. : chien,chat,oiseau</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
         <translation>Exécuter</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
         <translation>Score</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>IoU</source>
         <translation>IoU</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
-        <translation>Sélectionnez le mode 'Créer un rectangle' pour activer AI Prompt</translation>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
+        <translation>Sélectionnez le mode 'Créer un rectangle' pour activer AI Text-to-Annotation</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates rectangle annotations from the text prompt</source>
+        <translation>L'IA crée des annotations rectangulaires à partir du texte</translation>
     </message>
 </context>
 <context>

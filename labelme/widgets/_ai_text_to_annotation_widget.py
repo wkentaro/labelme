@@ -4,8 +4,10 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+from ._info_button import InfoButton
 
-class AiPromptWidget(QtWidgets.QWidget):
+
+class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _available_models: list[tuple[str, str]] = [
         ("sam3:latest", "SAM3 (smart)"),
         ("yoloworld:latest", "YOLO-World (fast)"),
@@ -30,9 +32,16 @@ class AiPromptWidget(QtWidgets.QWidget):
         layout.setSpacing(2)
         self.setLayout(layout)
 
-        label = QtWidgets.QLabel(self.tr("AI Prompt"))
-        label.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(label)
+        header_layout = QtWidgets.QHBoxLayout()
+        header_layout.addStretch()
+        label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
+        header_layout.addWidget(label)
+        info_button = InfoButton(
+            tooltip=self.tr("AI creates rectangle annotations from the text prompt")
+        )
+        header_layout.addWidget(info_button)
+        header_layout.addStretch()
+        layout.addLayout(header_layout)
 
         self._body = body = QtWidgets.QWidget()
         body.installEventFilter(self)
@@ -127,7 +136,9 @@ class AiPromptWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr("Select 'Create Rectangle' mode to enable AI Prompt"),
+                    self.tr(
+                        "Select 'Create Rectangle' mode to enable AI Text-to-Annotation"
+                    ),
                     self._body,
                 )
         return super().eventFilter(a0, a1)

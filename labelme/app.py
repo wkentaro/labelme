@@ -32,7 +32,7 @@ from labelme._label_file import ShapeDict
 from labelme.config import get_config
 from labelme.shape import Shape
 from labelme.widgets import AiAssistedAnnotationWidget
-from labelme.widgets import AiPromptWidget
+from labelme.widgets import AiTextToAnnotationWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
 from labelme.widgets import FileDialogPreview
@@ -836,12 +836,12 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
 
-        self._ai_prompt_widget: AiPromptWidget = AiPromptWidget(
-            on_submit=self._submit_ai_prompt, parent=self
+        self._ai_text_to_annotation_widget: AiTextToAnnotationWidget = (
+            AiTextToAnnotationWidget(on_submit=self._submit_ai_prompt, parent=self)
         )
-        self._ai_prompt_widget.setEnabled(False)
+        self._ai_text_to_annotation_widget.setEnabled(False)
         ai_prompt_action = QtWidgets.QWidgetAction(self)
-        ai_prompt_action.setDefaultWidget(self._ai_prompt_widget)
+        ai_prompt_action.setDefaultWidget(self._ai_text_to_annotation_widget)
 
         self.addToolBar(
             Qt.TopToolBarArea,
@@ -1025,9 +1025,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
-        texts = self._ai_prompt_widget.get_text_prompt().split(",")
+        texts = self._ai_text_to_annotation_widget.get_text_prompt().split(",")
 
-        model_name: str = self._ai_prompt_widget.get_model_name()
+        model_name: str = self._ai_text_to_annotation_widget.get_model_name()
         model_type = osam.apis.get_model_type_by_name(model_name)
         if not (_is_already_downloaded := model_type.get_size() is not None):
             if not download_ai_model(model_name=model_name, parent=self):
@@ -1065,8 +1065,8 @@ class MainWindow(QtWidgets.QMainWindow):
             boxes=boxes,
             scores=scores,
             labels=labels,
-            iou_threshold=self._ai_prompt_widget.get_iou_threshold(),
-            score_threshold=self._ai_prompt_widget.get_score_threshold(),
+            iou_threshold=self._ai_text_to_annotation_widget.get_iou_threshold(),
+            score_threshold=self._ai_text_to_annotation_widget.get_score_threshold(),
             max_num_detections=100,
         )
 
@@ -1154,7 +1154,9 @@ class MainWindow(QtWidgets.QMainWindow):
             for draw_mode, draw_action in self.draw_actions:
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
-        self._ai_prompt_widget.setEnabled(not edit and createMode == "rectangle")
+        self._ai_text_to_annotation_widget.setEnabled(
+            not edit and createMode == "rectangle"
+        )
 
     def updateFileMenu(self):
         current = self.filename
