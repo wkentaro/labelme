@@ -38,7 +38,7 @@
     <name>AiassistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
-        <source>AI-Assisted Annotation</source>
+        <source>AI Assisted Annotation</source>
         <translation>AI辅助标注</translation>
     </message>
     <message>

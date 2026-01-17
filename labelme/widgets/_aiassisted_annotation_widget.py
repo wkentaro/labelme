@@ -37,7 +37,7 @@ class AiassistedAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Assisted Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr(
