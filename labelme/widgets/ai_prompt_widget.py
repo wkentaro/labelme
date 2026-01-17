@@ -1,6 +1,7 @@
 from collections.abc import Callable
 
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 
@@ -17,6 +18,7 @@ class AiPromptWidget(QtWidgets.QWidget):
     _model_combo: QtWidgets.QComboBox
     _score_spinbox: QtWidgets.QDoubleSpinBox
     _iou_spinbox: QtWidgets.QDoubleSpinBox
+    _body: QtWidgets.QWidget
 
     def __init__(self, on_submit, parent: QtWidgets.QWidget | None = None):
         super().__init__(parent=parent)
@@ -31,6 +33,13 @@ class AiPromptWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self.tr("AI Prompt"))
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
+
+        self._body = body = QtWidgets.QWidget()
+        body.installEventFilter(self)
+        body_layout = QtWidgets.QVBoxLayout()
+        body_layout.setContentsMargins(0, 0, 0, 0)
+        body_layout.setSpacing(0)
+        body.setLayout(body_layout)
 
         grid = QtWidgets.QGridLayout()
         grid.setContentsMargins(0, 0, 0, 0)
@@ -93,7 +102,8 @@ class AiPromptWidget(QtWidgets.QWidget):
 
         grid.addLayout(settings_layout, 1, 0, 1, 2)
 
-        layout.addLayout(grid)
+        body_layout.addLayout(grid)
+        layout.addWidget(body)
 
         self.setMaximumWidth(320)
 
@@ -108,3 +118,16 @@ class AiPromptWidget(QtWidgets.QWidget):
 
     def get_iou_threshold(self) -> float:
         return self._iou_spinbox.value()
+
+    def setEnabled(self, a0: bool) -> None:
+        self._body.setEnabled(a0)
+
+    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
+        if a0 == self._body and not self._body.isEnabled():
+            if a1.type() == QtCore.QEvent.Enter:
+                QtWidgets.QToolTip.showText(
+                    QtGui.QCursor.pos(),
+                    self.tr("Select 'Create Rectangle' mode to enable AI Prompt"),
+                    self._body,
+                )
+        return super().eventFilter(a0, a1)
