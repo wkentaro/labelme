@@ -8,7 +8,6 @@ import os
 import os.path as osp
 import re
 import types
-import typing
 import webbrowser
 
 import imgviz
@@ -73,6 +72,7 @@ class _ZoomMode(enum.Enum):
 class MainWindow(QtWidgets.QMainWindow):
     filename: str | None
     _config: dict
+    _text_osam_session: OsamSession | None = None
     _is_changed: bool = False
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
@@ -1057,13 +1057,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         model_name: str = self._ai_prompt_widget.get_model_name()
         model_type = osam.apis.get_model_type_by_name(model_name)
-        model_type = typing.cast(type[osam.types.Model], model_type)
         if not (_is_already_downloaded := model_type.get_size() is not None):
             if not download_ai_model(model_name=model_name, parent=self):
                 return
+        if (
+            self._text_osam_session is None
+            or self._text_osam_session.model_name != model_name
+        ):
+            self._text_osam_session = OsamSession(model_name=model_name)
 
         boxes, scores, labels = bbox_from_text.get_bboxes_from_texts(
-            session=OsamSession(model_name=model_name),
+            session=self._text_osam_session,
             image=utils.img_qt_to_arr(self.image)[:, :, :3],
             image_id=str(hash(self.imagePath)),
             texts=texts,
