@@ -32,21 +32,43 @@ class OsamSession:
         self,
         image: NDArray[np.uint8],
         image_id: str,
-        points: NDArray[np.floating],
-        point_labels: NDArray[np.intp],
+        points: NDArray[np.floating] | None = None,
+        point_labels: NDArray[np.intp] | None = None,
+        texts: list[str] | None = None,
     ) -> osam.types.GenerateResponse:
-        image_embedding: osam.types.ImageEmbedding = self._get_or_compute_embedding(
-            image=image, image_id=image_id
-        )
+        image_embedding: osam.types.ImageEmbedding | None
+        try:
+            image_embedding = self._get_or_compute_embedding(
+                image=image, image_id=image_id
+            )
+        except NotImplementedError:
+            image_embedding = None
+
+        prompt: osam.types.Prompt
+        if points is not None and point_labels is not None:
+            prompt = osam.types.Prompt(
+                points=points,
+                point_labels=point_labels,
+            )
+        elif texts is not None:
+            prompt = osam.types.Prompt(
+                texts=texts,
+                iou_threshold=1.0,
+                score_threshold=0.01,
+                max_annotations=1000,
+            )
+        else:
+            raise ValueError(
+                "Either points and point_labels, or texts must be provided."
+            )
+
         model: osam.types.Model = self._get_or_load_model()
         return model.generate(
             request=osam.types.GenerateRequest(
                 model=model.name,
+                image=image,
                 image_embedding=image_embedding,
-                prompt=osam.types.Prompt(
-                    points=points,
-                    point_labels=point_labels,
-                ),
+                prompt=prompt,
             )
         )
 

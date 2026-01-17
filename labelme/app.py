@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import QMessageBox
 from labelme import __appname__
 from labelme import __version__
 from labelme._automation import bbox_from_text
+from labelme._automation._osam_session import OsamSession
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
@@ -1062,8 +1063,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
 
         boxes, scores, labels = bbox_from_text.get_bboxes_from_texts(
-            model=model_name,
+            session=OsamSession(model_name=model_name),
             image=utils.img_qt_to_arr(self.image)[:, :, :3],
+            image_id=str(hash(self.imagePath)),
             texts=texts,
         )
 
