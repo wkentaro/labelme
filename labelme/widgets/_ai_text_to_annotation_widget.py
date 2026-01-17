@@ -5,7 +5,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 
-class AiPromptWidget(QtWidgets.QWidget):
+class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _available_models: list[tuple[str, str]] = [
         ("sam3:latest", "SAM3 (smart)"),
         ("yoloworld:latest", "YOLO-World (fast)"),
@@ -127,7 +127,9 @@ class AiPromptWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr("Select 'Create Rectangle' mode to enable AI Text-to-Annotation"),
+                    self.tr(
+                        "Select 'Create Rectangle' mode to enable AI Text-to-Annotation"
+                    ),
                     self._body,
                 )
         return super().eventFilter(a0, a1)

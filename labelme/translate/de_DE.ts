@@ -15,34 +15,34 @@
     </message>
 </context>
 <context>
-    <name>AiPromptWidget</name>
+    <name>AiTextToAnnotationWidget</name>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
         <translation>KI-Prompt</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
         <translation>z.B. Hund,Katze,Vogel</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
         <translation>Ausführen</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
         <translation>Score</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>IoU</source>
         <translation>IoU</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
         <translation>Wählen Sie den Modus 'Rechteck erstellen', um AI Text-to-Annotation zu aktivieren</translation>
     </message>

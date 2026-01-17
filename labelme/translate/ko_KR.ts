@@ -15,34 +15,34 @@
     </message>
 </context>
 <context>
-    <name>AiPromptWidget</name>
+    <name>AiTextToAnnotationWidget</name>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
         <translation>AI 프롬프트</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
         <translation>예: 개, 고양이, 새</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
         <translation>실행</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
         <translation>점수</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>IoU</source>
         <translation>IoU</translation>
     </message>
     <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
         <translation>AI 프롬프트를 활성화하려면 '사각형 생성' 모드를 선택하세요</translation>
     </message>
