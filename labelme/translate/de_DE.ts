@@ -5,7 +5,7 @@
     <name>AiAssistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI Assisted Annotation</source>
+        <source>AI-Assisted Annotation</source>
         <translation>KI-gestützte Annotation</translation>
     </message>
     <message>
