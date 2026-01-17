@@ -69,6 +69,12 @@ def nms_bboxes(
     )
     for i, (score, label) in enumerate(zip(scores, labels)):
         scores_of_all_classes[i, label] = score
+    logger.debug(
+        "Running NMS: iou_threshold={}, score_threshold={}, max_num_detections={}",
+        iou_threshold,
+        score_threshold,
+        max_num_detections,
+    )
     logger.debug(f"Input: num_boxes={len(boxes)}")
     boxes, scores, labels = osam.apis.non_maximum_suppression(
         boxes=boxes,
