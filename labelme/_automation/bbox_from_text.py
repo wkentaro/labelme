@@ -6,26 +6,22 @@ import numpy.typing as npt
 import osam
 from loguru import logger
 
+from ._osam_session import OsamSession
+
 
 def get_bboxes_from_texts(
-    model: str, image: np.ndarray, texts: list[str]
+    session: OsamSession, image: np.ndarray, image_id: str, texts: list[str]
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    request: osam.types.GenerateRequest = osam.types.GenerateRequest(
-        model=model,
-        image=image,
-        prompt=osam.types.Prompt(
-            texts=texts,
-            iou_threshold=1.0,
-            score_threshold=0.01,
-            max_annotations=1000,
-        ),
-    )
     logger.debug(
-        f"Requesting with model={model!r}, image={(image.shape, image.dtype)}, "
-        f"prompt={request.prompt!r}"
+        f"Requesting with model={session.model_name!r}, "
+        f"image={(image.shape, image.dtype)}, texts={texts!r}"
     )
     t_start: float = time.time()
-    response: osam.types.GenerateResponse = osam.apis.generate(request=request)
+    response: osam.types.GenerateResponse = session.run(
+        image=image,
+        image_id=image_id,
+        texts=texts,
+    )
 
     num_annotations: int = len(response.annotations)
     logger.debug(
