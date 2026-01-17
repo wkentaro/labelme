@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets
 
 class AiPromptWidget(QtWidgets.QWidget):
     _available_models: list[tuple[str, str]] = [
-        # ("sam3:latest", "SAM3 (smart)"),
+        ("sam3:latest", "SAM3 (smart)"),
         ("yoloworld:latest", "YOLO-World (fast)"),
     ]
     _default_model_name: str = "yoloworld:latest"
