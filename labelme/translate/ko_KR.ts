@@ -2,6 +2,34 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ko_KR">
 <context>
+    <name>AiPromptWidget</name>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>AI Prompt</source>
+        <translation>AI 프롬프트</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>예: 개, 고양이, 새</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>실행</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>점수</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -731,35 +759,6 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>이전 밝기/대비 유지</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>IoU 임계값</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>점수 임계값</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>AI 프롬프트</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>예: 개, 고양이, 새</translation>
     </message>
 </context>
 </TS>

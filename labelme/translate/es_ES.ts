@@ -2,6 +2,34 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="es_ES">
 <context>
+    <name>AiPromptWidget</name>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>AI Prompt</source>
+        <translation>Indicación IA</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>p. ej., perro, gato, pájaro</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>Ejecutar</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>Puntuación</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -731,35 +759,6 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Mantener brillo/contraste anterior</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>Umbral IoU</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>Umbral de puntuación</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>Indicación IA</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>p. ej., perro, gato, pájaro</translation>
     </message>
 </context>
 </TS>
