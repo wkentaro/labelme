@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ko_KR">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI Assisted Annotation</source>
+        <translation>AI 지원 주석</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>AI가 'AI-Polygon' 및 'AI-Mask' 모드에서 주석을 제안합니다</translation>
+    </message>
+</context>
+<context>
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
@@ -32,19 +45,6 @@
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
         <translation>AI 프롬프트를 활성화하려면 '사각형 생성' 모드를 선택하세요</translation>
-    </message>
-</context>
-<context>
-    <name>AiassistedAnnotationWidget</name>
-    <message>
-        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI 지원 주석</translation>
-    </message>
-    <message>
-        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI가 'AI-Polygon' 및 'AI-Mask' 모드에서 주석을 제안합니다</translation>
     </message>
 </context>
 <context>

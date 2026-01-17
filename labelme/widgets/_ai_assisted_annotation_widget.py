@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets
 from ._info_button import InfoButton
 
 
-class AiassistedAnnotationWidget(QtWidgets.QWidget):
+class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     _available_models: list[tuple[str, str]] = [
         ("efficientsam:10m", "EfficientSam (speed)"),
         ("efficientsam:latest", "EfficientSam (accuracy)"),
@@ -37,7 +37,7 @@ class AiassistedAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Assisted Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr(

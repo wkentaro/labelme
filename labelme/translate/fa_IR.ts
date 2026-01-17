@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fa_IR">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI Assisted Annotation</source>
+        <translation>حاشیه‌نویسی با کمک هوش مصنوعی</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>هوش مصنوعی حاشیه‌نویسی را در حالت‌های 'AI-Polygon' و 'AI-Mask' پیشنهاد می‌دهد</translation>
+    </message>
+</context>
+<context>
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
@@ -32,19 +45,6 @@
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
         <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
         <translation>برای فعال کردن AI Prompt، حالت «ایجاد مستطیل» را انتخاب کنید</translation>
-    </message>
-</context>
-<context>
-    <name>AiassistedAnnotationWidget</name>
-    <message>
-        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
-        <source>AI-Assisted Annotation</source>
-        <translation>حاشیه‌نویسی با کمک هوش مصنوعی</translation>
-    </message>
-    <message>
-        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>هوش مصنوعی حاشیه‌نویسی را در حالت‌های 'AI-Polygon' و 'AI-Mask' پیشنهاد می‌دهد</translation>
     </message>
 </context>
 <context>

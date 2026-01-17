@@ -31,7 +31,7 @@ from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
 from labelme.config import get_config
 from labelme.shape import Shape
-from labelme.widgets import AiassistedAnnotationWidget
+from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiPromptWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
@@ -829,7 +829,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         selectAiModel = QtWidgets.QWidgetAction(self)
         selectAiModel.setDefaultWidget(
-            AiassistedAnnotationWidget(
+            AiAssistedAnnotationWidget(
                 default_model=self._config["ai"]["default"],
                 on_model_changed=self.canvas.set_ai_model_name,
                 parent=self,
