@@ -30,7 +30,7 @@ class AiPromptWidget(QtWidgets.QWidget):
         layout.setSpacing(2)
         self.setLayout(layout)
 
-        label = QtWidgets.QLabel(self.tr("AI Prompt"))
+        label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
 
@@ -127,7 +127,7 @@ class AiPromptWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr("Select 'Create Rectangle' mode to enable AI Prompt"),
+                    self.tr("Select 'Create Rectangle' mode to enable AI Text-to-Annotation"),
                     self._body,
                 )
         return super().eventFilter(a0, a1)

@@ -18,7 +18,7 @@
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
+        <source>AI Text-to-Annotation</source>
         <translation>AI 프롬프트</translation>
     </message>
     <message>
@@ -43,7 +43,7 @@
     </message>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
+        <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
         <translation>AI 프롬프트를 활성화하려면 '사각형 생성' 모드를 선택하세요</translation>
     </message>
 </context>

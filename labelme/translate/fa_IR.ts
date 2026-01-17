@@ -18,7 +18,7 @@
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
+        <source>AI Text-to-Annotation</source>
         <translation>پیشنهاد هوش مصنوعی</translation>
     </message>
     <message>
@@ -43,8 +43,8 @@
     </message>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
-        <translation>برای فعال کردن AI Prompt، حالت «ایجاد مستطیل» را انتخاب کنید</translation>
+        <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
+        <translation>برای فعال کردن AI Text-to-Annotation، حالت «ایجاد مستطیل» را انتخاب کنید</translation>
     </message>
 </context>
 <context>

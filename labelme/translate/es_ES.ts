@@ -18,7 +18,7 @@
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
+        <source>AI Text-to-Annotation</source>
         <translation>Indicación IA</translation>
     </message>
     <message>
@@ -43,8 +43,8 @@
     </message>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
-        <translation>Seleccione el modo 'Crear rectángulo' para habilitar AI Prompt</translation>
+        <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
+        <translation>Seleccione el modo 'Crear rectángulo' para habilitar AI Text-to-Annotation</translation>
     </message>
 </context>
 <context>

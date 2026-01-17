@@ -18,7 +18,7 @@
     <name>AiPromptWidget</name>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
+        <source>AI Text-to-Annotation</source>
         <translation>AI prompt</translation>
     </message>
     <message>
@@ -43,8 +43,8 @@
     </message>
     <message>
         <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Select &apos;Create Rectangle&apos; mode to enable AI Prompt</source>
-        <translation>Válassza a 'Téglalap létrehozása' módot az AI Prompt engedélyezéséhez</translation>
+        <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
+        <translation>Válassza a 'Téglalap létrehozása' módot az AI Text-to-Annotation engedélyezéséhez</translation>
     </message>
 </context>
 <context>
