@@ -37,12 +37,12 @@
 <context>
     <name>AiassistedAnnotationWidget</name>
     <message>
-        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI Assisted Annotation</source>
         <translation>AI辅助标注</translation>
     </message>
     <message>
-        <location filename="../widgets/_aiassisted_annotation_widget.py" line="0"/>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
         <translation>AI在'AI-Polygon'和'AI-Mask'模式下提供标注建议</translation>
     </message>
