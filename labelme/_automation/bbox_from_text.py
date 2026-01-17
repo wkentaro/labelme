@@ -59,6 +59,9 @@ def nms_bboxes(
     score_threshold: float,
     max_num_detections: int,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    if len(boxes) == 0:
+        return boxes, scores, labels
+
     num_classes: int = max(labels) + 1
     scores_of_all_classes: npt.NDArray[np.float32] = np.zeros(
         (len(boxes), num_classes), dtype=np.float32
