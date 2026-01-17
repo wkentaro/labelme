@@ -2,6 +2,34 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
+    <name>AiPromptWidget</name>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>AI Prompt</source>
+        <translation>KI-Prompt</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>z.B. Hund,Katze,Vogel</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>Ausführen</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>Score</translation>
+    </message>
+    <message>
+        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -737,35 +765,6 @@ Polygone</translation>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Verzeichnis öffnen</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>IoU-Schwellenwert</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>Score-Schwellenwert</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>KI-Prompt</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>z.B. Hund,Katze,Vogel</translation>
     </message>
 </context>
 </TS>
