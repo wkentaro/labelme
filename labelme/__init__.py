@@ -1,3 +1,4 @@
+import importlib.metadata
 import logging
 
 __appname__ = "Labelme"
@@ -7,7 +8,7 @@ __appname__ = "Labelme"
 # 2. MINOR version when you add functionality in a backwards-compatible manner;
 # 3. PATCH version when you make backwards-compatible bug fixes.
 # e.g., 1.0.0a0, 1.0.0a1, 1.0.0b0, 1.0.0rc0, 1.0.0, 1.0.0.post0
-__version__ = "5.10.0"
+__version__ = importlib.metadata.version("labelme")
 
 # XXX: has to be imported before PyQt5 to load dlls in order on Windows
 # https://github.com/wkentaro/labelme/issues/1564
