@@ -1077,23 +1077,9 @@ class MainWindow(QtWidgets.QMainWindow):
         scores = scores[keep]
         labels = labels[keep]
 
-        shape_dicts: list[dict] = bbox_from_text.get_shapes_from_bboxes(
-            boxes=boxes,
-            scores=scores,
-            labels=labels,
-            texts=texts,
+        shapes: list[Shape] = bbox_from_text.get_shapes_from_bboxes(
+            boxes=boxes, scores=scores, labels=labels, texts=texts
         )
-
-        shapes: list[Shape] = []
-        for shape_dict in shape_dicts:
-            shape = Shape(
-                label=shape_dict["label"],
-                shape_type=shape_dict["shape_type"],
-                description=shape_dict["description"],
-            )
-            for point in shape_dict["points"]:
-                shape.addPoint(QtCore.QPointF(*point))
-            shapes.append(shape)
 
         self.canvas.storeShapes()
         self._load_shapes(shapes, replace=False)
