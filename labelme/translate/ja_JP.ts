@@ -206,7 +206,8 @@
         <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
-        <translation>開く(&amp;O)</translation>
+        <translation>開く(&amp;O)
+</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -216,12 +217,14 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>ディレクトリを開く</translation>
+        <translation>ディレクトリを
+開く</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>次の画像(&amp;N)</translation>
+        <translation>次の
+画像(&amp;N)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -231,7 +234,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>前の画像(&amp;P)</translation>
+        <translation>前の
+画像(&amp;P)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -242,7 +246,8 @@
         <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
-        <translation>保存(&amp;S)</translation>
+        <translation>保存(&amp;S)
+</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -262,7 +267,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>ファイルを削除(&amp;D)</translation>
+        <translation>ファイルを
+削除(&amp;D)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -322,7 +328,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
-        <translation>ポリゴンを作成</translation>
+        <translation>ポリゴン
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -332,7 +339,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Rectangle</source>
-        <translation>矩形を作成</translation>
+        <translation>矩形
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -342,7 +350,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Circle</source>
-        <translation>円を作成</translation>
+        <translation>円
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -352,7 +361,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>直線を作成</translation>
+        <translation>直線
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -362,7 +372,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Point</source>
-        <translation>点を作成</translation>
+        <translation>点
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -372,7 +383,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create LineStrip</source>
-        <translation>折れ線を作成</translation>
+        <translation>折れ線
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -382,7 +394,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Polygon</source>
-        <translation>AIポリゴンを作成</translation>
+        <translation>AIポリゴン
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -392,7 +405,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Mask</source>
-        <translation>AIマスクを作成</translation>
+        <translation>AIマスク
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -402,7 +416,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Polygons</source>
-        <translation>ポリゴンを編集</translation>
+        <translation>ポリゴンを
+編集</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -412,7 +427,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Polygons</source>
-        <translation>ポリゴンを削除</translation>
+        <translation>ポリゴンを
+削除</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -422,7 +438,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Polygons</source>
-        <translation>ポリゴンを複製</translation>
+        <translation>ポリゴンを
+複製</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -584,7 +601,8 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>ウィンドウに合わせる(&amp;F)</translation>
+        <translation>ウィンドウに
+合わせる(&amp;F)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -604,7 +622,8 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>明るさ・コントラスト(&amp;B)</translation>
+        <translation>明るさ・
+コントラスト(&amp;B)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
