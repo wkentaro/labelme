@@ -734,7 +734,6 @@ wheels = [
 
 [[package]]
 name = "labelme"
-version = "5.10.0"
 source = { editable = "." }
 dependencies = [
     { name = "imgviz" },
