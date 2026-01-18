@@ -1,6 +1,8 @@
 from collections.abc import Callable
 
 from loguru import logger
+from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 from ._info_button import InfoButton
@@ -19,6 +21,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     ]
 
     _model_combo: QtWidgets.QComboBox
+    _body: QtWidgets.QWidget
 
     def __init__(
         self,
@@ -33,6 +36,8 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self, default_model: str, on_model_changed: Callable[[str], None]
     ) -> None:
         layout = QtWidgets.QVBoxLayout()
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(2)
         self.setLayout(layout)
 
         header_layout = QtWidgets.QHBoxLayout()
@@ -48,10 +53,19 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         header_layout.addStretch()
         layout.addLayout(header_layout)
 
+        self._body = body = QtWidgets.QWidget()
+        body.installEventFilter(self)
+        body_layout = QtWidgets.QVBoxLayout()
+        body_layout.setContentsMargins(0, 0, 0, 0)
+        body_layout.setSpacing(0)
+        body.setLayout(body_layout)
+
         self._model_combo = QtWidgets.QComboBox()
         for model_id, model_display in self._available_models:
             self._model_combo.addItem(model_display, model_id)
-        layout.addWidget(self._model_combo)
+        body_layout.addWidget(self._model_combo)
+
+        layout.addWidget(body)
 
         model_ui_names = [model_display for _, model_display in self._available_models]
         if default_model in model_ui_names:
@@ -66,3 +80,19 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._model_combo.setCurrentIndex(model_index)
 
         self.setMaximumWidth(200)
+
+    def setEnabled(self, a0: bool) -> None:
+        self._body.setEnabled(a0)
+
+    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
+        if a0 == self._body and not self._body.isEnabled():
+            if a1.type() == QtCore.QEvent.Enter:
+                QtWidgets.QToolTip.showText(
+                    QtGui.QCursor.pos(),
+                    self.tr(
+                        "Select 'AI-Polygon' or 'AI-Mask' mode "
+                        "to enable AI-Assisted Annotation"
+                    ),
+                    self._body,
+                )
+        return super().eventFilter(a0, a1)

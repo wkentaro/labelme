@@ -13,6 +13,11 @@
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
         <translation>AI가 'AI-Polygon' 및 'AI-Mask' 모드에서 주석을 제안합니다</translation>
     </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>AI 지원 주석을 활성화하려면 'AI-Polygon' 또는 'AI-Mask' 모드를 선택하세요</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
