@@ -827,14 +827,16 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        selectAiModel = QtWidgets.QWidgetAction(self)
-        selectAiModel.setDefaultWidget(
+        self._ai_assisted_annotation_widget: AiAssistedAnnotationWidget = (
             AiAssistedAnnotationWidget(
                 default_model=self._config["ai"]["default"],
                 on_model_changed=self.canvas.set_ai_model_name,
                 parent=self,
             )
         )
+        self._ai_assisted_annotation_widget.setEnabled(False)
+        selectAiModel = QtWidgets.QWidgetAction(self)
+        selectAiModel.setDefaultWidget(self._ai_assisted_annotation_widget)
 
         self._ai_text_to_annotation_widget: AiTextToAnnotationWidget = (
             AiTextToAnnotationWidget(on_submit=self._submit_ai_prompt, parent=self)
@@ -1156,6 +1158,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.editMode.setEnabled(not edit)
         self._ai_text_to_annotation_widget.setEnabled(
             not edit and createMode == "rectangle"
+        )
+        self._ai_assisted_annotation_widget.setEnabled(
+            not edit and createMode in ("ai_polygon", "ai_mask")
         )
 
     def updateFileMenu(self):

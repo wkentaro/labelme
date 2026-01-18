@@ -13,6 +13,11 @@
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
         <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
     </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Wählen Sie den Modus 'AI-Polygon' oder 'AI-Mask', um AI-Assisted Annotation zu aktivieren</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>

@@ -13,6 +13,11 @@
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
         <translation>هوش مصنوعی حاشیه‌نویسی را در حالت‌های 'AI-Polygon' و 'AI-Mask' پیشنهاد می‌دهد</translation>
     </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>برای فعال کردن AI-Assisted Annotation، حالت «AI-Polygon» یا «AI-Mask» را انتخاب کنید</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
