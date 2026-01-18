@@ -5,6 +5,9 @@ import numpy as np
 import osam
 from loguru import logger
 from numpy.typing import NDArray
+from PyQt5 import QtCore
+
+from labelme.shape import Shape
 
 from ._osam_session import OsamSession
 
@@ -88,18 +91,17 @@ def nms_bboxes(
 
 def get_shapes_from_bboxes(
     boxes: np.ndarray, scores: np.ndarray, labels: np.ndarray, texts: list[str]
-) -> list[dict]:
-    shapes: list[dict] = []
+) -> list[Shape]:
+    shapes: list[Shape] = []
     for box, score, label in zip(boxes.tolist(), scores.tolist(), labels.tolist()):
         text: str = texts[label]
+        shape = Shape(
+            label=text,
+            shape_type="rectangle",
+            description=json.dumps(dict(score=score, text=text)),
+        )
         xmin, ymin, xmax, ymax = box
-        shape: dict = {
-            "label": text,
-            "points": [[xmin, ymin], [xmax, ymax]],
-            "group_id": None,
-            "shape_type": "rectangle",
-            "flags": {},
-            "description": json.dumps(dict(score=score, text=text)),
-        }
+        shape.addPoint(QtCore.QPointF(xmin, ymin))
+        shape.addPoint(QtCore.QPointF(xmax, ymax))
         shapes.append(shape)
     return shapes
