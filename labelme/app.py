@@ -1196,9 +1196,6 @@ class MainWindow(QtWidgets.QMainWindow):
         return False
 
     def _edit_label(self, value=None):
-        if not self.canvas.editing():
-            return
-
         items = self.labelList.selectedItems()
         if not items:
             logger.warning("No label is selected, so cannot edit label.")
@@ -1519,10 +1516,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
     def _label_selection_changed(self) -> None:
-        if not self.canvas.editing():
-            logger.warning("canvas is not editing mode, cannot change label selection")
-            return
-
         selected_shapes: list[Shape] = []
         for item in self.labelList.selectedItems():
             selected_shapes.append(item.shape())
