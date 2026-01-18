@@ -2,9 +2,9 @@ import json
 import time
 
 import numpy as np
-import numpy.typing as npt
 import osam
 from loguru import logger
+from numpy.typing import NDArray
 
 from ._osam_session import OsamSession
 
@@ -29,9 +29,9 @@ def get_bboxes_from_texts(
         f"elapsed_time={time.time() - t_start:.3f} [s]"
     )
 
-    boxes: npt.NDArray[np.float32] = np.empty((num_annotations, 4), dtype=np.float32)
-    scores: npt.NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)
-    labels: npt.NDArray[np.float32] = np.empty((num_annotations,), dtype=np.int32)
+    boxes: NDArray[np.float32] = np.empty((num_annotations, 4), dtype=np.float32)
+    scores: NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)
+    labels: NDArray[np.float32] = np.empty((num_annotations,), dtype=np.int32)
     for i, annotation in enumerate(response.annotations):
         if annotation.bounding_box is None:
             raise ValueError("Bounding box is missing in the annotation.")
@@ -63,7 +63,7 @@ def nms_bboxes(
         return boxes, scores, labels
 
     num_classes: int = max(labels) + 1
-    scores_of_all_classes: npt.NDArray[np.float32] = np.zeros(
+    scores_of_all_classes: NDArray[np.float32] = np.zeros(
         (len(boxes), num_classes), dtype=np.float32
     )
     for i, (score, label) in enumerate(zip(scores, labels)):
