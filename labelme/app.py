@@ -13,8 +13,16 @@ import webbrowser
 import imgviz
 import natsort
 import numpy as np
-import osam
 from loguru import logger
+
+# Make osam import optional to handle DLL loading failures gracefully
+try:
+    import osam
+    _OSAM_AVAILABLE = True
+except (ImportError, OSError, RuntimeError):
+    # osam depends on onnxruntime which may fail to load on Windows
+    osam = None
+    _OSAM_AVAILABLE = False
 from numpy.typing import NDArray
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -62,6 +70,20 @@ if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
 
 
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
+
+
+def _get_supported_image_extensions() -> list[str]:
+    """Get list of supported image file extensions, including JPEG 2000 formats."""
+    extensions = [
+        fmt.data().decode().lower()
+        for fmt in QtGui.QImageReader.supportedImageFormats()
+    ]
+    # Manually add JPEG 2000 formats if not already included
+    jp2_extensions = ["jp2", "jpx", "j2k", "j2c"]
+    for ext in jp2_extensions:
+        if ext not in extensions:
+            extensions.append(ext)
+    return extensions
 
 
 class _ZoomMode(enum.Enum):
@@ -1027,6 +1049,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
+        if not _OSAM_AVAILABLE:
+            QMessageBox.warning(
+                self,
+                self.tr("AI Features Unavailable"),
+                self.tr(
+                    "AI-assisted annotation features are not available.\n"
+                    "onnxruntime failed to load. Please install Visual C++ Redistributable."
+                ),
+            )
+            return
+
         texts = self._ai_text_to_annotation_widget.get_text_prompt().split(",")
 
         model_name: str = self._ai_text_to_annotation_widget.get_model_name()
@@ -1744,10 +1777,7 @@ class MainWindow(QtWidgets.QMainWindow):
         image = QtGui.QImage.fromData(self.imageData)
 
         if image.isNull():
-            formats = [
-                f"*.{fmt.data().decode()}"
-                for fmt in QtGui.QImageReader.supportedImageFormats()
-            ]
+            formats = [f"*.{ext}" for ext in _get_supported_image_extensions()]
             self.errorMessage(
                 self.tr("Error opening file"),
                 self.tr(
@@ -1848,10 +1878,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.settings.setValue('window/geometry', self.saveGeometry())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
-        extensions = [
-            f".{fmt.data().decode().lower()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
+        extensions = [f".{ext}" for ext in _get_supported_image_extensions()]
         if a0.mimeData().hasUrls():
             items = [i.toLocalFile() for i in a0.mimeData().urls()]
             if any([i.lower().endswith(tuple(extensions)) for i in items]):
@@ -1896,10 +1923,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             return
         path = osp.dirname(str(self.filename)) if self.filename else "."
-        formats = [
-            f"*.{fmt.data().decode()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
+        formats = [f"*.{ext}" for ext in _get_supported_image_extensions()]
         filters = self.tr("Image & Label files (%s)") % " ".join(
             formats + [f"*{LabelFile.suffix}"]
         )
@@ -2157,10 +2181,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return lst
 
     def importDroppedImageFiles(self, imageFiles):
-        extensions = [
-            f".{fmt.data().decode().lower()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
+        extensions = [f".{ext}" for ext in _get_supported_image_extensions()]
 
         self.filename = None
         for file in imageFiles:
@@ -2224,10 +2245,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 def _scan_image_files(root_dir: str) -> list[str]:
-    extensions: list[str] = [
-        f".{fmt.data().decode().lower()}"
-        for fmt in QtGui.QImageReader.supportedImageFormats()
-    ]
+    extensions: list[str] = [f".{ext}" for ext in _get_supported_image_extensions()]
 
     images: list[str] = []
     for root, dirs, files in os.walk(root_dir):
