@@ -48,8 +48,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>AI creates rectangle annotations from the text prompt</source>
-        <translation>AI根据文本提示创建矩形标注</translation>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>AI根据文本提示创建标注</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>

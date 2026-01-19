@@ -37,7 +37,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
-            tooltip=self.tr("AI creates rectangle annotations from the text prompt")
+            tooltip=self.tr("AI creates annotations from the text prompt")
         )
         header_layout.addWidget(info_button)
         header_layout.addStretch()
