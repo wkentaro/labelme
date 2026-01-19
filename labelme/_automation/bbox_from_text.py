@@ -1,5 +1,6 @@
 import json
 import time
+from typing import Literal
 
 import numpy as np
 import osam
@@ -10,11 +11,12 @@ from PyQt5 import QtCore
 from labelme.shape import Shape
 
 from ._osam_session import OsamSession
+from .polygon_from_mask import compute_polygon_from_mask
 
 
 def get_bboxes_from_texts(
     session: OsamSession, image: np.ndarray, image_id: str, texts: list[str]
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None]:
     logger.debug(
         f"Requesting with model={session.model_name!r}, "
         f"image={(image.shape, image.dtype)}, texts={texts!r}"
@@ -34,7 +36,7 @@ def get_bboxes_from_texts(
 
     boxes: NDArray[np.float32] = np.empty((num_annotations, 4), dtype=np.float32)
     scores: NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)
-    labels: NDArray[np.float32] = np.empty((num_annotations,), dtype=np.int32)
+    labels: NDArray[np.int32] = np.empty((num_annotations,), dtype=np.int32)
     for i, annotation in enumerate(response.annotations):
         if annotation.bounding_box is None:
             raise ValueError("Bounding box is missing in the annotation.")
@@ -51,7 +53,13 @@ def get_bboxes_from_texts(
         scores[i] = annotation.score
         labels[i] = texts.index(annotation.text)
 
-    return boxes, scores, labels
+    masks: NDArray[np.bool_] | None = None
+    if response.annotations and response.annotations[0].mask is not None:
+        masks = np.array(
+            [annotation.mask for annotation in response.annotations], dtype=np.bool_
+        )
+
+    return boxes, scores, labels, masks
 
 
 def nms_bboxes(
@@ -61,9 +69,9 @@ def nms_bboxes(
     iou_threshold: float,
     score_threshold: float,
     max_num_detections: int,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     if len(boxes) == 0:
-        return boxes, scores, labels
+        return boxes, scores, labels, np.empty((0,), dtype=np.int32)
 
     num_classes: int = max(labels) + 1
     scores_of_all_classes: NDArray[np.float32] = np.zeros(
@@ -78,7 +86,7 @@ def nms_bboxes(
         max_num_detections,
     )
     logger.debug(f"Input: num_boxes={len(boxes)}")
-    boxes, scores, labels = osam.apis.non_maximum_suppression(
+    boxes, scores, labels, indices = osam.apis.non_maximum_suppression(
         boxes=boxes,
         scores=scores_of_all_classes,
         iou_threshold=iou_threshold,
@@ -86,22 +94,58 @@ def nms_bboxes(
         max_num_detections=max_num_detections,
     )
     logger.debug(f"Output: num_boxes={len(boxes)}")
-    return boxes, scores, labels
+    return boxes, scores, labels, indices
 
 
 def get_shapes_from_bboxes(
-    boxes: np.ndarray, scores: np.ndarray, labels: np.ndarray, texts: list[str]
+    boxes: np.ndarray,
+    scores: np.ndarray,
+    labels: np.ndarray,
+    texts: list[str],
+    masks: NDArray[np.bool_] | None,
+    shape_type: Literal["rectangle", "polygon", "mask"],
 ) -> list[Shape]:
     shapes: list[Shape] = []
-    for box, score, label in zip(boxes.tolist(), scores.tolist(), labels.tolist()):
+    for i, (box, score, label) in enumerate(zip(boxes, scores, labels)):
         text: str = texts[label]
+        xmin, ymin, xmax, ymax = box
+
+        points: list[list[float]]
+        mask: NDArray[np.bool_] | None = None
+        if shape_type == "rectangle":
+            points = [[xmin, ymin], [xmax, ymax]]
+        elif shape_type == "polygon":
+            if masks is None:
+                points = [
+                    [xmin, ymin],
+                    [xmax, ymin],
+                    [xmax, ymax],
+                    [xmin, ymax],
+                    [xmin, ymin],
+                ]
+            else:
+                mask = masks[i]
+                points = compute_polygon_from_mask(mask=mask).tolist()
+        elif shape_type == "mask":
+            xmin = int(xmin)
+            ymin = int(ymin)
+            xmax = int(xmax)
+            ymax = int(ymax)
+            points = [[xmin, ymin], [xmax, ymax]]
+            if masks is None:
+                mask = np.zeros((ymax - ymin, xmax - xmin), dtype=bool)
+            else:
+                mask = masks[i][ymin : ymax + 1, xmin : xmax + 1]
+        else:
+            raise ValueError(f"Unsupported shape_type: {shape_type!r}")
+
         shape = Shape(
             label=text,
-            shape_type="rectangle",
-            description=json.dumps(dict(score=score, text=text)),
+            shape_type=shape_type,
+            mask=mask,
+            description=json.dumps(dict(score=score.item(), text=text)),
         )
-        xmin, ymin, xmax, ymax = box
-        shape.addPoint(QtCore.QPointF(xmin, ymin))
-        shape.addPoint(QtCore.QPointF(xmax, ymax))
+        for point in points:
+            shape.addPoint(QtCore.QPointF(point[0], point[1]))
         shapes.append(shape)
     return shapes

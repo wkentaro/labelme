@@ -9,6 +9,7 @@ import os.path as osp
 import re
 import types
 import webbrowser
+from typing import Literal
 
 import imgviz
 import natsort
@@ -68,6 +69,16 @@ class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
     FIT_WIDTH = enum.auto()
     MANUAL_ZOOM = enum.auto()
+
+
+_AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE: dict[
+    str, Literal["mask", "polygon", "rectangle"]
+] = {
+    "ai_mask": "mask",
+    "ai_polygon": "polygon",
+    "polygon": "polygon",
+    "rectangle": "rectangle",
+}
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -1027,6 +1038,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
+        if (
+            self.canvas.createMode
+            not in _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE
+        ):
+            logger.warning("Unsupported createMode=%r", self.canvas.createMode)
+            return
+        shape_type: Literal["rectangle", "polygon", "mask"] = (
+            _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE[self.canvas.createMode]
+        )
+
         texts = self._ai_text_to_annotation_widget.get_text_prompt().split(",")
 
         model_name: str = self._ai_text_to_annotation_widget.get_model_name()
@@ -1040,30 +1061,28 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._text_osam_session = OsamSession(model_name=model_name)
 
-        boxes, scores, labels = bbox_from_text.get_bboxes_from_texts(
+        boxes, scores, labels, masks = bbox_from_text.get_bboxes_from_texts(
             session=self._text_osam_session,
             image=utils.img_qt_to_arr(self.image)[:, :, :3],
             image_id=str(hash(self.imagePath)),
             texts=texts,
         )
 
+        SCORE_FOR_EXISTING_SHAPE: float = 1.01
         for shape in self.canvas.shapes:
-            if shape.shape_type != "rectangle" or shape.label not in texts:
+            if shape.shape_type != shape_type or shape.label not in texts:
                 continue
-            box = np.array(
-                [
-                    shape.points[0].x(),
-                    shape.points[0].y(),
-                    shape.points[1].x(),
-                    shape.points[1].y(),
-                ],
-                dtype=np.float32,
+            points: NDArray[np.float64] = np.array(
+                [[p.x(), p.y()] for p in shape.points]
             )
+            xmin, ymin = points.min(axis=0)
+            xmax, ymax = points.max(axis=0)
+            box = np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
             boxes = np.r_[boxes, [box]]
-            scores = np.r_[scores, [1.01]]
+            scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
             labels = np.r_[labels, [texts.index(shape.label)]]
 
-        boxes, scores, labels = bbox_from_text.nms_bboxes(
+        boxes, scores, labels, indices = bbox_from_text.nms_bboxes(
             boxes=boxes,
             scores=scores,
             labels=labels,
@@ -1072,13 +1091,23 @@ class MainWindow(QtWidgets.QMainWindow):
             max_num_detections=100,
         )
 
-        keep = scores != 1.01
-        boxes = boxes[keep]
-        scores = scores[keep]
-        labels = labels[keep]
+        is_new = scores != SCORE_FOR_EXISTING_SHAPE
+        boxes = boxes[is_new]
+        scores = scores[is_new]
+        labels = labels[is_new]
+        indices = indices[is_new]
+
+        if masks is not None:
+            masks = masks[indices]
+        del indices
 
         shapes: list[Shape] = bbox_from_text.get_shapes_from_bboxes(
-            boxes=boxes, scores=scores, labels=labels, texts=texts
+            boxes=boxes,
+            scores=scores,
+            labels=labels,
+            texts=texts,
+            masks=masks,
+            shape_type=shape_type,
         )
 
         self.canvas.storeShapes()
@@ -1143,7 +1172,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 draw_action.setEnabled(createMode != draw_mode)
         self.actions.editMode.setEnabled(not edit)
         self._ai_text_to_annotation_widget.setEnabled(
-            not edit and createMode == "rectangle"
+            not edit and createMode in _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE
         )
         self._ai_assisted_annotation_widget.setEnabled(
             not edit and createMode in ("ai_polygon", "ai_mask")

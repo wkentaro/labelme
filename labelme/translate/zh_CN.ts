@@ -48,13 +48,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Create Rectangle&apos; mode to enable AI Text-to-Annotation</source>
-        <translation>选择&quot;创建矩形&quot;模式以启用AI提示</translation>
+        <source>AI creates rectangle annotations from the text prompt</source>
+        <translation>AI根据文本提示创建矩形标注</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>AI creates rectangle annotations from the text prompt</source>
-        <translation>AI根据文本提示创建矩形标注</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
+        <translation>选择 'Polygon'、'Rectangle'、'AI-Polygon' 或 'AI-Mask' 模式以启用</translation>
     </message>
 </context>
 <context>

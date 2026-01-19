@@ -137,7 +137,8 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
-                        "Select 'Create Rectangle' mode to enable AI Text-to-Annotation"
+                        "Select 'Polygon', 'Rectangle', 'AI-Polygon', or 'AI-Mask' "
+                        "mode to enable"
                     ),
                     self._body,
                 )
