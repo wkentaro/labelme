@@ -2,6 +2,62 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_TW">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI-Assisted Annotation</source>
+        <translation>AI輔助標註</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>AI在'AI-Polygon'和'AI-Mask'模式下提供標註建議</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>選擇「AI-Polygon」或「AI-Mask」模式以啟用AI輔助標註</translation>
+    </message>
+</context>
+<context>
+    <name>AiTextToAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI提示</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>例如：狗,貓,鳥</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>執行</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>分數</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>AI根據文字提示創建標註</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
+        <translation>選擇 'Polygon'、'Rectangle'、'AI-Polygon' 或 'AI-Mask' 模式以啟用</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -724,42 +780,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>AI蒙版模型</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>保留之前的亮度/對比度</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>IoU閾值</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>分數閾值</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>AI提示</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例如：狗,貓,鳥</translation>
     </message>
 </context>
 </TS>

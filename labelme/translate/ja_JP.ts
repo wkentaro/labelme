@@ -2,6 +2,62 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI-Assisted Annotation</source>
+        <translation>AI支援アノテーション</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>AIが'AI-Polygon'と'AI-Mask'モードでアノテーションを提案します</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>「AI-Polygon」または「AI-Mask」モードを選択してAI支援アノテーションを有効化</translation>
+    </message>
+</context>
+<context>
+    <name>AiTextToAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI Text-to-Annotation</source>
+        <translation>AIプロンプト</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>例: dog,cat,bird</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>実行</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>スコア</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>AIがテキストプロンプトからアノテーションを作成</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
+        <translation>「Polygon」「Rectangle」「AI-Polygon」「AI-Mask」モードで有効</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -150,7 +206,8 @@
         <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
-        <translation>開く(&amp;O)</translation>
+        <translation>開く(&amp;O)
+</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -160,12 +217,14 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>ディレクトリを開く</translation>
+        <translation>ディレクトリを
+開く</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>次の画像(&amp;N)</translation>
+        <translation>次の
+画像(&amp;N)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -175,7 +234,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>前の画像(&amp;P)</translation>
+        <translation>前の
+画像(&amp;P)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -186,7 +246,8 @@
         <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
-        <translation>保存(&amp;S)</translation>
+        <translation>保存(&amp;S)
+</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -206,7 +267,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>ファイルを削除(&amp;D)</translation>
+        <translation>ファイルを
+削除(&amp;D)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -266,7 +328,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
-        <translation>ポリゴンを作成</translation>
+        <translation>ポリゴン
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -276,7 +339,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Rectangle</source>
-        <translation>矩形を作成</translation>
+        <translation>矩形
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -286,7 +350,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Circle</source>
-        <translation>円を作成</translation>
+        <translation>円
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -296,7 +361,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>直線を作成</translation>
+        <translation>直線
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -306,7 +372,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Point</source>
-        <translation>点を作成</translation>
+        <translation>点
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -316,7 +383,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create LineStrip</source>
-        <translation>折れ線を作成</translation>
+        <translation>折れ線
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -326,7 +394,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Polygon</source>
-        <translation>AIポリゴンを作成</translation>
+        <translation>AIポリゴン
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -336,7 +405,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Mask</source>
-        <translation>AIマスクを作成</translation>
+        <translation>AIマスク
+を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -346,7 +416,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Polygons</source>
-        <translation>ポリゴンを編集</translation>
+        <translation>ポリゴンを
+編集</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -356,7 +427,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Polygons</source>
-        <translation>ポリゴンを削除</translation>
+        <translation>ポリゴンを
+削除</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -366,7 +438,8 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Polygons</source>
-        <translation>ポリゴンを複製</translation>
+        <translation>ポリゴンを
+複製</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -528,7 +601,8 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>ウィンドウに合わせる(&amp;F)</translation>
+        <translation>ウィンドウに
+合わせる(&amp;F)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -548,7 +622,8 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>明るさ・コントラスト(&amp;B)</translation>
+        <translation>明るさ・
+コントラスト(&amp;B)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -737,42 +812,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>AIマスクモデル</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>前の明るさ/コントラストを保持</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>IoU閾値</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>スコア閾値</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>AIプロンプト</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例: dog,cat,bird</translation>
     </message>
 </context>
 </TS>

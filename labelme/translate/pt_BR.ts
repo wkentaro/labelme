@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de_DE">
+<TS version="2.1" language="pt_BR">
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
-        <translation>KI-gestützte Annotation</translation>
+        <translation>Anotação Assistida por IA</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
+        <translation>IA sugere anotação nos modos 'Polígono IA' e 'Máscara IA'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Wählen Sie den Modus 'AI-Polygon' oder 'AI-Mask', um AI-Assisted Annotation zu aktivieren</translation>
+        <translation>Selecione o modo 'Polígono IA' ou 'Máscara IA' para ativar a Anotação Assistida por IA</translation>
     </message>
 </context>
 <context>
@@ -24,22 +24,27 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
-        <translation>KI-Prompt</translation>
+        <translation>Texto para Anotação IA</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>IA cria anotações a partir do prompt de texto</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
-        <translation>z.B. Hund,Katze,Vogel</translation>
+        <translation>ex.: cachorro, gato, pássaro</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
-        <translation>Ausführen</translation>
+        <translation>Executar</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
-        <translation>Score</translation>
+        <translation>Pontuação</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -48,116 +53,111 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>KI erstellt Annotationen aus dem Textprompt</translation>
-    </message>
-    <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Wählen Sie den Modus 'Polygon', 'Rechteck', 'AI-Polygon' oder 'AI-Maske' zum Aktivieren</translation>
+        <translation>Selecione o modo 'Polígono', 'Retângulo', 'Polígono IA' ou 'Máscara IA' para ativar</translation>
     </message>
 </context>
 <context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Creating %r</source>
-        <translation>%r wird erstellt</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>ESC to cancel</source>
-        <translation>ESC zum Abbrechen</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Enter or Space to finalize</source>
-        <translation>Enter oder Leertaste zum Abschließen</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Editing shapes</source>
-        <translation>Formen bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Punkte anklicken zum Einbeziehen oder Shift+Klick zum Ausschließen (KI-Polygon)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Punkte anklicken zum Einbeziehen oder Shift+Klick zum Ausschließen (KI-Maske)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click start point for line</source>
-        <translation>Startpunkt der Linie anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click end point for line</source>
-        <translation>Endpunkt der Linie anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click start point for linestrip</source>
-        <translation>Startpunkt der Linienfolge anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Nächsten Punkt anklicken oder mit Ctrl/Cmd+Klick abschließen (Linienfolge)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click center point for circle</source>
-        <translation>Mittelpunkt des Kreises anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click point on circumference for circle</source>
-        <translation>Punkt auf dem Kreisumfang anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click first corner for rectangle</source>
-        <translation>Erste Ecke des Rechtecks anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Gegenüberliegende Ecke des Rechtecks anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click to add point</source>
-        <translation>Klicken zum Hinzufügen eines Punktes</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation>Klicken und ziehen zum Verschieben des Punktes</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klick zum Löschen des Punktes</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klick zum Erstellen eines Punktes auf der Form</translation>
+        <translation>Clique e arraste para mover o ponto</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
-        <translation>Klicken und ziehen zum Verschieben der Form</translation>
+        <translation>Clique e arraste para mover a forma</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Creating %r</source>
+        <translation>Criando %r</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ESC to cancel</source>
+        <translation>ESC para cancelar</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Enter or Space to finalize</source>
+        <translation>Enter ou Espaço para finalizar</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Editing shapes</source>
+        <translation>Editando formas</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
+        <translation>Clique nos pontos para incluir ou Shift+Clique para excluir (polígono IA)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
+        <translation>Clique nos pontos para incluir ou Shift+Clique para excluir (máscara IA)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click start point for line</source>
+        <translation>Clique no ponto inicial da linha</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click end point for line</source>
+        <translation>Clique no ponto final da linha</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click start point for linestrip</source>
+        <translation>Clique no ponto inicial da linha contínua</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
+        <translation>Clique no próximo ponto ou Ctrl/Cmd+Clique para finalizar (linha contínua)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click center point for circle</source>
+        <translation>Clique no ponto central do círculo</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click point on circumference for circle</source>
+        <translation>Clique em um ponto da circunferência do círculo</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for rectangle</source>
+        <translation>Clique na primeira esquina do retângulo</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click to add point</source>
+        <translation>Clique para adicionar um ponto</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + SHIFT + Click to delete point</source>
+        <translation>ALT + SHIFT + Clique para excluir o ponto</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + Click to create point on shape</source>
+        <translation>ALT + Clique para criar um ponto na forma</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
-        <translation>Rechtsklick und Ziehen, um die Form zu kopieren</translation>
+        <translation>Clique com o botão direito e arraste para copiar a forma</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle</source>
+        <translation>Clique na esquina oposta do retângulo</translation>
     </message>
 </context>
 <context>
@@ -165,359 +165,348 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Flags</source>
-        <translation>Markierungen</translation>
+        <translation>Marcadores</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Polygon Labels</source>
-        <translation>Polygon-Labels</translation>
+        <translation>Rótulos de Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Label auswählen, um mit der Annotation zu beginnen. Mit 'Esc' abwählen.</translation>
+        <translation>Selecione um rótulo para começar a anotar. Pressione 'Esc' para desmarcar.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label List</source>
-        <translation>Label-Liste</translation>
+        <translation>Lista de Rótulos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
-        <translation>Dateiname suchen</translation>
+        <translation>Buscar Nome do Arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>File List</source>
-        <translation>Dateiliste</translation>
+        <translation>Lista de Arquivos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Beenden</translation>
+        <translation>&amp;Sair</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Quit application</source>
-        <translation>Anwendung beenden</translation>
+        <translation>Sair do aplicativo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
-        <translation>&amp;Öffnen
-</translation>
+        <translation>&amp;Abrir</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open image or label file</source>
-        <translation>Bild- oder Label-Datei öffnen</translation>
+        <translation>Abrir arquivo de imagem ou rótulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>Verzeichnis öffnen</translation>
+        <translation>Abrir Diretório</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>&amp;Nächstes Bild</translation>
+        <translation>Imagem &amp;Seguinte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Nächstes öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
+        <translation>Abrir seguinte (mantenha Ctrl+Shift para copiar rótulos)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>&amp;Vorheriges Bild</translation>
+        <translation>Imagem &amp;Anterior</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Vorheriges öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
+        <translation>Abrir anterior (mantenha Ctrl+Shift para copiar rótulos)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
-        <translation>&amp;Speichern
-</translation>
+        <translation>&amp;Salvar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
-        <translation>Labels in Datei speichern</translation>
+        <translation>Salvar rótulos no arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save As</source>
-        <translation>Speichern &amp;unter</translation>
+        <translation>Salvar &amp;Como</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
-        <translation>Labels in anderer Datei speichern</translation>
+        <translation>Salvar rótulos em um arquivo diferente</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>&amp;Datei löschen</translation>
+        <translation>&amp;Excluir Arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
-        <translation>Aktuelle Label-Datei löschen</translation>
+        <translation>Excluir arquivo de rótulo atual</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>&amp;Ausgabeverzeichnis ändern</translation>
+        <translation>Alterar Diretório de &amp;Saída</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
-        <translation>Ändern, wo Annotationen geladen/gespeichert werden</translation>
+        <translation>Alterar onde as anotações são carregadas/salvas</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatisch speichern</translation>
+        <translation>Salvar &amp;Automaticamente</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save automatically</source>
-        <translation>Automatisch speichern</translation>
+        <translation>Salvar automaticamente</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
-        <translation>Mit Bilddaten speichern</translation>
+        <translation>Salvar com Dados da Imagem</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
-        <translation>Bilddaten in Label-Datei speichern</translation>
+        <translation>Salvar dados da imagem no arquivo de rótulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Close</source>
-        <translation>&amp;Schließen</translation>
+        <translation>&amp;Fechar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Close current file</source>
-        <translation>Aktuelle Datei schließen</translation>
+        <translation>Fechar arquivo atual</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
-        <translation>Vorherige Annotation beibehalten</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>&quot;Vorherige Annotation beibehalten&quot; Modus umschalten</translation>
+        <translation>Manter Anotação Anterior</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
-        <translation>Polygone erstellen</translation>
+        <translation>Criar Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
-        <translation>Mit dem Zeichnen von Polygonen beginnen</translation>
+        <translation>Começar a desenhar polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Rectangle</source>
-        <translation>Rechteck erstellen</translation>
+        <translation>Criar Retângulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
-        <translation>Mit dem Zeichnen von Rechtecken beginnen</translation>
+        <translation>Começar a desenhar retângulos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Circle</source>
-        <translation>Kreis erstellen</translation>
+        <translation>Criar Círculo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
-        <translation>Mit dem Zeichnen von Kreisen beginnen</translation>
+        <translation>Começar a desenhar círculos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>Linie erstellen</translation>
+        <translation>Criar Linha</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>Mit dem Zeichnen von Linien beginnen</translation>
+        <translation>Começar a desenhar linhas</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Point</source>
-        <translation>Punkt erstellen</translation>
+        <translation>Criar Ponto</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
-        <translation>Mit dem Zeichnen von Punkten beginnen</translation>
+        <translation>Começar a desenhar pontos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create LineStrip</source>
-        <translation>Linienfolge erstellen</translation>
+        <translation>Criar Linha Contínua</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen einer Linienfolge beginnen. Strg+Linksklick beendet die Erstellung.</translation>
+        <translation>Começar a desenhar linha contínua. Ctrl+Clique esquerdo finaliza a criação.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Polygon</source>
-        <translation>KI-Polygon erstellen</translation>
+        <translation>Criar Polígono IA</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen eines KI-Polygons beginnen. Strg+Linksklick beendet die Erstellung.</translation>
+        <translation>Começar a desenhar polígono IA. Ctrl+Clique esquerdo finaliza a criação.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Mask</source>
-        <translation>KI-Maske erstellen</translation>
+        <translation>Criar Máscara IA</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen einer KI-Maske beginnen. Strg+Linksklick beendet die Erstellung.</translation>
+        <translation>Começar a desenhar máscara IA. Ctrl+Clique esquerdo finaliza a criação.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Polygons</source>
-        <translation>Polygone bearbeiten</translation>
+        <translation>Editar Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Move and edit the selected polygons</source>
-        <translation>Ausgewählte Polygone verschieben und bearbeiten</translation>
+        <translation>Mover e editar os polígonos selecionados</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Polygons</source>
-        <translation>Polygone löschen</translation>
+        <translation>Excluir Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete the selected polygons</source>
-        <translation>Ausgewählte Polygone löschen</translation>
+        <translation>Excluir os polígonos selecionados</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Polygons</source>
-        <translation>Polygone duplizieren</translation>
+        <translation>Duplicar Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected polygons</source>
-        <translation>Duplikat der ausgewählten Polygone erstellen</translation>
+        <translation>Criar uma cópia dos polígonos selecionados</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy Polygons</source>
-        <translation>Polygone kopieren</translation>
+        <translation>Copiar Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy selected polygons to clipboard</source>
-        <translation>Ausgewählte Polygone in Zwischenablage kopieren</translation>
+        <translation>Copiar polígonos selecionados para a área de transferência</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste Polygons</source>
-        <translation>Polygone einfügen</translation>
+        <translation>Colar Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste copied polygons</source>
-        <translation>Kopierte Polygone einfügen</translation>
+        <translation>Colar polígonos copiados</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
-        <translation>Letzten Punkt rückgängig machen</translation>
+        <translation>Desfazer último ponto</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
-        <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
+        <translation>Desfazer último ponto desenhado</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
-        <translation>Ausgewählten Punkt entfernen</translation>
+        <translation>Remover Ponto Selecionado</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
-        <translation>Ausgewählten Punkt aus Polygon entfernen</translation>
+        <translation>Remover ponto selecionado do polígono</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo
 </source>
-        <translation>Rückgängig
-</translation>
+        <translation>Desfazer</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
-        <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
+        <translation>Desfazer última adição e edição de forma</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Polygons</source>
-        <translation>&amp;Verbergen
-Polygone</translation>
+        <translation>Ocultar &amp;Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Hide all polygons</source>
-        <translation>Alle Polygone verbergen</translation>
+        <translation>Ocultar todos os polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Polygons</source>
-        <translation>&amp;Anzeigen
-Polygone</translation>
+        <translation>Mostrar &amp;Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show all polygons</source>
-        <translation>Alle Polygone anzeigen</translation>
+        <translation>Mostrar todos os polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Polygons</source>
-        <translation>&amp;Umschalten
-Polygone</translation>
+        <translation>Alternar &amp;Polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle all polygons</source>
-        <translation>Alle Polygone umschalten</translation>
+        <translation>Alternar todos os polígonos</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -527,7 +516,7 @@ Polygone</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
-        <translation>Tutorial-Seite anzeigen</translation>
+        <translation>Mostrar página do tutorial</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -537,152 +526,147 @@ Polygone</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom in or out of the image. Also accessible with {} and {} from the canvas.</source>
-        <translation>Bild vergrößern oder verkleinern. Auch mit {} und {} von der Leinwand aus zugänglich.</translation>
+        <translation>Aproximar ou afastar a imagem. Também acessível com {} e {} a partir da tela.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
-        <translation>Strg+Mausrad</translation>
+        <translation>Ctrl+Roda</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
-        <translation>&amp;Vergrößern</translation>
+        <translation>&amp;Aproximar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
-        <translation>Zoomstufe erhöhen</translation>
+        <translation>Aumentar nível de zoom</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Verkleinern</translation>
+        <translation>&amp;Afastar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
-        <translation>Zoomstufe verringern</translation>
+        <translation>Diminuir nível de zoom</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>&amp;Originalgröße</translation>
+        <translation>Tamanho &amp;Original</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
-        <translation>Auf Originalgröße zoomen</translation>
+        <translation>Zoom para o tamanho original</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>&amp;Vorherige Skalierung beibehalten</translation>
+        <translation>Manter Escala &amp;Anterior</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>Vorherige Zoomskalierung beibehalten</translation>
+        <translation>Manter escala de zoom anterior</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>&amp;An Fenster anpassen</translation>
+        <translation>Ajustar à &amp;Janela</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
-        <translation>Zoom folgt der Fenstergröße</translation>
+        <translation>O zoom segue o tamanho da janela</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
-        <translation>&amp;An Breite anpassen</translation>
+        <translation>Ajustar à &amp;Largura</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
-        <translation>Zoom folgt der Fensterbreite</translation>
+        <translation>O zoom segue a largura da janela</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Helligkeit/Kontrast</translation>
+        <translation>Brilho e &amp;Contraste</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
-        <translation>Helligkeit und Kontrast einstellen</translation>
+        <translation>Ajustar brilho e contraste</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
-        <translation>&amp;Label bearbeiten</translation>
+        <translation>&amp;Editar Rótulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected polygon</source>
-        <translation>Label des ausgewählten Polygons ändern</translation>
+        <translation>Modificar o rótulo do polígono selecionado</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
-        <translation>Gezeichnetes Polygon füllen</translation>
+        <translation>Preencher Polígono ao Desenhar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
-        <translation>Polygon beim Zeichnen füllen</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Keep Previous Brightness/Contrast</source>
-        <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+        <translation>Preencher polígono enquanto desenha</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Bearbeiten</translation>
+        <translation>&amp;Editar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
-        <translation>&amp;Ansicht</translation>
+        <translation>&amp;Visualizar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Help</source>
-        <translation>&amp;Hilfe</translation>
+        <translation>&amp;Ajuda</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
-        <translation>&amp;Zuletzt geöffnet</translation>
+        <translation>Abrir &amp;Recentes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s gestartet.</translation>
+        <translation>%s iniciado.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
-        <translation>Ungültiges Label</translation>
+        <translation>Rótulo inválido</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Ungültiges Label '{}' mit Validierungstyp '{}'</translation>
+        <translation>Rótulo inválido '{}' com tipo de validação '{}'</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
-        <translation>Fehler beim Speichern der Labeldaten</translation>
+        <translation>Erro ao salvar dados do rótulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -692,102 +676,112 @@ Polygone</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
-        <translation>Fehler beim Öffnen der Datei</translation>
+        <translation>Erro ao abrir arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Datei nicht gefunden: &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>Arquivo não encontrado: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>%s wird geladen...</translation>
+        <translation>Carregando %s...</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;%s&lt;/i&gt; eine gültige Beschriftungsdatei ist.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Certifique-se de que &lt;i&gt;%s&lt;/i&gt; seja um arquivo de rótulo válido.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
-        <translation>Fehler beim Lesen von %s</translation>
+        <translation>Erro ao ler %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;Make sure &lt;i&gt;{0}&lt;/i&gt; is a valid image file.&lt;br/&gt;Supported image formats: {1}&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;{0}&lt;/i&gt; eine gültige Bilddatei ist.&lt;br/&gt;Unterstützte Bildformate: {1}&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Certifique-se de que &lt;i&gt;{0}&lt;/i&gt; seja um arquivo de imagem válido.&lt;br/&gt;Formatos de imagem suportados: {1}&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
-        <translation>%s geladen</translation>
+        <translation>Carregado %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
-        <translation>Bild- und Label-Dateien (%s)</translation>
+        <translation>Arquivos de Imagem e Rótulo (%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose Image or Label file</source>
-        <translation>%s - Bild- oder Label-Datei auswählen</translation>
+        <translation>%s - Escolher Arquivo de Imagem ou Rótulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotationen im Verzeichnis speichern/laden</translation>
+        <translation>%s - Salvar/Carregar Anotações no Diretório</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Annotationen werden in %s gespeichert/geladen</translation>
+        <translation>%s . As anotações serão salvas/carregadas em %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose File</source>
-        <translation>%s - Datei auswählen</translation>
+        <translation>%s - Escolher Arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
-        <translation>Label-Dateien (*%s)</translation>
+        <translation>Arquivos de rótulo (*%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Choose File</source>
-        <translation>Datei auswählen</translation>
+        <translation>Escolher Arquivo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete this label file, proceed anyway?</source>
-        <translation>Möchten Sie diese Label-Datei endgültig löschen?</translation>
+        <translation>Você está prestes a excluir permanentemente este arquivo de rótulo, continuar mesmo assim?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Attention</source>
-        <translation>Achtung</translation>
+        <translation>Atenção</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Annotationen in &quot;{}&quot; speichern vor dem Schließen?</translation>
+        <translation>Salvar anotações em &quot;{}&quot; antes de fechar?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
-        <translation>Annotationen speichern?</translation>
+        <translation>Salvar anotações?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Möchten Sie {} Polygone endgültig löschen?</translation>
+        <translation>Você está prestes a excluir permanentemente {} polígonos, continuar mesmo assim?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
-        <translation>%s - Verzeichnis öffnen</translation>
+        <translation>%s - Abrir Diretório</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Toggle &quot;keep previous annotation&quot; mode</source>
+        <translation>Alternar modo &quot;manter anotação anterior&quot;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Keep Previous Brightness/Contrast</source>
+        <translation>Manter Brilho/Contraste Anterior</translation>
     </message>
 </context>
 </TS>

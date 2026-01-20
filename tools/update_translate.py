@@ -1,11 +1,11 @@
-import pathlib
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 from loguru import logger
 
-here: pathlib.Path = pathlib.Path(__file__).parent
+here: Path = Path(__file__).parent
 
 
 def main():
@@ -20,10 +20,10 @@ def main():
         diagnose=False,
     )
 
-    labelme_path: pathlib.Path = here / ".." / "labelme"
-    labelme_files: list[pathlib.Path] = list(labelme_path.rglob("*.py"))
+    labelme_path: Path = here / ".." / "labelme"
+    labelme_files: list[Path] = list(labelme_path.rglob("*.py"))
 
-    labelme_translate_path: pathlib.Path = labelme_path / "translate"
+    labelme_translate_path: Path = labelme_path / "translate"
 
     pylupdate_version: str = (
         subprocess.check_output(["pylupdate5", "-version"], stderr=subprocess.STDOUT)
@@ -48,7 +48,7 @@ def main():
         [ts_file.stem for ts_file in labelme_translate_path.glob("*.ts")]
     )
     for lang in languages:
-        ts_path: pathlib.Path = labelme_translate_path / f"{lang}.ts"
+        ts_path: Path = labelme_translate_path / f"{lang}.ts"
         subprocess.check_call(
             [
                 "pylupdate5",
@@ -66,7 +66,7 @@ def main():
         ts_path.write_text(new_ts_content)
         logger.info("updated .ts file: {}", ts_path)
 
-        qm_path: pathlib.Path = labelme_translate_path / f"{lang}.qm"
+        qm_path: Path = labelme_translate_path / f"{lang}.qm"
         subprocess.check_call(
             ["lrelease", ts_path, "-qm", qm_path],
             stdout=subprocess.DEVNULL,

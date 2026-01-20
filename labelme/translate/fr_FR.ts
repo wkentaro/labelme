@@ -2,6 +2,62 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI-Assisted Annotation</source>
+        <translation>Annotation assistée par IA</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>L'IA suggère l'annotation dans les modes 'AI-Polygon' et 'AI-Mask'</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Sélectionnez le mode 'AI-Polygon' ou 'AI-Mask' pour activer AI-Assisted Annotation</translation>
+    </message>
+</context>
+<context>
+    <name>AiTextToAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI Text-to-Annotation</source>
+        <translation>Invite IA</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>ex. : chien,chat,oiseau</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>Exécuter</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>Score</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>L'IA crée des annotations à partir du texte</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
+        <translation>Sélectionnez le mode 'Polygon', 'Rectangle', 'AI-Polygon' ou 'AI-Mask' pour activer</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -740,42 +796,8 @@ les polygones</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>Modèle de masque IA</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Conserver les réglages de luminosité/contraste</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>Seuil IoU</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>Seuil de score</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>Invite IA</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ex. : chien,chat,oiseau</translation>
     </message>
 </context>
 </TS>

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de_DE">
+<TS version="2.1" language="nl_NL">
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
-        <translation>KI-gestützte Annotation</translation>
+        <translation>AI-Ondersteunde Annotatie</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
+        <translation>AI stelt annotatie voor in 'AI-Polygoon' en 'AI-Masker' modi</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Wählen Sie den Modus 'AI-Polygon' oder 'AI-Mask', um AI-Assisted Annotation zu aktivieren</translation>
+        <translation>Selecteer 'AI-Polygoon' of 'AI-Masker' modus om AI-Ondersteunde Annotatie in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -24,17 +24,22 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
-        <translation>KI-Prompt</translation>
+        <translation>AI Tekst-naar-Annotatie</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>AI maakt annotaties van de tekstprompt</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
-        <translation>z.B. Hund,Katze,Vogel</translation>
+        <translation>bijv. hond, kat, vogel</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
-        <translation>Ausführen</translation>
+        <translation>Uitvoeren</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -48,116 +53,111 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>KI erstellt Annotationen aus dem Textprompt</translation>
-    </message>
-    <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Wählen Sie den Modus 'Polygon', 'Rechteck', 'AI-Polygon' oder 'AI-Maske' zum Aktivieren</translation>
+        <translation>Selecteer 'Polygoon', 'Rechthoek', 'AI-Polygoon' of 'AI-Masker' modus om in te schakelen</translation>
     </message>
 </context>
 <context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Creating %r</source>
-        <translation>%r wird erstellt</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>ESC to cancel</source>
-        <translation>ESC zum Abbrechen</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Enter or Space to finalize</source>
-        <translation>Enter oder Leertaste zum Abschließen</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Editing shapes</source>
-        <translation>Formen bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Punkte anklicken zum Einbeziehen oder Shift+Klick zum Ausschließen (KI-Polygon)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Punkte anklicken zum Einbeziehen oder Shift+Klick zum Ausschließen (KI-Maske)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click start point for line</source>
-        <translation>Startpunkt der Linie anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click end point for line</source>
-        <translation>Endpunkt der Linie anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click start point for linestrip</source>
-        <translation>Startpunkt der Linienfolge anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Nächsten Punkt anklicken oder mit Ctrl/Cmd+Klick abschließen (Linienfolge)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click center point for circle</source>
-        <translation>Mittelpunkt des Kreises anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click point on circumference for circle</source>
-        <translation>Punkt auf dem Kreisumfang anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click first corner for rectangle</source>
-        <translation>Erste Ecke des Rechtecks anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Gegenüberliegende Ecke des Rechtecks anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click to add point</source>
-        <translation>Klicken zum Hinzufügen eines Punktes</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation>Klicken und ziehen zum Verschieben des Punktes</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klick zum Löschen des Punktes</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klick zum Erstellen eines Punktes auf der Form</translation>
+        <translation>Klik en sleep om punt te verplaatsen</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
-        <translation>Klicken und ziehen zum Verschieben der Form</translation>
+        <translation>Klik en sleep om vorm te verplaatsen</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Creating %r</source>
+        <translation>Maken van %r</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ESC to cancel</source>
+        <translation>ESC om te annuleren</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Enter or Space to finalize</source>
+        <translation>Enter of Spatie om te voltooien</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Editing shapes</source>
+        <translation>Vormen bewerken</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
+        <translation>Klik op punten om op te nemen of Shift+Klik om uit te sluiten (AI-polygoon)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
+        <translation>Klik op punten om op te nemen of Shift+Klik om uit te sluiten (AI-masker)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click start point for line</source>
+        <translation>Klik op startpunt voor lijn</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click end point for line</source>
+        <translation>Klik op eindpunt voor lijn</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click start point for linestrip</source>
+        <translation>Klik op startpunt voor lijnstrook</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
+        <translation>Klik op volgend punt of Ctrl/Cmd+Klik om te voltooien (lijnstrook)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click center point for circle</source>
+        <translation>Klik op middelpunt voor cirkel</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click point on circumference for circle</source>
+        <translation>Klik op punt op omtrek voor cirkel</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for rectangle</source>
+        <translation>Klik op eerste hoek voor rechthoek</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click to add point</source>
+        <translation>Klik om punt toe te voegen</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + SHIFT + Click to delete point</source>
+        <translation>ALT + SHIFT + Klik om punt te verwijderen</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>ALT + Click to create point on shape</source>
+        <translation>ALT + Klik om punt op vorm te maken</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
-        <translation>Rechtsklick und Ziehen, um die Form zu kopieren</translation>
+        <translation>Rechtsklik en sleep om vorm te kopiëren</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle</source>
+        <translation>Klik op tegenoverliggende hoek voor rechthoek</translation>
     </message>
 </context>
 <context>
@@ -165,359 +165,348 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Flags</source>
-        <translation>Markierungen</translation>
+        <translation>Vlaggen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Polygon Labels</source>
-        <translation>Polygon-Labels</translation>
+        <translation>Polygoonlabels</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Label auswählen, um mit der Annotation zu beginnen. Mit 'Esc' abwählen.</translation>
+        <translation>Selecteer label om te beginnen met annoteren. Druk op 'Esc' om te deselecteren.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label List</source>
-        <translation>Label-Liste</translation>
+        <translation>Labellijst</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
-        <translation>Dateiname suchen</translation>
+        <translation>Zoek Bestandsnaam</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>File List</source>
-        <translation>Dateiliste</translation>
+        <translation>Bestandslijst</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Beenden</translation>
+        <translation>&amp;Afsluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Quit application</source>
-        <translation>Anwendung beenden</translation>
+        <translation>Applicatie afsluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
-        <translation>&amp;Öffnen
-</translation>
+        <translation>&amp;Openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open image or label file</source>
-        <translation>Bild- oder Label-Datei öffnen</translation>
+        <translation>Afbeelding of labelbestand openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>Verzeichnis öffnen</translation>
+        <translation>Map Openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>&amp;Nächstes Bild</translation>
+        <translation>Volgende &amp;Afbeelding</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Nächstes öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
+        <translation>Volgende openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>&amp;Vorheriges Bild</translation>
+        <translation>Vorige &amp;Afbeelding</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Vorheriges öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
+        <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
-        <translation>&amp;Speichern
-</translation>
+        <translation>&amp;Opslaan</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
-        <translation>Labels in Datei speichern</translation>
+        <translation>Labels opslaan naar bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save As</source>
-        <translation>Speichern &amp;unter</translation>
+        <translation>Opslaan &amp;als</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
-        <translation>Labels in anderer Datei speichern</translation>
+        <translation>Labels opslaan naar ander bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>&amp;Datei löschen</translation>
+        <translation>Bestand &amp;verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
-        <translation>Aktuelle Label-Datei löschen</translation>
+        <translation>Huidig labelbestand verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>&amp;Ausgabeverzeichnis ändern</translation>
+        <translation>Uitvoermap &amp;wijzigen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
-        <translation>Ändern, wo Annotationen geladen/gespeichert werden</translation>
+        <translation>Wijzig waar annotaties worden geladen/opgeslagen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatisch speichern</translation>
+        <translation>&amp;Automatisch opslaan</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save automatically</source>
-        <translation>Automatisch speichern</translation>
+        <translation>Automatisch opslaan</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
-        <translation>Mit Bilddaten speichern</translation>
+        <translation>Opslaan met Afbeeldingsgegevens</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
-        <translation>Bilddaten in Label-Datei speichern</translation>
+        <translation>Afbeeldingsgegevens opslaan in labelbestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Close</source>
-        <translation>&amp;Schließen</translation>
+        <translation>&amp;Sluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Close current file</source>
-        <translation>Aktuelle Datei schließen</translation>
+        <translation>Huidig bestand sluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
-        <translation>Vorherige Annotation beibehalten</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>&quot;Vorherige Annotation beibehalten&quot; Modus umschalten</translation>
+        <translation>Vorige Annotatie Behouden</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
-        <translation>Polygone erstellen</translation>
+        <translation>Polygonen Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
-        <translation>Mit dem Zeichnen von Polygonen beginnen</translation>
+        <translation>Begin met tekenen van polygonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Rectangle</source>
-        <translation>Rechteck erstellen</translation>
+        <translation>Rechthoek Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
-        <translation>Mit dem Zeichnen von Rechtecken beginnen</translation>
+        <translation>Begin met tekenen van rechthoeken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Circle</source>
-        <translation>Kreis erstellen</translation>
+        <translation>Cirkel Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
-        <translation>Mit dem Zeichnen von Kreisen beginnen</translation>
+        <translation>Begin met tekenen van cirkels</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>Linie erstellen</translation>
+        <translation>Lijn Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>Mit dem Zeichnen von Linien beginnen</translation>
+        <translation>Begin met tekenen van lijnen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Point</source>
-        <translation>Punkt erstellen</translation>
+        <translation>Punt Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
-        <translation>Mit dem Zeichnen von Punkten beginnen</translation>
+        <translation>Begin met tekenen van punten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create LineStrip</source>
-        <translation>Linienfolge erstellen</translation>
+        <translation>Lijnstrook Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen einer Linienfolge beginnen. Strg+Linksklick beendet die Erstellung.</translation>
+        <translation>Begin met tekenen van lijnstrook. Ctrl+Linkerklik beëindigt het maken.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Polygon</source>
-        <translation>KI-Polygon erstellen</translation>
+        <translation>AI-Polygoon Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen eines KI-Polygons beginnen. Strg+Linksklick beendet die Erstellung.</translation>
+        <translation>Begin met tekenen van AI-polygoon. Ctrl+Linkerklik beëindigt het maken.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Mask</source>
-        <translation>KI-Maske erstellen</translation>
+        <translation>AI-Masker Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen einer KI-Maske beginnen. Strg+Linksklick beendet die Erstellung.</translation>
+        <translation>Begin met tekenen van AI-masker. Ctrl+Linkerklik beëindigt het maken.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Polygons</source>
-        <translation>Polygone bearbeiten</translation>
+        <translation>Polygonen Bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Move and edit the selected polygons</source>
-        <translation>Ausgewählte Polygone verschieben und bearbeiten</translation>
+        <translation>Verplaats en bewerk de geselecteerde polygonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Polygons</source>
-        <translation>Polygone löschen</translation>
+        <translation>Polygonen Verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete the selected polygons</source>
-        <translation>Ausgewählte Polygone löschen</translation>
+        <translation>Geselecteerde polygonen verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Polygons</source>
-        <translation>Polygone duplizieren</translation>
+        <translation>Polygonen Dupliceren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected polygons</source>
-        <translation>Duplikat der ausgewählten Polygone erstellen</translation>
+        <translation>Maak een duplicaat van de geselecteerde polygonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy Polygons</source>
-        <translation>Polygone kopieren</translation>
+        <translation>Polygonen Kopiëren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy selected polygons to clipboard</source>
-        <translation>Ausgewählte Polygone in Zwischenablage kopieren</translation>
+        <translation>Geselecteerde polygonen naar klembord kopiëren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste Polygons</source>
-        <translation>Polygone einfügen</translation>
+        <translation>Polygonen Plakken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste copied polygons</source>
-        <translation>Kopierte Polygone einfügen</translation>
+        <translation>Gekopieerde polygonen plakken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
-        <translation>Letzten Punkt rückgängig machen</translation>
+        <translation>Laatste punt ongedaan maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
-        <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
+        <translation>Laatste getekende punt ongedaan maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
-        <translation>Ausgewählten Punkt entfernen</translation>
+        <translation>Geselecteerd Punt Verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
-        <translation>Ausgewählten Punkt aus Polygon entfernen</translation>
+        <translation>Geselecteerd punt uit polygoon verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo
 </source>
-        <translation>Rückgängig
-</translation>
+        <translation>Ongedaan Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
-        <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
+        <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Polygons</source>
-        <translation>&amp;Verbergen
-Polygone</translation>
+        <translation>Polygonen &amp;verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Hide all polygons</source>
-        <translation>Alle Polygone verbergen</translation>
+        <translation>Alle polygonen verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Polygons</source>
-        <translation>&amp;Anzeigen
-Polygone</translation>
+        <translation>Polygonen &amp;tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show all polygons</source>
-        <translation>Alle Polygone anzeigen</translation>
+        <translation>Alle polygonen tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Polygons</source>
-        <translation>&amp;Umschalten
-Polygone</translation>
+        <translation>Polygonen &amp;omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle all polygons</source>
-        <translation>Alle Polygone umschalten</translation>
+        <translation>Alle polygonen omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -527,7 +516,7 @@ Polygone</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
-        <translation>Tutorial-Seite anzeigen</translation>
+        <translation>Tutorialpagina tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -537,152 +526,147 @@ Polygone</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom in or out of the image. Also accessible with {} and {} from the canvas.</source>
-        <translation>Bild vergrößern oder verkleinern. Auch mit {} und {} von der Leinwand aus zugänglich.</translation>
+        <translation>In- of uitzoomen op de afbeelding. Ook toegankelijk met {} en {} vanaf het canvas.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
-        <translation>Strg+Mausrad</translation>
+        <translation>Ctrl+Wiel</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
-        <translation>&amp;Vergrößern</translation>
+        <translation>&amp;Inzoomen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
-        <translation>Zoomstufe erhöhen</translation>
+        <translation>Zoomniveau verhogen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Verkleinern</translation>
+        <translation>&amp;Uitzoomen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
-        <translation>Zoomstufe verringern</translation>
+        <translation>Zoomniveau verlagen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>&amp;Originalgröße</translation>
+        <translation>&amp;Originele grootte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
-        <translation>Auf Originalgröße zoomen</translation>
+        <translation>Zoomen naar originele grootte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>&amp;Vorherige Skalierung beibehalten</translation>
+        <translation>Vorige Schaal &amp;behouden</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>Vorherige Zoomskalierung beibehalten</translation>
+        <translation>Vorige zoomschaal behouden</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>&amp;An Fenster anpassen</translation>
+        <translation>Aanpassen aan &amp;venster</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
-        <translation>Zoom folgt der Fenstergröße</translation>
+        <translation>Zoom volgt venstergrootte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
-        <translation>&amp;An Breite anpassen</translation>
+        <translation>Aanpassen aan &amp;breedte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
-        <translation>Zoom folgt der Fensterbreite</translation>
+        <translation>Zoom volgt vensterbreedte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Helligkeit/Kontrast</translation>
+        <translation>Helderheid en &amp;contrast</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
-        <translation>Helligkeit und Kontrast einstellen</translation>
+        <translation>Helderheid en contrast aanpassen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
-        <translation>&amp;Label bearbeiten</translation>
+        <translation>Label &amp;bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected polygon</source>
-        <translation>Label des ausgewählten Polygons ändern</translation>
+        <translation>Label van geselecteerde polygoon wijzigen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
-        <translation>Gezeichnetes Polygon füllen</translation>
+        <translation>Polygoon Vullen bij Tekenen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
-        <translation>Polygon beim Zeichnen füllen</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Keep Previous Brightness/Contrast</source>
-        <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+        <translation>Polygoon vullen tijdens tekenen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Bearbeiten</translation>
+        <translation>&amp;Bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
-        <translation>&amp;Ansicht</translation>
+        <translation>&amp;Beeld</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Help</source>
-        <translation>&amp;Hilfe</translation>
+        <translation>&amp;Help</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
-        <translation>&amp;Zuletzt geöffnet</translation>
+        <translation>Open &amp;recent</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s gestartet.</translation>
+        <translation>%s gestart.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
-        <translation>Ungültiges Label</translation>
+        <translation>Ongeldig label</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Ungültiges Label '{}' mit Validierungstyp '{}'</translation>
+        <translation>Ongeldig label '{}' met validatietype '{}'</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
-        <translation>Fehler beim Speichern der Labeldaten</translation>
+        <translation>Fout bij opslaan van labelgegevens</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -692,102 +676,112 @@ Polygone</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
-        <translation>Fehler beim Öffnen der Datei</translation>
+        <translation>Fout bij openen van bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Datei nicht gefunden: &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>Bestand niet gevonden: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>%s wird geladen...</translation>
+        <translation>Laden van %s...</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;%s&lt;/i&gt; eine gültige Beschriftungsdatei ist.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig labelbestand is.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
-        <translation>Fehler beim Lesen von %s</translation>
+        <translation>Fout bij lezen van %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;Make sure &lt;i&gt;{0}&lt;/i&gt; is a valid image file.&lt;br/&gt;Supported image formats: {1}&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;{0}&lt;/i&gt; eine gültige Bilddatei ist.&lt;br/&gt;Unterstützte Bildformate: {1}&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Zorg ervoor dat &lt;i&gt;{0}&lt;/i&gt; een geldig afbeeldingsbestand is.&lt;br/&gt;Ondersteunde afbeeldingsformaten: {1}&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
-        <translation>%s geladen</translation>
+        <translation>Geladen %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
-        <translation>Bild- und Label-Dateien (%s)</translation>
+        <translation>Afbeelding- en labelbestanden (%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose Image or Label file</source>
-        <translation>%s - Bild- oder Label-Datei auswählen</translation>
+        <translation>%s - Kies Afbeelding- of labelbestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotationen im Verzeichnis speichern/laden</translation>
+        <translation>%s - Annotaties Opslaan/Laden in Map</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Annotationen werden in %s gespeichert/geladen</translation>
+        <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose File</source>
-        <translation>%s - Datei auswählen</translation>
+        <translation>%s - Kies Bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
-        <translation>Label-Dateien (*%s)</translation>
+        <translation>Labelbestanden (*%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Choose File</source>
-        <translation>Datei auswählen</translation>
+        <translation>Kies Bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete this label file, proceed anyway?</source>
-        <translation>Möchten Sie diese Label-Datei endgültig löschen?</translation>
+        <translation>U staat op het punt dit labelbestand permanent te verwijderen, doorgaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Attention</source>
-        <translation>Achtung</translation>
+        <translation>Let op</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Annotationen in &quot;{}&quot; speichern vor dem Schließen?</translation>
+        <translation>Annotaties opslaan naar &quot;{}&quot; voordat u sluit?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
-        <translation>Annotationen speichern?</translation>
+        <translation>Annotaties opslaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Möchten Sie {} Polygone endgültig löschen?</translation>
+        <translation>U staat op het punt {} polygonen permanent te verwijderen, doorgaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
-        <translation>%s - Verzeichnis öffnen</translation>
+        <translation>%s - Map Openen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Toggle &quot;keep previous annotation&quot; mode</source>
+        <translation>Modus &quot;vorige annotatie behouden&quot; omschakelen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Keep Previous Brightness/Contrast</source>
+        <translation>Vorige Helderheid/Contrast Behouden</translation>
     </message>
 </context>
 </TS>

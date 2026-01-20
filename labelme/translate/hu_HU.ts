@@ -2,6 +2,62 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="hu_HU">
 <context>
+    <name>AiAssistedAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI-Assisted Annotation</source>
+        <translation>MI-támogatott annotáció</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
+        <translation>Az MI annotációt javasol az 'AI-Polygon' és 'AI-Mask' módokban</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
+        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Válassza az 'AI-Polygon' vagy 'AI-Mask' módot az AI-Assisted Annotation engedélyezéséhez</translation>
+    </message>
+</context>
+<context>
+    <name>AiTextToAnnotationWidget</name>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI prompt</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>e.g., dog,cat,bird</source>
+        <translation>pl. kutya,macska,madár</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Run</source>
+        <translation>Futtatás</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Score</source>
+        <translation>Pontszám</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>IoU</source>
+        <translation>IoU</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
+        <translation>Válassza a 'Polygon', 'Rectangle', 'AI-Polygon' vagy 'AI-Mask' módot az engedélyezéshez</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -610,11 +666,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI Mask Model</source>
-        <translation>AI maszk modell</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>%s started.</source>
         <translation>%s elindítva.</translation>
     </message>
@@ -737,35 +788,6 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Könyvtár megnyitása</translation>
-    </message>
-</context>
-<context>
-    <name>_IouThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>IoU Threshold</source>
-        <translation>IoU küszöbérték</translation>
-    </message>
-</context>
-<context>
-    <name>_ScoreThresholdWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>Score Threshold</source>
-        <translation>Pontszám küszöbérték</translation>
-    </message>
-</context>
-<context>
-    <name>_TextPromptWidget</name>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>AI Prompt</source>
-        <translation>AI prompt</translation>
-    </message>
-    <message>
-        <location filename="../widgets/ai_prompt_widget.py" line="0"/>
-        <source>e.g., dog,cat,bird</source>
-        <translation>pl. kutya,macska,madár</translation>
     </message>
 </context>
 </TS>
