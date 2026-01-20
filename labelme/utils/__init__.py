@@ -9,6 +9,7 @@ from .image import img_data_to_png_data
 from .image import img_pil_to_data
 from .image import img_qt_to_arr
 from .qt import addActions
+from .qt import angleRad
 from .qt import distance
 from .qt import distancetoline
 from .qt import fmtShortcut
@@ -16,6 +17,11 @@ from .qt import labelValidator
 from .qt import newAction
 from .qt import newButton
 from .qt import newIcon
+from .qt import projectPointAtRightAngle
+from .qt import projectPointOnLine
+from .qt import rectangleFourthPoint
+from .qt import rotate
+from .qt import rotateMany
 from .shape import labelme_shapes_to_label
 from .shape import masks_to_bboxes
 from .shape import polygons_to_mask
