@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import pathlib
 from collections.abc import Generator
+from pathlib import Path
 from typing import Literal
 
 import pytest
@@ -20,7 +20,7 @@ import labelme.testing
 
 @pytest.fixture(autouse=True)
 def _isolated_qtsettings(
-    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> Generator[None, None, None]:
     settings_file = tmp_path / "qtsettings.ini"
     settings: QSettings = QSettings(str(settings_file), QSettings.IniFormat)
@@ -51,7 +51,7 @@ def test_MainWindow_open(qtbot: QtBot) -> None:
 
 
 @pytest.mark.gui
-def test_MainWindow_open_img(qtbot: QtBot, data_path: pathlib.Path) -> None:
+def test_MainWindow_open_img(qtbot: QtBot, data_path: Path) -> None:
     image_file: str = str(data_path / "raw/2011_000003.jpg")
     win: labelme.app.MainWindow = labelme.app.MainWindow(filename=image_file)
     qtbot.addWidget(win)
@@ -60,7 +60,7 @@ def test_MainWindow_open_img(qtbot: QtBot, data_path: pathlib.Path) -> None:
 
 
 @pytest.mark.gui
-def test_MainWindow_open_json(qtbot: QtBot, data_path: pathlib.Path) -> None:
+def test_MainWindow_open_json(qtbot: QtBot, data_path: Path) -> None:
     json_files: list[str] = [
         str(data_path / "annotated_with_data/apc2016_obj3.json"),
         str(data_path / "annotated/2011_000003.json"),
@@ -80,7 +80,7 @@ def test_MainWindow_open_json(qtbot: QtBot, data_path: pathlib.Path) -> None:
 def test_MainWindow_open_dir(
     qtbot: QtBot,
     scenario: Literal["raw", "annotated", "annotated_nested"],
-    data_path: pathlib.Path,
+    data_path: Path,
 ) -> None:
     directory: str
     output_dir: str | None
@@ -101,17 +101,17 @@ def test_MainWindow_open_dir(
     second_image_name: str = "2011_000006.jpg"
 
     assert win.imagePath
-    assert pathlib.Path(win.imagePath).name == first_image_name
+    assert Path(win.imagePath).name == first_image_name
     win._open_prev_image()
     qtbot.wait(100)
-    assert pathlib.Path(win.imagePath).name == first_image_name
+    assert Path(win.imagePath).name == first_image_name
 
     win._open_next_image()
     qtbot.wait(100)
-    assert pathlib.Path(win.imagePath).name == second_image_name
+    assert Path(win.imagePath).name == second_image_name
     win._open_prev_image()
     qtbot.wait(100)
-    assert pathlib.Path(win.imagePath).name == first_image_name
+    assert Path(win.imagePath).name == first_image_name
 
     assert win.fileListWidget.count() == 3
     expected_check_state = (
@@ -124,9 +124,7 @@ def test_MainWindow_open_dir(
 
 
 @pytest.mark.gui
-def test_MainWindow_annotate_jpg(
-    qtbot: QtBot, data_path: pathlib.Path, tmp_path: pathlib.Path
-) -> None:
+def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) -> None:
     input_file: str = str(data_path / "raw/2011_000003.jpg")
     out_file: str = str(tmp_path / "2011_000003.json")
 
@@ -182,9 +180,7 @@ def test_MainWindow_annotate_jpg(
 
 
 @pytest.mark.gui
-def test_image_navigation_while_selecting_shape(
-    qtbot: QtBot, data_path: pathlib.Path
-) -> None:
+def test_image_navigation_while_selecting_shape(qtbot: QtBot, data_path: Path) -> None:
     win: labelme.app.MainWindow = labelme.app.MainWindow(
         filename=str(data_path / "annotated")
     )

@@ -88,6 +88,7 @@ class Canvas(QtWidgets.QWidget):
     _is_dragging: bool
     _is_dragging_enabled: bool
 
+    _osam_session_model_name: str = "sam2:latest"
     _osam_session: OsamSession | None
 
     def __init__(self, *args, **kwargs):
@@ -169,19 +170,21 @@ class Canvas(QtWidgets.QWidget):
         self._createMode = value
 
     def set_ai_model_name(self, model_name: str) -> None:
-        if self._osam_session and self._osam_session.model_name == model_name:
-            return
-        self._osam_session = OsamSession(model_name=model_name)
+        self._osam_session_model_name = model_name
+
+    def _get_osam_session(self) -> OsamSession:
+        if (
+            self._osam_session is None
+            or self._osam_session.model_name != self._osam_session_model_name
+        ):
+            self._osam_session = OsamSession(model_name=self._osam_session_model_name)
+        return self._osam_session
 
     def _update_shape_with_ai(
         self, points: list[QPointF], point_labels: list[int], shape: Shape
     ) -> None:
-        if self._osam_session is None:
-            logger.warning("_osam_session is None, cannot update shape with AI")
-            return
-
         image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
-        response: osam.types.GenerateResponse = self._osam_session.run(
+        response: osam.types.GenerateResponse = self._get_osam_session().run(
             image=imgviz.asrgb(image),
             image_id=str(self._pixmap_hash),
             points=np.array([[p.x(), p.y()] for p in points]),
@@ -549,13 +552,8 @@ class Canvas(QtWidgets.QWidget):
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     if self.createMode in ["ai_polygon", "ai_mask"]:
-                        if self._osam_session is None:
-                            logger.warning(
-                                "_osam_session is None, cannot start AI shape creation"
-                            )
-                            return
                         if not download_ai_model(
-                            model_name=self._osam_session.model_name, parent=self
+                            model_name=self._osam_session_model_name, parent=self
                         ):
                             return
 

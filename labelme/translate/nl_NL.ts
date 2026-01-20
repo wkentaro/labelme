@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="nl_NL">
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
-        <translation>AI辅助标注</translation>
+        <translation>AI-Ondersteunde Annotatie</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI在'AI-Polygon'和'AI-Mask'模式下提供标注建议</translation>
+        <translation>AI stelt annotatie voor in 'AI-Polygoon' en 'AI-Masker' modi</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>选择「AI-Polygon」或「AI-Mask」模式以启用AI辅助标注</translation>
+        <translation>Selecteer 'AI-Polygoon' of 'AI-Masker' modus om AI-Ondersteunde Annotatie in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -24,22 +24,27 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
-        <translation>AI提示</translation>
+        <translation>AI Tekst-naar-Annotatie</translation>
+    </message>
+    <message>
+        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
+        <source>AI creates annotations from the text prompt</source>
+        <translation>AI maakt annotaties van de tekstprompt</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
-        <translation>例如：狗,猫,鸟</translation>
+        <translation>bijv. hond, kat, vogel</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
-        <translation>运行</translation>
+        <translation>Uitvoeren</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
-        <translation>分数</translation>
+        <translation>Score</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -48,13 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI根据文本提示创建标注</translation>
-    </message>
-    <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>选择 'Polygon'、'Rectangle'、'AI-Polygon' 或 'AI-Mask' 模式以启用</translation>
+        <translation>Selecteer 'Polygoon', 'Rechthoek', 'AI-Polygoon' of 'AI-Masker' modus om in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -62,102 +62,102 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation>点击并拖拽以移动控制点</translation>
+        <translation>Klik en sleep om punt te verplaatsen</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
-        <translation>点击并拖拽以移动形状</translation>
+        <translation>Klik en sleep om vorm te verplaatsen</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Creating %r</source>
-        <translation>正在创建 %r</translation>
+        <translation>Maken van %r</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ESC to cancel</source>
-        <translation>按 ESC 取消</translation>
+        <translation>ESC om te annuleren</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Enter or Space to finalize</source>
-        <translation>按 Enter 或空格键完成</translation>
+        <translation>Enter of Spatie om te voltooien</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
-        <translation>编辑形状</translation>
+        <translation>Vormen bewerken</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>点击以包含点或 Shift+点击以排除点(AI多边形)</translation>
+        <translation>Klik op punten om op te nemen of Shift+Klik om uit te sluiten (AI-polygoon)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>点击以包含点或 Shift+点击以排除点(AI蒙版)</translation>
+        <translation>Klik op punten om op te nemen of Shift+Klik om uit te sluiten (AI-masker)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for line</source>
-        <translation>点击线段起点</translation>
+        <translation>Klik op startpunt voor lijn</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click end point for line</source>
-        <translation>点击线段终点</translation>
+        <translation>Klik op eindpunt voor lijn</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for linestrip</source>
-        <translation>点击折线起点</translation>
+        <translation>Klik op startpunt voor lijnstrook</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>点击下一个点或 Ctrl/Cmd+点击完成折线</translation>
+        <translation>Klik op volgend punt of Ctrl/Cmd+Klik om te voltooien (lijnstrook)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click center point for circle</source>
-        <translation>点击圆形中心点</translation>
+        <translation>Klik op middelpunt voor cirkel</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click point on circumference for circle</source>
-        <translation>点击圆周上的点</translation>
+        <translation>Klik op punt op omtrek voor cirkel</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for rectangle</source>
-        <translation>点击矩形第一个角</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>点击矩形对角</translation>
+        <translation>Klik op eerste hoek voor rechthoek</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
-        <translation>点击以添加点</translation>
+        <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + 点击以删除点</translation>
+        <translation>ALT + SHIFT + Klik om punt te verwijderen</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + Click to create point on shape</source>
-        <translation>ALT + 点击在形状上创建点</translation>
+        <translation>ALT + Klik om punt op vorm te maken</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
-        <translation>右键点击并拖拽以复制形状</translation>
+        <translation>Rechtsklik en sleep om vorm te kopiëren</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle</source>
+        <translation>Klik op tegenoverliggende hoek voor rechthoek</translation>
     </message>
 </context>
 <context>
@@ -165,518 +165,508 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Flags</source>
-        <translation>标记</translation>
+        <translation>Vlaggen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Polygon Labels</source>
-        <translation>多边形标签</translation>
+        <translation>Polygoonlabels</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>选择标签类型并开始以其标注。按'Esc'取消选择。</translation>
+        <translation>Selecteer label om te beginnen met annoteren. Druk op 'Esc' om te deselecteren.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label List</source>
-        <translation>标签列表</translation>
+        <translation>Labellijst</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
-        <translation>按文件名检索</translation>
+        <translation>Zoek Bestandsnaam</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>File List</source>
-        <translation>文件列表</translation>
+        <translation>Bestandslijst</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Quit</source>
-        <translation>退出(&amp;Q)</translation>
+        <translation>&amp;Afsluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Quit application</source>
-        <translation>退出应用</translation>
+        <translation>Applicatie afsluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
-        <translation>打开(&amp;O)</translation>
+        <translation>&amp;Openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open image or label file</source>
-        <translation>打开图像或标签文件</translation>
+        <translation>Afbeelding of labelbestand openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>打开目录</translation>
+        <translation>Map Openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>下一幅(&amp;N)</translation>
+        <translation>Volgende &amp;Afbeelding</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打开下一幅 (按Ctl+Shift拷贝标签)</translation>
+        <translation>Volgende openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>上一幅(&amp;P)</translation>
+        <translation>Vorige &amp;Afbeelding</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打开上一幅 (按Ctl+Shift拷贝标签)</translation>
+        <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
-        <translation>保存(&amp;S)</translation>
+        <translation>&amp;Opslaan</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
-        <translation>保存标签到文件</translation>
+        <translation>Labels opslaan naar bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save As</source>
-        <translation>另存为(&amp;S)</translation>
+        <translation>Opslaan &amp;als</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
-        <translation>保存标签到不同的文件</translation>
+        <translation>Labels opslaan naar ander bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>删除(&amp;D)</translation>
+        <translation>Bestand &amp;verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
-        <translation>删除当前标签文件</translation>
+        <translation>Huidig labelbestand verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>更改输出路径(&amp;C)</translation>
+        <translation>Uitvoermap &amp;wijzigen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
-        <translation>更改载入、保存标注的路径</translation>
+        <translation>Wijzig waar annotaties worden geladen/opgeslagen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save &amp;Automatically</source>
-        <translation>自动保存(&amp;A)</translation>
+        <translation>&amp;Automatisch opslaan</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save automatically</source>
-        <translation>自动保存</translation>
+        <translation>Automatisch opslaan</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
-        <translation>同时保存图像数据</translation>
+        <translation>Opslaan met Afbeeldingsgegevens</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
-        <translation>将图像数据保存到标签文件中</translation>
+        <translation>Afbeeldingsgegevens opslaan in labelbestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Close</source>
-        <translation>关闭(&amp;C)</translation>
+        <translation>&amp;Sluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Close current file</source>
-        <translation>关闭当前文件</translation>
+        <translation>Huidig bestand sluiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
-        <translation>保留最后的标注</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep pevious annotation&quot; mode</source>
-        <translation type="obsolete">开关“保留最后的标注”模式</translation>
+        <translation>Vorige Annotatie Behouden</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
-        <translation>创建多边形</translation>
+        <translation>Polygonen Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
-        <translation>开始绘制多边形</translation>
+        <translation>Begin met tekenen van polygonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Rectangle</source>
-        <translation>创建矩形</translation>
+        <translation>Rechthoek Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
-        <translation>开始绘制矩形</translation>
+        <translation>Begin met tekenen van rechthoeken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Circle</source>
-        <translation>创建圆形</translation>
+        <translation>Cirkel Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
-        <translation>开始绘制圆形</translation>
+        <translation>Begin met tekenen van cirkels</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>创建直线</translation>
+        <translation>Lijn Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>开始创建直线</translation>
+        <translation>Begin met tekenen van lijnen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Point</source>
-        <translation>创建控制点</translation>
+        <translation>Punt Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
-        <translation>开始绘制控制点</translation>
+        <translation>Begin met tekenen van punten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create LineStrip</source>
-        <translation>创建折线</translation>
+        <translation>Lijnstrook Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>开始绘制折线。Ctrl+单击左键结束绘制。</translation>
+        <translation>Begin met tekenen van lijnstrook. Ctrl+Linkerklik beëindigt het maken.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Polygon</source>
-        <translation>创建AI多边形</translation>
+        <translation>AI-Polygoon Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>开始绘制AI多边形。Ctrl+单击左键结束绘制。</translation>
+        <translation>Begin met tekenen van AI-polygoon. Ctrl+Linkerklik beëindigt het maken.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Mask</source>
-        <translation>创建AI蒙版</translation>
+        <translation>AI-Masker Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>开始绘制AI蒙版。Ctrl+单击左键结束绘制。</translation>
+        <translation>Begin met tekenen van AI-masker. Ctrl+Linkerklik beëindigt het maken.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Polygons</source>
-        <translation>编辑多边形</translation>
+        <translation>Polygonen Bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Move and edit the selected polygons</source>
-        <translation>移动、编辑选中的多边形</translation>
+        <translation>Verplaats en bewerk de geselecteerde polygonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Polygons</source>
-        <translation>删除多边形</translation>
+        <translation>Polygonen Verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete the selected polygons</source>
-        <translation>删除选中的多边形</translation>
+        <translation>Geselecteerde polygonen verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Polygons</source>
-        <translation>复制多边形</translation>
+        <translation>Polygonen Dupliceren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected polygons</source>
-        <translation>为选中的多边形创建副本</translation>
+        <translation>Maak een duplicaat van de geselecteerde polygonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy Polygons</source>
-        <translation>复制多边形</translation>
+        <translation>Polygonen Kopiëren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy selected polygons to clipboard</source>
-        <translation>复制选中多边形到剪贴板</translation>
+        <translation>Geselecteerde polygonen naar klembord kopiëren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste Polygons</source>
-        <translation>粘贴多边形</translation>
+        <translation>Polygonen Plakken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste copied polygons</source>
-        <translation>粘贴已复制的多边形</translation>
+        <translation>Gekopieerde polygonen plakken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
-        <translation>撤销最后的控制点</translation>
+        <translation>Laatste punt ongedaan maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
-        <translation>撤销最后一次绘制的控制点</translation>
+        <translation>Laatste getekende punt ongedaan maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
-        <translation>移除选中的控制点</translation>
+        <translation>Geselecteerd Punt Verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
-        <translation>从多边形中移除选中的控制点</translation>
+        <translation>Geselecteerd punt uit polygoon verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo
 </source>
-        <translation>撤销</translation>
+        <translation>Ongedaan Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
-        <translation>撤销最近一次添加和编辑</translation>
+        <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Polygons</source>
-        <translation>隐藏多边形(&amp;H)</translation>
+        <translation>Polygonen &amp;verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Hide all polygons</source>
-        <translation>隐藏所有多边形</translation>
+        <translation>Alle polygonen verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Polygons</source>
-        <translation>显示多边形(&amp;S)</translation>
+        <translation>Polygonen &amp;tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show all polygons</source>
-        <translation>显示所有多边形</translation>
+        <translation>Alle polygonen tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Polygons</source>
-        <translation>开关多边形(&amp;S)</translation>
+        <translation>Polygonen &amp;omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle all polygons</source>
-        <translation>开关所有多边形</translation>
+        <translation>Alle polygonen omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
-        <translation>教程[&amp;T]</translation>
+        <translation>&amp;Tutorial</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
-        <translation>显示教程网页</translation>
+        <translation>Tutorialpagina tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom</source>
-        <translation>缩放</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom in or out of the image. Also accessible with {} and {} from the canvas.</source>
-        <translation>缩放图像。亦可从画布的{}和{}访问</translation>
+        <translation>In- of uitzoomen op de afbeelding. Ook toegankelijk met {} en {} vanaf het canvas.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
-        <translation>Ctrl+滚轮</translation>
+        <translation>Ctrl+Wiel</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
-        <translation>放大(&amp;I)</translation>
+        <translation>&amp;Inzoomen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
-        <translation>增加缩放水平</translation>
+        <translation>Zoomniveau verhogen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
-        <translation>缩小(&amp;Z)</translation>
+        <translation>&amp;Uitzoomen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
-        <translation>减小缩放水平</translation>
+        <translation>Zoomniveau verlagen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>原始大小(&amp;O)</translation>
+        <translation>&amp;Originele grootte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
-        <translation>缩放至原始大小</translation>
+        <translation>Zoomen naar originele grootte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>保留最后的比例(&amp;K)</translation>
+        <translation>Vorige Schaal &amp;behouden</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>保留最后的缩放比例</translation>
+        <translation>Vorige zoomschaal behouden</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>适应窗口(&amp;F)</translation>
+        <translation>Aanpassen aan &amp;venster</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
-        <translation>跟随窗口大小缩放</translation>
+        <translation>Zoom volgt venstergrootte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
-        <translation>适应宽度(&amp;W)</translation>
+        <translation>Aanpassen aan &amp;breedte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
-        <translation>跟随窗口宽度缩放</translation>
+        <translation>Zoom volgt vensterbreedte</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>亮度 对比度(&amp;B)</translation>
+        <translation>Helderheid en &amp;contrast</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
-        <translation>调节亮度和对比度</translation>
+        <translation>Helderheid en contrast aanpassen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
-        <translation>编辑标签(&amp;E)</translation>
+        <translation>Label &amp;bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected polygon</source>
-        <translation>修改选中多边形的标签</translation>
+        <translation>Label van geselecteerde polygoon wijzigen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
-        <translation>填充所绘多边形</translation>
+        <translation>Polygoon Vullen bij Tekenen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
-        <translation>绘制时填充多边形</translation>
+        <translation>Polygoon vullen tijdens tekenen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;File</source>
-        <translation>文件(&amp;F)</translation>
+        <translation>&amp;Bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit</source>
-        <translation>编辑(&amp;E)</translation>
+        <translation>&amp;Bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
-        <translation>视图(&amp;V)</translation>
+        <translation>&amp;Beeld</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Help</source>
-        <translation>帮助(&amp;H)</translation>
+        <translation>&amp;Help</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
-        <translation>最近打开(&amp;R)</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Model</source>
-        <translation type="obsolete">AI模型</translation>
+        <translation>Open &amp;recent</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s 启动完了</translation>
+        <translation>%s gestart.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
-        <translation>无效的标签</translation>
+        <translation>Ongeldig label</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>无效的标签'{}'，验证类型'{}'</translation>
+        <translation>Ongeldig label '{}' met validatietype '{}'</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
-        <translation>保存标签发生错误</translation>
+        <translation>Fout bij opslaan van labelgegevens</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -686,112 +676,112 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
-        <translation>打开文件发生错误</translation>
+        <translation>Fout bij openen van bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>文件不存在: &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>Bestand niet gevonden: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>正在载入 %s...</translation>
+        <translation>Laden van %s...</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请确认&lt;i&gt;%s&lt;/i&gt;是一个合法的标签文件。</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig labelbestand is.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
-        <translation>打开文件发生错误 %s</translation>
+        <translation>Fout bij lezen van %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;Make sure &lt;i&gt;{0}&lt;/i&gt; is a valid image file.&lt;br/&gt;Supported image formats: {1}&lt;/p&gt;</source>
-        <translation>lt;p&gt;请确认&lt;i&gt;{0}&lt;/i&gt;是一个合法的图像文件。&lt;br/&gt;支持的格式包括: {1}&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Zorg ervoor dat &lt;i&gt;{0}&lt;/i&gt; een geldig afbeeldingsbestand is.&lt;br/&gt;Ondersteunde afbeeldingsformaten: {1}&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
-        <translation>已加载 %s</translation>
+        <translation>Geladen %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
-        <translation>图像和标签文件(%s)</translation>
+        <translation>Afbeelding- en labelbestanden (%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose Image or Label file</source>
-        <translation>%s - 选择图像或标签文件</translation>
+        <translation>%s - Kies Afbeelding- of labelbestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 保存和加载批注的路径</translation>
+        <translation>%s - Annotaties Opslaan/Laden in Map</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 批注会被加载和保存在 %s</translation>
+        <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose File</source>
-        <translation>%s - 选择文件</translation>
+        <translation>%s - Kies Bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
-        <translation>标签文件(*%s)</translation>
+        <translation>Labelbestanden (*%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Choose File</source>
-        <translation>选择文件</translation>
+        <translation>Kies Bestand</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete this label file, proceed anyway?</source>
-        <translation>即将永久性删除此标签文件。还要继续吗?</translation>
+        <translation>U staat op het punt dit labelbestand permanent te verwijderen, doorgaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Attention</source>
-        <translation>注意</translation>
+        <translation>Let op</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>关闭前保存批注到&quot;{}&quot;吗?</translation>
+        <translation>Annotaties opslaan naar &quot;{}&quot; voordat u sluit?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
-        <translation>保存批注吗?</translation>
+        <translation>Annotaties opslaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>即将永久性删除多边形{}。还要继续吗?</translation>
+        <translation>U staat op het punt {} polygonen permanent te verwijderen, doorgaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
-        <translation>%s - 打开目录</translation>
+        <translation>%s - Map Openen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus &quot;vorige annotatie behouden&quot; omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
-        <translation>保留之前的亮度/对比度</translation>
+        <translation>Vorige Helderheid/Contrast Behouden</translation>
     </message>
 </context>
 </TS>
