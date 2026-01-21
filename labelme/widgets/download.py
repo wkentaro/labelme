@@ -40,7 +40,7 @@ def download_ai_model(model_name: str, parent: QtWidgets.QWidget) -> bool:
 
     dialog: QProgressDialog = QProgressDialog(
         "Downloading AI model...\n(requires internet connection)",
-        None,  # type: ignore
+        None,  # cancelButtonText
         0,
         0,
         parent,

@@ -12,6 +12,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
+from PyQt5.QtCore import QRectF
 from PyQt5.QtCore import Qt
 
 import labelme.utils
@@ -103,12 +104,16 @@ class Canvas(QtWidgets.QWidget):
                 "linestrip": False,
                 "ai_polygon": False,
                 "ai_mask": False,
+                "brush": False,
             },
         )
         super().__init__(*args, **kwargs)
-
-        self.resetState()
-
+        # Initialise local state.
+        self.shapes = []
+        self.shapesBackups = []
+        self.current = None
+        self.selectedShapes = []  # save the selected shapes here
+        self.selectedShapesCopy = []
         # self.line represents:
         #   - createMode == 'polygon': edge from last point to current
         #   - createMode == 'rectangle': diagonal line of the rectangle
@@ -119,16 +124,37 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = QPointF()
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
+        self.pixmap = QtGui.QPixmap()
+        self._pixmap_hash = None
         self._osam_session = None
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
+        self.hShape = None
+        self.prevhShape = None
+        self.hVertex = None
+        self.prevhVertex = None
+        self.hEdge = None
+        self.prevhEdge = None
+        self.movingShape = False
         self.snapping = True
         self.hShapeIsSelected = False
         self._painter = QtGui.QPainter()
+        self._cursor = CURSOR_DEFAULT
         self._dragging_start_pos = QPointF()
         self._is_dragging = False
         self._is_dragging_enabled = False
+        # Brush painting state
+        self._brush_image: QtGui.QImage | None = None
+        self._brush_size: int = 20  # brush size
+        self._is_painting: bool = False
+        self._last_brush_pos: QPointF | None = None
+        self._brush_press_pos: QPointF | None = (
+            None  # Record the position when mouse is pressed
+        )
+        self._brush_confirm_button: QtWidgets.QPushButton | None = None
+        self._brush_delete_button: QtWidgets.QPushButton | None = None
+        self._brush_confirm_pos: QPointF | None = None  # Position in image coordinates
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -158,12 +184,28 @@ class Canvas(QtWidgets.QWidget):
             "linestrip",
             "ai_polygon",
             "ai_mask",
+            "brush",
         ]:
             raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
+        # Reset the brush state
+        if value != "brush":
+            if self._brush_image is not None:
+                self._brush_image = None
+                self._is_painting = False
+                self._last_brush_pos = None
+                self._brush_press_pos = None
+                self._hide_brush_confirm_button()
+                self.update()  # Repaint to clear brush drawing
 
     def set_ai_model_name(self, model_name: str) -> None:
         self._osam_session_model_name = model_name
+
+    def set_brush_size(self, size: int) -> None:
+        """Set the brush size (2-40 pixels)"""
+        size = max(2, min(40, size))  # Clamp between 2 and 40
+        self._brush_size = size
+        logger.debug("Setting brush size to {!r}", size)
 
     def _get_osam_session(self) -> OsamSession:
         if (
@@ -223,16 +265,16 @@ class Canvas(QtWidgets.QWidget):
             shape.selected = False
         self.update()
 
-    def enterEvent(self, a0: QtCore.QEvent) -> None:
+    def enterEvent(self, ev):
         self.overrideCursor(self._cursor)
         self._update_status()
 
-    def leaveEvent(self, a0: QtCore.QEvent) -> None:
+    def leaveEvent(self, ev):
         self.unHighlight()
         self.restoreCursor()
         self._update_status()
 
-    def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
+    def focusOutEvent(self, ev):
         self.restoreCursor()
         self._update_status()
 
@@ -249,6 +291,13 @@ class Canvas(QtWidgets.QWidget):
         self.mode = CanvasMode.EDIT if value else CanvasMode.CREATE
         if self.mode == CanvasMode.EDIT:
             # CREATE -> EDIT
+            # Clear brush painting if switching away from brush mode
+            if self._brush_image is not None:
+                self._brush_image = None
+                self._is_painting = False
+                self._last_brush_pos = None
+                self._brush_press_pos = None
+                self._hide_brush_confirm_button()
             self.repaint()  # clear crosshair
         else:
             # EDIT -> CREATE
@@ -319,12 +368,17 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click first corner for rectangle")
             else:
                 return self.tr("Click opposite corner for rectangle")
+        if self.createMode == "brush":
+            if self._brush_image is None:
+                return self.tr("Click and drag to paint, Enter/Space to confirm")
+            else:
+                return self.tr("Continue painting or Enter/Space to confirm")
         return self.tr("Click to add point")
 
-    def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
+    def mouseMoveEvent(self, ev):
         """Update line with last point and current coordinates."""
         try:
-            pos = self.transformPos(a0.localPos())
+            pos = self.transformPos(ev.localPos())
         except AttributeError:
             return
 
@@ -332,13 +386,25 @@ class Canvas(QtWidgets.QWidget):
 
         self.prevMovePoint = pos
 
-        is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
+        is_shift_pressed = ev.modifiers() & Qt.ShiftModifier
 
         if self._is_dragging:
             self.overrideCursor(CURSOR_GRAB)
             delta: QPointF = pos - self._dragging_start_pos
             self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
             self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
+            return
+
+        # Brush painting.
+        if self.drawing() and self.createMode == "brush":
+            self.overrideCursor(CURSOR_DRAW)
+            if self._is_painting and self._brush_image is not None:
+                # Draw the brush stroke
+                self._paint_brush_stroke(pos)
+                self.repaint()
+            elif not self._is_painting:
+                self.repaint()  # draw crosshair
+                self._update_status()
             return
 
         # Polygon drawing.
@@ -401,8 +467,8 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon copy moving.
-        if Qt.RightButton & a0.buttons():
-            if self.selectedShapesCopy and self.prevPoint is not None:
+        if Qt.RightButton & ev.buttons():
+            if self.selectedShapesCopy and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
                 self.repaint()
@@ -413,12 +479,12 @@ class Canvas(QtWidgets.QWidget):
             return
 
         # Polygon/Vertex moving.
-        if Qt.LeftButton & a0.buttons():
+        if Qt.LeftButton & ev.buttons():
             if self.selectedVertex():
                 self.boundedMoveVertex(pos)
                 self.repaint()
                 self.movingShape = True
-            elif self.selectedShapes and self.prevPoint is not None:
+            elif self.selectedShapes and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapes, pos)
                 self.repaint()
@@ -511,13 +577,53 @@ class Canvas(QtWidgets.QWidget):
         self.prevhVertex = None
         self.movingShape = True  # Save changes
 
-    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pos: QPointF = self.transformPos(a0.localPos())
+    def mousePressEvent(self, ev):
+        pos: QPointF = self.transformPos(ev.localPos())
 
-        is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
+        is_shift_pressed = ev.modifiers() & Qt.ShiftModifier
 
-        if a0.button() == Qt.LeftButton:
+        if ev.button() == Qt.LeftButton:
             if self.drawing():
+                # Brush painting mode
+                if self.createMode == "brush":
+                    if (
+                        self._brush_confirm_button
+                        and self._brush_confirm_button.isVisible()
+                        and self._brush_confirm_button.geometry().contains(ev.pos())
+                    ):
+                        return  # Let the button handle the click
+                    if (
+                        self._brush_delete_button
+                        and self._brush_delete_button.isVisible()
+                        and self._brush_delete_button.geometry().contains(ev.pos())
+                    ):
+                        return  # Let the button handle the click
+                    if (
+                        self._brush_confirm_button
+                        and self._brush_confirm_button.isVisible()
+                    ) or (
+                        self._brush_delete_button
+                        and self._brush_delete_button.isVisible()
+                    ):
+                        self._hide_brush_confirm_button()
+                        self._brush_image = None
+                        self._brush_press_pos = None
+
+                    if not self.outOfPixmap(pos):
+                        if self._brush_image is None:
+                            # Initialize the brush image
+                            self._init_brush_image()
+                        self._is_painting = True
+                        self._brush_press_pos = pos  # Record the press position
+                        self._last_brush_pos = (
+                            None  # Reset to ensure a circle is drawn on first press
+                        )
+                        self._paint_brush_stroke(
+                            pos
+                        )  # Draw a circle at the press position
+                        self.repaint()
+                    return
+
                 if self.current:
                     # Add point to existing shape.
                     if self.createMode == "polygon":
@@ -532,7 +638,7 @@ class Canvas(QtWidgets.QWidget):
                     elif self.createMode == "linestrip":
                         self.current.addPoint(self.line[1])
                         self.line[0] = self.current[-1]
-                        if int(a0.modifiers()) == Qt.ControlModifier:
+                        if int(ev.modifiers()) == Qt.ControlModifier:
                             self.finalise()
                     elif self.createMode in ["ai_polygon", "ai_mask"]:
                         self.current.addPoint(
@@ -541,7 +647,7 @@ class Canvas(QtWidgets.QWidget):
                         )
                         self.line.points[0] = self.current.points[-1]
                         self.line.point_labels[0] = self.current.point_labels[-1]
-                        if a0.modifiers() & Qt.ControlModifier:
+                        if ev.modifiers() & Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
                     if self.createMode in ["ai_polygon", "ai_mask"]:
@@ -561,7 +667,7 @@ class Canvas(QtWidgets.QWidget):
                         self.finalise()
                     elif (
                         self.createMode in ["ai_polygon", "ai_mask"]
-                        and a0.modifiers() & Qt.ControlModifier
+                        and ev.modifiers() & Qt.ControlModifier
                     ):
                         self.finalise()
                     else:
@@ -579,40 +685,61 @@ class Canvas(QtWidgets.QWidget):
                         self.drawingPolygon.emit(True)
                         self.update()
             elif self.editing():
-                if self.selectedEdge() and a0.modifiers() == Qt.AltModifier:
+                if self.selectedEdge() and ev.modifiers() == Qt.AltModifier:
                     self.addPointToEdge()
-                elif self.selectedVertex() and a0.modifiers() == (
+                elif self.selectedVertex() and ev.modifiers() == (
                     Qt.AltModifier | Qt.ShiftModifier
                 ):
                     self.removeSelectedPoint()
 
-                group_mode = int(a0.modifiers()) == Qt.ControlModifier
+                group_mode = int(ev.modifiers()) == Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
                 self.repaint()
-        elif a0.button() == Qt.RightButton and self.editing():
-            group_mode = int(a0.modifiers()) == Qt.ControlModifier
+        elif ev.button() == Qt.RightButton and self.editing():
+            group_mode = int(ev.modifiers()) == Qt.ControlModifier
             if not self.selectedShapes or (
                 self.hShape is not None and self.hShape not in self.selectedShapes
             ):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
             self.prevPoint = pos
-        elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
+        elif ev.button() == Qt.MiddleButton and self._is_dragging_enabled:
             self.overrideCursor(CURSOR_GRAB)
             self._dragging_start_pos = pos
             self._is_dragging = True
         self._update_status()
 
-    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
-        if a0.button() == Qt.RightButton:
+    def mouseReleaseEvent(self, ev):
+        if ev.button() == Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
             self.restoreCursor()
-            if not menu.exec_(self.mapToGlobal(a0.pos())) and self.selectedShapesCopy:  # type: ignore
+            if not menu.exec_(self.mapToGlobal(ev.pos())) and self.selectedShapesCopy:
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
-        elif a0.button() == Qt.LeftButton:
+        elif ev.button() == Qt.LeftButton:
+            # End brush painting, display the confirmation button
+            if self.drawing() and self.createMode == "brush":
+                self._is_painting = False
+                # Check if it's a single click (no movement or very small movement)
+                release_pos = self.transformPos(ev.localPos())
+                if self._brush_press_pos is not None:
+                    distance = labelme.utils.distance(
+                        self._brush_press_pos - release_pos
+                    )
+
+                    if distance < 2 and self._brush_image is not None:
+                        # Draw a circle at the release position if no movement occurred
+                        self._last_brush_pos = None
+                        self._paint_brush_stroke(release_pos)
+                        self.repaint()
+                self._last_brush_pos = None
+                self._brush_press_pos = None
+                # If there is painting content, display the confirmation button
+                if self._brush_image is not None:
+                    self._show_brush_confirm_button(ev.pos())
+                return
             if self.editing():
                 if (
                     self.hShape is not None
@@ -622,7 +749,7 @@ class Canvas(QtWidgets.QWidget):
                     self.selectionChanged.emit(
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
-        elif a0.button() == Qt.MiddleButton:
+        elif ev.button() == Qt.MiddleButton:
             self._is_dragging = False
             self.restoreCursor()
 
@@ -665,6 +792,8 @@ class Canvas(QtWidgets.QWidget):
     def canCloseShape(self) -> bool:
         if not self.drawing():
             return False
+        if self.createMode == "brush":
+            return self._brush_image is not None
         if not self.current:
             return False
         if self.createMode in ["ai_polygon", "ai_mask"]:
@@ -673,7 +802,7 @@ class Canvas(QtWidgets.QWidget):
             return len(self.current) >= 2
         return len(self.current) >= 3
 
-    def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent) -> None:
+    def mouseDoubleClickEvent(self, ev):
         if self.double_click != "close":
             return
 
@@ -791,9 +920,9 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         self.update()
 
-    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
+    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
         if not self.pixmap:
-            return super().paintEvent(a0)
+            return super().paintEvent(event)
 
         p = self._painter
         p.begin(self)
@@ -805,14 +934,20 @@ class Canvas(QtWidgets.QWidget):
         p.translate(self.offsetToCenter())
 
         p.drawPixmap(0, 0, self.pixmap)
-
+        # Draw brush painting overlay - in the same transformation context
+        if self.createMode == "brush" and self._brush_image is not None:
+            p.drawImage(0, 0, self._brush_image)
         p.scale(1 / self.scale, 1 / self.scale)
+
+        # Update brush button positions if they are visible
+        if self._brush_confirm_button and self._brush_confirm_button.isVisible():
+            self._update_brush_button_positions()
 
         # draw crosshair
         if (
             self._crosshair[self._createMode]
             and self.drawing()
-            and self.prevMovePoint is not None
+            and self.prevMovePoint
             and not self.outOfPixmap(self.prevMovePoint)
         ):
             p.setPen(QtGui.QColor(0, 0, 0))
@@ -897,6 +1032,22 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
     def finalise(self):
+        # Handle brush mode: convert painted area to polygon
+        if self.createMode == "brush":
+            if self._brush_image is None:
+                return
+            self._convert_brush_to_polygon()
+            self._convert_brush_to_polygon()
+            self._brush_image = None
+            self._is_painting = False
+            self._last_brush_pos = None
+            self._brush_press_pos = None
+            self._hide_brush_confirm_button()
+            self.setHiding(False)
+            self.newShape.emit()
+            self.update()
+            return
+
         assert self.current
         if self.createMode in ["ai_polygon", "ai_mask"]:
             self._update_shape_with_ai(
@@ -991,18 +1142,18 @@ class Canvas(QtWidgets.QWidget):
             min_size = 1.167 * min_size
         return min_size
 
-    def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
-        mods: Qt.KeyboardModifiers = a0.modifiers()
-        delta: QPoint = a0.angleDelta()
+    def wheelEvent(self, ev: QtGui.QWheelEvent) -> None:
+        mods: Qt.KeyboardModifiers = ev.modifiers()
+        delta: QPoint = ev.angleDelta()
         if Qt.ControlModifier == int(mods):
             # with Ctrl/Command key
             # zoom
-            self.zoomRequest.emit(delta.y(), a0.posF())
+            self.zoomRequest.emit(delta.y(), ev.posF())
         else:
             # scroll
             self.scrollRequest.emit(delta.x(), Qt.Horizontal)
             self.scrollRequest.emit(delta.y(), Qt.Vertical)
-        a0.accept()
+        ev.accept()
 
     def moveByKeyboard(self, offset):
         if self.selectedShapes:
@@ -1010,10 +1161,24 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()
             self.movingShape = True
 
-    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
-        modifiers = a0.modifiers()
-        key = a0.key()
+    def keyPressEvent(self, ev):
+        modifiers = ev.modifiers()
+        key = ev.key()
         if self.drawing():
+            # Handle brush mode cancellation
+            if (
+                key == Qt.Key_Escape
+                and self.createMode == "brush"
+                and self._brush_image is not None
+            ):
+                self._brush_image = None
+                self._is_painting = False
+                self._last_brush_pos = None
+                self._brush_press_pos = None
+                self._hide_brush_confirm_button()
+                self.update()
+                self._update_status()
+                return
             if key == Qt.Key_Escape and self.current:
                 self.current = None
                 self.drawingPolygon.emit(False)
@@ -1036,8 +1201,8 @@ class Canvas(QtWidgets.QWidget):
                 self.moveByKeyboard(QPointF(MOVE_SPEED, 0.0))
         self._update_status()
 
-    def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
-        modifiers = a0.modifiers()
+    def keyReleaseEvent(self, ev):
+        modifiers = ev.modifiers()
         if self.drawing():
             if int(modifiers) == 0:
                 self.snapping = True
@@ -1124,17 +1289,319 @@ class Canvas(QtWidgets.QWidget):
         self._pixmap_hash = None
         self.shapes = []
         self.shapesBackups = []
-        self.movingShape = False
         self.selectedShapes = []
-        self.selectedShapesCopy = []
-        self.current = None
-        self.hShape = None
-        self.prevhShape = None
-        self.hVertex = None
-        self.prevhVertex = None
-        self.hEdge = None
-        self.prevhEdge = None
+        self._brush_image = None
+        self._is_painting = False
+        self._last_brush_pos = None
+        self._brush_press_pos = None
+        self._hide_brush_confirm_button()
         self.update()
+
+    def _init_brush_image(self):
+        """Initialize the brush painting image"""
+        if self.pixmap.isNull():
+            return
+        self._brush_image = QtGui.QImage(
+            self.pixmap.width(),
+            self.pixmap.height(),
+            QtGui.QImage.Format_ARGB32,
+        )
+        self._brush_image.fill(QtCore.Qt.transparent)
+
+    def _get_brush_color(self, pos: QPointF) -> QtGui.QColor:
+        """Get brush color based on background color. Use red if background is green."""
+        if self.pixmap.isNull():
+            return QtGui.QColor(0, 255, 0, 25)  # Default green
+
+        # Sample background color at the position
+        x = int(max(0, min(pos.x(), self.pixmap.width() - 1)))
+        y = int(max(0, min(pos.y(), self.pixmap.height() - 1)))
+
+        # Convert pixmap to image to access pixel data
+        image = self.pixmap.toImage()
+        if x < 0 or y < 0 or x >= image.width() or y >= image.height():
+            return QtGui.QColor(0, 255, 0, 25)  # Default green
+
+        pixel_color = QtGui.QColor(image.pixel(x, y))
+        r, g, b = pixel_color.red(), pixel_color.green(), pixel_color.blue()
+
+        # Check if the background is green (green channel is dominant)
+        # Consider it green if green is significantly higher than red and blue
+        green_threshold = 50  # Threshold for green detection
+        is_green_background = (
+            g > r + green_threshold
+            and g > b + green_threshold
+            and g > 100  # Ensure it's actually green, not just dark
+        )
+
+        if is_green_background:
+            # Use red color for visibility on green background
+            return QtGui.QColor(255, 0, 0, 25)  # Red with transparency
+        else:
+            # Use green color for other backgrounds
+            return QtGui.QColor(0, 255, 0, 25)  # Green with transparency
+
+    def _paint_brush_stroke(self, pos: QPointF):
+        """Draw the brush stroke, following the mouse movement"""
+        if self._brush_image is None:
+            return
+
+        # Ensure the coordinates are within the image range
+        w, h = self.pixmap.width(), self.pixmap.height()
+        pos = QPointF(max(0, min(pos.x(), w - 1)), max(0, min(pos.y(), h - 1)))
+
+        painter = QtGui.QPainter(self._brush_image)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        # Get brush color based on background
+        brush_color = self._get_brush_color(pos)
+        pen = QtGui.QPen(brush_color, self._brush_size)
+        pen.setCapStyle(QtCore.Qt.RoundCap)
+        pen.setJoinStyle(QtCore.Qt.RoundJoin)
+        painter.setPen(pen)
+
+        if self._last_brush_pos is not None:
+            # Ensure the previous point is also within the image range
+            last_pos = QPointF(
+                max(0, min(self._last_brush_pos.x(), w - 1)),
+                max(0, min(self._last_brush_pos.y(), h - 1)),
+            )
+
+            # Calculate the distance between the two points
+            distance = labelme.utils.distance(last_pos - pos)
+
+            if distance > self._brush_size / 4:
+                num_segments = max(2, int(distance / (self._brush_size / 4)))
+                prev_point = last_pos
+
+                # Draw multiple line segments by interpolating between the two points
+                for i in range(1, num_segments + 1):
+                    t = i / num_segments
+                    current_point = QPointF(
+                        last_pos.x() + (pos.x() - last_pos.x()) * t,
+                        last_pos.y() + (pos.y() - last_pos.y()) * t,
+                    )
+                    # Ensure the interpolation point is also within range.
+                    current_point = QPointF(
+                        max(0, min(current_point.x(), w - 1)),
+                        max(0, min(current_point.y(), h - 1)),
+                    )
+                    painter.drawLine(prev_point, current_point)
+                    prev_point = current_point
+            else:
+                # When the distance is small, draw a line segment directly.
+                painter.drawLine(last_pos, pos)
+        else:
+            # For the first drawing, draw a circular dot.
+            # Make single click circle smaller than brush size (about 70% of brush size)
+            # Use the same color detection for the circle
+            brush_color = self._get_brush_color(pos)
+            painter.setBrush(QtGui.QBrush(brush_color))
+            click_size = max(
+                2, int(self._brush_size * 0.5)
+            )  # Single click size is 70% of brush size, minimum 2
+            radius = click_size / 2.0
+            # Use QRectF for drawEllipse to handle float coordinates
+            painter.drawEllipse(
+                QRectF(pos.x() - radius, pos.y() - radius, click_size, click_size)
+            )
+
+        painter.end()
+        self._last_brush_pos = pos
+
+    def _update_brush_button_positions(self):
+        """Update button positions based on image coordinates"""
+        if self._brush_confirm_pos is None:
+            return
+        if self._brush_confirm_button is None or self._brush_delete_button is None:
+            return
+        if not self._brush_confirm_button.isVisible():
+            return
+
+        # Convert image coordinates to widget coordinates
+        image_pos = self._brush_confirm_pos
+        widget_pos = self._image_to_widget_coords(image_pos)
+
+        # Set button positions (Save button on the left, Delete button on the right)
+        save_button_size = self._brush_confirm_button.sizeHint()
+        delete_button_size = (
+            28  # Fixed size for circular delete button (smaller than Save)
+        )
+        button_spacing = 5  # Space between buttons
+
+        # Calculate total width needed
+        total_width = save_button_size.width() + button_spacing + delete_button_size
+
+        # Ensure buttons do not exceed the canvas range
+        x = int(
+            min(
+                max(widget_pos.x() - total_width // 2, 10),
+                self.width() - total_width - 10,
+            )
+        )
+        y = int(
+            min(
+                max(widget_pos.y() - save_button_size.height() - 10, 10),
+                self.height() - save_button_size.height() - 10,
+            )
+        )
+
+        # Position Save button
+        self._brush_confirm_button.move(x, y)
+        self._brush_confirm_button.raise_()
+
+        # Position Delete button next to Save button, vertically centered
+        delete_x = x + save_button_size.width() + button_spacing
+        # Center the smaller delete button vertically with the save button
+        delete_y = y + (save_button_size.height() - delete_button_size) // 2
+        self._brush_delete_button.move(delete_x, delete_y)
+        self._brush_delete_button.raise_()
+
+    def _image_to_widget_coords(self, image_pos: QPointF) -> QPointF:
+        """Convert image coordinates to widget coordinates"""
+        offset = self.offsetToCenter()
+        widget_pos = QPointF(
+            (image_pos.x() + offset.x()) * self.scale,
+            (image_pos.y() + offset.y()) * self.scale,
+        )
+        return widget_pos
+
+    def _show_brush_confirm_button(self, pos: QPoint):
+        """Display confirmation and delete buttons"""
+        # Convert widget coordinates to image coordinates
+        image_pos = self.transformPos(QPointF(pos))
+
+        # Create Save button if not exists
+        if self._brush_confirm_button is None:
+            self._brush_confirm_button = QtWidgets.QPushButton(self.tr("Save"), self)
+            self._brush_confirm_button.setStyleSheet(
+                """
+                QPushButton {
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 6px 12px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #45a049;
+                }
+                QPushButton:pressed {
+                    background-color: #3d8b40;
+                }
+                """
+            )
+            self._brush_confirm_button.clicked.connect(self._on_brush_confirm_clicked)
+
+        # Create Delete button if not exists
+        if self._brush_delete_button is None:
+            self._brush_delete_button = QtWidgets.QPushButton(self)
+            self._brush_delete_button.setIcon(labelme.utils.newIcon("x-circle.svg"))
+            self._brush_delete_button.setToolTip(self.tr("Cancel"))
+            # Set fixed size for circular button (smaller than Save button)
+            button_size = 28
+            self._brush_delete_button.setFixedSize(button_size, button_size)
+            self._brush_delete_button.setStyleSheet(
+                """
+                QPushButton {
+                    background-color: #f44336;
+                    color: white;
+                    border: none;
+                    border-radius: 14px;
+                    padding: 0px;
+                }
+                QPushButton:hover {
+                    background-color: #da190b;
+                }
+                QPushButton:pressed {
+                    background-color: #c62828;
+                }
+                """
+            )
+            self._brush_delete_button.clicked.connect(self._on_brush_delete_clicked)
+
+        # Save position in image coordinates
+        self._brush_confirm_pos = image_pos
+
+        # Update button positions
+        self._update_brush_button_positions()
+
+        # Show buttons
+        self._brush_confirm_button.show()
+        self._brush_delete_button.show()
+
+    def _hide_brush_confirm_button(self):
+        """Hide the confirmation and delete buttons"""
+        if self._brush_confirm_button is not None:
+            self._brush_confirm_button.hide()
+        if self._brush_delete_button is not None:
+            self._brush_delete_button.hide()
+        self._brush_confirm_pos = None
+
+    def _on_brush_confirm_clicked(self):
+        """Handle the confirmation button click"""
+        if self._brush_image is not None:
+            self._convert_brush_to_polygon()
+            self._brush_image = None
+            self._brush_press_pos = None
+            self._hide_brush_confirm_button()
+            self.setHiding(False)
+            self.newShape.emit()
+            self.update()
+
+    def _on_brush_delete_clicked(self):
+        """Handle the delete button click - cancel the current brush annotation"""
+        self._brush_image = None
+        self._is_painting = False
+        self._last_brush_pos = None
+        self._brush_press_pos = None
+        self._hide_brush_confirm_button()
+        self.update()
+        self._update_status()
+
+    def _convert_brush_to_polygon(self):
+        """Convert the brush painting area to a polygon"""
+        if self._brush_image is None:
+            return
+
+        # Convert the QImage to a numpy array
+        arr = labelme.utils.img_qt_to_arr(self._brush_image)
+
+        # Extract the alpha channel as a mask (non-transparent region)
+        # The array shape returned by img_qt_to_arr is (height, width, channels)
+        # For the ARGB32 format, channels should be 4
+        # The format of QImage.Format_ARGB32 is BGRA (blue, green, red, alpha)
+        if arr.shape[2] >= 4:
+            # The alpha channel is at index 3
+            mask = arr[:, :, 3] > 0  # alpha > 0 means there is painting
+        else:
+            # If there is no alpha channel, use any non-zero pixel
+            mask = np.any(arr > 0, axis=2)
+
+        if not np.any(mask):
+            logger.warning("No painted area found")
+            return
+
+        # Use polygon_from_mask to convert the mask to polygon points
+        try:
+            from labelme._automation import polygon_from_mask
+
+            polygon_points = polygon_from_mask.compute_polygon_from_mask(mask)
+        except Exception as e:
+            logger.error(f"Failed to convert brush to polygon: {e}")
+            return
+
+        if len(polygon_points) < 3:
+            logger.warning("Polygon has less than 3 points")
+            return
+
+        # Create a new Shape object
+        self.current = Shape(shape_type="polygon")
+        for point in polygon_points:
+            self.current.addPoint(QPointF(point[0], point[1]))
+        self.current.close()
+
+        # Note: storeShapes() will be called in newShape() after adding to shapes
 
 
 def _update_shape_with_ai_response(

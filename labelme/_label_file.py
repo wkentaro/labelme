@@ -32,7 +32,7 @@ class ShapeDict(TypedDict):
     flags: dict[str, bool]
     description: str
     group_id: int | None
-    mask: NDArray[np.bool] | None
+    mask: NDArray[np.bool_] | None
     other_data: dict
 
 
@@ -97,7 +97,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         )
         group_id = shape_json_obj["group_id"]
 
-    mask: NDArray[np.bool] | None = None
+    mask: NDArray[np.bool_] | None = None
     if shape_json_obj.get("mask") is not None:
         assert isinstance(shape_json_obj["mask"], str), (
             f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
@@ -106,7 +106,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
 
-    loaded: ShapeDict = ShapeDict(
+    loaded: ShapeDict = dict(
         label=label,
         points=points,
         shape_type=shape_type,

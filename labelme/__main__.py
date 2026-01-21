@@ -6,7 +6,6 @@ import os
 import os.path as osp
 import sys
 import traceback
-from typing import AnyStr
 
 import yaml
 from loguru import logger
@@ -21,11 +20,10 @@ from labelme.utils import newIcon
 
 
 class _LoggerIO(io.StringIO):
-    def write(self, s: AnyStr) -> int:
-        assert isinstance(s, str)
-        if stripped_s := s.strip():
-            logger.debug(stripped_s)
-        return len(s)
+    def write(self, message: str) -> int:
+        if stripped_message := message.strip():
+            logger.debug(stripped_message)
+        return len(message)
 
     def flush(self) -> None:
         pass
