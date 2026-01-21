@@ -1,6 +1,7 @@
 import os.path as osp
 import re
 import shutil
+from pathlib import Path
 
 import yaml
 from loguru import logger
@@ -90,5 +91,35 @@ def get_config(config_file_or_yaml=None, config_from_args=None):
     # 3. command line argument or specified config file
     if config_from_args is not None:
         update_dict(config, config_from_args, validate_item=validate_config_item)
+
+    return config
+
+
+def get_user_config_file(create_if_missing: bool = True) -> str:
+    user_config_file: str = osp.join(osp.expanduser("~"), ".labelmerc")
+    if not osp.exists(user_config_file) and create_if_missing:
+        try:
+            shutil.copy(osp.join(here, "default_config.yaml"), user_config_file)
+        except Exception:
+            logger.warning("Failed to save config: {!r}", user_config_file)
+    return user_config_file
+
+
+def load_config(config_file: Path | None, config_overrides: dict) -> dict:
+    config: dict
+    with open(osp.join(here, "default_config.yaml")) as f:
+        config = yaml.safe_load(f)
+
+    if config_file is not None:
+        with open(config_file) as f:
+            config_from_yaml = yaml.safe_load(f)
+        if isinstance(config_from_yaml, dict):
+            _migrate_config_from_file(config_from_yaml=config_from_yaml)
+            update_dict(config, config_from_yaml, validate_item=validate_config_item)
+
+    update_dict(config, config_overrides, validate_item=validate_config_item)
+
+    if not config["labels"] and config["validate_label"]:
+        raise ValueError("labels must be specified when validate_label is enabled")
 
     return config

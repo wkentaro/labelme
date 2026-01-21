@@ -128,9 +128,7 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) 
     input_file: str = str(data_path / "raw/2011_000003.jpg")
     out_file: str = str(tmp_path / "2011_000003.json")
 
-    config: dict = labelme.config._get_default_config_and_create_labelmerc()
     win: labelme.app.MainWindow = labelme.app.MainWindow(
-        config=config,
         filename=input_file,
         output_file=out_file,
     )
