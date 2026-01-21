@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections
 import enum
 from typing import Literal
 
@@ -16,6 +15,7 @@ from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 
 import labelme.utils
+from labelme._automation import OsamSession
 from labelme._automation import polygon_from_mask
 from labelme.shape import Shape
 
@@ -41,6 +41,7 @@ class CanvasMode(enum.Enum):
 
 class Canvas(QtWidgets.QWidget):
     pixmap: QtGui.QPixmap
+    _pixmap_hash: int | None
     _cursor: QtCore.Qt.CursorShape
     shapes: list[Shape]
     shapesBackups: list[list[Shape]]
@@ -80,9 +81,8 @@ class Canvas(QtWidgets.QWidget):
     _is_dragging: bool
     _is_dragging_enabled: bool
 
-    _ai_model_name: str = "sam2:latest"
-    _ai_model_cache: osam.types.Model | None = None
-    _ai_image_embedding_cache: collections.deque[tuple[str, osam.types.ImageEmbedding]]
+    _osam_session_model_name: str = "sam2:latest"
+    _osam_session: OsamSession | None
 
     def __init__(self, *args, **kwargs):
         self.epsilon = kwargs.pop("epsilon", 10.0)
@@ -120,7 +120,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = QPointF()
         self.offsets = QPointF(), QPointF()
         self.scale = 1.0
-        self._ai_image_embedding_cache = collections.deque(maxlen=3)
+        self._osam_session = None
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
@@ -165,39 +165,31 @@ class Canvas(QtWidgets.QWidget):
         self._createMode = value
 
     def set_ai_model_name(self, model_name: str) -> None:
-        logger.debug("Setting AI model to {!r}", model_name)
-        self._ai_model_name = model_name
+        self._osam_session_model_name = model_name
 
-    def _get_ai_model(self) -> osam.types.Model:
-        if self._ai_model_cache and self._ai_model_cache.name == self._ai_model_name:
-            return self._ai_model_cache
+    def _get_osam_session(self) -> OsamSession:
+        if (
+            self._osam_session is None
+            or self._osam_session.model_name != self._osam_session_model_name
+        ):
+            self._osam_session = OsamSession(model_name=self._osam_session_model_name)
+        return self._osam_session
 
-        model_type = osam.apis.get_model_type_by_name(self._ai_model_name)
-
-        self._ai_model_cache = model_type()
-        return self._ai_model_cache
-
-    def _get_ai_image_embedding(self) -> osam.types.ImageEmbedding:
-        qimage: QtGui.QImage = self.pixmap.toImage()
-
-        def pixmap_hash() -> int:
-            bits = qimage.constBits()
-            if bits is None:
-                return hash(None)
-            return hash(bits.asstring(qimage.sizeInBytes()))
-
-        cache_key: str = f"{self._ai_model_name}_{pixmap_hash()}"
-        key: str
-        image_embedding: osam.types.ImageEmbedding
-        for key, image_embedding in self._ai_image_embedding_cache:
-            if key == cache_key:
-                return image_embedding
-
-        image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=qimage)
-        image_embedding = self._get_ai_model().encode_image(image=imgviz.asrgb(image))
-        self._ai_image_embedding_cache.append((cache_key, image_embedding))
-        logger.debug("cached image embedding for key: {!r}", cache_key)
-        return image_embedding
+    def _update_shape_with_ai(
+        self, points: list[QPointF], point_labels: list[int], shape: Shape
+    ) -> None:
+        image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
+        response: osam.types.GenerateResponse = self._get_osam_session().run(
+            image=imgviz.asrgb(image),
+            image_id=str(self._pixmap_hash),
+            points=np.array([[p.x(), p.y()] for p in points]),
+            point_labels=np.array(point_labels),
+        )
+        _update_shape_with_ai_response(
+            response=response,
+            shape=shape,
+            createMode=self.createMode,
+        )
 
     def storeShapes(self):
         shapesBackup = []
@@ -589,7 +581,7 @@ class Canvas(QtWidgets.QWidget):
                 elif not self.outOfPixmap(pos):
                     if self.createMode in ["ai_polygon", "ai_mask"]:
                         if not download_ai_model(
-                            model_name=self._ai_model_name, parent=self
+                            model_name=self._osam_session_model_name, parent=self
                         ):
                             return
 
@@ -906,11 +898,10 @@ class Canvas(QtWidgets.QWidget):
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
-            _update_shape_with_sam(
-                sam=self._get_ai_model(),
-                image_embedding=self._get_ai_image_embedding(),
+            self._update_shape_with_ai(
+                points=drawing_shape.points,
+                point_labels=drawing_shape.point_labels,
                 shape=drawing_shape,
-                createMode=self.createMode,
             )
         drawing_shape.fill = self.fillDrawing()
         drawing_shape.selected = self.fillDrawing()
@@ -940,11 +931,10 @@ class Canvas(QtWidgets.QWidget):
     def finalise(self):
         assert self.current
         if self.createMode in ["ai_polygon", "ai_mask"]:
-            _update_shape_with_sam(
-                sam=self._get_ai_model(),
-                image_embedding=self._get_ai_image_embedding(),
+            self._update_shape_with_ai(
+                points=self.current.points,
+                point_labels=self.current.point_labels,
                 shape=self.current,
-                createMode=self.createMode,
             )
         self.current.close()
 
@@ -1126,6 +1116,9 @@ class Canvas(QtWidgets.QWidget):
 
     def loadPixmap(self, pixmap, clear_shapes=True):
         self.pixmap = pixmap
+        self._pixmap_hash = hash(
+            labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage()).tobytes()
+        )
         if clear_shapes:
             self.shapes = []
         self.update()
@@ -1160,6 +1153,7 @@ class Canvas(QtWidgets.QWidget):
     def resetState(self):
         self.restoreCursor()
         self.pixmap = QtGui.QPixmap()
+        self._pixmap_hash = None
         self.shapes = []
         self.shapesBackups = []
         self.movingShape = False
@@ -1175,9 +1169,8 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
 
-def _update_shape_with_sam(
-    sam: osam.types.Model,
-    image_embedding: osam.types.ImageEmbedding,
+def _update_shape_with_ai_response(
+    response: osam.types.GenerateResponse,
     shape: Shape,
     createMode: Literal["ai_polygon", "ai_mask"],
 ) -> None:
@@ -1186,18 +1179,8 @@ def _update_shape_with_sam(
             f"createMode must be 'ai_polygon' or 'ai_mask', not {createMode}"
         )
 
-    response: osam.types.GenerateResponse = sam.generate(
-        request=osam.types.GenerateRequest(
-            model=sam.name,
-            image_embedding=image_embedding,
-            prompt=osam.types.Prompt(
-                points=np.array([[point.x(), point.y()] for point in shape.points]),
-                point_labels=np.array(shape.point_labels),
-            ),
-        )
-    )
     if not response.annotations:
-        logger.warning("No annotations returned by model {!r}", sam)
+        logger.warning("No annotations returned")
         return
 
     if createMode == "ai_mask":

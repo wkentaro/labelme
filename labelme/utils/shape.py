@@ -5,10 +5,10 @@ import math
 import uuid
 
 import numpy as np
-import numpy.typing as npt
 import PIL.Image
 import PIL.ImageDraw
 from loguru import logger
+from numpy.typing import NDArray
 
 
 def polygons_to_mask(img_shape, polygons, shape_type=None):
@@ -24,7 +24,7 @@ def shape_to_mask(
     shape_type: str | None = None,
     line_width: int = 10,
     point_size: int = 5,
-) -> npt.NDArray[np.bool_]:
+) -> NDArray[np.bool_]:
     mask = PIL.Image.fromarray(np.zeros(img_shape[:2], dtype=np.uint8))
     draw = PIL.ImageDraw.Draw(mask)
     xy = [tuple(point) for point in points]
@@ -74,7 +74,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         ins_id = instances.index(instance) + 1
         cls_id = label_name_to_value[cls_name]
 
-        mask: npt.NDArray[np.bool_]
+        mask: NDArray[np.bool_]
         if shape_type == "mask":
             if not isinstance(shape["mask"], np.ndarray):
                 raise ValueError("shape['mask'] must be numpy.ndarray")

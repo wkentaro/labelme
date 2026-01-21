@@ -4,9 +4,9 @@ import os.path as osp
 
 import imgviz
 import numpy as np
-import numpy.typing as npt
 import PIL.Image
 from loguru import logger
+from numpy.typing import NDArray
 
 from labelme import utils
 from labelme._label_file import LabelFile
@@ -30,7 +30,7 @@ def main():
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
-    image: npt.NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
+    image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):
