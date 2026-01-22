@@ -14,8 +14,7 @@ def _update_dict(target_dict, new_dict, validate_item=None):
         if validate_item:
             validate_item(key, value)
         if key not in target_dict:
-            logger.warning(f"Skipping unexpected key in config: {key}")
-            continue
+            raise ValueError(f"Unexpected key in config: {key}")
         if isinstance(target_dict[key], dict) and isinstance(value, dict):
             _update_dict(target_dict[key], value, validate_item=validate_item)
         else:
