@@ -9,7 +9,7 @@ from loguru import logger
 here = osp.dirname(osp.abspath(__file__))
 
 
-def update_dict(target_dict, new_dict, validate_item=None):
+def _update_dict(target_dict, new_dict, validate_item=None):
     for key, value in new_dict.items():
         if validate_item:
             validate_item(key, value)
@@ -17,12 +17,12 @@ def update_dict(target_dict, new_dict, validate_item=None):
             logger.warning(f"Skipping unexpected key in config: {key}")
             continue
         if isinstance(target_dict[key], dict) and isinstance(value, dict):
-            update_dict(target_dict[key], value, validate_item=validate_item)
+            _update_dict(target_dict[key], value, validate_item=validate_item)
         else:
             target_dict[key] = value
 
 
-def validate_config_item(key, value):
+def _validate_config_item(key, value):
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
     if key == "shape_color" and value not in [None, "auto", "manual"]:
@@ -75,9 +75,9 @@ def load_config(config_file: Path | None, config_overrides: dict) -> dict:
             config_from_yaml = yaml.safe_load(f)
         if isinstance(config_from_yaml, dict):
             _migrate_config_from_file(config_from_yaml=config_from_yaml)
-            update_dict(config, config_from_yaml, validate_item=validate_config_item)
+            _update_dict(config, config_from_yaml, validate_item=_validate_config_item)
 
-    update_dict(config, config_overrides, validate_item=validate_config_item)
+    _update_dict(config, config_overrides, validate_item=_validate_config_item)
 
     if not config["labels"] and config["validate_label"]:
         raise ValueError("labels must be specified when validate_label is enabled")
