@@ -815,5 +815,31 @@ Polygons</source>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>前の明るさ/コントラストを保持</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>設定…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>テキストエディタで設定ファイルを開く</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>設定ファイルがありません</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>設定はコマンドラインからYAML式として提供されました。
+
+設定エディタを使用するには、設定ファイルを指定してLabelmeを起動してください:
+  labelme --config ~/.labelmerc</translation>
+    </message>
 </context>
 </TS>

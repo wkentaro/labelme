@@ -783,5 +783,31 @@ Polygons</source>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>نگه داشتن روشنایی/کنتراست قبلی</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>تنظیمات…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>باز کردن فایل پیکربندی در ویرایشگر متن</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>فایل پیکربندی وجود ندارد</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>پیکربندی به صورت عبارت YAML از طریق خط فرمان ارائه شده است.
+
+برای استفاده از ویرایشگر تنظیمات، Labelme را با یک فایل پیکربندی اجرا کنید:
+  labelme --config ~/.labelmerc</translation>
+    </message>
 </context>
 </TS>
