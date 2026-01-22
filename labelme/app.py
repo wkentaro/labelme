@@ -118,11 +118,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 output_file = output
         del output
 
-        self._config_file = config_file
-        self._config = load_config(
-            config_file=config_file, config_overrides=config_overrides or {}
+        super().__init__()
+        self.setWindowTitle(__appname__)
+
+        self._config_file, self._config = self._load_config(
+            config_file=config_file, config_overrides=config_overrides
         )
-        del config_overrides
 
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -142,9 +143,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Set point size from config file
         Shape.point_size = self._config["shape"]["point_size"]
-
-        super().__init__()
-        self.setWindowTitle(__appname__)
 
         self._copied_shapes = []
 
@@ -976,6 +974,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget.valueChanged.connect(self._paint_canvas)
 
         self.populateModeActions()
+
+    def _load_config(
+        self, config_file: Path | None, config_overrides: dict | None
+    ) -> tuple[Path | None, dict]:
+        try:
+            config = load_config(
+                config_file=config_file, config_overrides=config_overrides or {}
+            )
+        except ValueError as e:
+            msg_box = QMessageBox(self)
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle(self.tr("Configuration Errors"))
+            msg_box.setText(
+                self.tr(
+                    "Errors were found while loading the configuration. "
+                    "Please review the errors below and reload your configuration or "
+                    "ignore the erroneous lines."
+                )
+            )
+            msg_box.setInformativeText(str(e))
+            msg_box.setStandardButtons(QMessageBox.Ignore)
+            msg_box.setModal(False)
+            msg_box.show()
+
+            config_file = None
+            config_overrides = {}
+            config = load_config(
+                config_file=config_file, config_overrides=config_overrides
+            )
+        return config_file, config
 
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
