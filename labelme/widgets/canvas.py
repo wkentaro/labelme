@@ -228,7 +228,8 @@ class Canvas(QtWidgets.QWidget):
         self._update_status()
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
-        self.unHighlight()
+        if self.setHighlight(None):
+            self.update()
         self.restoreCursor()
         self._update_status()
 
@@ -252,17 +253,23 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()  # clear crosshair
         else:
             # EDIT -> CREATE
-            self.unHighlight()
-            self.deSelectShape()
+            should_update = self.setHighlight(None)
+            should_update |= self.deSelectShape()
+            if should_update:
+                self.update()
 
-    def unHighlight(self):
+    def setHighlight(self, shape: Shape | None, hEdge=None, hVertex=None) -> bool:
+        need_update = shape is not None
         if self.hShape:
             self.hShape.highlightClear()
-            self.update()
+            need_update = True
         self.prevhShape = self.hShape
         self.prevhVertex = self.hVertex
         self.prevhEdge = self.hEdge
-        self.hShape = self.hVertex = self.hEdge = None
+        self.hShape = shape
+        self.hVertex = hVertex
+        self.hEdge = hEdge
+        return need_update
 
     def selectedVertex(self):
         return self.hVertex is not None
@@ -437,17 +444,12 @@ class Canvas(QtWidgets.QWidget):
         for shape in ([self.hShape] if self.hShape else []) + [
             s for s in reversed(self.shapes) if self.isVisible(s) and s != self.hShape
         ]:
-            # Look for a nearby vertex to highlight. If that fails,
-            # check if we happen to be inside a shape.
+            # Look for a nearby vertex to highlight.
             index = shape.nearestVertex(pos, self.epsilon)
-            index_edge = shape.nearestEdge(pos, self.epsilon)
             if index is not None:
-                if self.selectedVertex() and self.hShape:
-                    self.hShape.highlightClear()
-                self.prevhVertex = self.hVertex = index
-                self.prevhShape = self.hShape = shape
-                self.prevhEdge = self.hEdge
-                self.hEdge = None
+                self.setHighlight(shape, hVertex=index)
+                self.prevhShape = shape
+                self.prevhVertex = index
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to move point"))
@@ -457,25 +459,22 @@ class Canvas(QtWidgets.QWidget):
                     )
                 self.update()
                 break
-            elif index_edge is not None and shape.canAddPoint():
-                if self.selectedVertex() and self.hShape:
-                    self.hShape.highlightClear()
-                self.prevhVertex = self.hVertex
-                self.hVertex = None
-                self.prevhShape = self.hShape = shape
-                self.prevhEdge = self.hEdge = index_edge
+
+            # Look for a nearby edge to highlight.
+            index_edge = shape.nearestEdge(pos, self.epsilon)
+            if index_edge is not None and shape.canAddPoint():
+                self.setHighlight(shape, hEdge=index_edge)
+                self.prevhShape = shape
+                self.prevhEdge = index_edge
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("ALT + Click to create point on shape"))
                 self.update()
                 break
-            elif shape.containsPoint(pos):
-                if self.selectedVertex() and self.hShape:
-                    self.hShape.highlightClear()
-                self.prevhVertex = self.hVertex
-                self.hVertex = None
-                self.prevhShape = self.hShape = shape
-                self.prevhEdge = self.hEdge
-                self.hEdge = None
+
+            # Check if we happen to be inside a shape.
+            if shape.containsPoint(pos):
+                self.setHighlight(shape)
+                self.prevhShape = shape
                 status_messages.extend(
                     [
                         self.tr("Click & drag to move shape"),
@@ -487,7 +486,8 @@ class Canvas(QtWidgets.QWidget):
                 break
         else:  # Nothing found, clear highlights, reset state.
             self.restoreCursor()
-            self.unHighlight()
+            if self.setHighlight(None):
+                self.update()
         self.vertexSelected.emit(self.hVertex is not None)
         self._update_status(extra_messages=status_messages)
 
@@ -709,7 +709,8 @@ class Canvas(QtWidgets.QWidget):
                         self.hShapeIsSelected = True
                     self.calculateOffsets(point)
                     return
-        self.deSelectShape()
+        if self.deSelectShape():
+            self.update()
 
     def calculateOffsets(self, point: QPointF) -> None:
         left = self.pixmap.width() - 1
@@ -776,12 +777,14 @@ class Canvas(QtWidgets.QWidget):
             return True
         return False
 
-    def deSelectShape(self):
+    def deSelectShape(self) -> bool:
+        need_update = False
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
             self.hShapeIsSelected = False
-            self.update()
+            need_update = True
+        return need_update
 
     def deleteSelected(self):
         deleted_shapes = []
