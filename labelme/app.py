@@ -2134,7 +2134,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if system == "Darwin":
             subprocess.Popen(["open", "-t", config_file])
         elif system == "Windows":
-            subprocess.run(["start", "", config_file], shell=True)
+            os.startfile(config_file)  # type: ignore[attr-defined]
         else:
             subprocess.Popen(["xdg-open", config_file])
 
