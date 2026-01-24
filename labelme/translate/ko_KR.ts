@@ -783,5 +783,41 @@ Polygons</source>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>이전 밝기/대비 유지</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>환경설정…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>텍스트 편집기에서 설정 파일 열기</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>설정 파일 없음</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>설정이 명령줄에서 YAML 표현식으로 제공되었습니다.
+
+환경설정 편집기를 사용하려면 설정 파일과 함께 Labelme를 시작하세요:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>구성 오류</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>구성을 불러오는 중 오류가 발견되었습니다. 아래 오류를 검토하고 구성을 다시 불러오거나 잘못된 줄을 무시하세요.</translation>
+    </message>
 </context>
 </TS>

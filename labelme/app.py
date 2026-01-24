@@ -6,9 +6,12 @@ import html
 import math
 import os
 import os.path as osp
+import platform
 import re
+import subprocess
 import types
 import webbrowser
+from pathlib import Path
 from typing import Literal
 
 import imgviz
@@ -30,7 +33,7 @@ from labelme._automation._osam_session import OsamSession
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
-from labelme.config import get_config
+from labelme.config import load_config
 from labelme.shape import Shape
 from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
@@ -82,8 +85,10 @@ _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE: dict[
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    filename: str | None
+    _config_file: Path | None
     _config: dict
+
+    filename: str | None
     _text_osam_session: OsamSession | None = None
     _is_changed: bool = False
     _copied_shapes: list[Shape]
@@ -100,7 +105,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(
         self,
-        config: dict | None = None,
+        config_file: Path | None = None,
+        config_overrides: dict | None = None,
         filename: str | None = None,
         output: str | None = None,
         output_file: str | None = None,
@@ -112,10 +118,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 output_file = output
         del output
 
-        # see labelme/config/default_config.yaml for valid configuration
-        if config is None:
-            config = get_config()
-        self._config = config
+        super().__init__()
+        self.setWindowTitle(__appname__)
+
+        self._config_file, self._config = self._load_config(
+            config_file=config_file, config_overrides=config_overrides
+        )
 
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -135,9 +143,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Set point size from config file
         Shape.point_size = self._config["shape"]["point_size"]
-
-        super().__init__()
-        self.setWindowTitle(__appname__)
 
         self._copied_shapes = []
 
@@ -159,8 +164,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
         self.flag_dock.setObjectName("Flags")
         self.flag_widget = QtWidgets.QListWidget()
-        if config["flags"]:
-            self._load_flags(flags={k: False for k in config["flags"]})
+        if self._config["flags"]:
+            self._load_flags(flags={k: False for k in self._config["flags"]})
         self.flag_dock.setWidget(self.flag_widget)
         self.flag_widget.itemChanged.connect(self.setDirty)
 
@@ -257,6 +262,14 @@ class MainWindow(QtWidgets.QMainWindow):
             icon=None,
             tip=self.tr("Quit application"),
         )
+        open_config = action(
+            text=self.tr("Preferences…"),
+            slot=self._open_config_file,
+            shortcut="Ctrl+," if platform.system() == "Darwin" else "Ctrl+Shift+,",
+            icon=None,
+            tip=self.tr("Open config file in text editor"),
+        )
+        open_config.setMenuRole(QtWidgets.QAction.PreferencesRole)
         open_ = action(
             self.tr("&Open\n"),
             self._open_file_with_dialog,
@@ -795,6 +808,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 close,
                 deleteFile,
                 None,
+                open_config,
+                None,
                 quit,
             ),
         )
@@ -926,8 +941,8 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Vertical: {},
         }  # key=filename, value=scroll_value
 
-        if config["file_search"]:
-            self.fileSearch.setText(config["file_search"])
+        if self._config["file_search"]:
+            self.fileSearch.setText(self._config["file_search"])
             self.fileSearchChanged()
 
         # XXX: Could be completely declarative.
@@ -959,6 +974,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget.valueChanged.connect(self._paint_canvas)
 
         self.populateModeActions()
+
+    def _load_config(
+        self, config_file: Path | None, config_overrides: dict | None
+    ) -> tuple[Path | None, dict]:
+        try:
+            config = load_config(
+                config_file=config_file, config_overrides=config_overrides or {}
+            )
+        except ValueError as e:
+            msg_box = QMessageBox(self)
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle(self.tr("Configuration Errors"))
+            msg_box.setText(
+                self.tr(
+                    "Errors were found while loading the configuration. "
+                    "Please review the errors below and reload your configuration or "
+                    "ignore the erroneous lines."
+                )
+            )
+            msg_box.setInformativeText(str(e))
+            msg_box.setStandardButtons(QMessageBox.Ignore)
+            msg_box.setModal(False)
+            msg_box.show()
+
+            config_file = None
+            config_overrides = {}
+            config = load_config(
+                config_file=config_file, config_overrides=config_overrides
+            )
+        return config_file, config
 
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
@@ -2069,6 +2114,29 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Unchecked)
 
             self.resetState()
+
+    def _open_config_file(self) -> None:
+        if self._config_file is None:
+            QtWidgets.QMessageBox.information(
+                self,
+                self.tr("No Config File"),
+                self.tr(
+                    "Configuration was provided as a YAML expression via "
+                    "command line.\n\n"
+                    "To use the preferences editor, start Labelme with a config file:\n"
+                    "  labelme --config ~/.labelmerc"
+                ),
+            )
+            return
+        config_file: Path = self._config_file
+
+        system: str = platform.system()
+        if system == "Darwin":
+            subprocess.Popen(["open", "-t", config_file])
+        elif system == "Windows":
+            os.startfile(config_file)  # type: ignore[attr-defined]
+        else:
+            subprocess.Popen(["xdg-open", config_file])
 
     # Message Dialogs. #
     def hasLabels(self):
