@@ -809,5 +809,15 @@ To use the preferences editor, start Labelme with a config file:
 Para usar el editor de preferencias, inicie Labelme con un archivo de configuración:
   labelme --config ~/.labelmerc</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Errores de Configuración</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Se encontraron errores al cargar la configuración. Por favor, revise los errores a continuación y recargue su configuración o ignore las líneas erróneas.</translation>
+    </message>
 </context>
 </TS>

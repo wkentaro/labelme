@@ -815,5 +815,15 @@ To use the preferences editor, start Labelme with a config file:
 A beállítások szerkesztő használatához indítsa el a Labelme-t konfigurációs fájllal:
   labelme --config ~/.labelmerc</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Konfigurációs Hibák</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Hibák találhatók a konfiguráció betöltése közben. Kérjük, tekintse át az alábbi hibákat, és töltse újra a konfigurációt, vagy hagyja figyelmen kívül a hibás sorokat.</translation>
+    </message>
 </context>
 </TS>

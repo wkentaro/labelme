@@ -809,5 +809,15 @@ To use the preferences editor, start Labelme with a config file:
 要使用偏好設定編輯器，請使用設定檔啟動Labelme：
   labelme --config ~/.labelmerc</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>設定錯誤</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>載入設定時發現錯誤。請檢查以下錯誤並重新載入設定，或忽略錯誤的行。</translation>
+    </message>
 </context>
 </TS>
