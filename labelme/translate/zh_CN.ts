@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>点击矩形对角</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>点击以添加点</translation>
     </message>
@@ -158,6 +153,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>右键点击并拖拽以复制形状</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>点击矩形对角（Shift绘制正方形）</translation>
     </message>
 </context>
 <context>

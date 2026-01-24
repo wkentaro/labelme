@@ -156,8 +156,8 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Clique na esquina oposta do retângulo</translation>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Clique na esquina oposta do retângulo (Shift para quadrado)</translation>
     </message>
 </context>
 <context>

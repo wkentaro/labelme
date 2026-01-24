@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Clicca sull'angolo opposto del rettangolo</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>Clicca per aggiungere un punto</translation>
     </message>
@@ -158,6 +153,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Tasto destro e trascina per copiare la forma</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Clicca sull'angolo opposto del rettangolo (Shift per quadrato)</translation>
     </message>
 </context>
 <context>
