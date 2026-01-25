@@ -1,15 +1,15 @@
 import json
-import os.path as osp
+from pathlib import Path
 
 from labelme.utils import image as image_module
 from labelme.utils import shape as shape_module
 
-here = osp.dirname(osp.abspath(__file__))
-data_dir = osp.join(here, "../data")
+here = Path(__file__).parent
+data_dir = here.parent.parent / "data"
 
 
 def get_img_and_data():
-    json_file = osp.join(data_dir, "annotated_with_data/apc2016_obj3.json")
+    json_file = data_dir / "annotated_with_data/apc2016_obj3.json"
     with open(json_file) as f:
         data = json.load(f)
     img_b64 = data["imageData"]
