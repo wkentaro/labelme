@@ -126,11 +126,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Gegenüberliegende Ecke des Rechtecks anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>Klicken zum Hinzufügen eines Punktes</translation>
     </message>
@@ -158,6 +153,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Rechtsklick und Ziehen, um die Form zu kopieren</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Gegenüberliegende Ecke des Rechtecks anklicken (Shift für Quadrat)</translation>
     </message>
 </context>
 <context>
@@ -788,6 +788,42 @@ Polygone</translation>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Verzeichnis öffnen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>Einstellungen…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>Konfigurationsdatei im Texteditor öffnen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>Keine Konfigurationsdatei</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>Die Konfiguration wurde als YAML-Ausdruck über die Kommandozeile bereitgestellt.
+
+Um den Einstellungseditor zu verwenden, starten Sie Labelme mit einer Konfigurationsdatei:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Konfigurationsfehler</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Beim Laden der Konfiguration wurden Fehler gefunden. Bitte überprüfen Sie die folgenden Fehler und laden Sie Ihre Konfiguration neu oder ignorieren Sie die fehlerhaften Zeilen.</translation>
     </message>
 </context>
 </TS>

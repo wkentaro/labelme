@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>کلیک روی گوشه مقابل مستطیل</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
@@ -158,6 +153,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>کلیک راست و کشیدن برای کپی شکل</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>کلیک روی گوشه مقابل مستطیل (Shift برای مربع)</translation>
     </message>
 </context>
 <context>
@@ -782,6 +782,42 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>نگه داشتن روشنایی/کنتراست قبلی</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>تنظیمات…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>باز کردن فایل پیکربندی در ویرایشگر متن</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>فایل پیکربندی وجود ندارد</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>پیکربندی به صورت عبارت YAML از طریق خط فرمان ارائه شده است.
+
+برای استفاده از ویرایشگر تنظیمات، Labelme را با یک فایل پیکربندی اجرا کنید:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>خطاهای پیکربندی</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>هنگام بارگیری پیکربندی خطاهایی یافت شد. لطفاً خطاهای زیر را بررسی کنید و پیکربندی خود را مجدداً بارگیری کنید یا خطوط نادرست را نادیده بگیرید.</translation>
     </message>
 </context>
 </TS>

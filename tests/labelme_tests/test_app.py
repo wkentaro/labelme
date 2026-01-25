@@ -128,9 +128,7 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) 
     input_file: str = str(data_path / "raw/2011_000003.jpg")
     out_file: str = str(tmp_path / "2011_000003.json")
 
-    config: dict = labelme.config._get_default_config_and_create_labelmerc()
     win: labelme.app.MainWindow = labelme.app.MainWindow(
-        config=config,
         filename=input_file,
         output_file=out_file,
     )
@@ -201,5 +199,53 @@ def test_image_navigation_while_selecting_shape(qtbot: QtBot, data_path: Path) -
     qtbot.keyClick(win.canvas, Qt.Key_Down)
     qtbot.wait(100)
     # }}
+
+    win.close()
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "with_config_file",
+    [
+        pytest.param(True, id="with_config_file"),
+        pytest.param(False, id="without_config_file"),
+    ],
+)
+def test_MainWindow_config(
+    with_config_file: bool,
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config_file: Path | None = None
+    auto_save: bool = False
+    if with_config_file:
+        config_file = tmp_path / "labelmerc.yaml"
+        config_file.write_text("auto_save: true\nlabels: [cat, dog]\n")
+        auto_save = True
+
+    win: labelme.app.MainWindow = labelme.app.MainWindow(
+        config_file=config_file,
+        config_overrides={"labels": ["bird"]},
+    )
+    qtbot.addWidget(win)
+    win.show()
+
+    assert win._config["auto_save"] is auto_save
+    assert win._config["labels"] == ["bird"]
+    assert win._config_file == config_file
+
+    if not with_config_file:
+        message_box_shown: list[bool] = [False]
+
+        def mock_information(parent, title, message):
+            message_box_shown[0] = True
+            assert "No Config File" in title
+            return QtWidgets.QMessageBox.Ok
+
+        monkeypatch.setattr(QtWidgets.QMessageBox, "information", mock_information)
+
+        win._open_config_file()
+        assert message_box_shown[0] is True
 
     win.close()

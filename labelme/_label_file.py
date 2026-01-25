@@ -4,6 +4,7 @@ import contextlib
 import io
 import json
 import os.path as osp
+from pathlib import PureWindowsPath
 from typing import TypedDict
 
 import numpy as np
@@ -187,14 +188,17 @@ class LabelFile:
             with open(filename, "r") as f:
                 data = json.load(f)
 
+            # Normalize Windows-style backslash paths to POSIX forward slashes
+            imagePath = PureWindowsPath(data["imagePath"]).as_posix()
+
             if data["imageData"] is not None:
                 imageData = base64.b64decode(data["imageData"])
             else:
                 # relative path from label file to relative path from cwd
-                imagePath = osp.join(osp.dirname(filename), data["imagePath"])
-                imageData = self.load_image_file(imagePath)
+                imageData = self.load_image_file(
+                    osp.join(osp.dirname(filename), imagePath)
+                )
             flags = data.get("flags") or {}
-            imagePath = data["imagePath"]
             self._check_image_height_and_width(
                 base64.b64encode(imageData).decode("utf-8"),
                 data.get("imageHeight"),

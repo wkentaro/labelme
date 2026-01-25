@@ -156,8 +156,8 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Klik op tegenoverliggende hoek voor rechthoek</translation>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Klik op tegenoverliggende hoek voor rechthoek (Shift voor vierkant)</translation>
     </message>
 </context>
 <context>
@@ -782,6 +782,42 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorige Helderheid/Contrast Behouden</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>Voorkeuren…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>Configuratiebestand openen in teksteditor</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>Geen configuratiebestand</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>De configuratie is als YAML-expressie via de opdrachtregel opgegeven.
+
+Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Configuratiefouten</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Er zijn fouten gevonden bij het laden van de configuratie. Bekijk de onderstaande fouten en herlaad uw configuratie of negeer de foutieve regels.</translation>
     </message>
 </context>
 </TS>

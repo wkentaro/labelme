@@ -325,7 +325,7 @@ class Canvas(QtWidgets.QWidget):
             if isNew:
                 return self.tr("Click first corner for rectangle")
             else:
-                return self.tr("Click opposite corner for rectangle")
+                return self.tr("Click opposite corner for rectangle (Shift for square)")
         return self.tr("Click to add point")
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
@@ -386,6 +386,10 @@ class Canvas(QtWidgets.QWidget):
                     0 if is_shift_pressed else 1,
                 ]
             elif self.createMode == "rectangle":
+                if is_shift_pressed:
+                    self.prevMovePoint = pos = _snap_cursor_pos_for_square(  # override
+                        pos=pos, opposite_vertex=self.current[0]
+                    )
                 self.line.points = [self.current[0], pos]
                 self.line.point_labels = [1, 1]
                 self.line.close()
@@ -422,7 +426,7 @@ class Canvas(QtWidgets.QWidget):
         # Polygon/Vertex moving.
         if Qt.LeftButton & a0.buttons():
             if self.selectedVertex():
-                self.boundedMoveVertex(pos)
+                self.boundedMoveVertex(pos, is_shift_pressed=is_shift_pressed)
                 self.repaint()
                 self.movingShape = True
             elif self.selectedShapes and self.prevPoint is not None:
@@ -736,15 +740,22 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
-    def boundedMoveVertex(self, pos: QPointF) -> None:
+    def boundedMoveVertex(self, pos: QPointF, is_shift_pressed: bool) -> None:
         if self.hVertex is None:
             logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
             return
         assert self.hShape is not None
 
         point: QPointF = self.hShape[self.hVertex]
+
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(point, pos)
+
+        if is_shift_pressed and self.hShape.shape_type == "rectangle":
+            pos = _snap_cursor_pos_for_square(
+                pos=pos, opposite_vertex=self.hShape[1 - self.hVertex]
+            )
+
         self.hShape.moveVertexBy(i=self.hVertex, offset=pos - point)
 
     def boundedMoveShapes(self, shapes, pos):
@@ -1189,3 +1200,12 @@ def _update_shape_with_ai_response(
             points=[QPointF(point[0], point[1]) for point in points],
             point_labels=[1] * len(points),
         )
+
+
+def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPointF:
+    pos_from_opposite: QPointF = pos - opposite_vertex
+    square_size: float = min(abs(pos_from_opposite.x()), abs(pos_from_opposite.y()))
+    return opposite_vertex + QPointF(
+        np.sign(pos_from_opposite.x()) * square_size,
+        np.sign(pos_from_opposite.y()) * square_size,
+    )

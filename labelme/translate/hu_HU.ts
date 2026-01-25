@@ -126,11 +126,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Kattintson a téglalap ellentétes sarkára</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>Kattintson pont hozzáadásához</translation>
     </message>
@@ -158,6 +153,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Jobb gombbal kattintás és húzás az alakzat másolásához</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Kattintson a téglalap ellentétes sarkára (Shift a négyzethez)</translation>
     </message>
 </context>
 <context>
@@ -788,6 +788,42 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Könyvtár megnyitása</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>Beállítások…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>Konfigurációs fájl megnyitása szövegszerkesztőben</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>Nincs konfigurációs fájl</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>A konfiguráció YAML kifejezésként lett megadva a parancssorból.
+
+A beállítások szerkesztő használatához indítsa el a Labelme-t konfigurációs fájllal:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Konfigurációs Hibák</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Hibák találhatók a konfiguráció betöltése közben. Kérjük, tekintse át az alábbi hibákat, és töltse újra a konfigurációt, vagy hagyja figyelmen kívül a hibás sorokat.</translation>
     </message>
 </context>
 </TS>
