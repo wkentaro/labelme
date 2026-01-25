@@ -12,21 +12,15 @@ from pytestqt.qtbot import QtBot
 import labelme.app
 import labelme.testing
 
-
-def _show_window_and_wait_for_imagedata(
-    qtbot: QtBot, win: labelme.app.MainWindow
-) -> None:
-    win.show()
-
-    def check_imageData():
-        assert hasattr(win, "imageData")
-        assert win.imageData is not None
-
-    qtbot.waitUntil(check_imageData)
+from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
-def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) -> None:
+def test_MainWindow_annotate_jpg(
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
     input_file: str = str(data_path / "raw/2011_000003.jpg")
     out_file: str = str(tmp_path / "2011_000003.json")
 
@@ -35,7 +29,7 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) 
         output_file=out_file,
     )
     qtbot.addWidget(win)
-    _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     label: str = "whole"
     canvas_size: QSize = win.canvas.size()

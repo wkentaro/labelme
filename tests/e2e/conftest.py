@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 from PyQt5.QtCore import QSettings
+from pytestqt.qtbot import QtBot
 
 import labelme.app
 
@@ -19,3 +20,15 @@ def _isolated_qtsettings(
         labelme.app.QtCore, "QSettings", lambda *args, **kwargs: settings
     )
     yield
+
+
+def show_window_and_wait_for_imagedata(
+    qtbot: QtBot, win: labelme.app.MainWindow
+) -> None:
+    win.show()
+
+    def check_imageData() -> None:
+        assert hasattr(win, "imageData")
+        assert win.imageData is not None
+
+    qtbot.waitUntil(check_imageData)

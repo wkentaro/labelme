@@ -11,30 +11,26 @@ from pytestqt.qtbot import QtBot
 import labelme.app
 import labelme.testing
 
-
-def _show_window_and_wait_for_imagedata(
-    qtbot: QtBot, win: labelme.app.MainWindow
-) -> None:
-    win.show()
-
-    def check_imageData():
-        assert hasattr(win, "imageData")
-        assert win.imageData is not None
-
-    qtbot.waitUntil(check_imageData)
+from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
-def test_MainWindow_open_img(qtbot: QtBot, data_path: Path) -> None:
+def test_MainWindow_open_img(
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
     image_file: str = str(data_path / "raw/2011_000003.jpg")
     win: labelme.app.MainWindow = labelme.app.MainWindow(filename=image_file)
     qtbot.addWidget(win)
-    _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     win.close()
 
 
 @pytest.mark.gui
-def test_MainWindow_open_json(qtbot: QtBot, data_path: Path) -> None:
+def test_MainWindow_open_json(
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
     json_files: list[str] = [
         str(data_path / "annotated_with_data/apc2016_obj3.json"),
         str(data_path / "annotated/2011_000003.json"),
@@ -45,7 +41,7 @@ def test_MainWindow_open_json(qtbot: QtBot, data_path: Path) -> None:
 
         win: labelme.app.MainWindow = labelme.app.MainWindow(filename=json_file)
         qtbot.addWidget(win)
-        _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+        show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
         win.close()
 
 
@@ -69,7 +65,7 @@ def test_MainWindow_open_dir(
         filename=directory, output_dir=output_dir
     )
     qtbot.addWidget(win)
-    _show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     first_image_name: str = "2011_000003.jpg"
     second_image_name: str = "2011_000006.jpg"
