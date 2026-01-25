@@ -54,7 +54,8 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) 
         qtbot.mousePress(win.canvas, Qt.LeftButton, pos=QPoint(int(xy[0]), int(xy[1])))
         qtbot.wait(100)
 
-    [click(xy=xy) for xy in points]
+    for xy in points:
+        click(xy=xy)
 
     def interact() -> None:
         qtbot.keyClicks(win.labelDialog.edit, label)
