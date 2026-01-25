@@ -78,3 +78,5 @@ def test_MainWindow_annotate_jpg(qtbot: QtBot, data_path: Path, tmp_path: Path) 
     win.saveFile()
 
     labelme.testing.assert_labelfile_sanity(out_file)
+
+    win.close()
