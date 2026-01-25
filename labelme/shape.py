@@ -289,7 +289,10 @@ class Shape:
         if i == self._highlightIndex:
             size, shape = self._highlightSettings[self._highlightMode]
             d *= size  # type: ignore[assignment]
-        if self._highlightIndex is not None:
+        # For point shapes, always use vertex_fill_color to maintain visibility
+        if self.shape_type == "point":
+            self._current_vertex_fill_color = self.vertex_fill_color
+        elif self._highlightIndex is not None:
             self._current_vertex_fill_color = self.hvertex_fill_color
         else:
             self._current_vertex_fill_color = self.vertex_fill_color
@@ -330,6 +333,13 @@ class Shape:
 
     def containsPoint(self, point) -> bool:
         if self.shape_type in ["line", "linestrip", "points"]:
+            return False
+        if self.shape_type == "point":
+            # For point shapes, check if the click is within the point's visual radius
+            # Use point_size * 2 to make it easier to click on points
+            if self.points:
+                dist = labelme.utils.distance(self.points[0] - point)
+                return dist <= self.point_size * 2 / self.scale
             return False
         if self.mask is not None:
             y = np.clip(
