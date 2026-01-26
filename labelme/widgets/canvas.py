@@ -129,6 +129,7 @@ class Canvas(QtWidgets.QWidget):
         self._dragging_start_pos = QPointF()
         self._is_dragging = False
         self._is_dragging_enabled = False
+        self._context_menu_active = False
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -257,7 +258,13 @@ class Canvas(QtWidgets.QWidget):
 
     def unHighlight(self):
         if self.hShape:
-            self.hShape.highlightClear()
+            # Keep highlight for selected point shapes during context menu
+            if not (
+                self._context_menu_active
+                and self.hShape.shape_type == "point"
+                and self.hShape in self.selectedShapes
+            ):
+                self.hShape.highlightClear()
             self.update()
         self.prevhShape = self.hShape
         self.prevhVertex = self.hVertex
@@ -601,6 +608,12 @@ class Canvas(QtWidgets.QWidget):
             ):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.repaint()
+            # Highlight selected point shapes during right-click context menu
+            for shape in self.selectedShapes:
+                if shape.shape_type == "point":
+                    shape.highlightVertex(0, shape.MOVE_VERTEX)
+            self._context_menu_active = True
+            self.repaint()
             self.prevPoint = pos
         elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
             self.overrideCursor(CURSOR_GRAB)
@@ -616,6 +629,12 @@ class Canvas(QtWidgets.QWidget):
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
                 self.repaint()
+            self._context_menu_active = False
+            # Clear highlight for point shapes after context menu closes
+            for shape in self.selectedShapes:
+                if shape.shape_type == "point":
+                    shape.highlightClear()
+            self.repaint()
         elif a0.button() == Qt.LeftButton:
             if self.editing():
                 if (
@@ -693,6 +712,19 @@ class Canvas(QtWidgets.QWidget):
         """Select the first shape created which contains this point."""
         if self.hVertex is not None:
             assert self.hShape is not None
+            # For point shapes, select the shape instead of highlighting the vertex
+            if self.hShape.shape_type == "point":
+                self.setHiding()
+                if self.hShape not in self.selectedShapes:
+                    if multiple_selection_mode:
+                        self.selectionChanged.emit(self.selectedShapes + [self.hShape])
+                    else:
+                        self.selectionChanged.emit([self.hShape])
+                    self.hShapeIsSelected = False
+                else:
+                    self.hShapeIsSelected = True
+                self.calculateOffsets(point)
+                return
             self.hShape.highlightVertex(i=self.hVertex, action=self.hShape.MOVE_VERTEX)
         else:
             shape: Shape
