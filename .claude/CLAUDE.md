@@ -9,11 +9,12 @@ Labelme is a graphical image annotation tool built with Python and PyQt5. It sup
 ## Development Commands
 
 ```bash
-make setup          # Install dependencies (uses uv sync)
-make format         # Format code with ruff
-make lint           # Run linting (ruff) and type checking (ty)
-make test           # Run all tests
-make check          # Run lint + translation checks
+make setup            # Install dependencies (uses uv sync)
+make format           # Format code with ruff
+make lint             # Run linting (ruff) and type checking (ty)
+make test             # Run all tests
+make check            # Run lint + translation checks
+make update_translate # Update .ts and compile .qm translation files
 ```
 
 ### Running Individual Tests
@@ -76,3 +77,9 @@ def test_example(qtbot: QtBot, data_path: Path) -> None:
 - Uses ty for type checking
 - Force single-line imports (isort)
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, `perf:`, `ci:`, `i18n:`
+
+## Translations
+
+- Translation files are in `labelme/translate/` (`.ts` source, `.qm` compiled)
+- After editing `.ts` files, run `make update_translate` to compile them
+- Do not run `pyside6-lrelease` or `lrelease` directly
