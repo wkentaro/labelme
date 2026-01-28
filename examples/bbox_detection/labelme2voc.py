@@ -89,7 +89,7 @@ def main():
             maker.segmented(),
         )
 
-        bboxes = []
+        bboxes: list[list[float]] = []
         labels = []
         for shape in label_file.shapes:
             if shape["shape_type"] != "rectangle":
@@ -127,7 +127,7 @@ def main():
             )
 
         if not args.noviz:
-            captions = [class_names[label] for label in labels]
+            captions: list[str] = [class_names[label] for label in labels]
             viz = imgviz.instances2rgb(
                 image=img,
                 labels=labels,

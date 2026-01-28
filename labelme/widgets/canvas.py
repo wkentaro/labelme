@@ -1168,8 +1168,8 @@ def _update_shape_with_ai_response(
         y2: int
         x2: int
         if response.annotations[0].bounding_box is None:
-            y1, x1, y2, x2 = imgviz.instances.mask_to_bbox(
-                [response.annotations[0].mask]
+            y1, x1, y2, x2 = imgviz.masks_to_bboxes(
+                masks=[response.annotations[0].mask]
             )[0].astype(int)
         else:
             y1 = response.annotations[0].bounding_box.ymin

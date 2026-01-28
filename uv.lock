@@ -166,6 +166,18 @@ wheels = [
 ]
 
 [[package]]
+name = "cmap"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/81/dc/7f22f008c90ff1211d34be6390cc4170c96304df8ce4ea04c61ad13238d3/cmap-0.7.0.tar.gz", hash = "sha256:8cab93661f1e6dd6d06435105fed744836ecb5ce266ecc14ab1e0657ca8fcda4", size = 936032, upload-time = "2026-01-05T18:14:54.031Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d1/3e/870754d98645a915dabbe61a10182b88695c035e53925d3aa9899b5d9e5a/cmap-0.7.0-py3-none-any.whl", hash = "sha256:70a278bf70d0b10427cc1b40cc2866a59e8f31f1ab3e7b6a87c652acd32677a4", size = 985164, upload-time = "2026-01-05T18:14:52.43Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -470,17 +482,16 @@ wheels = [
 
 [[package]]
 name = "imgviz"
-version = "1.7.6"
+version = "2.0.0a2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "matplotlib" },
+    { name = "cmap" },
     { name = "numpy" },
     { name = "pillow" },
-    { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/58/ab/b4c7671e36c426de4bb7341602cb51d3dfe2d18efb1dd0b6f1c98003032c/imgviz-1.7.6.tar.gz", hash = "sha256:4708429c90a3220ac39fa8ad330908fdbdec4fffca01b514a7f581241a536107", size = 8493873, upload-time = "2024-11-22T08:42:14.99Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f9/eb/bb49758188da169b40c1d0f7ebdfcdc15130a01b7e305e7263efe7ead29c/imgviz-2.0.0a2.tar.gz", hash = "sha256:a3369993b819511b4e3a3d8670364e2b39bd2b743df7da3f48d5dd5fb17aaf65", size = 8781891, upload-time = "2026-01-28T12:32:50.017Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/cd/fed922713ddd01279e9751f8fff85ab9302754364c6c7e22c9de54b9ca29/imgviz-1.7.6-py3-none-any.whl", hash = "sha256:6afccf52e66ad49032ca748f86580dca8c5fa8462f23836da8fe2ed2249fc4a9", size = 7675761, upload-time = "2024-11-22T08:42:04.05Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/1e/dc4569f106a98de41607f91058a21cd4deb85356fd01337cb52856df0592/imgviz-2.0.0a2-py3-none-any.whl", hash = "sha256:21dec6c1e10a417ee0cdd93332770f78e026c0890389e9543194734169f4454a", size = 7862539, upload-time = "2026-01-28T12:32:56.333Z" },
 ]
 
 [[package]]
@@ -766,7 +777,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "imgviz" },
+    { name = "imgviz", specifier = ">=2.0.0a2" },
     { name = "loguru" },
     { name = "matplotlib" },
     { name = "natsort", specifier = ">=7.1.0" },
