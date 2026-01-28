@@ -3,9 +3,16 @@ from __future__ import annotations
 import collections
 
 import numpy as np
-import osam
 from loguru import logger
 from numpy.typing import NDArray
+
+# Make osam import optional to handle DLL loading failures gracefully
+try:
+    import osam
+    _OSAM_AVAILABLE = True
+except (ImportError, OSError, RuntimeError):
+    osam = None
+    _OSAM_AVAILABLE = False
 
 
 class OsamSession:
@@ -36,6 +43,11 @@ class OsamSession:
         point_labels: NDArray[np.intp] | None = None,
         texts: list[str] | None = None,
     ) -> osam.types.GenerateResponse:
+        if not _OSAM_AVAILABLE:
+            raise RuntimeError(
+                "osam is not available. onnxruntime failed to load. "
+                "Please install Visual C++ Redistributable."
+            )
         image_embedding: osam.types.ImageEmbedding | None
         try:
             image_embedding = self._get_or_compute_embedding(
@@ -87,6 +99,11 @@ class OsamSession:
         return embedding
 
     def _get_or_load_model(self) -> osam.types.Model:
+        if not _OSAM_AVAILABLE:
+            raise RuntimeError(
+                "osam is not available. onnxruntime failed to load. "
+                "Please install Visual C++ Redistributable."
+            )
         if self._model is None:
             logger.debug("Loading model with name={!r}", self._model_name)
             self._model = osam.apis.get_model_type_by_name(self._model_name)()

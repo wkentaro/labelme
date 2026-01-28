@@ -2,8 +2,15 @@ from __future__ import annotations
 
 import types
 
-import osam
 from loguru import logger
+
+# Make osam import optional to handle DLL loading failures gracefully
+try:
+    import osam
+    _OSAM_AVAILABLE = True
+except (ImportError, OSError, RuntimeError):
+    osam = None
+    _OSAM_AVAILABLE = False
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import QRunnable
@@ -33,6 +40,15 @@ class _AiModelDownloadWorker(QRunnable):
 
 
 def download_ai_model(model_name: str, parent: QtWidgets.QWidget) -> bool:
+    if not _OSAM_AVAILABLE:
+        QtWidgets.QMessageBox.warning(
+            parent,
+            "AI Features Unavailable",
+            "AI-assisted annotation features are not available.\n"
+            "onnxruntime failed to load. Please install Visual C++ Redistributable.",
+        )
+        return False
+
     model_type = osam.apis.get_model_type_by_name(model_name)
 
     if _is_already_downloaded := model_type.get_size() is not None:

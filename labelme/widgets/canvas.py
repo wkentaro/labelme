@@ -5,8 +5,15 @@ from typing import Literal
 
 import imgviz
 import numpy as np
-import osam
 from loguru import logger
+
+# Make osam import optional to handle DLL loading failures gracefully
+try:
+    import osam
+    _OSAM_AVAILABLE = True
+except (ImportError, OSError, RuntimeError):
+    osam = None
+    _OSAM_AVAILABLE = False
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
