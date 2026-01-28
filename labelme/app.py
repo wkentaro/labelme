@@ -943,7 +943,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self._config["file_search"]:
             self.fileSearch.setText(self._config["file_search"])
-            self.fileSearchChanged()
 
         # XXX: Could be completely declarative.
         # Restore application settings.
@@ -960,7 +959,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if filename:
             if osp.isdir(filename):
-                self._import_images_from_dir(root_dir=filename)
+                self._import_images_from_dir(
+                    root_dir=filename, pattern=self.fileSearch.text()
+                )
                 self._open_next_image()
             else:
                 self._load_file(filename=filename)
