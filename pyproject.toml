@@ -22,7 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "imgviz>=2.0.0a2",
+  "imgviz>=2.0.0",
   "loguru",
   "matplotlib",
   "natsort>=7.1.0",
