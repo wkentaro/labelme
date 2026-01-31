@@ -113,7 +113,6 @@ shortcuts:
   paste_polygon: Ctrl+V
   undo: Ctrl+Z
   undo_last_point: Ctrl+Z
-  add_point_to_edge: Ctrl+Shift+P
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
