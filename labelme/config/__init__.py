@@ -1,6 +1,5 @@
 import os.path as osp
 import re
-import shutil
 from pathlib import Path
 
 import yaml
@@ -61,7 +60,17 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
     user_config_file: str = osp.join(osp.expanduser("~"), ".labelmerc")
     if not osp.exists(user_config_file) and create_if_missing:
         try:
-            shutil.copy(osp.join(here, "default_config.yaml"), user_config_file)
+            with open(user_config_file, "w") as f:
+                f.write(
+                    "# Labelme config file.\n"
+                    "# Only add settings you want to override.\n"
+                    "# For all available options and defaults, see:\n"
+                    "#   https://github.com/wkentaro/labelme/blob/main/labelme/config/default_config.yaml\n"
+                    "#\n"
+                    "# Example:\n"
+                    "#   auto_save: true\n"
+                    "#   labels: [cat, dog]\n"
+                )
         except Exception:
             logger.warning("Failed to save config: {!r}", user_config_file)
     return user_config_file
