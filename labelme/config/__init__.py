@@ -42,6 +42,9 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         )
         config_from_yaml["keep_prev_brightness_contrast"] = True
 
+    if config_from_yaml.get("shortcuts", {}).pop("add_point_to_edge", None):
+        logger.info("Migrating old config: removing shortcuts.add_point_to_edge")
+
     if (model_name := config_from_yaml.get("ai", {}).get("default")) and (
         m := re.match(r"^SegmentAnything \((.*)\)$", model_name)
     ):
