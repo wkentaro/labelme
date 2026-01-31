@@ -182,7 +182,7 @@ class Shape:
         pen.setWidth(self.PEN_WIDTH)
         painter.setPen(pen)
 
-        if self.mask is not None:
+        if self.shape_type == "mask" and self.mask is not None:
             image_to_draw = np.zeros(self.mask.shape + (4,), dtype=np.uint8)
             fill_color = (
                 self.select_fill_color.getRgb()
