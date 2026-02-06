@@ -454,7 +454,9 @@ class Canvas(QtWidgets.QWidget):
         # Polygon/Vertex moving.
         if Qt.LeftButton & a0.buttons():
             if self.selectedVertex():
-                self.boundedMoveVertex(pos, is_shift_pressed=is_shift_pressed)
+                self.boundedMoveVertex(
+                    self.hShape, self.hVertex, pos, is_shift_pressed=is_shift_pressed
+                )
                 self.update()
                 self.movingShape = True
             elif self.selectedShapes and self.prevPoint is not None:
@@ -768,29 +770,31 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
-    def boundedMoveVertex(self, pos: QPointF, is_shift_pressed: bool) -> None:
-        if self.hVertex is None:
-            logger.warning("hVertex is None, so cannot move vertex: pos={!r}", pos)
+    def boundedMoveVertex(
+        self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
+    ) -> None:
+        if vertex_index is None:
+            logger.warning("vertex_index is None, so cannot move vertex: pos={!r}", pos)
             return
-        assert self.hShape is not None
+        assert shape is not None
 
-        if self.hVertex >= len(self.hShape.points):
+        if vertex_index >= len(shape.points):
             logger.warning(
-                "hVertex is out of range: hVertex={:d}, len(points)={:d}",
-                self.hVertex,
-                len(self.hShape.points),
+                "vertex_index is out of range: vertex_index={:d}, len(points)={:d}",
+                vertex_index,
+                len(shape.points),
             )
             return
 
         if self.outOfPixmap(pos):
-            pos = self.intersectionPoint(self.hShape[self.hVertex], pos)
+            pos = self.intersectionPoint(shape[vertex_index], pos)
 
-        if is_shift_pressed and self.hShape.shape_type == "rectangle":
+        if is_shift_pressed and shape.shape_type == "rectangle":
             pos = _snap_cursor_pos_for_square(
-                pos=pos, opposite_vertex=self.hShape[1 - self.hVertex]
+                pos=pos, opposite_vertex=shape[1 - vertex_index]
             )
 
-        self.hShape.moveVertex(i=self.hVertex, pos=pos)
+        shape.moveVertex(i=vertex_index, pos=pos)
 
     def boundedMoveShapes(self, shapes: list[Shape], pos: QPointF) -> bool:
         if self.outOfPixmap(pos):
