@@ -55,6 +55,7 @@ class Canvas(QtWidgets.QWidget):
     prevhVertex: int | None
     hEdge: int | None
     prevhEdge: int | None
+    hRotation: int | None
 
     zoomRequest = QtCore.pyqtSignal(int, QPointF)
     scrollRequest = QtCore.pyqtSignal(int, int)
@@ -77,6 +78,8 @@ class Canvas(QtWidgets.QWidget):
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
 
+    _rotation_pos: QPointF
+    _rotation_center: QPointF
     _dragging_start_pos: QPointF
     _is_dragging: bool
     _is_dragging_enabled: bool
@@ -272,6 +275,9 @@ class Canvas(QtWidgets.QWidget):
     def selectedEdge(self):
         return self.hEdge is not None
 
+    def selectedRotationPoint(self):
+        return self.hRotation is not None
+
     def _update_status(self, extra_messages: list[str] | None = None) -> None:
         messages: list[str] = []
         if self.drawing():
@@ -436,6 +442,15 @@ class Canvas(QtWidgets.QWidget):
                     logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
                 self.repaint()
                 self.movingShape = True
+            elif self.selectedRotationPoint():
+                assert self.hShape is not None
+                edit_pos_angle = labelme.utils.angleRad(self._rotation_center, pos, flip_y=True)
+                start_angle = labelme.utils.angleRad(self._rotation_center, self._rotation_pos, flip_y=True)
+                angle = start_angle - edit_pos_angle
+                self.rotateShape(self.hShape, self._rotation_center, angle)
+                self._rotation_pos = pos
+                self.repaint()
+                self.movingShape = True
             elif self.selectedShapes and self.prevPoint is not None:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapes, pos)
@@ -463,6 +478,7 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge
                 self.hEdge = None
+                self.hRotation = None
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to move point"))
@@ -479,6 +495,7 @@ class Canvas(QtWidgets.QWidget):
                 self.hVertex = None
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge = index_edge
+                self.hRotation = None
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("ALT + Click to create point on shape"))
                 self.update()
@@ -490,6 +507,7 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge
                 self.hEdge = None
+                self.hRotation = index_rotation_point
                 shape.highlightRotationPoint(index_rotation_point, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to rotate the shape"))
@@ -503,6 +521,7 @@ class Canvas(QtWidgets.QWidget):
                 self.prevhShape = self.hShape = shape
                 self.prevhEdge = self.hEdge
                 self.hEdge = None
+                self.hRotation = None
                 status_messages.extend(
                     [
                         self.tr("Click & drag to move shape"),
@@ -626,6 +645,11 @@ class Canvas(QtWidgets.QWidget):
                     Qt.AltModifier | Qt.ShiftModifier
                 ):
                     self.removeSelectedPoint()
+                elif self.selectedRotationPoint():
+                    assert self.hShape is not None
+                    assert self.hRotation is not None
+                    self._rotation_pos = self.hShape.getRotationPoints()[self.hRotation]
+                    self._rotation_center = self.hShape.getCenter()
 
                 group_mode = int(a0.modifiers()) == Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
@@ -770,6 +794,13 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
+    def rotateShape(self, shape: Shape, rotation_center: QPointF, angle_rad: float) -> None:
+        assert shape.shape_type == "oriented rectangle", "Shape rotation is only supported for oriented rectangles"
+        rotation_center_np = np.array([rotation_center.x(), rotation_center.y()])
+        centered_points = np.array([[p.x(), p.y()] for p in shape.points]) - rotation_center_np
+        transformed_points = labelme.utils.rotateMany(centered_points, angle_rad) + rotation_center_np
+        for i, p in enumerate(transformed_points):
+            shape[i] = QPointF(*p)
 
     def boundedMoveVertex(self, shape: Shape, vertex_index: int, pos: QPointF) -> None:
         if shape.shape_type == "oriented rectangle":
@@ -1202,6 +1233,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevhVertex = None
         self.hEdge = None
         self.prevhEdge = None
+        self.hRotation = None
         self.update()
 
 
