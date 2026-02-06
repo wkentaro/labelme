@@ -367,8 +367,8 @@ class Shape:
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
 
-    def moveVertexBy(self, i, offset):
-        self.points[i] = self.points[i] + offset
+    def moveVertex(self, i, pos):
+        self.points[i] = pos
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action
