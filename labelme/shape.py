@@ -257,7 +257,7 @@ class Shape:
                         line_path.lineTo(self._scale_point(p))
                         self.drawVertex(vrtx_path, i)
                     center = self.getCenter()
-                    angle = self.getRotationRad()
+                    angle = self.getAngleRad()
                     self.drawArrow(orientation_arrow_path, center, angle)
                     line_path.lineTo(self._scale_point(self.points[0]))
                     self.drawRotationPoints(rotation_points_path)
@@ -332,7 +332,7 @@ class Shape:
             painter.drawPath(negative_vrtx_path)
             painter.fillPath(negative_vrtx_path, QtGui.QColor(255, 0, 0, 255))
 
-    def getRotationRad(self) -> float:
+    def getAngleRad(self) -> float:
         if self.shape_type == "oriented rectangle":
             return labelme.utils.angleRad(self.points[0], self.points[1])
         else:
@@ -455,7 +455,7 @@ class Shape:
             return self.mask[y, x]
         return self.makePath().contains(point)
 
-    def getRotationPoints(self):
+    def getRotationPoints(self) -> list[QtCore.QPointF]:
         rotation_points = []
         if self.shape_type == "oriented rectangle":
             for i, p in enumerate(self.points):
