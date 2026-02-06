@@ -740,17 +740,15 @@ class Canvas(QtWidgets.QWidget):
             return
         assert self.hShape is not None
 
-        point: QPointF = self.hShape[self.hVertex]
-
         if self.outOfPixmap(pos):
-            pos = self.intersectionPoint(point, pos)
+            pos = self.intersectionPoint(self.hShape[self.hVertex], pos)
 
         if is_shift_pressed and self.hShape.shape_type == "rectangle":
             pos = _snap_cursor_pos_for_square(
                 pos=pos, opposite_vertex=self.hShape[1 - self.hVertex]
             )
 
-        self.hShape.moveVertexBy(i=self.hVertex, offset=pos - point)
+        self.hShape.moveVertex(i=self.hVertex, pos=pos)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
