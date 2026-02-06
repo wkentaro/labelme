@@ -908,7 +908,7 @@ class Canvas(QtWidgets.QWidget):
 
     def outOfPixmap(self, p: QPointF) -> bool:
         w, h = self.pixmap.width(), self.pixmap.height()
-        return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
+        return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
     def finalise(self):
         assert self.current
@@ -941,13 +941,13 @@ class Canvas(QtWidgets.QWidget):
         size = self.pixmap.size()
         points = [
             (0, 0),
-            (size.width() - 1, 0),
-            (size.width() - 1, size.height() - 1),
-            (0, size.height() - 1),
+            (size.width(), 0),
+            (size.width(), size.height()),
+            (0, size.height()),
         ]
         # x1, y1 should be in the pixmap, x2, y2 should be out of the pixmap
-        x1 = min(max(p1.x(), 0), size.width() - 1)
-        y1 = min(max(p1.y(), 0), size.height() - 1)
+        x1 = min(max(p1.x(), 0), size.width())
+        y1 = min(max(p1.y(), 0), size.height())
         x2, y2 = p2.x(), p2.y()
         d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
