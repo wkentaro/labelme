@@ -267,6 +267,7 @@ class Canvas(QtWidgets.QWidget):
         if self.hShape:
             self.hShape.highlightClear()
             need_update = True
+        # NOTE: Store last highlighted for adding/removing points.
         self._lasthShape = self.hShape if hShape is None else hShape
         self._lasthVertex = self.hVertex if hVertex is None else hVertex
         self._lasthEdge = self.hEdge if hEdge is None else hEdge
