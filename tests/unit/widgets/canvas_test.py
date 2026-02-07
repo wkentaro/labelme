@@ -37,3 +37,35 @@ def canvas(qtbot) -> Canvas:
 )
 def test_outOfPixmap(canvas: Canvas, point: QPointF, is_outside: bool):
     assert canvas.outOfPixmap(point) is is_outside
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("p1", "p2", "pt_intersection"),
+    [
+        (
+            pt_center := QPointF(_WIDTH / 2, _HEIGHT / 2),
+            QPointF(_WIDTH + 50, _HEIGHT / 2),  # to the right
+            QPointF(_WIDTH, _HEIGHT / 2),  # right edge
+        ),
+        (
+            pt_center,
+            QPointF(_WIDTH / 2, -10),  # to the top
+            QPointF(_WIDTH / 2, 0),  # top edge
+        ),
+        (
+            pt_center,
+            QPointF(-10, _HEIGHT / 2),  # to the left
+            QPointF(0, _HEIGHT / 2),  # left edge
+        ),
+        (
+            pt_center,
+            QPointF(_WIDTH / 2, _HEIGHT + 30),  # to the bottom
+            QPointF(_WIDTH / 2, _HEIGHT),  # bottom edge
+        ),
+    ],
+)
+def test_intersectionPoint(
+    canvas: Canvas, p1: QPointF, p2: QPointF, pt_intersection: QPointF
+):
+    assert canvas.intersectionPoint(p1, p2) == pt_intersection
