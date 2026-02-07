@@ -782,7 +782,7 @@ class Canvas(QtWidgets.QWidget):
         return False
 
     def deSelectShape(self) -> bool:
-        need_update = False
+        need_update: bool = False
         if self.selectedShapes:
             self.setHiding(False)
             self.selectionChanged.emit([])
