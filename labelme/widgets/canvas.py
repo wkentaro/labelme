@@ -50,11 +50,11 @@ class Canvas(QtWidgets.QWidget):
     selectedShapesCopy: list[Shape]
     current: Shape | None
     hShape: Shape | None
-    prevhShape: Shape | None
+    _lasthShape: Shape | None
     hVertex: int | None
-    prevhVertex: int | None
+    _lasthVertex: int | None
     hEdge: int | None
-    prevhEdge: int | None
+    _lasthEdge: int | None
 
     zoomRequest = QtCore.pyqtSignal(int, QPointF)
     scrollRequest = QtCore.pyqtSignal(int, int)
@@ -267,9 +267,9 @@ class Canvas(QtWidgets.QWidget):
         if self.hShape:
             self.hShape.highlightClear()
             need_update = True
-        self.prevhShape = self.hShape if hShape is None else hShape
-        self.prevhVertex = self.hVertex if hVertex is None else hVertex
-        self.prevhEdge = self.hEdge if hEdge is None else hEdge
+        self._lasthShape = self.hShape if hShape is None else hShape
+        self._lasthVertex = self.hVertex if hVertex is None else hVertex
+        self._lasthEdge = self.hEdge if hEdge is None else hEdge
         self.hShape = hShape
         self.hVertex = hVertex
         self.hEdge = hEdge
@@ -491,8 +491,8 @@ class Canvas(QtWidgets.QWidget):
         self._update_status(extra_messages=status_messages)
 
     def addPointToEdge(self):
-        shape = self.prevhShape
-        index = self.prevhEdge
+        shape = self._lasthShape
+        index = self._lasthEdge
         point = self.prevMovePoint
         if shape is None or index is None or point is None:
             return
@@ -504,14 +504,14 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True
 
     def removeSelectedPoint(self):
-        shape = self.prevhShape
-        index = self.prevhVertex
+        shape = self._lasthShape
+        index = self._lasthVertex
         if shape is None or index is None:
             return
         shape.removePoint(index)
         shape.highlightClear()
         self.hShape = shape
-        self.prevhVertex = None
+        self._lasthVertex = None
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
@@ -1142,11 +1142,11 @@ class Canvas(QtWidgets.QWidget):
         self.selectedShapesCopy = []
         self.current = None
         self.hShape = None
-        self.prevhShape = None
+        self._lasthShape = None
         self.hVertex = None
-        self.prevhVertex = None
+        self._lasthVertex = None
         self.hEdge = None
-        self.prevhEdge = None
+        self._lasthEdge = None
         self.update()
 
 
