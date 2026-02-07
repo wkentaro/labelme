@@ -253,9 +253,11 @@ class Canvas(QtWidgets.QWidget):
             self.repaint()  # clear crosshair
         else:
             # EDIT -> CREATE
-            should_update = self._set_highlight(hShape=None, hEdge=None, hVertex=None)
-            should_update |= self.deSelectShape()
-            if should_update:
+            need_update: bool = self._set_highlight(
+                hShape=None, hEdge=None, hVertex=None
+            )
+            need_update |= self.deSelectShape()
+            if need_update:
                 self.update()
 
     def _set_highlight(
