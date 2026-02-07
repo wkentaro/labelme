@@ -267,9 +267,9 @@ class Canvas(QtWidgets.QWidget):
         if self.hShape:
             self.hShape.highlightClear()
             need_update = True
-        self.prevhShape = self.hShape
-        self.prevhVertex = self.hVertex
-        self.prevhEdge = self.hEdge
+        self.prevhShape = self.hShape if hShape is None else hShape
+        self.prevhVertex = self.hVertex if hVertex is None else hVertex
+        self.prevhEdge = self.hEdge if hEdge is None else hEdge
         self.hShape = hShape
         self.hVertex = hVertex
         self.hEdge = hEdge
@@ -452,8 +452,6 @@ class Canvas(QtWidgets.QWidget):
             index = shape.nearestVertex(pos, self.epsilon)
             if index is not None:
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=index)
-                self.prevhShape = shape
-                self.prevhVertex = index
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to move point"))
@@ -468,8 +466,6 @@ class Canvas(QtWidgets.QWidget):
             index_edge = shape.nearestEdge(pos, self.epsilon)
             if index_edge is not None and shape.canAddPoint():
                 self._set_highlight(hShape=shape, hEdge=index_edge, hVertex=None)
-                self.prevhShape = shape
-                self.prevhEdge = index_edge
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("ALT + Click to create point on shape"))
                 self.update()
@@ -478,7 +474,6 @@ class Canvas(QtWidgets.QWidget):
             # Check if we happen to be inside a shape.
             if shape.containsPoint(pos):
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=None)
-                self.prevhShape = shape
                 status_messages.extend(
                     [
                         self.tr("Click & drag to move shape"),
