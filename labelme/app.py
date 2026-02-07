@@ -1583,7 +1583,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if selected_shapes:
             self.canvas.selectShapes(selected_shapes)
         else:
-            self.canvas.deSelectShape()
+            if self.canvas.deSelectShape():
+                self.canvas.update()
 
     def labelItemChanged(self, item):
         shape = item.shape()
