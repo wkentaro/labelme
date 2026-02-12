@@ -21,29 +21,23 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             title_label.setFixedWidth(75)
             layout.addWidget(title_label)
             #
-            slider = QtWidgets.QSlider(Qt.Horizontal)  # type: ignore[attr-defined]
+            slider = QtWidgets.QSlider(Qt.Horizontal)
             slider.setRange(0, 3 * self._base_value)
             slider.setValue(self._base_value)
             layout.addWidget(slider)
             #
             value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
-            value_label.setAlignment(Qt.AlignRight)  # type: ignore[attr-defined]
+            value_label.setAlignment(Qt.AlignRight)
             layout.addWidget(value_label)
             #
-
-            #EDITED BRIGHTNESS
+            slider.valueChanged.connect(self.onNewValue)
             slider.valueChanged.connect(
-                lambda value, s=slider, l=value_label: l.setText(f"{s.value() / self._base_value:.2f}")
+                lambda _,
+                value_label_=value_label,
+                slider_=slider: value_label_.setText(
+                    f"{slider_.value() / self._base_value:.2f}"
+                )
             )
-            slider.sliderReleased.connect(self.onNewValue)
-    
-            #END
-
-            # slider.valueChanged.connect(self.onNewValue)
-            # slider.valueChanged.connect(
-            #     lambda: value_label.setText(f"{slider.value() / self._base_value:.2f}")
-            # )
-
             layouts[title] = layout
             sliders[title] = slider
 
@@ -87,7 +81,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
 
         #EDITED BRIGHTNESS
-        img = img.convert("RGB")
+        # img = img.convert("RGB")
         #END
 
         qimage = QImage(
