@@ -11,12 +11,12 @@
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI, &apos;AI-Polygon&apos; ve &apos;AI-Mask&apos; modlarında etiketleme önerir</translation>
+        <translation>AI, 'AI-Polygon' ve 'AI-Mask' modlarında etiketleme önerir</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI Destekli Etiketlemeyi etkinleştirmek için &apos;AI-Polygon&apos; veya &apos;AI-Mask&apos; modunu seçin</translation>
+        <translation>AI Destekli Etiketlemeyi etkinleştirmek için 'AI-Polygon' veya 'AI-Mask' modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -54,7 +54,7 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Etkinleştirmek için &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos; veya &apos;AI-Mask&apos; modunu seçin</translation>
+        <translation>Etkinleştirmek için 'Polygon', 'Rectangle', 'AI-Polygon' veya 'AI-Mask' modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -175,7 +175,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Etiketlemeye başlamak için bir etiket seçin. Seçimi kaldırmak için &apos;Esc&apos; tuşuna basın.</translation>
+        <translation>Etiketlemeye başlamak için bir etiket seçin. Seçimi kaldırmak için 'Esc' tuşuna basın.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -661,7 +661,7 @@ Polygons</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Doğrulama türü &apos;{}&apos; olan &apos;{}&apos; etiketi geçersiz</translation>
+        <translation>Doğrulama türü '{}' olan '{}' etiketi geçersiz</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -806,7 +806,7 @@ To use the preferences editor, start Labelme with a config file:
   labelme --config ~/.labelmerc</source>
         <translation>Yapılandırma, komut satırı üzerinden bir YAML ifadesi olarak sağlandı.
 
-Tercihler düzenleyicisini kullanmak için Labelme&apos;i bir yapılandırma dosyasıyla başlatın:
+Tercihler düzenleyicisini kullanmak için Labelme'i bir yapılandırma dosyasıyla başlatın:
   labelme --config ~/.labelmerc</translation>
     </message>
     <message>
