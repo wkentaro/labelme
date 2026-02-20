@@ -252,6 +252,8 @@ def main():
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
+    # Force light mode to avoid dark mode UI issues (e.g., invisible icons)
+    app.setPalette(QtWidgets.QStyleFactory.create("Fusion").standardPalette())
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("icon"))
     app.installTranslator(translator)
