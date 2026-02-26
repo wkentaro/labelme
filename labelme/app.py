@@ -1797,7 +1797,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.errorMessage(
                     self.tr("Error opening file"),
                     self.tr(
-                        "<p><b>%s</b></p><p>Make sure <i>%s</i> is a valid label file."
+                        "<p><b>%s</b></p>"
+                        "<p>Make sure <i>%s</i> is a valid label file.</p>"
                     )
                     % (e, label_file),
                 )
@@ -1812,7 +1813,19 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self._other_data = self.labelFile.otherData
         else:
-            self.imageData = LabelFile.load_image_file(filename)
+            try:
+                self.imageData = LabelFile.load_image_file(filename)
+            except OSError as e:
+                self.errorMessage(
+                    self.tr("Error opening file"),
+                    self.tr(
+                        "<p><b>%s</b></p>"
+                        "<p>Make sure <i>%s</i> is a valid image file.</p>"
+                    )
+                    % (e, filename),
+                )
+                self.show_status_message(self.tr("Error reading %s") % filename)
+                return False
             if self.imageData:
                 self.imagePath = filename
             self.labelFile = None

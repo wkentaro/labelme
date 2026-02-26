@@ -706,11 +706,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Győződjön meg arról, hogy &lt;i&gt;%s&lt;/i&gt; érvényes címke fájl.&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>Hiba a %s olvasásakor</translation>
     </message>
@@ -824,6 +819,16 @@ A beállítások szerkesztő használatához indítsa el a Labelme-t konfigurác
         <location filename="../app.py" line="0"/>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
         <translation>Hibák találhatók a konfiguráció betöltése közben. Kérjük, tekintse át az alábbi hibákat, és töltse újra a konfigurációt, vagy hagyja figyelmen kívül a hibás sorokat.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Győződjön meg arról, hogy &lt;i&gt;%s&lt;/i&gt; érvényes címke fájl.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Győződjön meg arról, hogy &lt;i&gt;%s&lt;/i&gt; érvényes képfájl.&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>
