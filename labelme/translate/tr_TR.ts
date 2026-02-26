@@ -690,11 +690,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Lütfen &lt;i&gt;%s&lt;/i&gt; geçerli bir etiket dosyası olduğundan emin olun.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>%s okunurken hata</translation>
     </message>
@@ -818,6 +813,16 @@ Tercihler düzenleyicisini kullanmak için Labelme'i bir yapılandırma dosyası
         <location filename="../app.py" line="0"/>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
         <translation>Yapılandırma yüklenirken hatalar bulundu. Lütfen aşağıdaki hataları inceleyin ve yapılandırmayı yeniden yükleyin ya da hatalı satırları yok sayın.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Lütfen &lt;i&gt;%s&lt;/i&gt; geçerli bir etiket dosyası olduğundan emin olun.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Lütfen &lt;i&gt;%s&lt;/i&gt; geçerli bir görüntü dosyası olduğundan emin olun.&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>

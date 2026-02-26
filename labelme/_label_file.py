@@ -139,11 +139,7 @@ class LabelFile:
 
     @staticmethod
     def load_image_file(filename):
-        try:
-            image_pil = PIL.Image.open(filename)
-        except OSError:
-            logger.error(f"Failed opening image file: {filename}")
-            return
+        image_pil = PIL.Image.open(filename)
 
         # apply orientation to image according to exif
         image_pil = utils.apply_exif_orientation(image_pil)
