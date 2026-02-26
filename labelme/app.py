@@ -1797,7 +1797,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.errorMessage(
                     self.tr("Error opening file"),
                     self.tr(
-                        "<p><b>%s</b></p><p>Make sure <i>%s</i> is a valid label file."
+                        "<p><b>%s</b></p>"
+                        "<p>Make sure <i>%s</i> is a valid label file.</p>"
                     )
                     % (e, label_file),
                 )
