@@ -139,20 +139,20 @@ class LabelFile:
 
     @staticmethod
     def load_image_file(filename):
+        logger.debug("Loading image file: {!r}", filename)
         image_pil = PIL.Image.open(filename)
 
         # apply orientation to image according to exif
         image_pil = utils.apply_exif_orientation(image_pil)
 
         with io.BytesIO() as f:
-            ext = osp.splitext(filename)[1].lower()
-            if ext in [".jpg", ".jpeg"]:
-                format = "JPEG"
-            else:
-                format = "PNG"
-            image_pil.save(f, format=format)
+            format = "PNG" if "A" in image_pil.mode else "JPEG"
+            image_pil.save(f, format=format, quality=95)
             f.seek(0)
-            return f.read()
+            imageData: bytes = f.read()
+
+        logger.debug("Finished loading image file: {!r}", filename)
+        return imageData
 
     def load(self, filename):
         keys = [
