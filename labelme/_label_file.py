@@ -150,11 +150,27 @@ class LabelFile:
 
         with io.BytesIO() as f:
             ext = osp.splitext(filename)[1].lower()
+            # Determine format based on file extension
             if ext in [".jpg", ".jpeg"]:
                 format = "JPEG"
+            elif ext in [".jp2", ".jpx", ".j2k", ".j2c"]:
+                # JPEG 2000 formats: Always convert to PNG for Qt compatibility
+                # QImage.fromData() may not support JPEG2000 format in memory
+                format = "PNG"
             else:
                 format = "PNG"
-            image_pil.save(f, format=format)
+            
+            try:
+                image_pil.save(f, format=format)
+            except Exception as e:
+                # If saving fails, try PNG as final fallback
+                logger.warning(
+                    f"Failed to save {filename} in {format} format, "
+                    f"falling back to PNG: {e}"
+                )
+                f.seek(0)
+                f.truncate(0)
+                image_pil.save(f, format="PNG")
             f.seek(0)
             return f.read()
 

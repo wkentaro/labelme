@@ -3,8 +3,15 @@ import time
 from typing import Literal
 
 import numpy as np
-import osam
 from loguru import logger
+
+# Make osam import optional to handle DLL loading failures gracefully
+try:
+    import osam
+    _OSAM_AVAILABLE = True
+except (ImportError, OSError, RuntimeError):
+    osam = None
+    _OSAM_AVAILABLE = False
 from numpy.typing import NDArray
 from PyQt5 import QtCore
 
@@ -86,6 +93,11 @@ def nms_bboxes(
         max_num_detections,
     )
     logger.debug(f"Input: num_boxes={len(boxes)}")
+    if not _OSAM_AVAILABLE:
+        raise RuntimeError(
+            "osam is not available. onnxruntime failed to load. "
+            "Please install Visual C++ Redistributable."
+        )
     boxes, scores, labels, indices = osam.apis.non_maximum_suppression(
         boxes=boxes,
         scores=scores_of_all_classes,
