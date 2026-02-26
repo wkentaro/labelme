@@ -1718,12 +1718,6 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("filename is None, cannot set brightness/contrast")
             return
 
-        dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData).convert("RGB"),
-            self.onNewBrightnessContrast,
-            parent=self,
-        )
-
         brightness: int | None
         contrast: int | None
         brightness, contrast = self._brightness_contrast_values.get(
@@ -1735,6 +1729,20 @@ class MainWindow(QtWidgets.QMainWindow):
                 brightness, contrast = self._brightness_contrast_values.get(
                     prev_filename, (None, None)
                 )
+            if brightness is None and contrast is None:
+                return
+
+        logger.debug(
+            "Opening brightness/contrast dialog with brightness={}, contrast={}",
+            brightness,
+            contrast,
+        )
+        dialog = BrightnessContrastDialog(
+            utils.img_data_to_pil(self.imageData).convert("RGB"),
+            self.onNewBrightnessContrast,
+            parent=self,
+        )
+
         if brightness is not None:
             dialog.slider_brightness.setValue(brightness)
         if contrast is not None:
@@ -1748,6 +1756,12 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast = dialog.slider_contrast.value()
 
         self._brightness_contrast_values[self.filename] = (brightness, contrast)
+        logger.debug(
+            "Updated states for {}: brightness={}, contrast={}",
+            self.filename,
+            brightness,
+            contrast,
+        )
 
     def togglePolygons(self, value):
         flag = value
