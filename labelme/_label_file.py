@@ -180,7 +180,7 @@ class LabelFile:
                 )
             flags = data.get("flags") or {}
             self._check_image_height_and_width(
-                base64.b64encode(imageData).decode("utf-8"),
+                imageData,
                 data.get("imageHeight"),
                 data.get("imageWidth"),
             )
@@ -205,19 +205,20 @@ class LabelFile:
 
     @staticmethod
     def _check_image_height_and_width(imageData, imageHeight, imageWidth):
-        img_arr = utils.img_b64_to_arr(imageData)
-        if imageHeight is not None and img_arr.shape[0] != imageHeight:
+        img_pil = utils.img_data_to_pil(imageData)
+        actual_w, actual_h = img_pil.size
+        if imageHeight is not None and actual_h != imageHeight:
             logger.error(
                 "imageHeight does not match with imageData or imagePath, "
                 "so getting imageHeight from actual image."
             )
-            imageHeight = img_arr.shape[0]
-        if imageWidth is not None and img_arr.shape[1] != imageWidth:
+            imageHeight = actual_h
+        if imageWidth is not None and actual_w != imageWidth:
             logger.error(
                 "imageWidth does not match with imageData or imagePath, "
                 "so getting imageWidth from actual image."
             )
-            imageWidth = img_arr.shape[1]
+            imageWidth = actual_w
         return imageHeight, imageWidth
 
     def save(
@@ -232,10 +233,10 @@ class LabelFile:
         flags=None,
     ):
         if imageData is not None:
-            imageData = base64.b64encode(imageData).decode("utf-8")
             imageHeight, imageWidth = self._check_image_height_and_width(
                 imageData, imageHeight, imageWidth
             )
+            imageData = base64.b64encode(imageData).decode("utf-8")
         if otherData is None:
             otherData = {}
         if flags is None:
