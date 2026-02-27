@@ -4,6 +4,7 @@ import contextlib
 import io
 import json
 import os.path as osp
+import time
 from pathlib import PureWindowsPath
 from typing import TypedDict
 
@@ -139,7 +140,7 @@ class LabelFile:
 
     @staticmethod
     def load_image_file(filename):
-        logger.debug("Loading image file: {!r}", filename)
+        t0 = time.time()
         image_pil = PIL.Image.open(filename)
 
         # apply orientation to image according to exif
@@ -151,7 +152,9 @@ class LabelFile:
             f.seek(0)
             imageData: bytes = f.read()
 
-        logger.debug("Finished loading image file: {!r}", filename)
+        logger.debug(
+            "Loaded image file: {!r} in {:.0f}ms", filename, (time.time() - t0) * 1000
+        )
         return imageData
 
     def load(self, filename):
