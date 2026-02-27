@@ -10,6 +10,7 @@ from typing import TypedDict
 
 import numpy as np
 import PIL.Image
+import tifffile
 from loguru import logger
 from numpy.typing import NDArray
 
@@ -141,7 +142,7 @@ class LabelFile:
     @staticmethod
     def load_image_file(filename):
         t0 = time.time()
-        image_pil = PIL.Image.open(filename)
+        image_pil = _imread(filename=filename)
 
         oriented: PIL.Image.Image = utils.apply_exif_orientation(image_pil)
         ext = osp.splitext(filename)[1].lower()
@@ -270,3 +271,48 @@ class LabelFile:
     @staticmethod
     def is_label_file(filename):
         return osp.splitext(filename)[1].lower() == LabelFile.suffix
+
+
+_DISPLAYABLE_MODES = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
+
+
+def _imread(filename: str) -> PIL.Image.Image:
+    ext: str = osp.splitext(filename)[1].lower()
+    try:
+        image_pil = PIL.Image.open(filename)
+        if image_pil.mode not in _DISPLAYABLE_MODES:
+            raise PIL.UnidentifiedImageError
+        return image_pil
+    except PIL.UnidentifiedImageError:
+        if ext in (".tif", ".tiff"):
+            return _imread_tiff(filename)
+        raise
+
+
+def _imread_tiff(filename: str) -> PIL.Image.Image:
+    img_arr: NDArray = tifffile.imread(filename)
+
+    if img_arr.ndim == 2:
+        img_arr_normalized = _normalize_to_uint8(img_arr)
+    elif img_arr.ndim == 3:
+        if img_arr.shape[2] >= 3:
+            img_arr_normalized = np.stack(
+                [_normalize_to_uint8(img_arr[:, :, i]) for i in range(3)],
+                axis=2,
+            )
+        else:
+            img_arr_normalized = _normalize_to_uint8(img_arr[:, :, 0])
+    else:
+        raise OSError(f"Unsupported image shape: {img_arr.shape}")
+
+    return PIL.Image.fromarray(img_arr_normalized)
+
+
+def _normalize_to_uint8(arr: NDArray) -> NDArray[np.uint8]:
+    arr = arr.astype(np.float64)
+    min_val = np.nanmin(arr)
+    max_val = np.nanmax(arr)
+    if max_val - min_val == 0:
+        return np.zeros(arr.shape, dtype=np.uint8)
+    normalized = (arr - min_val) / (max_val - min_val) * 255
+    return np.clip(normalized, 0, 255).astype(np.uint8)
