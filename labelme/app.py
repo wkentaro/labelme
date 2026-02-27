@@ -1899,7 +1899,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toggleActions(True)
         self.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
-        logger.debug("loaded file: {!r}", filename)
+        logger.debug("Loaded file: {!r}", filename)
         return True
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
