@@ -9,6 +9,7 @@ import os.path as osp
 import platform
 import re
 import subprocess
+import time
 import types
 import webbrowser
 from pathlib import Path
@@ -1718,12 +1719,6 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("filename is None, cannot set brightness/contrast")
             return
 
-        dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData).convert("RGB"),
-            self.onNewBrightnessContrast,
-            parent=self,
-        )
-
         brightness: int | None
         contrast: int | None
         brightness, contrast = self._brightness_contrast_values.get(
@@ -1735,6 +1730,20 @@ class MainWindow(QtWidgets.QMainWindow):
                 brightness, contrast = self._brightness_contrast_values.get(
                     prev_filename, (None, None)
                 )
+            if brightness is None and contrast is None:
+                return
+
+        logger.debug(
+            "Opening brightness/contrast dialog with brightness={}, contrast={}",
+            brightness,
+            contrast,
+        )
+        dialog = BrightnessContrastDialog(
+            utils.img_data_to_pil(self.imageData).convert("RGB"),
+            self.onNewBrightnessContrast,
+            parent=self,
+        )
+
         if brightness is not None:
             dialog.slider_brightness.setValue(brightness)
         if contrast is not None:
@@ -1748,6 +1757,12 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast = dialog.slider_contrast.value()
 
         self._brightness_contrast_values[self.filename] = (brightness, contrast)
+        logger.debug(
+            "Updated states for {}: brightness={}, contrast={}",
+            self.filename,
+            brightness,
+            contrast,
+        )
 
     def togglePolygons(self, value):
         flag = value
@@ -1786,6 +1801,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         # assumes same name, but json extension
         self.show_status_message(self.tr("Loading %s...") % osp.basename(str(filename)))
+        t0_load_file = time.time()
         label_file = f"{osp.splitext(filename)[0]}.json"
         if self.output_dir:
             label_file_without_path = osp.basename(label_file)
@@ -1830,7 +1846,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.imagePath = filename
             self.labelFile = None
         assert self.imageData is not None
+        t0 = time.time()
         image = QtGui.QImage.fromData(self.imageData)
+        logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
             formats = [
@@ -1848,7 +1866,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         self.image = image
         self.filename = filename
+        t0 = time.time()
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
+        logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
             self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
@@ -1881,7 +1901,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toggleActions(True)
         self.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
-        logger.debug("loaded file: {!r}", filename)
+        logger.info(
+            "Loaded file: {!r} in {:.0f}ms",
+            filename,
+            (time.time() - t0_load_file) * 1000,
+        )
         return True
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
