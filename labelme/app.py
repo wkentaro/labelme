@@ -1844,7 +1844,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.imagePath = filename
             self.labelFile = None
         assert self.imageData is not None
+        logger.debug("Creating QImage from image data")
         image = QtGui.QImage.fromData(self.imageData)
+        logger.debug("Finished creating QImage from image data")
 
         if image.isNull():
             formats = [
@@ -1862,7 +1864,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         self.image = image
         self.filename = filename
+        logger.debug("Loading pixmap to canvas")
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
+        logger.debug("Finished loading pixmap to canvas")
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
             self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
