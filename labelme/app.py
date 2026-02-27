@@ -1901,7 +1901,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.toggleActions(True)
         self.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
-        logger.debug(
+        logger.info(
             "Loaded file: {!r} in {:.0f}ms",
             filename,
             (time.time() - t0_load_file) * 1000,
