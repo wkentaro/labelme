@@ -312,7 +312,7 @@ def _normalize_to_uint8(arr: NDArray) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
     min_val = np.nanmin(arr)
     max_val = np.nanmax(arr)
-    if max_val - min_val == 0:
+    if np.isnan(min_val) or np.isnan(max_val) or max_val - min_val == 0:
         return np.zeros(arr.shape, dtype=np.uint8)
     normalized = (arr - min_val) / (max_val - min_val) * 255
     return np.clip(normalized, 0, 255).astype(np.uint8)
