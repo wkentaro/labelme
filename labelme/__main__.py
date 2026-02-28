@@ -137,10 +137,17 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--autosave",
+        "--no-autosave",
         dest="auto_save",
+        action="store_false",
+        help="disable auto save",
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--autosave",
+        dest="_deprecated_autosave",
         action="store_true",
-        help="auto save",
+        help=argparse.SUPPRESS,
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -198,6 +205,15 @@ def main():
             stacklevel=1,
         )
         del args._deprecated_nodata
+
+    if hasattr(args, "_deprecated_autosave"):
+        warnings.warn(
+            "--autosave is deprecated and will be removed in a future version. "
+            "Auto save is now enabled by default. Use --no-autosave to disable it.",
+            FutureWarning,
+            stacklevel=1,
+        )
+        del args._deprecated_autosave
 
     if args.version:
         print(f"{__appname__} {__version__}")
