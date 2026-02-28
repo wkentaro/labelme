@@ -6,6 +6,7 @@ import os
 import os.path as osp
 import sys
 import traceback
+import warnings
 from pathlib import Path
 from typing import AnyStr
 
@@ -122,6 +123,13 @@ def main():
     )
     # config for the gui
     parser.add_argument(
+        "--nodata",
+        dest="_deprecated_nodata",
+        action="store_true",
+        help=argparse.SUPPRESS,
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "--with-image-data",
         dest="with_image_data",
         action="store_true",
@@ -180,6 +188,16 @@ def main():
         default=argparse.SUPPRESS,
     )
     args = parser.parse_args()
+
+    if hasattr(args, "_deprecated_nodata"):
+        warnings.warn(
+            "--nodata is deprecated and will be removed in a future version. "
+            "Image data is no longer stored by default. "
+            "Use --with-image-data to store it.",
+            FutureWarning,
+            stacklevel=1,
+        )
+        del args._deprecated_nodata
 
     if args.version:
         print(f"{__appname__} {__version__}")
