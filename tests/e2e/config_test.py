@@ -24,11 +24,11 @@ def test_MainWindow_config(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     config_file: Path | None = None
-    auto_save: bool = False
+    auto_save: bool = True
     if with_config_file:
         config_file = tmp_path / "labelmerc.yaml"
-        config_file.write_text("auto_save: true\nlabels: [cat, dog]\n")
-        auto_save = True
+        config_file.write_text("auto_save: false\nlabels: [cat, dog]\n")
+        auto_save = False
 
     win: labelme.app.MainWindow = labelme.app.MainWindow(
         config_file=config_file,

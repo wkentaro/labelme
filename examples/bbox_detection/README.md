@@ -4,7 +4,7 @@
 ## Usage
 
 ```bash
-labelme data_annotated --labels labels.txt --autosave
+labelme data_annotated --labels labels.txt
 ```
 
 ![](.readme/annotation.jpg)

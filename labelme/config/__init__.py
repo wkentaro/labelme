@@ -73,7 +73,7 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
                     "#\n"
                     "# Example:\n"
                     "# with_image_data: true\n"
-                    "# auto_save: true\n"
+                    "# auto_save: false\n"
                     "# labels: [cat, dog]\n"
                 )
         except Exception:
