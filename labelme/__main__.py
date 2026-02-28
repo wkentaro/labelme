@@ -111,10 +111,7 @@ def main():
     parser.add_argument("filename", nargs="?", help="image or label filename")
     parser.add_argument(
         "--output",
-        "-O",
-        "-o",
-        help="output file or directory (if it ends with .json it is "
-        "recognized as file, else as directory)",
+        help="output directory for saving annotation JSON files",
     )
     default_config_file = get_user_config_file()
     parser.add_argument(
@@ -237,13 +234,14 @@ def main():
     del config_str
     config_overrides.update(config_from_args)
 
-    output_file = None
     output_dir = None
     if output is not None:
         if output.endswith(".json"):
-            output_file = output
-        else:
-            output_dir = output
+            parser.error(
+                f"--output expects a directory path, but '{output}' looks like a file."
+                " Remove the .json extension or provide a directory path."
+            )
+        output_dir = output
 
     translator = QtCore.QTranslator()
     translator.load(
@@ -261,7 +259,6 @@ def main():
         config_file=config_file,
         config_overrides=config_overrides,
         filename=filename,
-        output_file=output_file,
         output_dir=output_dir,
     )
 
