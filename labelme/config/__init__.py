@@ -41,6 +41,10 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         )
         config_from_yaml["keep_prev_brightness_contrast"] = True
 
+    if "store_data" in config_from_yaml:
+        logger.info("Migrating old config: store_data -> with_image_data")
+        config_from_yaml["with_image_data"] = config_from_yaml.pop("store_data")
+
     if config_from_yaml.get("shortcuts", {}).pop("add_point_to_edge", None):
         logger.info("Migrating old config: removing shortcuts.add_point_to_edge")
 
@@ -68,8 +72,8 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
                     "#   https://github.com/wkentaro/labelme/blob/main/labelme/config/default_config.yaml\n"
                     "#\n"
                     "# Example:\n"
+                    "# with_image_data: true\n"
                     "# auto_save: true\n"
-                    "# store_data: false\n"
                     "# labels: [cat, dog]\n"
                 )
         except Exception:

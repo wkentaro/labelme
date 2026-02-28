@@ -122,10 +122,10 @@ def main():
     )
     # config for the gui
     parser.add_argument(
-        "--nodata",
-        dest="store_data",
-        action="store_false",
-        help="stop storing image data to JSON file",
+        "--with-image-data",
+        dest="with_image_data",
+        action="store_true",
+        help="store image data in JSON file",
         default=argparse.SUPPRESS,
     )
     parser.add_argument(

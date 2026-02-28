@@ -98,7 +98,7 @@ labelme  # just open gui
 cd examples/tutorial
 labelme apc2016_obj3.jpg  # specify image file
 labelme apc2016_obj3.jpg --output annotations/  # save annotation JSON files to a directory
-labelme apc2016_obj3.jpg --nodata  # not include image data but relative image path in JSON file
+labelme apc2016_obj3.jpg --with-image-data  # include image data in JSON file
 labelme apc2016_obj3.jpg \
   --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # specify label list
 
