@@ -109,16 +109,8 @@ class MainWindow(QtWidgets.QMainWindow):
         config_file: Path | None = None,
         config_overrides: dict | None = None,
         filename: str | None = None,
-        output: str | None = None,
-        output_file: str | None = None,
         output_dir: str | None = None,
     ) -> None:
-        if output is not None:
-            logger.warning("argument output is deprecated, use output_file instead")
-            if output_file is None:
-                output_file = output
-        del output
-
         super().__init__()
         self.setWindowTitle(__appname__)
 
@@ -917,13 +909,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().addWidget(self.status_right, 0)
         self.statusBar().show()
 
-        if output_file is not None and self._config["auto_save"]:
-            logger.warning(
-                "If `auto_save` argument is True, `output_file` argument "
-                "is ignored and output filename is automatically "
-                "set as IMAGE_BASENAME.json."
-            )
-        self.output_file = output_file
         self.output_dir = output_dir
 
         # Application state.
@@ -2067,11 +2052,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
         if self.labelFile:
-            # DL20180323 - overwrite when in directory
             self._saveFile(self.labelFile.filename)
-        elif self.output_file:
-            self._saveFile(self.output_file)
-            self.close()
         else:
             self._saveFile(self.saveFileDialog())
 

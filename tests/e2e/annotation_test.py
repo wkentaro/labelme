@@ -26,7 +26,8 @@ def test_MainWindow_annotate_jpg(
 
     win: labelme.app.MainWindow = labelme.app.MainWindow(
         filename=input_file,
-        output_file=out_file,
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
     )
     qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
