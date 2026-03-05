@@ -41,24 +41,24 @@ def test_MainWindow_annotate_jpg(
         (canvas_size.width() * 0.25, canvas_size.height() * 0.75),
     ]
     win._switch_canvas_mode(edit=False, createMode="polygon")
-    qtbot.wait(100)
+    qtbot.wait(50)
 
     def click(xy: tuple[float, float]) -> None:
         qtbot.mouseMove(win.canvas, pos=QPoint(int(xy[0]), int(xy[1])))
-        qtbot.wait(100)
+        qtbot.wait(50)
         qtbot.mousePress(win.canvas, Qt.LeftButton, pos=QPoint(int(xy[0]), int(xy[1])))
-        qtbot.wait(100)
+        qtbot.wait(50)
 
     for xy in points:
         click(xy=xy)
 
     def interact() -> None:
         qtbot.keyClicks(win.labelDialog.edit, label)
-        qtbot.wait(100)
+        qtbot.wait(50)
         qtbot.keyClick(win.labelDialog.edit, Qt.Key_Enter)
-        qtbot.wait(100)
+        qtbot.wait(50)
 
-    QTimer.singleShot(300, interact)
+    QTimer.singleShot(100, interact)
 
     click(xy=points[0])
 
