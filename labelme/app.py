@@ -1074,7 +1074,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.createMode
             not in _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE
         ):
-            logger.warning("Unsupported createMode=%r", self.canvas.createMode)
+            logger.warning("Unsupported createMode={!r}", self.canvas.createMode)
             return
         shape_type: Literal["rectangle", "polygon", "mask"] = (
             _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE[self.canvas.createMode]
