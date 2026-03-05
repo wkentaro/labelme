@@ -109,7 +109,7 @@ def main():
         choices=["debug", "info", "warning", "fatal", "error"],
         help="logger level",
     )
-    parser.add_argument("filename", nargs="?", help="image or label filename")
+    parser.add_argument("path", nargs="?", help="image file, label file, or directory")
     parser.add_argument(
         "--output",
         help="output directory for saving annotation JSON files",
@@ -248,7 +248,7 @@ def main():
     config_from_args = args.__dict__
     config_from_args.pop("version")
     reset_config = config_from_args.pop("reset_config")
-    filename = config_from_args.pop("filename")
+    filename = config_from_args.pop("path")
     output = config_from_args.pop("output")
 
     config_overrides: dict
