@@ -166,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.itemDoubleClicked.connect(self._edit_label)
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemDropped.connect(self.labelOrderChanged)
-        self.shape_dock = QtWidgets.QDockWidget(self.tr("Shape Labels"), self)
+        self.shape_dock = QtWidgets.QDockWidget(self.tr("Annotation List"), self)
         self.shape_dock.setObjectName("Labels")
         self.shape_dock.setWidget(self.labelList)
 
