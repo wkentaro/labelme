@@ -55,3 +55,40 @@ def test_migrate_ai_model_name(input_name: str, expected_name: str) -> None:
     config: dict = {"ai": {"default": input_name}}
     _migrate_config_from_file(config)
     assert config["ai"]["default"] == expected_name
+
+
+_POLYGON_TO_SHAPE_RENAMES = {
+    "edit_polygon": "edit_shape",
+    "delete_polygon": "delete_shape",
+    "duplicate_polygon": "duplicate_shape",
+    "copy_polygon": "copy_shape",
+    "paste_polygon": "paste_shape",
+    "show_all_polygons": "show_all_shapes",
+    "hide_all_polygons": "hide_all_shapes",
+    "toggle_all_polygons": "toggle_all_shapes",
+}
+
+
+@pytest.mark.parametrize(
+    "old_key, new_key",
+    list(_POLYGON_TO_SHAPE_RENAMES.items()),
+    ids=list(_POLYGON_TO_SHAPE_RENAMES.keys()),
+)
+def test_migrate_polygon_shortcut_to_shape(old_key, new_key):
+    config = {"shortcuts": {old_key: "Ctrl+X"}}
+    _migrate_config_from_file(config)
+    assert old_key not in config["shortcuts"]
+    assert config["shortcuts"][new_key] == "Ctrl+X"
+
+
+def test_migrate_polygon_shortcuts_no_shortcuts_key():
+    config = {}
+    _migrate_config_from_file(config)
+    assert "shortcuts" not in config
+
+
+def test_migrate_polygon_shortcut_skips_when_new_key_exists():
+    config = {"shortcuts": {"edit_polygon": "Ctrl+X", "edit_shape": "Ctrl+Y"}}
+    _migrate_config_from_file(config)
+    assert config["shortcuts"]["edit_shape"] == "Ctrl+Y"
+    assert "edit_polygon" in config["shortcuts"]

@@ -166,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList.itemDoubleClicked.connect(self._edit_label)
         self.labelList.itemChanged.connect(self.labelItemChanged)
         self.labelList.itemDropped.connect(self.labelOrderChanged)
-        self.shape_dock = QtWidgets.QDockWidget(self.tr("Polygon Labels"), self)
+        self.shape_dock = QtWidgets.QDockWidget(self.tr("Shape Labels"), self)
         self.shape_dock.setObjectName("Labels")
         self.shape_dock.setWidget(self.labelList)
 
@@ -427,44 +427,44 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         editMode = action(
-            self.tr("Edit Polygons"),
+            self.tr("Edit Shapes"),
             lambda: self._switch_canvas_mode(edit=True),
-            shortcuts["edit_polygon"],
+            shortcuts["edit_shape"],
             icon="note-pencil.svg",
-            tip=self.tr("Move and edit the selected polygons"),
+            tip=self.tr("Move and edit the selected shapes"),
             enabled=False,
         )
 
         delete = action(
-            self.tr("Delete Polygons"),
+            self.tr("Delete Shapes"),
             self.deleteSelectedShape,
-            shortcuts["delete_polygon"],
+            shortcuts["delete_shape"],
             icon="trash.svg",
-            tip=self.tr("Delete the selected polygons"),
+            tip=self.tr("Delete the selected shapes"),
             enabled=False,
         )
         duplicate = action(
-            self.tr("Duplicate Polygons"),
+            self.tr("Duplicate Shapes"),
             self.duplicateSelectedShape,
-            shortcuts["duplicate_polygon"],
+            shortcuts["duplicate_shape"],
             icon="copy.svg",
-            tip=self.tr("Create a duplicate of the selected polygons"),
+            tip=self.tr("Create a duplicate of the selected shapes"),
             enabled=False,
         )
         copy = action(
-            self.tr("Copy Polygons"),
+            self.tr("Copy Shapes"),
             self.copySelectedShape,
-            shortcuts["copy_polygon"],
+            shortcuts["copy_shape"],
             "copy_clipboard",
-            self.tr("Copy selected polygons to clipboard"),
+            self.tr("Copy selected shapes to clipboard"),
             enabled=False,
         )
         paste = action(
-            self.tr("Paste Polygons"),
+            self.tr("Paste Shapes"),
             self.pasteSelectedShape,
-            shortcuts["paste_polygon"],
+            shortcuts["paste_shape"],
             "paste",
-            self.tr("Paste copied polygons"),
+            self.tr("Paste copied shapes"),
             enabled=False,
         )
         undoLastPoint = action(
@@ -494,27 +494,27 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         hideAll = action(
-            self.tr("&Hide\nPolygons"),
-            functools.partial(self.togglePolygons, False),
-            shortcuts["hide_all_polygons"],
+            self.tr("&Hide\nShapes"),
+            functools.partial(self.toggleShapes, False),
+            shortcuts["hide_all_shapes"],
             icon="eye.svg",
-            tip=self.tr("Hide all polygons"),
+            tip=self.tr("Hide all shapes"),
             enabled=False,
         )
         showAll = action(
-            self.tr("&Show\nPolygons"),
-            functools.partial(self.togglePolygons, True),
-            shortcuts["show_all_polygons"],
+            self.tr("&Show\nShapes"),
+            functools.partial(self.toggleShapes, True),
+            shortcuts["show_all_shapes"],
             icon="eye.svg",
-            tip=self.tr("Show all polygons"),
+            tip=self.tr("Show all shapes"),
             enabled=False,
         )
         toggleAll = action(
-            self.tr("&Toggle\nPolygons"),
-            functools.partial(self.togglePolygons, None),
-            shortcuts["toggle_all_polygons"],
+            self.tr("&Toggle\nShapes"),
+            functools.partial(self.toggleShapes, None),
+            shortcuts["toggle_all_shapes"],
             icon="eye.svg",
-            tip=self.tr("Toggle all polygons"),
+            tip=self.tr("Toggle all shapes"),
             enabled=False,
         )
 
@@ -618,7 +618,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._edit_label,
             shortcuts["edit_label"],
             icon="note-pencil.svg",
-            tip=self.tr("Modify the label of the selected polygon"),
+            tip=self.tr("Modify the label of the selected shape"),
             enabled=False,
         )
 
@@ -1749,7 +1749,7 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast,
         )
 
-    def togglePolygons(self, value):
+    def toggleShapes(self, value):
         flag = value
         for item in self.labelList:
             if value is None:
@@ -2220,7 +2220,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def deleteSelectedShape(self):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
-            "You are about to permanently delete {} polygons, proceed anyway?"
+            "You are about to permanently delete {} shapes, proceed anyway?"
         ).format(len(self.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
             self, self.tr("Attention"), msg, yes | no, yes

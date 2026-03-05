@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>برچسب‌های چندضلعی</translation>
+        <source>Shape Labels</source>
+        <translation>برچسب‌های شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>ویرایش چندضلعی</translation>
+        <source>Edit Shapes</source>
+        <translation>ویرایش شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>جابجایی و ویرایش چندضلعی‌های انتخاب شده</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>جابجایی و ویرایش شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>حذف چندضلعی</translation>
+        <source>Delete Shapes</source>
+        <translation>حذف شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>حذف چندضلعی‌های انتخاب شده</translation>
+        <source>Delete the selected shapes</source>
+        <translation>حذف شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>تکثیر چندضلعی</translation>
+        <source>Duplicate Shapes</source>
+        <translation>تکثیر شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>ایجاد کپی از چندضلعی‌های انتخاب شده</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>ایجاد کپی از شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>کپی چندضلعی</translation>
+        <source>Copy Shapes</source>
+        <translation>کپی شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>کپی چندضلعی‌های انتخاب شده به کلیپ‌بورد</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>کپی شکل‌های انتخاب شده به کلیپ‌بورد</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>چسباندن چندضلعی</translation>
+        <source>Paste Shapes</source>
+        <translation>چسباندن شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>چسباندن چندضلعی‌های کپی شده</translation>
+        <source>Paste copied shapes</source>
+        <translation>چسباندن شکل‌های کپی شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>مخفی کردن چندضلعی(&amp;H)</translation>
+Shapes</source>
+        <translation>مخفی کردن شکل(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>مخفی کردن همه چندضلعی‌ها</translation>
+        <source>Hide all shapes</source>
+        <translation>مخفی کردن همه شکل‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>نمایش چندضلعی(&amp;S)</translation>
+Shapes</source>
+        <translation>نمایش شکل(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>نمایش همه چندضلعی‌ها</translation>
+        <source>Show all shapes</source>
+        <translation>نمایش همه شکل‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>تغییر وضعیت چندضلعی(&amp;S)</translation>
+Shapes</source>
+        <translation>تغییر وضعیت شکل(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>تغییر وضعیت همه چندضلعی‌ها</translation>
+        <source>Toggle all shapes</source>
+        <translation>تغییر وضعیت همه شکل‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>تغییر برچسب چندضلعی انتخاب شده</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>تغییر برچسب شکل انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -760,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>شما در حال حذف دائمی {} چندضلعی هستید، ادامه دهید؟</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>شما در حال حذف دائمی {} شکل هستید، ادامه دهید؟</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

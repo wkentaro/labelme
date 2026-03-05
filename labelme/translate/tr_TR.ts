@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Çokgen Etiketleri</translation>
+        <source>Shape Labels</source>
+        <translation>Şekil Etiketleri</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Çokgenleri Düzenle</translation>
+        <source>Edit Shapes</source>
+        <translation>Şekilleri Düzenle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>Seçili çokgenleri taşı ve düzenle</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>Seçili şekilleri taşı ve düzenle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Çokgenleri Sil</translation>
+        <source>Delete Shapes</source>
+        <translation>Şekilleri Sil</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>Seçili çokgenleri sil</translation>
+        <source>Delete the selected shapes</source>
+        <translation>Seçili şekilleri sil</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Çokgenleri Çoğalt</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Şekilleri Çoğalt</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>Seçili çokgenlerin kopyasını oluştur</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>Seçili şekillerin kopyasını oluştur</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Çokgenleri Kopyala</translation>
+        <source>Copy Shapes</source>
+        <translation>Şekilleri Kopyala</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Seçili çokgenleri panoya kopyala</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Seçili şekilleri panoya kopyala</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Çokgenleri Yapıştır</translation>
+        <source>Paste Shapes</source>
+        <translation>Şekilleri Yapıştır</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Kopyalanan çokgenleri yapıştır</translation>
+        <source>Paste copied shapes</source>
+        <translation>Kopyalanan şekilleri yapıştır</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>Çokgenleri &amp;Gizle</translation>
+Shapes</source>
+        <translation>Şekilleri &amp;Gizle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Tüm çokgenleri gizle</translation>
+        <source>Hide all shapes</source>
+        <translation>Tüm şekilleri gizle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>Çokgenleri &amp;Göster</translation>
+Shapes</source>
+        <translation>Şekilleri &amp;Göster</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Tüm çokgenleri göster</translation>
+        <source>Show all shapes</source>
+        <translation>Tüm şekilleri göster</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>Çokgenleri &amp;Aç/Kapat</translation>
+Shapes</source>
+        <translation>Şekilleri &amp;Aç/Kapat</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Tüm çokgenleri aç/kapat</translation>
+        <source>Toggle all shapes</source>
+        <translation>Tüm şekilleri aç/kapat</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>Seçili çokgenin etiketini değiştir</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>Seçili şeklin etiketini değiştir</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -760,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>{} çokgeni kalıcı olarak silmek üzeresiniz, yine de devam edilsin mi?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>{} şekli kalıcı olarak silmek üzeresiniz, yine de devam edilsin mi?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
