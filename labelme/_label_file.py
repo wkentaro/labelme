@@ -1,5 +1,4 @@
 import base64
-import builtins
 import contextlib
 import io
 import json
@@ -21,10 +20,10 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 
 
 @contextlib.contextmanager
-def open(name, mode):
+def _open(name, mode):
     assert mode in ["r", "w"]
     encoding = "utf-8"
-    yield builtins.open(name, mode, encoding=encoding)
+    yield open(name, mode, encoding=encoding)
     return
 
 
@@ -148,7 +147,7 @@ class LabelFile:
         ext = osp.splitext(filename)[1].lower()
         if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
             # no encoding needed
-            with builtins.open(filename, "rb") as f:
+            with open(filename, "rb") as f:
                 imageData = f.read()
         else:
             with io.BytesIO() as f:
@@ -173,7 +172,7 @@ class LabelFile:
             "imageWidth",
         ]
         try:
-            with open(filename, "r") as f:
+            with _open(filename, "r") as f:
                 data = json.load(f)
 
             # Normalize Windows-style backslash paths to POSIX forward slashes
@@ -262,7 +261,7 @@ class LabelFile:
             assert key not in data
             data[key] = value
         try:
-            with open(filename, "w") as f:
+            with _open(filename, "w") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
         except Exception as e:
