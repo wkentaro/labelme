@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Sokszögcímkék</translation>
+        <source>Shape Labels</source>
+        <translation>Alakzatcímkék</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -403,53 +403,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Sokszögek szerkesztése</translation>
+        <source>Edit Shapes</source>
+        <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>A kijelölt sokszögek mozgatása és szerkesztése</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>A kijelölt alakzatok mozgatása és szerkesztése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Sokszögek törlése</translation>
+        <source>Delete Shapes</source>
+        <translation>Alakzatok törlése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>A kijelölt sokszögek törlése</translation>
+        <source>Delete the selected shapes</source>
+        <translation>A kijelölt alakzatok törlése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Sokszögek duplikálása</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Alakzatok duplikálása</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>A kijelölt sokszögek másolatának létrehozása</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>A kijelölt alakzatok másolatának létrehozása</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Sokszögek másolása</translation>
+        <source>Copy Shapes</source>
+        <translation>Alakzatok másolása</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Kijelölt sokszögek másolása a vágólapra</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Kijelölt alakzatok másolása a vágólapra</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Sokszögek beillesztése</translation>
+        <source>Paste Shapes</source>
+        <translation>Alakzatok beillesztése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Másolt sokszögek beillesztése</translation>
+        <source>Paste copied shapes</source>
+        <translation>Másolt alakzatok beillesztése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -486,38 +486,38 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>Sokszögek
+Shapes</source>
+        <translation>Alakzatok
 &amp;elrejtése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Összes sokszög elrejtése</translation>
+        <source>Hide all shapes</source>
+        <translation>Összes alakzat elrejtése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>Sokszögek
+Shapes</source>
+        <translation>Alakzatok
 &amp;megjelenítése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Összes sokszög megjelenítése</translation>
+        <source>Show all shapes</source>
+        <translation>Összes alakzat megjelenítése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>Sokszögek
+Shapes</source>
+        <translation>Alakzatok
 &amp;váltása</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Összes sokszög váltása</translation>
+        <source>Toggle all shapes</source>
+        <translation>Összes alakzat váltása</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -621,8 +621,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>A kijelölt sokszög címkéjének módosítása</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>A kijelölt alakzat címkéjének módosítása</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -776,8 +776,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Biztosan véglegesen törli a {} sokszöget?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>Biztosan véglegesen törli a {} alakzatot?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

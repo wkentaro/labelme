@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>ポリゴンラベル</translation>
+        <source>Shape Labels</source>
+        <translation>図形ラベル</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -415,56 +415,56 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>ポリゴンを
+        <source>Edit Shapes</source>
+        <translation>図形を
 編集</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>選択したポリゴンを移動・編集</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>選択した図形を移動・編集</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>ポリゴンを
+        <source>Delete Shapes</source>
+        <translation>図形を
 削除</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>選択したポリゴンを削除</translation>
+        <source>Delete the selected shapes</source>
+        <translation>選択した図形を削除</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>ポリゴンを
+        <source>Duplicate Shapes</source>
+        <translation>図形を
 複製</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>選択したポリゴンの複製を作成</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>選択した図形の複製を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>ポリゴンをコピー</translation>
+        <source>Copy Shapes</source>
+        <translation>図形をコピー</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>選択したポリゴンをクリップボードにコピー</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>選択した図形をクリップボードにコピー</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>ポリゴンを貼り付け</translation>
+        <source>Paste Shapes</source>
+        <translation>図形を貼り付け</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>コピーしたポリゴンを貼り付け</translation>
+        <source>Paste copied shapes</source>
+        <translation>コピーした図形を貼り付け</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -500,38 +500,38 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>ポリゴンを
+Shapes</source>
+        <translation>図形を
 非表示(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>すべてのポリゴンを非表示</translation>
+        <source>Hide all shapes</source>
+        <translation>すべての図形を非表示</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>ポリゴンを
+Shapes</source>
+        <translation>図形を
 表示(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>すべてのポリゴンを表示</translation>
+        <source>Show all shapes</source>
+        <translation>すべての図形を表示</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>ポリゴンを
+Shapes</source>
+        <translation>図形を
 切り替え(&amp;T)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>すべてのポリゴンの表示を切り替え</translation>
+        <source>Toggle all shapes</source>
+        <translation>すべての図形の表示を切り替え</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -637,8 +637,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>選択したポリゴンのラベルを変更</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>選択した図形のラベルを変更</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -792,8 +792,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>{} 個のポリゴンを完全に削除します。続行しますか？</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>{} 個の図形を完全に削除します。続行しますか？</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

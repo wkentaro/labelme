@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Étiquettes de polygones</translation>
+        <source>Shape Labels</source>
+        <translation>Étiquettes de formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -403,53 +403,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Modifier les polygones</translation>
+        <source>Edit Shapes</source>
+        <translation>Modifier les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>Déplacer et modifier les polygones sélectionnés</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>Déplacer et modifier les formes sélectionnées</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Supprimer les polygones</translation>
+        <source>Delete Shapes</source>
+        <translation>Supprimer les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>Supprimer les polygones sélectionnés</translation>
+        <source>Delete the selected shapes</source>
+        <translation>Supprimer les formes sélectionnées</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Dupliquer les polygones</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Dupliquer les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>Créer un doublon des polygones sélectionnés</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>Créer un doublon des formes sélectionnées</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Copier les polygones</translation>
+        <source>Copy Shapes</source>
+        <translation>Copier les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Copier les polygones sélectionnés dans le presse-papiers</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Copier les formes sélectionnées dans le presse-papiers</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Coller les polygones</translation>
+        <source>Paste Shapes</source>
+        <translation>Coller les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Coller les polygones copiés</translation>
+        <source>Paste copied shapes</source>
+        <translation>Coller les formes copiées</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -486,38 +486,38 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
+Shapes</source>
         <translation>&amp;Masquer
-les polygones</translation>
+les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Masquer tous les polygones</translation>
+        <source>Hide all shapes</source>
+        <translation>Masquer toutes les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
+Shapes</source>
         <translation>&amp;Afficher
-les polygones</translation>
+les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Afficher tous les polygones</translation>
+        <source>Show all shapes</source>
+        <translation>Afficher toutes les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
+Shapes</source>
         <translation>&amp;Basculer
-les polygones</translation>
+les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Basculer tous les polygones</translation>
+        <source>Toggle all shapes</source>
+        <translation>Basculer toutes les formes</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -621,8 +621,8 @@ les polygones</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>Modifier l'étiquette du polygone sélectionné</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>Modifier l'étiquette de la forme sélectionnée</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -776,8 +776,8 @@ les polygones</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Vous êtes sur le point de supprimer définitivement {} polygones, continuer quand même ?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>Vous êtes sur le point de supprimer définitivement {} formes, continuer quand même ?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

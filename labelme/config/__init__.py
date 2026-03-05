@@ -59,6 +59,27 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         )
         config_from_yaml["ai"]["default"] = model_name_new
 
+    # Migrate polygon shortcut keys to shape
+    _POLYGON_TO_SHAPE_RENAMES = {
+        "edit_polygon": "edit_shape",
+        "delete_polygon": "delete_shape",
+        "duplicate_polygon": "duplicate_shape",
+        "copy_polygon": "copy_shape",
+        "paste_polygon": "paste_shape",
+        "show_all_polygons": "show_all_shapes",
+        "hide_all_polygons": "hide_all_shapes",
+        "toggle_all_polygons": "toggle_all_shapes",
+    }
+    shortcuts = config_from_yaml.get("shortcuts", {})
+    for old_key, new_key in _POLYGON_TO_SHAPE_RENAMES.items():
+        if old_key in shortcuts and new_key not in shortcuts:
+            logger.info(
+                "Migrating old config: shortcuts.{} -> shortcuts.{}",
+                old_key,
+                new_key,
+            )
+            shortcuts[new_key] = shortcuts.pop(old_key)
+
 
 def get_user_config_file(create_if_missing: bool = True) -> str:
     user_config_file: str = osp.join(osp.expanduser("~"), ".labelmerc")

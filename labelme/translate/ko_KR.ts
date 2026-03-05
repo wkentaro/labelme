@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>다각형 레이블</translation>
+        <source>Shape Labels</source>
+        <translation>도형 레이블</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>다각형 편집</translation>
+        <source>Edit Shapes</source>
+        <translation>도형 편집</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>선택한 다각형 이동 및 편집</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>선택한 도형 이동 및 편집</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>다각형 삭제</translation>
+        <source>Delete Shapes</source>
+        <translation>도형 삭제</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>선택한 다각형 삭제</translation>
+        <source>Delete the selected shapes</source>
+        <translation>선택한 도형 삭제</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>다각형 복제</translation>
+        <source>Duplicate Shapes</source>
+        <translation>도형 복제</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>선택한 다각형의 복사본 생성</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>선택한 도형의 복사본 생성</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>다각형 복사</translation>
+        <source>Copy Shapes</source>
+        <translation>도형 복사</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>선택한 다각형을 클립보드에 복사</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>선택한 도형을 클립보드에 복사</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>다각형 붙여넣기</translation>
+        <source>Paste Shapes</source>
+        <translation>도형 붙여넣기</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>복사한 다각형 붙여넣기</translation>
+        <source>Paste copied shapes</source>
+        <translation>복사한 도형 붙여넣기</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>다각형 숨기기(&amp;H)</translation>
+Shapes</source>
+        <translation>도형 숨기기(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>모든 다각형 숨기기</translation>
+        <source>Hide all shapes</source>
+        <translation>모든 도형 숨기기</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>다각형 표시(&amp;S)</translation>
+Shapes</source>
+        <translation>도형 표시(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>모든 다각형 표시</translation>
+        <source>Show all shapes</source>
+        <translation>모든 도형 표시</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>다각형 토글(&amp;S)</translation>
+Shapes</source>
+        <translation>도형 토글(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>모든 다각형 토글</translation>
+        <source>Toggle all shapes</source>
+        <translation>모든 도형 토글</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>선택한 다각형의 레이블 수정</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>선택한 도형의 레이블 수정</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -760,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>{}개의 다각형을 영구적으로 삭제하시겠습니까?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>{}개의 도형을 영구적으로 삭제하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

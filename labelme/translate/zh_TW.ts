@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>多邊形標籤</translation>
+        <source>Shape Labels</source>
+        <translation>圖形標籤</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>編輯多邊形</translation>
+        <source>Edit Shapes</source>
+        <translation>編輯圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>移動、編輯選中的多邊形</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>移動、編輯選中的圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>刪除多邊形</translation>
+        <source>Delete Shapes</source>
+        <translation>刪除圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>刪除選中的多邊形</translation>
+        <source>Delete the selected shapes</source>
+        <translation>刪除選中的圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>複製多邊形</translation>
+        <source>Duplicate Shapes</source>
+        <translation>複製圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>為選中的多邊形創建副本</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>為選中的圖形創建副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>複製多邊形</translation>
+        <source>Copy Shapes</source>
+        <translation>複製圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>複製選中多邊形到剪貼板</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>複製選中圖形到剪貼板</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>粘貼多邊形</translation>
+        <source>Paste Shapes</source>
+        <translation>粘貼圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>粘貼已複製的多邊形</translation>
+        <source>Paste copied shapes</source>
+        <translation>粘貼已複製的圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>隱藏多邊形(&amp;H)</translation>
+Shapes</source>
+        <translation>隱藏圖形(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>隱藏所有多邊形</translation>
+        <source>Hide all shapes</source>
+        <translation>隱藏所有圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>顯示多邊形(&amp;S)</translation>
+Shapes</source>
+        <translation>顯示圖形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>顯示所有多邊形</translation>
+        <source>Show all shapes</source>
+        <translation>顯示所有圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>開關多邊形(&amp;S)</translation>
+Shapes</source>
+        <translation>開關圖形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>開關所有多邊形</translation>
+        <source>Toggle all shapes</source>
+        <translation>開關所有圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>修改選中多邊形的標籤</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>修改選中圖形的標籤</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -760,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>即將永久性刪除多邊形{}。還要繼續嗎?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>即將永久性刪除圖形{}。還要繼續嗎?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Nhãn Đa giác</translation>
+        <source>Shape Labels</source>
+        <translation>Nhãn Hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Chỉnh sửa Đa giác</translation>
+        <source>Edit Shapes</source>
+        <translation>Chỉnh sửa Hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>Di chuyển và chỉnh sửa các đa giác đã chọn</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>Di chuyển và chỉnh sửa các hình dạng đã chọn</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Xóa Đa giác</translation>
+        <source>Delete Shapes</source>
+        <translation>Xóa Hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>Xóa các đa giác đã chọn</translation>
+        <source>Delete the selected shapes</source>
+        <translation>Xóa các hình dạng đã chọn</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Nhân đôi Đa giác</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Nhân đôi Hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>Tạo bản sao của các đa giác đã chọn</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>Tạo bản sao của các hình dạng đã chọn</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Sao chép Đa giác</translation>
+        <source>Copy Shapes</source>
+        <translation>Sao chép Hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Sao chép các đa giác đã chọn vào clipboard</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Sao chép các hình dạng đã chọn vào clipboard</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Dán Đa giác</translation>
+        <source>Paste Shapes</source>
+        <translation>Dán Hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Dán các đa giác đã sao chép</translation>
+        <source>Paste copied shapes</source>
+        <translation>Dán các hình dạng đã sao chép</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>Ẩn Đa giác(&amp;H)</translation>
+Shapes</source>
+        <translation>Ẩn Hình dạng(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Ẩn tất cả đa giác</translation>
+        <source>Hide all shapes</source>
+        <translation>Ẩn tất cả hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>Hiển thị Đa giác(&amp;S)</translation>
+Shapes</source>
+        <translation>Hiển thị Hình dạng(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Hiển thị tất cả đa giác</translation>
+        <source>Show all shapes</source>
+        <translation>Hiển thị tất cả hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>Bật/tắt Đa giác(&amp;S)</translation>
+Shapes</source>
+        <translation>Bật/tắt Hình dạng(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Bật/tắt tất cả đa giác</translation>
+        <source>Toggle all shapes</source>
+        <translation>Bật/tắt tất cả hình dạng</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>Sửa đổi nhãn của đa giác đã chọn</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -760,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Bạn sắp xóa vĩnh viễn {} đa giác, có tiếp tục không?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>Bạn sắp xóa vĩnh viễn {} hình dạng, có tiếp tục không?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

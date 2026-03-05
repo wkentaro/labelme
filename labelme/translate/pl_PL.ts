@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Etykiety wielokątów</translation>
+        <source>Shape Labels</source>
+        <translation>Etykiety kształtów</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Edytuj wielokąty</translation>
+        <source>Edit Shapes</source>
+        <translation>Edytuj kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>Przesuń i edytuj zaznaczone wielokąty</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>Przesuń i edytuj zaznaczone kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Usuń wielokąty</translation>
+        <source>Delete Shapes</source>
+        <translation>Usuń kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>Usuń zaznaczone wielokąty</translation>
+        <source>Delete the selected shapes</source>
+        <translation>Usuń zaznaczone kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Duplikuj wielokąty</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Duplikuj kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>Utwórz duplikat zaznaczonych wielokątów</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>Utwórz duplikat zaznaczonych kształtów</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Kopiuj wielokąty</translation>
+        <source>Copy Shapes</source>
+        <translation>Kopiuj kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Kopiuj zaznaczone wielokąty do schowka</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Kopiuj zaznaczone kształty do schowka</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Wklej wielokąty</translation>
+        <source>Paste Shapes</source>
+        <translation>Wklej kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Wklej skopiowane wielokąty</translation>
+        <source>Paste copied shapes</source>
+        <translation>Wklej skopiowane kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>&amp;Ukryj wielokąty</translation>
+Shapes</source>
+        <translation>&amp;Ukryj kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Ukryj wszystkie wielokąty</translation>
+        <source>Hide all shapes</source>
+        <translation>Ukryj wszystkie kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>&amp;Pokaż wielokąty</translation>
+Shapes</source>
+        <translation>&amp;Pokaż kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Pokaż wszystkie wielokąty</translation>
+        <source>Show all shapes</source>
+        <translation>Pokaż wszystkie kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>Przełącz &amp;wielokąty</translation>
+Shapes</source>
+        <translation>Przełącz &amp;kształty</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Przełącz widoczność wszystkich wielokątów</translation>
+        <source>Toggle all shapes</source>
+        <translation>Przełącz widoczność wszystkich kształtów</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>Zmień etykietę zaznaczonego wielokąta</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>Zmień etykietę zaznaczonego kształtu</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -765,8 +765,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Czy na pewno trwale usunąć {} wielokątów?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>Czy na pewno trwale usunąć {} kształtów?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
