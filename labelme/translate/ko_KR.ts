@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Shape Labels</source>
-        <translation>도형 레이블</translation>
+        <source>Annotation List</source>
+        <translation>주석 목록</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
