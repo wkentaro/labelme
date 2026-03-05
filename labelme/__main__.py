@@ -137,7 +137,7 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--no-autosave",
+        "--no-auto-save",
         dest="auto_save",
         action="store_false",
         help="disable auto save",
@@ -151,7 +151,8 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--nosortlabels",
+        "--no-sort-labels",
+        "--nosortlabels",  # deprecated
         dest="sort_labels",
         action="store_false",
         help="stop sorting labels",
@@ -163,7 +164,8 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--labelflags",
+        "--label-flags",
+        "--labelflags",  # deprecated
         dest="label_flags",
         help=r"yaml string of label specific flags OR file containing json "
         r"string of label specific flags (ex. {person-\d+: [male, tall], "
@@ -176,7 +178,8 @@ def main():
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--validatelabel",
+        "--validate-label",
+        "--validatelabel",  # deprecated
         dest="validate_label",
         choices=["exact"],
         help="label validation types",
