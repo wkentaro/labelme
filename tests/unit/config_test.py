@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from labelme.config import _migrate_config_from_file
 from labelme.config import get_user_config_file
 from labelme.config import load_config
 
@@ -38,3 +39,19 @@ def test_migrate_store_data_to_with_image_data(tmp_path, old_value):
     config = load_config(config_file=config_file, config_overrides={})
     assert config["with_image_data"] is old_value
     assert "store_data" not in config
+
+
+@pytest.mark.parametrize(
+    "input_name, expected_name",
+    [
+        ("SegmentAnything (balanced)", "Sam (balanced)"),
+        ("SegmentAnything (tiny)", "Sam (tiny)"),
+        ("Sam (balanced)", "Sam (balanced)"),
+        ("Sam (large)", "Sam (large)"),
+        ("Sam2 (balanced)", "Sam2 (balanced)"),
+    ],
+)
+def test_migrate_ai_model_name(input_name: str, expected_name: str) -> None:
+    config: dict = {"ai": {"default": input_name}}
+    _migrate_config_from_file(config)
+    assert config["ai"]["default"] == expected_name
