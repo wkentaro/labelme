@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "labelme"
-description = "Image Polygonal Annotation with Python"
+description = "Image annotation with Python. Supports polygon, rectangle, circle, line, point, and AI-assisted annotation (SAM2, SAM3)."
 license = { text = "GPL-3.0-only" }
 requires-python = ">=3.10"
 authors = [{ name = "Kentaro Wada", email = "www.kentaro.wada@gmail.com" }]
