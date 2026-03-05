@@ -137,6 +137,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 ```bash
 LABELME_PATH=./labelme
 OSAM_PATH=$(python -c 'import os, osam; print(os.path.dirname(osam.__file__))')
+pip install 'numpy<2.0'  # numpy>=2.0 causes build errors (see #1532)
 pyinstaller labelme/labelme/__main__.py \
   --name=Labelme \
   --windowed \
