@@ -46,9 +46,10 @@ def main():
     for name, value in label_name_to_value.items():
         label_names[value] = name
 
-    lbl_viz = imgviz.label2rgb(
-        lbl, imgviz.asgray(image), label_names=label_names, loc="rb"
-    )
+    img_gray = imgviz.asgray(image)
+    if img_gray.dtype != np.uint8:
+        img_gray = (img_gray / (img_gray.max() / 255.0)).astype(np.uint8)
+    lbl_viz = imgviz.label2rgb(lbl, img_gray, label_names=label_names, loc="rb")
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
     utils.lblsave(osp.join(out_dir, "label.png"), lbl)
