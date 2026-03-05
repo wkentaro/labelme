@@ -736,7 +736,7 @@ class Canvas(QtWidgets.QWidget):
 
     def boundedMoveVertex(self, pos: QPointF, is_shift_pressed: bool) -> None:
         if self.hVertex is None:
-            logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
+            logger.warning("hVertex is None, so cannot move vertex: pos={!r}", pos)
             return
         assert self.hShape is not None
 
