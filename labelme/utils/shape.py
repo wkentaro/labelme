@@ -35,7 +35,12 @@ def shape_to_mask(
         draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
     elif shape_type == "rectangle":
         assert len(xy) == 2, "Shape of shape_type=rectangle must have 2 points"
-        draw.rectangle(xy, outline=1, fill=1)  # type: ignore[arg-type]
+        (x0, y0), (x1, y1) = xy
+        draw.rectangle(
+            ((min(x0, x1), min(y0, y1)), (max(x0, x1), max(y0, y1))),
+            outline=1,
+            fill=1,
+        )
     elif shape_type == "line":
         assert len(xy) == 2, "Shape of shape_type=line must have 2 points"
         draw.line(xy=xy, fill=1, width=line_width)  # type: ignore[arg-type]
