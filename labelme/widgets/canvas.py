@@ -740,6 +740,14 @@ class Canvas(QtWidgets.QWidget):
             return
         assert self.hShape is not None
 
+        if self.hVertex >= len(self.hShape.points):
+            logger.warning(
+                "hVertex is out of range: hVertex={:d}, len(points)={:d}",
+                self.hVertex,
+                len(self.hShape.points),
+            )
+            return
+
         if self.outOfPixmap(pos):
             pos = self.intersectionPoint(self.hShape[self.hVertex], pos)
 
