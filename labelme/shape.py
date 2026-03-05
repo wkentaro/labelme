@@ -1,6 +1,8 @@
 import copy
+from typing import Optional
 
 import numpy as np
+from numpy.typing import NDArray
 import skimage.measure
 from loguru import logger
 from PyQt5 import QtCore
@@ -43,14 +45,14 @@ class Shape:
 
     def __init__(
         self,
-        label=None,
-        line_color=None,
-        shape_type=None,
-        flags=None,
-        group_id=None,
-        description=None,
-        mask=None,
-    ):
+        label: Optional[str] = None,
+        line_color: Optional[QtGui.QColor] = None,
+        shape_type: Optional[str] = None,
+        flags: Optional[dict[str, bool]] = None,
+        group_id: Optional[int] = None,
+        description: Optional[str] = None,
+        mask: Optional[NDArray[np.bool_]] = None,
+    ) -> None:
         self.label = label
         self.group_id = group_id
         self.points = []
@@ -84,7 +86,13 @@ class Shape:
     def _scale_point(self, point: QtCore.QPointF) -> QtCore.QPointF:
         return QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
 
-    def setShapeRefined(self, shape_type, points, point_labels, mask=None):
+    def setShapeRefined(
+        self,
+        shape_type: str,
+        points: list[QtCore.QPointF],
+        point_labels: list[int],
+        mask: Optional[NDArray[np.bool_]] = None,
+    ) -> None:
         self._shape_raw = (self.shape_type, self.points, self.point_labels)
         self.shape_type = shape_type
         self.points = points
@@ -121,7 +129,7 @@ class Shape:
     def close(self):
         self._closed = True
 
-    def addPoint(self, point, label=1):
+    def addPoint(self, point: QtCore.QPointF, label: int = 1) -> None:
         if self.points and point == self.points[0]:
             self.close()
         else:
@@ -138,7 +146,7 @@ class Shape:
             return self.points.pop()
         return None
 
-    def insertPoint(self, i, point, label=1):
+    def insertPoint(self, i: int, point: QtCore.QPointF, label: int = 1) -> None:
         self.points.insert(i, point)
         self.point_labels.insert(i, label)
 
@@ -300,7 +308,7 @@ class Shape:
         else:
             assert False, "unsupported vertex shape"
 
-    def nearestVertex(self, point, epsilon):
+    def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> Optional[int]:
         min_distance = float("inf")
         min_i = None
         point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
@@ -312,7 +320,7 @@ class Shape:
                 min_i = i
         return min_i
 
-    def nearestEdge(self, point, epsilon):
+    def nearestEdge(self, point: QtCore.QPointF, epsilon: float) -> Optional[int]:
         min_distance = float("inf")
         post_i = None
         point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
