@@ -60,9 +60,6 @@ dev = [
 
 [project.scripts]
 labelme = "labelme.__main__:main"
-labelme_draw_json = "labelme.cli.draw_json:main"
-labelme_draw_label_png = "labelme.cli.draw_label_png:main"
-labelme_export_json = "labelme.cli.export_json:main"
 
 [tool.pytest.ini_options]
 qt_api = "pyqt5"
