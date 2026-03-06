@@ -15,6 +15,7 @@ def main():
     args = parser.parse_args()
 
     label_file = LabelFile(args.json_file)
+    assert label_file.imageData is not None
     img = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value = {"_background_": 0}
@@ -32,7 +33,7 @@ def main():
         label_names[value] = name
     lbl_viz = imgviz.label2rgb(
         lbl,
-        imgviz.asgray(img),
+        imgviz.asgray(img),  # type: ignore[arg-type]
         label_names=label_names,
         font_size=30,
         loc="rb",

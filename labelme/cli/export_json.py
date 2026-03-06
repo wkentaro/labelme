@@ -30,6 +30,7 @@ def main():
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
+    assert label_file.imageData is not None
     image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value: dict[str, int] = {"_background_": 0}
@@ -47,7 +48,10 @@ def main():
         label_names[value] = name
 
     lbl_viz = imgviz.label2rgb(
-        lbl, imgviz.asgray(image), label_names=label_names, loc="rb"
+        lbl,
+        imgviz.asgray(image),  # type: ignore[arg-type]
+        label_names=label_names,
+        loc="rb",
     )
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
