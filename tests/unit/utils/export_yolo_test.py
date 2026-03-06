@@ -10,8 +10,8 @@ import pathlib
 
 import pytest
 
-from labelme.utils.export_yolo import json_to_yolo_dir, shape_to_yolo_line
-
+from labelme.utils.export_yolo import json_to_yolo_dir
+from labelme.utils.export_yolo import shape_to_yolo_line
 
 # ---------------------------------------------------------------------------
 # shape_to_yolo_line tests
@@ -52,7 +52,7 @@ class TestShapeToYoloLine:
         assert bh == pytest.approx(200 / 480)
 
     def test_rectangle_reversed_coords(self):
-        """Right-to-left or bottom-to-top rectangles should still produce valid boxes."""
+        """Right-to-left or bottom-to-top rectangles should produce valid boxes."""
         shape_normal = _rect_shape("dog", 100, 100, 300, 300)
         shape_reversed = _rect_shape("dog", 300, 300, 100, 100)
         line_normal = shape_to_yolo_line(shape_normal, IMG_W, IMG_H, CLASS_LIST)
