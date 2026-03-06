@@ -61,9 +61,15 @@ class TestShapeToYoloLine:
 
     def test_rectangle_class_id(self):
         """Class id must match position in class_list."""
-        line_cat = shape_to_yolo_line(_rect_shape("cat", 0, 0, 10, 10), IMG_W, IMG_H, CLASS_LIST)
-        line_dog = shape_to_yolo_line(_rect_shape("dog", 0, 0, 10, 10), IMG_W, IMG_H, CLASS_LIST)
-        line_bird = shape_to_yolo_line(_rect_shape("bird", 0, 0, 10, 10), IMG_W, IMG_H, CLASS_LIST)
+        line_cat = shape_to_yolo_line(
+            _rect_shape("cat", 0, 0, 10, 10), IMG_W, IMG_H, CLASS_LIST
+        )
+        line_dog = shape_to_yolo_line(
+            _rect_shape("dog", 0, 0, 10, 10), IMG_W, IMG_H, CLASS_LIST
+        )
+        line_bird = shape_to_yolo_line(
+            _rect_shape("bird", 0, 0, 10, 10), IMG_W, IMG_H, CLASS_LIST
+        )
         assert line_cat is not None and line_cat.startswith("0 ")
         assert line_dog is not None and line_dog.startswith("1 ")
         assert line_bird is not None and line_bird.startswith("2 ")
@@ -94,7 +100,9 @@ class TestShapeToYoloLine:
                 "shape_type": shape_type,
                 "points": [[0, 0], [100, 100]],
             }
-            assert shape_to_yolo_line(shape, IMG_W, IMG_H, CLASS_LIST) is None, shape_type
+            assert shape_to_yolo_line(shape, IMG_W, IMG_H, CLASS_LIST) is None, (
+                shape_type
+            )
 
     def test_coords_clamped_to_unit_range(self):
         """Coordinates that slightly exceed the image boundary should be clamped."""
@@ -130,7 +138,9 @@ class TestShapeToYoloLine:
 # ---------------------------------------------------------------------------
 
 
-def _write_labelme_json(path: pathlib.Path, shapes: list[dict], w: int = 640, h: int = 480) -> None:
+def _write_labelme_json(
+    path: pathlib.Path, shapes: list[dict], w: int = 640, h: int = 480
+) -> None:
     data = {
         "imageWidth": w,
         "imageHeight": h,
