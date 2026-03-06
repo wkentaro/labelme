@@ -1,6 +1,6 @@
 import os.path as osp
-from math import sqrt
 from collections.abc import Callable
+from math import sqrt
 
 import numpy as np
 from PyQt5 import QtCore
