@@ -62,9 +62,7 @@ def test_shape_to_mask_circle():
 
 def test_shape_to_mask_point():
     img_shape = (100, 100)
-    mask = shape_module.shape_to_mask(
-        img_shape, [[50, 50]], shape_type="point"
-    )
+    mask = shape_module.shape_to_mask(img_shape, [[50, 50]], shape_type="point")
     assert mask.shape == img_shape
     assert mask.dtype == bool
     assert mask.sum() > 0, "Point mask should be non-empty"
