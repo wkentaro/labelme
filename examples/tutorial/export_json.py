@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import os
 import os.path as osp
@@ -25,8 +27,7 @@ def main():
         out_dir = osp.join(osp.dirname(json_file), out_dir)
     else:
         out_dir = args.out
-    if not osp.exists(out_dir):
-        os.mkdir(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
