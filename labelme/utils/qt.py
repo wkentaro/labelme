@@ -1,5 +1,6 @@
 import os.path as osp
 from collections.abc import Callable
+from collections.abc import Sequence
 from math import sqrt
 
 import numpy as np
@@ -63,7 +64,7 @@ def newAction(
     return a
 
 
-def addActions(widget: QtWidgets.QWidget, actions) -> None:
+def addActions(widget, actions) -> None:
     for action in actions:
         if action is None:
             widget.addSeparator()
@@ -81,21 +82,21 @@ def distance(p: QtCore.QPointF) -> float:
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
 
-def distancetoline(point: QtCore.QPointF, line: list) -> float:
+def distancetoline(point: QtCore.QPointF, line: Sequence[QtCore.QPointF]) -> float:
     p1, p2 = line
     p1 = np.array([p1.x(), p1.y()])
     p2 = np.array([p2.x(), p2.y()])
     p3 = np.array([point.x(), point.y()])
     if np.dot((p3 - p1), (p2 - p1)) < 0:
-        return np.linalg.norm(p3 - p1)
+        return float(np.linalg.norm(p3 - p1))
     if np.dot((p3 - p2), (p1 - p2)) < 0:
-        return np.linalg.norm(p3 - p2)
+        return float(np.linalg.norm(p3 - p2))
     d = p2 - p1
     if np.linalg.norm(d) == 0:
-        return np.linalg.norm(p3 - p1)
+        return float(np.linalg.norm(p3 - p1))
     v = p1 - p3
     cross = d[0] * v[1] - d[1] * v[0]
-    return abs(cross) / np.linalg.norm(d)
+    return float(abs(cross) / np.linalg.norm(d))
 
 
 def fmtShortcut(text: str) -> str:
