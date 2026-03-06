@@ -22,6 +22,11 @@
   <!-- | <a href="https://www.youtube.com/playlist?list=PLI6LvFw0iflh3o33YYnVIfOpaO0hc5Dzw"><b>Youtube FAQ</b></a> -->
 </div>
 
+<div align="center">
+  🌍 <b>Available in 14 Languages</b><br/>
+  English &middot; 日本語 &middot; 한국어 &middot; 简体中文 &middot; 繁體中文 &middot; Deutsch &middot; Français &middot; Español &middot; Italiano &middot; Português &middot; Nederlands &middot; Magyar &middot; Tiếng Việt &middot; فارسی
+</div>
+
 <br/>
 
 <div align="center">
