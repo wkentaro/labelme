@@ -49,9 +49,9 @@ def main():
 
     lbl_viz = imgviz.label2rgb(
         lbl,
-        imgviz.asgray(image),
+        imgviz.asgray(image),  # type: ignore[arg-type]
         label_names=label_names,
-        loc="rb",  # type: ignore[arg-type]
+        loc="rb",
     )
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
