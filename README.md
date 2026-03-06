@@ -155,6 +155,11 @@ pyinstaller labelme/labelme/__main__.py \
 ```
 
 
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
+Contributions require signing the [CLA](CLA.md).
+
 ## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme).
