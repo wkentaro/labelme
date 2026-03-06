@@ -44,6 +44,8 @@ It is written in Python and uses Qt for its graphical interface.
 <img src="https://user-images.githubusercontent.com/4310419/47907116-85667800-de82-11e8-83d0-b9f4eb33268f.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/4310419/47922172-57972880-deae-11e8-84f8-e4324a7c856a.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/14256482/46932075-92145f00-d080-11e8-8d09-2162070ae57c.png" width="32%" />  
 <i>Various primitives (polygon, rectangle, circle, line, and point).</i>
 
+<img src="https://github.com/user-attachments/assets/a0af0b0a-3aff-4f99-a070-1f0be5216f1a" width="32%" />
+<p><i>Multi-language support (English, 中文, 日本語, 한국어, Deutsch, Français, and more).</i></p>
 
 ## Features
 
@@ -53,9 +55,10 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] GUI customization (predefined labels / flags, auto-saving, label validation, etc) ([#144](https://github.com/wkentaro/labelme/pull/144))
 - [x] Exporting VOC-format dataset for [semantic segmentation](examples/semantic_segmentation), [instance segmentation](examples/instance_segmentation)
 - [x] Exporting COCO-format dataset for [instance segmentation](examples/instance_segmentation)
-- [x] Multilingual support `zh_CN`, `zh_TW`, `fr_FR`, `ja_JP`, `de_DE`, `hu_HU`, `ko_KR`, `es_ES`, `fa_IR`, `nl_NL`, `pt_BR`, `it_IT`, `vi_VN`, `tr_TR`, `pl_PL` (`LANG=zh_CN.UTF-8 labelme`)
 - [x] AI-assisted point-to-polygon/mask annotation by SAM, EfficientSAM models
 - [x] AI text-to-annotation by YOLO-world, SAM3 models
+
+**🌏 Available in 16 languages** - English &middot; 日本語 &middot; 한국어 &middot; 简体中文 &middot; 繁體中文 &middot; Deutsch &middot; Français &middot; Español &middot; Italiano &middot; Português &middot; Nederlands &middot; Magyar &middot; Tiếng Việt &middot; Türkçe &middot; Polski &middot; فارسی (`LANG=ja_JP.UTF-8 labelme`)
 
 
 ## Installation
