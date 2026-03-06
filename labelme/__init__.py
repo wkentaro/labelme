@@ -1,5 +1,4 @@
 import importlib.metadata
-import logging
 
 __appname__ = "Labelme"
 
@@ -14,6 +13,5 @@ __version__ = importlib.metadata.version("labelme")
 # https://github.com/wkentaro/labelme/issues/1564
 import onnxruntime
 
-from labelme import testing
 from labelme import utils
 from labelme._label_file import LabelFile
