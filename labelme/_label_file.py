@@ -93,9 +93,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     description: str = ""
     if shape_json_obj.get("description") is not None:
         if not isinstance(shape_json_obj["description"], str):
-            raise TypeError(
-                f"description must be str: {shape_json_obj['description']}"
-            )
+            raise TypeError(f"description must be str: {shape_json_obj['description']}")
         description = shape_json_obj["description"]
 
     group_id: int | None = None
