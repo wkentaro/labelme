@@ -1,5 +1,5 @@
 import copy
-from typing import Optional
+
 
 import numpy as np
 from numpy.typing import NDArray
@@ -45,13 +45,13 @@ class Shape:
 
     def __init__(
         self,
-        label: Optional[str] = None,
-        line_color: Optional[QtGui.QColor] = None,
-        shape_type: Optional[str] = None,
-        flags: Optional[dict[str, bool]] = None,
-        group_id: Optional[int] = None,
-        description: Optional[str] = None,
-        mask: Optional[NDArray[np.bool_]] = None,
+        label: str | None = None,
+        line_color: QtGui.QColor | None = None,
+        shape_type: str | None = None,
+        flags: dict[str, bool] | None = None,
+        group_id: int | None = None,
+        description: str | None = None,
+        mask: NDArray[np.bool_] | None = None,
     ) -> None:
         self.label = label
         self.group_id = group_id
@@ -91,7 +91,7 @@ class Shape:
         shape_type: str,
         points: list[QtCore.QPointF],
         point_labels: list[int],
-        mask: Optional[NDArray[np.bool_]] = None,
+        mask: NDArray[np.bool_] | None = None,
     ) -> None:
         self._shape_raw = (self.shape_type, self.points, self.point_labels)
         self.shape_type = shape_type
@@ -308,7 +308,7 @@ class Shape:
         else:
             assert False, "unsupported vertex shape"
 
-    def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> Optional[int]:
+    def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")
         min_i = None
         point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
@@ -320,7 +320,7 @@ class Shape:
                 min_i = i
         return min_i
 
-    def nearestEdge(self, point: QtCore.QPointF, epsilon: float) -> Optional[int]:
+    def nearestEdge(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")
         post_i = None
         point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
