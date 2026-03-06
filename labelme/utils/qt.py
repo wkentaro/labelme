@@ -1,6 +1,6 @@
 import os.path as osp
 from math import sqrt
-from typing import Callable, Optional
+from typing import Callable
 
 import numpy as np
 from PyQt5 import QtCore
@@ -19,8 +19,8 @@ def newIcon(icon_file_name: str) -> QtGui.QIcon:
 
 def newButton(
     text: str,
-    icon: Optional[str] = None,
-    slot: Optional[Callable] = None,
+    icon: str | None = None,
+    slot: Callable | None = None,
 ) -> QtWidgets.QPushButton:
     b = QtWidgets.QPushButton(text)
     if icon is not None:
@@ -33,10 +33,10 @@ def newButton(
 def newAction(
     parent: QtCore.QObject,
     text: str,
-    slot: Optional[Callable] = None,
+    slot: Callable | None = None,
     shortcut=None,
-    icon: Optional[str] = None,
-    tip: Optional[str] = None,
+    icon: str | None = None,
+    tip: str | None = None,
     checkable: bool = False,
     enabled: bool = True,
     checked: bool = False,
