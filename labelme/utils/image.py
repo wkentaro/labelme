@@ -10,11 +10,6 @@ import PIL.Image
 import PIL.ImageOps
 from numpy.typing import NDArray
 
-try:
-    from qtpy import QtGui
-except ImportError:  # pragma: no cover
-    QtGui = None  # type: ignore[assignment]
-
 
 def img_data_to_pil(img_data: bytes) -> PIL.Image.Image:
     f = io.BytesIO()
@@ -65,7 +60,7 @@ def img_data_to_png_data(img_data: bytes) -> bytes:
             return f.read()
 
 
-def img_qt_to_arr(img_qt: "QtGui.QImage") -> NDArray[np.uint8]:
+def img_qt_to_arr(img_qt) -> NDArray[np.uint8]:
     w, h, d = img_qt.size().width(), img_qt.size().height(), img_qt.depth()
     bytes_ = img_qt.bits().asstring(w * h * d // 8)
     img_arr = np.frombuffer(bytes_, dtype=np.uint8).reshape((h, w, d // 8))
@@ -73,9 +68,10 @@ def img_qt_to_arr(img_qt: "QtGui.QImage") -> NDArray[np.uint8]:
 
 
 def apply_exif_orientation(image: PIL.Image.Image) -> PIL.Image.Image:
+    _getexif = getattr(image, "_getexif", None)
     try:
-        exif = image._getexif()
-    except AttributeError:
+        exif = _getexif() if _getexif else None
+    except Exception:
         exif = None
 
     if exif is None:

@@ -93,6 +93,7 @@ def main():
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
 
+        assert label_file.imageData is not None
         img = labelme.utils.img_data_to_arr(label_file.imageData)
         imgviz.io.imsave(out_img_file, img)
         data["images"].append(

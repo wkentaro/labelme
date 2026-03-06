@@ -30,6 +30,7 @@ def main():
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
+    assert label_file.imageData is not None
     image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
 
     label_name_to_value: dict[str, int] = {"_background_": 0}
