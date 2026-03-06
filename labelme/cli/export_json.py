@@ -48,7 +48,7 @@ def main():
 
     img_gray = imgviz.asgray(image)
     if img_gray.dtype != np.uint8:
-        img_gray = (img_gray / (img_gray.max() / 255.0)).astype(np.uint8)
+        img_gray = (imgviz.normalize(img_gray) * 255).astype(np.uint8)
     lbl_viz = imgviz.label2rgb(lbl, img_gray, label_names=label_names, loc="rb")
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
