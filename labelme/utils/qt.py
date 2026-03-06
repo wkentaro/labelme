@@ -1,4 +1,6 @@
 import os.path as osp
+from collections.abc import Callable
+from collections.abc import Sequence
 from math import sqrt
 
 import numpy as np
@@ -16,7 +18,11 @@ def newIcon(icon_file_name: str) -> QtGui.QIcon:
     return QtGui.QIcon(osp.join(":/", icons_dir, icon_file_name))
 
 
-def newButton(text, icon=None, slot=None):
+def newButton(
+    text: str,
+    icon: str | None = None,
+    slot: Callable | None = None,
+) -> QtWidgets.QPushButton:
     b = QtWidgets.QPushButton(text)
     if icon is not None:
         b.setIcon(newIcon(icon))
@@ -26,16 +32,16 @@ def newButton(text, icon=None, slot=None):
 
 
 def newAction(
-    parent,
-    text,
-    slot=None,
+    parent: QtCore.QObject,
+    text: str,
+    slot: Callable | None = None,
     shortcut=None,
-    icon=None,
-    tip=None,
-    checkable=False,
-    enabled=True,
-    checked=False,
-):
+    icon: str | None = None,
+    tip: str | None = None,
+    checkable: bool = False,
+    enabled: bool = True,
+    checked: bool = False,
+) -> QtWidgets.QAction:
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QtWidgets.QAction(text, parent)
     if icon is not None:
@@ -58,7 +64,7 @@ def newAction(
     return a
 
 
-def addActions(widget, actions):
+def addActions(widget, actions) -> None:
     for action in actions:
         if action is None:
             widget.addSeparator()
@@ -68,31 +74,31 @@ def addActions(widget, actions):
             widget.addAction(action)
 
 
-def labelValidator():
+def labelValidator() -> QtGui.QRegExpValidator:
     return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
-def distance(p):
+def distance(p: QtCore.QPointF) -> float:
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
 
-def distancetoline(point, line):
+def distancetoline(point: QtCore.QPointF, line: Sequence[QtCore.QPointF]) -> float:
     p1, p2 = line
     p1 = np.array([p1.x(), p1.y()])
     p2 = np.array([p2.x(), p2.y()])
     p3 = np.array([point.x(), point.y()])
     if np.dot((p3 - p1), (p2 - p1)) < 0:
-        return np.linalg.norm(p3 - p1)
+        return float(np.linalg.norm(p3 - p1))
     if np.dot((p3 - p2), (p1 - p2)) < 0:
-        return np.linalg.norm(p3 - p2)
+        return float(np.linalg.norm(p3 - p2))
     d = p2 - p1
     if np.linalg.norm(d) == 0:
-        return np.linalg.norm(p3 - p1)
+        return float(np.linalg.norm(p3 - p1))
     v = p1 - p3
     cross = d[0] * v[1] - d[1] * v[0]
-    return abs(cross) / np.linalg.norm(d)
+    return float(abs(cross) / np.linalg.norm(d))
 
 
-def fmtShortcut(text):
+def fmtShortcut(text: str) -> str:
     mod, key = text.split("+", 1)
     return f"<b>{mod}</b>+<b>{key}</b>"
