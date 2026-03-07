@@ -242,9 +242,9 @@ class MainWindow(QtWidgets.QMainWindow):
         action = functools.partial(utils.newAction, self)
         shortcuts = self._config["shortcuts"]
         quit = action(
-            self.tr("&Quit"),
-            self.close,
-            shortcuts["quit"],
+            text=self.tr("&Quit"),
+            slot=self.close,
+            shortcut=shortcuts["quit"],
             icon=None,
             tip=self.tr("Quit application"),
         )
@@ -257,78 +257,74 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_config.setMenuRole(QtWidgets.QAction.PreferencesRole)
         open_ = action(
-            self.tr("&Open\n"),
-            self._open_file_with_dialog,
-            shortcuts["open"],
+            text=self.tr("&Open\n"),
+            slot=self._open_file_with_dialog,
+            shortcut=shortcuts["open"],
             icon="folder-open.svg",
             tip=self.tr("Open image or label file"),
         )
         opendir = action(
-            self.tr("Open Dir"),
-            self._open_dir_with_dialog,
-            shortcuts["open_dir"],
+            text=self.tr("Open Dir"),
+            slot=self._open_dir_with_dialog,
+            shortcut=shortcuts["open_dir"],
             icon="folder-open.svg",
             tip=self.tr("Open Dir"),
         )
         openNextImg = action(
-            self.tr("&Next Image"),
-            self._open_next_image,
-            shortcuts["open_next"],
+            text=self.tr("&Next Image"),
+            slot=self._open_next_image,
+            shortcut=shortcuts["open_next"],
             icon="arrow-fat-right.svg",
             tip=self.tr("Open next (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         openPrevImg = action(
-            self.tr("&Prev Image"),
-            self._open_prev_image,
-            shortcuts["open_prev"],
+            text=self.tr("&Prev Image"),
+            slot=self._open_prev_image,
+            shortcut=shortcuts["open_prev"],
             icon="arrow-fat-left.svg",
             tip=self.tr("Open prev (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
         save = action(
-            self.tr("&Save\n"),
-            self.saveFile,
-            shortcuts["save"],
+            text=self.tr("&Save\n"),
+            slot=self.saveFile,
+            shortcut=shortcuts["save"],
             icon="floppy-disk.svg",
             tip=self.tr("Save labels to file"),
             enabled=False,
         )
         saveAs = action(
-            self.tr("&Save As"),
-            self.saveFileAs,
-            shortcuts["save_as"],
+            text=self.tr("&Save As"),
+            slot=self.saveFileAs,
+            shortcut=shortcuts["save_as"],
             icon="floppy-disk.svg",
             tip=self.tr("Save labels to a different file"),
             enabled=False,
         )
-
         deleteFile = action(
-            self.tr("&Delete File"),
-            self.deleteFile,
-            shortcuts["delete_file"],
+            text=self.tr("&Delete File"),
+            slot=self.deleteFile,
+            shortcut=shortcuts["delete_file"],
             icon="file-x.svg",
             tip=self.tr("Delete current label file"),
             enabled=False,
         )
-
         changeOutputDir = action(
-            self.tr("&Change Output Dir"),
+            text=self.tr("&Change Output Dir"),
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
             icon="folders.svg",
             tip=self.tr("Change where annotations are loaded/saved"),
         )
-
         saveAuto = action(
             text=self.tr("Save &Automatically"),
-            slot=lambda x: self.actions.saveAuto.setChecked(x),
+            slot=lambda checked: self.actions.saveAuto.setChecked(checked),
             tip=self.tr("Save automatically"),
             checkable=True,
             enabled=True,
         )
         saveAuto.setChecked(self._config["auto_save"])
-
         saveWithImageData = action(
             text=self.tr("Save With Image Data"),
             slot=self.enableSaveImageWithData,
@@ -336,71 +332,68 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
             checked=self._config["with_image_data"],
         )
-
         close = action(
-            self.tr("&Close"),
-            self.closeFile,
-            shortcuts["close"],
+            text=self.tr("&Close"),
+            slot=self.closeFile,
+            shortcut=shortcuts["close"],
             icon="x-circle.svg",
             tip=self.tr("Close current file"),
         )
-
         toggle_keep_prev_mode = action(
-            self.tr("Keep Previous Annotation"),
-            self.toggleKeepPrevMode,
-            shortcuts["toggle_keep_prev_mode"],
-            None,
-            self.tr('Toggle "keep previous annotation" mode'),
+            text=self.tr("Keep Previous Annotation"),
+            slot=self.toggleKeepPrevMode,
+            shortcut=shortcuts["toggle_keep_prev_mode"],
+            icon=None,
+            tip=self.tr('Toggle "keep previous annotation" mode'),
             checkable=True,
         )
         toggle_keep_prev_mode.setChecked(self._config["keep_prev"])
-
         createMode = action(
-            self.tr("Create Polygons"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
-            shortcuts["create_polygon"],
-            "polygon.svg",
-            self.tr("Start drawing polygons"),
+            text=self.tr("Create Polygons"),
+            slot=lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
+            shortcut=shortcuts["create_polygon"],
+            icon="polygon.svg",
+            tip=self.tr("Start drawing polygons"),
             enabled=False,
         )
         createRectangleMode = action(
-            self.tr("Create Rectangle"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
-            shortcuts["create_rectangle"],
-            "rectangle.svg",
-            self.tr("Start drawing rectangles"),
+            text=self.tr("Create Rectangle"),
+            slot=lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
+            shortcut=shortcuts["create_rectangle"],
+            icon="rectangle.svg",
+            tip=self.tr("Start drawing rectangles"),
             enabled=False,
         )
         createCircleMode = action(
-            self.tr("Create Circle"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
-            shortcuts["create_circle"],
-            "circle.svg",
-            self.tr("Start drawing circles"),
+            text=self.tr("Create Circle"),
+            slot=lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
+            shortcut=shortcuts["create_circle"],
+            icon="circle.svg",
+            tip=self.tr("Start drawing circles"),
             enabled=False,
         )
         createLineMode = action(
-            self.tr("Create Line"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="line"),
-            shortcuts["create_line"],
-            "line-segment.svg",
-            self.tr("Start drawing lines"),
+            text=self.tr("Create Line"),
+            slot=lambda: self._switch_canvas_mode(edit=False, createMode="line"),
+            shortcut=shortcuts["create_line"],
+            icon="line-segment.svg",
+            tip=self.tr("Start drawing lines"),
             enabled=False,
         )
         createPointMode = action(
-            self.tr("Create Point"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="point"),
-            shortcuts["create_point"],
+            text=self.tr("Create Point"),
+            slot=lambda: self._switch_canvas_mode(edit=False, createMode="point"),
+            shortcut=shortcuts["create_point"],
             icon="circles-four.svg",
             tip=self.tr("Start drawing points"),
             enabled=False,
         )
         createLineStripMode = action(
-            self.tr("Create LineStrip"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
-            shortcuts["create_linestrip"],
-            "line-segments.svg",
-            self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
+            text=self.tr("Create LineStrip"),
+            slot=lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
+            shortcut=shortcuts["create_linestrip"],
+            icon="line-segments.svg",
+            tip=self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
         createAiPolygonMode = action(
