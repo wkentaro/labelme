@@ -8,23 +8,17 @@ from PyQt5 import QtGui
 
 import labelme.utils
 
-# TODO(unknown):
-# - [opt] Store paths instead of creating new ones at each paint.
-
 
 class Shape:
-    # Render handles as squares
+    # Handle point styles: square or round
     P_SQUARE = 0
-
-    # Render handles as circles
     P_ROUND = 1
 
-    # Flag for the handles we would move if dragging
+    # Vertex interaction modes
     MOVE_VERTEX = 0
-
-    # Flag for all other handles on the current shape
     NEAR_VERTEX = 1
 
+    # Width of the shape outline pen
     PEN_WIDTH = 2
 
     # The following class variables influence the drawing of all shape objects.
@@ -35,6 +29,7 @@ class Shape:
     select_fill_color: QtGui.QColor = QtGui.QColor(0, 255, 0, 64)
     hvertex_fill_color: QtGui.QColor = QtGui.QColor(255, 255, 255, 255)
 
+    # Default handle style, size, and zoom scale
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -66,6 +61,7 @@ class Shape:
         self.other_data = {}
         self.mask = mask
 
+        # Highlight state: which vertex is highlighted and how it looks
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
         self._highlightSettings = {
@@ -76,9 +72,7 @@ class Shape:
         self._closed = False
 
         if line_color is not None:
-            # Override the class line_color attribute
-            # with an object attribute. Currently this
-            # is used for drawing the pending line a different color.
+            # Per-instance line color override (used for the pending line).
             self.line_color = line_color
 
     def _scale_point(self, point: QtCore.QPointF) -> QtCore.QPointF:
