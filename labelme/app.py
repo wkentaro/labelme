@@ -133,6 +133,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._copied_shapes = []
 
         # Main widgets.
+        label_flags = self._config["label_flags"]
         self.labelDialog = LabelDialog(
             parent=self,
             labels=self._config["labels"],
@@ -140,7 +141,7 @@ class MainWindow(QtWidgets.QMainWindow):
             show_text_field=self._config["show_label_text_field"],
             completion=self._config["label_completion"],
             fit_to_content=self._config["fit_to_content"],
-            flags=self._config["label_flags"],
+            flags=label_flags,
         )
 
         self.labelList = LabelListWidget()
@@ -165,7 +166,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.uniqLabelList = UniqueLabelQListWidget()
         self.uniqLabelList.setToolTip(
-            self.tr("Select label to start annotating for it. Press 'Esc' to deselect.")
+            self.tr(
+                "Select label to start annotating for it."
+                " Press 'Esc' to deselect."
+            )
         )
         if self._config["labels"]:
             for label in self._config["labels"]:
@@ -192,14 +196,15 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListWidget.setLayout(fileListLayout)
         self.file_dock.setWidget(fileListWidget)
 
-        self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
+        self.zoomWidget = ZoomWidget()
 
+        canvas_config = self._config["canvas"]
         self.canvas = Canvas(
             epsilon=self._config["epsilon"],
-            double_click=self._config["canvas"]["double_click"],
-            num_backups=self._config["canvas"]["num_backups"],
-            crosshair=self._config["canvas"]["crosshair"],
+            double_click=canvas_config["double_click"],
+            num_backups=canvas_config["num_backups"],
+            crosshair=canvas_config["crosshair"],
         )
         self.canvas.zoomRequest.connect(self._zoom_requested)
         self.canvas.mouseMoved.connect(self._update_status_stats)
@@ -208,12 +213,12 @@ class MainWindow(QtWidgets.QMainWindow):
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)
         scrollArea.setWidgetResizable(True)
-        self.scrollBars = {
-            Qt.Vertical: scrollArea.verticalScrollBar(),
-            Qt.Horizontal: scrollArea.horizontalScrollBar(),
-        }
-        self.canvas.scrollRequest.connect(self.scrollRequest)
+        self.scrollBars = {}
+        self.scrollBars[Qt.Vertical] = scrollArea.verticalScrollBar()
+        self.scrollBars[Qt.Horizontal] = scrollArea.horizontalScrollBar()
 
+        # Canvas signal connections.
+        self.canvas.scrollRequest.connect(self.scrollRequest)
         self.canvas.newShape.connect(self.newShape)
         self.canvas.shapeMoved.connect(self.setDirty)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
@@ -221,22 +226,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(scrollArea)
 
+        dock_names = ["flag_dock", "label_dock", "shape_dock", "file_dock"]
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
-            if self._config[dock]["closable"]:
+        for dock_name in dock_names:
+            dock_cfg = self._config[dock_name]
+            if dock_cfg["closable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
-            if self._config[dock]["floatable"]:
+            if dock_cfg["floatable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetFloatable
-            if self._config[dock]["movable"]:
+            if dock_cfg["movable"]:
                 features = features | QtWidgets.QDockWidget.DockWidgetMovable
-            getattr(self, dock).setFeatures(features)
-            if self._config[dock]["show"] is False:
-                getattr(self, dock).setVisible(False)
+            getattr(self, dock_name).setFeatures(features)
+            if dock_cfg["show"] is False:
+                getattr(self, dock_name).setVisible(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
+        for dock in [self.flag_dock, self.label_dock, self.shape_dock, self.file_dock]:
+            self.addDockWidget(Qt.RightDockWidgetArea, dock)
 
         # Actions (keyboard shortcuts + callbacks).
         action = functools.partial(utils.newAction, self)
