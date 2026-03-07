@@ -52,12 +52,6 @@ from labelme.widgets import download_ai_model
 
 from . import utils
 
-# FIXME
-# - [medium] Set max zoom value to something big enough for FitWidth/Window
-
-# TODO(unknown):
-# - Zoom is too "steppy".
-
 # handle high-dpi scaling issue
 # https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5
 if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
@@ -99,9 +93,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_opened_dir: str | None
     _other_data: dict | None
 
-    # NB: this tells Mypy etc. that `actions` here
-    #     is a different type cf. the parent class
-    #     (where it is Callable[[QWidget], list[QAction]]).
+    # Override `actions` type annotation so that type checkers know it holds a
+    # SimpleNamespace of QAction objects rather than the base-class callable.
     actions: types.SimpleNamespace  # type: ignore[assignment]
 
     def __init__(
@@ -139,7 +132,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._copied_shapes = []
 
-        # Main widgets and related state.
+        # Main widgets.
         self.labelDialog = LabelDialog(
             parent=self,
             labels=self._config["labels"],
@@ -245,7 +238,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
-        # Actions
+        # Actions (keyboard shortcuts + callbacks).
         action = functools.partial(utils.newAction, self)
         shortcuts = self._config["shortcuts"]
         quit = action(
