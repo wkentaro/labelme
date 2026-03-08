@@ -956,12 +956,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.settings.setValue("settingsVersion", SETTINGS_VERSION)
 
         self.recentFiles = self.settings.value("recentFiles", []) or []
-        size = self.settings.value("window/size", QtCore.QSize(900, 500))
-        position = self.settings.value("window/position", QtCore.QPoint(0, 0))
-        state = self.settings.value("window/state", QtCore.QByteArray())
-        self.resize(size)
-        self.move(position)
-        self.restoreState(state)
+        self.resize(self.settings.value("window/size", QtCore.QSize(900, 500)))
+        self.move(self.settings.value("window/position", QtCore.QPoint(0, 0)))
+        self.restoreState(self.settings.value("window/state", QtCore.QByteArray()))
 
         if filename:
             if osp.isdir(filename):
