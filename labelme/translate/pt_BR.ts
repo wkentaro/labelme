@@ -819,5 +819,20 @@ Para usar o editor de preferências, inicie o Labelme com um arquivo de configur
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
         <translation>Foram encontrados erros ao carregar a configuração. Por favor, revise os erros abaixo e recarregue sua configuração ou ignore as linhas com erro.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation type="obsolete">&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Certifique-se de que &lt;i&gt;%s&lt;/i&gt; seja um arquivo de rótulo válido.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation type="obsolete">&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Certifique-se de que &lt;i&gt;%s&lt;/i&gt; seja um arquivo de imagem válido.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>Redefinir layout</translation>
+    </message>
 </context>
 </TS>

@@ -819,5 +819,20 @@ Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
         <translation>Er zijn fouten gevonden bij het laden van de configuratie. Bekijk de onderstaande fouten en herlaad uw configuratie of negeer de foutieve regels.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation type="obsolete">&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig labelbestand is.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation type="obsolete">&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig afbeeldingsbestand is.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>Layout herstellen</translation>
+    </message>
 </context>
 </TS>
