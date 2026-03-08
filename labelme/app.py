@@ -107,11 +107,29 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> None:
         super().__init__()
         self.setWindowTitle(__appname__)
+        self._setup_config(config_file=config_file, config_overrides=config_overrides)
+        self._setup_shape_defaults()
+        self._setup_widgets()
+        self._setup_canvas()
+        self._setup_docks()
+        self._setup_actions()
+        self._setup_menus()
+        self._setup_toolbars()
+        self._setup_statusbar()
+        self._setup_state(output_dir=output_dir)
+        self._restore_settings()
+        self._open_initial(filename=filename)
 
+    def _setup_config(
+        self,
+        config_file: Path | None,
+        config_overrides: dict | None,
+    ) -> None:
         self._config_file, self._config = self._load_config(
             config_file=config_file, config_overrides=config_overrides
         )
 
+    def _setup_shape_defaults(self) -> None:
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
         Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
@@ -131,8 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Set point size from config file
         Shape.point_size = self._config["shape"]["point_size"]
 
-        self._copied_shapes = []
-
+    def _setup_widgets(self) -> None:
         # Main widgets.
         self.labelDialog = LabelDialog(
             parent=self,
@@ -195,6 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
 
+    def _setup_canvas(self) -> None:
         self.canvas = Canvas(
             epsilon=self._config["epsilon"],
             double_click=self._config["canvas"]["double_click"],
@@ -221,6 +239,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setCentralWidget(scrollArea)
 
+    def _setup_docks(self) -> None:
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
         for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
             if self._config[dock]["closable"]:
@@ -238,6 +257,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
+    def _setup_actions(self) -> None:
         # Actions (keyboard shortcuts + callbacks).
         action = functools.partial(utils.newAction, self)
         shortcuts = self._config["shortcuts"]
@@ -620,12 +640,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._config["canvas"]["fill_drawing"]:
             fill_drawing.trigger()
 
-        # Label list context menu.
-        labelMenu = QtWidgets.QMenu()
-        utils.addActions(labelMenu, (edit, delete))
-        self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
-
         # Store actions for further handling.
         self.actions = types.SimpleNamespace(
             about=action(
@@ -701,6 +715,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 slot=self._reset_layout,
                 icon="layout-duotone.svg",
             ),
+            opendir=opendir,
+            quit=quit,
+            open_config=open_config,
+            help=help,
+            fill_drawing=fill_drawing,
+            hideAll=hideAll,
+            showAll=showAll,
+            toggleAll=toggleAll,
         )
         self.on_shapes_present_actions = (saveAs, hideAll, showAll, toggleAll)
 
@@ -767,37 +789,43 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
 
+    def _setup_menus(self) -> None:
+        label_list_menu = QtWidgets.QMenu()
+        utils.addActions(label_list_menu, (self.actions.edit, self.actions.delete))
+        self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
+
         self.menus = types.SimpleNamespace(
             file=self.menu(self.tr("&File")),
             edit=self.menu(self.tr("&Edit")),
             view=self.menu(self.tr("&View")),
             help=self.menu(self.tr("&Help")),
             recentFiles=QtWidgets.QMenu(self.tr("Open &Recent")),
-            labelList=labelMenu,
+            labelList=label_list_menu,
         )
 
         utils.addActions(
             self.menus.file,
             (
-                open_,
-                openNextImg,
-                openPrevImg,
-                opendir,
+                self.actions.open,
+                self.actions.openNextImg,
+                self.actions.openPrevImg,
+                self.actions.opendir,
                 self.menus.recentFiles,
-                save,
-                saveAs,
-                saveAuto,
-                changeOutputDir,
-                saveWithImageData,
-                close,
-                deleteFile,
+                self.actions.save,
+                self.actions.saveAs,
+                self.actions.saveAuto,
+                self.actions.changeOutputDir,
+                self.actions.saveWithImageData,
+                self.actions.close,
+                self.actions.deleteFile,
                 None,
-                open_config,
+                self.actions.open_config,
                 None,
-                quit,
+                self.actions.quit,
             ),
         )
-        utils.addActions(self.menus.help, (help, self.actions.about))
+        utils.addActions(self.menus.help, (self.actions.help, self.actions.about))
         utils.addActions(
             self.menus.view,
             (
@@ -808,21 +836,21 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 self.actions.reset_layout,
                 None,
-                fill_drawing,
+                self.actions.fill_drawing,
                 None,
-                hideAll,
-                showAll,
-                toggleAll,
+                self.actions.hideAll,
+                self.actions.showAll,
+                self.actions.toggleAll,
                 None,
-                zoomIn,
-                zoomOut,
-                zoomOrg,
-                keepPrevScale,
+                self.actions.zoomIn,
+                self.actions.zoomOut,
+                self.actions.zoomOrg,
+                self.actions.keepPrevScale,
                 None,
-                fitWindow,
-                fitWidth,
+                self.actions.fitWindow,
+                self.actions.fitWidth,
                 None,
-                brightnessContrast,
+                self.actions.brightnessContrast,
                 self.actions.toggle_keep_prev_brightness_contrast,
             ),
         )
@@ -831,6 +859,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Custom context menu for the canvas widget:
         utils.addActions(self.canvas.menus[0], self.context_menu_actions)
+        action = functools.partial(utils.newAction, self)
         utils.addActions(
             self.canvas.menus[1],
             (
@@ -839,6 +868,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
+    def _setup_toolbars(self) -> None:
         self._ai_assisted_annotation_widget: AiAssistedAnnotationWidget = (
             AiAssistedAnnotationWidget(
                 default_model=self._config["ai"]["default"],
@@ -862,21 +892,21 @@ class MainWindow(QtWidgets.QMainWindow):
             ToolBar(
                 title="Tools",
                 actions=[
-                    open_,
-                    opendir,
-                    openPrevImg,
-                    openNextImg,
-                    save,
-                    deleteFile,
+                    self.actions.open,
+                    self.actions.opendir,
+                    self.actions.openPrevImg,
+                    self.actions.openNextImg,
+                    self.actions.save,
+                    self.actions.deleteFile,
                     None,
-                    editMode,
-                    duplicate,
-                    delete,
-                    undo,
-                    brightnessContrast,
+                    self.actions.editMode,
+                    self.actions.duplicate,
+                    self.actions.delete,
+                    self.actions.undo,
+                    self.actions.brightnessContrast,
                     None,
-                    fitWindow,
-                    zoom,
+                    self.actions.fitWindow,
+                    self.actions.zoom,
                     None,
                     selectAiModel,
                     None,
@@ -896,12 +926,15 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
+    def _setup_statusbar(self) -> None:
         self.status_left = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
         self.status_right = StatusStats()
         self.statusBar().addWidget(self.status_left, 1)
         self.statusBar().addWidget(self.status_right, 0)
         self.statusBar().show()
 
+    def _setup_state(self, output_dir: str | None) -> None:
+        self._copied_shapes = []
         self.output_dir = output_dir
 
         # Application state.
@@ -924,7 +957,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileSearch.setText(self._config["file_search"])
 
         self._default_state: QtCore.QByteArray = self.saveState()
-        #
+
+    def _restore_settings(self) -> None:
         # XXX: Could be completely declarative.
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
@@ -947,6 +981,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
             self.move(primary_screen.availableGeometry().topLeft())
 
+    def _open_initial(self, filename: str | None) -> None:
         if filename:
             if osp.isdir(filename):
                 self._import_images_from_dir(
