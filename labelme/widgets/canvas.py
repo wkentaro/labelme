@@ -21,17 +21,13 @@ from labelme.shape import Shape
 
 from .download import download_ai_model
 
-# TODO(unknown):
-# - [maybe] Find optimal epsilon value.
-
-
 CURSOR_DEFAULT = Qt.ArrowCursor
 CURSOR_POINT = Qt.PointingHandCursor
 CURSOR_DRAW = Qt.CrossCursor
 CURSOR_MOVE = Qt.ClosedHandCursor
 CURSOR_GRAB = Qt.OpenHandCursor
 
-MOVE_SPEED = 5.0
+MOVE_SPEED: float = 5.0
 
 
 class CanvasMode(enum.Enum):
@@ -85,7 +81,7 @@ class Canvas(QtWidgets.QWidget):
     _osam_session: OsamSession | None
 
     def __init__(self, *args, **kwargs):
-        self.epsilon = kwargs.pop("epsilon", 10.0)
+        self.epsilon: float = kwargs.pop("epsilon", 10.0)
         self.double_click = kwargs.pop("double_click", "close")
         if self.double_click not in [None, "close"]:
             raise ValueError(
@@ -118,13 +114,13 @@ class Canvas(QtWidgets.QWidget):
         self.prevPoint = QPointF()
         self.prevMovePoint = QPointF()
         self.offsets = QPointF(), QPointF()
-        self.scale = 1.0
+        self.scale: float = 1.0
         self._osam_session = None
-        self.visible = {}
-        self._hideBackround = False
-        self.hideBackround = False
+        self.visible: dict = {}
+        self._hideBackround: bool = False
+        self.hideBackround: bool = False
         self.snapping = True
-        self.hShapeIsSelected = False
+        self.hShapeIsSelected: bool = False
         self._painter = QtGui.QPainter()
         self._dragging_start_pos = QPointF()
         self._is_dragging = False
@@ -133,7 +129,6 @@ class Canvas(QtWidgets.QWidget):
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
         self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
-        # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.WheelFocus)
 
@@ -237,13 +232,13 @@ class Canvas(QtWidgets.QWidget):
         self.restoreCursor()
         self._update_status()
 
-    def isVisible(self, shape):  # type: ignore[override]
+    def isVisible(self, shape: Shape) -> bool:  # type: ignore[override]
         return self.visible.get(shape, True)
 
-    def drawing(self):
+    def drawing(self) -> bool:
         return self.mode == CanvasMode.CREATE
 
-    def editing(self):
+    def editing(self) -> bool:
         return self.mode == CanvasMode.EDIT
 
     def setEditing(self, value=True):
@@ -276,10 +271,10 @@ class Canvas(QtWidgets.QWidget):
         self.hEdge = hEdge
         return need_update
 
-    def selectedVertex(self):
+    def selectedVertex(self) -> bool:
         return self.hVertex is not None
 
-    def selectedEdge(self):
+    def selectedEdge(self) -> bool:
         return self.hEdge is not None
 
     def _update_status(self, extra_messages: list[str] | None = None) -> None:
