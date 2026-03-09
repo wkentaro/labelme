@@ -830,5 +830,10 @@ Um den Einstellungseditor zu verwenden, starten Sie Labelme mit einer Konfigurat
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;%s&lt;/i&gt; eine gültige Bilddatei ist.&lt;/p&gt;</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>Layout zurücksetzen</translation>
+    </message>
 </context>
 </TS>

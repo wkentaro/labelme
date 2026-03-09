@@ -824,5 +824,10 @@ To use the preferences editor, start Labelme with a config file:
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;مطمئن شوید &lt;i&gt;%s&lt;/i&gt; یک فایل تصویر معتبر است.&lt;/p&gt;</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>بازنشانی چیدمان</translation>
+    </message>
 </context>
 </TS>

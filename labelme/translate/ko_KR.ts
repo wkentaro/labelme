@@ -824,5 +824,10 @@ To use the preferences editor, start Labelme with a config file:
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt;가 유효한 이미지 파일인지 확인하세요.&lt;/p&gt;</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>레이아웃 초기화</translation>
+    </message>
 </context>
 </TS>

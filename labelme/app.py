@@ -696,6 +696,11 @@ class MainWindow(QtWidgets.QMainWindow):
             brightnessContrast=brightnessContrast,
             openNextImg=openNextImg,
             openPrevImg=openPrevImg,
+            reset_layout=action(
+                text=self.tr("Reset Layout"),
+                slot=self._reset_layout,
+                icon="layout-duotone.svg",
+            ),
         )
         self.on_shapes_present_actions = (saveAs, hideAll, showAll, toggleAll)
 
@@ -800,6 +805,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
+                None,
+                self.actions.reset_layout,
                 None,
                 fill_drawing,
                 None,
@@ -916,24 +923,23 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._config["file_search"]:
             self.fileSearch.setText(self._config["file_search"])
 
+        self._default_state: QtCore.QByteArray = self.saveState()
+        #
         # XXX: Could be completely declarative.
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
-
+        #
         # Bump this when dock/toolbar layout changes to reset window state
         # for users upgrading from an older version.
         SETTINGS_VERSION: int = 1
         if self.settings.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
-            self.settings.remove("window/state")
+            self._reset_layout()
             self.settings.setValue("settingsVersion", SETTINGS_VERSION)
-
+        #
         self.recentFiles = self.settings.value("recentFiles", []) or []
-        size = self.settings.value("window/size", QtCore.QSize(900, 500))
-        position = self.settings.value("window/position", QtCore.QPoint(0, 0))
-        state = self.settings.value("window/state", QtCore.QByteArray())
-        self.resize(size)
-        self.move(position)
-        self.restoreState(state)
+        self.resize(self.settings.value("window/size", QtCore.QSize(900, 500)))
+        self.move(self.settings.value("window/position", QtCore.QPoint(0, 0)))
+        self.restoreState(self.settings.value("window/state", QtCore.QByteArray()))
 
         if filename:
             if osp.isdir(filename):
@@ -1925,6 +1931,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def enableSaveImageWithData(self, enabled):
         self._config["with_image_data"] = enabled
         self.actions.saveWithImageData.setChecked(enabled)
+
+    def _reset_layout(self):
+        self.settings.remove("window/state")
+        self.restoreState(self._default_state)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if not self._can_continue():

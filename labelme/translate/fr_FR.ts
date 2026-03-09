@@ -840,5 +840,10 @@ Pour utiliser l'éditeur de préférences, démarrez Labelme avec un fichier de 
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous que &lt;i&gt;%s&lt;/i&gt; est un fichier image valide.&lt;/p&gt;</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>Réinitialiser la disposition</translation>
+    </message>
 </context>
 </TS>
