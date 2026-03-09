@@ -919,14 +919,20 @@ class MainWindow(QtWidgets.QMainWindow):
         # XXX: Could be completely declarative.
         # Restore application settings.
         self.settings = QtCore.QSettings("labelme", "labelme")
+
+        # Bump this when dock/toolbar layout changes to reset window state
+        # for users upgrading from an older version.
+        SETTINGS_VERSION: int = 1
+        if self.settings.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
+            self.settings.remove("window/state")
+            self.settings.setValue("settingsVersion", SETTINGS_VERSION)
+
         self.recentFiles = self.settings.value("recentFiles", []) or []
         size = self.settings.value("window/size", QtCore.QSize(900, 500))
         position = self.settings.value("window/position", QtCore.QPoint(0, 0))
         state = self.settings.value("window/state", QtCore.QByteArray())
         self.resize(size)
         self.move(position)
-        # or simply:
-        # self.restoreGeometry(settings['window/geometry'])
         self.restoreState(state)
 
         if filename:
@@ -1928,8 +1934,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.setValue("window/position", self.pos())
         self.settings.setValue("window/state", self.saveState())
         self.settings.setValue("recentFiles", self.recentFiles)
-        # ask the use for where to save the labels
-        # self.settings.setValue('window/geometry', self.saveGeometry())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
         extensions = [
