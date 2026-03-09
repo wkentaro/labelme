@@ -940,6 +940,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(self.settings.value("window/size", QtCore.QSize(900, 500)))
         self.move(self.settings.value("window/position", QtCore.QPoint(0, 0)))
         self.restoreState(self.settings.value("window/state", QtCore.QByteArray()))
+        # Recover window position when the saved screen is no longer connected.
+        if not any(
+            s.availableGeometry().intersects(self.frameGeometry())
+            for s in QtWidgets.QApplication.screens()
+        ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
+            self.move(primary_screen.availableGeometry().topLeft())
 
         if filename:
             if osp.isdir(filename):
