@@ -325,6 +325,10 @@ class Shape:
     def containsPoint(self, point) -> bool:
         if self.shape_type in ["line", "linestrip", "points"]:
             return False
+        if self.shape_type == "point":
+            if not self.points:
+                return False
+            return labelme.utils.distance(point - self.points[0]) <= self.point_size / 2
         if self.mask is not None:
             raw_y = int(round(point.y() - self.points[0].y()))
             raw_x = int(round(point.x() - self.points[0].x()))
