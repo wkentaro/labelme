@@ -351,7 +351,7 @@ class MainWindow(QtWidgets.QMainWindow):
         createMode = action(
             text=self.tr("Create Polygons"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
-            shortcut=shortcuts["create_polygon"],
+            shortcut=[shortcuts["create_polygon"], "Tab"],
             icon="polygon.svg",
             tip=self.tr("Start drawing polygons"),
             enabled=False,
@@ -415,7 +415,7 @@ class MainWindow(QtWidgets.QMainWindow):
         editMode = action(
             self.tr("Edit Shapes"),
             lambda: self._switch_canvas_mode(edit=True),
-            shortcuts["edit_shape"],
+            [shortcuts["edit_shape"], "Escape"],
             icon="note-pencil.svg",
             tip=self.tr("Move and edit the selected shapes"),
             enabled=False,
