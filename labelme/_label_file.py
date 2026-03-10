@@ -50,15 +50,13 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     }
 
     assert "label" in shape_json_obj, f"label is required: {shape_json_obj}"
-    assert isinstance(shape_json_obj["label"], str), (
-        f"label must be str: {shape_json_obj['label']}"
-    )
+    if not isinstance(shape_json_obj["label"], str):
+        raise TypeError(f"label must be str: {shape_json_obj['label']!r}")
     label: str = shape_json_obj["label"]
 
     assert "points" in shape_json_obj, f"points is required: {shape_json_obj}"
-    assert isinstance(shape_json_obj["points"], list), (
-        f"points must be list: {shape_json_obj['points']}"
-    )
+    if not isinstance(shape_json_obj["points"], list):
+        raise TypeError(f"points must be list: {shape_json_obj['points']!r}")
     assert shape_json_obj["points"], f"points must be non-empty: {shape_json_obj}"
     assert all(
         isinstance(point, list)
@@ -69,16 +67,14 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     points: list[list[float]] = shape_json_obj["points"]
 
     assert "shape_type" in shape_json_obj, f"shape_type is required: {shape_json_obj}"
-    assert isinstance(shape_json_obj["shape_type"], str), (
-        f"shape_type must be str: {shape_json_obj['shape_type']}"
-    )
+    if not isinstance(shape_json_obj["shape_type"], str):
+        raise TypeError(f"shape_type must be str: {shape_json_obj['shape_type']!r}")
     shape_type: str = shape_json_obj["shape_type"]
 
     flags: dict = {}
     if shape_json_obj.get("flags") is not None:
-        assert isinstance(shape_json_obj["flags"], dict), (
-            f"flags must be dict: {shape_json_obj['flags']}"
-        )
+        if not isinstance(shape_json_obj["flags"], dict):
+            raise TypeError(f"flags must be dict: {shape_json_obj['flags']!r}")
         assert all(
             isinstance(k, str) and isinstance(v, bool)
             for k, v in shape_json_obj["flags"].items()
@@ -87,23 +83,24 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
     description: str = ""
     if shape_json_obj.get("description") is not None:
-        assert isinstance(shape_json_obj["description"], str), (
-            f"description must be str: {shape_json_obj['description']}"
-        )
+        if not isinstance(shape_json_obj["description"], str):
+            raise TypeError(
+                f"description must be str: {shape_json_obj['description']!r}"
+            )
         description = shape_json_obj["description"]
 
     group_id: int | None = None
     if shape_json_obj.get("group_id") is not None:
-        assert isinstance(shape_json_obj["group_id"], int), (
-            f"group_id must be int: {shape_json_obj['group_id']}"
-        )
+        if not isinstance(shape_json_obj["group_id"], int):
+            raise TypeError(f"group_id must be int: {shape_json_obj['group_id']!r}")
         group_id = shape_json_obj["group_id"]
 
     mask: NDArray[np.bool_] | None = None
     if shape_json_obj.get("mask") is not None:
-        assert isinstance(shape_json_obj["mask"], str), (
-            f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
-        )
+        if not isinstance(shape_json_obj["mask"], str):
+            raise TypeError(
+                f"mask must be base64-encoded PNG: {shape_json_obj['mask']!r}"
+            )
         mask = utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
@@ -123,17 +120,17 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
 
 class LabelFileError(Exception):
-    pass
+    """Raised when a label file cannot be loaded or saved."""
 
 
 class LabelFile:
     shapes: list[ShapeDict]
     suffix = ".json"
 
-    def __init__(self, filename=None):
+    def __init__(self, filename: str | None = None) -> None:
         self.shapes = []
-        self.imagePath = None
-        self.imageData = None
+        self.imagePath: str | None = None
+        self.imageData: bytes | None = None
         if filename is not None:
             self.load(filename)
         self.filename = filename
@@ -161,7 +158,7 @@ class LabelFile:
         )
         return imageData
 
-    def load(self, filename):
+    def load(self, filename: str) -> None:
         keys = [
             "version",
             "imageData",
@@ -173,7 +170,7 @@ class LabelFile:
         ]
         try:
             with _open(filename, "r") as f:
-                data = json.load(f)
+                data: dict = json.load(f)
 
             # Normalize Windows-style backslash paths to POSIX forward slashes
             imagePath = PureWindowsPath(data["imagePath"]).as_posix()
@@ -195,7 +192,7 @@ class LabelFile:
                 _load_shape_json_obj(shape_json_obj=s) for s in data["shapes"]
             ]
         except Exception as e:
-            raise LabelFileError(e)
+            raise LabelFileError(e) from e
 
         otherData = {}
         for key, value in data.items():
@@ -247,7 +244,7 @@ class LabelFile:
         if otherData is None:
             otherData = {}
         if flags is None:
-            flags = {}
+            flags: dict[str, bool] = {}
         data = dict(
             version=__version__,
             flags=flags,
@@ -265,7 +262,7 @@ class LabelFile:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
         except Exception as e:
-            raise LabelFileError(e)
+            raise LabelFileError(e) from e
 
     @staticmethod
     def is_label_file(filename):
