@@ -441,11 +441,17 @@ class Canvas(QtWidgets.QWidget):
         # - Highlight vertex
         # Update shape/vertex fill and tooltip value accordingly.
         status_messages: list[str] = []
-        for shape in ([self.hShape] if self.hShape else []) + [
+        self._highlight_hover_shape(pos=pos, status_messages=status_messages)
+        self.vertexSelected.emit(self.hVertex is not None)
+        self._update_status(extra_messages=status_messages)
+
+    def _highlight_hover_shape(self, pos: QPointF, status_messages: list[str]) -> None:
+        ordered_shapes: list[Shape] = ([self.hShape] if self.hShape else []) + [
             s for s in reversed(self.shapes) if self.isVisible(s) and s != self.hShape
-        ]:
-            # Look for a nearby vertex to highlight.
-            index = shape.nearestVertex(pos, self.epsilon)
+        ]
+
+        for shape in ordered_shapes:
+            index: int | None = shape.nearestVertex(pos, self.epsilon)
             if index is not None:
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=index)
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
@@ -456,18 +462,18 @@ class Canvas(QtWidgets.QWidget):
                         self.tr("ALT + SHIFT + Click to delete point")
                     )
                 self.update()
-                break
+                return
 
-            # Look for a nearby edge to highlight.
-            index_edge = shape.nearestEdge(pos, self.epsilon)
+        for shape in ordered_shapes:
+            index_edge: int | None = shape.nearestEdge(pos, self.epsilon)
             if index_edge is not None and shape.canAddPoint():
                 self._set_highlight(hShape=shape, hEdge=index_edge, hVertex=None)
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("ALT + Click to create point on shape"))
                 self.update()
-                break
+                return
 
-            # Check if we happen to be inside a shape.
+        for shape in ordered_shapes:
             if shape.containsPoint(pos):
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=None)
                 status_messages.extend(
@@ -478,13 +484,11 @@ class Canvas(QtWidgets.QWidget):
                 )
                 self.overrideCursor(CURSOR_GRAB)
                 self.update()
-                break
-        else:  # Nothing found, clear highlights, reset state.
-            self.restoreCursor()
-            if self._set_highlight(hShape=None, hEdge=None, hVertex=None):
-                self.update()
-        self.vertexSelected.emit(self.hVertex is not None)
-        self._update_status(extra_messages=status_messages)
+                return
+
+        self.restoreCursor()
+        if self._set_highlight(hShape=None, hEdge=None, hVertex=None):
+            self.update()
 
     def addPointToEdge(self):
         shape = self._lasthShape
