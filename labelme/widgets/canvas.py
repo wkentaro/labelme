@@ -173,7 +173,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
         response: osam.types.GenerateResponse = self._get_osam_session().run(
-            image=imgviz.asrgb(image),
+            image=imgviz.asrgb(image),  # type: ignore[arg-type]
             image_id=str(self._pixmap_hash),
             points=np.array([[p.x(), p.y()] for p in points]),
             point_labels=np.array(point_labels),
