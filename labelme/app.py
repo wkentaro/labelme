@@ -370,7 +370,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 edit=False, createMode="oriented rectangle"
             ),
             shortcuts["create_oriented_rectangle"],
-            "rectangle.svg",
+            "oriented_rectangle.svg",
             self.tr("Start drawing oriented rectangles"),
             enabled=False,
         )
