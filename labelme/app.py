@@ -366,7 +366,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         createOrientedRectangleMode = action(
             self.tr("Create Oriented Rectangle"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="oriented rectangle"),
+            lambda: self._switch_canvas_mode(
+                edit=False, createMode="oriented rectangle"
+            ),
             shortcuts["create_oriented_rectangle"],
             "rectangle.svg",
             self.tr("Start drawing oriented rectangles"),

@@ -382,7 +382,7 @@ class Canvas(QtWidgets.QWidget):
                 return
 
             if self.createMode == "oriented rectangle" and self.current.isClosed():
-                self.boundedMoveVertex(self.current, 2, pos)
+                self.boundedMoveVertex(self.current, 2, pos, False)
                 pos = self.current[2]
             elif self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
@@ -462,8 +462,6 @@ class Canvas(QtWidgets.QWidget):
                 self.boundedMoveVertex(
                     self.hShape,
                     self.hVertex,
-                    self.hShape,
-                    self.hVertex,
                     pos,
                     is_shift_pressed=is_shift_pressed,
                 )
@@ -505,7 +503,6 @@ class Canvas(QtWidgets.QWidget):
 
         for shape in ordered_shapes:
             index: int | None = shape.nearestVertex(pos, self.epsilon)
-            index_rotation_point = shape.nearestRotationPoint(pos, self.epsilon)
             if index is not None:
                 self._set_highlight(
                     hShape=shape, hEdge=None, hVertex=index, hRotation=None
@@ -521,17 +518,7 @@ class Canvas(QtWidgets.QWidget):
                 return
 
         for shape in ordered_shapes:
-            index_edge: int | None = shape.nearestEdge(pos, self.epsilon)
-            if index_edge is not None and shape.canAddPoint():
-                self._set_highlight(
-                    hShape=shape, hEdge=index_edge, hVertex=None, hRotation=None
-                )
-                self.overrideCursor(CURSOR_POINT)
-                status_messages.append(self.tr("ALT + Click to create point on shape"))
-                self.update()
-                return
-
-        for shape in ordered_shapes:
+            index_rotation_point = shape.nearestRotationPoint(pos, self.epsilon)
             if index_rotation_point is not None:
                 self._set_highlight(
                     hShape=shape,
@@ -543,8 +530,21 @@ class Canvas(QtWidgets.QWidget):
                 self.overrideCursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to rotate the shape"))
                 self.update()
-                break
-            elif shape.containsPoint(pos):
+                return
+
+        for shape in ordered_shapes:
+            index_edge: int | None = shape.nearestEdge(pos, self.epsilon)
+            if index_edge is not None and shape.canAddPoint():
+                self._set_highlight(
+                    hShape=shape, hEdge=index_edge, hVertex=None, hRotation=None
+                )
+                self.overrideCursor(CURSOR_POINT)
+                status_messages.append(self.tr("ALT + Click to create point on shape"))
+                self.update()
+                return
+
+        for shape in ordered_shapes:
+            if shape.containsPoint(pos):
                 self._set_highlight(
                     hShape=shape, hEdge=None, hVertex=None, hRotation=None
                 )
@@ -892,7 +892,7 @@ class Canvas(QtWidgets.QWidget):
                     pos=pos, opposite_vertex=shape[1 - vertex_index]
                 )
 
-            shape.moveVertex(i=vertex_index, offset=pos)
+            shape.moveVertex(vertex_index, pos)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
