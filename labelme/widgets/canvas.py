@@ -790,16 +790,26 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
-    def boundedMoveVertex(self, pos: QPointF) -> None:
-        if self.hVertex is None:
-            logger.warning("hVertex is None, so cannot move vertex: pos=%r", pos)
+    def boundedMoveVertex(
+        self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
+    ) -> None:
+        if vertex_index >= len(shape.points):
+            logger.warning(
+                "vertex_index is out of range: vertex_index={:d}, len(points)={:d}",
+                vertex_index,
+                len(shape.points),
+            )
             return
-        assert self.hShape is not None
 
-        point: QPointF = self.hShape[self.hVertex]
         if self.outOfPixmap(pos):
-            pos = self.intersectionPoint(point, pos)
-        self.hShape.moveVertexBy(i=self.hVertex, offset=pos - point)
+            pos = self.intersectionPoint(shape[vertex_index], pos)
+
+        if is_shift_pressed and shape.shape_type == "rectangle":
+            pos = _snap_cursor_pos_for_square(
+                pos=pos, opposite_vertex=shape[1 - vertex_index]
+            )
+
+        shape.moveVertex(i=vertex_index, pos=pos)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):
