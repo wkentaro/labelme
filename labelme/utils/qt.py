@@ -100,7 +100,7 @@ def fmtShortcut(text):
 
 def angleRad(p1: QtCore.QPointF, p2: QtCore.QPointF, flip_y=False):
     p = p2 - p1
-    return np.atan2(p.y() if flip_y == False else -p.y(), p.x())
+    return np.atan2(p.y() if not flip_y else -p.y(), p.x())
 
 
 def projectPointAtRightAngle(
@@ -133,22 +133,3 @@ def projectPointOnLine(
     )
     projected_p3 = np.array([p2.x(), p2.y()]) + offset_from_p2
     return QtCore.QPointF(*projected_p3)
-
-
-def rotate(point: np.ndarray | list, angle_rad: float):
-    """
-    Rotate a point around (0,0).
-    """
-    c, s = np.cos(angle_rad), np.sin(angle_rad)
-    rotation_mat = np.array([[c, -s], [s, c]])
-    return np.matmul(rotation_mat, np.transpose(point))
-
-
-def rotateMany(points, angle_deg: float):
-    """
-    Rotate a list of points around (0,0).
-    """
-    output = []
-    for p in points:
-        output.append(rotate(p, angle_deg))
-    return output

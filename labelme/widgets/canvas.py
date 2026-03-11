@@ -476,7 +476,7 @@ class Canvas(QtWidgets.QWidget):
                     self._rotation_center, self._rotation_pos, flip_y=True
                 )
                 angle = start_angle - edit_pos_angle
-                self.rotateShape(self.hShape, self._rotation_center, angle)
+                _rotateShape(self.hShape, self._rotation_center, angle)
                 self._rotation_pos = pos
                 self.repaint()
                 self.movingShape = True
@@ -819,22 +819,6 @@ class Canvas(QtWidgets.QWidget):
         x2 = right - point.x()
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
-
-    def rotateShape(
-        self, shape: Shape, rotation_center: QPointF, angle_rad: float
-    ) -> None:
-        assert shape.shape_type == "oriented rectangle", (
-            "Shape rotation is only supported for oriented rectangles"
-        )
-        rotation_center_np = np.array([rotation_center.x(), rotation_center.y()])
-        centered_points = (
-            np.array([[p.x(), p.y()] for p in shape.points]) - rotation_center_np
-        )
-        transformed_points = (
-            labelme.utils.rotateMany(centered_points, angle_rad) + rotation_center_np
-        )
-        for i, p in enumerate(transformed_points):
-            shape[i] = QPointF(*p)
 
     def boundedMoveVertex(
         self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
@@ -1347,3 +1331,26 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
         np.sign(pos_from_opposite.x()) * square_size,
         np.sign(pos_from_opposite.y()) * square_size,
     )
+
+
+def _rotate(point: np.ndarray, angle_rad: float) -> np.ndarray:
+    """
+    Rotate a point around (0,0).
+    """
+    c, s = np.cos(angle_rad), np.sin(angle_rad)
+    rotation_mat = np.array([[c, -s], [s, c]])
+    return np.matmul(rotation_mat, np.transpose(point))
+
+
+def _rotateShape(shape: Shape, rotation_center: QPointF, angle_rad: float) -> None:
+    assert shape.shape_type == "oriented rectangle", (
+        "Shape rotation is only supported for oriented rectangles"
+    )
+    rotation_center_np = np.array([rotation_center.x(), rotation_center.y()])
+    points_np = np.array([[p.x(), p.y()] for p in shape.points])
+    centered_points = points_np - rotation_center_np
+    transformed_points = [
+        _rotate(p, angle_rad) + rotation_center_np for p in centered_points
+    ]
+    for i, p in enumerate(transformed_points):
+        shape[i] = QPointF(*p)

@@ -29,7 +29,7 @@ class Shape:
     select_fill_color: QtGui.QColor = QtGui.QColor(0, 255, 0, 64)
     hvertex_fill_color: QtGui.QColor = QtGui.QColor(255, 255, 255, 255)
 
-    # TODO: Use to config file for the size of the orientation arrow.
+    # TODO: Expose a user config for the size of the orientation arrow.
     orientation_arrow_scale = np.array([5.0, 5.0])
     arrow_points = [
         np.array([0.22, -0.5]) * orientation_arrow_scale,
@@ -384,8 +384,9 @@ class Shape:
     def drawArrow(
         self, path: QtGui.QPainterPath, position: QtCore.QPointF, angle_rad: float
     ):
+        rotated_points = [_rotate(point, angle_rad) for point in self.arrow_points]
         transformed_points = np.add(
-            labelme.utils.rotateMany(self.arrow_points, angle_rad),
+            rotated_points,
             [position.x(), position.y()],
         )
         q_points = [self._scale_point(QtCore.QPointF(*p)) for p in transformed_points]
@@ -530,3 +531,12 @@ class Shape:
 
     def __setitem__(self, key, value):
         self.points[key] = value
+
+
+def _rotate(point: np.ndarray, angle_rad: float) -> np.ndarray:
+    """
+    Rotate a point around (0,0).
+    """
+    c, s = np.cos(angle_rad), np.sin(angle_rad)
+    rotation_mat = np.array([[c, -s], [s, c]])
+    return np.matmul(rotation_mat, np.transpose(point))
