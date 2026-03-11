@@ -261,7 +261,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
 
     def _set_highlight(
-        self, hShape: Shape | None, hEdge: int | None, hVertex: int | None
+        self, hShape: Shape | None, hEdge: int | None, hVertex: int | None, hRotation: int | None
     ) -> bool:
         need_update: bool = hShape is not None
         if self.hShape:
@@ -274,6 +274,7 @@ class Canvas(QtWidgets.QWidget):
         self.hShape = hShape
         self.hVertex = hVertex
         self.hEdge = hEdge
+        self.hRotation = hRotation
         return need_update
 
     def selectedVertex(self) -> bool:
@@ -790,6 +791,14 @@ class Canvas(QtWidgets.QWidget):
         y2 = bottom - point.y()
         self.offsets = QPointF(x1, y1), QPointF(x2, y2)
 
+    def rotateShape(self, shape: Shape, rotation_center: QPointF, angle_rad: float) -> None:
+        assert shape.shape_type == "oriented rectangle", "Shape rotation is only supported for oriented rectangles"
+        rotation_center_np = np.array([rotation_center.x(), rotation_center.y()])
+        centered_points = np.array([[p.x(), p.y()] for p in shape.points]) - rotation_center_np
+        transformed_points = labelme.utils.rotateMany(centered_points, angle_rad) + rotation_center_np
+        for i, p in enumerate(transformed_points):
+            shape[i] = QPointF(*p)
+
     def boundedMoveVertex(
         self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
     ) -> None:
@@ -801,15 +810,49 @@ class Canvas(QtWidgets.QWidget):
             )
             return
 
-        if self.outOfPixmap(pos):
-            pos = self.intersectionPoint(shape[vertex_index], pos)
+        if shape.shape_type == "oriented rectangle":
+            def _rectangle_fourth_point(p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF) -> QtCore.QPointF:
+                return p3 + p1 - p2
 
-        if is_shift_pressed and shape.shape_type == "rectangle":
-            pos = _snap_cursor_pos_for_square(
-                pos=pos, opposite_vertex=shape[1 - vertex_index]
-            )
+            assert shape.isClosed()
+            # Project the third editing point at a right angle.
+            p1 = shape[vertex_index-2]
+            p2 = shape[vertex_index-1]
+            p3 = pos
+            p4 = labelme.utils.projectPointAtRightAngle(p2, p1, p3)
+            p2 = _rectangle_fourth_point(p1, p4, p3)
 
-        shape.moveVertex(i=vertex_index, pos=pos)
+            if self.outOfPixmap(p3):
+                # Don't allow the user to draw outside the pixmap.
+                # Perform two intersections to get a line along the pixmap edge.
+                intersect_1 = self.intersectionPoint(p4, p3)
+                intersect_2 = self.intersectionPoint(p2, p3)
+                p3 = labelme.utils.projectPointOnLine(intersect_1, intersect_2, p3)
+                # Rebuild the rectangle.
+                p4 = labelme.utils.projectPointAtRightAngle(p2, p1, p3)
+                p2 = _rectangle_fourth_point(p1, p4, p3)
+
+            if self.outOfPixmap(p4):
+                p4 = self.intersectionPoint(p1, p4)
+                p3 = _rectangle_fourth_point(p4, p1, p2)
+            
+            if self.outOfPixmap(p2):
+                p2 = self.intersectionPoint(p1, p2)
+                p3 = _rectangle_fourth_point(p4, p1, p2)
+            
+            shape[vertex_index] = p3
+            shape[vertex_index-3] = p4
+            shape[vertex_index-1] = p2
+        else:
+            if self.outOfPixmap(pos):
+                pos = self.intersectionPoint(shape[vertex_index], pos)
+
+            if is_shift_pressed and shape.shape_type == "rectangle":
+                pos = _snap_cursor_pos_for_square(
+                    pos=pos, opposite_vertex=shape[1 - vertex_index]
+                )
+
+            shape.moveVertex(i=vertex_index, offset=pos)
 
     def boundedMoveShapes(self, shapes, pos):
         if self.outOfPixmap(pos):

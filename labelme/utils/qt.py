@@ -103,10 +103,6 @@ def angleRad(p1: QtCore.QPointF, p2: QtCore.QPointF, flip_y = False):
     return np.atan2(p.y() if flip_y == False else -p.y(), p.x())
 
 
-def rectangleFourthPoint(p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF) -> QtCore.QPointF:
-    return p3 + p1 - p2
-
-
 def projectPointAtRightAngle(p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF) -> QtCore.QPointF:
     """
     Find a new p3, such that the line 'p2 -> p3' forms a 90 degree angle with 'p2 -> p1'.
