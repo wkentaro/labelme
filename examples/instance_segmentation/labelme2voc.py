@@ -57,7 +57,7 @@ def main():
     else:
         labels = [label.strip() for label in args.labels.split(",")]
 
-    class_names = []
+    class_names: list[str] = []
     class_name_to_id = {}
     for i, label in enumerate(labels):
         class_id = i - 1  # starts with -1
@@ -69,7 +69,6 @@ def main():
         elif class_id == 0:
             assert class_name == "_background_"
         class_names.append(class_name)
-    class_names = tuple(class_names)
     print("class_names:", class_names)
     out_class_names_file = osp.join(args.output_dir, "class_names.txt")
     with open(out_class_names_file, "w") as f:

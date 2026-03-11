@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>點擊矩形對角</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>點擊以添加點</translation>
     </message>
@@ -159,6 +154,11 @@
         <source>Right-click &amp; drag to copy shape</source>
         <translation>右鍵點擊並拖拽以複製形狀</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>點擊矩形對角（Shift繪製正方形）</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>多邊形標籤</translation>
+        <source>Annotation List</source>
+        <translation>批註列表</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>編輯多邊形</translation>
+        <source>Edit Shapes</source>
+        <translation>編輯圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>移動、編輯選中的多邊形</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>移動、編輯選中的圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>刪除多邊形</translation>
+        <source>Delete Shapes</source>
+        <translation>刪除圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>刪除選中的多邊形</translation>
+        <source>Delete the selected shapes</source>
+        <translation>刪除選中的圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>複製多邊形</translation>
+        <source>Duplicate Shapes</source>
+        <translation>複製圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>為選中的多邊形創建副本</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>為選中的圖形創建副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>複製多邊形</translation>
+        <source>Copy Shapes</source>
+        <translation>複製圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>複製選中多邊形到剪貼板</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>複製選中圖形到剪貼板</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>粘貼多邊形</translation>
+        <source>Paste Shapes</source>
+        <translation>粘貼圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>粘貼已複製的多邊形</translation>
+        <source>Paste copied shapes</source>
+        <translation>粘貼已複製的圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>隱藏多邊形(&amp;H)</translation>
+Shapes</source>
+        <translation>隱藏圖形(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>隱藏所有多邊形</translation>
+        <source>Hide all shapes</source>
+        <translation>隱藏所有圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>顯示多邊形(&amp;S)</translation>
+Shapes</source>
+        <translation>顯示圖形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>顯示所有多邊形</translation>
+        <source>Show all shapes</source>
+        <translation>顯示所有圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>開關多邊形(&amp;S)</translation>
+Shapes</source>
+        <translation>開關圖形(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>開關所有多邊形</translation>
+        <source>Toggle all shapes</source>
+        <translation>開關所有圖形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>修改選中多邊形的標籤</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>修改選中圖形的標籤</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -690,11 +690,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;請確認&lt;i&gt;%s&lt;/i&gt;是一個合法的標籤文件。</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>打開文件發生錯誤 %s</translation>
     </message>
@@ -765,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>即將永久性刪除多邊形{}。還要繼續嗎?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>即將永久性刪除圖形{}。還要繼續嗎?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -782,6 +777,57 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>保留之前的亮度/對比度</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>偏好設定…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>在文字編輯器中開啟設定檔</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>沒有設定檔</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>設定已透過命令列以YAML表達式的形式提供。
+
+要使用偏好設定編輯器，請使用設定檔啟動Labelme：
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>設定錯誤</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>載入設定時發現錯誤。請檢查以下錯誤並重新載入設定，或忽略錯誤的行。</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;請確認&lt;i&gt;%s&lt;/i&gt;是一個合法的標籤文件。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;請確認&lt;i&gt;%s&lt;/i&gt;是一個合法的圖像文件。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>重置佈局</translation>
     </message>
 </context>
 </TS>

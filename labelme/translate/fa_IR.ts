@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>کلیک روی گوشه مقابل مستطیل</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
@@ -159,6 +154,11 @@
         <source>Right-click &amp; drag to copy shape</source>
         <translation>کلیک راست و کشیدن برای کپی شکل</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>کلیک روی گوشه مقابل مستطیل (Shift برای مربع)</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>برچسب‌های چندضلعی</translation>
+        <source>Annotation List</source>
+        <translation>فهرست حاشیه‌نویسی‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>ویرایش چندضلعی</translation>
+        <source>Edit Shapes</source>
+        <translation>ویرایش شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>جابجایی و ویرایش چندضلعی‌های انتخاب شده</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>جابجایی و ویرایش شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>حذف چندضلعی</translation>
+        <source>Delete Shapes</source>
+        <translation>حذف شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>حذف چندضلعی‌های انتخاب شده</translation>
+        <source>Delete the selected shapes</source>
+        <translation>حذف شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>تکثیر چندضلعی</translation>
+        <source>Duplicate Shapes</source>
+        <translation>تکثیر شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>ایجاد کپی از چندضلعی‌های انتخاب شده</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>ایجاد کپی از شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>کپی چندضلعی</translation>
+        <source>Copy Shapes</source>
+        <translation>کپی شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>کپی چندضلعی‌های انتخاب شده به کلیپ‌بورد</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>کپی شکل‌های انتخاب شده به کلیپ‌بورد</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>چسباندن چندضلعی</translation>
+        <source>Paste Shapes</source>
+        <translation>چسباندن شکل</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>چسباندن چندضلعی‌های کپی شده</translation>
+        <source>Paste copied shapes</source>
+        <translation>چسباندن شکل‌های کپی شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>مخفی کردن چندضلعی(&amp;H)</translation>
+Shapes</source>
+        <translation>مخفی کردن شکل(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>مخفی کردن همه چندضلعی‌ها</translation>
+        <source>Hide all shapes</source>
+        <translation>مخفی کردن همه شکل‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>نمایش چندضلعی(&amp;S)</translation>
+Shapes</source>
+        <translation>نمایش شکل(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>نمایش همه چندضلعی‌ها</translation>
+        <source>Show all shapes</source>
+        <translation>نمایش همه شکل‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>تغییر وضعیت چندضلعی(&amp;S)</translation>
+Shapes</source>
+        <translation>تغییر وضعیت شکل(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>تغییر وضعیت همه چندضلعی‌ها</translation>
+        <source>Toggle all shapes</source>
+        <translation>تغییر وضعیت همه شکل‌ها</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>تغییر برچسب چندضلعی انتخاب شده</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>تغییر برچسب شکل انتخاب شده</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -690,11 +690,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;مطمئن شوید &lt;i&gt;%s&lt;/i&gt; یک فایل برچسب معتبر است.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>خطا در خواندن %s</translation>
     </message>
@@ -765,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>شما در حال حذف دائمی {} چندضلعی هستید، ادامه دهید؟</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>شما در حال حذف دائمی {} شکل هستید، ادامه دهید؟</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -782,6 +777,57 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>نگه داشتن روشنایی/کنتراست قبلی</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>تنظیمات…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>باز کردن فایل پیکربندی در ویرایشگر متن</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>فایل پیکربندی وجود ندارد</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>پیکربندی به صورت عبارت YAML از طریق خط فرمان ارائه شده است.
+
+برای استفاده از ویرایشگر تنظیمات، Labelme را با یک فایل پیکربندی اجرا کنید:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>خطاهای پیکربندی</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>هنگام بارگیری پیکربندی خطاهایی یافت شد. لطفاً خطاهای زیر را بررسی کنید و پیکربندی خود را مجدداً بارگیری کنید یا خطوط نادرست را نادیده بگیرید.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;مطمئن شوید &lt;i&gt;%s&lt;/i&gt; یک فایل برچسب معتبر است.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;مطمئن شوید &lt;i&gt;%s&lt;/i&gt; یک فایل تصویر معتبر است.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>بازنشانی چیدمان</translation>
     </message>
 </context>
 </TS>

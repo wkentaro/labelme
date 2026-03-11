@@ -156,8 +156,8 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Klik op tegenoverliggende hoek voor rechthoek</translation>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Klik op tegenoverliggende hoek voor rechthoek (Shift voor vierkant)</translation>
     </message>
 </context>
 <context>
@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Polygoonlabels</translation>
+        <source>Annotation List</source>
+        <translation>Annotatielijst</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Polygonen Bewerken</translation>
+        <source>Edit Shapes</source>
+        <translation>Vormen Bewerken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>Verplaats en bewerk de geselecteerde polygonen</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>Verplaats en bewerk de geselecteerde vormen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Polygonen Verwijderen</translation>
+        <source>Delete Shapes</source>
+        <translation>Vormen Verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>Geselecteerde polygonen verwijderen</translation>
+        <source>Delete the selected shapes</source>
+        <translation>Geselecteerde vormen verwijderen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Polygonen Dupliceren</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Vormen Dupliceren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>Maak een duplicaat van de geselecteerde polygonen</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>Maak een duplicaat van de geselecteerde vormen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Polygonen Kopiëren</translation>
+        <source>Copy Shapes</source>
+        <translation>Vormen Kopiëren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Geselecteerde polygonen naar klembord kopiëren</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Geselecteerde vormen naar klembord kopiëren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Polygonen Plakken</translation>
+        <source>Paste Shapes</source>
+        <translation>Vormen Plakken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Gekopieerde polygonen plakken</translation>
+        <source>Paste copied shapes</source>
+        <translation>Gekopieerde vormen plakken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>Polygonen &amp;verbergen</translation>
+Shapes</source>
+        <translation>Vormen &amp;verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Alle polygonen verbergen</translation>
+        <source>Hide all shapes</source>
+        <translation>Alle vormen verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>Polygonen &amp;tonen</translation>
+Shapes</source>
+        <translation>Vormen &amp;tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Alle polygonen tonen</translation>
+        <source>Show all shapes</source>
+        <translation>Alle vormen tonen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>Polygonen &amp;omschakelen</translation>
+Shapes</source>
+        <translation>Vormen &amp;omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Alle polygonen omschakelen</translation>
+        <source>Toggle all shapes</source>
+        <translation>Alle vormen omschakelen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>Label van geselecteerde polygoon wijzigen</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>Label van geselecteerde vorm wijzigen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -690,11 +690,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig labelbestand is.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>Fout bij lezen van %s</translation>
     </message>
@@ -765,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>U staat op het punt {} polygonen permanent te verwijderen, doorgaan?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>U staat op het punt {} vormen permanent te verwijderen, doorgaan?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -782,6 +777,57 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorige Helderheid/Contrast Behouden</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>Voorkeuren…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>Configuratiebestand openen in teksteditor</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>Geen configuratiebestand</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>De configuratie is als YAML-expressie via de opdrachtregel opgegeven.
+
+Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Configuratiefouten</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Er zijn fouten gevonden bij het laden van de configuratie. Bekijk de onderstaande fouten en herlaad uw configuratie of negeer de foutieve regels.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig labelbestand is.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Zorg ervoor dat &lt;i&gt;%s&lt;/i&gt; een geldig afbeeldingsbestand is.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>Layout herstellen</translation>
     </message>
 </context>
 </TS>

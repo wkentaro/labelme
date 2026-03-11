@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>矩形の対角をクリック</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>クリックで頂点を追加</translation>
     </message>
@@ -159,6 +154,11 @@
         <source>Right-click &amp; drag to copy shape</source>
         <translation>右クリック &amp; ドラッグで図形をコピー</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>矩形の対角をクリック（Shiftで正方形）</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>ポリゴンラベル</translation>
+        <source>Annotation List</source>
+        <translation>アノテーション一覧</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -415,56 +415,56 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>ポリゴンを
+        <source>Edit Shapes</source>
+        <translation>図形を
 編集</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>選択したポリゴンを移動・編集</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>選択した図形を移動・編集</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>ポリゴンを
+        <source>Delete Shapes</source>
+        <translation>図形を
 削除</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>選択したポリゴンを削除</translation>
+        <source>Delete the selected shapes</source>
+        <translation>選択した図形を削除</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>ポリゴンを
+        <source>Duplicate Shapes</source>
+        <translation>図形を
 複製</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>選択したポリゴンの複製を作成</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>選択した図形の複製を作成</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>ポリゴンをコピー</translation>
+        <source>Copy Shapes</source>
+        <translation>図形をコピー</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>選択したポリゴンをクリップボードにコピー</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>選択した図形をクリップボードにコピー</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>ポリゴンを貼り付け</translation>
+        <source>Paste Shapes</source>
+        <translation>図形を貼り付け</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>コピーしたポリゴンを貼り付け</translation>
+        <source>Paste copied shapes</source>
+        <translation>コピーした図形を貼り付け</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -500,38 +500,38 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>ポリゴンを
+Shapes</source>
+        <translation>図形を
 非表示(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>すべてのポリゴンを非表示</translation>
+        <source>Hide all shapes</source>
+        <translation>すべての図形を非表示</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>ポリゴンを
+Shapes</source>
+        <translation>図形を
 表示(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>すべてのポリゴンを表示</translation>
+        <source>Show all shapes</source>
+        <translation>すべての図形を表示</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>ポリゴンを
+Shapes</source>
+        <translation>図形を
 切り替え(&amp;T)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>すべてのポリゴンの表示を切り替え</translation>
+        <source>Toggle all shapes</source>
+        <translation>すべての図形の表示を切り替え</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -637,8 +637,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>選択したポリゴンのラベルを変更</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>選択した図形のラベルを変更</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -722,11 +722,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt; が有効なラベルファイルであることを確認してください。&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>%s の読み込みエラー</translation>
     </message>
@@ -797,8 +792,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>{} 個のポリゴンを完全に削除します。続行しますか？</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>{} 個の図形を完全に削除します。続行しますか？</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -814,6 +809,57 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>前の明るさ/コントラストを保持</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>設定…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>テキストエディタで設定ファイルを開く</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>設定ファイルがありません</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>設定はコマンドラインからYAML式として提供されました。
+
+設定エディタを使用するには、設定ファイルを指定してLabelmeを起動してください:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>設定エラー</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>設定の読み込み中にエラーが見つかりました。以下のエラーを確認し、設定を再読み込みするか、エラーのある行を無視してください。</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt; が有効なラベルファイルであることを確認してください。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt; が有効な画像ファイルであることを確認してください。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>レイアウトをリセット</translation>
     </message>
 </context>
 </TS>

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "labelme"
-description = "Image Polygonal Annotation with Python"
+description = "Image annotation with Python."
 license = { text = "GPL-3.0-only" }
 requires-python = ">=3.10"
 authors = [{ name = "Kentaro Wada", email = "www.kentaro.wada@gmail.com" }]
@@ -22,18 +22,19 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "imgviz",
+  "imgviz>=2.0.0",
   "loguru",
   "matplotlib",
   "natsort>=7.1.0",
   "numpy",
-  "osam>=0.3.0a1",
+  "osam>=0.3.1",
   "pillow>=2.8",
   "pyqt5>=5.14.0",
   "pyqt5-qt5!=5.15.13 ; sys_platform == 'linux'",
   "pyqt5-qt5!=5.15.11,!=5.15.12,!=5.15.13,!=5.15.14,!=5.15.15,!=5.15.16 ; sys_platform == 'win32'",
   "pyyaml",
   "scikit-image",
+  "tifffile",
 ]
 dynamic = ["readme", "version"]
 
@@ -62,7 +63,6 @@ labelme = "labelme.__main__:main"
 labelme_draw_json = "labelme.cli.draw_json:main"
 labelme_draw_label_png = "labelme.cli.draw_label_png:main"
 labelme_export_json = "labelme.cli.export_json:main"
-labelme_on_docker = "labelme.cli.on_docker:main"
 
 [tool.pytest.ini_options]
 qt_api = "pyqt5"

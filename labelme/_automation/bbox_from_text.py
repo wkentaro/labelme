@@ -124,8 +124,7 @@ def get_shapes_from_bboxes(
                     [xmin, ymin],
                 ]
             else:
-                mask = masks[i]
-                points = compute_polygon_from_mask(mask=mask).tolist()
+                points = compute_polygon_from_mask(mask=masks[i]).tolist()
         elif shape_type == "mask":
             xmin = int(xmin)
             ymin = int(ymin)

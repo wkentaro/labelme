@@ -136,11 +136,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>사각형의 대각 모서리 클릭</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>점 추가를 위해 클릭</translation>
     </message>
@@ -159,6 +154,11 @@
         <source>Right-click &amp; drag to copy shape</source>
         <translation>우클릭하고 드래그하여 도형 복사</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>사각형의 대각 모서리 클릭 (Shift로 정사각형)</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>다각형 레이블</translation>
+        <source>Annotation List</source>
+        <translation>주석 목록</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -396,53 +396,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>다각형 편집</translation>
+        <source>Edit Shapes</source>
+        <translation>도형 편집</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>선택한 다각형 이동 및 편집</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>선택한 도형 이동 및 편집</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>다각형 삭제</translation>
+        <source>Delete Shapes</source>
+        <translation>도형 삭제</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>선택한 다각형 삭제</translation>
+        <source>Delete the selected shapes</source>
+        <translation>선택한 도형 삭제</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>다각형 복제</translation>
+        <source>Duplicate Shapes</source>
+        <translation>도형 복제</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>선택한 다각형의 복사본 생성</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>선택한 도형의 복사본 생성</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>다각형 복사</translation>
+        <source>Copy Shapes</source>
+        <translation>도형 복사</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>선택한 다각형을 클립보드에 복사</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>선택한 도형을 클립보드에 복사</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>다각형 붙여넣기</translation>
+        <source>Paste Shapes</source>
+        <translation>도형 붙여넣기</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>복사한 다각형 붙여넣기</translation>
+        <source>Paste copied shapes</source>
+        <translation>복사한 도형 붙여넣기</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -478,35 +478,35 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
-        <translation>다각형 숨기기(&amp;H)</translation>
+Shapes</source>
+        <translation>도형 숨기기(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>모든 다각형 숨기기</translation>
+        <source>Hide all shapes</source>
+        <translation>모든 도형 숨기기</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
-        <translation>다각형 표시(&amp;S)</translation>
+Shapes</source>
+        <translation>도형 표시(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>모든 다각형 표시</translation>
+        <source>Show all shapes</source>
+        <translation>모든 도형 표시</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
-        <translation>다각형 토글(&amp;S)</translation>
+Shapes</source>
+        <translation>도형 토글(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>모든 다각형 토글</translation>
+        <source>Toggle all shapes</source>
+        <translation>모든 도형 토글</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -610,8 +610,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>선택한 다각형의 레이블 수정</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>선택한 도형의 레이블 수정</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -690,11 +690,6 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt;가 유효한 레이블 파일인지 확인하세요.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>%s 읽기 오류</translation>
     </message>
@@ -765,8 +760,8 @@ Polygons</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>{}개의 다각형을 영구적으로 삭제하시겠습니까?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>{}개의 도형을 영구적으로 삭제하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -782,6 +777,57 @@ Polygons</source>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>이전 밝기/대비 유지</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>환경설정…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>텍스트 편집기에서 설정 파일 열기</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>설정 파일 없음</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>설정이 명령줄에서 YAML 표현식으로 제공되었습니다.
+
+환경설정 편집기를 사용하려면 설정 파일과 함께 Labelme를 시작하세요:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>구성 오류</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>구성을 불러오는 중 오류가 발견되었습니다. 아래 오류를 검토하고 구성을 다시 불러오거나 잘못된 줄을 무시하세요.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt;가 유효한 레이블 파일인지 확인하세요.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;%s&lt;/i&gt;가 유효한 이미지 파일인지 확인하세요.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>레이아웃 초기화</translation>
     </message>
 </context>
 </TS>

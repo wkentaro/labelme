@@ -7,15 +7,7 @@ import uuid
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
-from loguru import logger
 from numpy.typing import NDArray
-
-
-def polygons_to_mask(img_shape, polygons, shape_type=None):
-    logger.warning(
-        "The 'polygons_to_mask' function is deprecated, use 'shape_to_mask' instead."
-    )
-    return shape_to_mask(img_shape, points=polygons, shape_type=shape_type)
 
 
 def shape_to_mask(
@@ -35,7 +27,12 @@ def shape_to_mask(
         draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
     elif shape_type == "rectangle":
         assert len(xy) == 2, "Shape of shape_type=rectangle must have 2 points"
-        draw.rectangle(xy, outline=1, fill=1)  # type: ignore[arg-type]
+        (x0, y0), (x1, y1) = xy
+        draw.rectangle(
+            ((min(x0, x1), min(y0, y1)), (max(x0, x1), max(y0, y1))),
+            outline=1,
+            fill=1,
+        )
     elif shape_type == "line":
         assert len(xy) == 2, "Shape of shape_type=line must have 2 points"
         draw.line(xy=xy, fill=1, width=line_width)  # type: ignore[arg-type]
@@ -88,24 +85,6 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
         ins[mask] = ins_id
 
     return cls, ins
-
-
-def labelme_shapes_to_label(img_shape, shapes):
-    logger.warning(
-        "labelme_shapes_to_label is deprecated, so please use shapes_to_label."
-    )
-
-    label_name_to_value = {"_background_": 0}
-    for shape in shapes:
-        label_name = shape["label"]
-        if label_name in label_name_to_value:
-            label_value = label_name_to_value[label_name]
-        else:
-            label_value = len(label_name_to_value)
-            label_name_to_value[label_name] = label_value
-
-    lbl, _ = shapes_to_label(img_shape, shapes, label_name_to_value)
-    return lbl, label_name_to_value
 
 
 def masks_to_bboxes(masks):

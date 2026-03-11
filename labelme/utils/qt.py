@@ -85,9 +85,12 @@ def distancetoline(point, line):
         return np.linalg.norm(p3 - p1)
     if np.dot((p3 - p2), (p1 - p2)) < 0:
         return np.linalg.norm(p3 - p2)
-    if np.linalg.norm(p2 - p1) == 0:
+    d = p2 - p1
+    if np.linalg.norm(d) == 0:
         return np.linalg.norm(p3 - p1)
-    return np.linalg.norm(np.cross(p2 - p1, p1 - p3)) / np.linalg.norm(p2 - p1)
+    v = p1 - p3
+    cross = d[0] * v[1] - d[1] * v[0]
+    return abs(cross) / np.linalg.norm(d)
 
 
 def fmtShortcut(text):

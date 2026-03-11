@@ -8,23 +8,17 @@ from PyQt5 import QtGui
 
 import labelme.utils
 
-# TODO(unknown):
-# - [opt] Store paths instead of creating new ones at each paint.
-
 
 class Shape:
-    # Render handles as squares
+    # Handle point styles: square or round
     P_SQUARE = 0
-
-    # Render handles as circles
     P_ROUND = 1
 
-    # Flag for the handles we would move if dragging
+    # Vertex interaction modes
     MOVE_VERTEX = 0
-
-    # Flag for all other handles on the current shape
     NEAR_VERTEX = 1
 
+    # Width of the shape outline pen
     PEN_WIDTH = 2
 
     # The following class variables influence the drawing of all shape objects.
@@ -45,6 +39,7 @@ class Shape:
     ]
     orientation_arrow_size = np.max(arrow_points, axis=0) - np.min(arrow_points, axis=0)
 
+    # Default handle style, size, and zoom scale
     point_type = P_ROUND
     point_size = 8
     scale = 1.0
@@ -77,6 +72,7 @@ class Shape:
         self.other_data = {}
         self.mask = mask
 
+        # Highlight state: which vertex is highlighted and how it looks
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
         self._highlightSettings = {
@@ -89,9 +85,7 @@ class Shape:
         self._closed = False
 
         if line_color is not None:
-            # Override the class line_color attribute
-            # with an object attribute. Currently this
-            # is used for drawing the pending line a different color.
+            # Per-instance line color override (used for the pending line).
             self.line_color = line_color
 
     def _scale_point(self, point: QtCore.QPointF) -> QtCore.QPointF:
@@ -201,7 +195,7 @@ class Shape:
         pen.setWidth(self.PEN_WIDTH)
         painter.setPen(pen)
 
-        if self.mask is not None:
+        if self.shape_type == "mask" and self.mask is not None:
             image_to_draw = np.zeros(self.mask.shape + (4,), dtype=np.uint8)
             fill_color = (
                 self.select_fill_color.getRgb()
@@ -441,18 +435,21 @@ class Shape:
     def containsPoint(self, point) -> bool:
         if self.shape_type in ["line", "linestrip", "points"]:
             return False
+        if self.shape_type == "point":
+            if not self.points:
+                return False
+            return labelme.utils.distance(point - self.points[0]) <= self.point_size / 2
         if self.mask is not None:
-            y = np.clip(
-                int(round(point.y() - self.points[0].y())),
-                0,
-                self.mask.shape[0] - 1,
-            )
-            x = np.clip(
-                int(round(point.x() - self.points[0].x())),
-                0,
-                self.mask.shape[1] - 1,
-            )
-            return self.mask[y, x]
+            raw_y = int(round(point.y() - self.points[0].y()))
+            raw_x = int(round(point.x() - self.points[0].x()))
+            if (
+                raw_y < 0
+                or raw_y >= self.mask.shape[0]
+                or raw_x < 0
+                or raw_x >= self.mask.shape[1]
+            ):
+                return False
+            return bool(self.mask[raw_y, raw_x])
         return self.makePath().contains(point)
 
     def getRotationPoints(self) -> list[QtCore.QPointF]:
@@ -484,8 +481,8 @@ class Shape:
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
 
-    def moveVertexBy(self, i, offset):
-        self.points[i] = self.points[i] + offset
+    def moveVertex(self, i, pos):
+        self.points[i] = pos
 
     def highlightVertex(self, i, action):
         """Highlight a vertex appropriately based on the current action

@@ -126,11 +126,6 @@
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click opposite corner for rectangle</source>
-        <translation>Gegenüberliegende Ecke des Rechtecks anklicken</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>Klicken zum Hinzufügen eines Punktes</translation>
     </message>
@@ -159,6 +154,11 @@
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Rechtsklick und Ziehen, um die Form zu kopieren</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner for rectangle (Shift for square)</source>
+        <translation>Gegenüberliegende Ecke des Rechtecks anklicken (Shift für Quadrat)</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -169,8 +169,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Polygon Labels</source>
-        <translation>Polygon-Labels</translation>
+        <source>Annotation List</source>
+        <translation>Annotationsliste</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -403,53 +403,53 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Edit Polygons</source>
-        <translation>Polygone bearbeiten</translation>
+        <source>Edit Shapes</source>
+        <translation>Formen bearbeiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Move and edit the selected polygons</source>
-        <translation>Ausgewählte Polygone verschieben und bearbeiten</translation>
+        <source>Move and edit the selected shapes</source>
+        <translation>Ausgewählte Formen verschieben und bearbeiten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete Polygons</source>
-        <translation>Polygone löschen</translation>
+        <source>Delete Shapes</source>
+        <translation>Formen löschen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Delete the selected polygons</source>
-        <translation>Ausgewählte Polygone löschen</translation>
+        <source>Delete the selected shapes</source>
+        <translation>Ausgewählte Formen löschen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Duplicate Polygons</source>
-        <translation>Polygone duplizieren</translation>
+        <source>Duplicate Shapes</source>
+        <translation>Formen duplizieren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create a duplicate of the selected polygons</source>
-        <translation>Duplikat der ausgewählten Polygone erstellen</translation>
+        <source>Create a duplicate of the selected shapes</source>
+        <translation>Duplikat der ausgewählten Formen erstellen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy Polygons</source>
-        <translation>Polygone kopieren</translation>
+        <source>Copy Shapes</source>
+        <translation>Formen kopieren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Copy selected polygons to clipboard</source>
-        <translation>Ausgewählte Polygone in Zwischenablage kopieren</translation>
+        <source>Copy selected shapes to clipboard</source>
+        <translation>Ausgewählte Formen in Zwischenablage kopieren</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste Polygons</source>
-        <translation>Polygone einfügen</translation>
+        <source>Paste Shapes</source>
+        <translation>Formen einfügen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Paste copied polygons</source>
-        <translation>Kopierte Polygone einfügen</translation>
+        <source>Paste copied shapes</source>
+        <translation>Kopierte Formen einfügen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -486,38 +486,38 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
-Polygons</source>
+Shapes</source>
         <translation>&amp;Verbergen
-Polygone</translation>
+Formen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Hide all polygons</source>
-        <translation>Alle Polygone verbergen</translation>
+        <source>Hide all shapes</source>
+        <translation>Alle Formen verbergen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
-Polygons</source>
+Shapes</source>
         <translation>&amp;Anzeigen
-Polygone</translation>
+Formen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Show all polygons</source>
-        <translation>Alle Polygone anzeigen</translation>
+        <source>Show all shapes</source>
+        <translation>Alle Formen anzeigen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
-Polygons</source>
+Shapes</source>
         <translation>&amp;Umschalten
-Polygone</translation>
+Formen</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle all polygons</source>
-        <translation>Alle Polygone umschalten</translation>
+        <source>Toggle all shapes</source>
+        <translation>Alle Formen umschalten</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -621,8 +621,8 @@ Polygone</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Modify the label of the selected polygon</source>
-        <translation>Label des ausgewählten Polygons ändern</translation>
+        <source>Modify the label of the selected shape</source>
+        <translation>Label der ausgewählten Form ändern</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -706,11 +706,6 @@ Polygone</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;%s&lt;/i&gt; eine gültige Beschriftungsdatei ist.&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
         <translation>Fehler beim Lesen von %s</translation>
     </message>
@@ -781,13 +776,64 @@ Polygone</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>You are about to permanently delete {} polygons, proceed anyway?</source>
-        <translation>Möchten Sie {} Polygone endgültig löschen?</translation>
+        <source>You are about to permanently delete {} shapes, proceed anyway?</source>
+        <translation>Möchten Sie {} Formen endgültig löschen?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Verzeichnis öffnen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Preferences…</source>
+        <translation>Einstellungen…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Open config file in text editor</source>
+        <translation>Konfigurationsdatei im Texteditor öffnen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>No Config File</source>
+        <translation>Keine Konfigurationsdatei</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration was provided as a YAML expression via command line.
+
+To use the preferences editor, start Labelme with a config file:
+  labelme --config ~/.labelmerc</source>
+        <translation>Die Konfiguration wurde als YAML-Ausdruck über die Kommandozeile bereitgestellt.
+
+Um den Einstellungseditor zu verwenden, starten Sie Labelme mit einer Konfigurationsdatei:
+  labelme --config ~/.labelmerc</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Errors</source>
+        <translation>Konfigurationsfehler</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
+        <translation>Beim Laden der Konfiguration wurden Fehler gefunden. Bitte überprüfen Sie die folgenden Fehler und laden Sie Ihre Konfiguration neu oder ignorieren Sie die fehlerhaften Zeilen.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;%s&lt;/i&gt; eine gültige Beschriftungsdatei ist.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Stellen Sie sicher, dass &lt;i&gt;%s&lt;/i&gt; eine gültige Bilddatei ist.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Reset Layout</source>
+        <translation>Layout zurücksetzen</translation>
     </message>
 </context>
 </TS>
