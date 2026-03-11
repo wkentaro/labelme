@@ -107,7 +107,8 @@ def projectPointAtRightAngle(
     p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF
 ) -> QtCore.QPointF:
     """
-    Find a new p3, such that the line 'p2 -> p3' forms a 90 degree angle with 'p2 -> p1'.
+    Find a new p3, such that the line 'p2 -> p3' forms a 90 degree
+    angle with 'p2 -> p1'.
     """
     target_vec = np.array(
         [p1.y() - p2.y(), -(p1.x() - p2.x())]
