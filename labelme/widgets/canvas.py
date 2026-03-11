@@ -426,6 +426,8 @@ class Canvas(QtWidgets.QWidget):
         # Polygon/Vertex moving.
         if Qt.LeftButton & a0.buttons():
             if self.selectedVertex():
+                assert self.hVertex is not None
+                assert self.hShape is not None
                 self.boundedMoveVertex(
                     self.hShape, self.hVertex, pos, is_shift_pressed=is_shift_pressed
                 )
@@ -738,11 +740,6 @@ class Canvas(QtWidgets.QWidget):
     def boundedMoveVertex(
         self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
     ) -> None:
-        if vertex_index is None:
-            logger.warning("vertex_index is None, so cannot move vertex: pos={!r}", pos)
-            return
-        assert shape is not None
-
         if vertex_index >= len(shape.points):
             logger.warning(
                 "vertex_index is out of range: vertex_index={:d}, len(points)={:d}",
