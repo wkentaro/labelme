@@ -79,8 +79,8 @@ class Shape:
             self.NEAR_VERTEX: (4, self.P_ROUND),
             self.MOVE_VERTEX: (1.5, self.P_SQUARE),
         }
-        self._highlight_rotation_point_index = None,
-        self._highlight_orientation_arrow = False,
+        self._highlight_rotation_point_index = (None,)
+        self._highlight_orientation_arrow = (False,)
 
         self._closed = False
 
@@ -129,7 +129,7 @@ class Shape:
     def close(self):
         self._closed = True
 
-    def addPoint(self, point, label=1):      
+    def addPoint(self, point, label=1):
         if self.shape_type == "oriented rectangle":
             self.points.append(point)
             self.point_labels.append(label)
@@ -302,7 +302,9 @@ class Shape:
                 painter.fillPath(vrtx_path, self._current_vertex_fill_color)
             if rotation_points_path.length() > 0:
                 painter.drawPath(rotation_points_path)
-                painter.fillPath(rotation_points_path, self._current_rotation_point_fill_color)
+                painter.fillPath(
+                    rotation_points_path, self._current_rotation_point_fill_color
+                )
             if self.fill and self.shape_type not in [
                 "line",
                 "linestrip",
@@ -311,7 +313,7 @@ class Shape:
             ]:
                 color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
-            
+
             if orientation_arrow_path.length() > 0:
                 if self._highlight_orientation_arrow:
                     arrow_highlight_color = self.hvertex_fill_color
@@ -367,11 +369,11 @@ class Shape:
             shape = self.point_type
             d = self.point_size
             point = self._scale_point(p)
-            
+
             if i == self._highlight_rotation_point_index:
                 size, shape = self._highlightSettings[self._highlightMode]
                 d *= size  # type: ignore[assignment]
-            
+
             if shape == self.P_SQUARE:
                 path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
             elif shape == self.P_ROUND:
@@ -379,8 +381,13 @@ class Shape:
             else:
                 assert False, "unsupported rotation point shape"
 
-    def drawArrow(self, path: QtGui.QPainterPath, position: QtCore.QPointF, angle_rad: float):
-        transformed_points = np.add(labelme.utils.rotateMany(self.arrow_points, angle_rad), [position.x(), position.y()])
+    def drawArrow(
+        self, path: QtGui.QPainterPath, position: QtCore.QPointF, angle_rad: float
+    ):
+        transformed_points = np.add(
+            labelme.utils.rotateMany(self.arrow_points, angle_rad),
+            [position.x(), position.y()],
+        )
         q_points = [self._scale_point(QtCore.QPointF(*p)) for p in transformed_points]
 
         path.moveTo(q_points[0])
@@ -420,7 +427,7 @@ class Shape:
     def nearestRotationPoint(self, point, epsilon):
         if self.shape_type != "oriented rectangle":
             return None
-        
+
         min_distance = float("inf")
         min_i = None
         point = self._scale_point(point)
@@ -456,7 +463,7 @@ class Shape:
         rotation_points = []
         if self.shape_type == "oriented rectangle":
             for i, p in enumerate(self.points):
-                rotation_points.append((p + self.points[i-1])/2)
+                rotation_points.append((p + self.points[i - 1]) / 2)
         return rotation_points
 
     def makePath(self):

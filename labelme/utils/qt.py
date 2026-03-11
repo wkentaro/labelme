@@ -98,29 +98,39 @@ def fmtShortcut(text):
     return f"<b>{mod}</b>+<b>{key}</b>"
 
 
-def angleRad(p1: QtCore.QPointF, p2: QtCore.QPointF, flip_y = False):
+def angleRad(p1: QtCore.QPointF, p2: QtCore.QPointF, flip_y=False):
     p = p2 - p1
     return np.atan2(p.y() if flip_y == False else -p.y(), p.x())
 
 
-def projectPointAtRightAngle(p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF) -> QtCore.QPointF:
+def projectPointAtRightAngle(
+    p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF
+) -> QtCore.QPointF:
     """
     Find a new p3, such that the line 'p2 -> p3' forms a 90 degree angle with 'p2 -> p1'.
     """
-    target_vec = np.array([p1.y() - p2.y(), -(p1.x() - p2.x())]) # Vector perpendicular from 'p2 -> p1'.
-    source_vec = np.array([p3.x() - p2.x(), p3.y() - p2.y()]) # Vector 'p2 -> p3'.
-    offset_from_p2 = target_vec * np.dot(target_vec, source_vec) / np.dot(target_vec, target_vec)
+    target_vec = np.array(
+        [p1.y() - p2.y(), -(p1.x() - p2.x())]
+    )  # Vector perpendicular from 'p2 -> p1'.
+    source_vec = np.array([p3.x() - p2.x(), p3.y() - p2.y()])  # Vector 'p2 -> p3'.
+    offset_from_p2 = (
+        target_vec * np.dot(target_vec, source_vec) / np.dot(target_vec, target_vec)
+    )
     projected_p3 = np.array([p2.x(), p2.y()]) + offset_from_p2
     return QtCore.QPointF(*projected_p3)
 
 
-def projectPointOnLine(p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF) -> QtCore.QPointF:
+def projectPointOnLine(
+    p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF
+) -> QtCore.QPointF:
     """
     Find a new p3 projected along the 'p1 -> p2' line.
     """
-    target_vec = np.array([p1.x() - p2.x(), p1.y() - p2.y()]) # Vector 'p1 -> p2'.
-    source_vec = np.array([p3.x() - p2.x(), p3.y() - p2.y()]) # Vector 'p2 -> p3'.
-    offset_from_p2 = target_vec * np.dot(target_vec, source_vec) / np.dot(target_vec, target_vec)
+    target_vec = np.array([p1.x() - p2.x(), p1.y() - p2.y()])  # Vector 'p1 -> p2'.
+    source_vec = np.array([p3.x() - p2.x(), p3.y() - p2.y()])  # Vector 'p2 -> p3'.
+    offset_from_p2 = (
+        target_vec * np.dot(target_vec, source_vec) / np.dot(target_vec, target_vec)
+    )
     projected_p3 = np.array([p2.x(), p2.y()]) + offset_from_p2
     return QtCore.QPointF(*projected_p3)
 
