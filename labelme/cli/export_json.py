@@ -1,10 +1,12 @@
 import argparse
+import io
 import os
 import os.path as osp
 
 import imgviz
 import numpy as np
 import PIL.Image
+import PIL.ImageOps
 from loguru import logger
 from numpy.typing import NDArray
 
@@ -30,7 +32,11 @@ def main():
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
-    image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
+    _pil: PIL.Image.Image = PIL.Image.open(io.BytesIO(label_file.imageData))
+    _pil = PIL.ImageOps.exif_transpose(_pil)
+    if _pil.mode not in ("RGB", "RGBA"):
+        _pil = _pil.convert("RGB")
+    image: NDArray[np.uint8] = np.array(_pil)
 
     label_name_to_value: dict[str, int] = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):
