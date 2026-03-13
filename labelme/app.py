@@ -1729,7 +1729,7 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast,
         )
         dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData).convert("RGB"),
+            utils.img_data_to_pil(self.imageData),
             self.onNewBrightnessContrast,
             parent=self,
         )
