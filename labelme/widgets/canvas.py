@@ -838,14 +838,14 @@ class Canvas(QtWidgets.QWidget):
             p.drawLine(
                 0,
                 int(self.prevMovePoint.y() * self.scale),
-                self.width() - 1,
+                int(self.pixmap.width() * self.scale) - 1,
                 int(self.prevMovePoint.y() * self.scale),
             )
             p.drawLine(
                 int(self.prevMovePoint.x() * self.scale),
                 0,
                 int(self.prevMovePoint.x() * self.scale),
-                self.height() - 1,
+                int(self.pixmap.height() * self.scale) - 1,
             )
 
         Shape.scale = self.scale
