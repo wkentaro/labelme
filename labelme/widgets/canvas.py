@@ -73,6 +73,7 @@ class Canvas(QtWidgets.QWidget):
     prevMovePoint: QPointF
     offsets: tuple[QPointF, QPointF]
 
+    # Middle-button pan state.
     _dragging_start_pos: QPointF
     _is_dragging: bool
     _is_dragging_enabled: bool
@@ -122,9 +123,9 @@ class Canvas(QtWidgets.QWidget):
         self.snapping = True
         self.hShapeIsSelected: bool = False
         self._painter = QtGui.QPainter()
-        self._dragging_start_pos = QPointF()
-        self._is_dragging = False
-        self._is_dragging_enabled = False
+        self._dragging_start_pos: QPointF = QPointF()
+        self._is_dragging: bool = False
+        self._is_dragging_enabled: bool = False
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -342,10 +343,11 @@ class Canvas(QtWidgets.QWidget):
         is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
         if self._is_dragging:
+            # Pan the view by the distance moved since the drag started.
             self.overrideCursor(CURSOR_GRAB)
-            delta: QPointF = pos - self._dragging_start_pos
-            self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
-            self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
+            offset: QPointF = pos - self._dragging_start_pos
+            self.scrollRequest.emit(int(offset.x()), Qt.Horizontal)
+            self.scrollRequest.emit(int(offset.y()), Qt.Vertical)
             return
 
         # Polygon drawing.
@@ -602,9 +604,9 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
             self.prevPoint = pos
         elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
-            self.overrideCursor(CURSOR_GRAB)
             self._dragging_start_pos = pos
             self._is_dragging = True
+            self.overrideCursor(CURSOR_GRAB)
         self._update_status()
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
@@ -626,8 +628,8 @@ class Canvas(QtWidgets.QWidget):
                         [x for x in self.selectedShapes if x != self.hShape]
                     )
         elif a0.button() == Qt.MiddleButton:
-            self._is_dragging = False
             self.restoreCursor()
+            self._is_dragging = False
 
         if self.movingShape and self.hShape:
             index = self.shapes.index(self.hShape)
@@ -899,7 +901,8 @@ class Canvas(QtWidgets.QWidget):
         """Convert from widget-logical coordinates to painter-logical ones."""
         return point / self.scale - self.offsetToCenter()
 
-    def enableDragging(self, enabled: bool):
+    def enableDragging(self, enabled: bool) -> None:
+        """Enable or disable middle-button drag-to-pan."""
         self._is_dragging_enabled = enabled
 
     def offsetToCenter(self) -> QPointF:
@@ -1002,13 +1005,11 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self):
         if not self.pixmap:
             return super().minimumSizeHint()
-
-        min_size = self.scale * self.pixmap.size()
+        size = self.scale * self.pixmap.size()
         if self._is_dragging_enabled:
-            # When drag buffer should be enabled, add a bit of buffer around the image
-            # This lets dragging the image around have a bit of give on the edges
-            min_size = 1.167 * min_size
-        return min_size
+            # Add a small buffer so the image can be panned near its edges.
+            size = 1.167 * size
+        return size
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
