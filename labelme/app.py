@@ -1560,6 +1560,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def pasteSelectedShape(self):
         self._load_shapes(shapes=self._copied_shapes, replace=False)
+        self.canvas.selectShapes(self._copied_shapes)
         self.setDirty()
 
     def copySelectedShape(self):
