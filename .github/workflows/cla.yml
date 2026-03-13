@@ -8,9 +8,6 @@ on:
 
 jobs:
   cla:
-    if: |
-      (github.event_name == 'pull_request_target') ||
-      (github.event_name == 'issue_comment' && github.event.comment.body == 'recheck')
     runs-on: ubuntu-latest
     steps:
       - name: CLA Assistant
