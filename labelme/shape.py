@@ -294,7 +294,7 @@ class Shape:
         else:
             assert False, "unsupported vertex shape"
 
-    def nearestVertex(self, point, epsilon):
+    def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")
         min_i = None
         point = self._scale_point(point)
@@ -306,7 +306,7 @@ class Shape:
                 min_i = i
         return min_i
 
-    def nearestEdge(self, point, epsilon):
+    def nearestEdge(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")
         post_i = None
         point = self._scale_point(point)
@@ -320,7 +320,7 @@ class Shape:
                 post_i = i
         return post_i
 
-    def containsPoint(self, point) -> bool:
+    def containsPoint(self, point: QtCore.QPointF) -> bool:
         if self.shape_type in ["line", "linestrip", "points"]:
             return False
         if self.shape_type == "point":
@@ -362,22 +362,14 @@ class Shape:
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
 
-    def moveVertex(self, i, pos):
+    def moveVertex(self, i: int, pos: QtCore.QPointF) -> None:
         self.points[i] = pos
 
-    def highlightVertex(self, i, action):
-        """Highlight a vertex appropriately based on the current action
-
-        Args:
-            i (int): The vertex index
-            action (int): The action
-            (see Shape.NEAR_VERTEX and Shape.MOVE_VERTEX)
-        """
+    def highlightVertex(self, i: int, action: int) -> None:
         self._highlightIndex = i
         self._highlightMode = action
 
-    def highlightClear(self):
-        """Clear the highlighted point"""
+    def highlightClear(self) -> None:
         self._highlightIndex = None
 
     def copy(self):
