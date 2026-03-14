@@ -86,6 +86,12 @@ class _StatusBarWidgets(NamedTuple):
     stats: StatusStats
 
 
+class _CanvasWidgets(NamedTuple):
+    canvas: Canvas
+    zoom_widget: ZoomWidget
+    scroll_bars: dict[Qt.Orientation, QtWidgets.QScrollBar]
+
+
 class _DockWidgets(NamedTuple):
     flag_dock: QtWidgets.QDockWidget
     flag_list: QtWidgets.QListWidget
@@ -107,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
     _prev_opened_dir: str | None
+    _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
     _docks: _DockWidgets
 
@@ -176,36 +183,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._prev_opened_dir = None
         self._docks = self._setup_dock_widgets()
 
-        self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
-
-        self.canvas = Canvas(
-            epsilon=self._config["epsilon"],
-            double_click=self._config["canvas"]["double_click"],
-            num_backups=self._config["canvas"]["num_backups"],
-            crosshair=self._config["canvas"]["crosshair"],
-        )
-        self.canvas.zoomRequest.connect(self._zoom_requested)
-        self.canvas.mouseMoved.connect(self._update_status_stats)
-        self.canvas.statusUpdated.connect(
-            lambda text: self._status_bar.message.setText(text)
-        )
-
-        scrollArea = QtWidgets.QScrollArea()
-        scrollArea.setWidget(self.canvas)
-        scrollArea.setWidgetResizable(True)
-        self.scrollBars = {
-            Qt.Vertical: scrollArea.verticalScrollBar(),
-            Qt.Horizontal: scrollArea.horizontalScrollBar(),
-        }
-        self.canvas.scrollRequest.connect(self.scrollRequest)
-
-        self.canvas.newShape.connect(self.newShape)
-        self.canvas.shapeMoved.connect(self.setDirty)
-        self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
-        self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
-
-        self.setCentralWidget(scrollArea)
+        self._canvas_widgets = self._setup_canvas()
 
         # Actions (keyboard shortcuts + callbacks).
         action = functools.partial(utils.newAction, self)
@@ -424,7 +403,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         undoLastPoint = action(
             self.tr("Undo last point"),
-            self.canvas.undoLastPoint,
+            self._canvas_widgets.canvas.undoLastPoint,
             shortcuts["undo_last_point"],
             icon="arrow-u-up-left.svg",
             tip=self.tr("Undo last drawn point"),
@@ -485,10 +464,10 @@ class MainWindow(QtWidgets.QMainWindow):
         zoomLabel = QtWidgets.QLabel(self.tr("Zoom"))
         zoomLabel.setAlignment(Qt.AlignCenter)
         zoomBoxLayout.addWidget(zoomLabel)
-        zoomBoxLayout.addWidget(self.zoomWidget)
+        zoomBoxLayout.addWidget(self._canvas_widgets.zoom_widget)
         zoom.setDefaultWidget(QtWidgets.QWidget())
         zoom.defaultWidget().setLayout(zoomBoxLayout)
-        self.zoomWidget.setWhatsThis(
+        self._canvas_widgets.zoom_widget.setWhatsThis(
             str(
                 self.tr(
                     "Zoom in or out of the image. Also accessible with "
@@ -499,7 +478,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 utils.fmtShortcut(self.tr("Ctrl+Wheel")),
             )
         )
-        self.zoomWidget.setEnabled(False)
+        self._canvas_widgets.zoom_widget.setEnabled(False)
 
         zoomIn = action(
             self.tr("Zoom &In"),
@@ -579,7 +558,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         fill_drawing = action(
             self.tr("Fill Drawing Polygon"),
-            self.canvas.setFillDrawing,
+            self._canvas_widgets.canvas.setFillDrawing,
             None,
             icon="paint-bucket.svg",
             tip=self.tr("Fill polygon while drawing"),
@@ -686,7 +665,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Group zoom controls into a list for easier toggling.
         self.zoom_actions = (
-            self.zoomWidget,
+            self._canvas_widgets.zoom_widget,
             zoomIn,
             zoomOut,
             zoomOrg,
@@ -734,7 +713,9 @@ class MainWindow(QtWidgets.QMainWindow):
             toggle_keep_prev_mode,
         )
 
-        self.canvas.vertexSelected.connect(self.actions.removePoint.setEnabled)
+        self._canvas_widgets.canvas.vertexSelected.connect(
+            self.actions.removePoint.setEnabled
+        )
 
         self.menus = types.SimpleNamespace(
             file=self.menu(self.tr("&File")),
@@ -799,9 +780,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
         # Custom context menu for the canvas widget:
-        utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         utils.addActions(
-            self.canvas.menus[1],
+            self._canvas_widgets.canvas.menus[0], self.context_menu_actions
+        )
+        utils.addActions(
+            self._canvas_widgets.canvas.menus[1],
             (
                 action("&Copy here", self.copyShape),
                 action("&Move here", self.moveShape),
@@ -811,7 +794,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_assisted_annotation_widget: AiAssistedAnnotationWidget = (
             AiAssistedAnnotationWidget(
                 default_model=self._config["ai"]["default"],
-                on_model_changed=self.canvas.set_ai_model_name,
+                on_model_changed=self._canvas_widgets.canvas.set_ai_model_name,
                 parent=self,
             )
         )
@@ -873,7 +856,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.updateFileMenu()
 
         # Callbacks:
-        self.zoomWidget.valueChanged.connect(self._paint_canvas)
+        self._canvas_widgets.zoom_widget.valueChanged.connect(self._paint_canvas)
 
         self.populateModeActions()
 
@@ -942,6 +925,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().addWidget(stats, 0)
         self.statusBar().show()
         return _StatusBarWidgets(message=message, stats=stats)
+
+    def _setup_canvas(self) -> _CanvasWidgets:
+        zoom_widget = ZoomWidget()
+
+        canvas = Canvas(
+            epsilon=self._config["epsilon"],
+            double_click=self._config["canvas"]["double_click"],
+            num_backups=self._config["canvas"]["num_backups"],
+            crosshair=self._config["canvas"]["crosshair"],
+        )
+        canvas.zoomRequest.connect(self._zoom_requested)
+        canvas.mouseMoved.connect(self._update_status_stats)
+        canvas.statusUpdated.connect(
+            lambda text: self._status_bar.message.setText(text)
+        )
+
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidget(canvas)
+        scroll_area.setWidgetResizable(True)
+        scroll_bars = {
+            Qt.Vertical: scroll_area.verticalScrollBar(),
+            Qt.Horizontal: scroll_area.horizontalScrollBar(),
+        }
+        canvas.scrollRequest.connect(self.scrollRequest)
+
+        canvas.newShape.connect(self.newShape)
+        canvas.shapeMoved.connect(self.setDirty)
+        canvas.selectionChanged.connect(self.shapeSelectionChanged)
+        canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
+
+        self.setCentralWidget(scroll_area)
+
+        return _CanvasWidgets(
+            canvas=canvas,
+            zoom_widget=zoom_widget,
+            scroll_bars=scroll_bars,
+        )
 
     def _setup_dock_widgets(self) -> _DockWidgets:
         flag_list = QtWidgets.QListWidget()
@@ -1068,8 +1088,10 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self._docks.label_list)
 
     def populateModeActions(self) -> None:
-        self.canvas.menus[0].clear()
-        utils.addActions(self.canvas.menus[0], self.context_menu_actions)
+        self._canvas_widgets.canvas.menus[0].clear()
+        utils.addActions(
+            self._canvas_widgets.canvas.menus[0], self.context_menu_actions
+        )
         self.menus.edit.clear()
         actions = (
             *[draw_action for _, draw_action in self.draw_actions],
@@ -1094,7 +1116,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setDirty(self) -> None:
         # Even if we autosave the file, we keep the ability to undo
-        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
+        self.actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
 
         if self._config["auto_save"] or self.actions.saveAuto.isChecked():
             assert self._image_path
@@ -1135,13 +1157,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _submit_ai_prompt(self, _) -> None:
         if (
-            self.canvas.createMode
+            self._canvas_widgets.canvas.createMode
             not in _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE
         ):
-            logger.warning("Unsupported createMode={!r}", self.canvas.createMode)
+            logger.warning(
+                "Unsupported createMode={!r}", self._canvas_widgets.canvas.createMode
+            )
             return
         shape_type: Literal["rectangle", "polygon", "mask"] = (
-            _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE[self.canvas.createMode]
+            _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE[
+                self._canvas_widgets.canvas.createMode
+            ]
         )
 
         texts = self._ai_text_to_annotation_widget.get_text_prompt().split(",")
@@ -1165,7 +1191,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         SCORE_FOR_EXISTING_SHAPE: float = 1.01
-        for shape in self.canvas.shapes:
+        for shape in self._canvas_widgets.canvas.shapes:
             if shape.shape_type != shape_type or shape.label not in texts:
                 continue
             points: NDArray[np.float64] = np.array(
@@ -1206,7 +1232,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shape_type=shape_type,
         )
 
-        self.canvas.storeShapes()
+        self._canvas_widgets.canvas.storeShapes()
         self._load_shapes(shapes, replace=False)
         self.setDirty()
 
@@ -1217,7 +1243,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imageData = None
         self._label_file = None
         self._other_data = None
-        self.canvas.resetState()
+        self._canvas_widgets.canvas.resetState()
 
     def currentItem(self) -> LabelListWidgetItem | None:
         items = self._docks.label_list.selectedItems()
@@ -1235,10 +1261,10 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callbacks
 
     def undoShapeEdit(self) -> None:
-        self.canvas.restoreShape()
+        self._canvas_widgets.canvas.restoreShape()
         self._docks.label_list.clear()
-        self._load_shapes(self.canvas.shapes)
-        self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
+        self._load_shapes(self._canvas_widgets.canvas.shapes)
+        self.actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
 
     def tutorial(self):
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
@@ -1257,9 +1283,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _switch_canvas_mode(
         self, edit: bool = True, createMode: str | None = None
     ) -> None:
-        self.canvas.setEditing(edit)
+        self._canvas_widgets.canvas.setEditing(edit)
         if createMode is not None:
-            self.canvas.createMode = createMode
+            self._canvas_widgets.canvas.createMode = createMode
         if edit:
             for _, draw_action in self.draw_actions:
                 draw_action.setEnabled(True)
@@ -1368,7 +1394,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        self.canvas.storeShapes()
+        self._canvas_widgets.canvas.storeShapes()
         for item in items:
             shape: Shape = item.shape()  # type: ignore[no-redef]
 
@@ -1425,11 +1451,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.itemSelectionChanged.disconnect(
             self._label_selection_changed
         )
-        for shape in self.canvas.selectedShapes:
+        for shape in self._canvas_widgets.canvas.selectedShapes:
             shape.selected = False
         self._docks.label_list.clearSelection()
-        self.canvas.selectedShapes = selected_shapes
-        for shape in self.canvas.selectedShapes:
+        self._canvas_widgets.canvas.selectedShapes = selected_shapes
+        for shape in self._canvas_widgets.canvas.selectedShapes:
             shape.selected = True
             item = self._docks.label_list.findItemByShape(shape)
             self._docks.label_list.selectItem(item)
@@ -1536,7 +1562,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.itemSelectionChanged.connect(
             self._label_selection_changed
         )
-        self.canvas.loadShapes(shapes=shapes, replace=replace)
+        self._canvas_widgets.canvas.loadShapes(shapes=shapes, replace=replace)
 
     def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
         shapes: list[Shape] = []
@@ -1648,11 +1674,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def pasteSelectedShape(self) -> None:
         self._load_shapes(shapes=self._copied_shapes, replace=False)
-        self.canvas.selectShapes(self._copied_shapes)
+        self._canvas_widgets.canvas.selectShapes(self._copied_shapes)
         self.setDirty()
 
     def copySelectedShape(self) -> None:
-        self._copied_shapes = [s.copy() for s in self.canvas.selectedShapes]
+        self._copied_shapes = [
+            s.copy() for s in self._canvas_widgets.canvas.selectedShapes
+        ]
         self.actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
     def _label_selection_changed(self) -> None:
@@ -1660,18 +1688,22 @@ class MainWindow(QtWidgets.QMainWindow):
         for item in self._docks.label_list.selectedItems():
             selected_shapes.append(item.shape())
         if selected_shapes:
-            self.canvas.selectShapes(selected_shapes)
+            self._canvas_widgets.canvas.selectShapes(selected_shapes)
         else:
-            if self.canvas.deSelectShape():
-                self.canvas.update()
+            if self._canvas_widgets.canvas.deSelectShape():
+                self._canvas_widgets.canvas.update()
 
     def labelItemChanged(self, item: LabelListWidgetItem) -> None:
         shape = item.shape()
-        self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+        self._canvas_widgets.canvas.setShapeVisible(
+            shape, item.checkState() == Qt.Checked
+        )
 
     def labelOrderChanged(self) -> None:
         self.setDirty()
-        self.canvas.loadShapes([item.shape() for item in self._docks.label_list])
+        self._canvas_widgets.canvas.loadShapes(
+            [item.shape() for item in self._docks.label_list]
+        )
 
     # Callback functions:
 
@@ -1703,7 +1735,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ""
         if text:
             self._docks.label_list.clearSelection()
-            shape = self.canvas.setLastLabel(text, flags)
+            shape = self._canvas_widgets.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
             shape.description = description
             self.addLabel(shape)
@@ -1712,17 +1744,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.undo.setEnabled(True)
             self.setDirty()
         else:
-            self.canvas.undoLastLine()
-            self.canvas.shapesBackups.pop()
+            self._canvas_widgets.canvas.undoLastLine()
+            self._canvas_widgets.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta: int, orientation: Qt.Orientation) -> None:
         units = -delta * 0.1  # natural scroll
-        bar = self.scrollBars[orientation]
+        bar = self._canvas_widgets.scroll_bars[orientation]
         value = bar.value() + bar.singleStep() * units
         self.setScroll(orientation, value)
 
     def setScroll(self, orientation: Qt.Orientation, value: float) -> None:
-        self.scrollBars[orientation].setValue(int(value))
+        self._canvas_widgets.scroll_bars[orientation].setValue(int(value))
         if self._filename is not None:
             self._scroll_values[orientation][self._filename] = value
 
@@ -1732,18 +1764,20 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         if pos is None:
-            pos = QtCore.QPointF(self.canvas.visibleRegion().boundingRect().center())
-        canvas_width_old: int = self.canvas.width()
+            pos = QtCore.QPointF(
+                self._canvas_widgets.canvas.visibleRegion().boundingRect().center()
+            )
+        canvas_width_old: int = self._canvas_widgets.canvas.width()
 
         self.actions.fitWidth.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
         self.actions.fitWindow.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
-        self.canvas.enableDragging(
+        self._canvas_widgets.canvas.enableDragging(
             enabled=value > int(self.scalers[_ZoomMode.FIT_WINDOW]() * 100)
         )
-        self.zoomWidget.setValue(value)  # triggers self._paint_canvas
+        self._canvas_widgets.zoom_widget.setValue(value)  # triggers self._paint_canvas
         self._zoom_values[self._filename] = (self._zoom_mode, value)
 
-        canvas_width_new: int = self.canvas.width()
+        canvas_width_new: int = self._canvas_widgets.canvas.width()
         if canvas_width_old == canvas_width_new:
             return
         canvas_scale_factor = canvas_width_new / canvas_width_old
@@ -1751,11 +1785,11 @@ class MainWindow(QtWidgets.QMainWindow):
         y_shift: float = pos.y() * canvas_scale_factor - pos.y()
         self.setScroll(
             Qt.Horizontal,
-            self.scrollBars[Qt.Horizontal].value() + x_shift,
+            self._canvas_widgets.scroll_bars[Qt.Horizontal].value() + x_shift,
         )
         self.setScroll(
             Qt.Vertical,
-            self.scrollBars[Qt.Vertical].value() + y_shift,
+            self._canvas_widgets.scroll_bars[Qt.Vertical].value() + y_shift,
         )
 
     def _set_zoom_to_original(self):
@@ -1765,9 +1799,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def _add_zoom(self, increment: float, pos: QtCore.QPointF | None = None) -> None:
         zoom_value: int
         if increment > 1:
-            zoom_value = math.ceil(self.zoomWidget.value() * increment)
+            zoom_value = math.ceil(self._canvas_widgets.zoom_widget.value() * increment)
         else:
-            zoom_value = math.floor(self.zoomWidget.value() * increment)
+            zoom_value = math.floor(
+                self._canvas_widgets.zoom_widget.value() * increment
+            )
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
 
@@ -1791,7 +1827,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.keepPrevScale.setChecked(enabled)
 
     def onNewBrightnessContrast(self, qimage):
-        self.canvas.loadPixmap(QtGui.QPixmap.fromImage(qimage), clear_shapes=False)
+        self._canvas_widgets.canvas.loadPixmap(
+            QtGui.QPixmap.fromImage(qimage), clear_shapes=False
+        )
 
     def brightnessContrast(self, value: bool, is_initial_load: bool = False):
         if self._filename is None:
@@ -1861,14 +1899,14 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         prev_shapes: list[Shape] = (
-            self.canvas.shapes
+            self._canvas_widgets.canvas.shapes
             if self._config["keep_prev"]
             or QtWidgets.QApplication.keyboardModifiers()
             == (Qt.ControlModifier | Qt.ShiftModifier)
             else []
         )
         self.resetState()
-        self.canvas.setEnabled(False)
+        self._canvas_widgets.canvas.setEnabled(False)
         if filename is None:
             filename = self.settings.value("filename", "")
         filename = str(filename)
@@ -1946,7 +1984,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image = image
         self._filename = filename
         t0 = time.time()
-        self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
+        self._canvas_widgets.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
         if self._label_file:
@@ -1959,7 +1997,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setDirty()
         else:
             self.setClean()
-        self.canvas.setEnabled(True)
+        self._canvas_widgets.canvas.setEnabled(True)
         # set zoom values
         is_initial_load = not self._zoom_values
         if self._filename in self._zoom_values:
@@ -1978,7 +2016,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._paint_canvas()
         self.addRecentFile(self._filename)
         self.toggleActions(True)
-        self.canvas.setFocus()
+        self._canvas_widgets.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
         logger.info(
             "Loaded file: {!r} in {:.0f}ms",
@@ -1989,7 +2027,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         if (
-            self.canvas
+            self._canvas_widgets.canvas
             and not self._image.isNull()
             and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
@@ -2000,9 +2038,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._image.isNull():
             logger.warning("image is null, cannot paint canvas")
             return
-        self.canvas.scale = 0.01 * self.zoomWidget.value()
-        self.canvas.adjustSize()
-        self.canvas.update()
+        self._canvas_widgets.canvas.scale = (
+            0.01 * self._canvas_widgets.zoom_widget.value()
+        )
+        self._canvas_widgets.canvas.adjustSize()
+        self._canvas_widgets.canvas.update()
 
     def _adjust_scale(self) -> None:
         self._set_zoom(value=int(self.scalers[self._zoom_mode]() * 100))
@@ -2013,8 +2053,8 @@ class MainWindow(QtWidgets.QMainWindow):
         h1: float = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
         a1: float = w1 / h1
 
-        w2: float = self.canvas.pixmap.width()
-        h2: float = self.canvas.pixmap.height()
+        w2: float = self._canvas_widgets.canvas.pixmap.width()
+        h2: float = self._canvas_widgets.canvas.pixmap.height()
         a2: float = w2 / h2
 
         return w1 / w2 if a2 >= a1 else h1 / h2
@@ -2022,7 +2062,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def scaleFitWidth(self):
         EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
         w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        return w / self.canvas.pixmap.width()
+        return w / self._canvas_widgets.canvas.pixmap.width()
 
     def enableSaveImageWithData(self, enabled):
         self._config["with_image_data"] = enabled
@@ -2196,7 +2236,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resetState()
         self.setClean()
         self.toggleActions(False)
-        self.canvas.setEnabled(False)
+        self._canvas_widgets.canvas.setEnabled(False)
         self._docks.file_list.setFocus()
         self.actions.saveAs.setEnabled(False)
 
@@ -2298,11 +2338,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["keep_prev"] = not self._config["keep_prev"]
 
     def removeSelectedPoint(self) -> None:
-        self.canvas.removeSelectedPoint()
-        self.canvas.update()
-        if self.canvas.hShape and not self.canvas.hShape.points:
-            self.canvas.deleteShape(self.canvas.hShape)
-            self.remLabels([self.canvas.hShape])
+        self._canvas_widgets.canvas.removeSelectedPoint()
+        self._canvas_widgets.canvas.update()
+        if (
+            self._canvas_widgets.canvas.hShape
+            and not self._canvas_widgets.canvas.hShape.points
+        ):
+            self._canvas_widgets.canvas.deleteShape(self._canvas_widgets.canvas.hShape)
+            self.remLabels([self._canvas_widgets.canvas.hShape])
             if self.noShapes():
                 for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
@@ -2312,25 +2355,25 @@ class MainWindow(QtWidgets.QMainWindow):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
             "You are about to permanently delete {} shapes, proceed anyway?"
-        ).format(len(self.canvas.selectedShapes))
+        ).format(len(self._canvas_widgets.canvas.selectedShapes))
         if yes == QtWidgets.QMessageBox.warning(
             self, self.tr("Attention"), msg, yes | no, yes
         ):
-            self.remLabels(self.canvas.deleteSelected())
+            self.remLabels(self._canvas_widgets.canvas.deleteSelected())
             self.setDirty()
             if self.noShapes():
                 for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
 
     def copyShape(self) -> None:
-        self.canvas.endMove(copy=True)
-        for shape in self.canvas.selectedShapes:
+        self._canvas_widgets.canvas.endMove(copy=True)
+        for shape in self._canvas_widgets.canvas.selectedShapes:
             self.addLabel(shape)
         self._docks.label_list.clearSelection()
         self.setDirty()
 
     def moveShape(self) -> None:
-        self.canvas.endMove(copy=False)
+        self._canvas_widgets.canvas.endMove(copy=False)
         self.setDirty()
 
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
@@ -2426,7 +2469,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
-        stats.append(f"mode={self.canvas.mode.name}")
+        stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self._status_bar.stats.setText(" | ".join(stats))
 
