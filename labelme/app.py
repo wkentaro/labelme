@@ -102,21 +102,30 @@ class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
 
-    filename: str | None
     _text_osam_session: OsamSession | None = None
     _is_changed: bool = False
     _copied_shapes: list[Shape]
     _zoom_mode: _ZoomMode
-    _zoom_values: dict[str, tuple[_ZoomMode, int]]
-    _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
     _prev_opened_dir: str | None
-    _other_data: dict | None
     _status_bar: _StatusBarWidgets
     _docks: _DockWidgets
 
     # Override `actions` type annotation so that type checkers know it holds a
     # SimpleNamespace of QAction objects rather than the base-class callable.
     actions: types.SimpleNamespace  # type: ignore[assignment]
+
+    output_dir: str | None
+    filename: str | None
+    image: QtGui.QImage
+    labelFile: LabelFile | None
+    imagePath: str | None
+    recentFiles: list[str]
+    maxRecent: int
+    _other_data: dict | None
+    _zoom_values: dict[str, tuple[_ZoomMode, int]]
+    _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
+    scroll_values: dict[Qt.Orientation, dict[str, float]]
+    _default_state: QtCore.QByteArray
 
     def __init__(
         self,
@@ -858,28 +867,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
 
+        self._setup_app_state(output_dir=output_dir, filename=filename)
+
+        # Populate the File menu dynamically.
+        self.updateFileMenu()
+
+        # Callbacks:
+        self.zoomWidget.valueChanged.connect(self._paint_canvas)
+
+        self.populateModeActions()
+
+    def _setup_app_state(
+        self,
+        *,
+        output_dir: str | None,
+        filename: str | None,
+    ) -> None:
         self.output_dir = output_dir
 
-        # Application state.
         self.image = QtGui.QImage()
-        self.labelFile: LabelFile | None = None
-        self.imagePath: str | None = None
-        self.recentFiles: list[str] = []
+        self.labelFile = None
+        self.imagePath = None
         self.maxRecent = 7
         self._other_data = None
-        self.zoom_level = 100
-        self.fit_window = False
         self._zoom_values = {}
         self._brightness_contrast_values = {}
-        self.scroll_values = {  # type: ignore[var-annotated]
+        self.scroll_values = {
             Qt.Horizontal: {},
             Qt.Vertical: {},
-        }  # key=filename, value=scroll_value
+        }
 
         if self._config["file_search"]:
             self._docks.file_search.setText(self._config["file_search"])
 
-        self._default_state: QtCore.QByteArray = self.saveState()
+        self._default_state = self.saveState()
         #
         # XXX: Could be completely declarative.
         # Restore application settings.
@@ -913,14 +934,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._load_file(filename=filename)
         else:
             self.filename = None
-
-        # Populate the File menu dynamically.
-        self.updateFileMenu()
-
-        # Callbacks:
-        self.zoomWidget.valueChanged.connect(self._paint_canvas)
-
-        self.populateModeActions()
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -1710,7 +1723,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setScroll(self, orientation: Qt.Orientation, value: float) -> None:
         self.scrollBars[orientation].setValue(int(value))
-        self.scroll_values[orientation][self.filename] = value
+        if self.filename is not None:
+            self.scroll_values[orientation][self.filename] = value
 
     def _set_zoom(self, value: int, pos: QtCore.QPointF | None = None) -> None:
         if self.filename is None:
