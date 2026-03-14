@@ -86,6 +86,18 @@ class _StatusBarWidgets(NamedTuple):
     stats: StatusStats
 
 
+class _DockWidgets(NamedTuple):
+    flag_dock: QtWidgets.QDockWidget
+    flag_list: QtWidgets.QListWidget
+    shape_dock: QtWidgets.QDockWidget
+    label_list: LabelListWidget
+    label_dock: QtWidgets.QDockWidget
+    unique_label_list: UniqueLabelQListWidget
+    file_dock: QtWidgets.QDockWidget
+    file_search: QtWidgets.QLineEdit
+    file_list: QtWidgets.QListWidget
+
+
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
@@ -100,6 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_opened_dir: str | None
     _other_data: dict | None
     _status_bar: _StatusBarWidgets
+    _docks: _DockWidgets
 
     # Override `actions` type annotation so that type checkers know it holds a
     # SimpleNamespace of QAction objects rather than the base-class callable.
@@ -151,53 +164,8 @@ class MainWindow(QtWidgets.QMainWindow):
             flags=self._config["label_flags"],
         )
 
-        self.labelList = LabelListWidget()
         self._prev_opened_dir = None
-
-        self.flag_widget = QtWidgets.QListWidget()
-        self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
-        self.flag_dock.setObjectName("Flags")
-        if self._config["flags"]:
-            self._load_flags(flags={k: False for k in self._config["flags"]})
-        self.flag_dock.setWidget(self.flag_widget)
-        self.flag_widget.itemChanged.connect(self.setDirty)
-
-        self.labelList.itemSelectionChanged.connect(self._label_selection_changed)
-        self.labelList.itemDoubleClicked.connect(self._edit_label)
-        self.labelList.itemChanged.connect(self.labelItemChanged)
-        self.labelList.itemDropped.connect(self.labelOrderChanged)
-        self.shape_dock = QtWidgets.QDockWidget(self.tr("Annotation List"), self)
-        self.shape_dock.setObjectName("Labels")
-        self.shape_dock.setWidget(self.labelList)
-
-        self.uniqLabelList = UniqueLabelQListWidget()
-        self.uniqLabelList.setToolTip(
-            self.tr("Select label to start annotating for it. Press 'Esc' to deselect.")
-        )
-        if self._config["labels"]:
-            for label in self._config["labels"]:
-                self.uniqLabelList.add_label_item(
-                    label=label, color=self._get_rgb_by_label(label=label)
-                )
-        self.label_dock = QtWidgets.QDockWidget(self.tr("Label List"), self)
-        self.label_dock.setObjectName("Label List")
-        self.label_dock.setWidget(self.uniqLabelList)
-
-        self.fileSearch = QtWidgets.QLineEdit()
-        self.fileSearch.setPlaceholderText(self.tr("Search Filename"))
-        self.fileSearch.textChanged.connect(self.fileSearchChanged)
-        self.fileListWidget = QtWidgets.QListWidget()
-        self.fileListWidget.itemSelectionChanged.connect(self.fileSelectionChanged)
-        fileListLayout = QtWidgets.QVBoxLayout()
-        fileListLayout.setContentsMargins(0, 0, 0, 0)
-        fileListLayout.setSpacing(0)
-        fileListLayout.addWidget(self.fileSearch)
-        fileListLayout.addWidget(self.fileListWidget)
-        self.file_dock = QtWidgets.QDockWidget(self.tr("File List"), self)
-        self.file_dock.setObjectName("Files")
-        fileListWidget = QtWidgets.QWidget()
-        fileListWidget.setLayout(fileListLayout)
-        self.file_dock.setWidget(fileListWidget)
+        self._docks = self._setup_dock_widgets()
 
         self.zoomWidget = ZoomWidget()
         self.setAcceptDrops(True)
@@ -229,23 +197,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scrollArea)
-
-        features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ["flag_dock", "label_dock", "shape_dock", "file_dock"]:
-            if self._config[dock]["closable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetClosable
-            if self._config[dock]["floatable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
-            if self._config[dock]["movable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetMovable
-            getattr(self, dock).setFeatures(features)
-            if self._config[dock]["show"] is False:
-                getattr(self, dock).setVisible(False)
-
-        self.addDockWidget(Qt.RightDockWidgetArea, self.flag_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
 
         # Actions (keyboard shortcuts + callbacks).
         action = functools.partial(utils.newAction, self)
@@ -632,8 +583,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Label list context menu.
         labelMenu = QtWidgets.QMenu()
         utils.addActions(labelMenu, (edit, delete))
-        self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.labelList.customContextMenuRequested.connect(self.popLabelListMenu)
+        self._docks.label_list.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._docks.label_list.customContextMenuRequested.connect(self.popLabelListMenu)
 
         # Store actions for further handling.
         self.actions = types.SimpleNamespace(
@@ -810,10 +761,10 @@ class MainWindow(QtWidgets.QMainWindow):
         utils.addActions(
             self.menus.view,
             (
-                self.flag_dock.toggleViewAction(),
-                self.label_dock.toggleViewAction(),
-                self.shape_dock.toggleViewAction(),
-                self.file_dock.toggleViewAction(),
+                self._docks.flag_dock.toggleViewAction(),
+                self._docks.label_dock.toggleViewAction(),
+                self._docks.shape_dock.toggleViewAction(),
+                self._docks.file_dock.toggleViewAction(),
                 None,
                 self.actions.reset_layout,
                 None,
@@ -926,7 +877,7 @@ class MainWindow(QtWidgets.QMainWindow):
         }  # key=filename, value=scroll_value
 
         if self._config["file_search"]:
-            self.fileSearch.setText(self._config["file_search"])
+            self._docks.file_search.setText(self._config["file_search"])
 
         self._default_state: QtCore.QByteArray = self.saveState()
         #
@@ -955,7 +906,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if filename:
             if osp.isdir(filename):
                 self._import_images_from_dir(
-                    root_dir=filename, pattern=self.fileSearch.text()
+                    root_dir=filename, pattern=self._docks.file_search.text()
                 )
                 self._open_next_image()
             else:
@@ -978,6 +929,89 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().addWidget(stats, 0)
         self.statusBar().show()
         return _StatusBarWidgets(message=message, stats=stats)
+
+    def _setup_dock_widgets(self) -> _DockWidgets:
+        flag_list = QtWidgets.QListWidget()
+        flag = QtWidgets.QDockWidget(self.tr("Flags"), self)
+        flag.setObjectName("Flags")
+        if self._config["flags"]:
+            self._load_flags(
+                flags={k: False for k in self._config["flags"]},
+                widget=flag_list,
+            )
+        flag.setWidget(flag_list)
+        flag_list.itemChanged.connect(self.setDirty)
+
+        label_list = LabelListWidget()
+        label_list.itemSelectionChanged.connect(self._label_selection_changed)
+        label_list.itemDoubleClicked.connect(self._edit_label)
+        label_list.itemChanged.connect(self.labelItemChanged)
+        label_list.itemDropped.connect(self.labelOrderChanged)
+        shape = QtWidgets.QDockWidget(self.tr("Annotation List"), self)
+        shape.setObjectName("Labels")
+        shape.setWidget(label_list)
+
+        unique_label_list = UniqueLabelQListWidget()
+        unique_label_list.setToolTip(
+            self.tr("Select label to start annotating for it. Press 'Esc' to deselect.")
+        )
+        if self._config["labels"]:
+            for lbl in self._config["labels"]:
+                unique_label_list.add_label_item(
+                    label=lbl,
+                    color=self._get_rgb_by_label(
+                        label=lbl, unique_label_list=unique_label_list
+                    ),
+                )
+        label = QtWidgets.QDockWidget(self.tr("Label List"), self)
+        label.setObjectName("Label List")
+        label.setWidget(unique_label_list)
+
+        file_search = QtWidgets.QLineEdit()
+        file_search.setPlaceholderText(self.tr("Search Filename"))
+        file_search.textChanged.connect(self.fileSearchChanged)
+        file_list = QtWidgets.QListWidget()
+        file_list.itemSelectionChanged.connect(self.fileSelectionChanged)
+        file_list_layout = QtWidgets.QVBoxLayout()
+        file_list_layout.setContentsMargins(0, 0, 0, 0)
+        file_list_layout.setSpacing(0)
+        file_list_layout.addWidget(file_search)
+        file_list_layout.addWidget(file_list)
+        file = QtWidgets.QDockWidget(self.tr("File List"), self)
+        file.setObjectName("Files")
+        file_list_container = QtWidgets.QWidget()
+        file_list_container.setLayout(file_list_layout)
+        file.setWidget(file_list_container)
+
+        for config_key, dock_widget in [
+            ("flag_dock", flag),
+            ("label_dock", label),
+            ("shape_dock", shape),
+            ("file_dock", file),
+        ]:
+            features = QtWidgets.QDockWidget.DockWidgetFeatures()
+            if self._config[config_key]["closable"]:
+                features = features | QtWidgets.QDockWidget.DockWidgetClosable
+            if self._config[config_key]["floatable"]:
+                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
+            if self._config[config_key]["movable"]:
+                features = features | QtWidgets.QDockWidget.DockWidgetMovable
+            dock_widget.setFeatures(features)
+            if self._config[config_key]["show"] is False:
+                dock_widget.setVisible(False)
+            self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
+
+        return _DockWidgets(
+            flag_dock=flag,
+            flag_list=flag_list,
+            shape_dock=shape,
+            label_list=label_list,
+            label_dock=label,
+            unique_label_list=unique_label_list,
+            file_dock=file,
+            file_search=file_search,
+            file_list=file_list,
+        )
 
     def _load_config(
         self, config_file: Path | None, config_overrides: dict | None
@@ -1018,7 +1052,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Support Functions
 
     def noShapes(self) -> bool:
-        return not len(self.labelList)
+        return not len(self._docks.label_list)
 
     def populateModeActions(self) -> None:
         self.canvas.menus[0].clear()
@@ -1035,11 +1069,11 @@ class MainWindow(QtWidgets.QMainWindow):
         window_title: str = __appname__
         if self.imagePath:
             window_title = f"{window_title} - {self.imagePath}"
-            if self.fileListWidget.count() and self.fileListWidget.currentItem():
+            if self._docks.file_list.count() and self._docks.file_list.currentItem():
                 window_title = (
                     f"{window_title} "
-                    f"[{self.fileListWidget.currentRow() + 1}"
-                    f"/{self.fileListWidget.count()}]"
+                    f"[{self._docks.file_list.currentRow() + 1}"
+                    f"/{self._docks.file_list.count()}]"
                 )
         if dirty:
             window_title = f"{window_title}*"
@@ -1164,7 +1198,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
 
     def resetState(self) -> None:
-        self.labelList.clear()
+        self._docks.label_list.clear()
         self.filename = None
         self.imagePath = None
         self.imageData = None
@@ -1173,7 +1207,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.resetState()
 
     def currentItem(self) -> LabelListWidgetItem | None:
-        items = self.labelList.selectedItems()
+        items = self._docks.label_list.selectedItems()
         if items:
             return items[0]
         return None
@@ -1189,7 +1223,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def undoShapeEdit(self) -> None:
         self.canvas.restoreShape()
-        self.labelList.clear()
+        self._docks.label_list.clear()
         self._load_shapes(self.canvas.shapes)
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
@@ -1245,22 +1279,22 @@ class MainWindow(QtWidgets.QMainWindow):
             menu.addAction(action)
 
     def popLabelListMenu(self, point):
-        self.menus.labelList.exec_(self.labelList.mapToGlobal(point))
+        self.menus.labelList.exec_(self._docks.label_list.mapToGlobal(point))
 
     def validateLabel(self, label):
         # no validation
         if self._config["validate_label"] is None:
             return True
 
-        for i in range(self.uniqLabelList.count()):
-            label_i = self.uniqLabelList.item(i).data(Qt.UserRole)  # type: ignore[attr-defined,union-attr]
+        for i in range(self._docks.unique_label_list.count()):
+            label_i = self._docks.unique_label_list.item(i).data(Qt.UserRole)  # type: ignore[attr-defined,union-attr]
             if self._config["validate_label"] in ["exact"]:
                 if label_i == label:
                     return True
         return False
 
     def _edit_label(self, value=None):
-        items = self.labelList.selectedItems()
+        items = self._docks.label_list.selectedItems()
         if not items:
             logger.warning("No label is selected, so cannot edit label.")
             return
@@ -1344,18 +1378,22 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 item.setText(f"{shape.label} ({shape.group_id})")
             self.setDirty()
-            if self.uniqLabelList.find_label_item(shape.label) is None:
-                self.uniqLabelList.add_label_item(
-                    label=shape.label, color=self._get_rgb_by_label(label=shape.label)
+            if self._docks.unique_label_list.find_label_item(shape.label) is None:
+                self._docks.unique_label_list.add_label_item(
+                    label=shape.label,
+                    color=self._get_rgb_by_label(
+                        label=shape.label,
+                        unique_label_list=self._docks.unique_label_list,
+                    ),
                 )
 
     def fileSearchChanged(self):
         self._import_images_from_dir(
-            root_dir=self._prev_opened_dir, pattern=self.fileSearch.text()
+            root_dir=self._prev_opened_dir, pattern=self._docks.file_search.text()
         )
 
     def fileSelectionChanged(self) -> None:
-        items = self.fileListWidget.selectedItems()
+        items = self._docks.file_list.selectedItems()
         if not items:
             return
         item = items[0]
@@ -1371,17 +1409,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes: list[Shape]) -> None:
-        self.labelList.itemSelectionChanged.disconnect(self._label_selection_changed)
+        self._docks.label_list.itemSelectionChanged.disconnect(
+            self._label_selection_changed
+        )
         for shape in self.canvas.selectedShapes:
             shape.selected = False
-        self.labelList.clearSelection()
+        self._docks.label_list.clearSelection()
         self.canvas.selectedShapes = selected_shapes
         for shape in self.canvas.selectedShapes:
             shape.selected = True
-            item = self.labelList.findItemByShape(shape)
-            self.labelList.selectItem(item)
-            self.labelList.scrollToItem(item)
-        self.labelList.itemSelectionChanged.connect(self._label_selection_changed)
+            item = self._docks.label_list.findItemByShape(shape)
+            self._docks.label_list.selectItem(item)
+            self._docks.label_list.scrollToItem(item)
+        self._docks.label_list.itemSelectionChanged.connect(
+            self._label_selection_changed
+        )
         n_selected = len(selected_shapes)
         self.actions.delete.setEnabled(n_selected)
         self.actions.duplicate.setEnabled(n_selected)
@@ -1395,10 +1437,14 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = f"{shape.label} ({shape.group_id})"
         label_list_item = LabelListWidgetItem(text, shape)
-        self.labelList.addItem(label_list_item)
-        if self.uniqLabelList.find_label_item(shape.label) is None:
-            self.uniqLabelList.add_label_item(
-                label=shape.label, color=self._get_rgb_by_label(label=shape.label)
+        self._docks.label_list.addItem(label_list_item)
+        if self._docks.unique_label_list.find_label_item(shape.label) is None:
+            self._docks.unique_label_list.add_label_item(
+                label=shape.label,
+                color=self._get_rgb_by_label(
+                    label=shape.label,
+                    unique_label_list=self._docks.unique_label_list,
+                ),
             )
         self.labelDialog.addLabelHistory(shape.label)
         for action in self.on_shapes_present_actions:
@@ -1412,7 +1458,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _update_shape_color(self, shape: Shape) -> None:
         assert shape.label is not None
-        r, g, b = self._get_rgb_by_label(shape.label)
+        r, g, b = self._get_rgb_by_label(
+            shape.label, unique_label_list=self._docks.unique_label_list
+        )
         shape.line_color = QtGui.QColor(r, g, b)
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
         shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
@@ -1420,13 +1468,17 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.select_line_color = QtGui.QColor(255, 255, 255)
         shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
-    def _get_rgb_by_label(self, label: str) -> tuple[int, int, int]:
+    def _get_rgb_by_label(
+        self,
+        label: str,
+        unique_label_list: UniqueLabelQListWidget,
+    ) -> tuple[int, int, int]:
         if self._config["shape_color"] == "auto":
-            item = self.uniqLabelList.find_label_item(label)
+            item = unique_label_list.find_label_item(label)
             item_index: int = (
-                self.uniqLabelList.indexFromItem(item).row()
+                unique_label_list.indexFromItem(item).row()
                 if item
-                else self.uniqLabelList.count()
+                else unique_label_list.count()
             )
             label_id: int = (
                 1  # skip black color by default
@@ -1457,16 +1509,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def remLabels(self, shapes: list[Shape]) -> None:
         for shape in shapes:
-            item = self.labelList.findItemByShape(shape)
-            self.labelList.removeItem(item)
+            item = self._docks.label_list.findItemByShape(shape)
+            self._docks.label_list.removeItem(item)
 
     def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
-        self.labelList.itemSelectionChanged.disconnect(self._label_selection_changed)
+        self._docks.label_list.itemSelectionChanged.disconnect(
+            self._label_selection_changed
+        )
         shape: Shape
         for shape in shapes:
             self.addLabel(shape)
-        self.labelList.clearSelection()
-        self.labelList.itemSelectionChanged.connect(self._label_selection_changed)
+        self._docks.label_list.clearSelection()
+        self._docks.label_list.itemSelectionChanged.connect(
+            self._label_selection_changed
+        )
         self.canvas.loadShapes(shapes=shapes, replace=replace)
 
     def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
@@ -1500,15 +1556,19 @@ class MainWindow(QtWidgets.QMainWindow):
             shapes.append(shape)
         self._load_shapes(shapes=shapes)
 
-    def _load_flags(self, flags: dict[str, bool]) -> None:
-        self.flag_widget.clear()
+    def _load_flags(
+        self,
+        flags: dict[str, bool],
+        widget: QtWidgets.QListWidget,
+    ) -> None:
+        widget.clear()
         key: str
         flag: bool
         for key, flag in flags.items():
             item: QtWidgets.QListWidgetItem = QtWidgets.QListWidgetItem(key)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.flag_widget.addItem(item)
+            widget.addItem(item)
 
     def saveLabels(self, filename):
         lf = LabelFile()
@@ -1530,10 +1590,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return data
 
-        shapes = [format_shape(item.shape()) for item in self.labelList]
+        shapes = [format_shape(item.shape()) for item in self._docks.label_list]
         flags = {}
-        for i in range(self.flag_widget.count()):
-            item = self.flag_widget.item(i)
+        for i in range(self._docks.flag_list.count()):
+            item = self._docks.flag_list.item(i)
             assert item
             key = item.text()
             flag = item.checkState() == Qt.Checked
@@ -1555,7 +1615,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags=flags,
             )
             self.labelFile = lf
-            items = self.fileListWidget.findItems(self.imagePath, Qt.MatchExactly)
+            items = self._docks.file_list.findItems(self.imagePath, Qt.MatchExactly)
             if len(items) > 0:
                 if len(items) != 1:
                     raise RuntimeError("There are duplicate files.")
@@ -1584,7 +1644,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []
-        for item in self.labelList.selectedItems():
+        for item in self._docks.label_list.selectedItems():
             selected_shapes.append(item.shape())
         if selected_shapes:
             self.canvas.selectShapes(selected_shapes)
@@ -1598,7 +1658,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def labelOrderChanged(self) -> None:
         self.setDirty()
-        self.canvas.loadShapes([item.shape() for item in self.labelList])
+        self.canvas.loadShapes([item.shape() for item in self._docks.label_list])
 
     # Callback functions:
 
@@ -1607,7 +1667,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         position MUST be in global coordinates.
         """
-        items = self.uniqLabelList.selectedItems()
+        items = self._docks.unique_label_list.selectedItems()
         text = None
         if items:
             text = items[0].data(Qt.UserRole)
@@ -1629,7 +1689,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             text = ""
         if text:
-            self.labelList.clearSelection()
+            self._docks.label_list.clearSelection()
             shape = self.canvas.setLastLabel(text, flags)
             shape.group_id = group_id
             shape.description = description
@@ -1771,7 +1831,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleShapes(self, value):
         flag = value
-        for item in self.labelList:
+        for item in self._docks.label_list:
             if value is None:
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
@@ -1780,10 +1840,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """Load the specified file, or the last opened file if None."""
         # changing fileListWidget loads file
         if filename in self.imageList and (
-            self.fileListWidget.currentRow() != self.imageList.index(filename)
+            self._docks.file_list.currentRow() != self.imageList.index(filename)
         ):
-            self.fileListWidget.setCurrentRow(self.imageList.index(filename))
-            self.fileListWidget.repaint()
+            self._docks.file_list.setCurrentRow(self.imageList.index(filename))
+            self._docks.file_list.repaint()
             return
 
         prev_shapes: list[Shape] = (
@@ -1879,7 +1939,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_shape_dicts(shape_dicts=self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 flags.update(self.labelFile.flags)
-        self._load_flags(flags=flags)
+        self._load_flags(flags=flags, widget=self._docks.flag_list)
         if prev_shapes and self.noShapes():
             self._load_shapes(shapes=prev_shapes, replace=False)
             self.setDirty()
@@ -1993,24 +2053,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_file(filename)
 
     def _open_prev_image(self, _value=False) -> None:
-        row_prev: int = self.fileListWidget.currentRow() - 1
+        row_prev: int = self._docks.file_list.currentRow() - 1
         if row_prev < 0:
             logger.debug("there is no prev image")
             return
 
         logger.debug("setting current row to {:d}", row_prev)
-        self.fileListWidget.setCurrentRow(row_prev)
-        self.fileListWidget.repaint()
+        self._docks.file_list.setCurrentRow(row_prev)
+        self._docks.file_list.repaint()
 
     def _open_next_image(self, _value=False) -> None:
-        row_next: int = self.fileListWidget.currentRow() + 1
-        if row_next >= self.fileListWidget.count():
+        row_next: int = self._docks.file_list.currentRow() + 1
+        if row_next >= self._docks.file_list.count():
             logger.debug("there is no next image")
             return
 
         logger.debug("setting current row to {:d}", row_next)
-        self.fileListWidget.setCurrentRow(row_next)
-        self.fileListWidget.repaint()
+        self._docks.file_list.setCurrentRow(row_next)
+        self._docks.file_list.repaint()
 
     def _open_file_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
@@ -2068,8 +2128,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if current_filename in self.imageList:
             # retain currently selected file
-            self.fileListWidget.setCurrentRow(self.imageList.index(current_filename))
-            self.fileListWidget.repaint()
+            self._docks.file_list.setCurrentRow(self.imageList.index(current_filename))
+            self._docks.file_list.repaint()
 
     def saveFile(self, _value: bool = False) -> None:
         assert not self.image.isNull(), "cannot save empty image"
@@ -2123,7 +2183,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setClean()
         self.toggleActions(False)
         self.canvas.setEnabled(False)
-        self.fileListWidget.setFocus()
+        self._docks.file_list.setFocus()
         self.actions.saveAs.setEnabled(False)
 
     def getLabelFile(self) -> str:
@@ -2146,7 +2206,7 @@ class MainWindow(QtWidgets.QMainWindow):
             os.remove(label_file)
             logger.info(f"Label file is removed: {label_file}")
 
-            item = self.fileListWidget.currentItem()
+            item = self._docks.file_list.currentItem()
             if item:
                 item.setCheckState(Qt.Unchecked)
 
@@ -2252,7 +2312,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.endMove(copy=True)
         for shape in self.canvas.selectedShapes:
             self.addLabel(shape)
-        self.labelList.clearSelection()
+        self._docks.label_list.clearSelection()
         self.setDirty()
 
     def moveShape(self) -> None:
@@ -2284,8 +2344,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @property
     def imageList(self) -> list[str]:
         lst = []
-        for i in range(self.fileListWidget.count()):
-            item = self.fileListWidget.item(i)
+        for i in range(self._docks.file_list.count()):
+            item = self._docks.file_list.item(i)
             assert item
             lst.append(item.text())
         return lst
@@ -2310,7 +2370,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
-            self.fileListWidget.addItem(item)
+            self._docks.file_list.addItem(item)
 
         if len(self.imageList) > 1:
             self.actions.openNextImg.setEnabled(True)
@@ -2329,7 +2389,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._prev_opened_dir = root_dir
         self.filename = None
-        self.fileListWidget.clear()
+        self._docks.file_list.clear()
 
         filenames = _scan_image_files(root_dir=root_dir)
         if pattern:
@@ -2348,7 +2408,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
-            self.fileListWidget.addItem(item)
+            self._docks.file_list.addItem(item)
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
