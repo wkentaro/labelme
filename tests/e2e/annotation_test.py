@@ -57,9 +57,9 @@ def test_MainWindow_annotate_jpg(
         click(xy=xy)
 
     def interact() -> None:
-        qtbot.keyClicks(win.labelDialog.edit, label)
+        qtbot.keyClicks(win._label_dialog.edit, label)
         qtbot.wait(50)
-        qtbot.keyClick(win.labelDialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(win._label_dialog.edit, Qt.Key_Enter)
         qtbot.wait(50)
 
     QTimer.singleShot(100, interact)
