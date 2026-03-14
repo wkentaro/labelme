@@ -83,11 +83,11 @@ def test_MainWindow_open_dir(
     qtbot.wait(100)
     assert Path(win.imagePath).name == first_image_name
 
-    assert win.fileListWidget.count() == 3
+    assert win._docks.file_list.count() == 3
     expected_check_state = (
         Qt.Checked if scenario.startswith("annotated") else Qt.Unchecked
     )
-    for index in range(win.fileListWidget.count()):
-        item: QtWidgets.QListWidgetItem | None = win.fileListWidget.item(index)
+    for index in range(win._docks.file_list.count()):
+        item: QtWidgets.QListWidgetItem | None = win._docks.file_list.item(index)
         assert item
         assert item.checkState() == expected_check_state

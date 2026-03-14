@@ -29,7 +29,7 @@ def test_file_search_config_filters_on_startup(qtbot: QtBot, data_path: Path) ->
     qtbot.addWidget(win)
     win.show()
 
-    assert win.fileSearch.text() == "2011_000003"
-    assert win.fileListWidget.count() == 1
+    assert win._docks.file_search.text() == "2011_000003"
+    assert win._docks.file_list.count() == 1
 
     win.close()
