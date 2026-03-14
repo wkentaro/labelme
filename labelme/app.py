@@ -15,6 +15,7 @@ import webbrowser
 from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
+from typing import NamedTuple
 
 import imgviz
 import natsort
@@ -80,6 +81,11 @@ _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE: dict[
 }
 
 
+class _StatusBarWidgets(NamedTuple):
+    message: QtWidgets.QLabel
+    stats: StatusStats
+
+
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
@@ -93,6 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
     _prev_opened_dir: str | None
     _other_data: dict | None
+    _status_bar: _StatusBarWidgets
 
     # Override `actions` type annotation so that type checkers know it holds a
     # SimpleNamespace of QAction objects rather than the base-class callable.
@@ -203,7 +210,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.canvas.zoomRequest.connect(self._zoom_requested)
         self.canvas.mouseMoved.connect(self._update_status_stats)
-        self.canvas.statusUpdated.connect(lambda text: self.status_left.setText(text))
+        self.canvas.statusUpdated.connect(
+            lambda text: self._status_bar.message.setText(text)
+        )
 
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)
@@ -896,11 +905,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        self.status_left = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
-        self.status_right = StatusStats()
-        self.statusBar().addWidget(self.status_left, 1)
-        self.statusBar().addWidget(self.status_right, 0)
-        self.statusBar().show()
+        self._status_bar = self._setup_status_bar()
 
         self.output_dir = output_dir
 
@@ -965,6 +970,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomWidget.valueChanged.connect(self._paint_canvas)
 
         self.populateModeActions()
+
+    def _setup_status_bar(self) -> _StatusBarWidgets:
+        message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
+        stats = StatusStats()
+        self.statusBar().addWidget(message, 1)
+        self.statusBar().addWidget(stats, 0)
+        self.statusBar().show()
+        return _StatusBarWidgets(message=message, stats=stats)
 
     def _load_config(
         self, config_file: Path | None, config_overrides: dict | None
@@ -2341,7 +2354,7 @@ class MainWindow(QtWidgets.QMainWindow):
         stats: list[str] = []
         stats.append(f"mode={self.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
-        self.status_right.setText(" | ".join(stats))
+        self._status_bar.stats.setText(" | ".join(stats))
 
 
 def _scan_image_files(root_dir: str) -> list[str]:
