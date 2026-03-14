@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import copy
 
 import numpy as np
+import numpy.typing as npt
 import skimage.measure
 from loguru import logger
 from PyQt5 import QtCore
@@ -38,13 +41,13 @@ class Shape:
 
     def __init__(
         self,
-        label=None,
-        line_color=None,
-        shape_type=None,
-        flags=None,
-        group_id=None,
-        description=None,
-        mask=None,
+        label: str | None = None,
+        line_color: QtGui.QColor | None = None,
+        shape_type: str | None = None,
+        flags: dict[str, bool] | None = None,
+        group_id: int | None = None,
+        description: str | None = None,
+        mask: npt.NDArray[np.bool_] | None = None,
     ):
         self.label = label
         self.group_id = group_id

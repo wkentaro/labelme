@@ -12,6 +12,7 @@ import subprocess
 import time
 import types
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
 
@@ -1004,10 +1005,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Support Functions
 
-    def noShapes(self):
+    def noShapes(self) -> bool:
         return not len(self.labelList)
 
-    def populateModeActions(self):
+    def populateModeActions(self) -> None:
         self.canvas.menus[0].clear()
         utils.addActions(self.canvas.menus[0], self.context_menu_actions)
         self.menus.edit.clear()
@@ -1032,7 +1033,7 @@ class MainWindow(QtWidgets.QMainWindow):
             window_title = f"{window_title}*"
         return window_title
 
-    def setDirty(self):
+    def setDirty(self) -> None:
         # Even if we autosave the file, we keep the ability to undo
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable)
 
@@ -1048,7 +1049,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
 
-    def setClean(self):
+    def setClean(self) -> None:
         self._is_changed = False
         self.actions.save.setEnabled(False)
         for _, action in self.draw_actions:
@@ -1060,17 +1061,17 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.actions.deleteFile.setEnabled(False)
 
-    def toggleActions(self, value=True):
+    def toggleActions(self, value: bool = True) -> None:
         """Enable/Disable widgets which depend on an opened image."""
         for z in self.zoom_actions:
             z.setEnabled(value)
         for action in self.on_load_active_actions:
             action.setEnabled(value)
 
-    def queueEvent(self, function):
+    def queueEvent(self, function: Callable[[], None]) -> None:
         QtCore.QTimer.singleShot(0, function)
 
-    def show_status_message(self, message, delay=500):
+    def show_status_message(self, message: str, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
@@ -1150,7 +1151,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._load_shapes(shapes, replace=False)
         self.setDirty()
 
-    def resetState(self):
+    def resetState(self) -> None:
         self.labelList.clear()
         self.filename = None
         self.imagePath = None
@@ -1159,13 +1160,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._other_data = None
         self.canvas.resetState()
 
-    def currentItem(self):
+    def currentItem(self) -> LabelListWidgetItem | None:
         items = self.labelList.selectedItems()
         if items:
             return items[0]
         return None
 
-    def addRecentFile(self, filename):
+    def addRecentFile(self, filename: str) -> None:
         if filename in self.recentFiles:
             self.recentFiles.remove(filename)
         elif len(self.recentFiles) >= self.maxRecent:
@@ -1174,7 +1175,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Callbacks
 
-    def undoShapeEdit(self):
+    def undoShapeEdit(self) -> None:
         self.canvas.restoreShape()
         self.labelList.clear()
         self._load_shapes(self.canvas.shapes)
@@ -1341,7 +1342,7 @@ class MainWindow(QtWidgets.QMainWindow):
             root_dir=self._prev_opened_dir, pattern=self.fileSearch.text()
         )
 
-    def fileSelectionChanged(self):
+    def fileSelectionChanged(self) -> None:
         items = self.fileListWidget.selectedItems()
         if not items:
             return
@@ -1350,14 +1351,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             return
 
-        currIndex = self.imageList.index(str(item.text()))
-        if currIndex < len(self.imageList):
-            filename = self.imageList[currIndex]
+        curr_index = self.imageList.index(str(item.text()))
+        if curr_index < len(self.imageList):
+            filename = self.imageList[curr_index]
             if filename:
                 self._load_file(filename)
 
     # React to canvas signals.
-    def shapeSelectionChanged(self, selected_shapes):
+    def shapeSelectionChanged(self, selected_shapes: list[Shape]) -> None:
         self.labelList.itemSelectionChanged.disconnect(self._label_selection_changed)
         for shape in self.canvas.selectedShapes:
             shape.selected = False
@@ -1375,7 +1376,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.copy.setEnabled(n_selected)
         self.actions.edit.setEnabled(n_selected)
 
-    def addLabel(self, shape):
+    def addLabel(self, shape: Shape) -> None:
+        assert shape.label is not None
         if shape.group_id is None:
             text = shape.label
         else:
@@ -1396,7 +1398,8 @@ class MainWindow(QtWidgets.QMainWindow):
             f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
         )
 
-    def _update_shape_color(self, shape):
+    def _update_shape_color(self, shape: Shape) -> None:
+        assert shape.label is not None
         r, g, b = self._get_rgb_by_label(shape.label)
         shape.line_color = QtGui.QColor(r, g, b)
         shape.vertex_fill_color = QtGui.QColor(r, g, b)
@@ -1440,7 +1443,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return self._config["default_shape_color"]
         return (0, 255, 0)
 
-    def remLabels(self, shapes):
+    def remLabels(self, shapes: list[Shape]) -> None:
         for shape in shapes:
             item = self.labelList.findItemByShape(shape)
             self.labelList.removeItem(item)
@@ -1554,16 +1557,16 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
 
-    def duplicateSelectedShape(self):
+    def duplicateSelectedShape(self) -> None:
         self.copySelectedShape()
         self.pasteSelectedShape()
 
-    def pasteSelectedShape(self):
+    def pasteSelectedShape(self) -> None:
         self._load_shapes(shapes=self._copied_shapes, replace=False)
         self.canvas.selectShapes(self._copied_shapes)
         self.setDirty()
 
-    def copySelectedShape(self):
+    def copySelectedShape(self) -> None:
         self._copied_shapes = [s.copy() for s in self.canvas.selectedShapes]
         self.actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
@@ -1577,17 +1580,17 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.canvas.deSelectShape():
                 self.canvas.update()
 
-    def labelItemChanged(self, item):
+    def labelItemChanged(self, item: LabelListWidgetItem) -> None:
         shape = item.shape()
         self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
 
-    def labelOrderChanged(self):
+    def labelOrderChanged(self) -> None:
         self.setDirty()
         self.canvas.loadShapes([item.shape() for item in self.labelList])
 
     # Callback functions:
 
-    def newShape(self):
+    def newShape(self) -> None:
         """Pop-up and give focus to the label editor.
 
         position MUST be in global coordinates.
@@ -1627,13 +1630,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.canvas.undoLastLine()
             self.canvas.shapesBackups.pop()
 
-    def scrollRequest(self, delta, orientation):
+    def scrollRequest(self, delta: int, orientation: Qt.Orientation) -> None:
         units = -delta * 0.1  # natural scroll
         bar = self.scrollBars[orientation]
         value = bar.value() + bar.singleStep() * units
         self.setScroll(orientation, value)
 
-    def setScroll(self, orientation, value):
+    def setScroll(self, orientation: Qt.Orientation, value: float) -> None:
         self.scrollBars[orientation].setValue(int(value))
         self.scroll_values[orientation][self.filename] = value
 
@@ -2056,25 +2059,23 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.setCurrentRow(self.imageList.index(current_filename))
             self.fileListWidget.repaint()
 
-    def saveFile(self, _value=False):
+    def saveFile(self, _value: bool = False) -> None:
         assert not self.image.isNull(), "cannot save empty image"
         if self.labelFile:
             self._saveFile(self.labelFile.filename)
         else:
             self._saveFile(self.saveFileDialog())
 
-    def saveFileAs(self, _value=False):
+    def saveFileAs(self, _value: bool = False) -> None:
         assert not self.image.isNull(), "cannot save empty image"
         self._saveFile(self.saveFileDialog())
 
-    def saveFileDialog(self):
+    def saveFileDialog(self) -> str:
         assert self.filename is not None
         caption = self.tr("%s - Choose File") % __appname__
         filters = self.tr("Label files (*%s)") % LabelFile.suffix
-        if self.output_dir:
-            dlg = QtWidgets.QFileDialog(self, caption, self.output_dir, filters)
-        else:
-            dlg = QtWidgets.QFileDialog(self, caption, self.currentPath(), filters)
+        start_dir = self.output_dir if self.output_dir else self.currentPath()
+        dlg = QtWidgets.QFileDialog(self, caption, start_dir, filters)
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
@@ -2098,12 +2099,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return filename[0]
         return filename
 
-    def _saveFile(self, filename):
+    def _saveFile(self, filename: str | None) -> None:
         if filename and self.saveLabels(filename):
             self.addRecentFile(filename)
             self.setClean()
 
-    def closeFile(self, _value=False):
+    def closeFile(self, _value: bool = False) -> None:
         if not self._can_continue():
             return
         self.resetState()
@@ -2113,16 +2114,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileListWidget.setFocus()
         self.actions.saveAs.setEnabled(False)
 
-    def getLabelFile(self):
+    def getLabelFile(self) -> str:
         assert self.filename is not None
         if self.filename.lower().endswith(".json"):
-            label_file = self.filename
-        else:
-            label_file = f"{osp.splitext(self.filename)[0]}.json"
+            return self.filename
+        return f"{osp.splitext(self.filename)[0]}.json"
 
-        return label_file
-
-    def deleteFile(self):
+    def deleteFile(self) -> None:
         mb = QtWidgets.QMessageBox
         msg = self.tr(
             "You are about to permanently delete this label file, proceed anyway?"
@@ -2166,7 +2164,7 @@ class MainWindow(QtWidgets.QMainWindow):
             subprocess.Popen(["xdg-open", config_file])
 
     # Message Dialogs. #
-    def hasLabels(self):
+    def hasLabels(self) -> bool:
         if self.noShapes():
             self.errorMessage(
                 "No objects labeled",
@@ -2175,7 +2173,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         return True
 
-    def hasLabelFile(self):
+    def hasLabelFile(self) -> bool:
         if self.filename is None:
             return False
 
@@ -2202,18 +2200,18 @@ class MainWindow(QtWidgets.QMainWindow):
         else:  # answer == mb.Cancel
             return False
 
-    def errorMessage(self, title, message):
+    def errorMessage(self, title: str, message: str) -> int:
         return QtWidgets.QMessageBox.critical(
             self, title, f"<p><b>{title}</b></p>{message}"
         )
 
-    def currentPath(self):
+    def currentPath(self) -> str:
         return osp.dirname(str(self.filename)) if self.filename else "."
 
-    def toggleKeepPrevMode(self):
+    def toggleKeepPrevMode(self) -> None:
         self._config["keep_prev"] = not self._config["keep_prev"]
 
-    def removeSelectedPoint(self):
+    def removeSelectedPoint(self) -> None:
         self.canvas.removeSelectedPoint()
         self.canvas.update()
         if self.canvas.hShape and not self.canvas.hShape.points:
@@ -2224,7 +2222,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     action.setEnabled(False)
         self.setDirty()
 
-    def deleteSelectedShape(self):
+    def deleteSelectedShape(self) -> None:
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
             "You are about to permanently delete {} shapes, proceed anyway?"
@@ -2238,14 +2236,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 for action in self.on_shapes_present_actions:
                     action.setEnabled(False)
 
-    def copyShape(self):
+    def copyShape(self) -> None:
         self.canvas.endMove(copy=True)
         for shape in self.canvas.selectedShapes:
             self.addLabel(shape)
         self.labelList.clearSelection()
         self.setDirty()
 
-    def moveShape(self):
+    def moveShape(self) -> None:
         self.canvas.endMove(copy=False)
         self.setDirty()
 
