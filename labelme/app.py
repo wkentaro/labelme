@@ -147,10 +147,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList = LabelListWidget()
         self._prev_opened_dir = None
 
-        self.flag_dock = self.flag_widget = None
+        self.flag_widget = QtWidgets.QListWidget()
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
         self.flag_dock.setObjectName("Flags")
-        self.flag_widget = QtWidgets.QListWidget()
         if self._config["flags"]:
             self._load_flags(flags={k: False for k in self._config["flags"]})
         self.flag_dock.setWidget(self.flag_widget)
