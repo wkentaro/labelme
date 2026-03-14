@@ -297,9 +297,9 @@ class Shape:
     def nearestVertex(self, point, epsilon):
         min_distance = float("inf")
         min_i = None
-        point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
+        point = self._scale_point(point)
         for i, p in enumerate(self.points):
-            p = QtCore.QPointF(p.x() * self.scale, p.y() * self.scale)
+            p = self._scale_point(p)
             dist = labelme.utils.distance(p - point)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
@@ -309,12 +309,10 @@ class Shape:
     def nearestEdge(self, point, epsilon):
         min_distance = float("inf")
         post_i = None
-        point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
+        point = self._scale_point(point)
         for i in range(len(self.points)):
-            start = self.points[i - 1]
-            end = self.points[i]
-            start = QtCore.QPointF(start.x() * self.scale, start.y() * self.scale)
-            end = QtCore.QPointF(end.x() * self.scale, end.y() * self.scale)
+            start = self._scale_point(self.points[i - 1])
+            end = self._scale_point(self.points[i])
             line = [start, end]
             dist = labelme.utils.distancetoline(point, line)
             if dist <= epsilon and dist < min_distance:
