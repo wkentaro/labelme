@@ -147,10 +147,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.labelList = LabelListWidget()
         self._prev_opened_dir = None
 
-        self.flag_dock = self.flag_widget = None
+        self.flag_widget = QtWidgets.QListWidget()
         self.flag_dock = QtWidgets.QDockWidget(self.tr("Flags"), self)
         self.flag_dock.setObjectName("Flags")
-        self.flag_widget = QtWidgets.QListWidget()
         if self._config["flags"]:
             self._load_flags(flags={k: False for k in self._config["flags"]})
         self.flag_dock.setWidget(self.flag_widget)
@@ -1489,14 +1488,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._load_shapes(shapes=shapes)
 
     def _load_flags(self, flags: dict[str, bool]) -> None:
-        self.flag_widget.clear()  # type: ignore[union-attr]
+        self.flag_widget.clear()
         key: str
         flag: bool
         for key, flag in flags.items():
             item: QtWidgets.QListWidgetItem = QtWidgets.QListWidgetItem(key)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.flag_widget.addItem(item)  # type: ignore[union-attr]
+            self.flag_widget.addItem(item)
 
     def saveLabels(self, filename):
         lf = LabelFile()
@@ -1520,8 +1519,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         shapes = [format_shape(item.shape()) for item in self.labelList]
         flags = {}
-        for i in range(self.flag_widget.count()):  # type: ignore[union-attr]
-            item = self.flag_widget.item(i)  # type: ignore[union-attr]
+        for i in range(self.flag_widget.count()):
+            item = self.flag_widget.item(i)
             assert item
             key = item.text()
             flag = item.checkState() == Qt.Checked
