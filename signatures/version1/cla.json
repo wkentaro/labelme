@@ -1,3 +1,12 @@
 {
-   "signedContributors": []
+  "signedContributors": [
+    {
+      "name": "kancheng",
+      "id": 6993715,
+      "comment_id": 4086794684,
+      "created_at": "2026-03-19T01:08:38Z",
+      "repoId": 58374888,
+      "pullRequestNo": 1886
+    }
+  ]
 }
