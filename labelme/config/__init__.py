@@ -10,10 +10,11 @@ here = osp.dirname(osp.abspath(__file__))
 
 def _update_dict(target_dict, new_dict, validate_item=None):
     for key, value in new_dict.items():
+        if key not in target_dict:
+            logger.warning("Ignoring unexpected key in config file: {!r}", key)
+            continue
         if validate_item:
             validate_item(key, value)
-        if key not in target_dict:
-            raise ValueError(f"Unexpected key in config: {key}")
         if isinstance(target_dict[key], dict) and isinstance(value, dict):
             _update_dict(target_dict[key], value, validate_item=validate_item)
         else:

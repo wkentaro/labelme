@@ -92,3 +92,29 @@ def test_migrate_polygon_shortcut_skips_when_new_key_exists():
     _migrate_config_from_file(config)
     assert config["shortcuts"]["edit_shape"] == "Ctrl+Y"
     assert "edit_polygon" in config["shortcuts"]
+
+
+def test_unknown_config_key_warns_and_does_not_raise(tmp_path):
+    """Unknown keys in .labelmerc should warn and be ignored, not crash."""
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("unknown_key: true\n")
+    # Must not raise; labelme should open normally
+    config = load_config(config_file=config_file, config_overrides={})
+    assert "unknown_key" not in config
+
+
+def test_unknown_config_key_does_not_affect_valid_keys(tmp_path):
+    """Unknown keys should be silently skipped; valid keys still applied."""
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("unknown_key: 42\nauto_save: true\n")
+    config = load_config(config_file=config_file, config_overrides={})
+    assert config["auto_save"] is True
+    assert "unknown_key" not in config
+
+
+def test_invalid_value_for_known_key_still_raises(tmp_path):
+    """Bad values for *known* keys should still raise ValueError."""
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("validate_label: bad_value\n")
+    with pytest.raises(ValueError, match="validate_label"):
+        load_config(config_file=config_file, config_overrides={})
