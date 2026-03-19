@@ -38,6 +38,10 @@ lint:
 
 check_translate: update_translate
 	$(call exec,git diff --exit-code labelme/translate)
+	@if grep -r 'type="unfinished"' labelme/translate/*.ts; then \
+		echo "$(RED)Error: unfinished translations found$(NC)"; \
+		exit 1; \
+	fi
 
 check: lint check_translate # Run checks
 
