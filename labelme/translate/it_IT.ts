@@ -318,11 +318,6 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep pevious annotation&quot; mode</source>
-        <translation type="obsolete">Attiva/disattiva la modalità &quot;mantieni annotazione precedente&quot;</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
         <translation>Crea poligoni</translation>
     </message>
@@ -658,11 +653,6 @@ forme</translation>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
         <translation>Apri &amp;recenti</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Model</source>
-        <translation type="obsolete">Modello IA</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

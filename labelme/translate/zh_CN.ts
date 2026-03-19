@@ -316,11 +316,6 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep pevious annotation&quot; mode</source>
-        <translation type="obsolete">开关“保留最后的标注”模式</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
         <translation>创建多边形</translation>
     </message>
@@ -652,11 +647,6 @@ Shapes</source>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
         <translation>最近打开(&amp;R)</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Model</source>
-        <translation type="obsolete">AI模型</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
