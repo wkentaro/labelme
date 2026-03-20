@@ -154,6 +154,7 @@ class _Actions(NamedTuple):
     on_shapes_present: tuple[QtWidgets.QAction, ...]
     context_menu: tuple[QtWidgets.QAction, ...]
     edit_menu: tuple[QtWidgets.QAction | None, ...]
+    export_yolo_format: QtWidgets.QAction
 
 
 class _Menus(NamedTuple):
@@ -698,7 +699,18 @@ class MainWindow(QtWidgets.QMainWindow):
             create_ai_mask_mode,
             brightness_contrast,
         )
-        on_shapes_present = (save_as, hide_all, show_all, toggle_all)
+        export_yolo_format = action(
+            text=self.tr("Export to YOLO Format"),
+            slot=self.exportYoloFormat,
+            icon=None,
+            tip=self.tr(
+                "Export current annotation to YOLO .txt format "
+                "(rectangles and polygons only)"
+            ),
+            enabled=False,
+        )
+
+        on_shapes_present = (save_as, hide_all, show_all, toggle_all, export_yolo_format)
         context_menu = (
             *[draw_action for _, draw_action in draw],
             edit_mode,
@@ -776,6 +788,7 @@ class MainWindow(QtWidgets.QMainWindow):
             on_shapes_present=on_shapes_present,
             context_menu=context_menu,
             edit_menu=edit_menu,
+            export_yolo_format=export_yolo_format,
         )
 
     def _setup_menus(self) -> _Menus:
@@ -828,6 +841,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.save_auto,
                 self._actions.change_output_dir,
                 self._actions.save_with_image_data,
+                None,
+                self._actions.export_yolo_format,
                 self._actions.close,
                 self._actions.delete_file,
                 None,
@@ -2269,6 +2284,81 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveFileAs(self, _value: bool = False) -> None:
         assert not self._image.isNull(), "cannot save empty image"
         self._saveFile(self.saveFileDialog())
+
+    def exportYoloFormat(self, _value: bool = False) -> None:
+        """Export the current annotation to YOLO .txt format.
+
+        Prompts the user to save if the label file has unsaved changes, then
+        asks for an output directory.  The exported .txt file uses the same
+        stem as the JSON file and contains one annotation line per shape
+        (rectangles and polygons only; other shape types are skipped).
+
+        Class ids are assigned by sorting all unique labels in the current
+        annotation file alphabetically.
+        """
+        if not self.hasLabelFile():
+            msg = self.tr(
+                "No saved annotation file found.\n"
+                "Please save the annotation (Ctrl+S) before exporting."
+            )
+            QtWidgets.QMessageBox.warning(self, self.tr("Export YOLO"), msg)
+            return
+
+        label_file = self.getLabelFile()
+
+        # Collect unique labels sorted alphabetically for stable class ids
+        class_list: list[str] = sorted(
+            {s.label for s in self._canvas_widgets.canvas.shapes if s.label}
+        )
+        if not class_list:
+            msg = self.tr("No labelled shapes found in the current annotation.")
+            QtWidgets.QMessageBox.warning(self, self.tr("Export YOLO"), msg)
+            return
+
+        # Ask user for the output directory
+        output_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            self.tr("Select Output Directory for YOLO Export"),
+            osp.dirname(label_file),
+            QtWidgets.QFileDialog.ShowDirsOnly
+            | QtWidgets.QFileDialog.DontResolveSymlinks,
+        )
+        if not output_dir:
+            return  # User cancelled
+
+        try:
+            lines = utils.json_to_yolo_dir(label_file, output_dir, class_list)
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self,
+                self.tr("Export YOLO — Error"),
+                self.tr("Export failed: {}").format(str(e)),
+            )
+            return
+
+        # Write classes.txt alongside the annotation
+        import pathlib
+
+        classes_path = pathlib.Path(output_dir) / "classes.txt"
+        with open(classes_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(class_list) + "\n")
+
+        QtWidgets.QMessageBox.information(
+            self,
+            self.tr("Export YOLO"),
+            self.tr(
+                "Exported {n} annotation(s) to:\n{out}\n\n"
+                "Class mapping ({k} classes):\n{mapping}\n\n"
+                "classes.txt written to the same directory."
+            ).format(
+                n=len(lines),
+                out=output_dir,
+                k=len(class_list),
+                mapping="\n".join(
+                    f"  {i}: {c}" for i, c in enumerate(class_list)
+                ),
+            ),
+        )
 
     def saveFileDialog(self) -> str:
         assert self._filename is not None

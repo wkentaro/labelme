@@ -1,4 +1,6 @@
 from ._io import lblsave
+from .export_yolo import json_to_yolo_dir
+from .export_yolo import shape_to_yolo_line
 from .image import apply_exif_orientation
 from .image import img_arr_to_b64
 from .image import img_arr_to_data
