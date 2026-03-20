@@ -5,6 +5,7 @@ keep_prev: false
 keep_prev_scale: false
 keep_prev_brightness_contrast: false
 logger_level: info
+language: system  # system / Qt locale name (e.g., en_US, zh_CN, tr_TR)
 
 flags: null
 label_flags: null
