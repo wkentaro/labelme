@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import imgviz
 import numpy as np
 import pytest
+from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -105,9 +106,11 @@ def _get_provenance(shape: Shape) -> dict:
     return ensure_provenance(shape)
 
 
-def _create_dummy_pixmap() -> imgviz.types.Image:
-    """Create a dummy pixmap for testing."""
-    return np.zeros((100, 100, 3), dtype=np.uint8)
+def _create_dummy_qimage() -> QtGui.QImage:
+    """Create a self-owned dummy QImage for testing."""
+    image = QtGui.QImage(100, 100, QtGui.QImage.Format_RGB32)
+    image.fill(0)
+    return image
 
 
 def test_canvas_manual_finalise_records_create_event(qtbot: QtBot):
@@ -115,8 +118,9 @@ def test_canvas_manual_finalise_records_create_event(qtbot: QtBot):
     canvas = Canvas()
     qtbot.addWidget(canvas)
 
-    # Load a dummy pixmap
-    pixmap = imgviz.asqimage(_create_dummy_pixmap())
+    # Load a dummy QImage
+    image = _create_dummy_qimage()
+    pixmap = QtGui.QPixmap.fromImage(image)
     canvas.loadPixmap(pixmap)
 
     # Set to polygon creation mode
@@ -150,8 +154,9 @@ def test_canvas_ai_finalise_records_software_agent_create(qtbot: QtBot, monkeypa
     canvas = Canvas()
     qtbot.addWidget(canvas)
 
-    # Load a dummy pixmap
-    pixmap = imgviz.asqimage(_create_dummy_pixmap())
+    # Load a dummy QImage
+    image = _create_dummy_qimage()
+    pixmap = QtGui.QPixmap.fromImage(image)
     canvas.loadPixmap(pixmap)
 
     # Set to ai_polygon creation mode
@@ -196,18 +201,23 @@ def test_canvas_ai_finalise_records_software_agent_create(qtbot: QtBot, monkeypa
 def test_edit_label_adds_edit_event_for_different_agent(qtbot: QtBot, monkeypatch):
     """Test that editing a label created by SoftwareAgent adds an edit event."""
     config_overrides = _make_config_overrides()
+    config_overrides["auto_save"] = False  # Disable auto_save to avoid _image_path assertion
 
     # Create MainWindow with config overrides
     win = MainWindow(config_overrides=config_overrides)
     qtbot.addWidget(win)
 
-    # Load a dummy pixmap
-    from PyQt5 import QtGui
-
-    pixmap = QtGui.QPixmap.fromImage(imgviz.asqimage(_create_dummy_pixmap()))
+    # Load a dummy QImage
+    image = _create_dummy_qimage()
+    pixmap = QtGui.QPixmap.fromImage(image)
     win._canvas_widgets.canvas.loadPixmap(pixmap)
 
-    # Create a shape with SoftwareAgent provenance
+    # Set up minimal app state to avoid assertions
+    win._image_path = "/tmp/test.png"
+    win._filename = "/tmp/test.png"
+    win._image = image
+
+    # Create a shape with SoftwareAgent provenance and add it through the proper channel
     session_id = win._canvas_widgets.canvas.get_session_id()
     ai_shape = Shape(label="cat", shape_type="polygon")
     from PyQt5.QtCore import QPointF
@@ -223,8 +233,9 @@ def test_edit_label_adds_edit_event_for_different_agent(qtbot: QtBot, monkeypatc
         session_id=session_id,
         properties={"kinds": ["ai_generate", "ai_polygon"]},
     )
-    win._canvas_widgets.canvas.shapes.append(ai_shape)
-    win._canvas_widgets.canvas.storeShapes()
+
+    # Add shape through the app's proper channel to ensure label_list is updated
+    win._load_shapes([ai_shape], replace=True)
 
     # Select the shape
     win._canvas_widgets.canvas.selectShapes([ai_shape])
@@ -251,18 +262,23 @@ def test_paste_selected_shape_creates_derive_event(qtbot: QtBot):
     """Test that pasting a shape creates a derive event with new annotation_id."""
     config_overrides = _make_config_overrides()
     config_overrides["labels"] = ["cat"]
+    config_overrides["auto_save"] = False  # Disable auto_save to avoid _image_path assertion
 
     # Create MainWindow with config overrides
     win = MainWindow(config_overrides=config_overrides)
     qtbot.addWidget(win)
 
-    # Load a dummy pixmap
-    from PyQt5 import QtGui
-
-    pixmap = QtGui.QPixmap.fromImage(imgviz.asqimage(_create_dummy_pixmap()))
+    # Load a dummy QImage
+    image = _create_dummy_qimage()
+    pixmap = QtGui.QPixmap.fromImage(image)
     win._canvas_widgets.canvas.loadPixmap(pixmap)
 
-    # Create a shape with provenance
+    # Set up minimal app state to avoid assertions
+    win._image_path = "/tmp/test.png"
+    win._filename = "/tmp/test.png"
+    win._image = image
+
+    # Create a shape with provenance and add it through the proper channel
     session_id = win._canvas_widgets.canvas.get_session_id()
     original_shape = Shape(label="cat", shape_type="polygon")
     from PyQt5.QtCore import QPointF
@@ -279,8 +295,9 @@ def test_paste_selected_shape_creates_derive_event(qtbot: QtBot):
         properties={"kinds": ["manual_draw"]},
     )
     original_annotation_id = original_shape.other_data["provenance"]["annotation_id"]
-    win._canvas_widgets.canvas.shapes.append(original_shape)
-    win._canvas_widgets.canvas.storeShapes()
+
+    # Add shape through the app's proper channel to ensure label_list is updated
+    win._load_shapes([original_shape], replace=True)
 
     # Select and copy the shape
     win._canvas_widgets.canvas.selectShapes([original_shape])
@@ -303,20 +320,52 @@ def test_paste_selected_shape_creates_derive_event(qtbot: QtBot):
 
 def test_submit_ai_prompt_records_create_events(qtbot: QtBot, monkeypatch):
     """Test that text-to-annotation creates shapes with SoftwareAgent provenance."""
+    import osam.apis
+
     config_overrides = _make_config_overrides()
+    config_overrides["auto_save"] = False  # Disable auto_save to avoid _image_path assertion
 
     # Create MainWindow with config overrides
     win = MainWindow(config_overrides=config_overrides)
     qtbot.addWidget(win)
 
-    # Load a dummy pixmap
-    from PyQt5 import QtGui
-
-    pixmap = QtGui.QPixmap.fromImage(imgviz.asqimage(_create_dummy_pixmap()))
+    # Load a self-owned dummy QImage
+    image = _create_dummy_qimage()
+    pixmap = QtGui.QPixmap.fromImage(image)
     win._canvas_widgets.canvas.loadPixmap(pixmap)
+
+    # Set up minimal app state to avoid assertions
+    win._image_path = "/tmp/test.png"
+    win._filename = "/tmp/test.png"
+    win._image = image
 
     # Set to polygon mode for text-to-annotation
     win._canvas_widgets.canvas.createMode = "polygon"
+
+    # Monkeypatch all external dependencies used by MainWindow._submit_ai_prompt()
+    # Patch download_ai_model to skip model download
+    def mock_download_ai_model(*args, **kwargs):
+        return True
+
+    monkeypatch.setattr("labelme.app.download_ai_model", mock_download_ai_model)
+
+    # Patch osam.apis.get_model_type_by_name to return a fake with get_size() returning non-None
+    class FakeModelType:
+        @staticmethod
+        def get_size():
+            return 1
+
+    def mock_get_model_type_by_name(*args, **kwargs):
+        return FakeModelType
+
+    monkeypatch.setattr(osam.apis, "get_model_type_by_name", mock_get_model_type_by_name)
+
+    # Patch OsamSession with a lightweight fake
+    class FakeOsamSession:
+        def __init__(self, *args, **kwargs):
+            self.model_name = "yoloworld:latest"
+
+    monkeypatch.setattr("labelme.app.OsamSession", FakeOsamSession)
 
     # Monkeypatch bbox_from_text.get_shapes_from_bboxes to return one shape
     def mock_get_shapes_from_bboxes(*args, **kwargs):
@@ -329,34 +378,49 @@ def test_submit_ai_prompt_records_create_events(qtbot: QtBot, monkeypatch):
         return [shape]
 
     monkeypatch.setattr(
-        win._automation.bbox_from_text, "get_shapes_from_bboxes", mock_get_shapes_from_bboxes
+        "labelme.app.bbox_from_text.get_shapes_from_bboxes", mock_get_shapes_from_bboxes
     )
 
-    # Monkeypatch upstream model calls so no real model runs
+    # Monkeypatch get_bboxes_from_texts
     def mock_get_bboxes_from_texts(*args, **kwargs):
         return (
             np.array([[0, 0, 10, 10]], dtype=np.float32),
             np.array([1.0]),
             np.array([0]),
-            np.array([0]),
-        ), None
+            None,
+        )
 
     monkeypatch.setattr(
-        win._automation.bbox_from_text, "get_bboxes_from_texts", mock_get_bboxes_from_texts
+        "labelme.app.bbox_from_text.get_bboxes_from_texts", mock_get_bboxes_from_texts
     )
 
     # Monkeypatch NMS to pass through
     def mock_nms_bboxes(*args, **kwargs):
-        boxes, scores, labels, indices = args[0], args[1], args[2], args[3]
+        boxes = kwargs.get("boxes", args[0] if args else np.array([[0, 0, 10, 10]], dtype=np.float32))
+        scores = kwargs.get("scores", args[1] if len(args) > 1 else np.array([1.0]))
+        labels = kwargs.get("labels", args[2] if len(args) > 2 else np.array([0]))
+        indices = kwargs.get("indices", args[3] if len(args) > 3 else np.array([0]))
         return boxes, scores, labels, indices
 
-    monkeypatch.setattr(win._automation.bbox_from_text, "nms_bboxes", mock_nms_bboxes)
+    monkeypatch.setattr("labelme.app.bbox_from_text.nms_bboxes", mock_nms_bboxes)
 
-    # Monkeypatch model download to skip
-    def mock_download_ai_model(*args, **kwargs):
-        return True
+    # Monkeypatch _ai_text getters
+    def mock_get_text_prompt(*args, **kwargs):
+        return "cat"
 
-    monkeypatch.setattr("labelme.app.download_ai_model", mock_download_ai_model)
+    def mock_get_model_name(*args, **kwargs):
+        return "yoloworld:latest"
+
+    def mock_get_iou_threshold(*args, **kwargs):
+        return 0.5
+
+    def mock_get_score_threshold(*args, **kwargs):
+        return 0.5
+
+    monkeypatch.setattr(win._ai_text, "get_text_prompt", mock_get_text_prompt)
+    monkeypatch.setattr(win._ai_text, "get_model_name", mock_get_model_name)
+    monkeypatch.setattr(win._ai_text, "get_iou_threshold", mock_get_iou_threshold)
+    monkeypatch.setattr(win._ai_text, "get_score_threshold", mock_get_score_threshold)
 
     # Call _submit_ai_prompt
     win._submit_ai_prompt(None)
