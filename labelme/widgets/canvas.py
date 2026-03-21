@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import enum
 from typing import Literal
 
@@ -17,6 +18,11 @@ from PyQt5.QtCore import Qt
 import labelme.utils
 from labelme._automation import OsamSession
 from labelme._automation import polygon_from_mask
+from labelme.provenance import clone_shape_for_derivation
+from labelme.provenance import default_interactive_agent
+from labelme.provenance import model_agent
+from labelme.provenance import new_session_id
+from labelme.provenance import record_event
 from labelme.shape import Shape
 
 from .download import download_ai_model
@@ -102,6 +108,9 @@ class Canvas(QtWidgets.QWidget):
             },
         )
         super().__init__(*args, **kwargs)
+
+        self._current_agent = default_interactive_agent()
+        self._session_id = new_session_id()
 
         self.resetState()
 
@@ -629,26 +638,39 @@ class Canvas(QtWidgets.QWidget):
             self._is_dragging = False
             self.restoreCursor()
 
-        if self.movingShape and self.hShape and self.hShape in self.shapes:
-            index = self.shapes.index(self.hShape)
-            if self.shapesBackups[-1][index].points != self.shapes[index].points:
-                self.storeShapes()
-                self.shapeMoved.emit()
-
-            self.movingShape = False
+        if self.movingShape:
+            self.commit_pending_shape_edits(kinds=["geometry"])
         self._update_status()
 
     def endMove(self, copy):
         assert self.selectedShapes and self.selectedShapesCopy
         assert len(self.selectedShapesCopy) == len(self.selectedShapes)
+
         if copy:
-            for i, shape in enumerate(self.selectedShapesCopy):
-                self.shapes.append(shape)
-                self.selectedShapes[i].selected = False
-                self.selectedShapes[i] = shape
+            new_selected_shapes = []
+            for shadow_shape in self.selectedShapesCopy:
+                new_shape = clone_shape_for_derivation(
+                    shadow_shape,
+                    agent=self.get_current_agent(),
+                    session_id=self.get_session_id(),
+                    properties={"kinds": ["duplicate", "drag_copy"]},
+                )
+                self.shapes.append(new_shape)
+                new_selected_shapes.append(new_shape)
+            for original in self.selectedShapes:
+                original.selected = False
+            self.selectedShapes = new_selected_shapes
         else:
             for i, shape in enumerate(self.selectedShapesCopy):
                 self.selectedShapes[i].points = shape.points
+                record_event(
+                    self.selectedShapes[i],
+                    action="edit",
+                    agent=self.get_current_agent(),
+                    session_id=self.get_session_id(),
+                    properties={"kinds": ["geometry", "drag_move"]},
+                )
+
         self.selectedShapesCopy = []
         self.repaint()
         self.storeShapes()
@@ -923,8 +945,16 @@ class Canvas(QtWidgets.QWidget):
                 point_labels=self.current.point_labels,
                 shape=self.current,
             )
-        self.current.close()
 
+        record_event(
+            self.current,
+            action="create",
+            agent=self._get_create_agent(),
+            session_id=self.get_session_id(),
+            properties={"kinds": self._get_create_kinds()},
+        )
+
+        self.current.close()
         self.shapes.append(self.current)
         self.storeShapes()
         self.current = None
@@ -1061,17 +1091,8 @@ class Canvas(QtWidgets.QWidget):
             if int(modifiers) == 0:
                 self.snapping = True
         elif self.editing():
-            if (
-                self.movingShape
-                and self.selectedShapes
-                and self.selectedShapes[0] in self.shapes
-            ):
-                index = self.shapes.index(self.selectedShapes[0])
-                if self.shapesBackups[-1][index].points != self.shapes[index].points:
-                    self.storeShapes()
-                    self.shapeMoved.emit()
-
-                self.movingShape = False
+            if self.editing() and self.movingShape:
+                self.commit_pending_shape_edits(kinds=["geometry"])
 
     def setLastLabel(self, text, flags):
         assert text
@@ -1158,6 +1179,72 @@ class Canvas(QtWidgets.QWidget):
         self.hEdge = None
         self._lasthEdge = None
         self.update()
+
+    def set_current_agent(self, agent: dict) -> None:
+        self._current_agent = copy.deepcopy(agent)
+
+    def get_current_agent(self) -> dict:
+        return copy.deepcopy(self._current_agent)
+
+    def get_session_id(self) -> str:
+        return self._session_id
+
+    def _get_create_agent(self) -> dict:
+        if self.createMode in ["ai_polygon", "ai_mask"]:
+            return model_agent(self._osam_session_model_name)
+        return self.get_current_agent()
+
+    def _get_create_kinds(self) -> list[str]:
+        if self.createMode in ["ai_polygon", "ai_mask"]:
+            return ["ai_generate", self.createMode]
+        return ["manual_draw", self.createMode]
+
+    def _shape_geometry_changed(self, before: Shape, after: Shape) -> bool:
+        if before.shape_type != after.shape_type:
+            return True
+        if before.point_labels != after.point_labels:
+            return True
+        if len(before.points) != len(after.points):
+            return True
+        if any(bp != ap for bp, ap in zip(before.points, after.points)):
+            return True
+        if before.mask is None and after.mask is None:
+            return False
+        if (before.mask is None) != (after.mask is None):
+            return True
+        return not np.array_equal(before.mask, after.mask)
+
+    def _get_changed_shapes_since_last_backup(self) -> list[Shape]:
+        if not self.shapesBackups:
+            return []
+        previous = self.shapesBackups[-1]
+        changed = []
+        for index, shape in enumerate(self.shapes):
+            if index >= len(previous):
+                changed.append(shape)
+                continue
+            if self._shape_geometry_changed(previous[index], shape):
+                changed.append(shape)
+        return changed
+
+    def commit_pending_shape_edits(self, *, kinds: list[str]) -> bool:
+        changed_shapes = self._get_changed_shapes_since_last_backup()
+        if not changed_shapes:
+            self.movingShape = False
+            return False
+        agent = self.get_current_agent()
+        for shape in changed_shapes:
+            record_event(
+                shape,
+                action="edit",
+                agent=agent,
+                session_id=self.get_session_id(),
+                properties={"kinds": kinds},
+            )
+        self.storeShapes()
+        self.shapeMoved.emit()
+        self.movingShape = False
+        return True
 
 
 def _update_shape_with_ai_response(

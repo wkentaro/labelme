@@ -36,6 +36,10 @@ from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
 from labelme.config import load_config
+from labelme.provenance import clone_shape_for_derivation
+from labelme.provenance import default_interactive_agent
+from labelme.provenance import model_agent
+from labelme.provenance import record_event
 from labelme.shape import Shape
 from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
@@ -247,6 +251,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setAcceptDrops(True)
         self._canvas_widgets = self._setup_canvas()
+
+        self._canvas_widgets.canvas.set_current_agent(default_interactive_agent())
 
         self._actions = self._setup_actions()
         self._scalers = {
@@ -1306,6 +1312,17 @@ class MainWindow(QtWidgets.QMainWindow):
             shape_type=shape_type,
         )
 
+        agent = model_agent(model_name)
+        session_id = self._canvas_widgets.canvas.get_session_id()
+        for shape in shapes:
+            record_event(
+                shape,
+                action="create",
+                agent=agent,
+                session_id=session_id,
+                properties={"kinds": ["text_to_annotation", shape.shape_type]},
+            )
+
         self._canvas_widgets.canvas.storeShapes()
         self._load_shapes(shapes, replace=False)
         self.setDirty()
@@ -1469,17 +1486,37 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self._canvas_widgets.canvas.storeShapes()
+        changed_anything = False
         for item in items:
             shape: Shape = item.shape()  # type: ignore[no-redef]
 
-            if edit_text:
+            changed_kinds = []
+
+            if edit_text and shape.label != text:
                 shape.label = text
-            if edit_flags:
+                changed_kinds.append("label_edit")
+
+            if edit_flags and shape.flags != flags:
                 shape.flags = flags
-            if edit_group_id:
+                changed_kinds.append("flag_edit")
+
+            if edit_group_id and shape.group_id != group_id:
                 shape.group_id = group_id
-            if edit_description:
+                changed_kinds.append("group_id_edit")
+
+            if edit_description and shape.description != description:
                 shape.description = description
+                changed_kinds.append("description_edit")
+
+            if changed_kinds:
+                record_event(
+                    shape,
+                    action="edit",
+                    agent=self._canvas_widgets.canvas.get_current_agent(),
+                    session_id=self._canvas_widgets.canvas.get_session_id(),
+                    properties={"kinds": changed_kinds},
+                )
+                changed_anything = True
 
             self._update_shape_color(shape)
             if shape.group_id is None:
@@ -1490,7 +1527,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             else:
                 item.setText(f"{shape.label} ({shape.group_id})")
-            self.setDirty()
+
             if self._docks.unique_label_list.find_label_item(shape.label) is None:
                 self._docks.unique_label_list.add_label_item(
                     label=shape.label,
@@ -1499,6 +1536,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         unique_label_list=self._docks.unique_label_list,
                     ),
                 )
+        if changed_anything:
+            self.setDirty()
 
     def fileSearchChanged(self):
         self._import_images_from_dir(
@@ -1747,8 +1786,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pasteSelectedShape()
 
     def pasteSelectedShape(self) -> None:
-        self._load_shapes(shapes=self._copied_shapes, replace=False)
-        self._canvas_widgets.canvas.selectShapes(self._copied_shapes)
+        pasted_shapes = [
+            clone_shape_for_derivation(
+                shape,
+                agent=self._canvas_widgets.canvas.get_current_agent(),
+                session_id=self._canvas_widgets.canvas.get_session_id(),
+                properties={"kinds": ["duplicate", "paste"]},
+            )
+            for shape in self._copied_shapes
+        ]
+        self._load_shapes(shapes=pasted_shapes, replace=False)
+        self._canvas_widgets.canvas.selectShapes(pasted_shapes)
         self.setDirty()
 
     def copySelectedShape(self) -> None:
@@ -1813,6 +1861,24 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.group_id = group_id
             shape.description = description
             self.addLabel(shape)
+
+            # Compute actual changed kinds based on what was set
+            changed_kinds = []
+            changed_kinds.append("label_edit")  # newShape is always label assignment
+            if flags:
+                changed_kinds.append("flag_edit")
+            if group_id is not None:
+                changed_kinds.append("group_id_edit")
+            if description:
+                changed_kinds.append("description_edit")
+
+            record_event(
+                shape,
+                action="edit",
+                agent=self._canvas_widgets.canvas.get_current_agent(),
+                session_id=self._canvas_widgets.canvas.get_session_id(),
+                properties={"kinds": changed_kinds},
+            )
             self._actions.edit_mode.setEnabled(True)
             self._actions.undo_last_point.setEnabled(False)
             self._actions.undo.setEnabled(True)
@@ -2412,6 +2478,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["keep_prev"] = not self._config["keep_prev"]
 
     def removeSelectedPoint(self) -> None:
+        shape_count_before = len(self._canvas_widgets.canvas.shapes)
         self._canvas_widgets.canvas.removeSelectedPoint()
         self._canvas_widgets.canvas.update()
         if (
@@ -2423,6 +2490,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.noShapes():
                 for action in self._actions.on_shapes_present:
                     action.setEnabled(False)
+        # Only record geometry edit if shape was not deleted
+        if len(self._canvas_widgets.canvas.shapes) == shape_count_before:
+            self._canvas_widgets.canvas.commit_pending_shape_edits(kinds=["geometry"])
         self.setDirty()
 
     def deleteSelectedShape(self) -> None:
