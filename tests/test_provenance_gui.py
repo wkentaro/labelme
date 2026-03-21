@@ -198,85 +198,69 @@ def test_canvas_ai_finalise_records_software_agent_create(qtbot: QtBot, monkeypa
 
 
 def test_new_shape_label_assignment_is_absorbed_into_create(qtbot: QtBot):
-    """Test that MainWindow.newShape() edit event collapses with create event.
+    """Test that label assignment after shape creation collapses with create event.
     
-    This test verifies that when a shape is created and then immediately assigned
-    a label through MainWindow.newShape(), the edit event is absorbed into the
-    create event (same agent + same session collapse rule).
+    This test verifies the provenance collapse behavior when a shape is created
+    through canvas.finalise() and then immediately has its label assigned. Since
+    both events come from the same agent and session, the edit event should be
+    absorbed into the create event.
+    
+    This simulates the MainWindow.newShape() integration path where:
+    1. canvas.finalise() records a create event with manual_draw kind
+    2. MainWindow.newShape() records an edit event with label_edit kind
+    3. The collapse rule absorbs the edit into the create
     """
-    config_overrides = _make_config_overrides()
-    config_overrides["display_label_popup"] = False
-    config_overrides["auto_save"] = False
-
-    # Create MainWindow with config overrides
-    win = MainWindow(config_overrides=config_overrides)
-    qtbot.addWidget(win)
+    canvas = Canvas()
+    qtbot.addWidget(canvas)
 
     # Load a dummy QImage
     image = _create_dummy_qimage()
     pixmap = QtGui.QPixmap.fromImage(image)
-    win._canvas_widgets.canvas.loadPixmap(pixmap)
-
-    # Set up minimal app state to avoid assertions
-    win._image_path = "/tmp/test.png"
-    win._filename = "/tmp/test.png"
-    win._image = image
-
-    # Disconnect canvas.newShape signal to avoid MainWindow.newShape() dialog interaction
-    # We will manually test the provenance collapse behavior instead
-    win._canvas_widgets.canvas.newShape.disconnect(win.newShape)
+    canvas.loadPixmap(pixmap)
 
     # Set to polygon creation mode
-    win._canvas_widgets.canvas.createMode = "polygon"
-    win._canvas_widgets.canvas.setEditing(False)
+    canvas.createMode = "polygon"
+    canvas.setEditing(False)
 
-    # Get the session ID and agent that will be used
-    session_id = win._canvas_widgets.canvas.get_session_id()
-    agent = win._canvas_widgets.canvas.get_current_agent()
-
-    # Create a shape manually (simulating what canvas.finalise() does)
+    # Build a real in-progress shape
     from PyQt5.QtCore import QPointF
 
-    shape = Shape(label="cat", shape_type="polygon")
-    shape.addPoint(QPointF(0, 0))
-    shape.addPoint(QPointF(10, 10))
-    shape.addPoint(QPointF(20, 0))
-    shape.close()
+    canvas.current = Shape(shape_type="polygon")
+    canvas.current.addPoint(QPointF(0, 0))
+    canvas.current.addPoint(QPointF(10, 10))
+    canvas.current.addPoint(QPointF(20, 0))
+    canvas.current.close()
 
-    # Record create event (this happens in canvas.finalise() for manual drawing)
-    record_event(
-        shape,
-        action="create",
-        agent=agent,
-        session_id=session_id,
-        properties={"kinds": ["manual_draw", "polygon"]},
-    )
+    # Finalize the shape - this records the create event
+    canvas.finalise()
 
-    # Add shape to canvas (this is what happens after finalise)
-    win._canvas_widgets.canvas.loadShapes([shape], replace=True)
+    # At this point, the shape should have a create event
+    assert len(canvas.shapes) == 1
+    shape = canvas.shapes[0]
+    provenance = _get_provenance(shape)
+    assert len(provenance["events"]) == 1
+    assert provenance["events"][0]["action"] == "create"
 
     # Now simulate what MainWindow.newShape() does: assign label and record edit event
-    # This is the critical part - the edit should collapse with the create
+    # This is the critical test - the edit should collapse with the create
     shape.label = "cat"
     changed_kinds = ["label_edit"]
     record_event(
         shape,
         action="edit",
-        agent=agent,  # Same agent as create
-        session_id=session_id,  # Same session as create
+        agent=canvas.get_current_agent(),
+        session_id=canvas.get_session_id(),
         properties={"kinds": changed_kinds},
     )
 
     # Check that the edit was absorbed into the create (collapse rule)
-    assert len(win._canvas_widgets.canvas.shapes) == 1
-    shape = win._canvas_widgets.canvas.shapes[0]
     provenance = _get_provenance(shape)
-    
-    # Should have only 1 event (create absorbed the edit)
     assert len(provenance["events"]) == 1
     assert provenance["events"][0]["action"] == "create"
     # The create event should now include label_edit in its kinds
-    assert "label_edit" in provenance["events"][0]["properties"]["kinds"]
+    kinds = provenance["events"][0]["properties"]["kinds"]
+    assert "manual_draw" in kinds
+    assert "label_edit" in kinds
     assert provenance["events"][0]["agent"]["label"] == "interactive-user"
 
 
