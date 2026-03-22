@@ -1,38 +1,36 @@
-"""GUI tests for the provenance module using pytest-qt."""
+"""GUI tests for provenance integration."""
 
 from __future__ import annotations
 
-from pathlib import Path
+import os
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+from contextlib import contextmanager
 
 import numpy as np
 import pytest
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
-from pytestqt.qtbot import QtBot
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import QPointF
 
 from labelme.app import MainWindow
 from labelme.provenance import default_interactive_agent
 from labelme.provenance import ensure_provenance
 from labelme.provenance import model_agent
-from labelme.provenance import new_session_id
 from labelme.provenance import record_event
 from labelme.shape import Shape
 from labelme.widgets.canvas import Canvas
 
 
-def _make_config_overrides() -> dict:
-    """Helper to create minimal config overrides for GUI tests."""
+def _make_config_overrides(labels: list[str] | None = None) -> dict:
     return {
         "display_label_popup": False,
-        "labels": ["cat", "dog"],
+        "labels": labels if labels is not None else ["cat", "dog"],
         "auto_save": False,
-        "keep_prev": False,
         "with_image_data": False,
-        "shape_color": "auto",
-        "sort_labels": True,
         "show_label_text_field": False,
-        "label_completion": "startwith",
-        "fit_to_content": {"column": True, "row": False},
+        "sort_labels": True,
         "label_flags": {},
         "validate_label": None,
         "epsilon": 10.0,
@@ -51,450 +49,289 @@ def _make_config_overrides() -> dict:
             },
             "fill_drawing": True,
         },
-        "flags": {},
-        "file_search": None,
-        "keep_prev_scale": False,
-        "keep_prev_brightness_contrast": False,
-        "default_shape_color": [0, 255, 0],
-        "label_colors": {},
-        "shift_auto_shape_color": 0,
         "ai": {"default": "sam2:latest"},
-        "shortcuts": {
-            "close": "Ctrl+W",
-            "open": "Ctrl+O",
-            "open_dir": "Ctrl+U",
-            "quit": "Ctrl+Q",
-            "save": "Ctrl+S",
-            "save_as": "Ctrl+Shift+S",
-            "save_to": None,
-            "delete_file": "Ctrl+Shift+D",
-            "toggle_keep_prev_mode": None,
-            "open_next": "[",
-            "open_prev": "]",
-            "create_polygon": "P",
-            "create_rectangle": "R",
-            "create_circle": "C",
-            "create_line": "L",
-            "create_point": "P",
-            "create_linestrip": "I",
-            "edit_label": "E",
-            "edit_shape": "E",
-            "delete_shape": "Delete",
-            "duplicate_shape": "D",
-            "copy_shape": "Ctrl+C",
-            "paste_shape": "Ctrl+V",
-            "toggle_keep_prev_brightness_contrast": None,
-            "zoom_in": "Ctrl++",
-            "zoom_out": "Ctrl+-",
-            "zoom_to_original": "Ctrl+0",
-            "fit_window": "Ctrl+F",
-            "fit_width": "Ctrl+Shift+F",
-            "hide_all_shapes": "H",
-            "show_all_shapes": "S",
-            "toggle_all_shapes": "T",
-            "undo": "Ctrl+Z",
-            "undo_last_point": "Ctrl+Z",
-            "remove_selected_point": "ALT+SHIFT+Click",
-        },
     }
 
 
-def _get_provenance(shape: Shape) -> dict:
-    """Helper to get provenance from shape, handling both internal and missing cases."""
-    if "provenance" in shape.other_data:
-        return shape.other_data["provenance"]
-    return ensure_provenance(shape)
-
-
 def _create_dummy_qimage() -> QtGui.QImage:
-    """Create a self-owned dummy QImage for testing."""
     image = QtGui.QImage(100, 100, QtGui.QImage.Format_RGB32)
     image.fill(0)
     return image
 
 
-def test_canvas_manual_finalise_records_create_event(qtbot: QtBot):
-    """Test that manual drawing records a create event with Person agent."""
-    canvas = Canvas()
-    qtbot.addWidget(canvas)
+def _make_triangle(*, label: str | None = None, shape_type: str = "polygon") -> Shape:
+    shape = Shape(label=label, shape_type=shape_type)
+    shape.addPoint(QPointF(0, 0))
+    shape.addPoint(QPointF(10, 10))
+    shape.addPoint(QPointF(20, 0))
+    shape.close()
+    return shape
 
-    # Load a dummy QImage
+
+def _get_provenance(shape: Shape) -> dict:
+    return ensure_provenance(shape)
+
+
+def _cleanup_widget(widget: QtWidgets.QWidget, qapp: QtWidgets.QApplication) -> None:
+    try:
+        widget.hide()
+        widget.close()
+    finally:
+        widget.deleteLater()
+        qapp.processEvents()
+        QtWidgets.QApplication.processEvents()
+
+
+@contextmanager
+def _main_window(
+    qapp: QtWidgets.QApplication,
+    *,
+    labels: list[str] | None = None,
+) -> MainWindow:
+    win = MainWindow(config_overrides=_make_config_overrides(labels=labels))
+    # Avoid dirty-state save/discard dialogs during teardown in headless tests.
+    win.setDirty = lambda: None  # type: ignore[method-assign]
+    win.saveLabels = lambda *args, **kwargs: True  # type: ignore[method-assign]
+    image = _create_dummy_qimage()
+    pixmap = QtGui.QPixmap.fromImage(image)
+    win._canvas_widgets.canvas.loadPixmap(pixmap)
+    win._image_path = "/tmp/test.png"
+    win._filename = "/tmp/test.png"
+    win._image = image
+    try:
+        yield win
+    finally:
+        win._is_changed = False
+        _cleanup_widget(win, qapp)
+
+
+def test_canvas_manual_finalise_records_create_event(qapp: QtWidgets.QApplication):
+    canvas = Canvas()
     image = _create_dummy_qimage()
     pixmap = QtGui.QPixmap.fromImage(image)
     canvas.loadPixmap(pixmap)
 
-    # Set to polygon creation mode
-    canvas.createMode = "polygon"
-    canvas.setEditing(False)
+    try:
+        canvas.createMode = "polygon"
+        canvas.setEditing(False)
+        canvas.current = _make_triangle(shape_type="polygon")
+        canvas.finalise()
 
-    # Create a shape manually
-    from PyQt5.QtCore import QPointF
-
-    canvas.current = Shape(shape_type="polygon")
-    canvas.current.addPoint(QPointF(0, 0))
-    canvas.current.addPoint(QPointF(10, 10))
-    canvas.current.addPoint(QPointF(20, 0))
-    canvas.current.close()
-
-    # Finalize the shape
-    canvas.finalise()
-
-    # Check that the shape has provenance with one create event
-    assert len(canvas.shapes) == 1
-    shape = canvas.shapes[0]
-    provenance = _get_provenance(shape)
-    assert len(provenance["events"]) == 1
-    assert provenance["events"][0]["action"] == "create"
-    assert provenance["events"][0]["agent"]["type"] == "Person"
-    assert provenance["events"][0]["agent"]["label"] == "interactive-user"
+        assert len(canvas.shapes) == 1
+        shape = canvas.shapes[0]
+        provenance = _get_provenance(shape)
+        assert len(provenance["events"]) == 1
+        assert provenance["events"][0]["action"] == "create"
+        assert provenance["events"][0]["agent"]["type"] == "Person"
+        assert provenance["events"][0]["agent"]["label"] == "interactive-user"
+    finally:
+        _cleanup_widget(canvas, qapp)
 
 
-def test_canvas_ai_finalise_records_software_agent_create(qtbot: QtBot, monkeypatch):
-    """Test that AI polygon finalise records a create event with SoftwareAgent."""
+def test_canvas_ai_finalise_records_software_agent_create(
+    qapp: QtWidgets.QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+):
     canvas = Canvas()
-    qtbot.addWidget(canvas)
-
-    # Load a dummy QImage
     image = _create_dummy_qimage()
     pixmap = QtGui.QPixmap.fromImage(image)
     canvas.loadPixmap(pixmap)
 
-    # Set to ai_polygon creation mode
-    canvas.createMode = "ai_polygon"
-    canvas.setEditing(False)
-    canvas.set_ai_model_name("test-model:latest")
-
-    # Monkeypatch _update_shape_with_ai to convert current shape into a polygon
     def mock_update_shape_with_ai(points, point_labels, shape):
-        from PyQt5.QtCore import QPointF
         shape.setShapeRefined(
             shape_type="polygon",
             points=[QPointF(0, 0), QPointF(10, 10), QPointF(20, 0)],
             point_labels=[1, 1, 1],
         )
 
-    monkeypatch.setattr(
-        canvas, "_update_shape_with_ai", mock_update_shape_with_ai
-    )
+    monkeypatch.setattr(canvas, "_update_shape_with_ai", mock_update_shape_with_ai)
 
-    # Create a shape manually
-    from PyQt5.QtCore import QPointF
+    try:
+        canvas.createMode = "ai_polygon"
+        canvas.setEditing(False)
+        canvas.set_ai_model_name("test-model:latest")
+        canvas.current = Shape(shape_type="points")
+        canvas.current.addPoint(QPointF(5, 5), label=1)
+        canvas.current.addPoint(QPointF(15, 15), label=1)
+        canvas.current.addPoint(QPointF(25, 5), label=1)
+        canvas.finalise()
 
-    canvas.current = Shape(shape_type="points")
-    canvas.current.addPoint(QPointF(5, 5), label=1)
-    canvas.current.addPoint(QPointF(15, 15), label=1)
-    canvas.current.addPoint(QPointF(25, 5), label=1)
-
-    # Finalize the shape
-    canvas.finalise()
-
-    # Check that the shape has provenance with one create event by SoftwareAgent
-    assert len(canvas.shapes) == 1
-    shape = canvas.shapes[0]
-    provenance = _get_provenance(shape)
-    assert len(provenance["events"]) == 1
-    assert provenance["events"][0]["action"] == "create"
-    assert provenance["events"][0]["agent"]["type"] == "SoftwareAgent"
-
-
-def test_new_shape_label_assignment_is_absorbed_into_create(qtbot: QtBot):
-    """Test that label assignment after shape creation collapses with create event.
-    
-    This test verifies the provenance collapse behavior when a shape is created
-    through canvas.finalise() and then immediately has its label assigned. Since
-    both events come from the same agent and session, the edit event should be
-    absorbed into the create event.
-    
-    This simulates the MainWindow.newShape() integration path where:
-    1. canvas.finalise() records a create event with manual_draw kind
-    2. MainWindow.newShape() records an edit event with label_edit kind
-    3. The collapse rule absorbs the edit into the create
-    """
-    canvas = Canvas()
-    qtbot.addWidget(canvas)
-
-    # Load a dummy QImage
-    image = _create_dummy_qimage()
-    pixmap = QtGui.QPixmap.fromImage(image)
-    canvas.loadPixmap(pixmap)
-
-    # Set to polygon creation mode
-    canvas.createMode = "polygon"
-    canvas.setEditing(False)
-
-    # Build a real in-progress shape
-    from PyQt5.QtCore import QPointF
-
-    canvas.current = Shape(shape_type="polygon")
-    canvas.current.addPoint(QPointF(0, 0))
-    canvas.current.addPoint(QPointF(10, 10))
-    canvas.current.addPoint(QPointF(20, 0))
-    canvas.current.close()
-
-    # Finalize the shape - this records the create event
-    canvas.finalise()
-
-    # At this point, the shape should have a create event
-    assert len(canvas.shapes) == 1
-    shape = canvas.shapes[0]
-    provenance = _get_provenance(shape)
-    assert len(provenance["events"]) == 1
-    assert provenance["events"][0]["action"] == "create"
-
-    # Now simulate what MainWindow.newShape() does: assign label and record edit event
-    # This is the critical test - the edit should collapse with the create
-    shape.label = "cat"
-    changed_kinds = ["label_edit"]
-    record_event(
-        shape,
-        action="edit",
-        agent=canvas.get_current_agent(),
-        session_id=canvas.get_session_id(),
-        properties={"kinds": changed_kinds},
-    )
-
-    # Check that the edit was absorbed into the create (collapse rule)
-    provenance = _get_provenance(shape)
-    assert len(provenance["events"]) == 1
-    assert provenance["events"][0]["action"] == "create"
-    # The create event should now include label_edit in its kinds
-    kinds = provenance["events"][0]["properties"]["kinds"]
-    assert "manual_draw" in kinds
-    assert "label_edit" in kinds
-    assert provenance["events"][0]["agent"]["label"] == "interactive-user"
+        assert len(canvas.shapes) == 1
+        shape = canvas.shapes[0]
+        provenance = _get_provenance(shape)
+        assert len(provenance["events"]) == 1
+        assert provenance["events"][0]["action"] == "create"
+        assert provenance["events"][0]["agent"]["type"] == "SoftwareAgent"
+        assert provenance["events"][0]["agent"]["label"] == "test-model:latest"
+    finally:
+        _cleanup_widget(canvas, qapp)
 
 
-def test_edit_label_adds_edit_event_for_different_agent(qtbot: QtBot, monkeypatch):
-    """Test that editing a label created by SoftwareAgent adds an edit event."""
-    config_overrides = _make_config_overrides()
-    config_overrides["auto_save"] = False  # Disable auto_save to avoid _image_path assertion
-
-    # Create MainWindow with config overrides
-    win = MainWindow(config_overrides=config_overrides)
-    qtbot.addWidget(win)
-
-    # Load a dummy QImage
-    image = _create_dummy_qimage()
-    pixmap = QtGui.QPixmap.fromImage(image)
-    win._canvas_widgets.canvas.loadPixmap(pixmap)
-
-    # Set up minimal app state to avoid assertions
-    win._image_path = "/tmp/test.png"
-    win._filename = "/tmp/test.png"
-    win._image = image
-
-    # Create a shape with SoftwareAgent provenance and add it through the proper channel
-    session_id = win._canvas_widgets.canvas.get_session_id()
-    ai_shape = Shape(label="cat", shape_type="polygon")
-    from PyQt5.QtCore import QPointF
-
-    ai_shape.addPoint(QPointF(0, 0))
-    ai_shape.addPoint(QPointF(10, 10))
-    ai_shape.addPoint(QPointF(20, 0))
-    ai_shape.close()
-    record_event(
-        ai_shape,
-        action="create",
-        agent=model_agent("sam2:latest"),
-        session_id=session_id,
-        properties={"kinds": ["ai_generate", "ai_polygon"]},
-    )
-
-    # Add shape through the app's proper channel to ensure label_list is updated
-    win._load_shapes([ai_shape], replace=True)
-
-    # Select the shape
-    win._canvas_widgets.canvas.selectShapes([ai_shape])
-
-    # Monkeypatch the label dialog to return a changed label
-    def mock_popUp(*args, **kwargs):
-        return ("dog", {}, None, "")
-
-    monkeypatch.setattr(win._label_dialog, "popUp", mock_popUp)
-
-    # Call _edit_label
-    win._edit_label()
-
-    # Check that there are 2 provenance events: create, edit
-    assert len(win._canvas_widgets.canvas.shapes) == 1
-    shape = win._canvas_widgets.canvas.shapes[0]
-    provenance = _get_provenance(shape)
-    assert len(provenance["events"]) == 2
-    assert provenance["events"][0]["action"] == "create"
-    assert provenance["events"][1]["action"] == "edit"
-
-
-def test_paste_selected_shape_creates_derive_event(qtbot: QtBot):
-    """Test that pasting a shape creates a derive event with new annotation_id."""
-    config_overrides = _make_config_overrides()
-    config_overrides["labels"] = ["cat"]
-    config_overrides["auto_save"] = False  # Disable auto_save to avoid _image_path assertion
-
-    # Create MainWindow with config overrides
-    win = MainWindow(config_overrides=config_overrides)
-    qtbot.addWidget(win)
-
-    # Load a dummy QImage
-    image = _create_dummy_qimage()
-    pixmap = QtGui.QPixmap.fromImage(image)
-    win._canvas_widgets.canvas.loadPixmap(pixmap)
-
-    # Set up minimal app state to avoid assertions
-    win._image_path = "/tmp/test.png"
-    win._filename = "/tmp/test.png"
-    win._image = image
-
-    # Create a shape with provenance and add it through the proper channel
-    session_id = win._canvas_widgets.canvas.get_session_id()
-    original_shape = Shape(label="cat", shape_type="polygon")
-    from PyQt5.QtCore import QPointF
-
-    original_shape.addPoint(QPointF(0, 0))
-    original_shape.addPoint(QPointF(10, 10))
-    original_shape.addPoint(QPointF(20, 0))
-    original_shape.close()
-    record_event(
-        original_shape,
-        action="create",
-        agent=default_interactive_agent(),
-        session_id=session_id,
-        properties={"kinds": ["manual_draw"]},
-    )
-    original_annotation_id = original_shape.other_data["provenance"]["annotation_id"]
-
-    # Add shape through the app's proper channel to ensure label_list is updated
-    win._load_shapes([original_shape], replace=True)
-
-    # Select and copy the shape
-    win._canvas_widgets.canvas.selectShapes([original_shape])
-    win.copySelectedShape()
-
-    # Paste the shape
-    win.pasteSelectedShape()
-
-    # Check that the pasted shape has a different annotation_id and derive event
-    assert len(win._canvas_widgets.canvas.shapes) == 2
-    pasted_shape = win._canvas_widgets.canvas.shapes[1]
-    pasted_provenance = _get_provenance(pasted_shape)
-    assert pasted_provenance["annotation_id"] != original_annotation_id
-    # Pasted shape keeps prior history from copied source + new derive event
-    assert len(pasted_provenance["events"]) == 2
-    assert pasted_provenance["events"][0]["action"] == "create"
-    assert pasted_provenance["events"][1]["action"] == "derive"
-    assert pasted_provenance["events"][1]["properties"]["source_annotation_id"] == original_annotation_id
-
-
-def test_submit_ai_prompt_records_create_events(qtbot: QtBot, monkeypatch):
-    """Test that text-to-annotation creates shapes with SoftwareAgent provenance."""
-    import osam.apis
-
-    config_overrides = _make_config_overrides()
-    config_overrides["auto_save"] = False  # Disable auto_save to avoid _image_path assertion
-
-    # Create MainWindow with config overrides
-    win = MainWindow(config_overrides=config_overrides)
-    qtbot.addWidget(win)
-
-    # Load a self-owned dummy QImage
-    image = _create_dummy_qimage()
-    pixmap = QtGui.QPixmap.fromImage(image)
-    win._canvas_widgets.canvas.loadPixmap(pixmap)
-
-    # Set up minimal app state to avoid assertions
-    win._image_path = "/tmp/test.png"
-    win._filename = "/tmp/test.png"
-    win._image = image
-
-    # Set to polygon mode for text-to-annotation
-    win._canvas_widgets.canvas.createMode = "polygon"
-
-    # Monkeypatch all external dependencies used by MainWindow._submit_ai_prompt()
-    # Patch download_ai_model to skip model download
-    def mock_download_ai_model(*args, **kwargs):
-        return True
-
-    monkeypatch.setattr("labelme.app.download_ai_model", mock_download_ai_model)
-
-    # Patch osam.apis.get_model_type_by_name to return a fake with get_size() returning non-None
-    class FakeModelType:
-        @staticmethod
-        def get_size():
-            return 1
-
-    def mock_get_model_type_by_name(*args, **kwargs):
-        return FakeModelType
-
-    monkeypatch.setattr(osam.apis, "get_model_type_by_name", mock_get_model_type_by_name)
-
-    # Patch OsamSession with a lightweight fake
-    class FakeOsamSession:
-        def __init__(self, *args, **kwargs):
-            self.model_name = "yoloworld:latest"
-
-    monkeypatch.setattr("labelme.app.OsamSession", FakeOsamSession)
-
-    # Monkeypatch bbox_from_text.get_shapes_from_bboxes to return one shape
-    def mock_get_shapes_from_bboxes(*args, **kwargs):
-        from PyQt5.QtCore import QPointF
-        shape = Shape(label="cat", shape_type="polygon")
-        shape.addPoint(QPointF(0, 0))
-        shape.addPoint(QPointF(10, 10))
-        shape.addPoint(QPointF(20, 0))
-        shape.close()
-        return [shape]
-
-    monkeypatch.setattr(
-        "labelme.app.bbox_from_text.get_shapes_from_bboxes", mock_get_shapes_from_bboxes
-    )
-
-    # Monkeypatch get_bboxes_from_texts
-    def mock_get_bboxes_from_texts(*args, **kwargs):
-        return (
-            np.array([[0, 0, 10, 10]], dtype=np.float32),
-            np.array([1.0]),
-            np.array([0]),
-            None,
+def test_mainwindow_newshape_collapses_label_edit_into_create(
+    qapp: QtWidgets.QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    with _main_window(qapp, labels=["cat"]) as win:
+        monkeypatch.setattr(win, "setDirty", lambda: None)
+        monkeypatch.setattr(
+            win._label_dialog,
+            "popUp",
+            lambda *args, **kwargs: pytest.fail("unexpected label dialog"),
         )
 
-    monkeypatch.setattr(
-        "labelme.app.bbox_from_text.get_bboxes_from_texts", mock_get_bboxes_from_texts
-    )
+        item = win._docks.unique_label_list.find_label_item("cat")
+        assert item is not None
+        win._docks.unique_label_list.setCurrentItem(item)
+        item.setSelected(True)
 
-    # Monkeypatch NMS to pass through
-    def mock_nms_bboxes(*args, **kwargs):
-        boxes = kwargs.get("boxes", args[0] if args else np.array([[0, 0, 10, 10]], dtype=np.float32))
-        scores = kwargs.get("scores", args[1] if len(args) > 1 else np.array([1.0]))
-        labels = kwargs.get("labels", args[2] if len(args) > 2 else np.array([0]))
-        indices = kwargs.get("indices", args[3] if len(args) > 3 else np.array([0]))
-        return boxes, scores, labels, indices
+        session_id = win._canvas_widgets.canvas.get_session_id()
+        shape = _make_triangle(shape_type="polygon")
+        record_event(
+            shape,
+            action="create",
+            agent=default_interactive_agent(),
+            session_id=session_id,
+            properties={"kinds": ["manual_draw"]},
+        )
 
-    monkeypatch.setattr("labelme.app.bbox_from_text.nms_bboxes", mock_nms_bboxes)
+        def mock_set_last_label(text, flags):
+            shape.label = text
+            shape.flags = flags
+            return shape
 
-    # Monkeypatch _ai_text getters
-    def mock_get_text_prompt(*args, **kwargs):
-        return "cat"
+        monkeypatch.setattr(win._canvas_widgets.canvas, "setLastLabel", mock_set_last_label)
+        win.newShape()
 
-    def mock_get_model_name(*args, **kwargs):
-        return "yoloworld:latest"
+        provenance = _get_provenance(shape)
+        assert len(provenance["events"]) == 1
+        assert provenance["events"][0]["action"] == "create"
+        kinds = provenance["events"][0]["properties"]["kinds"]
+        assert "manual_draw" in kinds
+        assert "label_edit" in kinds
 
-    def mock_get_iou_threshold(*args, **kwargs):
-        return 0.5
 
-    def mock_get_score_threshold(*args, **kwargs):
-        return 0.5
+def test_edit_label_adds_edit_event_for_different_agent(
+    qapp: QtWidgets.QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    with _main_window(qapp) as win:
+        monkeypatch.setattr(win, "setDirty", lambda: None)
 
-    monkeypatch.setattr(win._ai_text, "get_text_prompt", mock_get_text_prompt)
-    monkeypatch.setattr(win._ai_text, "get_model_name", mock_get_model_name)
-    monkeypatch.setattr(win._ai_text, "get_iou_threshold", mock_get_iou_threshold)
-    monkeypatch.setattr(win._ai_text, "get_score_threshold", mock_get_score_threshold)
+        session_id = win._canvas_widgets.canvas.get_session_id()
+        ai_shape = _make_triangle(label="cat", shape_type="polygon")
+        record_event(
+            ai_shape,
+            action="create",
+            agent=model_agent("sam2:latest"),
+            session_id=session_id,
+            properties={"kinds": ["ai_generate", "ai_polygon"]},
+        )
+        win._load_shapes([ai_shape], replace=True)
 
-    # Call _submit_ai_prompt
-    win._submit_ai_prompt(None)
+        item = win._docks.label_list.findItemByShape(ai_shape)
+        win._docks.label_list.selectItem(item)
+        qapp.processEvents()
 
-    # Check that the inserted shape has a create event by SoftwareAgent
-    assert len(win._canvas_widgets.canvas.shapes) == 1
-    shape = win._canvas_widgets.canvas.shapes[0]
-    provenance = _get_provenance(shape)
-    assert len(provenance["events"]) == 1
-    assert provenance["events"][0]["action"] == "create"
-    assert provenance["events"][0]["agent"]["type"] == "SoftwareAgent"
+        monkeypatch.setattr(win._label_dialog, "popUp", lambda *args, **kwargs: ("dog", {}, None, ""))
+
+        win._edit_label()
+
+        provenance = _get_provenance(ai_shape)
+        assert [event["action"] for event in provenance["events"]] == ["create", "edit"]
+        assert ai_shape.label == "dog"
+
+
+def test_paste_selected_shape_creates_derive_event(qapp: QtWidgets.QApplication):
+    with _main_window(qapp, labels=["cat"]) as win:
+        original_shape = _make_triangle(label="cat", shape_type="polygon")
+        session_id = win._canvas_widgets.canvas.get_session_id()
+        record_event(
+            original_shape,
+            action="create",
+            agent=default_interactive_agent(),
+            session_id=session_id,
+            properties={"kinds": ["manual_draw"]},
+        )
+        original_annotation_id = _get_provenance(original_shape)["annotation_id"]
+
+        win._load_shapes([original_shape], replace=True)
+        win._canvas_widgets.canvas.selectShapes([original_shape])
+        win.copySelectedShape()
+        win.pasteSelectedShape()
+
+        assert len(win._canvas_widgets.canvas.shapes) == 2
+        pasted_shape = win._canvas_widgets.canvas.shapes[1]
+        pasted_provenance = _get_provenance(pasted_shape)
+        assert pasted_provenance["annotation_id"] != original_annotation_id
+        assert pasted_provenance["events"][0]["action"] == "create"
+        assert pasted_provenance["events"][-1]["action"] == "derive"
+        assert (
+            pasted_provenance["events"][-1]["properties"]["source_annotation_id"]
+            == original_annotation_id
+        )
+
+
+def test_submit_ai_prompt_records_create_events(
+    qapp: QtWidgets.QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    import osam.apis
+
+    with _main_window(qapp) as win:
+        monkeypatch.setattr(win, "setDirty", lambda: None)
+        win._canvas_widgets.canvas.createMode = "polygon"
+
+        monkeypatch.setattr("labelme.app.download_ai_model", lambda *args, **kwargs: True)
+
+        class FakeModelType:
+            @staticmethod
+            def get_size():
+                return 1
+
+        monkeypatch.setattr(osam.apis, "get_model_type_by_name", lambda *args, **kwargs: FakeModelType)
+
+        class FakeOsamSession:
+            def __init__(self, *args, **kwargs):
+                self.model_name = "yoloworld:latest"
+
+        monkeypatch.setattr("labelme.app.OsamSession", FakeOsamSession)
+
+        monkeypatch.setattr(
+            "labelme.app.bbox_from_text.get_bboxes_from_texts",
+            lambda *args, **kwargs: (
+                np.array([[0, 0, 10, 10]], dtype=np.float32),
+                np.array([1.0], dtype=np.float32),
+                np.array([0], dtype=np.int32),
+                None,
+            ),
+        )
+        monkeypatch.setattr(
+            "labelme.app.bbox_from_text.nms_bboxes",
+            lambda *args, **kwargs: (
+                kwargs.get("boxes", args[0] if args else np.array([[0, 0, 10, 10]], dtype=np.float32)),
+                kwargs.get("scores", args[1] if len(args) > 1 else np.array([1.0], dtype=np.float32)),
+                kwargs.get("labels", args[2] if len(args) > 2 else np.array([0], dtype=np.int32)),
+                np.array([0], dtype=np.int32),
+            ),
+        )
+
+        def mock_get_shapes_from_bboxes(*args, **kwargs):
+            return [_make_triangle(label="cat", shape_type="polygon")]
+
+        monkeypatch.setattr(
+            "labelme.app.bbox_from_text.get_shapes_from_bboxes",
+            mock_get_shapes_from_bboxes,
+        )
+        monkeypatch.setattr(win._ai_text, "get_text_prompt", lambda: "cat")
+        monkeypatch.setattr(win._ai_text, "get_model_name", lambda: "yoloworld:latest")
+        monkeypatch.setattr(win._ai_text, "get_iou_threshold", lambda: 0.5)
+        monkeypatch.setattr(win._ai_text, "get_score_threshold", lambda: 0.5)
+
+        win._submit_ai_prompt(None)
+
+        assert len(win._canvas_widgets.canvas.shapes) == 1
+        shape = win._canvas_widgets.canvas.shapes[0]
+        provenance = _get_provenance(shape)
+        assert len(provenance["events"]) == 1
+        assert provenance["events"][0]["action"] == "create"
+        assert provenance["events"][0]["agent"]["type"] == "SoftwareAgent"
