@@ -2562,4 +2562,11 @@ def _scan_image_files(root_dir: str) -> list[str]:
                 images.append(relativePath)
 
     logger.debug("found {:d} images in {!r}", len(images), root_dir)
-    return natsort.os_sorted(images)
+    try:
+        return natsort.os_sorted(images)
+    except OSError:
+        logger.warning(
+            "natsort.os_sorted failed (known macOS strxfrm bug), "
+            "falling back to locale-unaware natural sort"
+        )
+        return natsort.natsorted(images)
