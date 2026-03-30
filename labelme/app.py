@@ -988,7 +988,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 self._open_next_image()
             else:
-                self._load_file(filename=filename)
+                parent_dir = osp.dirname(osp.abspath(filename))
+                if parent_dir:
+                    self._import_images_from_dir(
+                        root_dir=parent_dir,
+                        pattern=self._docks.file_search.text(),
+                    )
+                self._load_file(filename=osp.abspath(filename))
         else:
             self._filename = None
 
