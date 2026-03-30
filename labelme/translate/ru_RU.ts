@@ -11,12 +11,12 @@
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>ИИ предлагает разметку в режимах &apos;AI-Polygon&apos; и &apos;AI-Mask&apos;</translation>
+        <translation>ИИ предлагает разметку в режимах 'AI-Polygon' и 'AI-Mask'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Выберите режим &apos;AI-Polygon&apos; или &apos;AI-Mask&apos;, чтобы включить разметку с помощью ИИ</translation>
+        <translation>Выберите режим 'AI-Polygon' или 'AI-Mask', чтобы включить разметку с помощью ИИ</translation>
     </message>
 </context>
 <context>
@@ -54,7 +54,7 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Выберите режим &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos; или &apos;AI-Mask&apos;, чтобы включить</translation>
+        <translation>Выберите режим 'Polygon', 'Rectangle', 'AI-Polygon' или 'AI-Mask', чтобы включить</translation>
     </message>
 </context>
 <context>
@@ -175,7 +175,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Выберите метку, чтобы начать разметку. Нажмите &apos;Esc&apos;, чтобы снять выбор.</translation>
+        <translation>Выберите метку, чтобы начать разметку. Нажмите 'Esc', чтобы снять выбор.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -201,12 +201,6 @@
         <location filename="../app.py" line="0"/>
         <source>Quit application</source>
         <translation>Выйти из приложения</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>&amp;Open
-:</source>
-        <translation>&amp;Открыть (&amp;O)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -237,12 +231,6 @@
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>&amp;Save
-:</source>
-        <translation>Сохранить (&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -466,12 +454,6 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Undo
-:</source>
-        <translation>Отменить</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
         <translation>Отменить последнее добавление и редактирование фигуры</translation>
     </message>
@@ -661,7 +643,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Неверная метка &apos;{}&apos; с типом проверки &apos;{}&apos;</translation>
+        <translation>Неверная метка '{}' с типом проверки '{}'</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -828,6 +810,27 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>Сбросить компоновку</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&amp;Save
+</source>
+        <translation>Сохранить (&amp;S)
+</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&amp;Open
+</source>
+        <translation>&amp;Открыть
+</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Undo
+</source>
+        <translation>Отменить
+</translation>
     </message>
 </context>
 </TS>
