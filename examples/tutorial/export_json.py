@@ -52,7 +52,7 @@ def main():
     )
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
-    utils.lblsave(osp.join(out_dir, "label.png"), lbl)
+    imgviz.io.lblsave(osp.join(out_dir, "label.png"), lbl.astype(np.uint8))
     PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, "label_viz.png"))
 
     with open(osp.join(out_dir, "label_names.txt"), "w") as f:
