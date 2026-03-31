@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import contextlib
 import io
@@ -136,13 +138,13 @@ class LabelFile:
     shapes: list[ShapeDict]
     suffix = ".json"
 
-    def __init__(self, filename=None):
-        self.shapes = []
-        self.imagePath = None
-        self.imageData = None
+    def __init__(self, filename: str | None = None):
+        self.shapes: list[ShapeDict] = []
+        self.imagePath: str | None = None
+        self.imageData: bytes | None = None
         if filename is not None:
             self.load(filename)
-        self.filename = filename
+        self.filename: str | None = filename
 
     @staticmethod
     def load_image_file(filename):

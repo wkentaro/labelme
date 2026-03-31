@@ -322,11 +322,6 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Toggle &quot;keep pevious annotation&quot; mode</source>
-        <translation type="obsolete">「前のアノテーションを保持」モードを切り替え</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
         <translation>ポリゴン
 を作成</translation>
@@ -674,11 +669,6 @@ Shapes</source>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
         <translation>最近使用したファイル(&amp;R)</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>AI Model</source>
-        <translation type="obsolete">AIモデル</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>

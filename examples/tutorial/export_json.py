@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import os
 import os.path as osp
@@ -25,8 +27,7 @@ def main():
         out_dir = osp.join(osp.dirname(json_file), out_dir)
     else:
         out_dir = args.out
-    if not osp.exists(out_dir):
-        os.mkdir(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
@@ -51,7 +52,7 @@ def main():
     )
 
     PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
-    utils.lblsave(osp.join(out_dir, "label.png"), lbl)
+    imgviz.io.lblsave(osp.join(out_dir, "label.png"), lbl.astype(np.uint8))
     PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, "label_viz.png"))
 
     with open(osp.join(out_dir, "label_names.txt"), "w") as f:

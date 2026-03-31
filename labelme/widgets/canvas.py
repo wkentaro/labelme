@@ -250,7 +250,7 @@ class Canvas(QtWidgets.QWidget):
         self.mode = CanvasMode.EDIT if value else CanvasMode.CREATE
         if self.mode == CanvasMode.EDIT:
             # CREATE -> EDIT
-            self.repaint()  # clear crosshair
+            self.update()  # clear crosshair
         else:
             # EDIT -> CREATE
             need_update: bool = self._set_highlight(
@@ -377,7 +377,7 @@ class Canvas(QtWidgets.QWidget):
 
             self.overrideCursor(CURSOR_DRAW)
             if not self.current:
-                self.repaint()  # draw crosshair
+                self.update()  # draw crosshair
                 self._update_status()
                 return
 
@@ -437,7 +437,7 @@ class Canvas(QtWidgets.QWidget):
                 self.line.point_labels = [1]
                 self.line.close()
             assert len(self.line.points) == len(self.line.point_labels)
-            self.repaint()
+            self.update()
             self.current.highlightClear()
             self._update_status()
             return
@@ -447,10 +447,10 @@ class Canvas(QtWidgets.QWidget):
             if self.selectedShapesCopy and self.prevPoint is not None:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
-                self.repaint()
+                self.update()
             elif self.selectedShapes:
                 self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-                self.repaint()
+                self.update()
             self._update_status()
             return
 
@@ -465,7 +465,7 @@ class Canvas(QtWidgets.QWidget):
                     pos,
                     is_shift_pressed=is_shift_pressed,
                 )
-                self.repaint()
+                self.update()
                 self.movingShape = True
             elif self.selectedRotationPoint():
                 assert self.hShape is not None
@@ -478,12 +478,12 @@ class Canvas(QtWidgets.QWidget):
                 angle = start_angle - edit_pos_angle
                 _rotateShape(self.hShape, self._rotation_center, angle)
                 self._rotation_pos = pos
-                self.repaint()
+                self.update()
                 self.movingShape = True
             elif self.selectedShapes and self.prevPoint is not None:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapes, pos)
-                self.repaint()
+                self.update()
                 self.movingShape = True
             return
 
@@ -679,14 +679,14 @@ class Canvas(QtWidgets.QWidget):
                 group_mode = int(a0.modifiers()) == Qt.ControlModifier
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
                 self.prevPoint = pos
-                self.repaint()
+                self.update()
         elif a0.button() == Qt.RightButton and self.editing():
             group_mode = int(a0.modifiers()) == Qt.ControlModifier
             if not self.selectedShapes or (
                 self.hShape is not None and self.hShape not in self.selectedShapes
             ):
                 self.selectShapePoint(pos, multiple_selection_mode=group_mode)
-                self.repaint()
+                self.update()
             self.prevPoint = pos
         elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
             self.overrideCursor(CURSOR_GRAB)
@@ -701,7 +701,7 @@ class Canvas(QtWidgets.QWidget):
             if not menu.exec_(self.mapToGlobal(a0.pos())) and self.selectedShapesCopy:  # type: ignore
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
-                self.repaint()
+                self.update()
         elif a0.button() == Qt.LeftButton:
             if self.editing():
                 if (
@@ -716,7 +716,7 @@ class Canvas(QtWidgets.QWidget):
             self._is_dragging = False
             self.restoreCursor()
 
-        if self.movingShape and self.hShape:
+        if self.movingShape and self.hShape and self.hShape in self.shapes:
             index = self.shapes.index(self.hShape)
             if self.shapesBackups[-1][index].points != self.shapes[index].points:
                 self.storeShapes()
@@ -737,7 +737,7 @@ class Canvas(QtWidgets.QWidget):
             for i, shape in enumerate(self.selectedShapesCopy):
                 self.selectedShapes[i].points = shape.points
         self.selectedShapesCopy = []
-        self.repaint()
+        self.update()
         self.storeShapes()
         return True
 
@@ -959,14 +959,14 @@ class Canvas(QtWidgets.QWidget):
             p.drawLine(
                 0,
                 int(self.prevMovePoint.y() * self.scale),
-                self.width() - 1,
+                int(self.pixmap.width() * self.scale) - 1,
                 int(self.prevMovePoint.y() * self.scale),
             )
             p.drawLine(
                 int(self.prevMovePoint.x() * self.scale),
                 0,
                 int(self.prevMovePoint.x() * self.scale),
-                self.height() - 1,
+                int(self.pixmap.height() * self.scale) - 1,
             )
 
         Shape.scale = self.scale
@@ -1147,7 +1147,7 @@ class Canvas(QtWidgets.QWidget):
     def moveByKeyboard(self, offset):
         if self.selectedShapes:
             self.boundedMoveShapes(self.selectedShapes, self.prevPoint + offset)
-            self.repaint()
+            self.update()
             self.movingShape = True
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
@@ -1182,7 +1182,11 @@ class Canvas(QtWidgets.QWidget):
             if int(modifiers) == 0:
                 self.snapping = True
         elif self.editing():
-            if self.movingShape and self.selectedShapes:
+            if (
+                self.movingShape
+                and self.selectedShapes
+                and self.selectedShapes[0] in self.shapes
+            ):
                 index = self.shapes.index(self.selectedShapes[0])
                 if self.shapesBackups[-1][index].points != self.shapes[index].points:
                     self.storeShapes()

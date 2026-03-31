@@ -14,7 +14,7 @@ labelme apc2016_obj3.jpg
 To view the json file quickly, you can use utility script:
 
 ```bash
-labelme_draw_json apc2016_obj3.json
+./draw_json.py apc2016_obj3.json
 ```
 
 <img src=".readme/draw_json.jpg" width="70%" />
@@ -26,7 +26,7 @@ To convert the json to set of image and label, you can run following:
 
 
 ```bash
-labelme_export_json apc2016_obj3.json
+./export_json.py apc2016_obj3.json
 ```
 
 It generates standard files from the JSON file.
@@ -59,8 +59,8 @@ array([0, 1, 2, 3], dtype=uint8)
 
 Also, you can see the label PNG file by:
 
-```python
-labelme_draw_label_png apc2016_obj3/label.png
+```bash
+./draw_label_png.py apc2016_obj3/label.png
 ```
 
 <img src=".readme/draw_label_png.jpg" width="35%" />

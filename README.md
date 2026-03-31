@@ -58,7 +58,7 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] AI-assisted point-to-polygon/mask annotation by SAM, EfficientSAM models
 - [x] AI text-to-annotation by YOLO-world, SAM3 models
 
-**🌏 Available in 16 languages** - English &middot; 日本語 &middot; 한국어 &middot; 简体中文 &middot; 繁體中文 &middot; Deutsch &middot; Français &middot; Español &middot; Italiano &middot; Português &middot; Nederlands &middot; Magyar &middot; Tiếng Việt &middot; Türkçe &middot; Polski &middot; فارسی (`LANG=ja_JP.UTF-8 labelme`)
+**🌏 Available in 20 languages** - English &middot; 日本語 &middot; 한국어 &middot; 简体中文 &middot; 繁體中文 &middot; Deutsch &middot; Ελληνικά &middot; Français &middot; Español &middot; Italiano &middot; Português &middot; Nederlands &middot; Magyar &middot; Русский &middot; ไทย &middot; Tiếng Việt &middot; Türkçe &middot; Українська &middot; Polski &middot; فارسی (`LANG=ja_JP.UTF-8 labelme`)
 
 
 ## Installation

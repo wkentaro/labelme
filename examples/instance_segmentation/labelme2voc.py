@@ -119,7 +119,7 @@ def main():
         ins[cls == -1] = 0  # ignore it.
 
         # class label
-        labelme.utils.lblsave(out_clsp_file, cls)
+        imgviz.io.lblsave(out_clsp_file, cls.astype(np.uint8))
         if not args.nonpy:
             np.save(out_cls_file, cls)
         if not args.noviz:
@@ -134,7 +134,7 @@ def main():
 
         if not args.noobject:
             # instance label
-            labelme.utils.lblsave(out_insp_file, ins)
+            imgviz.io.lblsave(out_insp_file, ins.astype(np.uint8))
             if not args.nonpy:
                 np.save(out_ins_file, ins)
             if not args.noviz:

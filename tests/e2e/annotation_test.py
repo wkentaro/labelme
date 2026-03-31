@@ -33,7 +33,7 @@ def test_MainWindow_annotate_jpg(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     label: str = "whole"
-    canvas_size: QSize = win.canvas.size()
+    canvas_size: QSize = win._canvas_widgets.canvas.size()
     points: list[tuple[float, float]] = [
         (canvas_size.width() * 0.25, canvas_size.height() * 0.25),
         (canvas_size.width() * 0.75, canvas_size.height() * 0.25),
@@ -44,31 +44,35 @@ def test_MainWindow_annotate_jpg(
     qtbot.wait(50)
 
     def click(xy: tuple[float, float]) -> None:
-        qtbot.mouseMove(win.canvas, pos=QPoint(int(xy[0]), int(xy[1])))
+        qtbot.mouseMove(win._canvas_widgets.canvas, pos=QPoint(int(xy[0]), int(xy[1])))
         qtbot.wait(50)
-        qtbot.mousePress(win.canvas, Qt.LeftButton, pos=QPoint(int(xy[0]), int(xy[1])))
+        qtbot.mousePress(
+            win._canvas_widgets.canvas,
+            Qt.LeftButton,
+            pos=QPoint(int(xy[0]), int(xy[1])),
+        )
         qtbot.wait(50)
 
     for xy in points:
         click(xy=xy)
 
     def interact() -> None:
-        qtbot.keyClicks(win.labelDialog.edit, label)
+        qtbot.keyClicks(win._label_dialog.edit, label)
         qtbot.wait(50)
-        qtbot.keyClick(win.labelDialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(win._label_dialog.edit, Qt.Key_Enter)
         qtbot.wait(50)
 
     QTimer.singleShot(100, interact)
 
     click(xy=points[0])
 
-    assert len(win.canvas.shapes) == 1
-    assert len(win.canvas.shapes[0].points) == 4
-    assert win.canvas.shapes[0].label == "whole"
-    assert win.canvas.shapes[0].shape_type == "polygon"
-    assert win.canvas.shapes[0].group_id is None
-    assert win.canvas.shapes[0].mask is None
-    assert win.canvas.shapes[0].flags == {}
+    assert len(win._canvas_widgets.canvas.shapes) == 1
+    assert len(win._canvas_widgets.canvas.shapes[0].points) == 4
+    assert win._canvas_widgets.canvas.shapes[0].label == "whole"
+    assert win._canvas_widgets.canvas.shapes[0].shape_type == "polygon"
+    assert win._canvas_widgets.canvas.shapes[0].group_id is None
+    assert win._canvas_widgets.canvas.shapes[0].mask is None
+    assert win._canvas_widgets.canvas.shapes[0].flags == {}
 
     win.saveFile()
 
