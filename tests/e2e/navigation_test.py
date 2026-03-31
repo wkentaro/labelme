@@ -25,16 +25,16 @@ def test_image_navigation_while_selecting_shape(
 
     # Incident: https://github.com/wkentaro/labelme/pull/1716 {{
     point = QPoint(250, 200)
-    qtbot.mouseMove(win.canvas, pos=point)
-    qtbot.mouseClick(win.canvas, Qt.LeftButton, pos=point)
+    qtbot.mouseMove(win._canvas_widgets.canvas, pos=point)
+    qtbot.mouseClick(win._canvas_widgets.canvas, Qt.LeftButton, pos=point)
     qtbot.wait(100)
 
-    qtbot.mouseClick(win.fileListWidget, Qt.LeftButton)
+    qtbot.mouseClick(win._docks.file_list, Qt.LeftButton)
     qtbot.wait(100)
 
-    qtbot.keyClick(win.fileListWidget, Qt.Key_Down)
+    qtbot.keyClick(win._docks.file_list, Qt.Key_Down)
     qtbot.wait(100)
-    qtbot.keyClick(win.canvas, Qt.Key_Down)
+    qtbot.keyClick(win._canvas_widgets.canvas, Qt.Key_Down)
     qtbot.wait(100)
     # }}
 

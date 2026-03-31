@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_FR">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
-        <translation>Annotation assistée par IA</translation>
+        <translation>Разметка с помощью ИИ</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>L'IA suggère l'annotation dans les modes 'AI-Polygon' et 'AI-Mask'</translation>
+        <translation>ИИ предлагает разметку в режимах 'AI-Polygon' и 'AI-Mask'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Sélectionnez le mode 'AI-Polygon' ou 'AI-Mask' pour activer AI-Assisted Annotation</translation>
+        <translation>Выберите режим 'AI-Polygon' или 'AI-Mask', чтобы включить разметку с помощью ИИ</translation>
     </message>
 </context>
 <context>
@@ -24,22 +24,22 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
-        <translation>Invite IA</translation>
+        <translation>ИИ: текст → разметка</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
-        <translation>ex. : chien,chat,oiseau</translation>
+        <translation>например: собака,кот,птица</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
-        <translation>Exécuter</translation>
+        <translation>Выполнить</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
-        <translation>Score</translation>
+        <translation>Оценка</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -49,12 +49,12 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI creates annotations from the text prompt</source>
-        <translation>L'IA crée des annotations à partir du texte</translation>
+        <translation>ИИ создаёт разметку по текстовому запросу</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Sélectionnez le mode 'Polygon', 'Rectangle', 'AI-Polygon' ou 'AI-Mask' pour activer</translation>
+        <translation>Выберите режим 'Polygon', 'Rectangle', 'AI-Polygon' или 'AI-Mask', чтобы включить</translation>
     </message>
 </context>
 <context>
@@ -62,102 +62,102 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation>Cliquer et glisser pour déplacer le point</translation>
+        <translation>Нажмите и перетащите, чтобы переместить точку</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
-        <translation>Cliquer et glisser pour déplacer la forme</translation>
+        <translation>Нажмите и перетащите, чтобы переместить фигуру</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Creating %r</source>
-        <translation>Création de %r</translation>
+        <translation>Создание %r</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ESC to cancel</source>
-        <translation>ESC pour annuler</translation>
+        <translation>ESC — отмена</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Enter or Space to finalize</source>
-        <translation>Entrée ou Espace pour finaliser</translation>
+        <translation>Enter или Space — завершить</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
-        <translation>Modification des formes</translation>
+        <translation>Редактирование фигур</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Cliquer sur les points à inclure ou Maj+Cliquer pour exclure (polygone IA)</translation>
+        <translation>Нажимайте точки, чтобы включить, или Shift+нажатие, чтобы исключить (ai_polygon)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Cliquer sur les points à inclure ou Maj+Cliquer pour exclure (masque IA)</translation>
+        <translation>Нажимайте точки, чтобы включить, или Shift+нажатие, чтобы исключить (ai_mask)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for line</source>
-        <translation>Cliquer sur le point de départ de la ligne</translation>
+        <translation>Нажмите начальную точку для линии</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click end point for line</source>
-        <translation>Cliquer sur le point d'arrivée de la ligne</translation>
+        <translation>Нажмите конечную точку для линии</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for linestrip</source>
-        <translation>Cliquer sur le point de départ de la polyligne</translation>
+        <translation>Нажмите начальную точку для ломаной</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Cliquer sur le point suivant ou Ctrl/Cmd+Cliquer pour terminer la polyligne</translation>
+        <translation>Нажмите следующую точку или завершите Ctrl/Cmd+нажатие для ломаной</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click center point for circle</source>
-        <translation>Cliquer sur le point central du cercle</translation>
+        <translation>Нажмите центр окружности</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click point on circumference for circle</source>
-        <translation>Cliquer sur un point de la circonférence du cercle</translation>
+        <translation>Нажмите точку на окружности для круга</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for rectangle</source>
-        <translation>Cliquer sur le premier coin du rectangle</translation>
+        <translation>Нажмите первый угол для прямоугольника</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
-        <translation>Cliquer pour ajouter un point</translation>
+        <translation>Нажмите, чтобы добавить точку</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + MAJ + Cliquer pour supprimer le point</translation>
+        <translation>ALT + SHIFT + нажатие — удалить точку</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Cliquer pour créer un point sur la forme</translation>
+        <translation>ALT + нажатие — создать точку на фигуре</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
-        <translation>Clic droit et glisser pour copier la forme</translation>
+        <translation>Правый клик и перетаскивание — копировать фигуру</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Cliquer sur le coin opposé du rectangle (Shift pour carré)</translation>
+        <translation>Нажмите противоположный угол для прямоугольника (Shift — квадрат)</translation>
     </message>
 </context>
 <context>
@@ -165,514 +165,490 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Flags</source>
-        <translation>Drapeaux</translation>
+        <translation>Флаги</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Annotation List</source>
-        <translation>Liste des annotations</translation>
+        <translation>Список разметки</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Sélectionner une étiquette pour commencer l'annotation. Appuyer sur 'Esc' pour désélectionner.</translation>
+        <translation>Выберите метку, чтобы начать разметку. Нажмите 'Esc', чтобы снять выбор.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label List</source>
-        <translation>Liste des étiquettes</translation>
+        <translation>Список меток</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
-        <translation>Rechercher un nom de fichier</translation>
+        <translation>Поиск по имени файла</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>File List</source>
-        <translation>Liste des fichiers</translation>
+        <translation>Список файлов</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Quitter</translation>
+        <translation>&amp;Выход</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Quit application</source>
-        <translation>Quitter l'application</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Ouvrir
-</translation>
+        <translation>Выйти из приложения</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open image or label file</source>
-        <translation>Ouvrir une image ou un fichier d'étiquettes</translation>
+        <translation>Открыть изображение или файл разметки</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>Ouvrir le répertoire</translation>
+        <translation>Открыть папку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>Image &amp;suivante</translation>
+        <translation>Следующее изображение (&amp;N)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Ouvrir la suivante (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
+        <translation>Открыть следующее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>Image &amp;précédente</translation>
+        <translation>Предыдущее изображение (&amp;P)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Ouvrir la précédente (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Enregistrer
-</translation>
+        <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
-        <translation>Enregistrer les étiquettes dans un fichier</translation>
+        <translation>Сохранить метки в файл</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Save As</source>
-        <translation>Enregistrer &amp;sous</translation>
+        <translation>Сохранить как</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
-        <translation>Enregistrer les étiquettes dans un autre fichier</translation>
+        <translation>Сохранить метки в другой файл</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>&amp;Supprimer le fichier</translation>
+        <translation>Удалить файл (&amp;D)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
-        <translation>Supprimer le fichier d'étiquettes actuel</translation>
+        <translation>Удалить текущий файл меток</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>&amp;Changer le répertoire de sortie</translation>
+        <translation>Изменить папку вывода (&amp;C)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
-        <translation>Changer où les annotations sont chargées/enregistrées</translation>
+        <translation>Изменить место загрузки/сохранения аннотаций</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save &amp;Automatically</source>
-        <translation>Enregistrer &amp;automatiquement</translation>
+        <translation>Сохранять &amp;автоматически</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save automatically</source>
-        <translation>Enregistrer automatiquement</translation>
+        <translation>Сохранять автоматически</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
-        <translation>Enregistrer avec les données d'image</translation>
+        <translation>Сохранять вместе с данными изображения</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
-        <translation>Enregistrer les données d'image dans le fichier d'étiquettes</translation>
+        <translation>Сохранять данные изображения в файле разметки</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Close</source>
-        <translation>&amp;Fermer</translation>
+        <translation>&amp;Закрыть</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Close current file</source>
-        <translation>Fermer le fichier actuel</translation>
+        <translation>Закрыть текущий файл</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
-        <translation>Conserver l'annotation précédente</translation>
+        <translation>Сохранять предыдущую разметку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Polygons</source>
-        <translation>Créer des polygones</translation>
+        <translation>Создать полигоны</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
-        <translation>Commencer à dessiner des polygones</translation>
+        <translation>Начать рисовать полигоны</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Rectangle</source>
-        <translation>Créer un rectangle</translation>
+        <translation>Создать прямоугольник</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
-        <translation>Commencer à dessiner des rectangles</translation>
+        <translation>Начать рисовать прямоугольники</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Circle</source>
-        <translation>Créer un cercle</translation>
+        <translation>Создать окружность</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
-        <translation>Commencer à dessiner des cercles</translation>
+        <translation>Начать рисовать окружности</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Line</source>
-        <translation>Créer une ligne</translation>
+        <translation>Создать линию</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>Commencer à dessiner des lignes</translation>
+        <translation>Начать рисовать линии</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create Point</source>
-        <translation>Créer un point</translation>
+        <translation>Создать точку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
-        <translation>Commencer à dessiner des points</translation>
+        <translation>Начать рисовать точки</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create LineStrip</source>
-        <translation>Créer une polyligne</translation>
+        <translation>Создать ломаную</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Commencer à dessiner une polyligne. Ctrl+Clic gauche termine la création.</translation>
+        <translation>Начать рисовать ломаную. Ctrl+ЛКМ завершает.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Polygon</source>
-        <translation>Créer un polygone IA</translation>
+        <translation>Создать AI-полигон</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Commencer à dessiner un polygone IA. Ctrl+Clic gauche termine la création.</translation>
+        <translation>Начать рисовать ai_polygon. Ctrl+ЛКМ завершает.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create AI-Mask</source>
-        <translation>Créer un masque IA</translation>
+        <translation>Создать AI-маску</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Commencer à dessiner un masque IA. Ctrl+Clic gauche termine la création.</translation>
+        <translation>Начать рисовать ai_mask. Ctrl+ЛКМ завершает.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Shapes</source>
-        <translation>Modifier les formes</translation>
+        <translation>Редактировать фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Move and edit the selected shapes</source>
-        <translation>Déplacer et modifier les formes sélectionnées</translation>
+        <translation>Перемещать и редактировать выбранные фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Shapes</source>
-        <translation>Supprimer les formes</translation>
+        <translation>Удалить фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete the selected shapes</source>
-        <translation>Supprimer les formes sélectionnées</translation>
+        <translation>Удалить выбранные фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Shapes</source>
-        <translation>Dupliquer les formes</translation>
+        <translation>Дублировать фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected shapes</source>
-        <translation>Créer un doublon des formes sélectionnées</translation>
+        <translation>Создать копию выбранных фигур</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy Shapes</source>
-        <translation>Copier les formes</translation>
+        <translation>Копировать фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy selected shapes to clipboard</source>
-        <translation>Copier les formes sélectionnées dans le presse-papiers</translation>
+        <translation>Копировать выбранные фигуры в буфер обмена</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste Shapes</source>
-        <translation>Coller les formes</translation>
+        <translation>Вставить фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste copied shapes</source>
-        <translation>Coller les formes copiées</translation>
+        <translation>Вставить скопированные фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
-        <translation>Annuler le dernier point</translation>
+        <translation>Отменить последнюю точку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
-        <translation>Annuler le dernier point dessiné</translation>
+        <translation>Отменить последнюю нарисованную точку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
-        <translation>Supprimer le point sélectionné</translation>
+        <translation>Удалить выбранную точку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
-        <translation>Supprimer le point sélectionné du polygone</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Undo
-</source>
-        <translation>Annuler
-</translation>
+        <translation>Удалить выбранную точку из полигона</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
-        <translation>Annuler le dernier ajout et la dernière modification de forme</translation>
+        <translation>Отменить последнее добавление и редактирование фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Shapes</source>
-        <translation>&amp;Masquer
-les formes</translation>
+        <translation>&amp;Скрыть фигуры (&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Hide all shapes</source>
-        <translation>Masquer toutes les formes</translation>
+        <translation>Скрыть все фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Shapes</source>
-        <translation>&amp;Afficher
-les formes</translation>
+        <translation>&amp;Показать фигуры (&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show all shapes</source>
-        <translation>Afficher toutes les formes</translation>
+        <translation>Показать все фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Shapes</source>
-        <translation>&amp;Basculer
-les formes</translation>
+        <translation>&amp;Переключить фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle all shapes</source>
-        <translation>Basculer toutes les formes</translation>
+        <translation>Переключить все фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
-        <translation>&amp;Tutoriel</translation>
+        <translation>&amp;Руководство</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
-        <translation>Afficher la page du tutoriel</translation>
+        <translation>Показать страницу руководства</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom</source>
-        <translation>Zoom</translation>
+        <translation>Масштаб</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom in or out of the image. Also accessible with {} and {} from the canvas.</source>
-        <translation>Zoomer ou dézoomer l'image. Également accessible avec {} et {} depuis le canevas.</translation>
+        <translation>Увеличить или уменьшить изображение. Также доступно с {} и {} на холсте.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Molette</translation>
+        <translation>Ctrl+Колесо</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
-        <translation>Zoom &amp;avant</translation>
+        <translation>Увеличить (&amp;I)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
-        <translation>Augmenter le niveau de zoom</translation>
+        <translation>Увеличить уровень масштаба</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
-        <translation>Zoom &amp;arrière</translation>
+        <translation>Уменьшить (&amp;Z)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
-        <translation>Diminuer le niveau de zoom</translation>
+        <translation>Уменьшить уровень масштаба</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>Taille &amp;d'origine</translation>
+        <translation>&amp;Исходный размер</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
-        <translation>Zoomer à la taille d'origine</translation>
+        <translation>Вернуть исходный размер</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>&amp;Conserver l'échelle précédente</translation>
+        <translation>Сохранять предыдущий масштаб</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>Conserver l'échelle de zoom précédente</translation>
+        <translation>Сохранять масштаб предыдущего изображения</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>&amp;Adapter à la fenêtre</translation>
+        <translation>По размеру окна</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
-        <translation>Le zoom suit la taille de la fenêtre</translation>
+        <translation>Масштаб подстраивается под размер окна</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
-        <translation>Adapter la &amp;largeur</translation>
+        <translation>По &amp;ширине</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
-        <translation>Le zoom suit la largeur de la fenêtre</translation>
+        <translation>Масштаб подстраивается под ширину окна</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Luminosité et contraste</translation>
+        <translation>&amp;Яркость/Контраст</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
-        <translation>Ajuster la luminosité et le contraste</translation>
+        <translation>Настроить яркость и контраст</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
-        <translation>&amp;Modifier l'étiquette</translation>
+        <translation>&amp;Редактировать метку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected shape</source>
-        <translation>Modifier l'étiquette de la forme sélectionnée</translation>
+        <translation>Изменить метку выбранной фигуры</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
-        <translation>Remplir le polygone en cours de dessin</translation>
+        <translation>Заполнить нарисованный полигон</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
-        <translation>Remplir le polygone pendant le dessin</translation>
+        <translation>Заполнять полигон во время рисования</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;File</source>
-        <translation>&amp;Fichier</translation>
+        <translation>&amp;Файл</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Modifier</translation>
+        <translation>&amp;Правка</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
-        <translation>&amp;Affichage</translation>
+        <translation>&amp;Вид</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Help</source>
-        <translation>&amp;Aide</translation>
+        <translation>&amp;Справка</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open &amp;Recent</source>
-        <translation>Fichiers &amp;récents</translation>
+        <translation>Открыть &amp;недавние</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s démarré.</translation>
+        <translation>%s запущен.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
-        <translation>Étiquette invalide</translation>
+        <translation>Неверная метка</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Étiquette invalide '{}' avec le type de validation '{}'</translation>
+        <translation>Неверная метка '{}' с типом проверки '{}'</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
-        <translation>Erreur lors de l'enregistrement des données d'étiquettes</translation>
+        <translation>Ошибка при сохранении данных разметки</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -682,122 +658,122 @@ les formes</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
-        <translation>Erreur lors de l'ouverture du fichier</translation>
+        <translation>Ошибка при открытии файла</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Fichier introuvable : &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>Файл не найден: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>Chargement de %s...</translation>
+        <translation>Загрузка %s...</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
-        <translation>Erreur lors de la lecture de %s</translation>
+        <translation>Ошибка чтения %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;Make sure &lt;i&gt;{0}&lt;/i&gt; is a valid image file.&lt;br/&gt;Supported image formats: {1}&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Assurez-vous que &lt;i&gt;{0}&lt;/i&gt; est un fichier d'image valide.&lt;br/&gt;Formats d'image pris en charge : {1}&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Убедитесь, что &lt;i&gt;{0}&lt;/i&gt; является корректным файлом изображения.&lt;br/&gt;Поддерживаемые форматы: {1}&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
-        <translation>%s chargé</translation>
+        <translation>%s загружен</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
-        <translation>Fichiers Image &amp; Étiquettes (%s)</translation>
+        <translation>Файлы изображения и меток (%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose Image or Label file</source>
-        <translation>%s - Choisir un fichier Image ou Étiquette</translation>
+        <translation>%s — выберите файл изображения или меток</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Enregistrer/Charger les annotations dans le répertoire</translation>
+        <translation>%s — сохранять/загружать разметку в папке</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Les annotations seront enregistrées/chargées dans %s</translation>
+        <translation>%s. Разметка будет сохраняться/загружаться в %s</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Choose File</source>
-        <translation>%s - Choisir un fichier</translation>
+        <translation>%s — выбрать файл</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
-        <translation>Fichiers d'étiquettes (*%s)</translation>
+        <translation>Файлы меток (*%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Choose File</source>
-        <translation>Choisir un fichier</translation>
+        <translation>Выбрать файл</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete this label file, proceed anyway?</source>
-        <translation>Vous êtes sur le point de supprimer définitivement ce fichier d'étiquettes, continuer quand même ?</translation>
+        <translation>Вы собираетесь безвозвратно удалить этот файл меток. Продолжить?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Attention</source>
-        <translation>Attention</translation>
+        <translation>Внимание</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Enregistrer les annotations dans &quot;{}&quot; avant de fermer ?</translation>
+        <translation>Сохранить аннотации в &quot;{}&quot; перед закрытием?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
-        <translation>Enregistrer les annotations ?</translation>
+        <translation>Сохранить аннотации?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete {} shapes, proceed anyway?</source>
-        <translation>Vous êtes sur le point de supprimer définitivement {} formes, continuer quand même ?</translation>
+        <translation>Вы собираетесь безвозвратно удалить {} фигур. Продолжить?</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
-        <translation>%s - Ouvrir le répertoire</translation>
+        <translation>%s — открыть папку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Activer/désactiver le mode &quot;conserver l'annotation précédente&quot;</translation>
+        <translation>Переключить режим &quot;сохранять предыдущую разметку&quot;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
-        <translation>Conserver les réglages de luminosité/contraste</translation>
+        <translation>Сохранять яркость/контраст предыдущего изображения</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Preferences…</source>
-        <translation>Préférences…</translation>
+        <translation>Параметры…</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open config file in text editor</source>
-        <translation>Ouvrir le fichier de configuration dans l'éditeur de texte</translation>
+        <translation>Открыть файл конфигурации в текстовом редакторе</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No Config File</source>
-        <translation>Aucun fichier de configuration</translation>
+        <translation>Файл конфигурации не найден</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -805,35 +781,56 @@ les formes</translation>
 
 To use the preferences editor, start Labelme with a config file:
   labelme --config ~/.labelmerc</source>
-        <translation>La configuration a été fournie sous forme d'expression YAML via la ligne de commande.
+        <translation>Конфигурация была передана как YAML-выражение через командную строку.
 
-Pour utiliser l'éditeur de préférences, démarrez Labelme avec un fichier de configuration :
+Чтобы использовать редактор параметров, запустите Labelme с файлом конфигурации:
   labelme --config ~/.labelmerc</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
-        <translation>Erreurs de Configuration</translation>
+        <translation>Ошибки конфигурации</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Des erreurs ont été trouvées lors du chargement de la configuration. Veuillez examiner les erreurs ci-dessous et recharger votre configuration ou ignorer les lignes erronées.</translation>
+        <translation>Были найдены ошибки при загрузке конфигурации. Пожалуйста, просмотрите ошибки ниже и перезагрузите конфигурацию или игнорируйте ошибочные строки.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous que &lt;i&gt;%s&lt;/i&gt; est un fichier d'étiquettes valide.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Убедитесь, что &lt;i&gt;%s&lt;/i&gt; является корректным файлом меток.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Assurez-vous que &lt;i&gt;%s&lt;/i&gt; est un fichier image valide.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Убедитесь, что &lt;i&gt;%s&lt;/i&gt; является корректным файлом изображения.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
-        <translation>Réinitialiser la disposition</translation>
+        <translation>Сбросить компоновку</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&amp;Save
+</source>
+        <translation>Сохранить (&amp;S)
+</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>&amp;Open
+</source>
+        <translation>&amp;Открыть
+</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Undo
+</source>
+        <translation>Отменить
+</translation>
     </message>
 </context>
 </TS>

@@ -32,8 +32,8 @@ Note that the label file contains only very low label values (ex. `0, 4, 14`), a
 You can see the label PNG file by following.
 
 ```bash
-labelme_draw_label_png data_dataset_voc/SegmentationClass/2011_000003.png   # left
-labelme_draw_label_png data_dataset_voc/SegmentationObject/2011_000003.png  # right
+../tutorial/draw_label_png.py data_dataset_voc/SegmentationClass/2011_000003.png   # left
+../tutorial/draw_label_png.py data_dataset_voc/SegmentationObject/2011_000003.png  # right
 ```
 
 <img src=".readme/draw_label_png_class.jpg" width="33%" /> <img src=".readme/draw_label_png_object.jpg" width="33%" />

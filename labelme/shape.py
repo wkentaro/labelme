@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import copy
 
 import numpy as np
+import numpy.typing as npt
 import skimage.measure
 from loguru import logger
 from PyQt5 import QtCore
@@ -38,13 +41,13 @@ class Shape:
 
     def __init__(
         self,
-        label=None,
-        line_color=None,
-        shape_type=None,
-        flags=None,
-        group_id=None,
-        description=None,
-        mask=None,
+        label: str | None = None,
+        line_color: QtGui.QColor | None = None,
+        shape_type: str | None = None,
+        flags: dict[str, bool] | None = None,
+        group_id: int | None = None,
+        description: str | None = None,
+        mask: npt.NDArray[np.bool_] | None = None,
     ):
         self.label = label
         self.group_id = group_id
@@ -294,27 +297,25 @@ class Shape:
         else:
             assert False, "unsupported vertex shape"
 
-    def nearestVertex(self, point, epsilon):
+    def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")
         min_i = None
-        point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
+        point = self._scale_point(point)
         for i, p in enumerate(self.points):
-            p = QtCore.QPointF(p.x() * self.scale, p.y() * self.scale)
+            p = self._scale_point(p)
             dist = labelme.utils.distance(p - point)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 min_i = i
         return min_i
 
-    def nearestEdge(self, point, epsilon):
+    def nearestEdge(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")
         post_i = None
-        point = QtCore.QPointF(point.x() * self.scale, point.y() * self.scale)
+        point = self._scale_point(point)
         for i in range(len(self.points)):
-            start = self.points[i - 1]
-            end = self.points[i]
-            start = QtCore.QPointF(start.x() * self.scale, start.y() * self.scale)
-            end = QtCore.QPointF(end.x() * self.scale, end.y() * self.scale)
+            start = self._scale_point(self.points[i - 1])
+            end = self._scale_point(self.points[i])
             line = [start, end]
             dist = labelme.utils.distancetoline(point, line)
             if dist <= epsilon and dist < min_distance:
@@ -322,7 +323,7 @@ class Shape:
                 post_i = i
         return post_i
 
-    def containsPoint(self, point) -> bool:
+    def containsPoint(self, point: QtCore.QPointF) -> bool:
         if self.shape_type in ["line", "linestrip", "points"]:
             return False
         if self.shape_type == "point":
@@ -364,22 +365,14 @@ class Shape:
     def moveBy(self, offset):
         self.points = [p + offset for p in self.points]
 
-    def moveVertex(self, i, pos):
+    def moveVertex(self, i: int, pos: QtCore.QPointF) -> None:
         self.points[i] = pos
 
-    def highlightVertex(self, i, action):
-        """Highlight a vertex appropriately based on the current action
-
-        Args:
-            i (int): The vertex index
-            action (int): The action
-            (see Shape.NEAR_VERTEX and Shape.MOVE_VERTEX)
-        """
+    def highlightVertex(self, i: int, action: int) -> None:
         self._highlightIndex = i
         self._highlightMode = action
 
-    def highlightClear(self):
-        """Clear the highlighted point"""
+    def highlightClear(self) -> None:
         self._highlightIndex = None
 
     def copy(self):

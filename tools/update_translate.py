@@ -52,6 +52,7 @@ def main():
         subprocess.check_call(
             [
                 "pylupdate5",
+                "-noobsolete",
                 *labelme_files,
                 "-ts",
                 str(ts_path),

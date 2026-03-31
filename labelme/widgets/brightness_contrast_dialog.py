@@ -53,8 +53,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         del layouts
         self.setLayout(v_layout)
 
+        self._alpha = None
+        if "A" in img.getbands():
+            self._alpha = img.getchannel("A")
         if img.mode != "RGB":
-            raise ValueError("Image mode must be RGB")
+            img = img.convert("RGB")
         self.img = img
         self.callback = callback
 
@@ -68,7 +71,15 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         if contrast != 1:
             img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
 
+        fmt: QImage.Format
+        if self._alpha is None:
+            fmt = QImage.Format_RGB888
+        else:
+            img = img.convert("RGBA")
+            img.putalpha(self._alpha)
+            fmt = QImage.Format_RGBA8888
+
         qimage = QImage(
-            img.tobytes(), img.width, img.height, img.width * 3, QImage.Format_RGB888
+            img.tobytes(), img.width, img.height, img.width * len(img.getbands()), fmt
         )
         self.callback(qimage)
