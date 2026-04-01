@@ -12,6 +12,7 @@ from pytestqt.qtbot import QtBot
 import labelme.app
 import labelme.testing
 
+from ..conftest import close_or_pause
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -20,6 +21,7 @@ def test_MainWindow_annotate_jpg(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    pause: bool,
 ) -> None:
     input_file: str = str(data_path / "raw/2011_000003.jpg")
     out_file: str = str(tmp_path / "2011_000003.json")
@@ -46,7 +48,7 @@ def test_MainWindow_annotate_jpg(
     def click(xy: tuple[float, float]) -> None:
         qtbot.mouseMove(win._canvas_widgets.canvas, pos=QPoint(int(xy[0]), int(xy[1])))
         qtbot.wait(50)
-        qtbot.mousePress(
+        qtbot.mouseClick(
             win._canvas_widgets.canvas,
             Qt.LeftButton,
             pos=QPoint(int(xy[0]), int(xy[1])),
@@ -78,4 +80,4 @@ def test_MainWindow_annotate_jpg(
 
     labelme.testing.assert_labelfile_sanity(out_file)
 
-    win.close()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

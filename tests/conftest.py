@@ -1,22 +1,35 @@
+from __future__ import annotations
+
 import json
 import shutil
 from pathlib import Path
 
 import pytest
+from PyQt5.QtWidgets import QWidget
+from pytestqt.qtbot import QtBot
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption(
-        "--show",
+        "--pause",
         action="store_true",
         default=False,
-        help="Show GUI widgets during tests for visual inspection.",
+        help="Pause after each GUI test until the window is closed manually.",
     )
 
 
 @pytest.fixture()
-def show(request: pytest.FixtureRequest) -> bool:
-    return request.config.getoption("--show", default=False)
+def pause(request: pytest.FixtureRequest) -> bool:
+    return request.config.getoption("--pause", default=False)
+
+
+def close_or_pause(
+    *, qtbot: QtBot, widget: QWidget, pause: bool, timeout: int = 60_000
+) -> None:
+    if pause:
+        qtbot.waitUntil(lambda: not widget.isVisible(), timeout=timeout)
+    else:
+        widget.close()
 
 
 def _create_annotated_nested(data_path: Path) -> None:

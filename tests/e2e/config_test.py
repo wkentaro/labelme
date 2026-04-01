@@ -8,6 +8,8 @@ from pytestqt.qtbot import QtBot
 
 import labelme.app
 
+from ..conftest import close_or_pause
+
 
 @pytest.mark.gui
 @pytest.mark.parametrize(
@@ -22,6 +24,7 @@ def test_MainWindow_config(
     qtbot: QtBot,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
 ) -> None:
     config_file: Path | None = None
     auto_save: bool = True
@@ -54,4 +57,4 @@ def test_MainWindow_config(
         win._open_config_file()
         assert message_box_shown[0] is True
 
-    win.close()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
