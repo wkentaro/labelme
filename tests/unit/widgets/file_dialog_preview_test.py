@@ -8,18 +8,16 @@ from pytestqt.qtbot import QtBot
 
 from labelme.widgets.file_dialog_preview import FileDialogPreview
 
+from ...conftest import close_or_pause
+
 
 @pytest.fixture()
 def _file_preview_widget(qtbot: QtBot) -> FileDialogPreview:
     widget = FileDialogPreview()
     qtbot.addWidget(widget)
-    return widget
-
-
-def _show_and_wait(widget: FileDialogPreview, qtbot: QtBot) -> None:
     widget.show()
     qtbot.waitExposed(widget)
-    qtbot.waitUntil(lambda: not widget.isVisible(), timeout=30_000)
+    return widget
 
 
 @pytest.mark.gui
@@ -27,7 +25,7 @@ def test_onChange_valid_json(
     _file_preview_widget: FileDialogPreview,
     tmp_path: Path,
     qtbot: QtBot,
-    show: bool,
+    pause: bool,
 ) -> None:
     path = tmp_path / "valid.json"
     path.write_text(json.dumps({"version": "5.0.0", "shapes": []}))
@@ -37,8 +35,7 @@ def test_onChange_valid_json(
     assert _file_preview_widget.labelPreview.isHidden() is False
     assert '"version"' in _file_preview_widget.labelPreview.label.text()
 
-    if show:
-        _show_and_wait(_file_preview_widget, qtbot)
+    close_or_pause(qtbot=qtbot, widget=_file_preview_widget, pause=pause)
 
 
 @pytest.mark.gui
@@ -55,7 +52,7 @@ def test_onChange_bad_json_no_crash(
     tmp_path: Path,
     content_bytes: bytes,
     qtbot: QtBot,
-    show: bool,
+    pause: bool,
 ) -> None:
     path = tmp_path / "bad.json"
     path.write_bytes(content_bytes)
@@ -65,8 +62,7 @@ def test_onChange_bad_json_no_crash(
     assert _file_preview_widget.labelPreview.isHidden() is False
     assert "Cannot preview" in _file_preview_widget.labelPreview.label.text()
 
-    if show:
-        _show_and_wait(_file_preview_widget, qtbot)
+    close_or_pause(qtbot=qtbot, widget=_file_preview_widget, pause=pause)
 
 
 @pytest.mark.gui

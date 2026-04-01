@@ -11,6 +11,7 @@ from pytestqt.qtbot import QtBot
 import labelme.app
 import labelme.testing
 
+from ..conftest import close_or_pause
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -18,18 +19,21 @@ from .conftest import show_window_and_wait_for_imagedata
 def test_MainWindow_open_img(
     qtbot: QtBot,
     data_path: Path,
+    pause: bool,
 ) -> None:
     image_file: str = str(data_path / "raw/2011_000003.jpg")
     win: labelme.app.MainWindow = labelme.app.MainWindow(filename=image_file)
     qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    win.close()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
 @pytest.mark.gui
 def test_MainWindow_open_json(
     qtbot: QtBot,
     data_path: Path,
+    pause: bool,
 ) -> None:
     json_files: list[str] = [
         str(data_path / "annotated_with_data/apc2016_obj3.json"),
@@ -42,7 +46,8 @@ def test_MainWindow_open_json(
         win: labelme.app.MainWindow = labelme.app.MainWindow(filename=json_file)
         qtbot.addWidget(win)
         show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-        win.close()
+
+        close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
 @pytest.mark.gui
@@ -51,6 +56,7 @@ def test_MainWindow_open_dir(
     qtbot: QtBot,
     scenario: Literal["raw", "annotated", "annotated_nested"],
     data_path: Path,
+    pause: bool,
 ) -> None:
     directory: str
     output_dir: str | None
@@ -91,3 +97,5 @@ def test_MainWindow_open_dir(
         item: QtWidgets.QListWidgetItem | None = win._docks.file_list.item(index)
         assert item
         assert item.checkState() == expected_check_state
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

@@ -9,6 +9,7 @@ from pytestqt.qtbot import QtBot
 
 import labelme.app
 
+from ..conftest import close_or_pause
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -16,6 +17,7 @@ from .conftest import show_window_and_wait_for_imagedata
 def test_image_navigation_while_selecting_shape(
     qtbot: QtBot,
     data_path: Path,
+    pause: bool,
 ) -> None:
     win: labelme.app.MainWindow = labelme.app.MainWindow(
         filename=str(data_path / "annotated")
@@ -38,4 +40,4 @@ def test_image_navigation_while_selecting_shape(
     qtbot.wait(100)
     # }}
 
-    win.close()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
