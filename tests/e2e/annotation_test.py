@@ -46,7 +46,7 @@ def test_MainWindow_annotate_jpg(
     def click(xy: tuple[float, float]) -> None:
         qtbot.mouseMove(win._canvas_widgets.canvas, pos=QPoint(int(xy[0]), int(xy[1])))
         qtbot.wait(50)
-        qtbot.mousePress(
+        qtbot.mouseClick(
             win._canvas_widgets.canvas,
             Qt.LeftButton,
             pos=QPoint(int(xy[0]), int(xy[1])),
