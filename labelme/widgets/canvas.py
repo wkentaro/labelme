@@ -172,9 +172,9 @@ class Canvas(QtWidgets.QWidget):
             self._osam_session = OsamSession(model_name=self._osam_session_model_name)
         return self._osam_session
 
-    def _update_shape_with_ai(
-        self, points: list[QPointF], point_labels: list[int], shape: Shape
-    ) -> None:
+    def _shapes_from_points_ai(
+        self, points: list[QPointF], point_labels: list[int]
+    ) -> list[Shape]:
         image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
         response: osam.types.GenerateResponse = self._get_osam_session().run(
             image=imgviz.asrgb(image),
@@ -182,26 +182,24 @@ class Canvas(QtWidgets.QWidget):
             points=np.array([[p.x(), p.y()] for p in points]),
             point_labels=np.array(point_labels),
         )
-        _update_shape_with_ai_response(
+        return _shapes_from_ai_response(
             response=response,
-            shape=shape,
             output_format=self._ai_output_format,
         )
 
-    def _update_shape_with_bbox_ai(self, shape: Shape) -> None:
-        if len(shape.points) != 2:
-            raise ValueError(f"Expected 2 points for bbox AI, got {len(shape.points)}")
+    def _shapes_from_bbox_ai(self, bbox_points: list[QPointF]) -> list[Shape]:
+        if len(bbox_points) != 2:
+            raise ValueError(f"Expected 2 points for bbox AI, got {len(bbox_points)}")
         image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
         response: osam.types.GenerateResponse = self._get_osam_session().run(
             image=imgviz.asrgb(image),
             image_id=str(self._pixmap_hash),
-            points=np.array([[p.x(), p.y()] for p in shape.points]),
+            points=np.array([[p.x(), p.y()] for p in bbox_points]),
             # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
             point_labels=np.array([2, 3]),
         )
-        _update_shape_with_ai_response(
+        return _shapes_from_ai_response(
             response=response,
-            shape=shape,
             output_format=self._ai_output_format,
         )
 
@@ -916,11 +914,12 @@ class Canvas(QtWidgets.QWidget):
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
-            self._update_shape_with_ai(
+            shapes = self._shapes_from_points_ai(
                 points=drawing_shape.points,
                 point_labels=drawing_shape.point_labels,
-                shape=drawing_shape,
             )
+            if shapes:
+                drawing_shape = shapes[0]
         drawing_shape.fill = self.fillDrawing()
         drawing_shape.selected = self.fillDrawing()
         drawing_shape.paint(p)
@@ -948,17 +947,25 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
+        new_shapes: list[Shape] = []
         if self.createMode == "ai_points_to_shape":
-            self._update_shape_with_ai(
+            new_shapes = self._shapes_from_points_ai(
                 points=self.current.points,
                 point_labels=self.current.point_labels,
-                shape=self.current,
             )
         elif self.createMode == "ai_box_to_shape":
-            self._update_shape_with_bbox_ai(shape=self.current)
-        self.current.close()
+            new_shapes = self._shapes_from_bbox_ai(
+                bbox_points=self.current.points,
+            )
+        else:
+            self.current.close()
+            new_shapes = [self.current]
 
-        self.shapes.append(self.current)
+        if not new_shapes:
+            self.current = None
+            return
+
+        self.shapes.extend(new_shapes)
         self.storeShapes()
         self.current = None
         self.setHiding(False)
@@ -1108,14 +1115,29 @@ class Canvas(QtWidgets.QWidget):
 
     def setLastLabel(self, text, flags):
         assert text
-        self.shapes[-1].label = text
-        self.shapes[-1].flags = flags
+        shapes = []
+        for shape in reversed(self.shapes):
+            if shape.label is not None:
+                break
+            shapes.append(shape)
+        shapes.reverse()
+        for shape in shapes:
+            shape.label = text
+            shape.flags = flags
         self.shapesBackups.pop()
         self.storeShapes()
-        return self.shapes[-1]
+        return shapes
 
     def undoLastLine(self):
         assert self.shapes
+        if self.createMode in ["ai_points_to_shape", "ai_box_to_shape"]:
+            # Remove all unlabeled shapes at the tail (added by AI in one shot)
+            while self.shapes and self.shapes[-1].label is None:
+                self.shapes.pop()
+            self.current = None
+            self.drawingPolygon.emit(False)
+            self.update()
+            return
         self.current = self.shapes.pop()
         self.current.setOpen()
         self.current.restoreShapeRaw()
@@ -1198,11 +1220,55 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
 
-def _update_shape_with_ai_response(
-    response: osam.types.GenerateResponse,
-    shape: Shape,
+def _shape_from_annotation(
+    annotation: osam.types.Annotation,
     output_format: Literal["polygon", "mask"],
-) -> None:
+) -> Shape | None:
+    if annotation.mask is None:
+        return None
+
+    mask: np.ndarray = annotation.mask
+
+    if output_format == "mask":
+        y1: int
+        x1: int
+        y2: int
+        x2: int
+        if annotation.bounding_box is None:
+            y1, x1, y2, x2 = imgviz.masks_to_bboxes(masks=[mask])[0].astype(int)
+        else:
+            y1 = annotation.bounding_box.ymin
+            x1 = annotation.bounding_box.xmin
+            y2 = annotation.bounding_box.ymax
+            x2 = annotation.bounding_box.xmax
+        shape = Shape()
+        shape.setShapeRefined(
+            shape_type="mask",
+            points=[QPointF(x1, y1), QPointF(x2, y2)],
+            point_labels=[1, 1],
+            mask=mask[y1 : y2 + 1, x1 : x2 + 1],
+        )
+        shape.close()
+        return shape
+    elif output_format == "polygon":
+        points = polygon_from_mask.compute_polygon_from_mask(mask=mask)
+        if len(points) < 2:
+            return None
+        shape = Shape()
+        shape.setShapeRefined(
+            shape_type="polygon",
+            points=[QPointF(point[0], point[1]) for point in points],
+            point_labels=[1] * len(points),
+        )
+        shape.close()
+        return shape
+    raise ValueError(f"Unsupported output_format: {output_format!r}")
+
+
+def _shapes_from_ai_response(
+    response: osam.types.GenerateResponse,
+    output_format: Literal["polygon", "mask"],
+) -> list[Shape]:
     if output_format not in ["polygon", "mask"]:
         raise ValueError(
             f"output_format must be 'polygon' or 'mask', not {output_format}"
@@ -1210,39 +1276,22 @@ def _update_shape_with_ai_response(
 
     if not response.annotations:
         logger.warning("No annotations returned")
-        return
+        return []
 
-    if output_format == "mask":
-        y1: int
-        x1: int
-        y2: int
-        x2: int
-        if response.annotations[0].bounding_box is None:
-            y1, x1, y2, x2 = imgviz.masks_to_bboxes(
-                masks=[response.annotations[0].mask]
-            )[0].astype(int)
-        else:
-            y1 = response.annotations[0].bounding_box.ymin
-            x1 = response.annotations[0].bounding_box.xmin
-            y2 = response.annotations[0].bounding_box.ymax
-            x2 = response.annotations[0].bounding_box.xmax
-        shape.setShapeRefined(
-            shape_type="mask",
-            points=[QPointF(x1, y1), QPointF(x2, y2)],
-            point_labels=[1, 1],
-            mask=response.annotations[0].mask[y1 : y2 + 1, x1 : x2 + 1],
+    annotations = sorted(
+        response.annotations,
+        key=lambda a: a.score if a.score is not None else 0,
+        reverse=True,
+    )
+
+    shapes: list[Shape] = []
+    for annotation in annotations:
+        shape = _shape_from_annotation(
+            annotation=annotation, output_format=output_format
         )
-    elif output_format == "polygon":
-        points = polygon_from_mask.compute_polygon_from_mask(
-            mask=response.annotations[0].mask
-        )
-        if len(points) < 2:
-            return
-        shape.setShapeRefined(
-            shape_type="polygon",
-            points=[QPointF(point[0], point[1]) for point in points],
-            point_labels=[1] * len(points),
-        )
+        if shape is not None:
+            shapes.append(shape)
+    return shapes
 
 
 def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPointF:

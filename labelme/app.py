@@ -1815,10 +1815,11 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ""
         if text:
             self._docks.label_list.clearSelection()
-            shape = self._canvas_widgets.canvas.setLastLabel(text, flags)
-            shape.group_id = group_id
-            shape.description = description
-            self.addLabel(shape)
+            shapes = self._canvas_widgets.canvas.setLastLabel(text, flags)
+            for shape in shapes:
+                shape.group_id = group_id
+                shape.description = description
+                self.addLabel(shape)
             self._actions.edit_mode.setEnabled(True)
             self._actions.undo_last_point.setEnabled(False)
             self._actions.undo.setEnabled(True)

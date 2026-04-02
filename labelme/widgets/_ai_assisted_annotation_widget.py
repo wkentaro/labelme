@@ -21,6 +21,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         ("sam2:small", "Sam2 (speed)"),
         ("sam2:latest", "Sam2 (balanced)"),
         ("sam2:large", "Sam2 (accuracy)"),
+        ("sam3:latest", "Sam3"),
     ]
 
     _model_combo: QtWidgets.QComboBox
