@@ -91,8 +91,23 @@ In some Linux distributions, you can install labelme via their package managers 
 
 ## Usage
 
-Run `labelme --help` for detail.  
+Run `labelme --help` for detail.
 The annotations are saved as a [JSON](http://www.json.org/) file.
+
+### Per-Shape Provenance
+
+Each shape may include optional `provenance` metadata that tracks its creation and modification history.
+This follows a compact W3C PROV-inspired profile:
+
+- **Internal representation**: `shape.other_data["provenance"]`
+- **On-disk JSON format**: `provenance` is a top-level key on each shape object (not nested under `other_data`)
+- **Event types**: `create`, `edit`, `derive`
+- **Agent types**: `Person` (interactive users), `SoftwareAgent` (AI models)
+- **Event collapsing**: Same agent + same session + compatible actions collapse into one event
+- **Lineage tracking**: Derive events include `source_annotation_id` for tracing shape copies
+- **Backward compatibility**: If `provenance` is absent, the origin is unknown (legacy files); existing JSON files without provenance remain valid and load normally
+
+For more details, see [`labelme/provenance.py`](labelme/provenance.py).
 
 ```bash
 labelme  # just open gui
