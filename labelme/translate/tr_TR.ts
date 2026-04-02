@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI, 'AI-Polygon' ve 'AI-Mask' modlarında etiketleme önerir</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>AI, 'AI Points to Shape' modunda etiketleme önerir</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI Destekli Etiketlemeyi etkinleştirmek için 'AI-Polygon' veya 'AI-Mask' modunu seçin</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>AI Destekli Etiketlemeyi etkinleştirmek için 'AI Points to Shape' modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Etkinleştirmek için 'Polygon', 'Rectangle', 'AI-Polygon' veya 'AI-Mask' modunu seçin</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>Etkinleştirmek için 'Polygon', 'Rectangle' veya 'AI Points to Shape' modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -88,16 +88,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Şekiller düzenleniyor</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>ai_polygon için noktaları dahil etmek için tıkla, hariç tutmak için Shift+tıkla</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>ai_mask için noktaları dahil etmek için tıkla, hariç tutmak için Shift+tıkla</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>Dikdörtgen için karşı köşeye tıkla (kare için Shift)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>Dahil etmek için noktalara tıkla veya hariç tutmak için Shift+Click. Ctrl+LeftClick oluşturmayı bitirir.</translation>
     </message>
 </context>
 <context>
@@ -343,16 +338,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Çizgi şeridi çizmeye başla. Ctrl+Sol Tık ile oluşturmayı bitirir.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>ai_polygon çizmeye başla. Ctrl+Sol Tık ile oluşturmayı bitirir.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>ai_mask çizmeye başla. Ctrl+Sol Tık ile oluşturmayı bitirir.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -821,13 +806,13 @@ Tercihler düzenleyicisini kullanmak için Labelme'i bir yapılandırma dosyası
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>AI-Polygon</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>AI-Mask</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>Nesneyi bölütlemek için noktalara tıkla. Ctrl+LeftClick oluşturmayı bitirir.</translation>
     </message>
 </context>
 </TS>

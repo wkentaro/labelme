@@ -70,14 +70,11 @@ class _ZoomMode(enum.Enum):
     MANUAL_ZOOM = enum.auto()
 
 
-_AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE: dict[
-    str, Literal["mask", "polygon", "rectangle"]
-] = {
-    "ai_mask": "mask",
-    "ai_polygon": "polygon",
-    "polygon": "polygon",
-    "rectangle": "rectangle",
-}
+_TEXT_TO_ANNOTATION_CREATE_MODES: tuple[str, ...] = (
+    "polygon",
+    "rectangle",
+)
+_AI_CREATE_MODES: tuple[str, ...] = ("ai_points_to_shape",)
 
 
 class _StatusBarWidgets(NamedTuple):
@@ -130,8 +127,7 @@ class _Actions(NamedTuple):
     create_line_mode: QtWidgets.QAction
     create_point_mode: QtWidgets.QAction
     create_line_strip_mode: QtWidgets.QAction
-    create_ai_polygon_mode: QtWidgets.QAction
-    create_ai_mask_mode: QtWidgets.QAction
+    create_ai_points_to_shape_mode: QtWidgets.QAction
     open_next_img: QtWidgets.QAction
     open_prev_img: QtWidgets.QAction
     keep_prev_scale: QtWidgets.QAction
@@ -259,6 +255,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_annotation = AiAssistedAnnotationWidget(
             default_model=self._config["ai"]["default"],
             on_model_changed=self._canvas_widgets.canvas.set_ai_model_name,
+            on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
             parent=self,
         )
         self._ai_annotation.setEnabled(False)
@@ -511,20 +508,14 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
-        create_ai_polygon_mode = action(
-            self.tr("AI-Polygon"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="ai_polygon"),
+        create_ai_points_to_shape_mode = action(
+            self.tr("AI-Points"),
+            lambda: self._switch_canvas_mode(
+                edit=False, createMode="ai_points_to_shape"
+            ),
             None,
             "ai-polygon.svg",
-            self.tr("Start drawing ai_polygon. Ctrl+LeftClick ends creation."),
-            enabled=False,
-        )
-        create_ai_mask_mode = action(
-            self.tr("AI-Mask"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="ai_mask"),
-            None,
-            "ai-mask.svg",
-            self.tr("Start drawing ai_mask. Ctrl+LeftClick ends creation."),
+            self.tr("Click points to segment object. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
         open_next_img = action(
@@ -675,8 +666,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("point", create_point_mode),
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
-            ("ai_polygon", create_ai_polygon_mode),
-            ("ai_mask", create_ai_mask_mode),
+            ("ai_points_to_shape", create_ai_points_to_shape_mode),
         ]
         zoom = (
             self._canvas_widgets.zoom_widget,
@@ -694,8 +684,7 @@ class MainWindow(QtWidgets.QMainWindow):
             create_line_mode,
             create_point_mode,
             create_line_strip_mode,
-            create_ai_polygon_mode,
-            create_ai_mask_mode,
+            create_ai_points_to_shape_mode,
             brightness_contrast,
         )
         on_shapes_present = (save_as, hide_all, show_all, toggle_all)
@@ -752,8 +741,7 @@ class MainWindow(QtWidgets.QMainWindow):
             create_line_mode=create_line_mode,
             create_point_mode=create_point_mode,
             create_line_strip_mode=create_line_strip_mode,
-            create_ai_polygon_mode=create_ai_polygon_mode,
-            create_ai_mask_mode=create_ai_mask_mode,
+            create_ai_points_to_shape_mode=create_ai_points_to_shape_mode,
             open_next_img=open_next_img,
             open_prev_img=open_prev_img,
             keep_prev_scale=keep_prev_scale,
@@ -1238,19 +1226,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _) -> None:
-        if (
-            self._canvas_widgets.canvas.createMode
-            not in _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE
-        ):
-            logger.warning(
-                "Unsupported createMode={!r}", self._canvas_widgets.canvas.createMode
-            )
+        create_mode = self._canvas_widgets.canvas.createMode
+        shape_type: Literal["rectangle", "polygon", "mask"]
+        if create_mode in _AI_CREATE_MODES:
+            shape_type = self._ai_annotation.output_format
+        elif create_mode in _TEXT_TO_ANNOTATION_CREATE_MODES:
+            shape_type = create_mode
+        else:
+            logger.warning("Unsupported createMode={!r}", create_mode)
             return
-        shape_type: Literal["rectangle", "polygon", "mask"] = (
-            _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE[
-                self._canvas_widgets.canvas.createMode
-            ]
-        )
 
         texts = self._ai_text.get_text_prompt().split(",")
 
@@ -1376,11 +1360,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 draw_action.setEnabled(createMode != draw_mode)
         self._actions.edit_mode.setEnabled(not edit)
         self._ai_text.setEnabled(
-            not edit and createMode in _AI_TEXT_TO_ANNOTATION_CREATE_MODE_TO_SHAPE_TYPE
+            not edit
+            and createMode in (*_TEXT_TO_ANNOTATION_CREATE_MODES, *_AI_CREATE_MODES)
         )
-        self._ai_annotation.setEnabled(
-            not edit and createMode in ("ai_polygon", "ai_mask")
-        )
+        self._ai_annotation.setEnabled(not edit and createMode in _AI_CREATE_MODES)
 
     def updateFileMenu(self):
         current = self._filename

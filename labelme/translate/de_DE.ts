@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>KI schlägt Annotation in den Modi 'AI-Polygon' und 'AI-Mask' vor</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>KI schlägt Annotation im 'AI Points to Shape'-Modus vor</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Wählen Sie den Modus 'AI-Polygon' oder 'AI-Mask', um AI-Assisted Annotation zu aktivieren</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>'AI Points to Shape'-Modus auswählen, um KI-gestützte Annotation zu aktivieren</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Wählen Sie den Modus 'Polygon', 'Rechteck', 'AI-Polygon' oder 'AI-Maske' zum Aktivieren</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>'Polygon'-, 'Rectangle'- oder 'AI Points to Shape'-Modus auswählen zum Aktivieren</translation>
     </message>
 </context>
 <context>
@@ -78,16 +78,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Formen bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Punkte anklicken zum Einbeziehen oder Shift+Klick zum Ausschließen (KI-Polygon)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Punkte anklicken zum Einbeziehen oder Shift+Klick zum Ausschließen (KI-Maske)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>Gegenüberliegende Ecke des Rechtecks anklicken (Shift für Quadrat)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>Punkte anklicken zum Einschließen oder Shift+Click zum Ausschließen. Ctrl+LeftClick beendet die Erstellung.</translation>
     </message>
 </context>
 <context>
@@ -350,16 +345,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Mit dem Zeichnen einer Linienfolge beginnen. Strg+Linksklick beendet die Erstellung.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen eines KI-Polygons beginnen. Strg+Linksklick beendet die Erstellung.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen einer KI-Maske beginnen. Strg+Linksklick beendet die Erstellung.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -827,13 +812,13 @@ Um den Einstellungseditor zu verwenden, starten Sie Labelme mit einer Konfigurat
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>KI-Polygon</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>KI-Maske</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>Punkte anklicken, um Objekt zu segmentieren. Ctrl+LeftClick beendet die Erstellung.</translation>
     </message>
 </context>
 </TS>

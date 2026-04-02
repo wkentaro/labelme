@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Literal
 
 from loguru import logger
 from PyQt5 import QtCore
@@ -23,19 +24,32 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     ]
 
     _model_combo: QtWidgets.QComboBox
+    _output_format_combo: QtWidgets.QComboBox
     _body: QtWidgets.QWidget
 
     def __init__(
         self,
         default_model: str,
         on_model_changed: Callable[[str], None],
+        on_output_format_changed: Callable[[Literal["polygon", "mask"]], None],
         parent: QtWidgets.QWidget | None = None,
     ):
         super().__init__(parent=parent)
-        self._init_ui(default_model=default_model, on_model_changed=on_model_changed)
+        self._init_ui(
+            default_model=default_model,
+            on_model_changed=on_model_changed,
+            on_output_format_changed=on_output_format_changed,
+        )
+
+    @property
+    def output_format(self) -> Literal["polygon", "mask"]:
+        return self._output_format_combo.currentData()
 
     def _init_ui(
-        self, default_model: str, on_model_changed: Callable[[str], None]
+        self,
+        default_model: str,
+        on_model_changed: Callable[[str], None],
+        on_output_format_changed: Callable[[Literal["polygon", "mask"]], None],
     ) -> None:
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(4, 4, 4, 4)
@@ -47,9 +61,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
-            tooltip=self.tr(
-                "AI suggests annotation in 'AI-Polygon' and 'AI-Mask' modes"
-            )
+            tooltip=self.tr("AI suggests annotation in 'AI Points to Shape' mode")
         )
         header_layout.addWidget(info_button)
         header_layout.addStretch()
@@ -67,6 +79,11 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             self._model_combo.addItem(model_display, model_id)
         body_layout.addWidget(self._model_combo)
 
+        self._output_format_combo = QtWidgets.QComboBox()
+        self._output_format_combo.addItem("Polygon", "polygon")
+        self._output_format_combo.addItem("Mask", "mask")
+        body_layout.addWidget(self._output_format_combo)
+
         layout.addWidget(body)
 
         model_ui_names = [model_display for _, model_display in self._available_models]
@@ -81,6 +98,13 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         )
         self._model_combo.setCurrentIndex(model_index)
 
+        self._output_format_combo.currentIndexChanged.connect(
+            lambda index: on_output_format_changed(
+                self._output_format_combo.itemData(index)
+            )
+        )
+        self._output_format_combo.setCurrentIndex(0)
+
         self.setMaximumWidth(200)
 
     def setEnabled(self, a0: bool) -> None:
@@ -92,7 +116,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
-                        "Select 'AI-Polygon' or 'AI-Mask' mode "
+                        "Select 'AI Points to Shape' mode "
                         "to enable AI-Assisted Annotation"
                     ),
                     self._body,
