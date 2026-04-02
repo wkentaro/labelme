@@ -36,6 +36,11 @@ class ToolBar(QtWidgets.QToolBar):
         self.setObjectName(f"{title}ToolBar")
         self.setOrientation(orientation)
         self.setToolButtonStyle(button_style)
+        if orientation == Qt.Vertical:
+            self.setStyleSheet(
+                "QToolBar::separator { height: 1px; margin: 4px 2px;"
+                " background: palette(mid); }"
+            )
         utils.addActions(widget=self, actions=actions)
 
     def addAction(self, action):  # type: ignore[override]
