@@ -927,7 +927,15 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.LeftToolBarArea,
             ToolBar(
                 title="CreateShapeTools",
-                actions=[a for _, a in self._actions.draw],
+                actions=[
+                    *[
+                        a
+                        for mode, a in self._actions.draw
+                        if not mode.startswith("ai_")
+                    ],
+                    None,
+                    *[a for mode, a in self._actions.draw if mode.startswith("ai_")],
+                ],
                 orientation=Qt.Vertical,
                 button_style=Qt.ToolButtonTextUnderIcon,
                 font_base=self.font(),
