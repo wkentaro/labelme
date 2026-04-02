@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>Az MI annotációt javasol az 'AI-Polygon' és 'AI-Mask' módokban</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>Az AI annotációt javasol 'AI Points to Shape' módban</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Válassza az 'AI-Polygon' vagy 'AI-Mask' módot az AI-Assisted Annotation engedélyezéséhez</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Válassza az 'AI Points to Shape' módot az MI-támogatott annotáció engedélyezéséhez</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Válassza a 'Polygon', 'Rectangle', 'AI-Polygon' vagy 'AI-Mask' módot az engedélyezéshez</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>Válassza a 'Polygon', 'Rectangle' vagy 'AI Points to Shape' módot az engedélyezéshez</translation>
     </message>
 </context>
 <context>
@@ -78,16 +78,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Alakzatok szerkesztése</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Kattintson a pontokra a belefoglaláshoz vagy Shift+Kattintás a kizáráshoz (AI sokszög)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Kattintson a pontokra a belefoglaláshoz vagy Shift+Kattintás a kizáráshoz (AI maszk)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>Kattintson a téglalap ellentétes sarkára (Shift a négyzethez)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>Kattintson pontokra a hozzáadáshoz vagy Shift+Click a kizáráshoz. Ctrl+LeftClick befejezi a létrehozást.</translation>
     </message>
 </context>
 <context>
@@ -350,16 +345,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Vonallánc rajzolásának megkezdése. Ctrl+Bal klikk befejezi a létrehozást.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>AI sokszög rajzolásának megkezdése. Ctrl+Bal klikk befejezi a létrehozást.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>AI maszk rajzolásának megkezdése. Ctrl+Bal klikk befejezi a létrehozást.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -827,13 +812,13 @@ A beállítások szerkesztő használatához indítsa el a Labelme-t konfigurác
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>AI-sokszög</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>AI-maszk</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>Kattintson pontokra az objektum szegmentálásához. Ctrl+LeftClick befejezi a létrehozást.</translation>
     </message>
 </context>
 </TS>

@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด 'AI-Polygon' และ 'AI-Mask'</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>AI แนะนำแอนโนเทชันในโหมด 'AI Points to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>เลือกโหมด 'AI-Polygon' หรือ 'AI-Mask' เพื่อเปิดใช้แอนโนเทชันด้วย AI</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>เลือกโหมด 'AI Points to Shape' เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>เลือกโหมด 'Polygon', 'Rectangle', 'AI-Polygon' หรือ 'AI-Mask' เพื่อเปิดใช้</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>เลือกโหมด 'Polygon', 'Rectangle' หรือ 'AI Points to Shape' เพื่อเปิดใช้งาน</translation>
     </message>
 </context>
 <context>
@@ -88,16 +88,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>แก้ไขรูปร่าง</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>คลิกจุดเพื่อรวม หรือ Shift+คลิกเพื่อยกเว้น สำหรับ ai_polygon</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>คลิกจุดเพื่อรวม หรือ Shift+คลิกเพื่อยกเว้น สำหรับ ai_mask</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>คลิกมุมตรงข้ามของสี่เหลี่ยม (Shift สำหรับสี่เหลี่ยมจัตุรัส)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>คลิกจุดเพื่อรวม หรือ Shift+Click เพื่อยกเว้น Ctrl+LeftClick เพื่อจบการสร้าง</translation>
     </message>
 </context>
 <context>
@@ -343,16 +338,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>เริ่มวาดเส้นต่อเนื่อง Ctrl+คลิกซ้ายเพื่อจบ</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>เริ่มวาด ai_polygon Ctrl+คลิกซ้ายเพื่อจบ</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>เริ่มวาด ai_mask Ctrl+คลิกซ้ายเพื่อจบ</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -821,13 +806,13 @@ To use the preferences editor, start Labelme with a config file:
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>AI-หลายเหลี่ยม</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>AI-มาสก์</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ Ctrl+LeftClick เพื่อจบการสร้าง</translation>
     </message>
 </context>
 </TS>

@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI가 'AI-Polygon' 및 'AI-Mask' 모드에서 주석을 제안합니다</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>AI가 'AI Points to Shape' 모드에서 주석을 제안합니다</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI 지원 주석을 활성화하려면 'AI-Polygon' 또는 'AI-Mask' 모드를 선택하세요</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>'AI Points to Shape' 모드를 선택하여 AI 지원 주석을 활성화하세요</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>활성화하려면 'Polygon', 'Rectangle', 'AI-Polygon' 또는 'AI-Mask' 모드를 선택하세요</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>'Polygon', 'Rectangle' 또는 'AI Points to Shape' 모드를 선택하여 활성화</translation>
     </message>
 </context>
 <context>
@@ -88,16 +88,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>도형 편집 중</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>점을 클릭하여 포함하거나 Shift+클릭하여 제외 (AI 다각형)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>점을 클릭하여 포함하거나 Shift+클릭하여 제외 (AI 마스크)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>사각형의 대각 모서리 클릭 (Shift로 정사각형)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>클릭으로 포함할 점을, Shift+Click으로 제외할 점을 지정. Ctrl+LeftClick으로 생성 완료.</translation>
     </message>
 </context>
 <context>
@@ -343,16 +338,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>연속선 그리기 시작. Ctrl+좌클릭으로 완료.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>AI 다각형 그리기 시작. Ctrl+좌클릭으로 완료.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>AI 마스크 그리기 시작. Ctrl+좌클릭으로 완료.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -821,13 +806,13 @@ To use the preferences editor, start Labelme with a config file:
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>AI 다각형</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>AI 마스크</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>클릭으로 객체를 세그먼트. Ctrl+LeftClick으로 생성 완료.</translation>
     </message>
 </context>
 </TS>

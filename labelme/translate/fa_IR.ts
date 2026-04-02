@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>هوش مصنوعی حاشیه‌نویسی را در حالت‌های 'AI-Polygon' و 'AI-Mask' پیشنهاد می‌دهد</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>هوش مصنوعی حاشیه‌نویسی را در حالت 'AI Points to Shape' پیشنهاد می‌دهد</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>برای فعال کردن AI-Assisted Annotation، حالت «AI-Polygon» یا «AI-Mask» را انتخاب کنید</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>حالت 'AI Points to Shape' را برای فعال‌سازی حاشیه‌نویسی با کمک هوش مصنوعی انتخاب کنید</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>برای فعال کردن، حالت «Polygon»، «Rectangle»، «AI-Polygon» یا «AI-Mask» را انتخاب کنید</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>حالت 'Polygon'، 'Rectangle' یا 'AI Points to Shape' را برای فعال‌سازی انتخاب کنید</translation>
     </message>
 </context>
 <context>
@@ -88,16 +88,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>ویرایش اشکال</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>کلیک برای شامل کردن نقاط یا Shift+کلیک برای حذف (چندضلعی هوش مصنوعی)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>کلیک برای شامل کردن نقاط یا Shift+کلیک برای حذف (ماسک هوش مصنوعی)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>کلیک روی گوشه مقابل مستطیل (Shift برای مربع)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>روی نقاط کلیک کنید تا شامل شوند یا Shift+Click برای حذف. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
     </message>
 </context>
 <context>
@@ -343,16 +338,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>شروع رسم خط چندتکه‌ای. Ctrl+کلیک چپ برای پایان.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>شروع رسم چندضلعی هوش مصنوعی. Ctrl+کلیک چپ برای پایان.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>شروع رسم ماسک هوش مصنوعی. Ctrl+کلیک چپ برای پایان.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -821,13 +806,13 @@ To use the preferences editor, start Labelme with a config file:
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>چندضلعی هوش مصنوعی</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>ماسک هوش مصنوعی</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
     </message>
 </context>
 </TS>

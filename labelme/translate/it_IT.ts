@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>L'IA suggerisce annotazioni nelle modalità 'AI-Polygon' e 'AI-Mask'</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>L'IA suggerisce annotazioni nella modalità 'AI Points to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Seleziona la modalità 'AI-Polygon' o 'AI-Mask' per abilitare l'Annotazione assistita da IA</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Selezionare la modalità 'AI Points to Shape' per abilitare l'annotazione assistita da IA</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Seleziona la modalità 'Polygon', 'Rectangle', 'AI-Polygon' o 'AI-Mask' per abilitare</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>Selezionare la modalità 'Polygon', 'Rectangle' o 'AI Points to Shape' per abilitare</translation>
     </message>
 </context>
 <context>
@@ -88,16 +88,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Modifica delle forme</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Clicca sui punti da includere o Maiusc+Clicca per escludere (poligono IA)</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Clicca sui punti da includere o Maiusc+Clicca per escludere (maschera IA)</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>Clicca sull'angolo opposto del rettangolo (Shift per quadrato)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>Clicca i punti da includere o Shift+Click per escludere. Ctrl+LeftClick per terminare la creazione.</translation>
     </message>
 </context>
 <context>
@@ -345,16 +340,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Inizia a disegnare una polilinea. Ctrl+Clic sinistro termina la creazione.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Inizia a disegnare un poligono IA. Ctrl+Clic sinistro termina la creazione.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Inizia a disegnare una maschera IA. Ctrl+Clic sinistro termina la creazione.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -827,13 +812,13 @@ Per utilizzare l'editor delle preferenze, avvia Labelme con un file di configura
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>Poligono IA</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>Maschera IA</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>Clicca i punti per segmentare l'oggetto. Ctrl+LeftClick per terminare la creazione.</translation>
     </message>
 </context>
 </TS>

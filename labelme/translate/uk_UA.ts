@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>AI пропонує анотацію в режимах «AI-Polygon» і «AI-Mask»</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>AI пропонує анотацію в режимі 'AI Points to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Виберіть режим «AI-Polygon» або «AI-Mask», щоб увімкнути анотацію за допомогою AI</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Виберіть режим 'AI Points to Shape', щоб увімкнути AI-анотацію</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Виберіть режим «Polygon», «Rectangle», «AI-Polygon» або «AI-Mask», щоб увімкнути</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>Виберіть режим 'Polygon', 'Rectangle' або 'AI Points to Shape', щоб увімкнути</translation>
     </message>
 </context>
 <context>
@@ -78,16 +78,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Редагування фігур</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Натисніть точки, щоб включити, або Shift+Click, щоб виключити ai_polygon</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Натисніть точки, щоб включити, або Shift+Click, щоб виключити ai_mask</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Натисніть правою кнопкою миші та перетягніть, щоб скопіювати фігуру</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>Натисніть точки для включення або Shift+Click для виключення. Ctrl+LeftClick завершує створення.</translation>
     </message>
 </context>
 <context>
@@ -384,16 +379,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Почніть малювати лінію. Ctrl+Лівий клік завершує створення.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Почніть малювати ai_polygon. Ctrl+Лівий клік завершує створення.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Почніть малювати ai_mask. Ctrl+Лівий клік завершує створення.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -824,13 +809,13 @@ To use the preferences editor, start Labelme with a config file:
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>AI-Polygon</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>AI-Mask</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>Натисніть точки для сегментації об'єкта. Ctrl+LeftClick завершує створення.</translation>
     </message>
 </context>
 </TS>

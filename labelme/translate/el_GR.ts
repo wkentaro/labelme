@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI-Polygon&apos; and &apos;AI-Mask&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες 'AI-Polygon' και 'AI-Mask'</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
+        <translation>Η ΤΝ προτείνει σχολιασμό στη λειτουργία 'AI Points to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI-Polygon&apos; or &apos;AI-Mask&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Επιλέξτε τη λειτουργία 'AI-Polygon' ή 'AI-Mask' για να ενεργοποιήσετε τον σχολιασμό με υποβοήθηση τεχνητής νοημοσύνης</translation>
+        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Επιλέξτε τη λειτουργία 'AI Points to Shape' για να ενεργοποιήσετε τον σχολιασμό με υποβοήθηση ΤΝ</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, &apos;AI-Polygon&apos;, or &apos;AI-Mask&apos; mode to enable</source>
-        <translation>Επιλέξτε 'Πολύγωνο', 'Ορθογώνιο', 'AI-Polygon' ή 'AI-Mask' για ενεργοποίηση</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
+        <translation>Επιλέξτε τη λειτουργία 'Polygon', 'Rectangle' ή 'AI Points to Shape' για ενεργοποίηση</translation>
     </message>
 </context>
 <context>
@@ -78,16 +78,6 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Επεξεργασία σχημάτων</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_polygon</source>
-        <translation>Κάντε κλικ στα σημεία για συμπερίληψη ή Shift+Click για εξαίρεση για το ai_polygon</translation>
-    </message>
-    <message>
-        <location filename="../widgets/canvas.py" line="0"/>
-        <source>Click points to include or Shift+Click to exclude for ai_mask</source>
-        <translation>Κάντε κλικ στα σημεία για συμπερίληψη ή Shift+Click για εξαίρεση για το ai_mask</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -158,6 +148,11 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Δεξί κλικ &amp; σύρσιμο για αντιγραφή σχήματος</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
+        <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή Shift+Click για εξαίρεση. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
     </message>
 </context>
 <context>
@@ -384,16 +379,6 @@
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Ξεκινήστε να σχεδιάζετε linestrip. Ctrl+LeftClick τελειώνει τη δημιουργία.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
-        <translation>Ξεκινήστε να σχεδιάζετε ai_polygon. Το Ctrl+LeftClick τελειώνει τη δημιουργία.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Start drawing ai_mask. Ctrl+LeftClick ends creation.</source>
-        <translation>Ξεκινήστε να σχεδιάζετε ai_mask. Το Ctrl+LeftClick τελειώνει τη δημιουργία.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -823,13 +808,13 @@ To use the preferences editor, start Labelme with a config file:
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Polygon</source>
-        <translation>AI-Polygon</translation>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>AI-Mask</source>
-        <translation>AI-Mask</translation>
+        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
+        <translation>Κάντε κλικ σε σημεία για κατάτμηση αντικειμένου. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
     </message>
 </context>
 </TS>
