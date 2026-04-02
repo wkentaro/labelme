@@ -456,7 +456,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_mode = action(
-            text=self.tr("Create Polygons"),
+            text=self.tr("Polygon"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
             shortcut=shortcuts["create_polygon"],
             icon="polygon.svg",
@@ -472,7 +472,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_rectangle_mode = action(
-            text=self.tr("Create Rectangle"),
+            text=self.tr("Rectangle"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
             icon="rectangle.svg",
@@ -480,7 +480,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_circle_mode = action(
-            text=self.tr("Create Circle"),
+            text=self.tr("Circle"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
             shortcut=shortcuts["create_circle"],
             icon="circle.svg",
@@ -488,7 +488,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_line_mode = action(
-            text=self.tr("Create Line"),
+            text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="line"),
             shortcut=shortcuts["create_line"],
             icon="line-segment.svg",
@@ -496,7 +496,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_point_mode = action(
-            text=self.tr("Create Point"),
+            text=self.tr("Point"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="point"),
             shortcut=shortcuts["create_point"],
             icon="circles-four.svg",
@@ -504,7 +504,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_line_strip_mode = action(
-            text=self.tr("Create LineStrip"),
+            text=self.tr("LineStrip"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
             icon="line-segments.svg",
@@ -512,7 +512,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_ai_polygon_mode = action(
-            self.tr("Create AI-Polygon"),
+            self.tr("AI-Polygon"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_polygon"),
             None,
             "ai-polygon.svg",
@@ -520,7 +520,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         create_ai_mask_mode = action(
-            self.tr("Create AI-Mask"),
+            self.tr("AI-Mask"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_mask"),
             None,
             "ai-mask.svg",

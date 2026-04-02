@@ -347,11 +347,6 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Polygons</source>
-        <translation>Створення багатокутників</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Почніть малювати багатокутники</translation>
     </message>
@@ -367,18 +362,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Rectangle</source>
-        <translation>Створити прямокутник</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
         <translation>Почніть малювати прямокутники</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Circle</source>
-        <translation>Створити коло</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -387,18 +372,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Line</source>
-        <translation>Створити лінію</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
         <translation>Почніть малювати лінії</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Point</source>
-        <translation>Створити точку</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -407,28 +382,13 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create LineStrip</source>
-        <translation>Створити LineStrip</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Почніть малювати лінію. Ctrl+Лівий клік завершує створення.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create AI-Polygon</source>
-        <translation>Створити AI-Polygon</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
         <translation>Почніть малювати ai_polygon. Ctrl+Лівий клік завершує створення.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create AI-Mask</source>
-        <translation>Створити AI-Mask</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -831,6 +791,46 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Відкрити каталог</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Polygon</source>
+        <translation>Багатокутник</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Rectangle</source>
+        <translation>Прямокутник</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Circle</source>
+        <translation>Коло</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Line</source>
+        <translation>Лінія</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Point</source>
+        <translation>Точка</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>LineStrip</source>
+        <translation>LineStrip</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Polygon</source>
+        <translation>AI-Polygon</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Mask</source>
+        <translation>AI-Mask</translation>
     </message>
 </context>
 </TS>
