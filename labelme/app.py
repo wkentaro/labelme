@@ -74,7 +74,10 @@ _TEXT_TO_ANNOTATION_CREATE_MODES: tuple[str, ...] = (
     "polygon",
     "rectangle",
 )
-_AI_CREATE_MODES: tuple[str, ...] = ("ai_points_to_shape",)
+_AI_CREATE_MODES: tuple[str, ...] = (
+    "ai_points_to_shape",
+    "ai_box_to_shape",
+)
 
 
 class _StatusBarWidgets(NamedTuple):
@@ -128,6 +131,7 @@ class _Actions(NamedTuple):
     create_point_mode: QtWidgets.QAction
     create_line_strip_mode: QtWidgets.QAction
     create_ai_points_to_shape_mode: QtWidgets.QAction
+    create_ai_box_to_shape_mode: QtWidgets.QAction
     open_next_img: QtWidgets.QAction
     open_prev_img: QtWidgets.QAction
     keep_prev_scale: QtWidgets.QAction
@@ -518,6 +522,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Click points to segment object. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
+        create_ai_box_to_shape_mode = action(
+            self.tr("AI-Box"),
+            lambda: self._switch_canvas_mode(edit=False, createMode="ai_box_to_shape"),
+            None,
+            "ai-mask.svg",
+            self.tr("Draw a bounding box to segment object."),
+            enabled=False,
+        )
         open_next_img = action(
             text=self.tr("&Next Image"),
             slot=self._open_next_image,
@@ -667,6 +679,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
             ("ai_points_to_shape", create_ai_points_to_shape_mode),
+            ("ai_box_to_shape", create_ai_box_to_shape_mode),
         ]
         zoom = (
             self._canvas_widgets.zoom_widget,
@@ -685,6 +698,7 @@ class MainWindow(QtWidgets.QMainWindow):
             create_point_mode,
             create_line_strip_mode,
             create_ai_points_to_shape_mode,
+            create_ai_box_to_shape_mode,
             brightness_contrast,
         )
         on_shapes_present = (save_as, hide_all, show_all, toggle_all)
@@ -742,6 +756,7 @@ class MainWindow(QtWidgets.QMainWindow):
             create_point_mode=create_point_mode,
             create_line_strip_mode=create_line_strip_mode,
             create_ai_points_to_shape_mode=create_ai_points_to_shape_mode,
+            create_ai_box_to_shape_mode=create_ai_box_to_shape_mode,
             open_next_img=open_next_img,
             open_prev_img=open_prev_img,
             keep_prev_scale=keep_prev_scale,

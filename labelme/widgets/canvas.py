@@ -99,6 +99,7 @@ class Canvas(QtWidgets.QWidget):
                 "point": False,
                 "linestrip": False,
                 "ai_points_to_shape": False,
+                "ai_box_to_shape": True,
             },
         )
         super().__init__(*args, **kwargs)
@@ -152,6 +153,7 @@ class Canvas(QtWidgets.QWidget):
             "point",
             "linestrip",
             "ai_points_to_shape",
+            "ai_box_to_shape",
         ]:
             raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
@@ -179,6 +181,23 @@ class Canvas(QtWidgets.QWidget):
             image_id=str(self._pixmap_hash),
             points=np.array([[p.x(), p.y()] for p in points]),
             point_labels=np.array(point_labels),
+        )
+        _update_shape_with_ai_response(
+            response=response,
+            shape=shape,
+            output_format=self._ai_output_format,
+        )
+
+    def _update_shape_with_bbox_ai(self, shape: Shape) -> None:
+        if len(shape.points) != 2:
+            raise ValueError(f"Expected 2 points for bbox AI, got {len(shape.points)}")
+        image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
+        response: osam.types.GenerateResponse = self._get_osam_session().run(
+            image=imgviz.asrgb(image),
+            image_id=str(self._pixmap_hash),
+            points=np.array([[p.x(), p.y()] for p in shape.points]),
+            # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
+            point_labels=np.array([2, 3]),
         )
         _update_shape_with_ai_response(
             response=response,
@@ -303,6 +322,11 @@ class Canvas(QtWidgets.QWidget):
                 "Click points to include or Shift+Click to exclude."
                 " Ctrl+LeftClick ends creation."
             )
+        if self.createMode == "ai_box_to_shape":
+            if isNew:
+                return self.tr("Click first corner of bbox for AI segmentation")
+            else:
+                return self.tr("Click opposite corner to segment object")
         if self.createMode == "line":
             if isNew:
                 return self.tr("Click start point for line")
@@ -351,6 +375,8 @@ class Canvas(QtWidgets.QWidget):
         if self.drawing():
             if self.createMode == "ai_points_to_shape":
                 self.line.shape_type = "points"
+            elif self.createMode == "ai_box_to_shape":
+                self.line.shape_type = "rectangle"
             else:
                 self.line.shape_type = self.createMode
 
@@ -384,7 +410,7 @@ class Canvas(QtWidgets.QWidget):
                     self.current.point_labels[-1],
                     0 if is_shift_pressed else 1,
                 ]
-            elif self.createMode == "rectangle":
+            elif self.createMode in ["rectangle", "ai_box_to_shape"]:
                 if is_shift_pressed:
                     self.prevMovePoint = pos = _snap_cursor_pos_for_square(  # override
                         pos=pos, opposite_vertex=self.current[0]
@@ -527,7 +553,12 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
-                    elif self.createMode in ["rectangle", "circle", "line"]:
+                    elif self.createMode in [
+                        "rectangle",
+                        "circle",
+                        "line",
+                        "ai_box_to_shape",
+                    ]:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
                         self.finalise()
@@ -546,18 +577,23 @@ class Canvas(QtWidgets.QWidget):
                         if a0.modifiers() & Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
-                    if self.createMode == "ai_points_to_shape":
+                    if self.createMode in [
+                        "ai_points_to_shape",
+                        "ai_box_to_shape",
+                    ]:
                         if not download_ai_model(
                             model_name=self._osam_session_model_name, parent=self
                         ):
                             return
 
                     # Create new shape.
-                    self.current = Shape(
-                        shape_type="points"
-                        if self.createMode == "ai_points_to_shape"
-                        else self.createMode
-                    )
+                    if self.createMode == "ai_points_to_shape":
+                        initial_shape_type = "points"
+                    elif self.createMode == "ai_box_to_shape":
+                        initial_shape_type = "rectangle"
+                    else:
+                        initial_shape_type = self.createMode
+                    self.current = Shape(shape_type=initial_shape_type)
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
                     if self.createMode == "point":
                         self.finalise()
@@ -918,6 +954,8 @@ class Canvas(QtWidgets.QWidget):
                 point_labels=self.current.point_labels,
                 shape=self.current,
             )
+        elif self.createMode == "ai_box_to_shape":
+            self._update_shape_with_bbox_ai(shape=self.current)
         self.current.close()
 
         self.shapes.append(self.current)
@@ -1083,7 +1121,12 @@ class Canvas(QtWidgets.QWidget):
         self.current.restoreShapeRaw()
         if self.createMode in ["polygon", "linestrip"]:
             self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in ["rectangle", "line", "circle"]:
+        elif self.createMode in [
+            "rectangle",
+            "line",
+            "circle",
+            "ai_box_to_shape",
+        ]:
             self.current.points = self.current.points[0:1]
         elif self.createMode == "point":
             self.current = None

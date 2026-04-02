@@ -61,7 +61,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
-            tooltip=self.tr("AI suggests annotation in 'AI Points to Shape' mode")
+            tooltip=self.tr(
+                "AI suggests annotation in 'AI Points to Shape'"
+                " and 'AI Box to Shape' modes"
+            )
         )
         header_layout.addWidget(info_button)
         header_layout.addStretch()
@@ -116,7 +119,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
-                        "Select 'AI Points to Shape' mode "
+                        "Select 'AI Points to Shape' or 'AI Box to Shape' mode "
                         "to enable AI-Assisted Annotation"
                     ),
                     self._body,

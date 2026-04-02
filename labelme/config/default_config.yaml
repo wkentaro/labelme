@@ -79,6 +79,7 @@ canvas:
     point: false
     linestrip: false
     ai_points_to_shape: false
+    ai_box_to_shape: true
 
 shortcuts:
   close: Ctrl+W
