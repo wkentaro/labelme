@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด 'AI Points to Shape'</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
+        <translation>AI แนะนำแอนโนเทชันในโหมด 'AI Points to Shape' และ 'AI Box to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>เลือกโหมด 'AI Points to Shape' เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
+        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>เลือกโหมด 'AI Points to Shape' หรือ 'AI Box to Shape' เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,16 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>คลิกจุดเพื่อรวม หรือ Shift+Click เพื่อยกเว้น Ctrl+LeftClick เพื่อจบการสร้าง</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner of bbox for AI segmentation</source>
+        <translation>คลิกมุมแรกของ bbox สำหรับ AI segmentation</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner to segment object</source>
+        <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
 </context>
 <context>
@@ -813,6 +823,16 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ Ctrl+LeftClick เพื่อจบการสร้าง</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Draw a bounding box to segment object.</source>
+        <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
 </context>
 </TS>

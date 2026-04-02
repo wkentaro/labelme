@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
-        <translation>ИИ предлагает разметку в режиме 'AI Points to Shape'</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
+        <translation>ИИ предлагает аннотацию в режимах 'AI Points to Shape' и 'AI Box to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Выберите режим 'AI Points to Shape', чтобы включить разметку с помощью ИИ</translation>
+        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Выберите режим 'AI Points to Shape' или 'AI Box to Shape', чтобы включить аннотацию с помощью ИИ</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,16 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Нажмите точки для включения или Shift+Click для исключения. Ctrl+LeftClick завершает создание.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner of bbox for AI segmentation</source>
+        <translation>Нажмите на первый угол bbox для сегментации ИИ</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner to segment object</source>
+        <translation>Нажмите на противоположный угол для сегментации объекта</translation>
     </message>
 </context>
 <context>
@@ -816,6 +826,16 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Нажмите точки для сегментации объекта. Ctrl+LeftClick завершает создание.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Draw a bounding box to segment object.</source>
+        <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
 </context>
 </TS>

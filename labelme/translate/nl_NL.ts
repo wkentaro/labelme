@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
-        <translation>AI suggereert annotatie in 'AI Points to Shape'-modus</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
+        <translation>AI stelt annotaties voor in de modi 'AI Points to Shape' en 'AI Box to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Selecteer 'AI Points to Shape'-modus om AI-Ondersteunde Annotatie in te schakelen</translation>
+        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Selecteer de modus 'AI Points to Shape' of 'AI Box to Shape' om AI-ondersteunde annotatie in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,16 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Klik op punten om toe te voegen of Shift+Click om uit te sluiten. Ctrl+LeftClick beëindigt het maken.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner of bbox for AI segmentation</source>
+        <translation>Klik op de eerste hoek van de bbox voor AI-segmentatie</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner to segment object</source>
+        <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
     </message>
 </context>
 <context>
@@ -813,6 +823,16 @@ Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Klik op punten om object te segmenteren. Ctrl+LeftClick beëindigt het maken.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Draw a bounding box to segment object.</source>
+        <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
     </message>
 </context>
 </TS>
