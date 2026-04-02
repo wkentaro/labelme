@@ -347,11 +347,6 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Polygons</source>
-        <translation>Δημιουργία πολυγώνων</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Ξεκινήστε να σχεδιάζετε πολύγωνα</translation>
     </message>
@@ -367,18 +362,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Rectangle</source>
-        <translation>Δημιουργία ορθογωνίου</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
         <translation>Ξεκινήστε να σχεδιάζετε ορθογώνια</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Circle</source>
-        <translation>Δημιουργία κύκλου</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -387,18 +372,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Line</source>
-        <translation>Δημιουργία γραμμής</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
         <translation>Έναρξη σχεδίασης γραμμών</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Point</source>
-        <translation>Δημιουργία σημείου</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -407,28 +382,13 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create LineStrip</source>
-        <translation>Δημιουργία LineStrip</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Ξεκινήστε να σχεδιάζετε linestrip. Ctrl+LeftClick τελειώνει τη δημιουργία.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create AI-Polygon</source>
-        <translation>Δημιουργία AI-Polygon</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
         <translation>Ξεκινήστε να σχεδιάζετε ai_polygon. Το Ctrl+LeftClick τελειώνει τη δημιουργία.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create AI-Mask</source>
-        <translation>Δημιουργία AI-Mask</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -830,6 +790,46 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Άνοιγμα καταλόγου</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Polygon</source>
+        <translation>Πολύγωνο</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Rectangle</source>
+        <translation>Ορθογώνιο</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Circle</source>
+        <translation>Κύκλος</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Line</source>
+        <translation>Γραμμή</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Point</source>
+        <translation>Σημείο</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>LineStrip</source>
+        <translation>LineStrip</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Polygon</source>
+        <translation>AI-Polygon</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Mask</source>
+        <translation>AI-Mask</translation>
     </message>
 </context>
 </TS>

@@ -316,18 +316,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Polygons</source>
-        <translation>다각형 생성</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>다각형 그리기 시작</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Rectangle</source>
-        <translation>사각형 생성</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -336,18 +326,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Circle</source>
-        <translation>원 생성</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
         <translation>원 그리기 시작</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Line</source>
-        <translation>선 생성</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -356,18 +336,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Point</source>
-        <translation>점 생성</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
         <translation>점 그리기 시작</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create LineStrip</source>
-        <translation>연속선 생성</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -376,18 +346,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create AI-Polygon</source>
-        <translation>AI 다각형 생성</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
         <translation>AI 다각형 그리기 시작. Ctrl+좌클릭으로 완료.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create AI-Mask</source>
-        <translation>AI 마스크 생성</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -828,6 +788,46 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>레이아웃 초기화</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Polygon</source>
+        <translation>다각형</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Rectangle</source>
+        <translation>사각형</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Circle</source>
+        <translation>원</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Line</source>
+        <translation>선</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Point</source>
+        <translation>점</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>LineStrip</source>
+        <translation>연결선</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Polygon</source>
+        <translation>AI 다각형</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Mask</source>
+        <translation>AI 마스크</translation>
     </message>
 </context>
 </TS>

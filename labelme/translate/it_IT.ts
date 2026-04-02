@@ -318,18 +318,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Polygons</source>
-        <translation>Crea poligoni</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Inizia a disegnare poligoni</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Rectangle</source>
-        <translation>Crea rettangolo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -338,18 +328,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Circle</source>
-        <translation>Crea cerchio</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
         <translation>Inizia a disegnare cerchi</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Line</source>
-        <translation>Crea linea</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -358,18 +338,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Point</source>
-        <translation>Crea punto</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
         <translation>Inizia a disegnare punti</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create LineStrip</source>
-        <translation>Crea polilinea</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -378,18 +348,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create AI-Polygon</source>
-        <translation>Crea poligono IA</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
         <translation>Inizia a disegnare un poligono IA. Ctrl+Clic sinistro termina la creazione.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create AI-Mask</source>
-        <translation>Crea maschera IA</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -834,6 +794,46 @@ Per utilizzare l'editor delle preferenze, avvia Labelme con un file di configura
         <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>Ripristina layout</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Polygon</source>
+        <translation>Poligono</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Rectangle</source>
+        <translation>Rettangolo</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Circle</source>
+        <translation>Cerchio</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Line</source>
+        <translation>Linea</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Point</source>
+        <translation>Punto</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>LineStrip</source>
+        <translation>Polilinea</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Polygon</source>
+        <translation>Poligono IA</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Mask</source>
+        <translation>Maschera IA</translation>
     </message>
 </context>
 </TS>

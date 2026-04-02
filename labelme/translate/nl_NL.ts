@@ -316,18 +316,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Polygons</source>
-        <translation>Polygonen Maken</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Begin met tekenen van polygonen</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Rectangle</source>
-        <translation>Rechthoek Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -336,18 +326,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Circle</source>
-        <translation>Cirkel Maken</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
         <translation>Begin met tekenen van cirkels</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Line</source>
-        <translation>Lijn Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -356,18 +336,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Point</source>
-        <translation>Punt Maken</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
         <translation>Begin met tekenen van punten</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create LineStrip</source>
-        <translation>Lijnstrook Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -376,18 +346,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create AI-Polygon</source>
-        <translation>AI-Polygoon Maken</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
         <translation>Begin met tekenen van AI-polygoon. Ctrl+Linkerklik beëindigt het maken.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create AI-Mask</source>
-        <translation>AI-Masker Maken</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -828,6 +788,46 @@ Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
         <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>Layout herstellen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Polygon</source>
+        <translation>Polygoon</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Rectangle</source>
+        <translation>Rechthoek</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Circle</source>
+        <translation>Cirkel</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Line</source>
+        <translation>Lijn</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Point</source>
+        <translation>Punt</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>LineStrip</source>
+        <translation>Lijnstrip</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Polygon</source>
+        <translation>AI-Polygoon</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Mask</source>
+        <translation>AI-Masker</translation>
     </message>
 </context>
 </TS>

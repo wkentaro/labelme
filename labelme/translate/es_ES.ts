@@ -316,18 +316,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Polygons</source>
-        <translation>Crear polígonos</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Empezar a dibujar polígonos</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Rectangle</source>
-        <translation>Crear rectángulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -336,18 +326,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Circle</source>
-        <translation>Crear círculo</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
         <translation>Empezar a dibujar círculos</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create Line</source>
-        <translation>Crear línea</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -356,18 +336,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create Point</source>
-        <translation>Crear punto</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
         <translation>Empezar a dibujar puntos</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create LineStrip</source>
-        <translation>Crear línea continua</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -376,18 +346,8 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Create AI-Polygon</source>
-        <translation>Crear polígono IA</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing ai_polygon. Ctrl+LeftClick ends creation.</source>
         <translation>Empezar a dibujar polígono IA. Ctrl+Clic izquierdo finaliza la creación.</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Create AI-Mask</source>
-        <translation>Crear máscara IA</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -828,6 +788,46 @@ Para usar el editor de preferencias, inicie Labelme con un archivo de configurac
         <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>Restablecer diseño</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Polygon</source>
+        <translation>Polígono</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Rectangle</source>
+        <translation>Rectángulo</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Circle</source>
+        <translation>Círculo</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Line</source>
+        <translation>Línea</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Point</source>
+        <translation>Punto</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>LineStrip</source>
+        <translation>Línea continua</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Polygon</source>
+        <translation>Polígono IA</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Mask</source>
+        <translation>Máscara IA</translation>
     </message>
 </context>
 </TS>
