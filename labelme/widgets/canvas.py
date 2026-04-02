@@ -947,17 +947,25 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
+        new_shapes: list[Shape] = []
         if self.createMode == "ai_points_to_shape":
-            self._update_shape_with_ai(
+            new_shapes = self._shapes_from_points_ai(
                 points=self.current.points,
                 point_labels=self.current.point_labels,
-                shape=self.current,
             )
         elif self.createMode == "ai_box_to_shape":
-            self._update_shape_with_bbox_ai(shape=self.current)
-        self.current.close()
+            new_shapes = self._shapes_from_bbox_ai(
+                bbox_points=self.current.points,
+            )
+        else:
+            self.current.close()
+            new_shapes = [self.current]
 
-        self.shapes.append(self.current)
+        if not new_shapes:
+            self.current = None
+            return
+
+        self.shapes.extend(new_shapes)
         self.storeShapes()
         self.current = None
         self.setHiding(False)
@@ -1107,14 +1115,29 @@ class Canvas(QtWidgets.QWidget):
 
     def setLastLabel(self, text, flags):
         assert text
-        self.shapes[-1].label = text
-        self.shapes[-1].flags = flags
+        shapes = []
+        for shape in reversed(self.shapes):
+            if shape.label is not None:
+                break
+            shapes.append(shape)
+        shapes.reverse()
+        for shape in shapes:
+            shape.label = text
+            shape.flags = flags
         self.shapesBackups.pop()
         self.storeShapes()
-        return self.shapes[-1]
+        return shapes
 
     def undoLastLine(self):
         assert self.shapes
+        if self.createMode in ["ai_points_to_shape", "ai_box_to_shape"]:
+            # Remove all unlabeled shapes at the tail (added by AI in one shot)
+            while self.shapes and self.shapes[-1].label is None:
+                self.shapes.pop()
+            self.current = None
+            self.drawingPolygon.emit(False)
+            self.update()
+            return
         self.current = self.shapes.pop()
         self.current.setOpen()
         self.current.restoreShapeRaw()
