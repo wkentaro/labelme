@@ -79,6 +79,7 @@ class Canvas(QtWidgets.QWidget):
 
     _osam_session_model_name: str = "sam2:latest"
     _osam_session: OsamSession | None
+    _ai_output_format: Literal["polygon", "mask"] = "polygon"
 
     def __init__(self, *args, **kwargs):
         self.epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -97,8 +98,7 @@ class Canvas(QtWidgets.QWidget):
                 "line": False,
                 "point": False,
                 "linestrip": False,
-                "ai_polygon": False,
-                "ai_mask": False,
+                "ai_points_to_shape": False,
             },
         )
         super().__init__(*args, **kwargs)
@@ -151,14 +151,16 @@ class Canvas(QtWidgets.QWidget):
             "line",
             "point",
             "linestrip",
-            "ai_polygon",
-            "ai_mask",
+            "ai_points_to_shape",
         ]:
             raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
 
     def set_ai_model_name(self, model_name: str) -> None:
         self._osam_session_model_name = model_name
+
+    def set_ai_output_format(self, output_format: Literal["polygon", "mask"]) -> None:
+        self._ai_output_format = output_format
 
     def _get_osam_session(self) -> OsamSession:
         if (
@@ -181,7 +183,7 @@ class Canvas(QtWidgets.QWidget):
         _update_shape_with_ai_response(
             response=response,
             shape=shape,
-            createMode=self.createMode,
+            output_format=self._ai_output_format,
         )
 
     def storeShapes(self):
@@ -296,13 +298,10 @@ class Canvas(QtWidgets.QWidget):
     def _get_create_mode_message(self) -> str:
         assert self.drawing()
         isNew: bool = self.current is None
-        if self.createMode == "ai_polygon":
+        if self.createMode == "ai_points_to_shape":
             return self.tr(
-                "Click points to include or Shift+Click to exclude for ai_polygon"
-            )
-        if self.createMode == "ai_mask":
-            return self.tr(
-                "Click points to include or Shift+Click to exclude for ai_mask"
+                "Click points to include or Shift+Click to exclude."
+                " Ctrl+LeftClick ends creation."
             )
         if self.createMode == "line":
             if isNew:
@@ -350,7 +349,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Polygon drawing.
         if self.drawing():
-            if self.createMode in ["ai_polygon", "ai_mask"]:
+            if self.createMode == "ai_points_to_shape":
                 self.line.shape_type = "points"
             else:
                 self.line.shape_type = self.createMode
@@ -379,7 +378,7 @@ class Canvas(QtWidgets.QWidget):
             if self.createMode in ["polygon", "linestrip"]:
                 self.line.points = [self.current[-1], pos]
                 self.line.point_labels = [1, 1]
-            elif self.createMode in ["ai_polygon", "ai_mask"]:
+            elif self.createMode == "ai_points_to_shape":
                 self.line.points = [self.current.points[-1], pos]
                 self.line.point_labels = [
                     self.current.point_labels[-1],
@@ -537,7 +536,7 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if int(a0.modifiers()) == Qt.ControlModifier:
                             self.finalise()
-                    elif self.createMode in ["ai_polygon", "ai_mask"]:
+                    elif self.createMode == "ai_points_to_shape":
                         self.current.addPoint(
                             self.line.points[1],
                             label=self.line.point_labels[1],
@@ -547,7 +546,7 @@ class Canvas(QtWidgets.QWidget):
                         if a0.modifiers() & Qt.ControlModifier:
                             self.finalise()
                 elif not self.outOfPixmap(pos):
-                    if self.createMode in ["ai_polygon", "ai_mask"]:
+                    if self.createMode == "ai_points_to_shape":
                         if not download_ai_model(
                             model_name=self._osam_session_model_name, parent=self
                         ):
@@ -556,14 +555,14 @@ class Canvas(QtWidgets.QWidget):
                     # Create new shape.
                     self.current = Shape(
                         shape_type="points"
-                        if self.createMode in ["ai_polygon", "ai_mask"]
+                        if self.createMode == "ai_points_to_shape"
                         else self.createMode
                     )
                     self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
                     if self.createMode == "point":
                         self.finalise()
                     elif (
-                        self.createMode in ["ai_polygon", "ai_mask"]
+                        self.createMode == "ai_points_to_shape"
                         and a0.modifiers() & Qt.ControlModifier
                     ):
                         self.finalise()
@@ -571,10 +570,7 @@ class Canvas(QtWidgets.QWidget):
                         if self.createMode == "circle":
                             self.current.shape_type = "circle"
                         self.line.points = [pos, pos]
-                        if (
-                            self.createMode in ["ai_polygon", "ai_mask"]
-                            and is_shift_pressed
-                        ):
+                        if self.createMode == "ai_points_to_shape" and is_shift_pressed:
                             self.line.point_labels = [0, 0]
                         else:
                             self.line.point_labels = [1, 1]
@@ -670,7 +666,7 @@ class Canvas(QtWidgets.QWidget):
             return False
         if not self.current:
             return False
-        if self.createMode in ["ai_polygon", "ai_mask"]:
+        if self.createMode == "ai_points_to_shape":
             return True
         if self.createMode == "linestrip":
             return len(self.current) >= 2
@@ -863,8 +859,7 @@ class Canvas(QtWidgets.QWidget):
 
         if not self.current or self.createMode not in [
             "polygon",
-            "ai_polygon",
-            "ai_mask",
+            "ai_points_to_shape",
         ]:
             p.end()
             return
@@ -880,7 +875,7 @@ class Canvas(QtWidgets.QWidget):
                     )
                     drawing_shape.fill_color.setAlpha(64)
                 drawing_shape.addPoint(self.line[1])
-        elif self.createMode in ["ai_polygon", "ai_mask"]:
+        elif self.createMode == "ai_points_to_shape":
             drawing_shape.addPoint(
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
@@ -917,7 +912,7 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
-        if self.createMode in ["ai_polygon", "ai_mask"]:
+        if self.createMode == "ai_points_to_shape":
             self._update_shape_with_ai(
                 points=self.current.points,
                 point_labels=self.current.point_labels,
@@ -1163,18 +1158,18 @@ class Canvas(QtWidgets.QWidget):
 def _update_shape_with_ai_response(
     response: osam.types.GenerateResponse,
     shape: Shape,
-    createMode: Literal["ai_polygon", "ai_mask"],
+    output_format: Literal["polygon", "mask"],
 ) -> None:
-    if createMode not in ["ai_polygon", "ai_mask"]:
+    if output_format not in ["polygon", "mask"]:
         raise ValueError(
-            f"createMode must be 'ai_polygon' or 'ai_mask', not {createMode}"
+            f"output_format must be 'polygon' or 'mask', not {output_format}"
         )
 
     if not response.annotations:
         logger.warning("No annotations returned")
         return
 
-    if createMode == "ai_mask":
+    if output_format == "mask":
         y1: int
         x1: int
         y2: int
@@ -1194,7 +1189,7 @@ def _update_shape_with_ai_response(
             point_labels=[1, 1],
             mask=response.annotations[0].mask[y1 : y2 + 1, x1 : x2 + 1],
         )
-    elif createMode == "ai_polygon":
+    elif output_format == "polygon":
         points = polygon_from_mask.compute_polygon_from_mask(
             mask=response.annotations[0].mask
         )

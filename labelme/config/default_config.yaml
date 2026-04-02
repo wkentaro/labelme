@@ -78,8 +78,7 @@ canvas:
     line: false
     point: false
     linestrip: false
-    ai_polygon: false
-    ai_mask: false
+    ai_points_to_shape: false
 
 shortcuts:
   close: Ctrl+W
