@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
-        <translation>Η ΤΝ προτείνει σχολιασμό στη λειτουργία 'AI Points to Shape'</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
+        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες 'AI Points to Shape' και 'AI Box to Shape'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Επιλέξτε τη λειτουργία 'AI Points to Shape' για να ενεργοποιήσετε τον σχολιασμό με υποβοήθηση ΤΝ</translation>
+        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Επιλέξτε τη λειτουργία 'AI Points to Shape' ή 'AI Box to Shape' για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,16 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή Shift+Click για εξαίρεση. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner of bbox for AI segmentation</source>
+        <translation>Κάντε κλικ στην πρώτη γωνία του bbox για τμηματοποίηση AI</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner to segment object</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για τμηματοποίηση αντικειμένου</translation>
     </message>
 </context>
 <context>
@@ -815,6 +825,16 @@ To use the preferences editor, start Labelme with a config file:
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Κάντε κλικ σε σημεία για κατάτμηση αντικειμένου. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Draw a bounding box to segment object.</source>
+        <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
     </message>
 </context>
 </TS>

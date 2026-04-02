@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
-        <translation>Az AI annotációt javasol 'AI Points to Shape' módban</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
+        <translation>Az AI annotációt javasol 'AI Points to Shape' és 'AI Box to Shape' módokban</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Válassza az 'AI Points to Shape' módot az MI-támogatott annotáció engedélyezéséhez</translation>
+        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Válassza az 'AI Points to Shape' vagy 'AI Box to Shape' módot az AI-támogatott annotáció engedélyezéséhez</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,16 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Kattintson pontokra a hozzáadáshoz vagy Shift+Click a kizáráshoz. Ctrl+LeftClick befejezi a létrehozást.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner of bbox for AI segmentation</source>
+        <translation>Kattintson a bbox első sarkára az AI szegmentáláshoz</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner to segment object</source>
+        <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
     </message>
 </context>
 <context>
@@ -819,6 +829,16 @@ A beállítások szerkesztő használatához indítsa el a Labelme-t konfigurác
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Kattintson pontokra az objektum szegmentálásához. Ctrl+LeftClick befejezi a létrehozást.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Draw a bounding box to segment object.</source>
+        <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
     </message>
 </context>
 </TS>

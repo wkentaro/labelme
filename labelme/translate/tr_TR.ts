@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; mode</source>
-        <translation>AI, 'AI Points to Shape' modunda etiketleme önerir</translation>
+        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
+        <translation>AI, 'AI Points to Shape' ve 'AI Box to Shape' modlarında etiketleme önerir</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI Destekli Etiketlemeyi etkinleştirmek için 'AI Points to Shape' modunu seçin</translation>
+        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>AI Destekli Açıklamayı etkinleştirmek için 'AI Points to Shape' veya 'AI Box to Shape' modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,16 @@
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Dahil etmek için noktalara tıkla veya hariç tutmak için Shift+Click. Ctrl+LeftClick oluşturmayı bitirir.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner of bbox for AI segmentation</source>
+        <translation>AI segmentasyonu için bbox'ın ilk köşesine tıklayın</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click opposite corner to segment object</source>
+        <translation>Nesneyi segmentlemek için karşı köşeye tıklayın</translation>
     </message>
 </context>
 <context>
@@ -813,6 +823,16 @@ Tercihler düzenleyicisini kullanmak için Labelme'i bir yapılandırma dosyası
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Nesneyi bölütlemek için noktalara tıkla. Ctrl+LeftClick oluşturmayı bitirir.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Draw a bounding box to segment object.</source>
+        <translation>Nesneyi segmentlemek için bir sınırlayıcı kutu çizin.</translation>
     </message>
 </context>
 </TS>
