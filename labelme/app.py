@@ -1393,6 +1393,10 @@ class MainWindow(QtWidgets.QMainWindow):
             and createMode in (*_TEXT_TO_ANNOTATION_CREATE_MODES, *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and createMode in _AI_CREATE_MODES)
+        if createMode == "ai_points_to_shape":
+            self._ai_annotation.set_disabled_models(_AI_MODELS_WITHOUT_POINT_SUPPORT)
+        else:
+            self._ai_annotation.set_disabled_models(())
 
     def updateFileMenu(self):
         current = self._filename
