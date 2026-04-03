@@ -24,6 +24,12 @@ class Shape:
     # Width of the shape outline pen
     PEN_WIDTH = 2
 
+    # Maximum number of vertex dots to draw for unselected shapes.
+    # Shapes with more points than this threshold skip vertex dots while
+    # drawing (the outline is always preserved), which avoids the O(n)
+    # drawEllipse() cost that causes visible UI lag for large polygons.
+    _MAX_VERTEX_DOTS = 100
+
     # The following class variables influence the drawing of all shape objects.
     line_color: QtGui.QColor = QtGui.QColor(0, 255, 0, 128)
     fill_color: QtGui.QColor = QtGui.QColor(0, 0, 0, 64)
@@ -237,10 +243,12 @@ class Shape:
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
             elif self.shape_type == "linestrip":
+                _show_vertices = self.selected or len(self.points) <= self._MAX_VERTEX_DOTS
                 line_path.moveTo(self._scale_point(self.points[0]))
                 for i, p in enumerate(self.points):
                     line_path.lineTo(self._scale_point(p))
-                    self.drawVertex(vrtx_path, i)
+                    if _show_vertices:
+                        self.drawVertex(vrtx_path, i)
             elif self.shape_type == "points":
                 assert len(self.points) == len(self.point_labels)
                 for i, point_label in enumerate(self.point_labels):
@@ -249,6 +257,7 @@ class Shape:
                     else:
                         self.drawVertex(negative_vrtx_path, i)
             else:
+                _show_vertices = self.selected or len(self.points) <= self._MAX_VERTEX_DOTS
                 line_path.moveTo(self._scale_point(self.points[0]))
                 # Uncommenting the following line will draw 2 paths
                 # for the 1st vertex, and make it non-filled, which
@@ -257,7 +266,8 @@ class Shape:
 
                 for i, p in enumerate(self.points):
                     line_path.lineTo(self._scale_point(p))
-                    self.drawVertex(vrtx_path, i)
+                    if _show_vertices:
+                        self.drawVertex(vrtx_path, i)
                 if self.isClosed():
                     line_path.lineTo(self._scale_point(self.points[0]))
 
