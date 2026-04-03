@@ -158,6 +158,9 @@ class Canvas(QtWidgets.QWidget):
             raise ValueError(f"Unsupported createMode: {value}")
         self._createMode = value
 
+    def get_ai_model_name(self) -> str:
+        return self._osam_session_model_name
+
     def set_ai_model_name(self, model_name: str) -> None:
         self._osam_session_model_name = model_name
 

@@ -834,5 +834,17 @@ To use the preferences editor, start Labelme with a config file:
         <source>Draw a bounding box to segment object.</source>
         <translation>바운딩 박스를 그려서 객체를 세그먼트.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points 사용 불가</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
+다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
+    </message>
 </context>
 </TS>

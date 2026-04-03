@@ -840,5 +840,17 @@ Per utilizzare l'editor delle preferenze, avvia Labelme con un file di configura
         <source>Draw a bounding box to segment object.</source>
         <translation>Disegnare un riquadro di delimitazione per segmentare l'oggetto.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points non disponibile</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s non supporta i prompt a punti.
+Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
+    </message>
 </context>
 </TS>

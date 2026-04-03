@@ -840,5 +840,17 @@ Um den Einstellungseditor zu verwenden, starten Sie Labelme mit einer Konfigurat
         <source>Draw a bounding box to segment object.</source>
         <translation>Einen Begrenzungsrahmen zeichnen, um Objekt zu segmentieren.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points nicht verfügbar</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s unterstützt keine Punkt-Eingaben.
+Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
+    </message>
 </context>
 </TS>

@@ -834,5 +834,17 @@ Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
         <source>Draw a bounding box to segment object.</source>
         <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points niet beschikbaar</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s ondersteunt geen puntinvoer.
+Selecteer een ander model of gebruik de AI-Box-modus.</translation>
+    </message>
 </context>
 </TS>

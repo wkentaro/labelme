@@ -840,5 +840,17 @@ Pour utiliser l'éditeur de préférences, démarrez Labelme avec un fichier de 
         <source>Draw a bounding box to segment object.</source>
         <translation>Dessinez un cadre englobant pour segmenter l'objet.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points indisponible</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s ne prend pas en charge les invites par points.
+Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
+    </message>
 </context>
 </TS>
