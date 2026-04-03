@@ -837,5 +837,17 @@ To use the preferences editor, start Labelme with a config file:
         <source>Draw a bounding box to segment object.</source>
         <translation>Намалюйте обмежувальну рамку для сегментації об'єкта.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points недоступний</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s не підтримує точкові запити.
+Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
+    </message>
 </context>
 </TS>

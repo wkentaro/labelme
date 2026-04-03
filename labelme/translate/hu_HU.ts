@@ -840,5 +840,17 @@ A beállítások szerkesztő használatához indítsa el a Labelme-t konfigurác
         <source>Draw a bounding box to segment object.</source>
         <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points nem elérhető</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s nem támogatja a pont alapú promptokat.
+Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
+    </message>
 </context>
 </TS>

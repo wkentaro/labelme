@@ -834,5 +834,17 @@ Tercihler düzenleyicisini kullanmak için Labelme'i bir yapılandırma dosyası
         <source>Draw a bounding box to segment object.</source>
         <translation>Nesneyi segmentlemek için bir sınırlayıcı kutu çizin.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points kullanılamıyor</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s nokta istemlerini desteklemiyor.
+Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
+    </message>
 </context>
 </TS>

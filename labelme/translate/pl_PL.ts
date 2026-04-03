@@ -834,5 +834,17 @@ Aby użyć edytora preferencji, uruchom Labelme z plikiem konfiguracji:
         <source>Draw a bounding box to segment object.</source>
         <translation>Narysuj ramkę ograniczającą, aby segmentować obiekt.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>AI-Points Unavailable</source>
+        <translation>AI-Points niedostępne</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>%s does not support point prompts.
+Please select a different model or use AI-Box mode.</source>
+        <translation>%s nie obsługuje poleceń punktowych.
+Wybierz inny model lub użyj trybu AI-Box.</translation>
+    </message>
 </context>
 </TS>
