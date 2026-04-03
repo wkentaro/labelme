@@ -78,6 +78,7 @@ _AI_CREATE_MODES: tuple[str, ...] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
 )
+_AI_MODELS_WITHOUT_POINT_SUPPORT: tuple[str, ...] = ("sam3:latest",)
 
 
 class _StatusBarWidgets(NamedTuple):
@@ -1364,6 +1365,19 @@ class MainWindow(QtWidgets.QMainWindow):
     def _switch_canvas_mode(
         self, edit: bool = True, createMode: str | None = None
     ) -> None:
+        if createMode == "ai_points_to_shape":
+            model_name = self._canvas_widgets.canvas.get_ai_model_name()
+            if model_name in _AI_MODELS_WITHOUT_POINT_SUPPORT:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr("AI-Points Unavailable"),
+                    self.tr(
+                        "%s does not support point prompts.\n"
+                        "Please select a different model or use AI-Box mode."
+                    )
+                    % model_name,
+                )
+                return
         self._canvas_widgets.canvas.setEditing(edit)
         if createMode is not None:
             self._canvas_widgets.canvas.createMode = createMode
