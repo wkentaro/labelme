@@ -8,9 +8,6 @@ from PyQt5 import QtWidgets
 
 import labelme.utils
 
-# TODO(unknown):
-# - Calculate optimal position so as not to go out of screen area.
-
 
 class LabelQLineEdit(QtWidgets.QLineEdit):
     def setListWidget(self, list_widget):
@@ -235,7 +232,15 @@ class LabelDialog(QtWidgets.QDialog):
             self.edit.completer().setCurrentRow(row)
         self.edit.setFocus(QtCore.Qt.PopupFocusReason)
         if move:
-            self.move(QtGui.QCursor.pos())
+            pos = QtGui.QCursor.pos()
+            screen = QtWidgets.QApplication.screenAt(pos)
+            if screen is not None:
+                geom = screen.availableGeometry()
+                pos.setX(min(pos.x(), geom.right() - self.width()))
+                pos.setY(min(pos.y(), geom.bottom() - self.height()))
+                pos.setX(max(pos.x(), geom.left()))
+                pos.setY(max(pos.y(), geom.top()))
+            self.move(pos)
         if self.exec_():
             return (
                 self.edit.text(),
