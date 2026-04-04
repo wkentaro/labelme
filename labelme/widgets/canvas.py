@@ -336,10 +336,11 @@ class Canvas(QtWidgets.QWidget):
         if self.createMode == "linestrip":
             if isNew:
                 return self.tr("Click start point for linestrip")
-            else:
+            if self.current and len(self.current) >= 3:
                 return self.tr(
-                    "Click next point or finish by Ctrl/Cmd+Click for linestrip"
+                    "Click next point, or double-click / Enter to finish"
                 )
+            return self.tr("Click next point or finish by Ctrl/Cmd+Click for linestrip")
         if self.createMode == "circle":
             if isNew:
                 return self.tr("Click center point for circle")
@@ -350,6 +351,9 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click first corner for rectangle")
             else:
                 return self.tr("Click opposite corner for rectangle (Shift for square)")
+        # Default: polygon
+        if not isNew and self.current and len(self.current) >= 3:
+            return self.tr("Click to add point, or double-click / Enter to finish")
         return self.tr("Click to add point")
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
