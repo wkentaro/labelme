@@ -1,5 +1,7 @@
 import os.path as osp
 from math import sqrt
+from typing import Optional
+from typing import Union
 
 import numpy as np
 from PyQt5 import QtCore
@@ -16,13 +18,18 @@ def newIcon(icon_file_name: str) -> QtGui.QIcon:
     return QtGui.QIcon(osp.join(":/", icons_dir, icon_file_name))
 
 
-def newButton(text, icon=None, slot=None):
-    b = QtWidgets.QPushButton(text)
+def newButton(
+    text: str,
+    icon: Optional[str] = None,
+    slot=None,
+) -> QtWidgets.QPushButton:
+    """Create a QPushButton with optional icon and click callback."""
+    button = QtWidgets.QPushButton(text)
     if icon is not None:
-        b.setIcon(newIcon(icon))
+        button.setIcon(newIcon(icon))
     if slot is not None:
-        b.clicked.connect(slot)
-    return b
+        button.clicked.connect(slot)
+    return button
 
 
 def newAction(
@@ -58,7 +65,8 @@ def newAction(
     return a
 
 
-def addActions(widget, actions):
+def addActions(widget, actions) -> None:
+    """Add a list of actions to a widget; None inserts a separator."""
     for action in actions:
         if action is None:
             widget.addSeparator()
@@ -68,31 +76,42 @@ def addActions(widget, actions):
             widget.addAction(action)
 
 
-def labelValidator():
+def labelValidator() -> QtGui.QRegExpValidator:
+    """Return a validator that rejects labels starting with whitespace."""
     return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
-def distance(p):
+def distance(p: QtCore.QPointF) -> float:
+    """Return the Euclidean distance from the origin to point p."""
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
 
-def distancetoline(point, line):
+def distancetoline(
+    point: QtCore.QPointF,
+    line: list,
+) -> float:
+    """Return the shortest distance from point to a line segment.
+
+    If the perpendicular projection falls outside the segment, the
+    distance to the nearest endpoint is returned instead.
+    """
     p1, p2 = line
-    p1 = np.array([p1.x(), p1.y()])
-    p2 = np.array([p2.x(), p2.y()])
-    p3 = np.array([point.x(), point.y()])
-    if np.dot((p3 - p1), (p2 - p1)) < 0:
-        return np.linalg.norm(p3 - p1)
-    if np.dot((p3 - p2), (p1 - p2)) < 0:
-        return np.linalg.norm(p3 - p2)
-    d = p2 - p1
+    a = np.array([p1.x(), p1.y()])
+    b = np.array([p2.x(), p2.y()])
+    p = np.array([point.x(), point.y()])
+    if np.dot((p - a), (b - a)) < 0:
+        return np.linalg.norm(p - a)
+    if np.dot((p - b), (a - b)) < 0:
+        return np.linalg.norm(p - b)
+    d = b - a
     if np.linalg.norm(d) == 0:
-        return np.linalg.norm(p3 - p1)
-    v = p1 - p3
+        return np.linalg.norm(p - a)
+    v = a - p
     cross = d[0] * v[1] - d[1] * v[0]
     return abs(cross) / np.linalg.norm(d)
 
 
-def fmtShortcut(text):
+def fmtShortcut(text: str) -> str:
+    """Format a shortcut string like 'Ctrl+S' as bold HTML."""
     mod, key = text.split("+", 1)
     return f"<b>{mod}</b>+<b>{key}</b>"
