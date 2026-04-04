@@ -280,18 +280,37 @@ def main():
             )
         output_dir = output
 
+    # Pick UI language for this run.
+    # - Default: system locale
+    # - Override: `language:` in config (e.g. en_US, zh_CN, tr_TR)
+    requested_language: object | None = None
+    if isinstance(config_overrides, dict) and "language" in config_overrides:
+        requested_language = config_overrides.get("language")
+    elif config_file is not None:
+        try:
+            with open(config_file, "r", encoding="utf-8") as f:
+                loaded = yaml.safe_load(f) or {}
+            if isinstance(loaded, dict) and "language" in loaded:
+                requested_language = loaded.get("language")
+        except Exception:
+            logger.warning("Failed to read `language` from config: {}", config_file)
+
+    if requested_language in (None, "system", "system locale"):
+        locale_name = QtCore.QLocale.system().name()
+    else:
+        locale_name = str(requested_language)
+
     translator = QtCore.QTranslator()
-    translator.load(
-        QtCore.QLocale.system().name(),
-        f"{osp.dirname(osp.abspath(__file__))}/translate",
-    )
+    translate_dir = f"{osp.dirname(osp.abspath(__file__))}/translate"
+    translator_loaded: bool = translator.load(locale_name, translate_dir)
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
     # Force light mode to avoid dark mode UI issues (e.g., invisible icons)
     app.setPalette(QtWidgets.QStyleFactory.create("Fusion").standardPalette())
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("icon"))
-    app.installTranslator(translator)
+    if translator_loaded:
+        app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,
         config_overrides=config_overrides,
