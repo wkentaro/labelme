@@ -28,13 +28,13 @@ setup:  # Setup the development environment
 	$(call exec,uv sync)
 
 format:  # Format code
-	$(call exec,uv run ruff format)
-	$(call exec,uv run ruff check --fix)
+	$(call exec,uv run --no-sync ruff format)
+	$(call exec,uv run --no-sync ruff check --fix)
 
 lint:
-	$(call exec,uv run ruff format --check)
-	$(call exec,uv run ruff check)
-	$(call exec,uv run ty check --no-progress)
+	$(call exec,uv run --no-sync ruff format --check)
+	$(call exec,uv run --no-sync ruff check)
+	$(call exec,uv run --no-sync ty check --no-progress)
 
 check_translate: update_translate
 	$(call exec,git diff --exit-code labelme/translate)
