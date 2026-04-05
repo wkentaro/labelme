@@ -1302,7 +1302,7 @@ class MainWindow(QtWidgets.QMainWindow):
         indices = indices[is_new]
 
         if masks is not None:
-            masks = masks[indices]
+            masks = [masks[i] for i in indices]
         del indices
 
         shapes: list[Shape] = bbox_from_text.get_shapes_from_bboxes(
