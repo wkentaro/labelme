@@ -1233,23 +1233,15 @@ def _shape_from_annotation(
     mask: np.ndarray = annotation.mask
 
     if output_format == "mask":
-        y1: int
-        x1: int
-        y2: int
-        x2: int
         if annotation.bounding_box is None:
-            y1, x1, y2, x2 = imgviz.masks_to_bboxes(masks=[mask])[0].astype(int)
-        else:
-            y1 = annotation.bounding_box.ymin
-            x1 = annotation.bounding_box.xmin
-            y2 = annotation.bounding_box.ymax
-            x2 = annotation.bounding_box.xmax
+            return None
+        bb = annotation.bounding_box
         shape = Shape()
         shape.setShapeRefined(
             shape_type="mask",
-            points=[QPointF(x1, y1), QPointF(x2, y2)],
+            points=[QPointF(bb.xmin, bb.ymin), QPointF(bb.xmax, bb.ymax)],
             point_labels=[1, 1],
-            mask=mask[y1 : y2 + 1, x1 : x2 + 1],
+            mask=mask,
         )
         shape.close()
         return shape
@@ -1257,6 +1249,9 @@ def _shape_from_annotation(
         points = polygon_from_mask.compute_polygon_from_mask(mask=mask)
         if len(points) < 2:
             return None
+        if annotation.bounding_box is not None:
+            bb = annotation.bounding_box
+            points = points + np.array([bb.xmin, bb.ymin], dtype=np.float32)
         shape = Shape()
         shape.setShapeRefined(
             shape_type="polygon",
