@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os.path as osp
 
@@ -6,7 +8,7 @@ import imgviz
 import labelme.utils
 
 
-def assert_labelfile_sanity(filename):
+def assert_labelfile_sanity(filename: str) -> None:
     assert osp.exists(filename)
 
     data = json.load(open(filename))
