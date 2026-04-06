@@ -1,6 +1,8 @@
 # MIT License
 # Copyright (c) Kentaro Wada
 
+from __future__ import annotations
+
 import base64
 import io
 
@@ -8,47 +10,49 @@ import numpy as np
 import PIL.ExifTags
 import PIL.Image
 import PIL.ImageOps
+from numpy.typing import NDArray
+from PyQt5 import QtGui
 
 
-def img_data_to_pil(img_data):
+def img_data_to_pil(img_data: bytes) -> PIL.Image.Image:
     f = io.BytesIO()
     f.write(img_data)
     img_pil = PIL.Image.open(f)
     return img_pil
 
 
-def img_data_to_arr(img_data):
+def img_data_to_arr(img_data: bytes) -> NDArray[np.uint8]:
     img_pil = img_data_to_pil(img_data)
     img_arr = np.array(img_pil)
     return img_arr
 
 
-def img_b64_to_arr(img_b64):
+def img_b64_to_arr(img_b64: str | bytes) -> NDArray[np.uint8]:
     img_data = base64.b64decode(img_b64)
     img_arr = img_data_to_arr(img_data)
     return img_arr
 
 
-def img_pil_to_data(img_pil):
+def img_pil_to_data(img_pil: PIL.Image.Image) -> bytes:
     f = io.BytesIO()
     img_pil.save(f, format="PNG")
     img_data = f.getvalue()
     return img_data
 
 
-def img_arr_to_b64(img_arr):
+def img_arr_to_b64(img_arr: NDArray[np.uint8]) -> str:
     img_data = img_arr_to_data(img_arr)
     img_b64 = base64.b64encode(img_data).decode("utf-8")
     return img_b64
 
 
-def img_arr_to_data(img_arr):
+def img_arr_to_data(img_arr: NDArray[np.uint8]) -> bytes:
     img_pil = PIL.Image.fromarray(img_arr)
     img_data = img_pil_to_data(img_pil)
     return img_data
 
 
-def img_data_to_png_data(img_data):
+def img_data_to_png_data(img_data: bytes) -> bytes:
     with io.BytesIO() as f:
         f.write(img_data)
         img = PIL.Image.open(f)
@@ -59,16 +63,16 @@ def img_data_to_png_data(img_data):
             return f.read()
 
 
-def img_qt_to_arr(img_qt):
+def img_qt_to_arr(img_qt: QtGui.QImage) -> NDArray[np.uint8]:
     w, h, d = img_qt.size().width(), img_qt.size().height(), img_qt.depth()
     bytes_ = img_qt.bits().asstring(w * h * d // 8)
     img_arr = np.frombuffer(bytes_, dtype=np.uint8).reshape((h, w, d // 8))
     return img_arr
 
 
-def apply_exif_orientation(image):
+def apply_exif_orientation(image: PIL.Image.Image) -> PIL.Image.Image:
     try:
-        exif = image._getexif()
+        exif = image._getexif()  # type: ignore[attr-defined]
     except AttributeError:
         exif = None
 
