@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from PyQt5.QtCore import QPointF
 
 from labelme.utils.qt import distancetoline
 
 
-def test_distancetoline():
+def test_distancetoline() -> None:
     line = (QPointF(0, 0), QPointF(10, 0))
 
     assert distancetoline(QPointF(5, 0), line) == 0

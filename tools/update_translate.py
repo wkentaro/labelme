@@ -8,7 +8,7 @@ from loguru import logger
 here: Path = Path(__file__).parent
 
 
-def main():
+def main() -> None:
     logger.remove(0)
     logger.level("INFO", color="<dim><white>")
     logger.add(

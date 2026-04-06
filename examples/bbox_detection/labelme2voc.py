@@ -19,7 +19,7 @@ except ImportError:
     sys.exit(1)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -71,6 +71,7 @@ def main():
                 args.output_dir, "AnnotationsVisualization", f"{base}.jpg"
             )
 
+        assert label_file.imageData is not None
         img = labelme.utils.img_data_to_arr(label_file.imageData)
         imgviz.io.imsave(out_img_file, img)
 

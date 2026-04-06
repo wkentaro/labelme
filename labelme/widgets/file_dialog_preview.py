@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 from typing import cast
 
@@ -7,8 +9,8 @@ from PyQt5 import QtWidgets
 
 
 class ScrollAreaPreview(QtWidgets.QScrollArea):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        super().__init__(parent)
 
         self.setWidgetResizable(True)
 
@@ -22,19 +24,19 @@ class ScrollAreaPreview(QtWidgets.QScrollArea):
 
         lay.addWidget(self.label)
 
-    def setText(self, text):
+    def setText(self, text: str) -> None:
         self.label.setText(text)
 
-    def setPixmap(self, pixmap):
+    def setPixmap(self, pixmap: QtGui.QPixmap) -> None:
         self.label.setPixmap(pixmap)
 
-    def clear(self):
+    def clear(self) -> None:
         self.label.clear()
 
 
 class FileDialogPreview(QtWidgets.QFileDialog):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        super().__init__(parent)
         self.setOption(self.DontUseNativeDialog, True)
 
         self.labelPreview = ScrollAreaPreview(self)
@@ -51,7 +53,7 @@ class FileDialogPreview(QtWidgets.QFileDialog):
         layout.addLayout(box, 1, 3, 1, 1)
         self.currentChanged.connect(self.onChange)
 
-    def onChange(self, path):
+    def onChange(self, path: str) -> None:
         if path.lower().endswith(".json"):
             try:
                 with open(path) as f:

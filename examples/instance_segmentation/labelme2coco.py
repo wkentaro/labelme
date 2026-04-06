@@ -22,7 +22,7 @@ except ImportError:
     sys.exit(1)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -93,6 +93,7 @@ def main():
         base = osp.splitext(osp.basename(filename))[0]
         out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
 
+        assert label_file.imageData is not None
         img = labelme.utils.img_data_to_arr(label_file.imageData)
         if img.ndim == 3 and img.shape[2] == 4:
             img = imgviz.rgba2rgb(img)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import types
 
 import osam
+import osam.types
 from loguru import logger
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QObject
@@ -19,12 +20,14 @@ class _AiModelDownloadSignals(QObject):
 
 
 class _AiModelDownloadWorker(QRunnable):
-    def __init__(self, model_type, signals: _AiModelDownloadSignals):
+    def __init__(
+        self, model_type: type[osam.types.Model], signals: _AiModelDownloadSignals
+    ) -> None:
         super().__init__()
         self.model_type = model_type
         self.signals = signals
 
-    def run(self):
+    def run(self) -> None:
         try:
             self.model_type.pull()
             self.signals.finished.emit()
@@ -54,7 +57,7 @@ def download_ai_model(model_name: str, parent: QtWidgets.QWidget) -> bool:
 
     handle_error_attrs = types.SimpleNamespace(e=None)
 
-    def handle_error(e: Exception):
+    def handle_error(e: Exception) -> None:
         logger.error("Exception occurred: {}", e)
         handle_error_attrs.e = e
         #

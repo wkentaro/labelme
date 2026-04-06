@@ -9,7 +9,7 @@ import PIL.Image
 here = osp.dirname(osp.abspath(__file__))
 
 
-def main():
+def main() -> None:
     label_png = osp.join(here, "apc2016_obj3/label.png")
     print("Loading:", label_png)
     print()

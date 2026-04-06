@@ -3,13 +3,14 @@ from __future__ import annotations
 import pytest
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+from pytestqt.qtbot import QtBot
 
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelQLineEdit
 
 
 @pytest.mark.gui
-def test_LabelQLineEdit(qtbot):
+def test_LabelQLineEdit(qtbot: QtBot) -> None:
     list_widget = QtWidgets.QListWidget()
     list_widget.addItems(["cat", "dog", "person"])
     widget = LabelQLineEdit()
@@ -19,9 +20,13 @@ def test_LabelQLineEdit(qtbot):
     # key press to navigate in label list
     item = widget.list_widget.findItems("cat", QtCore.Qt.MatchExactly)[0]
     widget.list_widget.setCurrentItem(item)
-    assert widget.list_widget.currentItem().text() == "cat"
+    current_item = widget.list_widget.currentItem()
+    assert current_item is not None
+    assert current_item.text() == "cat"
     qtbot.keyPress(widget, QtCore.Qt.Key_Down)
-    assert widget.list_widget.currentItem().text() == "dog"
+    current_item = widget.list_widget.currentItem()
+    assert current_item is not None
+    assert current_item.text() == "dog"
 
     # key press to enter label
     qtbot.keyPress(widget, QtCore.Qt.Key_P)
@@ -34,7 +39,7 @@ def test_LabelQLineEdit(qtbot):
 
 
 @pytest.mark.gui
-def test_LabelDialog_addLabelHistory(qtbot):
+def test_LabelDialog_addLabelHistory(qtbot: QtBot) -> None:
     labels = ["cat", "dog", "person"]
     widget = LabelDialog(labels=labels, sort_labels=True)
     qtbot.addWidget(widget)
@@ -49,14 +54,14 @@ def test_LabelDialog_addLabelHistory(qtbot):
 
 
 @pytest.mark.gui
-def test_LabelDialog_popUp(qtbot):
+def test_LabelDialog_popUp(qtbot: QtBot) -> None:
     labels = ["cat", "dog", "person"]
     widget = LabelDialog(labels=labels, sort_labels=True)
     qtbot.addWidget(widget)
 
     # popUp(text='cat')
 
-    def interact():
+    def interact() -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_P)  # enter 'p' for 'person'  # NOQA
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
@@ -70,7 +75,7 @@ def test_LabelDialog_popUp(qtbot):
 
     # popUp()
 
-    def interact():
+    def interact() -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
@@ -83,7 +88,7 @@ def test_LabelDialog_popUp(qtbot):
 
     # popUp() + key_Up
 
-    def interact():
+    def interact() -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Up)  # 'person' -> 'dog'  # NOQA
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA

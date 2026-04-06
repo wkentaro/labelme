@@ -1,6 +1,11 @@
+from __future__ import annotations
+
 import os.path as osp
 import re
+from collections.abc import Callable
+from collections.abc import Sized
 from pathlib import Path
+from typing import cast
 
 import yaml
 from loguru import logger
@@ -8,24 +13,36 @@ from loguru import logger
 here = osp.dirname(osp.abspath(__file__))
 
 
-def _update_dict(target_dict, new_dict, validate_item=None):
+def _update_dict(
+    target_dict: dict[str, object],
+    new_dict: dict[str, object],
+    validate_item: Callable[[str, object], None] | None = None,
+) -> None:
     for key, value in new_dict.items():
         if validate_item:
             validate_item(key, value)
         if key not in target_dict:
             raise ValueError(f"Unexpected key in config: {key}")
         if isinstance(target_dict[key], dict) and isinstance(value, dict):
-            _update_dict(target_dict[key], value, validate_item=validate_item)
+            _update_dict(
+                cast(dict[str, object], target_dict[key]),
+                cast(dict[str, object], value),
+                validate_item=validate_item,
+            )
         else:
             target_dict[key] = value
 
 
-def _validate_config_item(key, value):
+def _validate_config_item(key: str, value: object) -> None:
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
     if key == "shape_color" and value not in [None, "auto", "manual"]:
         raise ValueError(f"Unexpected value for config key 'shape_color': {value}")
-    if key == "labels" and value is not None and len(value) != len(set(value)):
+    if (
+        key == "labels"
+        and isinstance(value, Sized)
+        and len(value) != len(set(cast(list[object], value)))
+    ):
         raise ValueError(f"Duplicates are detected for config key 'labels': {value}")
 
 

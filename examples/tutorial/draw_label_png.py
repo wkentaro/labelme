@@ -9,7 +9,7 @@ import numpy as np
 from loguru import logger
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )

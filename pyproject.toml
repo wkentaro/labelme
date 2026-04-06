@@ -70,6 +70,7 @@ markers = [
 
 [tool.ruff.lint]
 select = [
+  "ANN",  # flake8-annotations
   "E",  # pycodestyle
   "F",  # pyflakes
   "I",  # isort

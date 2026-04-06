@@ -1,6 +1,8 @@
 # MIT License
 # Copyright (c) Kentaro Wada
 
+from __future__ import annotations
+
 import math
 import uuid
 
@@ -8,6 +10,8 @@ import numpy as np
 import PIL.Image
 import PIL.ImageDraw
 from numpy.typing import NDArray
+
+from labelme._label_file import ShapeDict
 
 
 def shape_to_mask(
@@ -51,7 +55,11 @@ def shape_to_mask(
     return np.array(mask, dtype=bool)
 
 
-def shapes_to_label(img_shape, shapes, label_name_to_value):
+def shapes_to_label(
+    img_shape: tuple[int, ...],
+    shapes: list[ShapeDict],
+    label_name_to_value: dict[str, int],
+) -> tuple[NDArray[np.int32], NDArray[np.int32]]:
     cls = np.zeros(img_shape[:2], dtype=np.int32)
     ins = np.zeros_like(cls)
     instances = []
@@ -87,7 +95,7 @@ def shapes_to_label(img_shape, shapes, label_name_to_value):
     return cls, ins
 
 
-def masks_to_bboxes(masks):
+def masks_to_bboxes(masks: NDArray[np.bool_]) -> NDArray[np.float32]:
     if masks.ndim != 3:
         raise ValueError(f"masks.ndim must be 3, but it is {masks.ndim}")
     if masks.dtype != bool:

@@ -47,7 +47,9 @@ def test_MainWindow_config(
     if not with_config_file:
         message_box_shown: list[bool] = [False]
 
-        def mock_information(parent, title, message):
+        def mock_information(
+            parent: QtWidgets.QWidget, title: str, message: str
+        ) -> int:
             message_box_shown[0] = True
             assert "No Config File" in title
             return QtWidgets.QMessageBox.Ok

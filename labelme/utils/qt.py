@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 import os.path as osp
+from collections.abc import Callable
+from collections.abc import Sequence
 from math import sqrt
+from typing import Any
 
 import numpy as np
 from PyQt5 import QtCore
@@ -16,7 +21,11 @@ def newIcon(icon_file_name: str) -> QtGui.QIcon:
     return QtGui.QIcon(osp.join(":/", icons_dir, icon_file_name))
 
 
-def newButton(text, icon=None, slot=None):
+def newButton(
+    text: str,
+    icon: str | None = None,
+    slot: Callable[..., object] | None = None,
+) -> QtWidgets.QPushButton:
     b = QtWidgets.QPushButton(text)
     if icon is not None:
         b.setIcon(newIcon(icon))
@@ -26,16 +35,16 @@ def newButton(text, icon=None, slot=None):
 
 
 def newAction(
-    parent,
-    text,
-    slot=None,
-    shortcut=None,
-    icon=None,
-    tip=None,
-    checkable=False,
-    enabled=True,
-    checked=False,
-):
+    parent: QtWidgets.QWidget,
+    text: str,
+    slot: Callable[..., object] | None = None,
+    shortcut: str | list[str] | tuple[str, ...] | None = None,
+    icon: str | None = None,
+    tip: str | None = None,
+    checkable: bool = False,
+    enabled: bool = True,
+    checked: bool = False,
+) -> QtWidgets.QAction:
     """Create a new action and assign callbacks, shortcuts, etc."""
     a = QtWidgets.QAction(text, parent)
     if icon is not None:
@@ -58,25 +67,31 @@ def newAction(
     return a
 
 
-def addActions(widget, actions):
+def addActions(
+    widget: QtWidgets.QMenu | QtWidgets.QToolBar,
+    actions: Sequence[QtWidgets.QAction | QtWidgets.QMenu | None],
+) -> None:
     for action in actions:
         if action is None:
             widget.addSeparator()
         elif isinstance(action, QtWidgets.QMenu):
-            widget.addMenu(action)
+            widget.addMenu(action)  # type: ignore[union-attr]
         else:
             widget.addAction(action)
 
 
-def labelValidator():
+def labelValidator() -> QtGui.QRegExpValidator:
     return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
-def distance(p):
+def distance(p: QtCore.QPointF) -> float:
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
 
-def distancetoline(point, line):
+def distancetoline(
+    point: QtCore.QPointF,
+    line: tuple[QtCore.QPointF, QtCore.QPointF],
+) -> np.floating[Any]:
     p1, p2 = line
     p1 = np.array([p1.x(), p1.y()])
     p2 = np.array([p2.x(), p2.y()])
@@ -93,6 +108,6 @@ def distancetoline(point, line):
     return abs(cross) / np.linalg.norm(d)
 
 
-def fmtShortcut(text):
+def fmtShortcut(text: str) -> str:
     mod, key = text.split("+", 1)
     return f"<b>{mod}</b>+<b>{key}</b>"

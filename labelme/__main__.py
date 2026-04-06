@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import codecs
 import contextlib
@@ -6,6 +8,7 @@ import os
 import os.path as osp
 import sys
 import traceback
+import types
 import warnings
 from pathlib import Path
 from typing import AnyStr
@@ -77,7 +80,11 @@ def _setup_loguru(logger_level: str) -> None:
     )
 
 
-def _handle_exception(exc_type, exc_value, exc_traceback):
+def _handle_exception(
+    exc_type: type[BaseException],
+    exc_value: BaseException,
+    exc_traceback: types.TracebackType | None,
+) -> None:
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         sys.exit(0)
@@ -99,7 +106,7 @@ def _handle_exception(exc_type, exc_value, exc_traceback):
     sys.exit(1)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
     parser.add_argument("--reset-config", action="store_true", help="reset qt config")

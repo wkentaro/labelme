@@ -12,34 +12,34 @@ def _make_point_shape(x: float, y: float) -> Shape:
     return shape
 
 
-def test_point_shape_contains_center():
+def test_point_shape_contains_center() -> None:
     """Clicking exactly on a point shape should return True."""
     shape = _make_point_shape(100.0, 200.0)
     assert shape.containsPoint(QtCore.QPointF(100.0, 200.0)) is True
 
 
-def test_point_shape_contains_within_radius():
+def test_point_shape_contains_within_radius() -> None:
     """Clicking within point_size/2 of the center should return True."""
     shape = _make_point_shape(100.0, 200.0)
     # point_size defaults to 8, so radius = 4. A point 3px away should hit.
     assert shape.containsPoint(QtCore.QPointF(103.0, 200.0)) is True
 
 
-def test_point_shape_at_exact_boundary():
+def test_point_shape_at_exact_boundary() -> None:
     """Clicking exactly at point_size/2 distance should return True (inclusive)."""
     shape = _make_point_shape(100.0, 200.0)
     # point_size defaults to 8, so radius = 4. Exactly 4px away should hit.
     assert shape.containsPoint(QtCore.QPointF(104.0, 200.0)) is True
 
 
-def test_point_shape_outside_radius():
+def test_point_shape_outside_radius() -> None:
     """Clicking more than point_size/2 away should return False."""
     shape = _make_point_shape(100.0, 200.0)
     # 10px away, well outside the radius of 4
     assert shape.containsPoint(QtCore.QPointF(110.0, 200.0)) is False
 
 
-def test_point_shape_empty_points():
+def test_point_shape_empty_points() -> None:
     """A point shape with no points should return False, not raise."""
     shape = Shape(shape_type="point")
     assert shape.containsPoint(QtCore.QPointF(0.0, 0.0)) is False

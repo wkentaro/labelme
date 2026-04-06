@@ -6,7 +6,9 @@ import io
 import json
 import os.path as osp
 import time
+from collections.abc import Iterator
 from pathlib import PureWindowsPath
+from typing import Any
 from typing import TypedDict
 
 import numpy as np
@@ -22,7 +24,7 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 
 
 @contextlib.contextmanager
-def _open(name, mode):
+def _open(name: str, mode: str) -> Iterator[io.TextIOWrapper]:
     assert mode in ["r", "w"]
     encoding = "utf-8"
     yield open(name, mode, encoding=encoding)
@@ -138,7 +140,7 @@ class LabelFile:
     shapes: list[ShapeDict]
     suffix = ".json"
 
-    def __init__(self, filename: str | None = None):
+    def __init__(self, filename: str | None = None) -> None:
         self.shapes: list[ShapeDict] = []
         self.imagePath: str | None = None
         self.imageData: bytes | None = None
@@ -147,7 +149,7 @@ class LabelFile:
         self.filename: str | None = filename
 
     @staticmethod
-    def load_image_file(filename):
+    def load_image_file(filename: str) -> bytes:
         t0 = time.time()
         image_pil = _imread(filename=filename)
 
@@ -169,7 +171,7 @@ class LabelFile:
         )
         return imageData
 
-    def load(self, filename):
+    def load(self, filename: str) -> None:
         keys = [
             "version",
             "imageData",
@@ -219,7 +221,9 @@ class LabelFile:
         self.otherData = otherData
 
     @staticmethod
-    def _check_image_height_and_width(imageData, imageHeight, imageWidth):
+    def _check_image_height_and_width(
+        imageData: bytes, imageHeight: int | None, imageWidth: int | None
+    ) -> tuple[int | None, int | None]:
         img_pil = utils.img_data_to_pil(imageData)
         actual_w, actual_h = img_pil.size
         if imageHeight is not None and actual_h != imageHeight:
@@ -238,20 +242,21 @@ class LabelFile:
 
     def save(
         self,
-        filename,
-        shapes,
-        imagePath,
-        imageHeight,
-        imageWidth,
-        imageData=None,
-        otherData=None,
-        flags=None,
-    ):
+        filename: str,
+        shapes: list[dict[str, Any]],
+        imagePath: str,
+        imageHeight: int | None,
+        imageWidth: int | None,
+        imageData: bytes | None = None,
+        otherData: dict[str, Any] | None = None,
+        flags: dict[str, bool] | None = None,
+    ) -> None:
+        imageData_b64: str | None = None
         if imageData is not None:
             imageHeight, imageWidth = self._check_image_height_and_width(
                 imageData, imageHeight, imageWidth
             )
-            imageData = base64.b64encode(imageData).decode("utf-8")
+            imageData_b64 = base64.b64encode(imageData).decode("utf-8")
         if otherData is None:
             otherData = {}
         if flags is None:
@@ -261,7 +266,7 @@ class LabelFile:
             flags=flags,
             shapes=shapes,
             imagePath=imagePath,
-            imageData=imageData,
+            imageData=imageData_b64,
             imageHeight=imageHeight,
             imageWidth=imageWidth,
         )
@@ -276,7 +281,7 @@ class LabelFile:
             raise LabelFileError(e)
 
     @staticmethod
-    def is_label_file(filename):
+    def is_label_file(filename: str) -> bool:
         return osp.splitext(filename)[1].lower() == LabelFile.suffix
 
 
