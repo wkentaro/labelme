@@ -15,6 +15,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
 from typing import NamedTuple
+from typing import TypeAlias
+from typing import cast
+from typing import get_args
 
 import imgviz
 import natsort
@@ -70,10 +73,7 @@ class _ZoomMode(enum.Enum):
     MANUAL_ZOOM = enum.auto()
 
 
-_TEXT_TO_ANNOTATION_CREATE_MODES: tuple[str, ...] = (
-    "polygon",
-    "rectangle",
-)
+_TextToAnnotationCreateMode: TypeAlias = Literal["polygon", "rectangle"]
 _AI_CREATE_MODES: tuple[str, ...] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
@@ -1239,8 +1239,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shape_type: Literal["rectangle", "polygon", "mask"]
         if create_mode in _AI_CREATE_MODES:
             shape_type = self._ai_annotation.output_format
-        elif create_mode in _TEXT_TO_ANNOTATION_CREATE_MODES:
-            shape_type = create_mode
+        elif create_mode in get_args(_TextToAnnotationCreateMode):
+            shape_type = cast(_TextToAnnotationCreateMode, create_mode)
         else:
             logger.warning("Unsupported createMode={!r}", create_mode)
             return
@@ -1376,7 +1376,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.edit_mode.setEnabled(not edit)
         self._ai_text.setEnabled(
             not edit
-            and createMode in (*_TEXT_TO_ANNOTATION_CREATE_MODES, *_AI_CREATE_MODES)
+            and createMode
+            in (*get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and createMode in _AI_CREATE_MODES)
         if createMode == "ai_points_to_shape":
@@ -1470,7 +1471,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._canvas_widgets.canvas.storeShapes()
         for item in items:
-            shape: Shape = item.shape()
+            shape = item.shape()
+            assert shape is not None
 
             if edit_text:
                 shape.label = text
@@ -1482,6 +1484,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape.description = description
 
             self._update_shape_color(shape)
+            assert shape.label is not None
             if shape.group_id is None:
                 r, g, b = shape.fill_color.getRgb()[:3]
                 item.setText(
@@ -1703,7 +1706,11 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return data
 
-        shapes = [format_shape(item.shape()) for item in self._docks.label_list]
+        shapes = [
+            format_shape(s)
+            for item in self._docks.label_list
+            if (s := item.shape()) is not None
+        ]
         flags = {}
         for i in range(self._docks.flag_list.count()):
             item = self._docks.flag_list.item(i)
@@ -1760,7 +1767,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []
         for item in self._docks.label_list.selectedItems():
-            selected_shapes.append(item.shape())
+            shape = item.shape()
+            assert shape is not None
+            selected_shapes.append(shape)
         if selected_shapes:
             self._canvas_widgets.canvas.selectShapes(selected_shapes)
         else:
@@ -1769,15 +1778,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def labelItemChanged(self, item: LabelListWidgetItem) -> None:
         shape = item.shape()
+        assert shape is not None
         self._canvas_widgets.canvas.setShapeVisible(
             shape, item.checkState() == Qt.Checked
         )
 
     def labelOrderChanged(self) -> None:
         self.setDirty()
-        self._canvas_widgets.canvas.loadShapes(
-            [item.shape() for item in self._docks.label_list]
-        )
+        shapes = [
+            s for item in self._docks.label_list if (s := item.shape()) is not None
+        ]
+        self._canvas_widgets.canvas.loadShapes(shapes)
 
     # Callback functions:
 
@@ -1809,6 +1820,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text = ""
         if text:
             self._docks.label_list.clearSelection()
+            assert isinstance(flags, dict)
             shapes = self._canvas_widgets.canvas.setLastLabel(text, flags)
             for shape in shapes:
                 shape.group_id = group_id
@@ -1929,6 +1941,7 @@ class MainWindow(QtWidgets.QMainWindow):
             brightness,
             contrast,
         )
+        assert self.imageData is not None
         dialog = BrightnessContrastDialog(
             utils.img_data_to_pil(self.imageData),
             self.onNewBrightnessContrast,
