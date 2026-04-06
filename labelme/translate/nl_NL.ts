@@ -600,11 +600,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Open &amp;Recent</source>
-        <translation>Open &amp;recent</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>%s started.</source>
         <translation>%s gestart.</translation>
     </message>
