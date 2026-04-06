@@ -5,6 +5,7 @@ from typing import Final
 import pytest
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPointF
+from pytestqt.qtbot import QtBot
 
 from labelme.widgets.canvas import Canvas
 
@@ -13,7 +14,7 @@ _HEIGHT: Final = 50
 
 
 @pytest.fixture()
-def canvas(qtbot) -> Canvas:
+def canvas(qtbot: QtBot) -> Canvas:
     canvas = Canvas()
     canvas.pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
     qtbot.addWidget(canvas)
@@ -35,7 +36,7 @@ def canvas(qtbot) -> Canvas:
         (QPointF(_WIDTH / 2, -0.1), True),
     ],
 )
-def test_outOfPixmap(canvas: Canvas, point: QPointF, is_outside: bool):
+def test_outOfPixmap(canvas: Canvas, point: QPointF, is_outside: bool) -> None:
     assert canvas.outOfPixmap(point) is is_outside
 
 
@@ -67,5 +68,5 @@ def test_outOfPixmap(canvas: Canvas, point: QPointF, is_outside: bool):
 )
 def test_intersectionPoint(
     canvas: Canvas, p1: QPointF, p2: QPointF, pt_intersection: QPointF
-):
+) -> None:
     assert canvas.intersectionPoint(p1, p2) == pt_intersection

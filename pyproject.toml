@@ -82,6 +82,4 @@ force-single-line = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"examples/**" = ["ANN"]
-"tests/**" = ["ANN"]
 "tools/**" = ["ANN"]

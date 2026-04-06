@@ -1,5 +1,11 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
+from typing import Any
+
+import numpy as np
+from numpy.typing import NDArray
 
 from labelme.utils import image as image_module
 from labelme.utils import shape as shape_module
@@ -8,7 +14,7 @@ here = Path(__file__).parent
 data_dir = here.parent.parent / "data"
 
 
-def get_img_and_data():
+def get_img_and_data() -> tuple[NDArray[np.uint8], dict[str, Any]]:
     json_file = data_dir / "annotated_with_data/apc2016_obj3.json"
     with open(json_file) as f:
         data = json.load(f)
@@ -17,7 +23,7 @@ def get_img_and_data():
     return img, data
 
 
-def get_img_and_lbl():
+def get_img_and_lbl() -> tuple[NDArray[np.uint8], NDArray[np.int32], list[str | None]]:
     img, data = get_img_and_data()
 
     label_name_to_value = {"__background__": 0}

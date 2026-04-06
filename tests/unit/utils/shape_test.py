@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 
 from labelme.utils import shape as shape_module
@@ -5,7 +7,7 @@ from labelme.utils import shape as shape_module
 from .util import get_img_and_data
 
 
-def test_shapes_to_label():
+def test_shapes_to_label() -> None:
     img, data = get_img_and_data()
     label_name_to_value = {}
     for shape in data["shapes"]:
@@ -18,7 +20,7 @@ def test_shapes_to_label():
     assert cls.shape == img.shape[:2]
 
 
-def test_shape_to_mask():
+def test_shape_to_mask() -> None:
     img, data = get_img_and_data()
     for shape in data["shapes"]:
         points = shape["points"]
@@ -26,7 +28,7 @@ def test_shape_to_mask():
         assert mask.shape == img.shape[:2]
 
 
-def test_shape_to_mask_rectangle_reversed_coords():
+def test_shape_to_mask_rectangle_reversed_coords() -> None:
     img_shape = (100, 100)
     mask_tl_br = shape_module.shape_to_mask(
         img_shape, [[10, 10], [50, 50]], shape_type="rectangle"
