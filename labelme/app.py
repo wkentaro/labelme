@@ -1151,7 +1151,11 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         return config_file, config
 
-    def menu(self, title, actions=None):
+    def menu(
+        self,
+        title: str,
+        actions: tuple[QtWidgets.QAction | QtWidgets.QMenu | None, ...] | None = None,
+    ) -> QtWidgets.QMenu:
         menu = self.menuBar().addMenu(title)
         if actions:
             utils.addActions(menu, actions)
@@ -1230,7 +1234,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_status_message(self, message: str, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
-    def _submit_ai_prompt(self, _) -> None:
+    def _submit_ai_prompt(self, _: bool) -> None:
         create_mode = self._canvas_widgets.canvas.createMode
         shape_type: Literal["rectangle", "polygon", "mask"]
         if create_mode in _AI_CREATE_MODES:
@@ -1330,11 +1334,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._load_shapes(self._canvas_widgets.canvas.shapes)
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
 
-    def tutorial(self):
+    def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def toggleDrawingSensitive(self, drawing=True):
+    def toggleDrawingSensitive(self, drawing: bool = True) -> None:
         """Toggle drawing sensitive.
 
         In the middle of drawing, toggling between modes should be disabled.
@@ -1381,27 +1385,29 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.set_disabled_models(())
 
     def popLabelListMenu(self, point: QtCore.QPoint) -> None:
+        # PyQt5 stubs type QMenu.exec() argument too narrowly
         self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # type: ignore[invalid-argument-type]
 
-    def validateLabel(self, label):
+    def validateLabel(self, label: str) -> bool:
         # no validation
         if self._config["validate_label"] is None:
             return True
 
         for i in range(self._docks.unique_label_list.count()):
+            # PyQt5 stubs: item() typed as Optional and .data() unrecognized
             label_i = self._docks.unique_label_list.item(i).data(Qt.UserRole)  # type: ignore[attr-defined,union-attr]
             if self._config["validate_label"] in ["exact"]:
                 if label_i == label:
                     return True
         return False
 
-    def _edit_label(self, value=None):
+    def _edit_label(self, value: object | None = None) -> None:
         items = self._docks.label_list.selectedItems()
         if not items:
             logger.warning("No label is selected, so cannot edit label.")
             return
 
-        shape = items[0].shape()
+        first_shape = items[0].shape()
 
         if len(items) == 1:
             edit_text = True
@@ -1409,13 +1415,18 @@ class MainWindow(QtWidgets.QMainWindow):
             edit_group_id = True
             edit_description = True
         else:
-            edit_text = all(item.shape().label == shape.label for item in items[1:])
-            edit_flags = all(item.shape().flags == shape.flags for item in items[1:])
+            edit_text = all(
+                item.shape().label == first_shape.label for item in items[1:]
+            )
+            edit_flags = all(
+                item.shape().flags == first_shape.flags for item in items[1:]
+            )
             edit_group_id = all(
-                item.shape().group_id == shape.group_id for item in items[1:]
+                item.shape().group_id == first_shape.group_id for item in items[1:]
             )
             edit_description = all(
-                item.shape().description == shape.description for item in items[1:]
+                item.shape().description == first_shape.description
+                for item in items[1:]
             )
 
         if not edit_text:
@@ -1427,10 +1438,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self._label_dialog.editDescription.setDisabled(True)
 
         text, flags, group_id, description = self._label_dialog.popUp(
-            text=shape.label if edit_text else "",
-            flags=shape.flags if edit_flags else None,
-            group_id=shape.group_id if edit_group_id else None,
-            description=shape.description if edit_description else None,
+            text=first_shape.label if edit_text else "",
+            flags=first_shape.flags if edit_flags else None,
+            group_id=first_shape.group_id if edit_group_id else None,
+            description=first_shape.description if edit_description else None,
             flags_disabled=not edit_flags,
         )
 
@@ -1459,7 +1470,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._canvas_widgets.canvas.storeShapes()
         for item in items:
-            shape: Shape = item.shape()  # type: ignore[no-redef]
+            shape: Shape = item.shape()
 
             if edit_text:
                 shape.label = text
@@ -1489,7 +1500,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     ),
                 )
 
-    def fileSearchChanged(self):
+    def fileSearchChanged(self) -> None:
         self._import_images_from_dir(
             root_dir=self._prev_opened_dir, pattern=self._docks.file_search.text()
         )
@@ -1672,10 +1683,10 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             widget.addItem(item)
 
-    def saveLabels(self, filename):
+    def saveLabels(self, filename: str) -> bool:
         lf = LabelFile()
 
-        def format_shape(s):
+        def format_shape(s: Shape) -> dict:
             data = s.other_data.copy()
             data.update(
                 dict(
@@ -1856,7 +1867,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._canvas_widgets.scroll_bars[Qt.Vertical].value() + y_shift,
         )
 
-    def _set_zoom_to_original(self):
+    def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=100)
 
@@ -1874,28 +1885,28 @@ class MainWindow(QtWidgets.QMainWindow):
     def _zoom_requested(self, delta: int, pos: QtCore.QPointF) -> None:
         self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
 
-    def setFitWindow(self, value=True):
+    def setFitWindow(self, value: bool = True) -> None:
         if value:
             self._actions.fit_width.setChecked(False)
         self._zoom_mode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self._adjust_scale()
 
-    def setFitWidth(self, value=True):
+    def setFitWidth(self, value: bool = True) -> None:
         if value:
             self._actions.fit_window.setChecked(False)
         self._zoom_mode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
         self._adjust_scale()
 
-    def enableKeepPrevScale(self, enabled):
+    def enableKeepPrevScale(self, enabled: bool) -> None:
         self._config["keep_prev_scale"] = enabled
         self._actions.keep_prev_scale.setChecked(enabled)
 
-    def onNewBrightnessContrast(self, qimage):
+    def onNewBrightnessContrast(self, qimage: QtGui.QImage) -> None:
         self._canvas_widgets.canvas.loadPixmap(
             QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
 
-    def brightnessContrast(self, value: bool, is_initial_load: bool = False):
+    def brightnessContrast(self, value: bool, is_initial_load: bool = False) -> None:
         if self._filename is None:
             logger.warning("filename is None, cannot set brightness/contrast")
             return
@@ -1944,7 +1955,7 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast,
         )
 
-    def toggleShapes(self, value):
+    def toggleShapes(self, value: bool | None) -> None:
         flag = value
         for item in self._docks.label_list:
             if value is None:
@@ -2121,16 +2132,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return w1 / w2 if a2 >= a1 else h1 / h2
 
-    def scaleFitWidth(self):
+    def scaleFitWidth(self) -> float:
         EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
         w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
         return w / self._canvas_widgets.canvas.pixmap.width()
 
-    def enableSaveImageWithData(self, enabled):
+    def enableSaveImageWithData(self, enabled: bool) -> None:
         self._config["with_image_data"] = enabled
         self._actions.save_with_image_data.setChecked(enabled)
 
-    def _reset_layout(self):
+    def _reset_layout(self) -> None:
         self.settings.remove("window/state")
         self.restoreState(self._default_state)
 
@@ -2163,7 +2174,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # User Dialogs #
 
-    def _open_prev_image(self, _value=False) -> None:
+    def _open_prev_image(self, _value: bool = False) -> None:
         row_prev: int = self._docks.file_list.currentRow() - 1
         if row_prev < 0:
             logger.debug("there is no prev image")
@@ -2173,7 +2184,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_list.setCurrentRow(row_prev)
         self._docks.file_list.repaint()
 
-    def _open_next_image(self, _value=False) -> None:
+    def _open_next_image(self, _value: bool = False) -> None:
         row_next: int = self._docks.file_list.currentRow() + 1
         if row_next >= self._docks.file_list.count():
             logger.debug("there is no next image")
@@ -2207,7 +2218,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if fileName:
                 self._load_file(filename=fileName)
 
-    def changeOutputDirDialog(self, _value=False):
+    def changeOutputDirDialog(self, _value: bool = False) -> None:
         default_output_dir = self._output_dir
         if default_output_dir is None and self._filename:
             default_output_dir = osp.dirname(self._filename)
@@ -2341,7 +2352,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if system == "Darwin":
             subprocess.Popen(["open", "-t", config_file])
         elif system == "Windows":
-            os.startfile(config_file)  # type: ignore[attr-defined]
+            os.startfile(config_file)  # type: ignore[attr-defined]  # Windows-only
         else:
             subprocess.Popen(["xdg-open", config_file])
 
@@ -2463,7 +2474,7 @@ class MainWindow(QtWidgets.QMainWindow):
             lst.append(item.text())
         return lst
 
-    def importDroppedImageFiles(self, imageFiles):
+    def importDroppedImageFiles(self, imageFiles: list[str]) -> None:
         extensions = [
             f".{fmt.data().decode().lower()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
