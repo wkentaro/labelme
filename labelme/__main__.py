@@ -81,13 +81,10 @@ def _setup_loguru(logger_level: str) -> None:
 
 
 def _handle_exception(
-    exc_type: type[BaseException] | None,
-    exc_value: BaseException | None,
+    exc_type: type[BaseException],
+    exc_value: BaseException,
     exc_traceback: types.TracebackType | None,
 ) -> None:
-    if exc_type is None or exc_value is None:
-        return
-
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         sys.exit(0)

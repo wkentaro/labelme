@@ -6,7 +6,7 @@ import io
 import json
 import os.path as osp
 import time
-from collections.abc import Generator
+from collections.abc import Iterator
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import TypedDict
@@ -24,7 +24,7 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 
 
 @contextlib.contextmanager
-def _open(name: str, mode: str) -> Generator[io.TextIOWrapper]:
+def _open(name: str, mode: str) -> Iterator[io.TextIOWrapper]:
     assert mode in ["r", "w"]
     encoding = "utf-8"
     yield open(name, mode, encoding=encoding)
