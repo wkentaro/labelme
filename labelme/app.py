@@ -162,7 +162,6 @@ class _Menus(NamedTuple):
     edit: QtWidgets.QMenu
     view: QtWidgets.QMenu
     help: QtWidgets.QMenu
-    recent_files: QtWidgets.QMenu
     label_list: QtWidgets.QMenu
 
 
@@ -190,8 +189,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _image: QtGui.QImage
     _label_file: LabelFile | None
     _image_path: str | None
-    _recent_files: list[str]
-    _max_recent: int
+    _prev_image_path: str | None
     _other_data: dict | None
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
@@ -275,8 +273,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar = self._setup_status_bar()
 
         self._setup_app_state(output_dir=output_dir, filename=filename)
-
-        self.updateFileMenu()
 
         self._canvas_widgets.zoom_widget.valueChanged.connect(self._paint_canvas)
 
@@ -812,8 +808,6 @@ class MainWindow(QtWidgets.QMainWindow):
         edit_menu = self.menu(self.tr("&Edit"))
         view_menu = self.menu(self.tr("&View"))
         help_menu = self.menu(self.tr("&Help"))
-        recent_files = QtWidgets.QMenu(self.tr("Open &Recent"))
-
         label_menu = QtWidgets.QMenu()
         utils.addActions(label_menu, (self._actions.edit, self._actions.delete))
         self._docks.label_list.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -826,7 +820,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.open_next_img,
                 self._actions.open_prev_img,
                 self._actions.open_dir,
-                recent_files,
                 self._actions.save,
                 self._actions.save_as,
                 self._actions.save_auto,
@@ -870,8 +863,6 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        file_menu.aboutToShow.connect(self.updateFileMenu)
-
         utils.addActions(
             self._canvas_widgets.canvas.menus[0], self._actions.context_menu
         )
@@ -888,7 +879,6 @@ class MainWindow(QtWidgets.QMainWindow):
             edit=edit_menu,
             view=view_menu,
             help=help_menu,
-            recent_files=recent_files,
             label_list=label_menu,
         )
 
@@ -957,7 +947,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image = QtGui.QImage()
         self._label_file = None
         self._image_path = None
-        self._max_recent = 7
+        self._prev_image_path = None
         self._other_data = None
         self._zoom_values = {}
         self._brightness_contrast_values = {}
@@ -982,7 +972,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._reset_layout()
             self.settings.setValue("settingsVersion", SETTINGS_VERSION)
         #
-        self._recent_files = self.settings.value("recentFiles", []) or []
         self.resize(self.settings.value("window/size", QtCore.QSize(900, 500)))
         self.move(self.settings.value("window/position", QtCore.QPoint(0, 0)))
         self.restoreState(self.settings.value("window/state", QtCore.QByteArray()))
@@ -1333,13 +1322,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return items[0]
         return None
 
-    def addRecentFile(self, filename: str) -> None:
-        if filename in self._recent_files:
-            self._recent_files.remove(filename)
-        elif len(self._recent_files) >= self._max_recent:
-            self._recent_files.pop()
-        self._recent_files.insert(0, filename)
-
     # Callbacks
 
     def undoShapeEdit(self) -> None:
@@ -1397,23 +1379,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.set_disabled_models(_AI_MODELS_WITHOUT_POINT_SUPPORT)
         else:
             self._ai_annotation.set_disabled_models(())
-
-    def updateFileMenu(self):
-        current = self._filename
-
-        def exists(filename):
-            return osp.exists(str(filename))
-
-        menu = self._menus.recent_files
-        menu.clear()
-        files = [f for f in self._recent_files if f != current and exists(f)]
-        for i, f in enumerate(files):
-            icon = utils.newIcon("labels")
-            action = QtWidgets.QAction(
-                icon, f"&{i + 1} {QtCore.QFileInfo(f).fileName()}", self
-            )
-            action.triggered.connect(functools.partial(self.loadRecent, f))
-            menu.addAction(action)
 
     def popLabelListMenu(self, point: QtCore.QPoint) -> None:
         self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # type: ignore[invalid-argument-type]
@@ -1941,10 +1906,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self._filename, (None, None)
         )
         if is_initial_load:
-            prev_filename: str = self._recent_files[0] if self._recent_files else ""
-            if self._config["keep_prev_brightness_contrast"] and prev_filename:
+            if self._config["keep_prev_brightness_contrast"] and self._prev_image_path:
                 brightness, contrast = self._brightness_contrast_values.get(
-                    prev_filename, (None, None)
+                    self._prev_image_path, (None, None)
                 )
             if brightness is None and contrast is None:
                 return
@@ -2007,6 +1971,7 @@ class MainWindow(QtWidgets.QMainWindow):
             == (Qt.ControlModifier | Qt.ShiftModifier)
             else []
         )
+        self._prev_image_path = self._image_path
         self.resetState()
         self._canvas_widgets.canvas.setEnabled(False)
         if not QtCore.QFile.exists(filename):
@@ -2113,7 +2078,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
         self.brightnessContrast(value=False, is_initial_load=True)
         self._paint_canvas()
-        self.addRecentFile(self._filename)
         self.toggleActions(True)
         self._canvas_widgets.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
@@ -2177,7 +2141,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.settings.setValue("window/size", self.size())
         self.settings.setValue("window/position", self.pos())
         self.settings.setValue("window/state", self.saveState())
-        self.settings.setValue("recentFiles", self._recent_files)
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
         extensions = [
@@ -2199,10 +2162,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.importDroppedImageFiles(items)
 
     # User Dialogs #
-
-    def loadRecent(self, filename: str | None) -> None:
-        if self._can_continue():
-            self._load_file(filename=filename)
 
     def _open_prev_image(self, _value=False) -> None:
         row_prev: int = self._docks.file_list.currentRow() - 1
@@ -2325,7 +2284,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _saveFile(self, filename: str | None) -> None:
         if filename and self.saveLabels(filename):
-            self.addRecentFile(filename)
             self.setClean()
 
     def closeFile(self, _value: bool = False) -> None:
