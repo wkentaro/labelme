@@ -1542,7 +1542,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if curr_index < len(self.imageList):
             filename = self.imageList[curr_index]
             if filename:
-                self._load_file(filename)
+                self._load_file(filename=filename)
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes: list[Shape]) -> None:
@@ -1987,8 +1987,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
-    def _load_file(self, filename=None):
-        """Load the specified file, or the last opened file if None."""
+    def _load_file(self, filename: str | None = None) -> None:
+        if filename is None:
+            filename = self.settings.value("filename", "")
+        assert isinstance(filename, str)
+
         # changing fileListWidget loads file
         if filename in self.imageList and (
             self._docks.file_list.currentRow() != self.imageList.index(filename)
@@ -2006,17 +2009,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.resetState()
         self._canvas_widgets.canvas.setEnabled(False)
-        if filename is None:
-            filename = self.settings.value("filename", "")
-        filename = str(filename)
         if not QtCore.QFile.exists(filename):
             self.errorMessage(
                 self.tr("Error opening file"),
                 self.tr("No such file: <b>%s</b>") % filename,
             )
-            return False
+            return
         # assumes same name, but json extension
-        self.show_status_message(self.tr("Loading %s...") % osp.basename(str(filename)))
+        self.show_status_message(self.tr("Loading %s...") % osp.basename(filename))
         t0_load_file = time.time()
         label_file = f"{osp.splitext(filename)[0]}.json"
         if self._output_dir:
@@ -2035,7 +2035,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     % (e, label_file),
                 )
                 self.show_status_message(self.tr("Error reading %s") % label_file)
-                return False
+                return
             assert self._label_file is not None
             self.imageData = self._label_file.imageData
             assert self._label_file.imagePath
@@ -2057,7 +2057,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     % (e, filename),
                 )
                 self.show_status_message(self.tr("Error reading %s") % filename)
-                return False
+                return
             if self.imageData:
                 self._image_path = filename
             self._label_file = None
@@ -2079,7 +2079,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 ).format(filename, ",".join(formats)),
             )
             self.show_status_message(self.tr("Error reading %s") % filename)
-            return False
+            return
         self._image = image
         self._filename = filename
         t0 = time.time()
@@ -2122,7 +2122,6 @@ class MainWindow(QtWidgets.QMainWindow):
             filename,
             (time.time() - t0_load_file) * 1000,
         )
-        return True
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         if (
@@ -2201,9 +2200,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # User Dialogs #
 
-    def loadRecent(self, filename):
+    def loadRecent(self, filename: str | None) -> None:
         if self._can_continue():
-            self._load_file(filename)
+            self._load_file(filename=filename)
 
     def _open_prev_image(self, _value=False) -> None:
         row_prev: int = self._docks.file_list.currentRow() - 1
@@ -2247,7 +2246,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_():
             fileName = fileDialog.selectedFiles()[0]
             if fileName:
-                self._load_file(fileName)
+                self._load_file(filename=fileName)
 
     def changeOutputDirDialog(self, _value=False):
         default_output_dir = self._output_dir
