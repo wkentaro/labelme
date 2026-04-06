@@ -108,6 +108,7 @@ def main():
                     f"{base}.jpg",
                 )
 
+        assert label_file.imageData is not None
         img = labelme.utils.img_data_to_arr(label_file.imageData)
         imgviz.io.imsave(out_img_file, img)
 

@@ -19,9 +19,13 @@ def test_LabelQLineEdit(qtbot):
     # key press to navigate in label list
     item = widget.list_widget.findItems("cat", QtCore.Qt.MatchExactly)[0]
     widget.list_widget.setCurrentItem(item)
-    assert widget.list_widget.currentItem().text() == "cat"
+    current_item = widget.list_widget.currentItem()
+    assert current_item is not None
+    assert current_item.text() == "cat"
     qtbot.keyPress(widget, QtCore.Qt.Key_Down)
-    assert widget.list_widget.currentItem().text() == "dog"
+    current_item = widget.list_widget.currentItem()
+    assert current_item is not None
+    assert current_item.text() == "dog"
 
     # key press to enter label
     qtbot.keyPress(widget, QtCore.Qt.Key_P)
