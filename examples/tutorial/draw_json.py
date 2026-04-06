@@ -9,7 +9,7 @@ from labelme import utils
 from labelme._label_file import LabelFile
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("json_file")
     args = parser.parse_args()
