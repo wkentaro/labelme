@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 from typing import cast
 
@@ -13,7 +15,7 @@ import labelme.utils
 
 
 class LabelQLineEdit(QtWidgets.QLineEdit):
-    def setListWidget(self, list_widget):
+    def setListWidget(self, list_widget: QtWidgets.QListWidget) -> None:
         self.list_widget = list_widget
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
@@ -26,15 +28,15 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
 class LabelDialog(QtWidgets.QDialog):
     def __init__(
         self,
-        text="Enter object label",
-        parent=None,
-        labels=None,
-        sort_labels=True,
-        show_text_field=True,
-        completion="startswith",
-        fit_to_content=None,
-        flags=None,
-    ):
+        text: str = "Enter object label",
+        parent: QtWidgets.QWidget | None = None,
+        labels: list[str] | None = None,
+        sort_labels: bool = True,
+        show_text_field: bool = True,
+        completion: str = "startswith",
+        fit_to_content: dict[str, bool] | None = None,
+        flags: dict[str, list[str]] | None = None,
+    ) -> None:
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
         self._fit_to_content = fit_to_content
@@ -112,17 +114,17 @@ class LabelDialog(QtWidgets.QDialog):
         completer.setModel(self.labelList.model())
         self.edit.setCompleter(completer)
 
-    def addLabelHistory(self, label):
+    def addLabelHistory(self, label: str) -> None:
         if self.labelList.findItems(label, QtCore.Qt.MatchExactly):
             return
         self.labelList.addItem(label)
         if self._sort_labels:
             self.labelList.sortItems()
 
-    def labelSelected(self, item):
+    def labelSelected(self, item: QtWidgets.QListWidgetItem) -> None:
         self.edit.setText(item.text())
 
-    def validate(self):
+    def validate(self) -> None:
         if not self.edit.isEnabled():
             self.accept()
             return
@@ -138,13 +140,13 @@ class LabelDialog(QtWidgets.QDialog):
             return str(text.trimmed())
         return str(text)
 
-    def labelDoubleClicked(self, item):
+    def labelDoubleClicked(self, item: QtWidgets.QListWidgetItem) -> None:
         self.validate()
 
-    def postProcess(self):
+    def postProcess(self) -> None:
         self.edit.setText(self._get_stripped_text())
 
-    def updateFlags(self, label_new):
+    def updateFlags(self, label_new: str) -> None:
         # keep state of shared flags
         flags_old = self.getFlags()
 
@@ -155,13 +157,13 @@ class LabelDialog(QtWidgets.QDialog):
                     flags_new[key] = flags_old.get(key, False)
         self.setFlags(flags_new)
 
-    def deleteFlags(self):
+    def deleteFlags(self) -> None:
         for i in reversed(range(self.flagsLayout.count())):
             item = self.flagsLayout.itemAt(i).widget()
             self.flagsLayout.removeWidget(item)
             item.setParent(QtWidgets.QWidget())
 
-    def resetFlags(self, label=""):
+    def resetFlags(self, label: str = "") -> None:
         flags = {}
         for pattern, keys in self._flags.items():
             if re.match(pattern, label):
@@ -169,7 +171,7 @@ class LabelDialog(QtWidgets.QDialog):
                     flags[key] = False
         self.setFlags(flags)
 
-    def setFlags(self, flags):
+    def setFlags(self, flags: dict[str, bool]) -> None:
         self.deleteFlags()
         for key in flags:
             item = QtWidgets.QCheckBox(key, self)
@@ -177,7 +179,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.flagsLayout.addWidget(item)
             item.show()
 
-    def getFlags(self):
+    def getFlags(self) -> dict[str, bool]:
         flags = {}
         for i in range(self.flagsLayout.count()):
             item = self.flagsLayout.itemAt(i).widget()
@@ -185,7 +187,7 @@ class LabelDialog(QtWidgets.QDialog):
             flags[item.text()] = item.isChecked()
         return flags
 
-    def getGroupId(self):
+    def getGroupId(self) -> int | None:
         group_id = self.edit_group_id.text()
         if group_id:
             return int(group_id)
@@ -193,13 +195,13 @@ class LabelDialog(QtWidgets.QDialog):
 
     def popUp(
         self,
-        text=None,
-        move=True,
-        flags=None,
-        group_id=None,
-        description=None,
+        text: str | None = None,
+        move: bool = True,
+        flags: dict[str, bool] | None = None,
+        group_id: int | None = None,
+        description: str | None = None,
         flags_disabled: bool = False,
-    ):
+    ) -> tuple[str, dict[str, bool], int | None, str] | tuple[None, None, None, None]:
         if self._fit_to_content["row"]:
             self.labelList.setMinimumHeight(
                 self.labelList.sizeHintForRow(0) * self.labelList.count() + 2
