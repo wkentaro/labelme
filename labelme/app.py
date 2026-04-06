@@ -22,6 +22,7 @@ import numpy as np
 import osam
 from loguru import logger
 from numpy.typing import NDArray
+import yaml
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -814,6 +815,38 @@ class MainWindow(QtWidgets.QMainWindow):
         help_menu = self.menu(self.tr("&Help"))
         recent_files = QtWidgets.QMenu(self.tr("Open &Recent"))
 
+        # Language selection for UI translations.
+        language_menu = QtWidgets.QMenu("Language", self)
+        current_language = self._config.get("language") or "system"
+        if current_language == "system locale":
+            current_language = "system"
+        self._language_menu_actions: list[QtWidgets.QAction] = []
+
+        system_locale_name = QtCore.QLocale.system().name()
+        system_label = f"System ({system_locale_name})"
+        system_action = action(system_label, slot=None)
+        system_action.setCheckable(True)
+        system_action.setChecked(current_language == "system")
+        system_action.triggered.connect(
+            lambda _checked=False: self._set_language_preference("system")
+        )
+        system_action.setData("system")
+        language_menu.addAction(system_action)
+        self._language_menu_actions.append(system_action)
+
+        translate_dir = Path(osp.dirname(osp.abspath(__file__))) / "translate"
+        available_locales = sorted([p.stem for p in translate_dir.glob("*.ts")])
+        for locale in available_locales:
+            locale_action = action(locale, slot=None)
+            locale_action.setCheckable(True)
+            locale_action.setChecked(current_language == locale)
+            locale_action.triggered.connect(
+                lambda _checked=False, loc=locale: self._set_language_preference(loc)
+            )
+            locale_action.setData(locale)
+            language_menu.addAction(locale_action)
+            self._language_menu_actions.append(locale_action)
+
         label_menu = QtWidgets.QMenu()
         utils.addActions(label_menu, (self._actions.edit, self._actions.delete))
         self._docks.label_list.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -848,6 +881,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._docks.label_dock.toggleViewAction(),
                 self._docks.shape_dock.toggleViewAction(),
                 self._docks.file_dock.toggleViewAction(),
+                None,
+                language_menu,
                 None,
                 self._actions.reset_layout,
                 None,
@@ -890,6 +925,55 @@ class MainWindow(QtWidgets.QMainWindow):
             help=help_menu,
             recent_files=recent_files,
             label_list=label_menu,
+        )
+
+    def _set_language_preference(self, locale: str) -> None:
+        """
+        Persist UI language preference to config file.
+
+        Note: the translation is loaded during app startup, so this setting takes
+        effect on next launch.
+        """
+        if self._config_file is None:
+            QMessageBox.information(
+                self,
+                "Language preference not saved",
+                "Start Labelme with a config file to persist language preference.",
+            )
+            return
+
+        language_value = "system" if locale in ("system", "system locale") else locale
+
+        config_path: Path = self._config_file
+        try:
+            config_data: dict = {}
+            if config_path.exists():
+                loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+                if isinstance(loaded, dict):
+                    config_data = loaded
+            config_data["language"] = language_value
+            config_path.write_text(
+                yaml.safe_dump(config_data, sort_keys=False, allow_unicode=True),
+                encoding="utf-8",
+            )
+        except Exception as e:
+            logger.warning("Failed to write language config: {}", e)
+            QMessageBox.information(
+                self,
+                "Language preference failed",
+                "Failed to save language preference. Please check permissions.",
+            )
+            return
+
+        # Update menu checkmarks immediately (translation will apply on next startup).
+        self._config["language"] = language_value
+        for a in getattr(self, "_language_menu_actions", []):
+            a.setChecked(a.data() == language_value)
+
+        QMessageBox.information(
+            self,
+            "Restart required",
+            "Language will take effect on next launch. Please restart Labelme.",
         )
 
     def _setup_toolbars(self) -> None:
