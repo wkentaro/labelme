@@ -36,7 +36,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         on_model_changed: Callable[[str], None],
         on_output_format_changed: Callable[[Literal["polygon", "mask"]], None],
         parent: QtWidgets.QWidget | None = None,
-    ):
+    ) -> None:
         super().__init__(parent=parent)
         self._init_ui(
             default_model=default_model,

@@ -24,11 +24,15 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _iou_spinbox: QtWidgets.QDoubleSpinBox
     _body: QtWidgets.QWidget
 
-    def __init__(self, on_submit, parent: QtWidgets.QWidget | None = None):
+    def __init__(
+        self,
+        on_submit: Callable[[bool], None],
+        parent: QtWidgets.QWidget | None = None,
+    ) -> None:
         super().__init__(parent=parent)
         self._init_ui(on_submit)
 
-    def _init_ui(self, on_submit: Callable[[], None]) -> None:
+    def _init_ui(self, on_submit: Callable[[bool], None]) -> None:
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(2)

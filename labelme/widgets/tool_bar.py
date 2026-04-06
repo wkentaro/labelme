@@ -43,7 +43,7 @@ class ToolBar(QtWidgets.QToolBar):
             )
         utils.addActions(widget=self, actions=actions)
 
-    def addAction(self, action):  # type: ignore[override]
+    def addAction(self, action: QtWidgets.QAction) -> None:  # type: ignore[override]
         if isinstance(action, QtWidgets.QWidgetAction):
             return super().addAction(action)
         btn = QtWidgets.QToolButton()

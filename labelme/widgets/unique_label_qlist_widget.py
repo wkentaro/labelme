@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import html
 
 from PyQt5 import QtGui
@@ -8,18 +10,18 @@ from .label_list_widget import HTMLDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
-    def keyPressEvent(self, keyEvent: QtGui.QKeyEvent) -> None:  # type: ignore
+    def keyPressEvent(self, keyEvent: QtGui.QKeyEvent) -> None:  # type: ignore[override]
         super().keyPressEvent(keyEvent)
         if keyEvent.key() == Qt.Key_Escape:
             self.clearSelection()
 
 
 class UniqueLabelQListWidget(_EscapableQListWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        super().__init__(parent=parent)
         self.setItemDelegate(HTMLDelegate(parent=self))
 
-    def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:  # type: ignore
+    def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:  # type: ignore[override]
         super().mousePressEvent(mouseEvent)
         if not self.indexAt(mouseEvent.pos()).isValid():
             self.clearSelection()
