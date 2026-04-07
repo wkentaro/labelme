@@ -27,7 +27,7 @@ def test_MainWindow_annotate_jpg(
     out_file: str = str(tmp_path / "2011_000003.json")
 
     win: labelme.app.MainWindow = labelme.app.MainWindow(
-        filename=input_file,
+        file_or_dir=input_file,
         config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )
@@ -76,7 +76,7 @@ def test_MainWindow_annotate_jpg(
     assert win._canvas_widgets.canvas.shapes[0].mask is None
     assert win._canvas_widgets.canvas.shapes[0].flags == {}
 
-    win.saveFile()
+    win._save_label_file()
 
     labelme.testing.assert_labelfile_sanity(out_file)
 
