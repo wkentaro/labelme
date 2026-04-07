@@ -1195,12 +1195,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
 
         if self._config["auto_save"] or self._actions.save_auto.isChecked():
-            assert self._image_path
-            label_file = f"{osp.splitext(self._image_path)[0]}.json"
-            if self._output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self._output_dir, label_file_without_path)
-            self.saveLabels(label_file)
+            assert self._image_path is not None
+            self.saveLabels(
+                label_path=self._get_label_path(image_or_label_path=self._image_path)
+            )
             return
         self._is_changed = True
         self._actions.save.setEnabled(True)
@@ -1961,6 +1959,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
+    def _get_label_path(self, image_or_label_path: str) -> str:
+        if LabelFile.is_label_file(filename=image_or_label_path):
+            return image_or_label_path
+        return osp.join(
+            self._output_dir or osp.dirname(image_or_label_path),
+            f"{osp.splitext(osp.basename(image_or_label_path))[0]}{LabelFile.suffix}",
+        )
+
     def _load_file(self, image_or_label_path: str) -> None:
         # changing fileListWidget loads file
         if image_or_label_path in self.imageList and (
@@ -1994,17 +2000,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Loading %s...") % osp.basename(image_or_label_path)
         )
 
-        label_file: str
-        if LabelFile.is_label_file(filename=image_or_label_path):
-            label_file = image_or_label_path
-        else:
-            label_file = osp.join(
-                self._output_dir or osp.dirname(image_or_label_path),
-                f"{osp.splitext(osp.basename(image_or_label_path))[0]}{LabelFile.suffix}",
-            )
-
         t0_load_file = time.time()
-        if QtCore.QFile.exists(label_file):
+        if QtCore.QFile.exists(
+            label_file := self._get_label_path(image_or_label_path=image_or_label_path)
+        ):
             try:
                 self._label_file = LabelFile(label_file)
             except LabelFileError as e:
@@ -2278,26 +2277,21 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         caption = self.tr("%s - Choose File") % __appname__
         filters = self.tr("Label files (*%s)") % LabelFile.suffix
-        start_dir = self._output_dir if self._output_dir else self.currentPath()
-        dlg = QtWidgets.QFileDialog(self, caption, start_dir, filters)
+        dlg = QtWidgets.QFileDialog(
+            parent=self,
+            caption=caption,
+            directory=self._output_dir or osp.dirname(self._image_path),
+            filter=filters,
+        )
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setOption(QtWidgets.QFileDialog.DontConfirmOverwrite, False)
         dlg.setOption(QtWidgets.QFileDialog.DontUseNativeDialog, False)
-        basename = osp.basename(osp.splitext(self._image_path)[0])
-        if self._output_dir:
-            default_labelfile_name = osp.join(
-                self._output_dir, basename + LabelFile.suffix
-            )
-        else:
-            default_labelfile_name = osp.join(
-                self.currentPath(), basename + LabelFile.suffix
-            )
         label_path, _ = dlg.getSaveFileName(
-            self,
-            self.tr("Choose File"),
-            default_labelfile_name,
-            self.tr("Label files (*%s)") % LabelFile.suffix,
+            parent=self,
+            caption=self.tr("Choose File"),
+            directory=self._get_label_path(image_or_label_path=self._image_path),
+            filter=self.tr("Label files (*%s)") % LabelFile.suffix,
         )
         return label_path
 
@@ -2494,13 +2488,9 @@ class MainWindow(QtWidgets.QMainWindow):
         for file in imageFiles:
             if file in self.imageList or not file.lower().endswith(tuple(extensions)):
                 continue
-            label_file = f"{osp.splitext(file)[0]}.json"
-            if self._output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self._output_dir, label_file_without_path)
             item = QtWidgets.QListWidgetItem(file)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(label_file):
+            if QtCore.QFile.exists(self._get_label_path(image_or_label_path=file)):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
@@ -2532,13 +2522,11 @@ class MainWindow(QtWidgets.QMainWindow):
             except re.error:
                 pass
         for image_path in image_paths:
-            label_file = f"{osp.splitext(image_path)[0]}.json"
-            if self._output_dir:
-                label_file_without_path = osp.basename(label_file)
-                label_file = osp.join(self._output_dir, label_file_without_path)
             item = QtWidgets.QListWidgetItem(image_path)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(label_file):
+            if QtCore.QFile.exists(
+                self._get_label_path(image_or_label_path=image_path)
+            ):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
