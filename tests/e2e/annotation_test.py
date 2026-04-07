@@ -76,7 +76,7 @@ def test_MainWindow_annotate_jpg(
     assert win._canvas_widgets.canvas.shapes[0].mask is None
     assert win._canvas_widgets.canvas.shapes[0].flags == {}
 
-    win.saveFile()
+    win._save_label_file()
 
     labelme.testing.assert_labelfile_sanity(out_file)
 

@@ -306,7 +306,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save = action(
             text=self.tr("&Save\n"),
-            slot=self.saveFile,
+            slot=self._save_label_file,
             shortcut=shortcuts["save"],
             icon="floppy-disk.svg",
             tip=self.tr("Save labels to file"),
@@ -314,7 +314,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save_as = action(
             text=self.tr("&Save As"),
-            slot=self.saveFileAs,
+            slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="floppy-disk.svg",
             tip=self.tr("Save labels to a different file"),
@@ -2262,16 +2262,21 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self._docks.file_list.repaint()
 
-    def saveFile(self, _value: bool = False) -> None:
+    def _save_label_file(self, *, save_as: bool = False) -> None:
         assert not self._image.isNull(), "cannot save empty image"
-        if self._label_file:
-            self._saveFile(label_path=self._label_file.filename)
-        else:
-            self._saveFile(label_path=self.saveFileDialog())
 
-    def saveFileAs(self, _value: bool = False) -> None:
-        assert not self._image.isNull(), "cannot save empty image"
-        self._saveFile(label_path=self.saveFileDialog())
+        label_path: str | None = None
+        if not save_as and self._label_file:
+            label_path = self._label_file.filename
+        if label_path is None:
+            label_path = self.saveFileDialog()
+
+        if not label_path:
+            logger.warning("label_path=%r is empty, so cannot save", label_path)
+            return
+
+        if self.saveLabels(label_path=label_path):
+            self.setClean()
 
     def saveFileDialog(self) -> str:
         assert self._image_path is not None
@@ -2294,10 +2299,6 @@ class MainWindow(QtWidgets.QMainWindow):
             filter=self.tr("Label files (*%s)") % LabelFile.suffix,
         )
         return label_path
-
-    def _saveFile(self, label_path: str | None) -> None:
-        if label_path and self.saveLabels(label_path=label_path):
-            self.setClean()
 
     def closeFile(self, _value: bool = False) -> None:
         if not self._can_continue():
@@ -2390,7 +2391,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if answer == mb.Discard:
             return True
         elif answer == mb.Save:
-            self.saveFile()
+            self._save_label_file()
             return True
         else:  # answer == mb.Cancel
             return False
