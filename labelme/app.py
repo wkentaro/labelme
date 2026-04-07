@@ -2440,6 +2440,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setDirty()
 
     def _load_from_file_or_dir(self, file_or_dir: str) -> None:
+        if not file_or_dir:
+            raise ValueError("file_or_dir cannot be empty")
+
         if LabelFile.is_label_file(filename=file_or_dir):
             self._docks.file_list.clear()
             self._docks.file_dock.setEnabled(False)
@@ -2480,7 +2483,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self._load_from_file_or_dir(file_or_dir=dir_path)
+        if dir_path:
+            self._load_from_file_or_dir(file_or_dir=dir_path)
 
     @property
     def imageList(self) -> list[str]:
