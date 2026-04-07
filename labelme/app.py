@@ -1079,7 +1079,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_search.setPlaceholderText(self.tr("Search Filename"))
         file_search.textChanged.connect(self.fileSearchChanged)
         file_list = QtWidgets.QListWidget()
-        file_list.itemSelectionChanged.connect(self.fileSelectionChanged)
+        file_list.itemSelectionChanged.connect(self._file_list_item_selection_changed)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)
         file_list_layout.setSpacing(0)
@@ -1508,20 +1508,12 @@ class MainWindow(QtWidgets.QMainWindow):
             root_dir=self._prev_opened_dir, pattern=self._docks.file_search.text()
         )
 
-    def fileSelectionChanged(self) -> None:
-        items = self._docks.file_list.selectedItems()
-        if not items:
-            return
-        item = items[0]
-
+    def _file_list_item_selection_changed(self) -> None:
         if not self._can_continue():
             return
-
-        curr_index = self.imageList.index(str(item.text()))
-        if curr_index < len(self.imageList):
-            filename = self.imageList[curr_index]
-            if filename:
-                self._load_file(filename=filename)
+        if not (items := self._docks.file_list.selectedItems()):
+            return
+        self._load_file(filename=items[0].text())
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes: list[Shape]) -> None:
