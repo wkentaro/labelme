@@ -2525,18 +2525,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._docks.file_list.clear()
 
-        filenames = _scan_image_files(root_dir=root_dir)
+        image_paths = _scan_image_files(root_dir=root_dir)
         if pattern:
             try:
-                filenames = [f for f in filenames if re.search(pattern, f)]
+                image_paths = [x for x in image_paths if re.search(pattern, x)]
             except re.error:
                 pass
-        for filename in filenames:
-            label_file = f"{osp.splitext(filename)[0]}.json"
+        for image_path in image_paths:
+            label_file = f"{osp.splitext(image_path)[0]}.json"
             if self._output_dir:
                 label_file_without_path = osp.basename(label_file)
                 label_file = osp.join(self._output_dir, label_file_without_path)
-            item = QtWidgets.QListWidgetItem(filename)
+            item = QtWidgets.QListWidgetItem(image_path)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(label_file):
                 item.setCheckState(Qt.Checked)
