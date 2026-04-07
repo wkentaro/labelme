@@ -1000,7 +1000,7 @@ class Canvas(QtWidgets.QWidget):
         x1 = min(max(p1.x(), 0), size.width())
         y1 = min(max(p1.y(), 0), size.height())
         x2, y2 = p2.x(), p2.y()
-        d, i, (x, y) = min(self.intersectingEdges((x1, y1), (x2, y2), points))
+        d, i, (x, y) = min(_compute_intersection_edges((x1, y1), (x2, y2), points))
         x3, y3 = points[i]
         x4, y4 = points[(i + 1) % 4]
         if (x, y) == (x1, y1):
@@ -1010,40 +1010,6 @@ class Canvas(QtWidgets.QWidget):
             else:  # y3 == y4
                 return QPointF(min(max(0, x2), max(x3, x4)), y3)
         return QPointF(x, y)
-
-    def intersectingEdges(
-        self,
-        point1: tuple[float, float],
-        point2: tuple[float, float],
-        points: list[tuple[int, int]],
-    ) -> Iterator[tuple[float, int, tuple[float, float]]]:
-        """Find intersecting edges.
-
-        For each edge formed by `points', yield the intersection
-        with the line segment `(x1,y1) - (x2,y2)`, if it exists.
-        Also return the distance of `(x2,y2)' to the middle of the
-        edge along with its index, so that the one closest can be chosen.
-        """
-        (x1, y1) = point1
-        (x2, y2) = point2
-        for i in range(4):
-            x3, y3 = points[i]
-            x4, y4 = points[(i + 1) % 4]
-            denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
-            nua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)
-            nub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)
-            if denom == 0:
-                # This covers two cases:
-                #   nua == nub == 0: Coincident
-                #   otherwise: Parallel
-                continue
-            ua, ub = nua / denom, nub / denom
-            if 0 <= ua <= 1 and 0 <= ub <= 1:
-                x = x1 + ua * (x2 - x1)
-                y = y1 + ua * (y2 - y1)
-                m = QPointF((x3 + x4) / 2, (y3 + y4) / 2)
-                d = labelme.utils.distance(m - QPointF(x2, y2))
-                yield d, i, (x, y)
 
     # These two, along with a call to adjustSize are required for the
     # scroll area.
@@ -1307,3 +1273,37 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
         np.sign(pos_from_opposite.x()) * square_size,
         np.sign(pos_from_opposite.y()) * square_size,
     )
+
+
+def _compute_intersection_edges(
+    point1: tuple[float, float],
+    point2: tuple[float, float],
+    points: list[tuple[int, int]],
+) -> Iterator[tuple[float, int, tuple[float, float]]]:
+    """Find intersecting edges.
+
+    For each edge formed by `points', yield the intersection
+    with the line segment `(x1,y1) - (x2,y2)`, if it exists.
+    Also return the distance of `(x2,y2)' to the middle of the
+    edge along with its index, so that the one closest can be chosen.
+    """
+    (x1, y1) = point1
+    (x2, y2) = point2
+    for i in range(4):
+        x3, y3 = points[i]
+        x4, y4 = points[(i + 1) % 4]
+        denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
+        nua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)
+        nub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)
+        if denom == 0:
+            # This covers two cases:
+            #   nua == nub == 0: Coincident
+            #   otherwise: Parallel
+            continue
+        ua, ub = nua / denom, nub / denom
+        if 0 <= ua <= 1 and 0 <= ub <= 1:
+            x = x1 + ua * (x2 - x1)
+            y = y1 + ua * (y2 - y1)
+            m = QPointF((x3 + x4) / 2, (y3 + y4) / 2)
+            d = labelme.utils.distance(m - QPointF(x2, y2))
+            yield d, i, (x, y)
