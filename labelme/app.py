@@ -2441,6 +2441,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _load_from_file_or_dir(self, file_or_dir: str) -> None:
         if LabelFile.is_label_file(filename=file_or_dir):
+            self._docks.file_list.clear()
+            self._docks.file_dock.setEnabled(False)
+            self._docks.file_dock.setToolTip(
+                self.tr("File list is disabled when a label file is opened")
+            )
             self._load_file(image_or_label_path=file_or_dir)
         elif osp.isdir(file_or_dir):
             self._import_images_from_dir(
@@ -2518,6 +2523,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not self._can_continue() or not root_dir:
             return
+
+        self._docks.file_dock.setEnabled(True)
+        self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
         self._image_path = None
