@@ -7,22 +7,23 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+_PREVIEW_SIZE = 300
+_PREVIEW_PADDING = 30
+
 
 class ScrollAreaPreview(QtWidgets.QScrollArea):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
-
         self.setWidgetResizable(True)
 
-        content = QtWidgets.QWidget(self)
-        self.setWidget(content)
+        container = QtWidgets.QWidget(self)
+        self.setWidget(container)
 
-        lay = QtWidgets.QVBoxLayout(content)
+        container_layout = QtWidgets.QVBoxLayout(container)
 
-        self.label = QtWidgets.QLabel(content)
+        self.label = QtWidgets.QLabel(container)
         self.label.setWordWrap(True)
-
-        lay.addWidget(self.label)
+        container_layout.addWidget(self.label)
 
     def setText(self, text: str) -> None:
         self.label.setText(text)
@@ -39,28 +40,27 @@ class FileDialogPreview(QtWidgets.QFileDialog):
         super().__init__(parent)
         self.setOption(self.DontUseNativeDialog, True)
 
-        self.labelPreview = ScrollAreaPreview(self)
-        self.labelPreview.setFixedSize(300, 300)
+        self.labelPreview = ScrollAreaPreview(parent=self)
+        self.labelPreview.setFixedSize(_PREVIEW_SIZE, _PREVIEW_SIZE)
         self.labelPreview.setHidden(True)
 
-        box = QtWidgets.QVBoxLayout()
-        box.addWidget(self.labelPreview)
-        box.addStretch()
+        preview_layout = QtWidgets.QVBoxLayout()
+        preview_layout.addWidget(self.labelPreview)
+        preview_layout.addStretch()
 
-        self.setFixedSize(self.width() + 300, self.height())
-        layout = self.layout()
-        layout = cast(QtWidgets.QGridLayout, layout)
-        layout.addLayout(box, 1, 3, 1, 1)
+        self.setFixedSize(self.width() + _PREVIEW_SIZE, self.height())
+        grid = cast(QtWidgets.QGridLayout, self.layout())
+        grid.addLayout(preview_layout, 1, 3, 1, 1)
         self.currentChanged.connect(self.onChange)
 
     def onChange(self, path: str) -> None:
         if path.lower().endswith(".json"):
             try:
-                with open(path) as f:
-                    data = json.load(f)
-                text = json.dumps(data, indent=4, sort_keys=False)
-            except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                text = f"Cannot preview: {e}"
+                with open(path, encoding="utf-8") as fp:
+                    parsed = json.load(fp)
+                text = json.dumps(parsed, indent=4, sort_keys=False)
+            except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+                text = f"Cannot preview: {exc}"
             self.labelPreview.setText(text)
             self.labelPreview.label.setAlignment(
                 QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop
@@ -72,13 +72,13 @@ class FileDialogPreview(QtWidgets.QFileDialog):
                 self.labelPreview.clear()
                 self.labelPreview.setHidden(True)
             else:
-                self.labelPreview.setPixmap(
-                    pixmap.scaled(
-                        self.labelPreview.width() - 30,
-                        self.labelPreview.height() - 30,
-                        QtCore.Qt.KeepAspectRatio,
-                        QtCore.Qt.SmoothTransformation,
-                    )
+                max_dim = _PREVIEW_SIZE - _PREVIEW_PADDING
+                scaled_pixmap = pixmap.scaled(
+                    max_dim,
+                    max_dim,
+                    QtCore.Qt.KeepAspectRatio,
+                    QtCore.Qt.SmoothTransformation,
                 )
+                self.labelPreview.setPixmap(scaled_pixmap)
                 self.labelPreview.label.setAlignment(QtCore.Qt.AlignCenter)
                 self.labelPreview.setHidden(False)

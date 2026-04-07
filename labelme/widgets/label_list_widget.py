@@ -44,7 +44,8 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
         ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
 
-        if option.state & QStyle.State_Selected:
+        is_selected = bool(option.state & QStyle.State_Selected)
+        if is_selected:
             ctx.palette.setColor(
                 QPalette.Text,
                 option.palette.color(QPalette.Active, QPalette.HighlightedText),
@@ -67,7 +68,8 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
         painter.translate(textRect.topLeft())
         painter.setClipRect(textRect.translated(-textRect.topLeft()))
-        self.doc.documentLayout().draw(painter, ctx)
+        doc_layout = self.doc.documentLayout()
+        doc_layout.draw(painter, ctx)
 
         painter.restore()
 
@@ -89,9 +91,9 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         self.setText(text or "")
         self.setShape(shape)
 
+        self.setEditable(False)
         self.setCheckable(True)
         self.setCheckState(Qt.Checked)
-        self.setEditable(False)
         self.setTextAlignment(Qt.AlignBottom)
 
     def clone(self) -> LabelListWidgetItem:
@@ -157,7 +159,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self.setWindowFlags(Qt.Window)
 
-        self._model: _ItemModel = _ItemModel()
+        self._model = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
@@ -197,37 +199,39 @@ class LabelListWidget(QtWidgets.QListView):
         self.itemSelectionChanged.emit(selected_items, deselected_items)
 
     def itemDoubleClickedEvent(self, index: QtCore.QModelIndex) -> None:
-        self.itemDoubleClicked.emit(self._model.itemFromIndex(index))
+        clicked_item = self._model.itemFromIndex(index)
+        self.itemDoubleClicked.emit(clicked_item)
 
     def selectedItems(self) -> list[LabelListWidgetItem]:
         return [
-            cast(LabelListWidgetItem, self._model.itemFromIndex(i))
-            for i in self.selectedIndexes()
+            cast(LabelListWidgetItem, self._model.itemFromIndex(idx))
+            for idx in self.selectedIndexes()
         ]
 
     def scrollToItem(self, item: LabelListWidgetItem) -> None:
-        self.scrollTo(self._model.indexFromItem(item))
+        item_index = self._model.indexFromItem(item)
+        self.scrollTo(item_index)
 
     def addItem(self, item: LabelListWidgetItem) -> None:
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
-        self._model.setItem(self._model.rowCount(), 0, item)
+        row_count = self._model.rowCount()
+        self._model.setItem(row_count, 0, item)
         item.setSizeHint(self.itemDelegate().sizeHint(None, None))  # type: ignore[arg-type,union-attr]
 
     def removeItem(self, item: LabelListWidgetItem) -> None:
-        index = self._model.indexFromItem(item)
-        self._model.removeRows(index.row(), 1)
+        item_index = self._model.indexFromItem(item)
+        self._model.removeRows(item_index.row(), 1)
 
     def selectItem(self, item: LabelListWidgetItem) -> None:
-        index = self._model.indexFromItem(item)
-        self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
+        item_index = self._model.indexFromItem(item)
+        self.selectionModel().select(item_index, QtCore.QItemSelectionModel.Select)
 
     def findItemByShape(self, shape: Shape) -> LabelListWidgetItem:
-        for row in range(self._model.rowCount()):
-            item = self._model.item(row, 0)
-            item = cast(LabelListWidgetItem, item)
-            if item.shape() == shape:
-                return item
+        for row_idx in range(self._model.rowCount()):
+            list_item = cast(LabelListWidgetItem, self._model.item(row_idx, 0))
+            if list_item.shape() == shape:
+                return list_item
         raise ValueError(f"cannot find shape: {shape}")
 
     def clear(self) -> None:

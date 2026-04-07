@@ -173,10 +173,10 @@ def main() -> None:
     parser.add_argument(
         "--label-flags",
         "--labelflags",  # deprecated
-        dest="label_flags",
         help=r"yaml string of label specific flags OR file containing json "
         r"string of label specific flags (ex. {person-\d+: [male, tall], "
         r"dog-\d+: [black, brown, white], .*: [occluded]})",  # NOQA
+        dest="label_flags",
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -249,11 +249,12 @@ def main() -> None:
             args.labels = [line for line in args.labels.split(",") if line]
 
     if hasattr(args, "label_flags"):
-        if os.path.isfile(args.label_flags):
-            with codecs.open(args.label_flags, "r", encoding="utf-8") as f:
-                args.label_flags = yaml.safe_load(f)
+        label_flags_value = args.label_flags
+        if os.path.isfile(label_flags_value):
+            with codecs.open(label_flags_value, "r", encoding="utf-8") as fp:
+                args.label_flags = yaml.safe_load(fp)
         else:
-            args.label_flags = yaml.safe_load(args.label_flags)
+            args.label_flags = yaml.safe_load(label_flags_value)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")
@@ -287,18 +288,17 @@ def main() -> None:
             )
         output_dir = output
 
-    translator = QtCore.QTranslator()
-    translator.load(
-        QtCore.QLocale.system().name(),
-        f"{osp.dirname(osp.abspath(__file__))}/translate",
-    )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
     # Force light mode to avoid dark mode UI issues (e.g., invisible icons)
     app.setPalette(QtWidgets.QStyleFactory.create("Fusion").standardPalette())
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("icon"))
-    app.installTranslator(translator)
+    qt_translator = QtCore.QTranslator()
+    translate_dir = osp.join(osp.dirname(osp.abspath(__file__)), "translate")
+    locale_name = QtCore.QLocale.system().name()
+    qt_translator.load(locale_name, translate_dir)
+    app.installTranslator(qt_translator)
     win = MainWindow(
         config_file=config_file,
         config_overrides=config_overrides,

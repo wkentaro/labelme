@@ -27,10 +27,10 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
             self.clearSelection()
 
     def find_label_item(self, label: str) -> QtWidgets.QListWidgetItem | None:
-        for row in range(self.count()):
-            item = self.item(row)
-            if item and item.data(Qt.UserRole) == label:
-                return item
+        for idx in range(self.count()):
+            list_item = self.item(idx)
+            if list_item is not None and list_item.data(Qt.UserRole) == label:
+                return list_item
         return None
 
     def add_label_item(self, label: str, color: tuple[int, int, int]) -> None:

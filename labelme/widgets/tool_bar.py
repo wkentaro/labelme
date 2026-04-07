@@ -24,11 +24,11 @@ class ToolBar(QtWidgets.QToolBar):
             font.setPointSizeF(font_base.pointSizeF() * 0.875)
             self.setFont(font)
 
-        layout = self.layout()
-        m = (0, 0, 0, 0)
-        layout.setSpacing(0)
-        layout.setContentsMargins(*m)
-        self.setContentsMargins(*m)
+        toolbar_layout = self.layout()
+        zero_margins = (0, 0, 0, 0)
+        toolbar_layout.setSpacing(0)
+        toolbar_layout.setContentsMargins(*zero_margins)
+        self.setContentsMargins(*zero_margins)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
         self.setMovable(False)
         self.setFloatable(False)
@@ -46,12 +46,14 @@ class ToolBar(QtWidgets.QToolBar):
     def addAction(self, action: QtWidgets.QAction) -> None:  # type: ignore[override]
         if isinstance(action, QtWidgets.QWidgetAction):
             return super().addAction(action)
-        btn = QtWidgets.QToolButton()
-        btn.setDefaultAction(action)
-        btn.setToolButtonStyle(self.toolButtonStyle())
-        self.addWidget(btn)
+        tool_btn = QtWidgets.QToolButton()
+        tool_btn.setDefaultAction(action)
+        tool_btn.setToolButtonStyle(self.toolButtonStyle())
+        self.addWidget(tool_btn)
 
-        # center align
-        for i in range(self.layout().count()):
-            if isinstance(self.layout().itemAt(i).widget(), QtWidgets.QToolButton):
-                self.layout().itemAt(i).setAlignment(QtCore.Qt.AlignCenter)
+        # center-align all tool buttons
+        toolbar_layout = self.layout()
+        for idx in range(toolbar_layout.count()):
+            widget = toolbar_layout.itemAt(idx).widget()
+            if isinstance(widget, QtWidgets.QToolButton):
+                toolbar_layout.itemAt(idx).setAlignment(QtCore.Qt.AlignCenter)

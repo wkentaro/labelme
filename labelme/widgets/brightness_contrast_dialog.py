@@ -24,43 +24,43 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.setModal(True)
         self.setWindowTitle("Brightness/Contrast")
 
-        sliders = {}
-        layouts = {}
-        for title in ["Brightness:", "Contrast:"]:
-            layout = QtWidgets.QHBoxLayout()
-            title_label = QtWidgets.QLabel(self.tr(title))
-            title_label.setFixedWidth(75)
-            layout.addWidget(title_label)
-            #
+        slider_map: dict[str, QtWidgets.QSlider] = {}
+        row_layouts: dict[str, QtWidgets.QHBoxLayout] = {}
+        for label_text in ("Brightness:", "Contrast:"):
+            row = QtWidgets.QHBoxLayout()
+            name_label = QtWidgets.QLabel(self.tr(label_text))
+            name_label.setFixedWidth(75)
+            row.addWidget(name_label)
+
             slider = QtWidgets.QSlider(Qt.Horizontal)
             slider.setRange(0, 3 * self._base_value)
             slider.setValue(self._base_value)
-            layout.addWidget(slider)
-            #
-            value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
-            value_label.setAlignment(Qt.AlignRight)
-            layout.addWidget(value_label)
-            #
+            row.addWidget(slider)
+
+            val_label = QtWidgets.QLabel(
+                f"{slider.value() / self._base_value:.2f}"
+            )
+            val_label.setAlignment(Qt.AlignRight)
+            row.addWidget(val_label)
+
             slider.valueChanged.connect(self.onNewValue)
             slider.valueChanged.connect(
                 lambda _,
-                value_label_=value_label,
-                slider_=slider: value_label_.setText(
-                    f"{slider_.value() / self._base_value:.2f}"
+                vl=val_label,
+                sl=slider: vl.setText(
+                    f"{sl.value() / self._base_value:.2f}"
                 )
             )
-            layouts[title] = layout
-            sliders[title] = slider
+            row_layouts[label_text] = row
+            slider_map[label_text] = slider
 
-        self.slider_brightness = sliders["Brightness:"]
-        self.slider_contrast = sliders["Contrast:"]
-        del sliders
+        self.slider_brightness = slider_map["Brightness:"]
+        self.slider_contrast = slider_map["Contrast:"]
 
-        v_layout = QtWidgets.QVBoxLayout()
-        v_layout.addLayout(layouts["Brightness:"])
-        v_layout.addLayout(layouts["Contrast:"])
-        del layouts
-        self.setLayout(v_layout)
+        main_layout = QtWidgets.QVBoxLayout()
+        main_layout.addLayout(row_layouts["Brightness:"])
+        main_layout.addLayout(row_layouts["Contrast:"])
+        self.setLayout(main_layout)
 
         self._alpha = None
         if "A" in img.getbands():
@@ -71,24 +71,29 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.callback = callback
 
     def onNewValue(self, _: int | None) -> None:
-        brightness = self.slider_brightness.value() / self._base_value
-        contrast = self.slider_contrast.value() / self._base_value
+        brightness_ratio = self.slider_brightness.value() / self._base_value
+        contrast_ratio = self.slider_contrast.value() / self._base_value
 
-        img: PIL.Image.Image = self.img
-        if brightness != 1:
-            img = PIL.ImageEnhance.Brightness(img).enhance(brightness)
-        if contrast != 1:
-            img = PIL.ImageEnhance.Contrast(img).enhance(contrast)
+        adjusted: PIL.Image.Image = self.img
+        if brightness_ratio != 1:
+            adjusted = PIL.ImageEnhance.Brightness(adjusted).enhance(brightness_ratio)
+        if contrast_ratio != 1:
+            adjusted = PIL.ImageEnhance.Contrast(adjusted).enhance(contrast_ratio)
 
         fmt: QImage.Format
         if self._alpha is None:
             fmt = QImage.Format_RGB888
         else:
-            img = img.convert("RGBA")
-            img.putalpha(self._alpha)
+            adjusted = adjusted.convert("RGBA")
+            adjusted.putalpha(self._alpha)
             fmt = QImage.Format_RGBA8888
 
+        num_channels = len(adjusted.getbands())
         qimage = QImage(
-            img.tobytes(), img.width, img.height, img.width * len(img.getbands()), fmt
+            adjusted.tobytes(),
+            adjusted.width,
+            adjusted.height,
+            adjusted.width * num_channels,
+            fmt,
         )
         self.callback(qimage)

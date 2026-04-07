@@ -68,7 +68,7 @@ canvas:
   # None: do nothing
   # close: close polygon
   double_click: close
-  # The max number of edits we can undo
+  # Maximum number of undo steps stored
   num_backups: 10
   # show crosshair
   crosshair:

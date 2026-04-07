@@ -26,12 +26,12 @@ def newButton(
     icon: str | None = None,
     slot: Callable[..., object] | None = None,
 ) -> QtWidgets.QPushButton:
-    b = QtWidgets.QPushButton(text)
+    button = QtWidgets.QPushButton(text)
     if icon is not None:
-        b.setIcon(newIcon(icon))
+        button.setIcon(newIcon(icon))
     if slot is not None:
-        b.clicked.connect(slot)
-    return b
+        button.clicked.connect(slot)
+    return button
 
 
 def newAction(
@@ -45,39 +45,38 @@ def newAction(
     enabled: bool = True,
     checked: bool = False,
 ) -> QtWidgets.QAction:
-    """Create a new action and assign callbacks, shortcuts, etc."""
-    a = QtWidgets.QAction(text, parent)
+    act = QtWidgets.QAction(text, parent)
     if icon is not None:
-        a.setIconText(text.replace(" ", "\n"))
-        a.setIcon(newIcon(icon))
+        act.setIconText(text.replace(" ", "\n"))
+        act.setIcon(newIcon(icon))
     if shortcut is not None:
         if isinstance(shortcut, list | tuple):
-            a.setShortcuts(shortcut)
+            act.setShortcuts(shortcut)
         else:
-            a.setShortcut(shortcut)
+            act.setShortcut(shortcut)
     if tip is not None:
-        a.setToolTip(tip)
-        a.setStatusTip(tip)
+        act.setToolTip(tip)
+        act.setStatusTip(tip)
     if slot is not None:
-        a.triggered.connect(slot)
+        act.triggered.connect(slot)
     if checkable:
-        a.setCheckable(True)
-    a.setEnabled(enabled)
-    a.setChecked(checked)
-    return a
+        act.setCheckable(True)
+    act.setEnabled(enabled)
+    act.setChecked(checked)
+    return act
 
 
 def addActions(
     widget: QtWidgets.QMenu | QtWidgets.QToolBar,
     actions: Sequence[QtWidgets.QAction | QtWidgets.QMenu | None],
 ) -> None:
-    for action in actions:
-        if action is None:
+    for entry in actions:
+        if entry is None:
             widget.addSeparator()
-        elif isinstance(action, QtWidgets.QMenu):
-            widget.addMenu(action)  # type: ignore[union-attr]
+        elif isinstance(entry, QtWidgets.QMenu):
+            widget.addMenu(entry)  # type: ignore[union-attr]
         else:
-            widget.addAction(action)
+            widget.addAction(entry)
 
 
 def labelValidator() -> QtGui.QRegExpValidator:
@@ -85,29 +84,30 @@ def labelValidator() -> QtGui.QRegExpValidator:
 
 
 def distance(p: QtCore.QPointF) -> float:
-    return sqrt(p.x() * p.x() + p.y() * p.y())
+    dx, dy = p.x(), p.y()
+    return sqrt(dx * dx + dy * dy)
 
 
 def distancetoline(
     point: QtCore.QPointF,
     line: tuple[QtCore.QPointF, QtCore.QPointF],
 ) -> np.floating[Any]:
-    p1, p2 = line
-    p1 = np.array([p1.x(), p1.y()])
-    p2 = np.array([p2.x(), p2.y()])
-    p3 = np.array([point.x(), point.y()])
-    if np.dot((p3 - p1), (p2 - p1)) < 0:
-        return np.linalg.norm(p3 - p1)
-    if np.dot((p3 - p2), (p1 - p2)) < 0:
-        return np.linalg.norm(p3 - p2)
-    d = p2 - p1
-    if np.linalg.norm(d) == 0:
-        return np.linalg.norm(p3 - p1)
-    v = p1 - p3
-    cross = d[0] * v[1] - d[1] * v[0]
-    return abs(cross) / np.linalg.norm(d)
+    start, end = line
+    a = np.array([start.x(), start.y()])
+    b = np.array([end.x(), end.y()])
+    pt = np.array([point.x(), point.y()])
+    ab = b - a
+    if np.dot(pt - a, ab) < 0:
+        return np.linalg.norm(pt - a)
+    if np.dot(pt - b, a - b) < 0:
+        return np.linalg.norm(pt - b)
+    ab_len = np.linalg.norm(ab)
+    if ab_len == 0:
+        return np.linalg.norm(pt - a)
+    cross_product = ab[0] * (a[1] - pt[1]) - ab[1] * (a[0] - pt[0])
+    return abs(cross_product) / ab_len
 
 
 def fmtShortcut(text: str) -> str:
-    mod, key = text.split("+", 1)
-    return f"<b>{mod}</b>+<b>{key}</b>"
+    modifier, key = text.split("+", 1)
+    return f"<b>{modifier}</b>+<b>{key}</b>"

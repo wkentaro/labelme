@@ -133,7 +133,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
 
 class LabelFileError(Exception):
-    pass
+    """Raised when loading or saving a label file fails."""
 
 
 class LabelFile:
@@ -144,9 +144,9 @@ class LabelFile:
         self.shapes: list[ShapeDict] = []
         self.imagePath: str | None = None
         self.imageData: bytes | None = None
+        self.filename: str | None = filename
         if filename is not None:
             self.load(filename)
-        self.filename: str | None = filename
 
     @staticmethod
     def load_image_file(filename: str) -> bytes:
@@ -182,8 +182,8 @@ class LabelFile:
             "imageWidth",
         ]
         try:
-            with _open(filename, "r") as f:
-                data = json.load(f)
+            with _open(filename, "r") as fp:
+                data = json.load(fp)
 
             # Normalize Windows-style backslash paths to POSIX forward slashes
             imagePath = PureWindowsPath(data["imagePath"]).as_posix()
@@ -195,7 +195,7 @@ class LabelFile:
                 imageData = self.load_image_file(
                     osp.join(osp.dirname(filename), imagePath)
                 )
-            flags = data.get("flags") or {}
+            flags = data.get("flags") if data.get("flags") else {}
             self._check_image_height_and_width(
                 imageData,
                 data.get("imageHeight"),
@@ -204,8 +204,8 @@ class LabelFile:
             shapes: list[ShapeDict] = [
                 _load_shape_json_obj(shape_json_obj=s) for s in data["shapes"]
             ]
-        except Exception as e:
-            raise LabelFileError(e)
+        except Exception as exc:
+            raise LabelFileError(exc) from exc
 
         otherData = {}
         for key, value in data.items():
@@ -257,10 +257,10 @@ class LabelFile:
                 imageData, imageHeight, imageWidth
             )
             imageData_b64 = base64.b64encode(imageData).decode("utf-8")
-        if otherData is None:
-            otherData = {}
         if flags is None:
             flags = {}
+        if otherData is None:
+            otherData = {}
         data = dict(
             version=__version__,
             flags=flags,
@@ -274,11 +274,11 @@ class LabelFile:
             assert key not in data
             data[key] = value
         try:
-            with _open(filename, "w") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+            with _open(filename, "w") as fp:
+                json.dump(data, fp, ensure_ascii=False, indent=2)
             self.filename = filename
-        except Exception as e:
-            raise LabelFileError(e)
+        except Exception as exc:
+            raise LabelFileError(exc) from exc
 
     @staticmethod
     def is_label_file(filename: str) -> bool:
