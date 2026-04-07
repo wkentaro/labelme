@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>فهرست فایل‌ها هنگام باز بودن یک فایل برچسب غیرفعال است</translation>
+    </message>
 </context>
 </TS>

@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s no admite indicaciones de puntos.
 Seleccione un modelo diferente o use el modo AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>La lista de archivos está desactivada cuando se abre un archivo de etiquetas</translation>
+    </message>
 </context>
 </TS>

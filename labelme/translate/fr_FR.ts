@@ -847,5 +847,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s ne prend pas en charge les invites par points.
 Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>La liste des fichiers est désactivée lorsqu'un fichier d'étiquettes est ouvert</translation>
+    </message>
 </context>
 </TS>

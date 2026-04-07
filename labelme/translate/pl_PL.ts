@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s nie obsługuje poleceń punktowych.
 Wybierz inny model lub użyj trybu AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>Lista plików jest wyłączona, gdy otwarty jest plik etykiet</translation>
+    </message>
 </context>
 </TS>
