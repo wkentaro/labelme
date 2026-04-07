@@ -2003,10 +2003,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         t0_load_file = time.time()
         if QtCore.QFile.exists(
-            label_file := self._get_label_path(image_or_label_path=image_or_label_path)
+            label_path := self._get_label_path(image_or_label_path=image_or_label_path)
         ):
             try:
-                self._label_file = LabelFile(label_file)
+                self._label_file = LabelFile(label_path)
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -2014,15 +2014,15 @@ class MainWindow(QtWidgets.QMainWindow):
                         "<p><b>%s</b></p>"
                         "<p>Make sure <i>%s</i> is a valid label file.</p>"
                     )
-                    % (e, label_file),
+                    % (e, label_path),
                 )
-                self.show_status_message(self.tr("Error reading %s") % label_file)
+                self.show_status_message(self.tr("Error reading %s") % label_path)
                 return
             assert self._label_file is not None
             self.imageData = self._label_file.imageData
             assert self._label_file.imagePath
             self._image_path = osp.join(
-                osp.dirname(label_file),
+                osp.dirname(label_path),
                 self._label_file.imagePath,
             )
             self._other_data = self._label_file.otherData
