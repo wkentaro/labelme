@@ -1994,12 +1994,18 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         # assumes same name, but json extension
         self.show_status_message(self.tr("Loading %s...") % osp.basename(filename))
+
+        label_file: str
+        if LabelFile.is_label_file(filename=filename):
+            label_file = filename
+        else:
+            label_file = osp.join(
+                self._output_dir or osp.dirname(filename),
+                f"{osp.splitext(osp.basename(filename))[0]}{LabelFile.suffix}",
+            )
+
         t0_load_file = time.time()
-        label_file = f"{osp.splitext(filename)[0]}.json"
-        if self._output_dir:
-            label_file_without_path = osp.basename(label_file)
-            label_file = osp.join(self._output_dir, label_file_without_path)
-        if QtCore.QFile.exists(label_file) and LabelFile.is_label_file(label_file):
+        if QtCore.QFile.exists(label_file):
             try:
                 self._label_file = LabelFile(label_file)
             except LabelFileError as e:
