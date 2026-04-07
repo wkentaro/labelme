@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s não suporta prompts de pontos.
 Selecione um modelo diferente ou use o modo AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>A lista de arquivos está desativada quando um arquivo de rótulos é aberto</translation>
+    </message>
 </context>
 </TS>

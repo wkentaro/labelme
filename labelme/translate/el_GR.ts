@@ -843,5 +843,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s δεν υποστηρίζει εντολές σημείων.
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>Η λίστα αρχείων είναι απενεργοποιημένη όταν ανοίγεται ένα αρχείο ετικετών</translation>
+    </message>
 </context>
 </TS>

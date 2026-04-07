@@ -844,5 +844,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s не поддерживает точечные запросы.
 Выберите другую модель или используйте режим AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>Список файлов отключён при открытии файла меток</translation>
+    </message>
 </context>
 </TS>

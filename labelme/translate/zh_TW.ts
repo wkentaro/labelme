@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s 不支援點提示。
 請選擇其他模型或使用 AI-Box 模式。</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>開啟標籤檔案時，檔案列表已停用</translation>
+    </message>
 </context>
 </TS>

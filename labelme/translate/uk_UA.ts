@@ -844,5 +844,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s не підтримує точкові запити.
 Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>Список файлів вимкнено, коли відкрито файл міток</translation>
+    </message>
 </context>
 </TS>

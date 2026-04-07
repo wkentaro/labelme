@@ -855,5 +855,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s はポイントプロンプトに対応していません。
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>ラベルファイルを開いている場合、ファイルリストは無効です</translation>
+    </message>
 </context>
 </TS>

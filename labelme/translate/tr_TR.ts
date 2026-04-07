@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s nokta istemlerini desteklemiyor.
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>Bir etiket dosyası açıkken dosya listesi devre dışıdır</translation>
+    </message>
 </context>
 </TS>

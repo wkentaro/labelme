@@ -841,5 +841,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>라벨 파일이 열려 있을 때 파일 목록이 비활성화됩니다</translation>
+    </message>
 </context>
 </TS>

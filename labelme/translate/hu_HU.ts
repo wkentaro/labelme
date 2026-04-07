@@ -847,5 +847,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>%s nem támogatja a pont alapú promptokat.
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>File list is disabled when a label file is opened</source>
+        <translation>A fájllista le van tiltva, ha egy címke fájl van megnyitva</translation>
+    </message>
 </context>
 </TS>

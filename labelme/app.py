@@ -981,15 +981,8 @@ class MainWindow(QtWidgets.QMainWindow):
         ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
             self.move(primary_screen.availableGeometry().topLeft())
 
-        if not file_or_dir:
-            pass
-        elif osp.isdir(file_or_dir):
-            self._import_images_from_dir(
-                root_dir=file_or_dir, pattern=self._docks.file_search.text()
-            )
-            self._open_next_image()
-        else:
-            self._load_file(image_or_label_path=file_or_dir)
+        if file_or_dir:
+            self._load_from_file_or_dir(file_or_dir=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -2003,10 +1996,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         t0_load_file = time.time()
         if QtCore.QFile.exists(
-            label_file := self._get_label_path(image_or_label_path=image_or_label_path)
+            label_path := self._get_label_path(image_or_label_path=image_or_label_path)
         ):
             try:
-                self._label_file = LabelFile(label_file)
+                self._label_file = LabelFile(label_path)
             except LabelFileError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -2014,21 +2007,22 @@ class MainWindow(QtWidgets.QMainWindow):
                         "<p><b>%s</b></p>"
                         "<p>Make sure <i>%s</i> is a valid label file.</p>"
                     )
-                    % (e, label_file),
+                    % (e, label_path),
                 )
-                self.show_status_message(self.tr("Error reading %s") % label_file)
+                self.show_status_message(self.tr("Error reading %s") % label_path)
                 return
             assert self._label_file is not None
             self.imageData = self._label_file.imageData
             assert self._label_file.imagePath
             self._image_path = osp.join(
-                osp.dirname(label_file),
+                osp.dirname(label_path),
                 self._label_file.imagePath,
             )
             self._other_data = self._label_file.otherData
         else:
+            image_path: str = image_or_label_path
             try:
-                self.imageData = LabelFile.load_image_file(image_or_label_path)
+                self.imageData = LabelFile.load_image_file(image_path)
             except OSError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -2036,14 +2030,12 @@ class MainWindow(QtWidgets.QMainWindow):
                         "<p><b>%s</b></p>"
                         "<p>Make sure <i>%s</i> is a valid image file.</p>"
                     )
-                    % (e, image_or_label_path),
+                    % (e, image_path),
                 )
-                self.show_status_message(
-                    self.tr("Error reading %s") % image_or_label_path
-                )
+                self.show_status_message(self.tr("Error reading %s") % image_path)
                 return
             if self.imageData:
-                self._image_path = image_or_label_path
+                self._image_path = image_path
             self._label_file = None
         assert self.imageData is not None
         t0 = time.time()
@@ -2224,7 +2216,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_() and (
             image_or_label_path := fileDialog.selectedFiles()[0]
         ):
-            self._load_file(image_or_label_path=image_or_label_path)
+            self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
     def changeOutputDirDialog(self, _value: bool = False) -> None:
         default_output_dir = self._output_dir
@@ -2447,6 +2439,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.endMove(copy=False)
         self.setDirty()
 
+    def _load_from_file_or_dir(self, file_or_dir: str) -> None:
+        if not file_or_dir:
+            raise ValueError("file_or_dir cannot be empty")
+
+        if LabelFile.is_label_file(filename=file_or_dir):
+            self._docks.file_list.clear()
+            self._docks.file_dock.setEnabled(False)
+            self._docks.file_dock.setToolTip(
+                self.tr("File list is disabled when a label file is opened")
+            )
+            self._load_file(image_or_label_path=file_or_dir)
+        elif osp.isdir(file_or_dir):
+            self._import_images_from_dir(
+                root_dir=file_or_dir, pattern=self._docks.file_search.text()
+            )
+            self._open_next_image()
+        else:
+            self._import_images_from_dir(
+                root_dir=osp.dirname(file_or_dir) or ".",
+                pattern=self._docks.file_search.text(),
+            )
+            self._load_file(image_or_label_path=file_or_dir)
+
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
             return
@@ -2459,7 +2474,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 osp.dirname(self._image_path) if self._image_path else "."
             )
 
-        targetDirPath = str(
+        dir_path = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
                 self.tr("%s - Open Directory") % __appname__,
@@ -2468,8 +2483,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self._import_images_from_dir(root_dir=targetDirPath)
-        self._open_next_image()
+        if dir_path:
+            self._load_from_file_or_dir(file_or_dir=dir_path)
 
     @property
     def imageList(self) -> list[str]:
@@ -2512,6 +2527,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not self._can_continue() or not root_dir:
             return
+
+        self._docks.file_dock.setEnabled(True)
+        self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
         self._image_path = None
