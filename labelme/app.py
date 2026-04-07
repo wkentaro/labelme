@@ -1967,11 +1967,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
-    def _load_file(self, filename: str | None = None) -> None:
-        if filename is None:
-            filename = self.settings.value("filename", "")
-        assert isinstance(filename, str)
-
+    def _load_file(self, filename: str) -> None:
         # changing fileListWidget loads file
         if filename in self.imageList and (
             self._docks.file_list.currentRow() != self.imageList.index(filename)
@@ -2153,7 +2149,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if not self._can_continue():
             a0.ignore()
-        self.settings.setValue("filename", self._filename if self._filename else "")
         self.settings.setValue("window/size", self.size())
         self.settings.setValue("window/position", self.pos())
         self.settings.setValue("window/state", self.saveState())
