@@ -1674,7 +1674,7 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             widget.addItem(item)
 
-    def saveLabels(self, filename: str) -> bool:
+    def saveLabels(self, label_path: str) -> bool:
         lf = LabelFile()
 
         def format_shape(s: Shape) -> dict:
@@ -1708,12 +1708,12 @@ class MainWindow(QtWidgets.QMainWindow):
             flags[key] = flag
         try:
             assert self._image_path
-            imagePath = osp.relpath(self._image_path, osp.dirname(filename))
+            imagePath = osp.relpath(self._image_path, osp.dirname(label_path))
             imageData = self.imageData if self._config["with_image_data"] else None
-            if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
-                os.makedirs(osp.dirname(filename))
+            if osp.dirname(label_path) and not osp.exists(osp.dirname(label_path)):
+                os.makedirs(osp.dirname(label_path))
             lf.save(
-                filename=filename,
+                filename=label_path,
                 shapes=shapes,
                 imagePath=imagePath,
                 imageData=imageData,
@@ -2266,13 +2266,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveFile(self, _value: bool = False) -> None:
         assert not self._image.isNull(), "cannot save empty image"
         if self._label_file:
-            self._saveFile(self._label_file.filename)
+            self._saveFile(label_path=self._label_file.filename)
         else:
-            self._saveFile(self.saveFileDialog())
+            self._saveFile(label_path=self.saveFileDialog())
 
     def saveFileAs(self, _value: bool = False) -> None:
         assert not self._image.isNull(), "cannot save empty image"
-        self._saveFile(self.saveFileDialog())
+        self._saveFile(label_path=self.saveFileDialog())
 
     def saveFileDialog(self) -> str:
         assert self._image_path is not None
@@ -2303,8 +2303,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return filename[0]
         return filename
 
-    def _saveFile(self, filename: str | None) -> None:
-        if filename and self.saveLabels(filename):
+    def _saveFile(self, label_path: str | None) -> None:
+        if label_path and self.saveLabels(label_path=label_path):
             self.setClean()
 
     def closeFile(self, _value: bool = False) -> None:
