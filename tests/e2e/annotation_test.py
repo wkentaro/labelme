@@ -27,7 +27,7 @@ def test_MainWindow_annotate_jpg(
     out_file: str = str(tmp_path / "2011_000003.json")
 
     win: labelme.app.MainWindow = labelme.app.MainWindow(
-        filename=input_file,
+        file_or_dir=input_file,
         config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )

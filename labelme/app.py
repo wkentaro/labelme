@@ -199,7 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self,
         config_file: Path | None = None,
         config_overrides: dict | None = None,
-        filename: str | None = None,
+        file_or_dir: str | None = None,
         output_dir: str | None = None,
     ) -> None:
         super().__init__()
@@ -271,7 +271,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
 
-        self._setup_app_state(output_dir=output_dir, filename=filename)
+        self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
 
         self._canvas_widgets.zoom_widget.valueChanged.connect(self._paint_canvas)
 
@@ -938,8 +938,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def _setup_app_state(
         self,
         *,
+        file_or_dir: str | None,
         output_dir: str | None,
-        filename: str | None,
     ) -> None:
         self._output_dir = output_dir
 
@@ -981,14 +981,15 @@ class MainWindow(QtWidgets.QMainWindow):
         ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
             self.move(primary_screen.availableGeometry().topLeft())
 
-        if filename:
-            if osp.isdir(filename):
-                self._import_images_from_dir(
-                    root_dir=filename, pattern=self._docks.file_search.text()
-                )
-                self._open_next_image()
-            else:
-                self._load_file(image_or_label_path=filename)
+        if not file_or_dir:
+            pass
+        elif osp.isdir(file_or_dir):
+            self._import_images_from_dir(
+                root_dir=file_or_dir, pattern=self._docks.file_search.text()
+            )
+            self._open_next_image()
+        else:
+            self._load_file(image_or_label_path=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)

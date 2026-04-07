@@ -258,7 +258,7 @@ def main() -> None:
     config_from_args = args.__dict__
     config_from_args.pop("version")
     reset_config = config_from_args.pop("reset_config")
-    filename = config_from_args.pop("path")
+    file_or_dir = config_from_args.pop("path")
     output = config_from_args.pop("output")
 
     config_overrides: dict
@@ -302,7 +302,7 @@ def main() -> None:
     win = MainWindow(
         config_file=config_file,
         config_overrides=config_overrides,
-        filename=filename,
+        file_or_dir=file_or_dir,
         output_dir=output_dir,
     )
 

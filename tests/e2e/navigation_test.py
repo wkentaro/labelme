@@ -20,7 +20,7 @@ def test_image_navigation_while_selecting_shape(
     pause: bool,
 ) -> None:
     win: labelme.app.MainWindow = labelme.app.MainWindow(
-        filename=str(data_path / "annotated")
+        file_or_dir=str(data_path / "annotated")
     )
     qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)

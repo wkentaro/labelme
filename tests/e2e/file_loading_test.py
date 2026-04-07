@@ -22,7 +22,7 @@ def test_MainWindow_open_img(
     pause: bool,
 ) -> None:
     image_file: str = str(data_path / "raw/2011_000003.jpg")
-    win: labelme.app.MainWindow = labelme.app.MainWindow(filename=image_file)
+    win: labelme.app.MainWindow = labelme.app.MainWindow(file_or_dir=image_file)
     qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
@@ -43,7 +43,7 @@ def test_MainWindow_open_json(
     for json_file in json_files:
         labelme.testing.assert_labelfile_sanity(json_file)
 
-        win: labelme.app.MainWindow = labelme.app.MainWindow(filename=json_file)
+        win: labelme.app.MainWindow = labelme.app.MainWindow(file_or_dir=json_file)
         qtbot.addWidget(win)
         show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
@@ -68,7 +68,7 @@ def test_MainWindow_open_dir(
         output_dir = None
 
     win: labelme.app.MainWindow = labelme.app.MainWindow(
-        filename=directory, output_dir=output_dir
+        file_or_dir=directory, output_dir=output_dir
     )
     qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)

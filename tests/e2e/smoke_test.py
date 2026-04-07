@@ -29,7 +29,7 @@ def test_file_search_config_filters_on_startup(
 
     win = labelme.app.MainWindow(
         config_overrides={"file_search": "2011_000003"},
-        filename=str(raw_dir),
+        file_or_dir=str(raw_dir),
     )
     qtbot.addWidget(win)
     win.show()
