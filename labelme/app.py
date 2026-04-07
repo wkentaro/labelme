@@ -989,7 +989,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 self._open_next_image()
             else:
-                self._load_file(filename=filename)
+                self._load_file(image_or_label_path=filename)
         else:
             self._filename = None
 
@@ -1513,7 +1513,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if not (items := self._docks.file_list.selectedItems()):
             return
-        self._load_file(filename=items[0].text())
+        self._load_file(image_or_label_path=items[0].text())
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes: list[Shape]) -> None:
@@ -1967,12 +1967,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 flag = item.checkState() == Qt.Unchecked
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
 
-    def _load_file(self, filename: str) -> None:
+    def _load_file(self, image_or_label_path: str) -> None:
         # changing fileListWidget loads file
-        if filename in self.imageList and (
-            self._docks.file_list.currentRow() != self.imageList.index(filename)
+        if image_or_label_path in self.imageList and (
+            self._docks.file_list.currentRow()
+            != self.imageList.index(image_or_label_path)
         ):
-            self._docks.file_list.setCurrentRow(self.imageList.index(filename))
+            self._docks.file_list.setCurrentRow(
+                self.imageList.index(image_or_label_path)
+            )
             self._docks.file_list.repaint()
             return
 
@@ -1986,22 +1989,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self._prev_image_path = self._image_path
         self.resetState()
         self._canvas_widgets.canvas.setEnabled(False)
-        if not QtCore.QFile.exists(filename):
+        if not QtCore.QFile.exists(image_or_label_path):
             self.errorMessage(
                 self.tr("Error opening file"),
-                self.tr("No such file: <b>%s</b>") % filename,
+                self.tr("No such file: <b>%s</b>") % image_or_label_path,
             )
             return
         # assumes same name, but json extension
-        self.show_status_message(self.tr("Loading %s...") % osp.basename(filename))
+        self.show_status_message(
+            self.tr("Loading %s...") % osp.basename(image_or_label_path)
+        )
 
         label_file: str
-        if LabelFile.is_label_file(filename=filename):
-            label_file = filename
+        if LabelFile.is_label_file(filename=image_or_label_path):
+            label_file = image_or_label_path
         else:
             label_file = osp.join(
-                self._output_dir or osp.dirname(filename),
-                f"{osp.splitext(osp.basename(filename))[0]}{LabelFile.suffix}",
+                self._output_dir or osp.dirname(image_or_label_path),
+                f"{osp.splitext(osp.basename(image_or_label_path))[0]}{LabelFile.suffix}",
             )
 
         t0_load_file = time.time()
@@ -2029,7 +2034,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._other_data = self._label_file.otherData
         else:
             try:
-                self.imageData = LabelFile.load_image_file(filename)
+                self.imageData = LabelFile.load_image_file(image_or_label_path)
             except OSError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -2037,12 +2042,14 @@ class MainWindow(QtWidgets.QMainWindow):
                         "<p><b>%s</b></p>"
                         "<p>Make sure <i>%s</i> is a valid image file.</p>"
                     )
-                    % (e, filename),
+                    % (e, image_or_label_path),
                 )
-                self.show_status_message(self.tr("Error reading %s") % filename)
+                self.show_status_message(
+                    self.tr("Error reading %s") % image_or_label_path
+                )
                 return
             if self.imageData:
-                self._image_path = filename
+                self._image_path = image_or_label_path
             self._label_file = None
         assert self.imageData is not None
         t0 = time.time()
@@ -2059,12 +2066,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr(
                     "<p>Make sure <i>{0}</i> is a valid image file.<br/>"
                     "Supported image formats: {1}</p>"
-                ).format(filename, ",".join(formats)),
+                ).format(image_or_label_path, ",".join(formats)),
             )
-            self.show_status_message(self.tr("Error reading %s") % filename)
+            self.show_status_message(self.tr("Error reading %s") % image_or_label_path)
             return
         self._image = image
-        self._filename = filename
+        self._filename = image_or_label_file
         t0 = time.time()
         self._canvas_widgets.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
@@ -2098,10 +2105,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._paint_canvas()
         self.toggleActions(True)
         self._canvas_widgets.canvas.setFocus()
-        self.show_status_message(self.tr("Loaded %s") % osp.basename(filename))
+        self.show_status_message(
+            self.tr("Loaded %s") % osp.basename(image_or_label_path)
+        )
         logger.info(
             "Loaded file: {!r} in {:.0f}ms",
-            filename,
+            image_or_label_path,
             (time.time() - t0_load_file) * 1000,
         )
 
@@ -2219,10 +2228,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fileDialog.setWindowFilePath(path)
         fileDialog.setViewMode(FileDialogPreview.Detail)
-        if fileDialog.exec_():
-            fileName = fileDialog.selectedFiles()[0]
-            if fileName:
-                self._load_file(filename=fileName)
+        if fileDialog.exec_() and (
+            image_or_label_path := fileDialog.selectedFiles()[0]
+        ):
+            self._load_file(image_or_label_path=image_or_label_path)
 
     def changeOutputDirDialog(self, _value: bool = False) -> None:
         default_output_dir = self._output_dir
