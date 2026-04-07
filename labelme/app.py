@@ -2027,8 +2027,9 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self._other_data = self._label_file.otherData
         else:
+            image_path: str = image_or_label_path
             try:
-                self.imageData = LabelFile.load_image_file(image_or_label_path)
+                self.imageData = LabelFile.load_image_file(image_path)
             except OSError as e:
                 self.errorMessage(
                     self.tr("Error opening file"),
@@ -2036,14 +2037,12 @@ class MainWindow(QtWidgets.QMainWindow):
                         "<p><b>%s</b></p>"
                         "<p>Make sure <i>%s</i> is a valid image file.</p>"
                     )
-                    % (e, image_or_label_path),
+                    % (e, image_path),
                 )
-                self.show_status_message(
-                    self.tr("Error reading %s") % image_or_label_path
-                )
+                self.show_status_message(self.tr("Error reading %s") % image_path)
                 return
             if self.imageData:
-                self._image_path = image_or_label_path
+                self._image_path = image_path
             self._label_file = None
         assert self.imageData is not None
         t0 = time.time()
