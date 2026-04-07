@@ -2448,6 +2448,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self._open_next_image()
         else:
+            self._import_images_from_dir(
+                root_dir=osp.dirname(file_or_dir) or ".",
+                pattern=self._docks.file_search.text(),
+            )
             self._load_file(image_or_label_path=file_or_dir)
 
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
