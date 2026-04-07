@@ -981,15 +981,8 @@ class MainWindow(QtWidgets.QMainWindow):
         ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
             self.move(primary_screen.availableGeometry().topLeft())
 
-        if not file_or_dir:
-            pass
-        elif osp.isdir(file_or_dir):
-            self._import_images_from_dir(
-                root_dir=file_or_dir, pattern=self._docks.file_search.text()
-            )
-            self._open_next_image()
-        else:
-            self._load_file(image_or_label_path=file_or_dir)
+        if file_or_dir:
+            self._load_from_file_or_dir(file_or_dir=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -2223,7 +2216,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileDialog.exec_() and (
             image_or_label_path := fileDialog.selectedFiles()[0]
         ):
-            self._load_file(image_or_label_path=image_or_label_path)
+            self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
     def changeOutputDirDialog(self, _value: bool = False) -> None:
         default_output_dir = self._output_dir
@@ -2446,6 +2439,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.endMove(copy=False)
         self.setDirty()
 
+    def _load_from_file_or_dir(self, file_or_dir: str) -> None:
+        if LabelFile.is_label_file(filename=file_or_dir):
+            self._load_file(image_or_label_path=file_or_dir)
+        elif osp.isdir(file_or_dir):
+            self._import_images_from_dir(
+                root_dir=file_or_dir, pattern=self._docks.file_search.text()
+            )
+            self._open_next_image()
+        else:
+            self._load_file(image_or_label_path=file_or_dir)
+
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
             return
@@ -2458,7 +2462,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 osp.dirname(self._image_path) if self._image_path else "."
             )
 
-        targetDirPath = str(
+        dir_path = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
                 self.tr("%s - Open Directory") % __appname__,
@@ -2467,8 +2471,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
         )
-        self._import_images_from_dir(root_dir=targetDirPath)
-        self._open_next_image()
+        self._load_from_file_or_dir(file_or_dir=dir_path)
 
     @property
     def imageList(self) -> list[str]:
