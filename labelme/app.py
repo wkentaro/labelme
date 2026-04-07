@@ -2293,15 +2293,13 @@ class MainWindow(QtWidgets.QMainWindow):
             default_labelfile_name = osp.join(
                 self.currentPath(), basename + LabelFile.suffix
             )
-        filename = dlg.getSaveFileName(
+        label_path, _ = dlg.getSaveFileName(
             self,
             self.tr("Choose File"),
             default_labelfile_name,
             self.tr("Label files (*%s)") % LabelFile.suffix,
         )
-        if isinstance(filename, tuple):
-            return filename[0]
-        return filename
+        return label_path
 
     def _saveFile(self, label_path: str | None) -> None:
         if label_path and self.saveLabels(label_path=label_path):
