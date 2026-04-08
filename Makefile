@@ -21,7 +21,7 @@ setup:  # Setup the development environment
 format:  # Format code
 	$(call exec,uv run ruff format)
 	$(call exec,uv run ruff check --fix)
-	$(call exec,uv run taplo fmt)
+	$(call exec,uv run taplo fmt $(shell git ls-files "*.toml"))
 	$(call exec,uv run mdformat $(shell git ls-files "*.md"))
 	$(call exec,uv run yamlfix $(shell git ls-files "*.yml" "*.yaml"))
 
@@ -29,7 +29,7 @@ lint:  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
-	$(call exec,uv run taplo fmt --check)
+	$(call exec,uv run taplo fmt --check $(shell git ls-files "*.toml"))
 	$(call exec,uv run mdformat --check $(shell git ls-files "*.md"))
 	$(call exec,uv run yamlfix --check $(shell git ls-files "*.yml" "*.yaml"))
 	$(call exec,uv run typos)
