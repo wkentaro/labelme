@@ -53,6 +53,20 @@ def _open_and_select_shape(
     return win, canvas
 
 
+def _delete_selected_shape(
+    win: labelme.app.MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+) -> None:
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "warning",
+        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+    )
+    win.deleteSelectedShape()
+    qtbot.wait(50)
+
+
 @pytest.mark.gui
 def test_select_shape(
     qtbot: QtBot,
@@ -81,16 +95,38 @@ def test_delete_shape(
         output_dir=str(tmp_path),
     )
 
-    # Bypass the confirmation dialog
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
-    )
-    win.deleteSelectedShape()
-    qtbot.wait(50)
+    _delete_selected_shape(win=win, monkeypatch=monkeypatch, qtbot=qtbot)
 
     assert len(canvas.shapes) == 4
+
+    win._save_label_file()
+    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_delete_undo_shape(
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
+    )
+
+    _delete_selected_shape(win=win, monkeypatch=monkeypatch, qtbot=qtbot)
+    assert len(canvas.shapes) == 4
+
+    win.undoShapeEdit()
+    qtbot.wait(50)
+    assert len(canvas.shapes) == 5
+    assert canvas.shapes[0].label == "person"
 
     win._save_label_file()
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
