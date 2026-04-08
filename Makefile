@@ -21,11 +21,13 @@ setup:  # Setup the development environment
 format:  # Format code
 	$(call exec,uv run ruff format)
 	$(call exec,uv run ruff check --fix)
+	$(call exec,uv run taplo fmt)
 
 lint:  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
+	$(call exec,uv run taplo fmt --check)
 
 check_translate: update_translate
 	$(call exec,git diff --exit-code labelme/translate)

@@ -53,6 +53,7 @@ dev = [
   "pytest-qt>=4.4.0",
   "pytest-xdist>=3.8.0",
   "ruff~=0.12.11",
+  "taplo>=0.9.3",
   "twine>=6.1.0",
   "ty>=0.0.1a29",
   "types-pillow>=10.2.0.20240822",
@@ -64,16 +65,14 @@ labelme = "labelme.__main__:main"
 
 [tool.pytest.ini_options]
 qt_api = "pyqt5"
-markers = [
-  "gui: mark a test as a GUI test.",
-]
+markers = ["gui: mark a test as a GUI test."]
 
 [tool.ruff.lint]
 select = [
-  "ANN",  # flake8-annotations
-  "E",  # pycodestyle
-  "F",  # pyflakes
-  "I",  # isort
+  "ANN", # flake8-annotations
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "I",   # isort
   "UP",  # pyupgrade
 ]
 
