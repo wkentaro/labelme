@@ -120,8 +120,8 @@ class Canvas(QtWidgets.QWidget):
         self.scale: float = 1.0
         self._osam_session = None
         self.visible: dict = {}
-        self._hideBackround: bool = False
-        self.hideBackround: bool = False
+        self._hideBackground: bool = False
+        self.hideBackground: bool = False
         self.snapping = True
         self.hShapeIsSelected: bool = False
         self._painter = QtGui.QPainter()
@@ -695,8 +695,8 @@ class Canvas(QtWidgets.QWidget):
         self.storeShapes()
         return True
 
-    def hideBackroundShapes(self, value: bool) -> None:
-        self.hideBackround = value
+    def hideBackgroundShapes(self, value: bool) -> None:
+        self.hideBackground = value
         if self.selectedShapes:
             # Only hide other shapes if there is a current selection.
             # Otherwise the user will not be able to select a shape.
@@ -704,7 +704,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()
 
     def setHiding(self, enable: bool = True) -> None:
-        self._hideBackround = self.hideBackround if enable else False
+        self._hideBackground = self.hideBackground if enable else False
 
     def canCloseShape(self) -> bool:
         if not self.drawing():
@@ -890,7 +890,7 @@ class Canvas(QtWidgets.QWidget):
 
         Shape.scale = self.scale
         for shape in self.shapes:
-            if (shape.selected or not self._hideBackround) and self.isVisible(shape):
+            if (shape.selected or not self._hideBackground) and self.isVisible(shape):
                 shape.fill = shape.selected or shape == self.hShape
                 shape.paint(p)
         if self.current:

@@ -37,6 +37,7 @@ dependencies = [
   "pyyaml",
   "scikit-image",
   "tifffile",
+  "typos>=1.45.0",
 ]
 dynamic = ["readme", "version"]
 
