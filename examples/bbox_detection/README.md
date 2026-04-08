@@ -1,6 +1,5 @@
 # Bounding Box Detection Example
 
-
 ## Usage
 
 ```bash
@@ -8,7 +7,6 @@ labelme data_annotated --labels labels.txt
 ```
 
 ![](.readme/annotation.jpg)
-
 
 ## Convert to VOC-format Dataset
 

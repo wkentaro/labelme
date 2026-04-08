@@ -8,7 +8,6 @@ labelme apc2016_obj3.jpg
 
 ![](.readme/annotation.jpg)
 
-
 ## Visualization
 
 To view the json file quickly, you can use utility script:
@@ -19,11 +18,9 @@ To view the json file quickly, you can use utility script:
 
 <img src=".readme/draw_json.jpg" width="70%" />
 
-
 ## Convert to Dataset
 
 To convert the json to set of image and label, you can run following:
-
 
 ```bash
 ./export_json.py apc2016_obj3.json

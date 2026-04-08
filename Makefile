@@ -22,12 +22,14 @@ format:  # Format code
 	$(call exec,uv run ruff format)
 	$(call exec,uv run ruff check --fix)
 	$(call exec,uv run taplo fmt)
+	$(call exec,uv run mdformat $(shell git ls-files "*.md"))
 
 lint:  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
 	$(call exec,uv run taplo fmt --check)
+	$(call exec,uv run mdformat --check $(shell git ls-files "*.md"))
 
 check_translate: update_translate
 	$(call exec,git diff --exit-code labelme/translate)

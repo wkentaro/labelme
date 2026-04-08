@@ -22,6 +22,8 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
+  "mdformat-frontmatter>=2.0.10",
+  "mdformat>=0.7",
   "imgviz>=2.0.0",
   "loguru",
   "matplotlib",

@@ -1,6 +1,5 @@
 # Video Annotation Example
 
-
 ## Annotation
 
 ```bash
@@ -11,11 +10,9 @@ labelme data_annotated --labels labels.txt --keep-prev --config '{shift_auto_sha
 
 *Fig 1. Video annotation example. A frame (left), The next frame (right).*
 
-
 <img src=".readme/data_annotated.gif" width="98%" />
 
 *Fig 2. Visualization of video semantic segmentation.*
-
 
 ## How to Convert a Video File to Images for Annotation?
 
