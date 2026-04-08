@@ -44,7 +44,7 @@ check_translate: update_translate
 check: lint check_translate # Run checks
 
 test:  # Run tests
-	$(call exec,QT_QPA_PLATFORM=offscreen uv run pytest -v tests/ --numprocesses=auto)
+	$(call exec,QT_QPA_PLATFORM=offscreen uv run pytest -v tests/ $(PYTEST_ARGS))
 
 update_translate:
 	$(call exec,uv run --no-sync tools/update_translate.py)
