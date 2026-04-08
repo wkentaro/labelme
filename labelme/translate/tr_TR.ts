@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>AI, 'AI Points to Shape' ve 'AI Box to Shape' modlarında etiketleme önerir</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI, 'AI-Points' ve 'AI-Box' modlarında etiketleme önerir</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI Destekli Açıklamayı etkinleştirmek için 'AI Points to Shape' veya 'AI Box to Shape' modunu seçin</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>AI Destekli Açıklamayı etkinleştirmek için 'AI-Points' veya 'AI-Box' modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>Etkinleştirmek için 'Polygon', 'Rectangle' veya 'AI Points to Shape' modunu seçin</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>Etkinleştirmek için 'Polygon', 'Rectangle' veya 'AI-Points' modunu seçin</translation>
     </message>
 </context>
 <context>

@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες 'AI Points to Shape' και 'AI Box to Shape'</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες 'AI-Points' και 'AI-Box'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Επιλέξτε τη λειτουργία 'AI Points to Shape' ή 'AI Box to Shape' για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Επιλέξτε τη λειτουργία 'AI-Points' ή 'AI-Box' για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>Επιλέξτε τη λειτουργία 'Polygon', 'Rectangle' ή 'AI Points to Shape' για ενεργοποίηση</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>Επιλέξτε τη λειτουργία 'Polygon', 'Rectangle' ή 'AI-Points' για ενεργοποίηση</translation>
     </message>
 </context>
 <context>

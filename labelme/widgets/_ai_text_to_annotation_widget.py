@@ -143,8 +143,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
-                        "Select 'Polygon', 'Rectangle', or 'AI Points to Shape' "
-                        "mode to enable"
+                        "Select 'Polygon', 'Rectangle', or 'AI-Points' mode to enable"
                     ),
                     self._body,
                 )
