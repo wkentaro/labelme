@@ -2,7 +2,7 @@ ifneq ($(OS),Windows_NT)
 	SHELL := bash
 endif
 
-.PHONY: help setup format lint test
+.PHONY: help setup format lint test coverage
 .DEFAULT_GOAL := help
 
 PYTEST_ARGS ?= --numprocesses=auto
@@ -48,3 +48,6 @@ test:  # Run tests
 
 update_translate:
 	$(call exec,uv run --no-sync tools/update_translate.py)
+
+coverage:  # Run tests with coverage
+	$(MAKE) test PYTEST_ARGS="--cov=labelme --cov-report=term-missing"

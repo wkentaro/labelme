@@ -1,4 +1,5 @@
 /.cache/
+/.coverage
 /.pytest_cache/
 
 /build/
