@@ -1,12 +1,14 @@
+# Build artifacts
+/build/
+/dist/
+/*.egg-info/
+*.py[cdo]
+
+# Test / lint caches
 /.cache/
 /.coverage
 /.pytest_cache/
 
-/build/
-/dist/
-/*.egg-info/
-
-*.py[cdo]
-
+# OS / IDE
 .DS_Store
 .idea/
