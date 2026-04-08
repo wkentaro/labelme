@@ -9,8 +9,8 @@ from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 import labelme.app
-import labelme.testing
 
+from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import show_window_and_wait_for_imagedata
 
@@ -41,7 +41,7 @@ def test_MainWindow_open_json(
     ]
     json_file: str
     for json_file in json_files:
-        labelme.testing.assert_labelfile_sanity(json_file)
+        assert_labelfile_sanity(json_file)
 
         win: labelme.app.MainWindow = labelme.app.MainWindow(file_or_dir=json_file)
         qtbot.addWidget(win)
