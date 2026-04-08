@@ -4,10 +4,18 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSettings
 from pytestqt.qtbot import QtBot
 
 import labelme.app
+from labelme.widgets.canvas import Canvas
+
+
+def image_to_widget_pos(canvas: Canvas, image_pos: QPointF) -> QPoint:
+    widget_pos = (image_pos + canvas.offsetToCenter()) * canvas.scale
+    return QPoint(int(widget_pos.x()), int(widget_pos.y()))
 
 
 @pytest.fixture(autouse=True)
