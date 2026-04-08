@@ -10,8 +10,8 @@ from PyQt5.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 import labelme.app
-import labelme.testing
 
+from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import show_window_and_wait_for_imagedata
 
@@ -78,6 +78,6 @@ def test_MainWindow_annotate_jpg(
 
     win._save_label_file()
 
-    labelme.testing.assert_labelfile_sanity(out_file)
+    assert_labelfile_sanity(out_file)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
