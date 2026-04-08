@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>AIが'AI Points to Shape'および'AI Box to Shape'モードでアノテーションを提案</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AIが'AI-Points'および'AI-Box'モードでアノテーションを提案</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>'AI Points to Shape'または'AI Box to Shape'モードを選択してAI支援アノテーションを有効化</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>'AI-Points'または'AI-Box'モードを選択してAI支援アノテーションを有効化</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>「Polygon」「Rectangle」または「AI Points to Shape」モードで有効</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
     </message>
 </context>
 <context>

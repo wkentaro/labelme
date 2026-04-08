@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด 'AI Points to Shape' และ 'AI Box to Shape'</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI แนะนำแอนโนเทชันในโหมด 'AI-Points' และ 'AI-Box'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>เลือกโหมด 'AI Points to Shape' หรือ 'AI Box to Shape' เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>เลือกโหมด 'AI-Points' หรือ 'AI-Box' เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>เลือกโหมด 'Polygon', 'Rectangle' หรือ 'AI Points to Shape' เพื่อเปิดใช้งาน</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>เลือกโหมด 'Polygon', 'Rectangle' หรือ 'AI-Points' เพื่อเปิดใช้งาน</translation>
     </message>
 </context>
 <context>

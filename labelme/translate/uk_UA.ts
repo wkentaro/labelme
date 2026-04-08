@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>ШІ пропонує анотацію в режимах 'AI Points to Shape' та 'AI Box to Shape'</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>ШІ пропонує анотацію в режимах 'AI-Points' та 'AI-Box'</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Виберіть режим 'AI Points to Shape' або 'AI Box to Shape', щоб увімкнути анотацію за допомогою ШІ</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Виберіть режим 'AI-Points' або 'AI-Box', щоб увімкнути анотацію за допомогою ШІ</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>Виберіть режим 'Polygon', 'Rectangle' або 'AI Points to Shape', щоб увімкнути</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>Виберіть режим 'Polygon', 'Rectangle' або 'AI-Points', щоб увімкнути</translation>
     </message>
 </context>
 <context>

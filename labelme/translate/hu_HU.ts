@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>Az AI annotációt javasol 'AI Points to Shape' és 'AI Box to Shape' módokban</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>Az AI annotációt javasol 'AI-Points' és 'AI-Box' módokban</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Válassza az 'AI Points to Shape' vagy 'AI Box to Shape' módot az AI-támogatott annotáció engedélyezéséhez</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>Válassza az 'AI-Points' vagy 'AI-Box' módot az AI-támogatott annotáció engedélyezéséhez</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>Válassza a 'Polygon', 'Rectangle' vagy 'AI Points to Shape' módot az engedélyezéshez</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>Válassza a 'Polygon', 'Rectangle' vagy 'AI-Points' módot az engedélyezéshez</translation>
     </message>
 </context>
 <context>

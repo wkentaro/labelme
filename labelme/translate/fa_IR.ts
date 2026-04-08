@@ -10,13 +10,13 @@
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>AI suggests annotation in &apos;AI Points to Shape&apos; and &apos;AI Box to Shape&apos; modes</source>
-        <translation>AI در حالت‌های 'AI Points to Shape' و 'AI Box to Shape' حاشیه‌نویسی پیشنهاد می‌دهد</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI در حالت‌های 'AI-Points' و 'AI-Box' حاشیه‌نویسی پیشنهاد می‌دهد</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
-        <source>Select &apos;AI Points to Shape&apos; or &apos;AI Box to Shape&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>حالت 'AI Points to Shape' یا 'AI Box to Shape' را برای فعال‌سازی حاشیه‌نویسی با کمک AI انتخاب کنید</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
+        <translation>حالت 'AI-Points' یا 'AI-Box' را برای فعال‌سازی حاشیه‌نویسی با کمک AI انتخاب کنید</translation>
     </message>
 </context>
 <context>
@@ -53,8 +53,8 @@
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI Points to Shape&apos; mode to enable</source>
-        <translation>حالت 'Polygon'، 'Rectangle' یا 'AI Points to Shape' را برای فعال‌سازی انتخاب کنید</translation>
+        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
+        <translation>حالت 'Polygon'، 'Rectangle' یا 'AI-Points' را برای فعال‌سازی انتخاب کنید</translation>
     </message>
 </context>
 <context>
