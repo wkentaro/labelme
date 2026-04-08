@@ -1,83 +1,70 @@
+---
 name: CI
-
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: astral-sh/setup-uv@v5
-      with:
-        python-version: "3.10"
-    - uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages: qttools5-dev
-        version: 1.0
-    - run: make setup
-    - run: |
-        make check
-
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.10'
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: qttools5-dev
+          version: 1.0
+      - run: make setup
+      - run: |
+          make check
   build:
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-
     steps:
-    - uses: actions/checkout@v4
-
-    - uses: astral-sh/setup-uv@v5
-      with:
-        python-version: "3.10"
-
-    - shell: bash
-      run: |
-        make setup
-
-    - uses: awalsh128/cache-apt-pkgs-action@v1
-      if: matrix.os == 'ubuntu-latest'
-      with:
-        packages: xvfb libqt5widgets5
-        version: 1.0
-    - name: Test
-      shell: bash
-      if: matrix.os == 'ubuntu-latest'
-      env:
-        MPLBACKEND: 'agg'
-      run: |
-        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        export DISPLAY=:99
-
-        make test
-
-    - name: Run examples
-      shell: bash
-      if: matrix.os != 'windows-latest'
-      env:
-        MPLBACKEND: agg
-      run: |
-        labelme --help
-        labelme --version
-        (cd examples/primitives && ../tutorial/export_json.py primitives.json && rm -rf primitives)
-        (cd examples/tutorial && rm -rf apc2016_obj3_json && ./export_json.py apc2016_obj3.json && python load_label_png.py && git checkout -- .)
-        (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-        (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-        (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-
-        uv pip install 'lxml<5.0.0'  # for bbox_detection/labelme2voc.py
-        (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-
-        uv pip install cython && uv pip install pycocotools  # for instance_segmentation/labelme2coco.py
-        (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
-
-    - name: Build wheel and install from it
-      shell: bash
-      run: |
-        uv build
-        uv pip install dist/labelme-*.whl
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.10'
+      - shell: bash
+        run: |
+          make setup
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          packages: xvfb libqt5widgets5
+          version: 1.0
+      - name: Test
+        shell: bash
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          MPLBACKEND: agg
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          export DISPLAY=:99
+          make test
+      - name: Run examples
+        shell: bash
+        if: matrix.os != 'windows-latest'
+        env:
+          MPLBACKEND: agg
+        run: |
+          labelme --help
+          labelme --version
+          (cd examples/primitives && ../tutorial/export_json.py primitives.json && rm -rf primitives)
+          (cd examples/tutorial && rm -rf apc2016_obj3_json && ./export_json.py apc2016_obj3.json && python load_label_png.py && git checkout -- .)
+          (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+          (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+          (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+          uv pip install 'lxml<5.0.0'  # for bbox_detection/labelme2voc.py
+          (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+          uv pip install cython && uv pip install pycocotools  # for instance_segmentation/labelme2coco.py
+          (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
+      - name: Build wheel and install from it
+        shell: bash
+        run: |-
+          uv build
+          uv pip install dist/labelme-*.whl

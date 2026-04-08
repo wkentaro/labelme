@@ -1,6 +1,5 @@
 # Classification Example
 
-
 ## Usage
 
 ```bash

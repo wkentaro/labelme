@@ -30,18 +30,18 @@
 
 ## Description
 
-Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.  
+Labelme is a graphical image annotation tool inspired by <http://labelme.csail.mit.edu>.\
 It is written in Python and uses Qt for its graphical interface.
 
 > Looking for a simple install without Python or Qt? Get the standalone app at **[labelme.io](https://labelme.io)**.
 
-<img src="examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClass/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObject/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg" width="19%" />  
+<img src="examples/instance_segmentation/data_dataset_voc/JPEGImages/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClass/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationClassVisualization/2011_000006.jpg" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObject/2011_000006.png" width="19%" /> <img src="examples/instance_segmentation/data_dataset_voc/SegmentationObjectVisualization/2011_000006.jpg" width="19%" />\
 <i>VOC dataset example of instance segmentation.</i>
 
-<img src="examples/semantic_segmentation/.readme/annotation.jpg" width="30%" /> <img src="examples/bbox_detection/.readme/annotation.jpg" width="30%" /> <img src="examples/classification/.readme/annotation_cat.jpg" width="35%" />  
+<img src="examples/semantic_segmentation/.readme/annotation.jpg" width="30%" /> <img src="examples/bbox_detection/.readme/annotation.jpg" width="30%" /> <img src="examples/classification/.readme/annotation_cat.jpg" width="35%" />\
 <i>Other examples (semantic segmentation, bbox detection, and classification).</i>
 
-<img src="https://user-images.githubusercontent.com/4310419/47907116-85667800-de82-11e8-83d0-b9f4eb33268f.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/4310419/47922172-57972880-deae-11e8-84f8-e4324a7c856a.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/14256482/46932075-92145f00-d080-11e8-8d09-2162070ae57c.png" width="32%" />  
+<img src="https://user-images.githubusercontent.com/4310419/47907116-85667800-de82-11e8-83d0-b9f4eb33268f.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/4310419/47922172-57972880-deae-11e8-84f8-e4324a7c856a.gif" width="30%" /> <img src="https://user-images.githubusercontent.com/14256482/46932075-92145f00-d080-11e8-8d09-2162070ae57c.png" width="32%" />\
 <i>Various primitives (polygon, rectangle, circle, line, and point).</i>
 
 <img src="https://github.com/user-attachments/assets/53bf09db-b097-48b7-9f32-ab490da5ac53" width="32%" />
@@ -58,8 +58,7 @@ It is written in Python and uses Qt for its graphical interface.
 - [x] AI-assisted point-to-polygon/mask annotation by SAM, EfficientSAM models
 - [x] AI text-to-annotation by YOLO-world, SAM3 models
 
-**🌏 Available in 20 languages** - English &middot; 日本語 &middot; 한국어 &middot; 简体中文 &middot; 繁體中文 &middot; Deutsch &middot; Ελληνικά &middot; Français &middot; Español &middot; Italiano &middot; Português &middot; Nederlands &middot; Magyar &middot; Русский &middot; ไทย &middot; Tiếng Việt &middot; Türkçe &middot; Українська &middot; Polski &middot; فارسی (`LANG=ja_JP.UTF-8 labelme`)
-
+**🌏 Available in 20 languages** - English · 日本語 · 한국어 · 简体中文 · 繁體中文 · Deutsch · Ελληνικά · Français · Español · Italiano · Português · Nederlands · Magyar · Русский · ไทย · Tiếng Việt · Türkçe · Українська · Polski · فارسی (`LANG=ja_JP.UTF-8 labelme`)
 
 ## Installation
 
@@ -91,7 +90,7 @@ In some Linux distributions, you can install labelme via their package managers 
 
 ## Usage
 
-Run `labelme --help` for detail.  
+Run `labelme --help` for detail.\
 The annotations are saved as a [JSON](http://www.json.org/) file.
 
 ```bash
@@ -112,6 +111,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 ```
 
 ### Command Line Arguments
+
 - `--output` specifies the location that annotations will be written to. If the location ends with .json, a single annotation will be written to this file. Only one image can be annotated if a location is specified with .json. If the location does not end with .json, the program will assume it is a directory. Annotations will be stored in this directory with a name that corresponds to the image that the annotation was made on.
 - The first time you run labelme, it will create a config file at `~/.labelmerc`. Add only the settings you want to override. For all available options and their defaults, see [`default_config.yaml`](labelme/config/default_config.yaml). If you would prefer to use a config file from another location, you can specify this file with the `--config` flag.
 - Without the `--nosortlabels` flag, the program will list labels in alphabetical order. When the program is run with this flag, it will display labels in the order that they are provided.
@@ -125,15 +125,13 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 - **How to get annotations for semantic segmentation?** See [examples/semantic_segmentation](examples/semantic_segmentation).
 - **How to get annotations for instance segmentation?** See [examples/instance_segmentation](examples/instance_segmentation).
 
-
 ## Examples
 
-* [Image Classification](examples/classification)
-* [Bounding Box Detection](examples/bbox_detection)
-* [Semantic Segmentation](examples/semantic_segmentation)
-* [Instance Segmentation](examples/instance_segmentation)
-* [Video Annotation](examples/video_annotation)
-
+- [Image Classification](examples/classification)
+- [Bounding Box Detection](examples/bbox_detection)
+- [Semantic Segmentation](examples/semantic_segmentation)
+- [Instance Segmentation](examples/instance_segmentation)
+- [Video Annotation](examples/video_annotation)
 
 ## How to build standalone executable
 
@@ -153,7 +151,6 @@ pyinstaller labelme/labelme/__main__.py \
   --icon=$(LABELME_PATH)/icons/icon-256.png \
   --onedir
 ```
-
 
 ## Acknowledgement
 
