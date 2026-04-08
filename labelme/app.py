@@ -1604,9 +1604,11 @@ class MainWindow(QtWidgets.QMainWindow):
         return (0, 255, 0)
 
     def remLabels(self, shapes: list[Shape]) -> None:
+        self._docks.label_list.itemDropped.disconnect(self.labelOrderChanged)
         for shape in shapes:
             item = self._docks.label_list.findItemByShape(shape)
             self._docks.label_list.removeItem(item)
+        self._docks.label_list.itemDropped.connect(self.labelOrderChanged)
 
     def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
         self._docks.label_list.itemSelectionChanged.disconnect(
