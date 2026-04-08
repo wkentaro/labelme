@@ -930,8 +930,6 @@ dependencies = [
     { name = "imgviz" },
     { name = "loguru" },
     { name = "matplotlib" },
-    { name = "mdformat" },
-    { name = "mdformat-frontmatter" },
     { name = "natsort" },
     { name = "numpy" },
     { name = "osam" },
@@ -942,13 +940,14 @@ dependencies = [
     { name = "pyyaml" },
     { name = "scikit-image" },
     { name = "tifffile" },
-    { name = "typos" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "ipython", version = "8.38.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "ipython", version = "9.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "mdformat" },
+    { name = "mdformat-frontmatter" },
     { name = "pyqt5-stubs" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -960,6 +959,7 @@ dev = [
     { name = "ty" },
     { name = "types-pillow" },
     { name = "types-pyyaml" },
+    { name = "typos" },
     { name = "yamlfix" },
 ]
 
@@ -968,8 +968,6 @@ requires-dist = [
     { name = "imgviz", specifier = ">=2.0.0" },
     { name = "loguru" },
     { name = "matplotlib" },
-    { name = "mdformat", specifier = ">=0.7" },
-    { name = "mdformat-frontmatter", specifier = ">=2.0.10" },
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy" },
     { name = "osam", specifier = ">=0.4.0a0" },
@@ -980,12 +978,13 @@ requires-dist = [
     { name = "pyyaml" },
     { name = "scikit-image" },
     { name = "tifffile" },
-    { name = "typos", specifier = ">=1.45.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "ipython" },
+    { name = "mdformat", specifier = ">=0.7" },
+    { name = "mdformat-frontmatter", specifier = ">=2.0.10" },
     { name = "pyqt5-stubs", specifier = ">=5.15.6.0" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
@@ -997,6 +996,7 @@ dev = [
     { name = "ty", specifier = ">=0.0.1a29" },
     { name = "types-pillow", specifier = ">=10.2.0.20240822" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
+    { name = "typos", specifier = ">=1.45.0" },
     { name = "yamlfix", specifier = ">=1.19.1" },
 ]
 

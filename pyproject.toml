@@ -22,8 +22,6 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-  "mdformat-frontmatter>=2.0.10",
-  "mdformat>=0.7",
   "imgviz>=2.0.0",
   "loguru",
   "matplotlib",
@@ -37,7 +35,6 @@ dependencies = [
   "pyyaml",
   "scikit-image",
   "tifffile",
-  "typos>=1.45.0",
 ]
 dynamic = ["readme", "version"]
 
@@ -51,6 +48,8 @@ source = "vcs"
 [dependency-groups]
 dev = [
   "ipython",
+  "mdformat-frontmatter>=2.0.10",
+  "mdformat>=0.7",
   "pyqt5-stubs>=5.15.6.0",
   "pytest>=8.3.4",
   "pytest-cov>=7.1.0",
@@ -62,6 +61,7 @@ dev = [
   "ty>=0.0.1a29",
   "types-pillow>=10.2.0.20240822",
   "types-pyyaml>=6.0.12.20241230",
+  "typos>=1.45.0",
   "yamlfix>=1.19.1",
 ]
 
