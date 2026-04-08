@@ -60,6 +60,7 @@ dev = [
   "ty>=0.0.1a29",
   "types-pillow>=10.2.0.20240822",
   "types-pyyaml>=6.0.12.20241230",
+  "yamlfix>=1.19.1",
 ]
 
 [project.scripts]

@@ -1,3 +1,4 @@
+---
 auto_save: true
 display_label_popup: true
 with_image_data: false
@@ -5,19 +6,16 @@ keep_prev: false
 keep_prev_scale: false
 keep_prev_brightness_contrast: false
 logger_level: info
-
-flags: null
-label_flags: null
-labels: null
-file_search: null
+flags:
+label_flags:
+labels:
+file_search:
 sort_labels: true
-validate_label: null
-
+validate_label:
 default_shape_color: [0, 255, 0]
 shape_color: auto  # null, 'auto', 'manual'
 shift_auto_shape_color: 0
-label_colors: null
-
+label_colors:
 shape:
   # drawing
   line_color: [0, 255, 0, 128]
@@ -28,10 +26,8 @@ shape:
   select_fill_color: [0, 255, 0, 64]
   hvertex_fill_color: [255, 255, 255, 255]
   point_size: 8
-
 ai:
-  default: 'Sam2 (balanced)'
-
+  default: Sam2 (balanced)
 # main
 flag_dock:
   show: true
@@ -53,14 +49,12 @@ file_dock:
   closable: true
   movable: true
   floatable: true
-
 # label_dialog
 show_label_text_field: true
 label_completion: startswith
 fit_to_content:
   column: true
   row: false
-
 # canvas
 epsilon: 10.0
 canvas:
@@ -80,7 +74,6 @@ canvas:
     linestrip: false
     ai_points_to_shape: false
     ai_box_to_shape: true
-
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O
@@ -88,24 +81,21 @@ shortcuts:
   quit: Ctrl+Q
   save: Ctrl+S
   save_as: Ctrl+Shift+S
-  save_to: null
+  save_to:
   delete_file: Ctrl+Delete
-
   open_next: [D, Ctrl+Shift+D]
   open_prev: [A, Ctrl+Shift+A]
-
   zoom_in: [Ctrl++, Ctrl+=]
   zoom_out: Ctrl+-
   zoom_to_original: Ctrl+0
   fit_window: Ctrl+F
   fit_width: Ctrl+Shift+F
-
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
-  create_circle: null
-  create_line: null
-  create_point: null
-  create_linestrip: null
+  create_circle:
+  create_line:
+  create_point:
+  create_linestrip:
   edit_shape: Ctrl+J
   delete_shape: Delete
   duplicate_shape: Ctrl+D
@@ -116,7 +106,6 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode: Ctrl+P
   remove_selected_point: [Meta+H, Backspace]
-
-  show_all_shapes: null
-  hide_all_shapes: null
+  show_all_shapes:
+  hide_all_shapes:
   toggle_all_shapes: T

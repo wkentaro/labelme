@@ -1,10 +1,9 @@
+---
 name: discord-notify
-
 on:
   pull_request:
     types: [closed]
     branches: [main]
-
 jobs:
   notify:
     if: |
@@ -17,23 +16,19 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
-        run: |
+        run: |-
           if [[ -z "$DISCORD_WEBHOOK" ]]; then
             echo "Error: DISCORD_WEBHOOK secret not configured"
             exit 1
           fi
-
           TYPE="🎉 **New feature merged!** Try it in the next release"
           COLOR=3066993
-
           MILESTONE="${{ github.event.pull_request.milestone.title }}"
           if [[ -z "$MILESTONE" ]]; then
             MILESTONE="None"
           fi
-
           TITLE_ESCAPED=$(echo "$PR_TITLE" | jq -Rs '.[:-1]')
           BODY_ESCAPED=$(echo "$PR_BODY" | jq -Rs '.[:-1] | if . == "" then "No description provided" elif length > 2000 then .[0:1997] + "..." else . end')
-
           curl -fsS -X POST "$DISCORD_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d "{
