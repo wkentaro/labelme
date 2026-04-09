@@ -93,7 +93,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.flagsLayout = QtWidgets.QVBoxLayout()
         self.resetFlags()
         layout.addItem(self.flagsLayout)
-        self.edit.textChanged.connect(self.updateFlags)
         # text edit
         self.editDescription = QtWidgets.QTextEdit()
         self.editDescription.setPlaceholderText("Label description")
@@ -158,10 +157,10 @@ class LabelDialog(QtWidgets.QDialog):
         self.setFlags(flags_new)
 
     def deleteFlags(self) -> None:
-        for i in reversed(range(self.flagsLayout.count())):
-            item = self.flagsLayout.itemAt(i).widget()
-            self.flagsLayout.removeWidget(item)
-            item.setParent(QtWidgets.QWidget())
+        while self.flagsLayout.count() > 0:
+            widget = self.flagsLayout.takeAt(0).widget()
+            if widget is not None:
+                widget.setParent(QtWidgets.QWidget())
 
     def resetFlags(self, label: str = "") -> None:
         flags = {}
@@ -193,6 +192,12 @@ class LabelDialog(QtWidgets.QDialog):
             return int(group_id)
         return None
 
+    def _restoreOrResetFlags(self, text: str, flags: dict[str, bool] | None) -> None:
+        if flags:
+            self.setFlags(flags)
+        else:
+            self.resetFlags(text)
+
     def popUp(
         self,
         text: str | None = None,
@@ -215,10 +220,7 @@ class LabelDialog(QtWidgets.QDialog):
         if description is None:
             description = ""
         self.editDescription.setPlainText(description)
-        if flags:
-            self.setFlags(flags)
-        else:
-            self.resetFlags(text)
+        self._restoreOrResetFlags(text, flags)
         if flags_disabled:
             for i in range(self.flagsLayout.count()):
                 self.flagsLayout.itemAt(i).widget().setDisabled(True)
