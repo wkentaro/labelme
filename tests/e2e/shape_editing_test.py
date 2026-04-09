@@ -4,8 +4,6 @@ from pathlib import Path
 
 import pytest
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -14,14 +12,8 @@ from labelme.widgets.canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import image_to_widget_pos
 from .conftest import show_window_and_wait_for_imagedata
-
-
-def _image_to_widget_pos(canvas: Canvas, image_pos: QPointF) -> QPoint:
-    # Inverse of Canvas.transformPos: needed to click on pre-existing shapes
-    # whose positions are in image coordinates.
-    widget_pos = (image_pos + canvas.offsetToCenter()) * canvas.scale
-    return QPoint(int(widget_pos.x()), int(widget_pos.y()))
 
 
 def _open_and_select_shape(
@@ -43,7 +35,7 @@ def _open_and_select_shape(
     assert len(canvas.shapes) == 5
 
     shape_center = canvas.shapes[shape_index].boundingRect().center()
-    pos = _image_to_widget_pos(canvas=canvas, image_pos=shape_center)
+    pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
