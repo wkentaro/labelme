@@ -104,8 +104,9 @@ def _save_and_check(
     win: labelme.app.MainWindow,
     tmp_path: Path,
 ) -> None:
-    win._save_label_file()
-    assert_labelfile_sanity(str(tmp_path / Path(_TEST_FILE_NAME).name))
+    label_path = str(tmp_path / Path(_TEST_FILE_NAME).name)
+    win.saveLabels(label_path=label_path)
+    assert_labelfile_sanity(label_path)
 
 
 @pytest.mark.gui
