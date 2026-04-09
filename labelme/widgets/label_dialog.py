@@ -46,8 +46,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setPlaceholderText(text)
         self.edit.setValidator(labelme.utils.labelValidator())
         self.edit.editingFinished.connect(self.postProcess)
-        if flags:
-            self.edit.textChanged.connect(self.updateFlags)
+        self._has_flag_definitions = bool(flags)
         self.edit_group_id = QtWidgets.QLineEdit()
         self.edit_group_id.setPlaceholderText("Group ID")
         self.edit_group_id.setValidator(
@@ -59,7 +58,6 @@ class LabelDialog(QtWidgets.QDialog):
             layout_edit.addWidget(self.edit, 6)
             layout_edit.addWidget(self.edit_group_id, 2)
             layout.addLayout(layout_edit)
-        # buttons
         self.buttonBox = bb = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
             QtCore.Qt.Horizontal,
@@ -68,7 +66,6 @@ class LabelDialog(QtWidgets.QDialog):
         bb.accepted.connect(self.validate)
         bb.rejected.connect(self.reject)
         layout.addWidget(bb)
-        # label_list
         self.labelList = QtWidgets.QListWidget()
         if self._fit_to_content["row"]:
             self.labelList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -86,21 +83,17 @@ class LabelDialog(QtWidgets.QDialog):
         self.labelList.setFixedHeight(150)
         self.edit.setListWidget(self.labelList)
         layout.addWidget(self.labelList)
-        # label_flags
-        if flags is None:
-            flags = {}
-        self._flags = flags
+        self._flags = flags if flags is not None else {}
         self.flagsLayout = QtWidgets.QVBoxLayout()
         self.resetFlags()
         layout.addItem(self.flagsLayout)
-        self.edit.textChanged.connect(self.updateFlags)
-        # text edit
+        if self._has_flag_definitions:
+            self.edit.textChanged.connect(self.updateFlags)
         self.editDescription = QtWidgets.QTextEdit()
         self.editDescription.setPlaceholderText("Label description")
         self.editDescription.setFixedHeight(50)
         layout.addWidget(self.editDescription)
         self.setLayout(layout)
-        # completion
         completer = QtWidgets.QCompleter()
         if completion == "startswith":
             completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
@@ -147,51 +140,53 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setText(self._get_stripped_text())
 
     def updateFlags(self, label_new: str) -> None:
-        # keep state of shared flags
-        flags_old = self.getFlags()
-
-        flags_new = {}
-        for pattern, keys in self._flags.items():
+        previous_state = self.getFlags()
+        merged: dict[str, bool] = {}
+        for pattern, flag_names in self._flags.items():
             if re.match(pattern, label_new):
-                for key in keys:
-                    flags_new[key] = flags_old.get(key, False)
-        self.setFlags(flags_new)
+                for name in flag_names:
+                    merged[name] = previous_state.get(name, False)
+        self.setFlags(merged)
 
     def deleteFlags(self) -> None:
-        for i in reversed(range(self.flagsLayout.count())):
-            item = self.flagsLayout.itemAt(i).widget()
-            self.flagsLayout.removeWidget(item)
-            item.setParent(QtWidgets.QWidget())
+        while self.flagsLayout.count() > 0:
+            widget = self.flagsLayout.takeAt(0).widget()
+            if widget is not None:
+                widget.setParent(QtWidgets.QWidget())
 
     def resetFlags(self, label: str = "") -> None:
-        flags = {}
-        for pattern, keys in self._flags.items():
+        matched_flags: dict[str, bool] = {}
+        for pattern, flag_names in self._flags.items():
             if re.match(pattern, label):
-                for key in keys:
-                    flags[key] = False
-        self.setFlags(flags)
+                matched_flags.update({name: False for name in flag_names})
+        self.setFlags(matched_flags)
 
     def setFlags(self, flags: dict[str, bool]) -> None:
         self.deleteFlags()
-        for key in flags:
-            item = QtWidgets.QCheckBox(key, self)
-            item.setChecked(flags[key])
-            self.flagsLayout.addWidget(item)
-            item.show()
+        for name, checked in flags.items():
+            checkbox = QtWidgets.QCheckBox(name, self)
+            checkbox.setChecked(checked)
+            self.flagsLayout.addWidget(checkbox)
+            checkbox.show()
 
     def getFlags(self) -> dict[str, bool]:
-        flags = {}
-        for i in range(self.flagsLayout.count()):
-            item = self.flagsLayout.itemAt(i).widget()
-            item = cast(QtWidgets.QCheckBox, item)
-            flags[item.text()] = item.isChecked()
-        return flags
+        result: dict[str, bool] = {}
+        for idx in range(self.flagsLayout.count()):
+            checkbox = cast(QtWidgets.QCheckBox, self.flagsLayout.itemAt(idx).widget())
+            result[checkbox.text()] = checkbox.isChecked()
+        return result
 
     def getGroupId(self) -> int | None:
         group_id = self.edit_group_id.text()
         if group_id:
             return int(group_id)
         return None
+
+    def _restoreOrResetFlags(self, flags: dict[str, bool] | None, label: str) -> None:
+        if flags is not None and len(flags) > 0:
+            self.setFlags(flags)
+        else:
+            self.resetFlags(label)
 
     def popUp(
         self,
@@ -208,42 +203,35 @@ class LabelDialog(QtWidgets.QDialog):
             )
         if self._fit_to_content["column"]:
             self.labelList.setMinimumWidth(self.labelList.sizeHintForColumn(0) + 2)
-        # if text is None, the previous label in self.edit is kept
         if text is None:
             text = self.edit.text()
-        # description is always initialized by empty text c.f., self.edit.text
-        if description is None:
-            description = ""
-        self.editDescription.setPlainText(description)
-        if flags:
-            self.setFlags(flags)
-        else:
-            self.resetFlags(text)
+        self.editDescription.setPlainText(description or "")
+        self._restoreOrResetFlags(flags=flags, label=text)
         if flags_disabled:
-            for i in range(self.flagsLayout.count()):
-                self.flagsLayout.itemAt(i).widget().setDisabled(True)
+            for idx in range(self.flagsLayout.count()):
+                self.flagsLayout.itemAt(idx).widget().setDisabled(True)
         self.edit.setText(text)
         self.edit.setSelection(0, len(text))
-        if group_id is None:
-            self.edit_group_id.clear()
-        else:
+        if group_id is not None:
             self.edit_group_id.setText(str(group_id))
-        items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
-        if items:
-            if len(items) != 1:
+        else:
+            self.edit_group_id.clear()
+        matched_items = self.labelList.findItems(text, QtCore.Qt.MatchFixedString)
+        if matched_items:
+            if len(matched_items) != 1:
                 logger.warning(f"Label list has duplicate '{text}'")
-            self.labelList.setCurrentItem(items[0])
-            row = self.labelList.row(items[0])
+            self.labelList.setCurrentItem(matched_items[0])
+            row = self.labelList.row(matched_items[0])
             self.edit.completer().setCurrentRow(row)
         self.edit.setFocus(QtCore.Qt.PopupFocusReason)
         if move:
             self.move(QtGui.QCursor.pos())
-        if self.exec_():
-            return (
-                self.edit.text(),
-                self.getFlags(),
-                self.getGroupId(),
-                self.editDescription.toPlainText(),
-            )
-        else:
-            return None, None, None, None
+        accepted = self.exec_()
+        if not accepted:
+            return (None, None, None, None)
+        return (
+            self.edit.text(),
+            self.getFlags(),
+            self.getGroupId(),
+            self.editDescription.toPlainText(),
+        )

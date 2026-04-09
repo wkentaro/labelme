@@ -170,15 +170,15 @@ def main() -> None:
         help="comma separated list of flags OR file containing flags",
         default=argparse.SUPPRESS,
     )
-    parser.add_argument(
+    label_flags_arg = parser.add_argument(
         "--label-flags",
         "--labelflags",  # deprecated
-        dest="label_flags",
         help=r"yaml string of label specific flags OR file containing json "
         r"string of label specific flags (ex. {person-\d+: [male, tall], "
         r"dog-\d+: [black, brown, white], .*: [occluded]})",  # NOQA
         default=argparse.SUPPRESS,
     )
+    label_flags_arg.dest = "label_flags"
     parser.add_argument(
         "--labels",
         help="comma separated list of labels OR file containing labels",
@@ -249,11 +249,12 @@ def main() -> None:
             args.labels = [line for line in args.labels.split(",") if line]
 
     if hasattr(args, "label_flags"):
-        if os.path.isfile(args.label_flags):
-            with codecs.open(args.label_flags, "r", encoding="utf-8") as f:
+        label_flags_value = args.label_flags
+        if Path(label_flags_value).is_file():
+            with codecs.open(label_flags_value, "r", encoding="utf-8") as f:
                 args.label_flags = yaml.safe_load(f)
         else:
-            args.label_flags = yaml.safe_load(args.label_flags)
+            args.label_flags = yaml.safe_load(label_flags_value)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")

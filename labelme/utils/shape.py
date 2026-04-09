@@ -22,13 +22,13 @@ def shape_to_mask(
     point_size: int = 5,
 ) -> NDArray[np.bool_]:
     mask = PIL.Image.fromarray(np.zeros(img_shape[:2], dtype=np.uint8))
-    draw = PIL.ImageDraw.Draw(mask)
     xy = [tuple(point) for point in points]
+    draw = PIL.ImageDraw.Draw(mask)
     if shape_type == "circle":
         assert len(xy) == 2, "Shape of shape_type=circle must have 2 points"
         (cx, cy), (px, py) = xy
         d = math.sqrt((cx - px) ** 2 + (cy - py) ** 2)
-        draw.ellipse([cx - d, cy - d, cx + d, cy + d], outline=1, fill=1)
+        draw.ellipse(xy=((cx - d, cy - d), (cx + d, cy + d)), outline=1, fill=1)
     elif shape_type == "rectangle":
         assert len(xy) == 2, "Shape of shape_type=rectangle must have 2 points"
         (x0, y0), (x1, y1) = xy
@@ -49,7 +49,7 @@ def shape_to_mask(
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
     elif shape_type in [None, "polygon"]:
         assert len(xy) > 2, "Polygon must have points more than 2"
-        draw.polygon(xy=xy, outline=1, fill=1)  # type: ignore[arg-type]
+        draw.polygon(xy=xy, fill=1, outline=1)  # type: ignore[arg-type]
     else:
         raise ValueError(f"shape_type={shape_type!r} is not supported.")
     return np.array(mask, dtype=bool)
@@ -69,7 +69,7 @@ def shapes_to_label(
         group_id = shape.get("group_id")
         if group_id is None:
             group_id = uuid.uuid1()
-        shape_type = shape.get("shape_type", None)
+        shape_type = shape.get("shape_type")
 
         cls_name = label
         instance = (cls_name, group_id)
