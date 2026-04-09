@@ -50,4 +50,4 @@ update_translate:
 	$(call exec,uv run --no-sync tools/update_translate.py)
 
 coverage:  # Run tests with coverage
-	$(MAKE) test PYTEST_ARGS="--cov=labelme --cov-report=term-missing"
+	$(call exec,QT_QPA_PLATFORM=offscreen uv run pytest -v tests/ --numprocesses=auto --cov=labelme --cov-report=term-missing)
