@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
+from labelme.shape import Shape
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.label_dialog import LabelDialog
 
@@ -100,6 +101,23 @@ def _enter_label(
         qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
 
     QTimer.singleShot(0, _poll)
+
+
+def _click_to_remove_point(
+    qtbot: QtBot,
+    canvas: Canvas,
+    vertex: QPointF,
+) -> None:
+    vtx_widget = image_to_widget_pos(canvas=canvas, image_pos=vertex)
+    qtbot.mouseMove(canvas, pos=vtx_widget)
+    qtbot.wait(100)
+    qtbot.mouseClick(
+        canvas,
+        Qt.LeftButton,
+        modifier=Qt.AltModifier | Qt.ShiftModifier,
+        pos=vtx_widget,
+    )
+    qtbot.wait(50)
 
 
 def _save_and_check(
@@ -257,17 +275,7 @@ def test_remove_point_from_shape(
     shape = canvas.shapes[_SHAPE_INDEX]
     original_num_points = len(shape.points)
 
-    vertex = shape.points[0]
-    vtx_widget = image_to_widget_pos(canvas=canvas, image_pos=vertex)
-    qtbot.mouseMove(canvas, pos=vtx_widget)
-    qtbot.wait(100)
-    qtbot.mouseClick(
-        canvas,
-        Qt.LeftButton,
-        modifier=Qt.AltModifier | Qt.ShiftModifier,
-        pos=vtx_widget,
-    )
-    qtbot.wait(50)
+    _click_to_remove_point(qtbot=qtbot, canvas=canvas, vertex=shape.points[0])
 
     assert len(shape.points) == original_num_points - 1
 
