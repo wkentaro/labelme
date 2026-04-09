@@ -65,6 +65,63 @@ def test_select_shape(
 
 
 @pytest.mark.gui
+def test_copy_paste_shape(
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
+    )
+
+    original_label = canvas.selectedShapes[0].label
+    num_shapes_before = len(canvas.shapes)
+
+    win.copySelectedShape()
+    win.pasteSelectedShape()
+    qtbot.wait(50)
+
+    assert len(canvas.shapes) == num_shapes_before + 1
+    assert canvas.shapes[-1].label == original_label
+
+    win._save_label_file()
+    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_duplicate_shape(
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
+    )
+
+    num_shapes_before = len(canvas.shapes)
+
+    win.duplicateSelectedShape()
+    qtbot.wait(50)
+
+    assert len(canvas.shapes) == num_shapes_before + 1
+
+    win._save_label_file()
+    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_delete_shape(
     qtbot: QtBot,
     data_path: Path,
