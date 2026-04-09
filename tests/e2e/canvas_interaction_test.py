@@ -18,6 +18,7 @@ from labelme.widgets.canvas import Canvas
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import image_to_widget_pos
+from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
@@ -38,16 +39,6 @@ def _annotated_win(
     qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win
-
-
-def _select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
-    shape_center = canvas.shapes[shape_index].boundingRect().center()
-    pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
-    qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
-    qtbot.wait(50)
-    assert len(canvas.selectedShapes) == 1
 
 
 def _hover_and_drag(
@@ -130,7 +121,7 @@ def test_move_shape_by_drag(
 
     center = shape.boundingRect().center()
     offset = QPointF(15, 10)
-    _select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     _hover_and_drag(
         qtbot=qtbot,
         canvas=canvas,
@@ -191,7 +182,7 @@ def test_move_shape_by_arrow_key(
     expected_dy: float,
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
-    _select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     shape = canvas.selectedShapes[0]
     original_center = QPointF(shape.boundingRect().center())
 

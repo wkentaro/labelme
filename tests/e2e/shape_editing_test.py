@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 import labelme.app
@@ -12,7 +11,7 @@ from labelme.widgets.canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
-from .conftest import image_to_widget_pos
+from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -34,14 +33,7 @@ def _open_and_select_shape(
     canvas = win._canvas_widgets.canvas
     assert len(canvas.shapes) == 5
 
-    shape_center = canvas.shapes[shape_index].boundingRect().center()
-    pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
-    qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
-    qtbot.wait(50)
-
-    assert len(canvas.selectedShapes) == 1
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
     return win, canvas
 
 
