@@ -368,3 +368,38 @@ def test_finalize_polygon_with_enter(
 
     _save_and_check(win=_annotated_win, tmp_path=tmp_path)
     close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_undo_shape_creation(
+    qtbot: QtBot,
+    _annotated_win: labelme.app.MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    canvas = _annotated_win._canvas_widgets.canvas
+    num_shapes_before = len(canvas.shapes)
+    _annotated_win._switch_canvas_mode(edit=False, createMode="polygon")
+    qtbot.wait(50)
+
+    for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
+        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+
+    assert canvas.current is not None
+
+    label = "undo_target"
+    _enter_label(qtbot=qtbot, label_dialog=_annotated_win._label_dialog, label=label)
+
+    qtbot.keyPress(canvas, Qt.Key_Return)
+    qtbot.wait(200)
+
+    assert len(canvas.shapes) == num_shapes_before + 1
+    assert canvas.shapes[-1].label == label
+
+    _annotated_win.undoShapeEdit()
+    qtbot.wait(100)
+
+    assert len(canvas.shapes) == num_shapes_before
+
+    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
