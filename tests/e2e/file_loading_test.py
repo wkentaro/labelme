@@ -8,22 +8,21 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-import labelme.app
-
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
 def test_MainWindow_open_img(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
 ) -> None:
     image_file: str = str(data_path / "raw/2011_000003.jpg")
-    win: labelme.app.MainWindow = labelme.app.MainWindow(file_or_dir=image_file)
-    qtbot.addWidget(win)
+    win = main_win(file_or_dir=image_file)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -31,6 +30,7 @@ def test_MainWindow_open_img(
 
 @pytest.mark.gui
 def test_MainWindow_open_json(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
@@ -43,8 +43,7 @@ def test_MainWindow_open_json(
     for json_file in json_files:
         assert_labelfile_sanity(json_file)
 
-        win: labelme.app.MainWindow = labelme.app.MainWindow(file_or_dir=json_file)
-        qtbot.addWidget(win)
+        win = main_win(file_or_dir=json_file)
         show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
         close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -53,6 +52,7 @@ def test_MainWindow_open_json(
 @pytest.mark.gui
 @pytest.mark.parametrize("scenario", ["raw", "annotated", "annotated_nested"])
 def test_MainWindow_open_dir(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     scenario: Literal["raw", "annotated", "annotated_nested"],
     data_path: Path,
@@ -67,10 +67,7 @@ def test_MainWindow_open_dir(
         directory = str(data_path / scenario)
         output_dir = None
 
-    win: labelme.app.MainWindow = labelme.app.MainWindow(
-        file_or_dir=directory, output_dir=output_dir
-    )
-    qtbot.addWidget(win)
+    win = main_win(file_or_dir=directory, output_dir=output_dir)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     first_image_name: str = "2011_000003.jpg"

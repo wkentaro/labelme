@@ -11,10 +11,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
-import labelme.app
-
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 # Smallest available model (~40MB) to keep download and inference fast
@@ -117,6 +116,7 @@ _AI_MODEL = "efficientsam:10m"
     ],
 )
 def test_annotate_shape_types(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
@@ -133,12 +133,11 @@ def test_annotate_shape_types(
     input_file = str(data_path / "raw/2011_000003.jpg")
     out_file = str(tmp_path / "2011_000003.json")
 
-    win = labelme.app.MainWindow(
+    win = main_win(
         file_or_dir=input_file,
         config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     label = "test_shape"
@@ -200,16 +199,16 @@ def test_annotate_shape_types(
 
 @pytest.mark.gui
 def test_ai_model_download(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    win = labelme.app.MainWindow(
+    win = main_win(
         file_or_dir=str(data_path / "raw/2011_000003.jpg"),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas

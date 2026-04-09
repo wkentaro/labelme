@@ -7,22 +7,21 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-import labelme.app
-
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
 def test_close_file(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
 ) -> None:
-    win = labelme.app.MainWindow(
+    win = main_win(
         file_or_dir=str(data_path / "annotated/2011_000003.json"),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     assert win.imageData is not None
@@ -40,15 +39,15 @@ def test_close_file(
 
 @pytest.mark.gui
 def test_delete_label_file(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    win = labelme.app.MainWindow(
+    win = main_win(
         file_or_dir=str(data_path / "annotated"),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     label_file = data_path / "annotated/2011_000003.json"

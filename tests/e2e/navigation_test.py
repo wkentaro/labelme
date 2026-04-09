@@ -7,22 +7,19 @@ from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-import labelme.app
-
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
 def test_image_navigation_while_selecting_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
 ) -> None:
-    win: labelme.app.MainWindow = labelme.app.MainWindow(
-        file_or_dir=str(data_path / "annotated")
-    )
-    qtbot.addWidget(win)
+    win = main_win(file_or_dir=str(data_path / "annotated"))
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     # Incident: https://github.com/wkentaro/labelme/pull/1716 {{

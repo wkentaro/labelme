@@ -6,9 +6,8 @@ import pytest
 from PyQt5 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-import labelme.app
-
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 
 
 @pytest.mark.gui
@@ -20,6 +19,7 @@ from ..conftest import close_or_pause
     ],
 )
 def test_MainWindow_config(
+    main_win: MainWinFactory,
     with_config_file: bool,
     qtbot: QtBot,
     tmp_path: Path,
@@ -33,12 +33,10 @@ def test_MainWindow_config(
         config_file.write_text("auto_save: false\nlabels: [cat, dog]\n")
         auto_save = False
 
-    win: labelme.app.MainWindow = labelme.app.MainWindow(
+    win = main_win(
         config_file=config_file,
         config_overrides={"labels": ["bird"]},
     )
-    qtbot.addWidget(win)
-    win.show()
 
     assert win._config["auto_save"] is auto_save
     assert win._config["labels"] == ["bird"]
