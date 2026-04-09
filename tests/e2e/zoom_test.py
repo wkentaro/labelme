@@ -6,10 +6,11 @@ from typing import Final
 import pytest
 from pytestqt.qtbot import QtBot
 
-import labelme.app
+from labelme.app import MainWindow
 from labelme.app import _ZoomMode
 
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
@@ -17,13 +18,13 @@ _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 
 @pytest.fixture()
 def _win(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-) -> labelme.app.MainWindow:
-    win = labelme.app.MainWindow(
+) -> MainWindow:
+    win = main_win(
         file_or_dir=str(data_path / _TEST_FILE_NAME),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win
 
@@ -31,7 +32,7 @@ def _win(
 @pytest.mark.gui
 def test_zoom_fit_window(
     qtbot: QtBot,
-    _win: labelme.app.MainWindow,
+    _win: MainWindow,
     pause: bool,
 ) -> None:
     _win.setFitWindow(True)
@@ -47,7 +48,7 @@ def test_zoom_fit_window(
 @pytest.mark.gui
 def test_zoom_fit_width(
     qtbot: QtBot,
-    _win: labelme.app.MainWindow,
+    _win: MainWindow,
     pause: bool,
 ) -> None:
     _win.setFitWindow(True)
@@ -63,7 +64,7 @@ def test_zoom_fit_width(
 @pytest.mark.gui
 def test_zoom_to_original(
     qtbot: QtBot,
-    _win: labelme.app.MainWindow,
+    _win: MainWindow,
     pause: bool,
 ) -> None:
     _win.setFitWindow(True)

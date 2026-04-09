@@ -8,10 +8,11 @@ from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-import labelme.app
+from labelme.app import MainWindow
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
@@ -20,16 +21,16 @@ _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 
 @pytest.fixture()
 def _auto_save_win(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-) -> labelme.app.MainWindow:
-    win = labelme.app.MainWindow(
+) -> MainWindow:
+    win = main_win(
         file_or_dir=str(data_path / _TEST_FILE_NAME),
         config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win
 
@@ -37,7 +38,7 @@ def _auto_save_win(
 @pytest.mark.gui
 def test_auto_save_on_shape_move(
     qtbot: QtBot,
-    _auto_save_win: labelme.app.MainWindow,
+    _auto_save_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:

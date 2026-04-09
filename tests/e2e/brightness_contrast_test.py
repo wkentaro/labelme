@@ -5,24 +5,24 @@ from pathlib import Path
 import pytest
 from pytestqt.qtbot import QtBot
 
-import labelme.app
 import labelme.utils
 from labelme.widgets.brightness_contrast_dialog import BrightnessContrastDialog
 
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
 def test_brightness_contrast_dialog(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
 ) -> None:
-    win = labelme.app.MainWindow(
+    win = main_win(
         file_or_dir=str(data_path / "annotated/2011_000003.json"),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas

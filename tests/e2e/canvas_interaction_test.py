@@ -12,11 +12,13 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
-import labelme.app
+from labelme.app import MainWindow
 from labelme.widgets.canvas import Canvas
+from labelme.widgets.label_dialog import LabelDialog
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import image_to_widget_pos
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
@@ -27,16 +29,16 @@ _SHAPE_INDEX: Final[int] = 0
 
 @pytest.fixture()
 def _annotated_win(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-) -> labelme.app.MainWindow:
-    win = labelme.app.MainWindow(
+) -> MainWindow:
+    win = main_win(
         file_or_dir=str(data_path / _TEST_FILE_NAME),
         config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win
 
@@ -86,7 +88,7 @@ def _click_canvas_fraction(
 
 def _enter_label(
     qtbot: QtBot,
-    label_dialog: labelme.app.LabelDialog,
+    label_dialog: LabelDialog,
     label: str,
 ) -> None:
     def _poll() -> None:
@@ -101,7 +103,7 @@ def _enter_label(
 
 
 def _save_and_check(
-    win: labelme.app.MainWindow,
+    win: MainWindow,
     tmp_path: Path,
 ) -> None:
     label_path = str(tmp_path / Path(_TEST_FILE_NAME).name)
@@ -112,7 +114,7 @@ def _save_and_check(
 @pytest.mark.gui
 def test_move_shape_by_drag(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
@@ -140,7 +142,7 @@ def test_move_shape_by_drag(
 @pytest.mark.gui
 def test_move_vertex_by_drag(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
@@ -176,7 +178,7 @@ def test_move_vertex_by_drag(
 )
 def test_move_shape_by_arrow_key(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     pause: bool,
     key: int,
     expected_dx: float,
@@ -202,7 +204,7 @@ def test_move_shape_by_arrow_key(
 @pytest.mark.gui
 def test_add_point_on_edge(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
@@ -247,7 +249,7 @@ def test_add_point_on_edge(
 @pytest.mark.gui
 def test_remove_point_from_shape(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
@@ -276,7 +278,7 @@ def test_remove_point_from_shape(
 @pytest.mark.gui
 def test_cancel_drawing_with_escape(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     pause: bool,
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
@@ -298,7 +300,7 @@ def test_cancel_drawing_with_escape(
 @pytest.mark.gui
 def test_undo_last_point_while_drawing(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
@@ -344,7 +346,7 @@ def test_undo_last_point_while_drawing(
 @pytest.mark.gui
 def test_finalize_polygon_with_enter(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
@@ -374,7 +376,7 @@ def test_finalize_polygon_with_enter(
 @pytest.mark.gui
 def test_undo_shape_creation(
     qtbot: QtBot,
-    _annotated_win: labelme.app.MainWindow,
+    _annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:

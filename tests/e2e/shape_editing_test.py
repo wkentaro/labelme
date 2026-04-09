@@ -6,28 +6,29 @@ import pytest
 from PyQt5 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-import labelme.app
+from labelme.app import MainWindow
 from labelme.widgets.canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
 def _open_and_select_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     shape_index: int = 0,
     config_overrides: dict[str, bool] | None = None,
     output_dir: str | None = None,
-) -> tuple[labelme.app.MainWindow, Canvas]:
-    win = labelme.app.MainWindow(
+) -> tuple[MainWindow, Canvas]:
+    win = main_win(
         file_or_dir=str(data_path / "annotated/2011_000003.json"),
         config_overrides=config_overrides,
         output_dir=output_dir,
     )
-    qtbot.addWidget(win)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
@@ -38,7 +39,7 @@ def _open_and_select_shape(
 
 
 def _delete_selected_shape(
-    win: labelme.app.MainWindow,
+    win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
 ) -> None:
@@ -53,11 +54,14 @@ def _delete_selected_shape(
 
 @pytest.mark.gui
 def test_select_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
 ) -> None:
-    win, canvas = _open_and_select_shape(qtbot=qtbot, data_path=data_path)
+    win, canvas = _open_and_select_shape(
+        main_win=main_win, qtbot=qtbot, data_path=data_path
+    )
 
     assert canvas.selectedShapes[0].label == "person"
 
@@ -66,12 +70,14 @@ def test_select_shape(
 
 @pytest.mark.gui
 def test_copy_paste_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
+        main_win=main_win,
         qtbot=qtbot,
         data_path=data_path,
         config_overrides=dict(auto_save=True),
@@ -96,12 +102,14 @@ def test_copy_paste_shape(
 
 @pytest.mark.gui
 def test_duplicate_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
+        main_win=main_win,
         qtbot=qtbot,
         data_path=data_path,
         config_overrides=dict(auto_save=True),
@@ -123,6 +131,7 @@ def test_duplicate_shape(
 
 @pytest.mark.gui
 def test_delete_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
@@ -130,6 +139,7 @@ def test_delete_shape(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     win, canvas = _open_and_select_shape(
+        main_win=main_win,
         qtbot=qtbot,
         data_path=data_path,
         config_overrides=dict(auto_save=True),
@@ -148,6 +158,7 @@ def test_delete_shape(
 
 @pytest.mark.gui
 def test_delete_undo_shape(
+    main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
@@ -155,6 +166,7 @@ def test_delete_undo_shape(
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
+        main_win=main_win,
         qtbot=qtbot,
         data_path=data_path,
         config_overrides=dict(auto_save=True),
