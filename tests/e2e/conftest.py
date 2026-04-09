@@ -7,6 +7,7 @@ import pytest
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 import labelme.app
@@ -28,6 +29,16 @@ def _isolated_qtsettings(
         labelme.app.QtCore, "QSettings", lambda *args, **kwargs: settings
     )
     yield
+
+
+def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
+    shape_center = canvas.shapes[shape_index].boundingRect().center()
+    pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
+    qtbot.mouseMove(canvas, pos=pos)
+    qtbot.wait(50)
+    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
+    qtbot.wait(50)
+    assert len(canvas.selectedShapes) == 1
 
 
 def show_window_and_wait_for_imagedata(

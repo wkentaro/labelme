@@ -1,0 +1,75 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
+from pytestqt.qtbot import QtBot
+
+import labelme.app
+
+from ..conftest import close_or_pause
+from .conftest import show_window_and_wait_for_imagedata
+
+
+@pytest.mark.gui
+def test_close_file(
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = labelme.app.MainWindow(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+    )
+    qtbot.addWidget(win)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    assert win.imageData is not None
+    assert win._canvas_widgets.canvas.isEnabled()
+
+    win.closeFile()
+    qtbot.wait(50)
+
+    assert not win._canvas_widgets.canvas.isEnabled()
+    assert win.imageData is None
+    assert win.windowTitle() == "Labelme"
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_delete_label_file(
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = labelme.app.MainWindow(
+        file_or_dir=str(data_path / "annotated"),
+    )
+    qtbot.addWidget(win)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    label_file = data_path / "annotated/2011_000003.json"
+    assert label_file.exists()
+
+    item = win._docks.file_list.currentItem()
+    assert item is not None
+    assert item.checkState() == Qt.Checked
+
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "warning",
+        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+    )
+    win.deleteFile()
+    qtbot.wait(50)
+
+    assert not label_file.exists()
+
+    item = win._docks.file_list.currentItem()
+    assert item is not None
+    assert item.checkState() == Qt.Unchecked
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

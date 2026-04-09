@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 import labelme.app
@@ -12,7 +11,7 @@ from labelme.widgets.canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
-from .conftest import image_to_widget_pos
+from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -34,14 +33,7 @@ def _open_and_select_shape(
     canvas = win._canvas_widgets.canvas
     assert len(canvas.shapes) == 5
 
-    shape_center = canvas.shapes[shape_index].boundingRect().center()
-    pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
-    qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
-    qtbot.wait(50)
-
-    assert len(canvas.selectedShapes) == 1
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
     return win, canvas
 
 
@@ -68,6 +60,63 @@ def test_select_shape(
     win, canvas = _open_and_select_shape(qtbot=qtbot, data_path=data_path)
 
     assert canvas.selectedShapes[0].label == "person"
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_copy_paste_shape(
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
+    )
+
+    original_label = canvas.selectedShapes[0].label
+    num_shapes_before = len(canvas.shapes)
+
+    win.copySelectedShape()
+    win.pasteSelectedShape()
+    qtbot.wait(50)
+
+    assert len(canvas.shapes) == num_shapes_before + 1
+    assert canvas.shapes[-1].label == original_label
+
+    win._save_label_file()
+    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_duplicate_shape(
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
+    )
+
+    num_shapes_before = len(canvas.shapes)
+
+    win.duplicateSelectedShape()
+    qtbot.wait(50)
+
+    assert len(canvas.shapes) == num_shapes_before + 1
+
+    win._save_label_file()
+    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
