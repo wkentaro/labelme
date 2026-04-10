@@ -10,7 +10,7 @@ from labelme.utils.qt import newIcon
 class InfoButton(QtWidgets.QToolButton):
     def __init__(self, tooltip: str, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent=parent)
-        self.setIcon(newIcon("info.svg"))
+        self.setIcon(newIcon("phosphor/info.svg"))
         self.setIconSize(QtCore.QSize(16, 16))
         self.setStyleSheet(
             """

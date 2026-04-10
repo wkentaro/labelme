@@ -308,7 +308,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Save\n"),
             slot=self._save_label_file,
             shortcut=shortcuts["save"],
-            icon="floppy-disk.svg",
+            icon="phosphor/floppy-disk.svg",
             tip=self.tr("Save labels to file"),
             enabled=False,
         )
@@ -316,7 +316,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Save As"),
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
-            icon="floppy-disk.svg",
+            icon="phosphor/floppy-disk.svg",
             tip=self.tr("Save labels to a different file"),
             enabled=False,
         )
@@ -338,35 +338,35 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Change Output Dir"),
             slot=self.changeOutputDirDialog,
             shortcut=shortcuts["save_to"],
-            icon="folders.svg",
+            icon="phosphor/folders.svg",
             tip=self.tr("Change where annotations are loaded/saved"),
         )
         open_ = action(
             text=self.tr("&Open\n"),
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
-            icon="folder-open.svg",
+            icon="phosphor/folder-open.svg",
             tip=self.tr("Open image or label file"),
         )
         open_dir = action(
             text=self.tr("Open Dir"),
             slot=self._open_dir_with_dialog,
             shortcut=shortcuts["open_dir"],
-            icon="folder-open.svg",
+            icon="phosphor/folder-open.svg",
             tip=self.tr("Open Dir"),
         )
         close = action(
             text=self.tr("&Close"),
             slot=self.closeFile,
             shortcut=shortcuts["close"],
-            icon="x-circle.svg",
+            icon="phosphor/x-circle.svg",
             tip=self.tr("Close current file"),
         )
         delete_file = action(
             text=self.tr("&Delete File"),
             slot=self.deleteFile,
             shortcut=shortcuts["delete_file"],
-            icon="file-x.svg",
+            icon="phosphor/file-x.svg",
             tip=self.tr("Delete current label file"),
             enabled=False,
         )
@@ -392,7 +392,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Delete Shapes"),
             self.deleteSelectedShape,
             shortcuts["delete_shape"],
-            icon="trash.svg",
+            icon="phosphor/trash.svg",
             tip=self.tr("Delete the selected shapes"),
             enabled=False,
         )
@@ -400,7 +400,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Edit Label"),
             self._edit_label,
             shortcuts["edit_label"],
-            icon="note-pencil.svg",
+            icon="phosphor/note-pencil.svg",
             tip=self.tr("Modify the label of the selected shape"),
             enabled=False,
         )
@@ -408,7 +408,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Duplicate Shapes"),
             self.duplicateSelectedShape,
             shortcuts["duplicate_shape"],
-            icon="copy.svg",
+            icon="phosphor/copy.svg",
             tip=self.tr("Create a duplicate of the selected shapes"),
             enabled=False,
         )
@@ -432,7 +432,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Undo last point"),
             self._canvas_widgets.canvas.undoLastPoint,
             shortcuts["undo_last_point"],
-            icon="arrow-u-up-left.svg",
+            icon="phosphor/arrow-u-up-left.svg",
             tip=self.tr("Undo last drawn point"),
             enabled=False,
         )
@@ -440,7 +440,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Undo\n"),
             self.undoShapeEdit,
             shortcuts["undo"],
-            icon="arrow-u-up-left.svg",
+            icon="phosphor/arrow-u-up-left.svg",
             tip=self.tr("Undo last add and edit of shape"),
             enabled=False,
         )
@@ -448,7 +448,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Remove Selected Point"),
             slot=self.removeSelectedPoint,
             shortcut=shortcuts["remove_selected_point"],
-            icon="trash.svg",
+            icon="phosphor/trash.svg",
             tip=self.tr("Remove selected point from polygon"),
             enabled=False,
         )
@@ -456,7 +456,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Polygon"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
             shortcut=shortcuts["create_polygon"],
-            icon="polygon.svg",
+            icon="phosphor/polygon.svg",
             tip=self.tr("Start drawing polygons"),
             enabled=False,
         )
@@ -464,7 +464,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Edit Shapes"),
             lambda: self._switch_canvas_mode(edit=True),
             shortcuts["edit_shape"],
-            icon="note-pencil.svg",
+            icon="phosphor/note-pencil.svg",
             tip=self.tr("Move and edit the selected shapes"),
             enabled=False,
         )
@@ -472,7 +472,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Rectangle"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
-            icon="rectangle.svg",
+            icon="phosphor/rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
             enabled=False,
         )
@@ -480,7 +480,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Circle"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
             shortcut=shortcuts["create_circle"],
-            icon="circle.svg",
+            icon="phosphor/circle.svg",
             tip=self.tr("Start drawing circles"),
             enabled=False,
         )
@@ -488,7 +488,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="line"),
             shortcut=shortcuts["create_line"],
-            icon="line-segment.svg",
+            icon="phosphor/line-segment.svg",
             tip=self.tr("Start drawing lines"),
             enabled=False,
         )
@@ -496,7 +496,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Point"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="point"),
             shortcut=shortcuts["create_point"],
-            icon="circles-four.svg",
+            icon="phosphor/circles-four.svg",
             tip=self.tr("Start drawing points"),
             enabled=False,
         )
@@ -504,7 +504,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("LineStrip"),
             slot=lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
-            icon="line-segments.svg",
+            icon="phosphor/line-segments.svg",
             tip=self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -530,7 +530,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Next Image"),
             slot=self._open_next_image,
             shortcut=shortcuts["open_next"],
-            icon="arrow-fat-right.svg",
+            icon="phosphor/arrow-fat-right.svg",
             tip=self.tr("Open next (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
@@ -538,7 +538,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Prev Image"),
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
-            icon="arrow-fat-left.svg",
+            icon="phosphor/arrow-fat-left.svg",
             tip=self.tr("Open prev (hold Ctl+Shift to copy labels)"),
             enabled=False,
         )
@@ -554,7 +554,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Fit Window"),
             self.setFitWindow,
             shortcuts["fit_window"],
-            icon="frame-corners.svg",
+            icon="phosphor/frame-corners.svg",
             tip=self.tr("Zoom follows window size"),
             checkable=True,
             enabled=False,
@@ -580,7 +580,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Zoom &In"),
             lambda _: self._add_zoom(increment=1.1),
             shortcuts["zoom_in"],
-            icon="magnifying-glass-minus.svg",
+            icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Increase zoom level"),
             enabled=False,
         )
@@ -588,7 +588,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Zoom Out"),
             lambda _: self._add_zoom(increment=0.9),
             shortcuts["zoom_out"],
-            icon="magnifying-glass-plus.svg",
+            icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Decrease zoom level"),
             enabled=False,
         )
@@ -596,20 +596,20 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Original size"),
             self._set_zoom_to_original,
             shortcuts["zoom_to_original"],
-            icon="image-square.svg",
+            icon="phosphor/image-square.svg",
             tip=self.tr("Zoom to original size"),
             enabled=False,
         )
         reset_layout = action(
             text=self.tr("Reset Layout"),
             slot=self._reset_layout,
-            icon="layout-duotone.svg",
+            icon="phosphor/layout-duotone.svg",
         )
         fill_drawing = action(
             self.tr("Fill Drawing Polygon"),
             self._canvas_widgets.canvas.setFillDrawing,
             None,
-            icon="paint-bucket.svg",
+            icon="phosphor/paint-bucket.svg",
             tip=self.tr("Fill polygon while drawing"),
             checkable=True,
             enabled=True,
@@ -620,7 +620,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Hide\nShapes"),
             functools.partial(self.toggleShapes, False),
             shortcuts["hide_all_shapes"],
-            icon="eye.svg",
+            icon="phosphor/eye.svg",
             tip=self.tr("Hide all shapes"),
             enabled=False,
         )
@@ -628,7 +628,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Show\nShapes"),
             functools.partial(self.toggleShapes, True),
             shortcuts["show_all_shapes"],
-            icon="eye.svg",
+            icon="phosphor/eye.svg",
             tip=self.tr("Show all shapes"),
             enabled=False,
         )
@@ -636,7 +636,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Toggle\nShapes"),
             functools.partial(self.toggleShapes, None),
             shortcuts["toggle_all_shapes"],
-            icon="eye.svg",
+            icon="phosphor/eye.svg",
             tip=self.tr("Toggle all shapes"),
             enabled=False,
         )
@@ -799,7 +799,7 @@ class MainWindow(QtWidgets.QMainWindow):
         help_ = action(
             self.tr("&Tutorial"),
             self.tutorial,
-            icon="question.svg",
+            icon="phosphor/question.svg",
             tip=self.tr("Show tutorial page"),
         )
 
