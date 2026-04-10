@@ -127,7 +127,7 @@ class Shape:
 
     def addPoint(self, point: QtCore.QPointF, label: int = 1) -> None:
         if self.points and self.points[0] == point:
-            self._closed = True
+            self.close()
             return
         self.points.append(point)
         self.point_labels.append(label)
