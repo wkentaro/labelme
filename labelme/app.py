@@ -1949,11 +1949,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def toggleShapes(self, value: bool | None) -> None:
-        flag = value
         for item in self._docks.label_list:
-            if value is None:
-                flag = item.checkState() == Qt.Unchecked
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
+            target = item.checkState() == Qt.Unchecked if value is None else value
+            item.setCheckState(Qt.Checked if target else Qt.Unchecked)
 
     def _get_label_path(self, image_or_label_path: str) -> str:
         if LabelFile.is_label_file(filename=image_or_label_path):
@@ -2125,15 +2123,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def scaleFitWindow(self) -> float:
         EPSILON_TO_HIDE_SCROLLBAR: float = 2.0
-        w1: float = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        h1: float = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
-        a1: float = w1 / h1
+        viewport_w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
+        viewport_h = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
 
-        w2: float = self._canvas_widgets.canvas.pixmap.width()
-        h2: float = self._canvas_widgets.canvas.pixmap.height()
-        a2: float = w2 / h2
+        pixmap_w = self._canvas_widgets.canvas.pixmap.width()
+        pixmap_h = self._canvas_widgets.canvas.pixmap.height()
 
-        return w1 / w2 if a2 >= a1 else h1 / h2
+        scale_by_width = viewport_w / pixmap_w
+        scale_by_height = viewport_h / pixmap_h
+        return min(scale_by_width, scale_by_height)
 
     def scaleFitWidth(self) -> float:
         EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
@@ -2310,24 +2308,30 @@ class MainWindow(QtWidgets.QMainWindow):
         return f"{osp.splitext(self._image_path)[0]}.json"
 
     def deleteFile(self) -> None:
-        mb = QtWidgets.QMessageBox
         msg = self.tr(
             "You are about to permanently delete this label file, proceed anyway?"
         )
-        answer = mb.warning(self, self.tr("Attention"), msg, mb.Yes | mb.No)
-        if answer != mb.Yes:
+        answer = QtWidgets.QMessageBox.warning(
+            self,
+            self.tr("Attention"),
+            msg,
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+        )
+        if answer != QtWidgets.QMessageBox.Yes:
             return
 
-        label_file = self.getLabelFile()
-        if osp.exists(label_file):
-            os.remove(label_file)
-            logger.info(f"Label file is removed: {label_file}")
+        annotation_path = self.getLabelFile()
+        if not osp.exists(annotation_path):
+            return
 
-            item = self._docks.file_list.currentItem()
-            if item:
-                item.setCheckState(Qt.Unchecked)
+        os.remove(annotation_path)
+        logger.info(f"Label file is removed: {annotation_path}")
 
-            self.resetState()
+        item = self._docks.file_list.currentItem()
+        if item:
+            item.setCheckState(Qt.Unchecked)
+
+        self.resetState()
 
     def _open_config_file(self) -> None:
         if self._config_file is None:
@@ -2372,24 +2376,22 @@ class MainWindow(QtWidgets.QMainWindow):
     def _can_continue(self) -> bool:
         if not self._is_changed:
             return True
-        mb = QtWidgets.QMessageBox
-        msg = self.tr('Save annotations to "{}" before closing?').format(
+        prompt_text = self.tr('Save annotations to "{}" before closing?').format(
             self._image_path
         )
-        answer = mb.question(
+        user_choice = QtWidgets.QMessageBox.question(
             self,
             self.tr("Save annotations?"),
-            msg,
-            mb.Save | mb.Discard | mb.Cancel,
-            mb.Save,
+            prompt_text,
+            QtWidgets.QMessageBox.Save
+            | QtWidgets.QMessageBox.Discard
+            | QtWidgets.QMessageBox.Cancel,
+            QtWidgets.QMessageBox.Save,
         )
-        if answer == mb.Discard:
-            return True
-        elif answer == mb.Save:
+        if user_choice == QtWidgets.QMessageBox.Save:
             self._save_label_file()
             return True
-        else:  # answer == mb.Cancel
-            return False
+        return user_choice == QtWidgets.QMessageBox.Discard
 
     def errorMessage(self, title: str, message: str) -> int:
         return QtWidgets.QMessageBox.critical(

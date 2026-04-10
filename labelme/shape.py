@@ -67,9 +67,10 @@ class Shape:
         # Highlight state: which vertex is highlighted and how it looks
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
-        self._highlightSettings = {
-            self.NEAR_VERTEX: (4, self.P_ROUND),
-            self.MOVE_VERTEX: (1.5, self.P_SQUARE),
+        self._highlight_sizes = {self.NEAR_VERTEX: 4, self.MOVE_VERTEX: 1.5}
+        self._highlight_shapes = {
+            self.NEAR_VERTEX: self.P_ROUND,
+            self.MOVE_VERTEX: self.P_SQUARE,
         }
 
         self._closed = False
@@ -125,11 +126,11 @@ class Shape:
         self._closed = True
 
     def addPoint(self, point: QtCore.QPointF, label: int = 1) -> None:
-        if self.points and point == self.points[0]:
+        if self.points and self.points[0] == point:
             self.close()
-        else:
-            self.points.append(point)
-            self.point_labels.append(label)
+            return
+        self.points.append(point)
+        self.point_labels.append(label)
 
     def canAddPoint(self) -> bool:
         return self.shape_type in ["polygon", "linestrip"]
@@ -287,21 +288,27 @@ class Shape:
 
     def drawVertex(self, path: QtGui.QPainterPath, i: int) -> None:
         d = self.point_size
-        shape = self.point_type
-        point = self._scale_point(self.points[i])
-        if i == self._highlightIndex:
-            size, shape = self._highlightSettings[self._highlightMode]
-            d *= size  # type: ignore[assignment]
-        if self._highlightIndex is not None:
-            self._current_vertex_fill_color = self.hvertex_fill_color
+        vertex_shape = self.point_type
+        pos = self._scale_point(self.points[i])
+
+        is_highlighted = self._highlightIndex is not None and self._highlightIndex == i
+        if is_highlighted:
+            d *= self._highlight_sizes[self._highlightMode]
+            vertex_shape = self._highlight_shapes[self._highlightMode]
+
+        self._current_vertex_fill_color = (
+            self.hvertex_fill_color
+            if self._highlightIndex is not None
+            else self.vertex_fill_color
+        )
+
+        half = d / 2.0
+        if vertex_shape == self.P_SQUARE:
+            path.addRect(pos.x() - half, pos.y() - half, d, d)
+        elif vertex_shape == self.P_ROUND:
+            path.addEllipse(pos, half, half)
         else:
-            self._current_vertex_fill_color = self.vertex_fill_color
-        if shape == self.P_SQUARE:
-            path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
-        elif shape == self.P_ROUND:
-            path.addEllipse(point, d / 2.0, d / 2.0)
-        else:
-            assert False, "unsupported vertex shape"
+            raise ValueError(f"Unsupported vertex shape: {vertex_shape}")
 
     def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         min_distance = float("inf")

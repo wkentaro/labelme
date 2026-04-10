@@ -15,11 +15,9 @@ from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QStyle
 
 
-# https://stackoverflow.com/a/2039745/4158863
 class HTMLDelegate(QtWidgets.QStyledItemDelegate):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
-        super().__init__()
-        self.doc = QtGui.QTextDocument(self)
+        super().__init__(parent)
 
     def paint(
         self,
@@ -27,48 +25,37 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         option: QtWidgets.QStyleOptionViewItem,
         index: QtCore.QModelIndex,
     ) -> None:
-        painter.save()
+        opt = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
 
-        options = QtWidgets.QStyleOptionViewItem(option)
+        html = opt.text
+        opt.text = ""
 
-        self.initStyleOption(options, index)
-        self.doc.setHtml(options.text)
-        options.text = ""
-
-        style = (
-            QtWidgets.QApplication.style()
-            if options.widget is None
-            else options.widget.style()
+        widget_style = (
+            opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
-        style.drawControl(QStyle.CE_ItemViewItem, options, painter)
+        widget_style.drawControl(QStyle.CE_ItemViewItem, opt, painter)
 
-        ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
-
-        if option.state & QStyle.State_Selected:
-            ctx.palette.setColor(
-                QPalette.Text,
-                option.palette.color(QPalette.Active, QPalette.HighlightedText),
-            )
+        doc = QtGui.QTextDocument()
+        if opt.state & QStyle.State_Selected:
+            text_color = opt.palette.color(QPalette.Active, QPalette.HighlightedText)
         else:
-            ctx.palette.setColor(
-                QPalette.Text,
-                option.palette.color(QPalette.Active, QPalette.Text),
-            )
+            text_color = opt.palette.color(QPalette.Active, QPalette.Text)
+        doc.setDefaultStyleSheet(f"body {{ color: {text_color.name()}; }}")
+        doc.setHtml(f"<body>{html}</body>")
 
-        textRect = style.subElementRect(QStyle.SE_ItemViewItemText, options)
-
+        text_rect = widget_style.subElementRect(QStyle.SE_ItemViewItemText, opt)
         if index.column() != 0:
-            textRect.adjust(5, 0, 0, 0)
+            text_rect.adjust(5, 0, 0, 0)
 
-        thefuckyourshitup_constant = 4
-        margin = (option.rect.height() - options.fontMetrics.height()) // 2
-        margin = margin - thefuckyourshitup_constant
-        textRect.setTop(textRect.top() + margin)
+        VERT_FUDGE = 4
+        margin = (option.rect.height() - opt.fontMetrics.height()) // 2 - VERT_FUDGE
+        text_rect.setTop(text_rect.top() + margin)
 
-        painter.translate(textRect.topLeft())
-        painter.setClipRect(textRect.translated(-textRect.topLeft()))
-        self.doc.documentLayout().draw(painter, ctx)
-
+        painter.save()
+        painter.translate(text_rect.topLeft())
+        painter.setClipRect(text_rect.translated(-text_rect.topLeft()))
+        doc.drawContents(painter)
         painter.restore()
 
     def sizeHint(
@@ -76,11 +63,17 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         option: QtWidgets.QStyleOptionViewItem | None,
         index: QtCore.QModelIndex | None,
     ) -> QtCore.QSize:
-        thefuckyourshitup_constant = 4
-        return QtCore.QSize(
-            int(self.doc.idealWidth()),
-            int(self.doc.size().height() - thefuckyourshitup_constant),
-        )
+        VERT_FUDGE = 4
+        if option is not None and index is not None:
+            opt = QtWidgets.QStyleOptionViewItem(option)
+            self.initStyleOption(opt, index)
+            doc = QtGui.QTextDocument()
+            doc.setHtml(opt.text)
+            height = int(doc.size().height()) - VERT_FUDGE
+            return QtCore.QSize(int(doc.idealWidth()), height)
+        doc = QtGui.QTextDocument()
+        height = int(doc.size().height()) - VERT_FUDGE
+        return QtCore.QSize(int(doc.idealWidth()), height)
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):

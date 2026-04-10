@@ -21,8 +21,10 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
-        self.setModal(True)
         self.setWindowTitle(self.tr("Brightness/Contrast"))
+        self.setModal(True)
+
+        self._on_image_changed = callback
 
         sliders = {}
         layouts = {}
@@ -68,7 +70,6 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         if img.mode != "RGB":
             img = img.convert("RGB")
         self.img = img
-        self.callback = callback
 
     def onNewValue(self, _: int | None) -> None:
         brightness = self.slider_brightness.value() / self._base_value
@@ -91,4 +92,4 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         qimage = QImage(
             img.tobytes(), img.width, img.height, img.width * len(img.getbands()), fmt
         )
-        self.callback(qimage)
+        self._on_image_changed(qimage)

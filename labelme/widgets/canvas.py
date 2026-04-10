@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections
 import enum
 from collections.abc import Iterator
 from typing import Any
@@ -42,7 +43,7 @@ class Canvas(QtWidgets.QWidget):
     _pixmap_hash: int | None
     _cursor: QtCore.Qt.CursorShape
     shapes: list[Shape]
-    shapesBackups: list[list[Shape]]
+    shapesBackups: collections.deque[list[Shape]]
     movingShape: bool
     selectedShapes: list[Shape]
     selectedShapesCopy: list[Shape]
@@ -209,12 +210,7 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def storeShapes(self) -> None:
-        shapesBackup = []
-        for shape in self.shapes:
-            shapesBackup.append(shape.copy())
-        if len(self.shapesBackups) > self.num_backups:
-            self.shapesBackups = self.shapesBackups[-self.num_backups - 1 :]
-        self.shapesBackups.append(shapesBackup)
+        self.shapesBackups.append([s.copy() for s in self.shapes])
 
     @property
     def isShapeRestorable(self) -> bool:
@@ -753,26 +749,20 @@ class Canvas(QtWidgets.QWidget):
             self.update()
 
     def calculateOffsets(self, point: QPointF) -> None:
-        left = self.pixmap.width() - 1
-        right = 0
-        top = self.pixmap.height() - 1
-        bottom = 0
-        for s in self.selectedShapes:
-            rect = s.boundingRect()
-            if rect.left() < left:
-                left = rect.left()
-            if rect.right() > right:
-                right = rect.right()
-            if rect.top() < top:
-                top = rect.top()
-            if rect.bottom() > bottom:
-                bottom = rect.bottom()
+        if not self.selectedShapes:
+            self.offsets = QPointF(0.0, 0.0), QPointF(0.0, 0.0)
+            return
 
-        x1 = left - point.x()
-        y1 = top - point.y()
-        x2 = right - point.x()
-        y2 = bottom - point.y()
-        self.offsets = QPointF(x1, y1), QPointF(x2, y2)
+        rects = [s.boundingRect() for s in self.selectedShapes]
+        left = min(r.left() for r in rects)
+        top = min(r.top() for r in rects)
+        right = max(r.right() for r in rects)
+        bottom = max(r.bottom() for r in rects)
+
+        self.offsets = (
+            QPointF(left - point.x(), top - point.y()),
+            QPointF(right - point.x(), bottom - point.y()),
+        )
 
     def boundedMoveVertex(
         self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
@@ -799,28 +789,27 @@ class Canvas(QtWidgets.QWidget):
 
     def boundedMoveShapes(self, shapes: list[Shape], pos: QPointF) -> bool:
         if self.outOfPixmap(pos):
-            return False  # No need to move
-        o1 = pos + self.offsets[0]
-        if self.outOfPixmap(o1):
-            pos -= QPointF(min(0, o1.x()), min(0, o1.y()))
-        o2 = pos + self.offsets[1]
-        if self.outOfPixmap(o2):
+            return False
+
+        tl = pos + self.offsets[0]
+        if self.outOfPixmap(tl):
+            pos -= QPointF(min(0, tl.x()), min(0, tl.y()))
+
+        br = pos + self.offsets[1]
+        if self.outOfPixmap(br):
             pos += QPointF(
-                min(0, self.pixmap.width() - o2.x()),
-                min(0, self.pixmap.height() - o2.y()),
+                min(0, self.pixmap.width() - br.x()),
+                min(0, self.pixmap.height() - br.y()),
             )
-        # XXX: The next line tracks the new position of the cursor
-        # relative to the shape, but also results in making it
-        # a bit "shaky" when nearing the border and allows it to
-        # go outside of the shape's area for some reason.
-        # self.calculateOffsets(self.selectedShapes, pos)
+
         dp = pos - self.prevPoint
-        if not dp.isNull():
-            for shape in shapes:
-                shape.moveBy(dp)
-            self.prevPoint = pos
-            return True
-        return False
+        if dp.isNull():
+            return False
+
+        for shape in shapes:
+            shape.moveBy(dp)
+        self.prevPoint = pos
+        return True
 
     def deSelectShape(self) -> bool:
         need_update: bool = False
@@ -1161,7 +1150,7 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
         self.shapes = []
-        self.shapesBackups = []
+        self.shapesBackups = collections.deque(maxlen=self.num_backups)
         self.movingShape = False
         self.selectedShapes = []
         self.selectedShapesCopy = []
