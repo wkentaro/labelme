@@ -287,13 +287,13 @@ class Shape:
             painter.fillPath(negative_vrtx_path, QtGui.QColor(255, 0, 0, 255))
 
     def drawVertex(self, path: QtGui.QPainterPath, i: int) -> None:
-        half_size = self.point_size / (2.0 * self.scale)
+        d = self.point_size
         vertex_shape = self.point_type
         pos = self._scale_point(self.points[i])
 
         is_highlighted = self._highlightIndex is not None and self._highlightIndex == i
         if is_highlighted:
-            half_size *= self._highlight_sizes[self._highlightMode]
+            d *= self._highlight_sizes[self._highlightMode]
             vertex_shape = self._highlight_shapes[self._highlightMode]
 
         self._current_vertex_fill_color = (
@@ -302,12 +302,11 @@ class Shape:
             else self.vertex_fill_color
         )
 
+        half = d / 2.0
         if vertex_shape == self.P_SQUARE:
-            path.addRect(
-                pos.x() - half_size, pos.y() - half_size, half_size * 2, half_size * 2
-            )
+            path.addRect(pos.x() - half, pos.y() - half, d, d)
         elif vertex_shape == self.P_ROUND:
-            path.addEllipse(pos, half_size, half_size)
+            path.addEllipse(pos, half, half)
         else:
             raise ValueError(f"Unsupported vertex shape: {vertex_shape}")
 

@@ -791,21 +791,16 @@ class Canvas(QtWidgets.QWidget):
         if self.outOfPixmap(pos):
             return False
 
-        pw = self.pixmap.width()
-        ph = self.pixmap.height()
+        tl = pos + self.offsets[0]
+        if self.outOfPixmap(tl):
+            pos -= QPointF(min(0, tl.x()), min(0, tl.y()))
 
-        proposed_tl = pos + self.offsets[0]
-        proposed_br = pos + self.offsets[1]
-
-        cx = max(0.0, min(pos.x(), pos.x() + pw - proposed_br.x()))
-        if proposed_tl.x() < 0:
-            cx = max(cx, pos.x() - proposed_tl.x())
-
-        cy = max(0.0, min(pos.y(), pos.y() + ph - proposed_br.y()))
-        if proposed_tl.y() < 0:
-            cy = max(cy, pos.y() - proposed_tl.y())
-
-        pos = QPointF(cx, cy)
+        br = pos + self.offsets[1]
+        if self.outOfPixmap(br):
+            pos += QPointF(
+                min(0, self.pixmap.width() - br.x()),
+                min(0, self.pixmap.height() - br.y()),
+            )
 
         dp = pos - self.prevPoint
         if dp.isNull():

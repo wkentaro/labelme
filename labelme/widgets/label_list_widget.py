@@ -48,10 +48,13 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         if index.column() != 0:
             text_rect.adjust(5, 0, 0, 0)
 
+        VERT_FUDGE = 4
+        margin = (option.rect.height() - opt.fontMetrics.height()) // 2 - VERT_FUDGE
+        text_rect.setTop(text_rect.top() + margin)
+
         painter.save()
         painter.translate(text_rect.topLeft())
         painter.setClipRect(text_rect.translated(-text_rect.topLeft()))
-        doc.setTextWidth(text_rect.width())
         doc.drawContents(painter)
         painter.restore()
 
@@ -60,15 +63,17 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         option: QtWidgets.QStyleOptionViewItem | None,
         index: QtCore.QModelIndex | None,
     ) -> QtCore.QSize:
+        VERT_FUDGE = 4
         if option is not None and index is not None:
             opt = QtWidgets.QStyleOptionViewItem(option)
             self.initStyleOption(opt, index)
             doc = QtGui.QTextDocument()
             doc.setHtml(opt.text)
-            doc.setTextWidth(opt.rect.width())
-            return QtCore.QSize(int(doc.idealWidth()), int(doc.size().height()))
+            height = int(doc.size().height()) - VERT_FUDGE
+            return QtCore.QSize(int(doc.idealWidth()), height)
         doc = QtGui.QTextDocument()
-        return QtCore.QSize(int(doc.idealWidth()), int(doc.size().height()))
+        height = int(doc.size().height()) - VERT_FUDGE
+        return QtCore.QSize(int(doc.idealWidth()), height)
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
