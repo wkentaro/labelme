@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections
 import enum
 from collections.abc import Iterator
 from typing import Any
@@ -42,7 +43,7 @@ class Canvas(QtWidgets.QWidget):
     _pixmap_hash: int | None
     _cursor: QtCore.Qt.CursorShape
     shapes: list[Shape]
-    shapesBackups: list[list[Shape]]
+    shapesBackups: collections.deque[list[Shape]]
     movingShape: bool
     selectedShapes: list[Shape]
     selectedShapesCopy: list[Shape]
@@ -209,8 +210,6 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def storeShapes(self) -> None:
-        while len(self.shapesBackups) > self.num_backups:
-            self.shapesBackups.pop(0)
         self.shapesBackups.append([s.copy() for s in self.shapes])
 
     @property
@@ -1156,7 +1155,7 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
         self.shapes = []
-        self.shapesBackups = []
+        self.shapesBackups = collections.deque(maxlen=self.num_backups)
         self.movingShape = False
         self.selectedShapes = []
         self.selectedShapesCopy = []
