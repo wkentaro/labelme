@@ -22,7 +22,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
     ) -> None:
         super().__init__(parent)
         self.setModal(True)
-        self.setWindowTitle("Brightness/Contrast")
+        self.setWindowTitle(self.tr("Brightness/Contrast"))
 
         sliders = {}
         layouts = {}
