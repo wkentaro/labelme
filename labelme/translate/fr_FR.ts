@@ -58,6 +58,14 @@
     </message>
 </context>
 <context>
+    <name>BrightnessContrastDialog</name>
+    <message>
+        <location filename="../widgets/brightness_contrast_dialog.py" line="0"/>
+        <source>Brightness/Contrast</source>
+        <translation>Luminosité/Contraste</translation>
+    </message>
+</context>
+<context>
     <name>Canvas</name>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
