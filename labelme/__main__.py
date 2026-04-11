@@ -16,12 +16,14 @@ from typing import AnyStr
 import yaml
 from loguru import logger
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_user_config_file
+from labelme.config import load_config
 from labelme.utils import newIcon
 
 
@@ -110,6 +112,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
     parser.add_argument("--reset-config", action="store_true", help="reset qt config")
+    parser.add_argument(
+        "--dark-mode",
+        dest="dark_mode",
+        action="store_true",
+        help="enable dark mode",
+        default=argparse.SUPPRESS,
+    )
     parser.add_argument(
         "--logger-level",
         default="debug",
@@ -287,6 +296,9 @@ def main() -> None:
             )
         output_dir = output
 
+    # Load full config to get dark_mode setting (before GUI starts)
+    full_config = load_config(config_file, config_overrides)
+
     translator = QtCore.QTranslator()
     translator.load(
         QtCore.QLocale.system().name(),
@@ -294,8 +306,97 @@ def main() -> None:
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
-    # Force light mode to avoid dark mode UI issues (e.g., invisible icons)
-    app.setPalette(QtWidgets.QStyleFactory.create("Fusion").standardPalette())
+
+    # Check if dark mode is enabled in config
+    dark_mode_enabled = full_config.get("dark_mode", False)
+    logger.info(f"Dark mode enabled from config: {dark_mode_enabled}")
+
+    if dark_mode_enabled:
+        # Dark mode palette for eye comfort during long annotation sessions
+        dark_palette = QtGui.QPalette()
+        dark_palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
+        dark_palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.Base, QtGui.QColor(35, 35, 35))
+        dark_palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(53, 53, 53))
+        dark_palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.Text, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
+        dark_palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
+        dark_palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(42, 130, 218))
+        dark_palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
+        dark_palette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.Text, QtGui.QColor(127, 127, 127))
+        dark_palette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, QtGui.QColor(127, 127, 127))
+        app.setPalette(dark_palette)
+
+    # Dark mode stylesheet for all Qt widgets
+    dark_stylesheet = """
+    QWidget { background-color: #353535; color: #ffffff; }
+    QMainWindow { background-color: #353535; }
+    QMenuBar { background-color: #353535; color: #ffffff; }
+    QMenuBar::item:selected { background-color: #2a82da; }
+    QMenu { background-color: #353535; color: #ffffff; border: 1px solid #555555; }
+    QMenu::item:selected { background-color: #2a82da; }
+    QToolBar { background-color: #353535; border: none; }
+    QToolButton { background-color: #353535; color: #ffffff; border: none; padding: 4px; }
+    QToolButton:hover { background-color: #2a82da; }
+    QToolButton:pressed { background-color: #1a62a8; }
+    QToolButton:checked { background-color: #2a82da; }
+    QPushButton { background-color: #454545; color: #ffffff; border: 1px solid #555555; padding: 4px 12px; border-radius: 3px; }
+    QPushButton:hover { background-color: #555555; }
+    QPushButton:pressed { background-color: #333333; }
+    QPushButton:checked { background-color: #2a82da; color: #000000; }
+    QPushButton:disabled { background-color: #404040; color: #777777; }
+    QLineEdit, QTextEdit, QPlainTextEdit { background-color: #232323; color: #ffffff; border: 1px solid #555555; padding: 2px; }
+    QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus { border: 1px solid #2a82da; }
+    QComboBox { background-color: #454545; color: #ffffff; border: 1px solid #555555; padding: 4px; }
+    QComboBox:hover { background-color: #555555; }
+    QComboBox::drop-down { border: none; }
+    QComboBox::down-arrow { image: none; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid #ffffff; }
+    QListWidget { background-color: #232323; color: #ffffff; border: 1px solid #555555; }
+    QListWidget::item:selected { background-color: #2a82da; color: #000000; }
+    QListWidget::item:hover { background-color: #454545; }
+    QTreeWidget, QTreeView { background-color: #232323; color: #ffffff; border: 1px solid #555555; }
+    QTreeWidget::item:selected { background-color: #2a82da; color: #000000; }
+    QHeaderView::section { background-color: #454545; color: #ffffff; border: 1px solid #555555; padding: 4px; }
+    QScrollBar:vertical { background: #353535; width: 12px; margin: 0px; }
+    QScrollBar::handle:vertical { background: #555555; min-height: 20px; border-radius: 5px; }
+    QScrollBar::handle:vertical:hover { background: #666666; }
+    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }
+    QScrollBar:horizontal { background: #353535; height: 12px; margin: 0px; }
+    QScrollBar::handle:horizontal { background: #555555; min-width: 20px; border-radius: 5px; }
+    QScrollBar::handle:horizontal:hover { background: #666666; }
+    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0px; }
+    QLabel { color: #ffffff; background-color: transparent; }
+    QCheckBox { color: #ffffff; spacing: 8px; }
+    QCheckBox::indicator { width: 16px; height: 16px; border: 1px solid #555555; background-color: #232323; }
+    QCheckBox::indicator:checked { background-color: #2a82da; border: 1px solid #2a82da; }
+    QRadioButton { color: #ffffff; spacing: 8px; }
+    QRadioButton::indicator { width: 16px; height: 16px; border: 1px solid #555555; border-radius: 7px; background-color: #232323; }
+    QRadioButton::indicator:checked { background-color: #2a82da; border: 1px solid #2a82da; }
+    QGroupBox { color: #ffffff; border: 1px solid #555555; border-radius: 3px; margin-top: 8px; padding-top: 16px; }
+    QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; left: 8px; }
+    QTabWidget::pane { border: 1px solid #555555; background-color: #353535; }
+    QTabBar::tab { background-color: #353535; color: #ffffff; border: 1px solid #555555; padding: 6px 12px; }
+    QTabBar::tab:selected { background-color: #2a82da; color: #000000; }
+    QTabBar::tab:hover { background-color: #454545; }
+    QDockWidget { color: #ffffff; titlebar-close-icon: url(none); titlebar-normal-icon: url(none); }
+    QDockWidget::title { background-color: #353535; color: #ffffff; padding: 4px; }
+    QDockWidget::content { background-color: #353535; }
+    QStatusBar { background-color: #353535; color: #ffffff; }
+    QSpinBox, QDoubleSpinBox { background-color: #232323; color: #ffffff; border: 1px solid #555555; padding: 2px; }
+    QSpinBox::up-button, QDoubleSpinBox::up-button { background-color: #454545; border-left: 1px solid #555555; }
+    QSpinBox::down-button, QDoubleSpinBox::down-button { background-color: #454545; border-left: 1px solid #555555; border-right: none; }
+    QSlider::groove:horizontal { background: #555555; height: 4px; }
+    QSlider::handle:horizontal { background: #2a82da; width: 14px; margin: -5px 0; border-radius: 7px; }
+    QSlider::add-page:horizontal { background: #2a82da; }
+    QSlider::sub-page:horizontal { background: #555555; }
+    QProgressBar { background-color: #232323; color: #ffffff; border: 1px solid #555555; text-align: center; }
+    QProgressBar::chunk { background-color: #2a82da; }
+    """
+    if dark_mode_enabled:
+        app.setStyleSheet(dark_stylesheet)
     app.setApplicationName(__appname__)
     app.setWindowIcon(newIcon("icon"))
     app.installTranslator(translator)
