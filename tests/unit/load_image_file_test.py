@@ -26,10 +26,12 @@ def test_tiff_without_alpha_encoded_as_jpeg(tmp_path: Path) -> None:
     assert data[:2] == b"\xff\xd8"
 
 
-def test_tiff_with_alpha_encoded_as_png(tmp_path: Path) -> None:
+def test_tiff_with_4_bands_drops_extra_band(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.tiff", mode="RGBA")
     data = LabelFile.load_image_file(str(path))
-    assert data[:4] == b"\x89PNG"
+    assert data[:2] == b"\xff\xd8"
+    img = PIL.Image.open(io.BytesIO(data))
+    assert img.mode == "RGB"
 
 
 def test_jpeg_returns_raw_bytes(tmp_path: Path) -> None:

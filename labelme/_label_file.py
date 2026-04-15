@@ -289,42 +289,42 @@ _DISPLAYABLE_MODES = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
 
 def _imread(filename: str) -> PIL.Image.Image:
-    ext: str = osp.splitext(filename)[1].lower()
-    try:
-        image_pil = PIL.Image.open(filename)
-        if image_pil.mode not in _DISPLAYABLE_MODES:
-            raise PIL.UnidentifiedImageError
-        return image_pil
-    except PIL.UnidentifiedImageError:
-        if ext in (".tif", ".tiff"):
-            return _imread_tiff(filename)
-        raise
+    ext = osp.splitext(filename)[1].lower()
+    if ext in (".tif", ".tiff"):
+        return _imread_tiff(filename)
+    image_pil = PIL.Image.open(filename)
+    if image_pil.mode not in _DISPLAYABLE_MODES:
+        raise PIL.UnidentifiedImageError
+    return image_pil
 
 
 def _imread_tiff(filename: str) -> PIL.Image.Image:
     img_arr: NDArray = tifffile.imread(filename)
 
     if img_arr.ndim == 2:
-        img_arr_normalized = _normalize_to_uint8(img_arr)
+        img_uint8 = _to_uint8(img_arr)
     elif img_arr.ndim == 3:
         if img_arr.shape[2] >= 3:
-            img_arr_normalized = np.stack(
-                [_normalize_to_uint8(img_arr[:, :, i]) for i in range(3)],
-                axis=2,
-            )
+            img_uint8 = _to_uint8(img_arr[:, :, :3])
         else:
-            img_arr_normalized = _normalize_to_uint8(img_arr[:, :, 0])
+            img_uint8 = _to_uint8(img_arr[:, :, 0])
     else:
         raise OSError(f"Unsupported image shape: {img_arr.shape}")
 
-    return PIL.Image.fromarray(img_arr_normalized)
+    return PIL.Image.fromarray(img_uint8)
+
+
+def _to_uint8(arr: NDArray) -> NDArray[np.uint8]:
+    if arr.dtype == np.uint8:
+        return np.asarray(arr, dtype=np.uint8)
+    return _normalize_to_uint8(arr)
 
 
 def _normalize_to_uint8(arr: NDArray) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
-    min_val = np.nanmin(arr)
-    max_val = np.nanmax(arr)
-    if np.isnan(min_val) or np.isnan(max_val) or max_val - min_val == 0:
+    lo = np.nanpercentile(arr, q=2)
+    hi = np.nanpercentile(arr, q=98)
+    if np.isnan(lo) or np.isnan(hi) or hi - lo == 0:
         return np.zeros(arr.shape, dtype=np.uint8)
-    normalized = (arr - min_val) / (max_val - min_val) * 255
+    normalized = (arr - lo) / (hi - lo) * 255
     return np.clip(normalized, 0, 255).astype(np.uint8)
