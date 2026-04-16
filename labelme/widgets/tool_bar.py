@@ -42,6 +42,8 @@ class ToolBar(QtWidgets.QToolBar):
                 " background: palette(mid); }"
             )
         utils.addActions(widget=self, actions=actions)
+        if orientation == Qt.Vertical:
+            self._equalize_button_widths()
 
     def addAction(self, action: QtWidgets.QAction) -> None:  # type: ignore[override]
         if isinstance(action, QtWidgets.QWidgetAction):
@@ -55,3 +57,19 @@ class ToolBar(QtWidgets.QToolBar):
         for i in range(self.layout().count()):
             if isinstance(self.layout().itemAt(i).widget(), QtWidgets.QToolButton):
                 self.layout().itemAt(i).setAlignment(QtCore.Qt.AlignCenter)
+
+    def _equalize_button_widths(self) -> None:
+        layout = self.layout()
+        buttons: list[QtWidgets.QToolButton] = []
+        for i in range(layout.count()):
+            widget = layout.itemAt(i).widget()
+            if isinstance(widget, QtWidgets.QToolButton):
+                buttons.append(widget)
+        if not buttons:
+            return
+        max_width = 0
+        for btn in buttons:
+            btn.ensurePolished()
+            max_width = max(max_width, btn.sizeHint().width())
+        for btn in buttons:
+            btn.setMinimumWidth(max_width)
