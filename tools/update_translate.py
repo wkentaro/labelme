@@ -44,37 +44,35 @@ def main() -> None:
         logger.warning("lrelease version is not 5.15.x, skipping .qm generation")
         return
 
-    languages: list[str] = sorted(
-        [ts_file.stem for ts_file in labelme_translate_path.glob("*.ts")]
-    )
-    for lang in languages:
-        ts_path: Path = labelme_translate_path / f"{lang}.ts"
-        subprocess.check_call(
-            [
-                "pylupdate5",
-                "-noobsolete",
-                *labelme_files,
-                "-ts",
-                str(ts_path),
-            ]
-        )
-        assert ts_path.exists()
+    ts_paths: list[Path] = sorted(labelme_translate_path.glob("*.ts"))
 
+    # Batch all languages into a single pylupdate5 call (~10x faster)
+    subprocess.check_call(
+        [
+            "pylupdate5",
+            "-noobsolete",
+            *labelme_files,
+            "-ts",
+            *ts_paths,
+        ]
+    )
+
+    for ts_path in ts_paths:
         # Zero out line numbers to reduce unnecessary diffs in .ts file
         ts_content: str = ts_path.read_text()
         new_ts_content: str = re.sub(r'line="\d+"', 'line="0"', ts_content)
         assert ts_content.strip() != new_ts_content.strip()
         ts_path.write_text(new_ts_content)
-        logger.info("updated .ts file: {}", ts_path)
 
-        qm_path: Path = labelme_translate_path / f"{lang}.qm"
+        qm_path: Path = ts_path.with_suffix(".qm")
         subprocess.check_call(
             ["lrelease", ts_path, "-qm", qm_path],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
         assert qm_path.exists()
-        logger.info("updated .qm file: {}", qm_path)
+
+    logger.info("updated {} languages", len(ts_paths))
 
 
 if __name__ == "__main__":
