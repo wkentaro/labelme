@@ -1192,7 +1192,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Even if we autosave the file, we keep the ability to undo
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
 
-        if self._config["auto_save"] or self._actions.save_auto.isChecked():
+        if self._actions.save_auto.isChecked():
             assert self._image_path
             label_file = f"{osp.splitext(self._image_path)[0]}.json"
             if self._output_dir:
