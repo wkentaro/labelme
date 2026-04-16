@@ -13,6 +13,7 @@ import time
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
+from typing import Final
 from typing import Literal
 from typing import NamedTuple
 from typing import TypeAlias
@@ -934,6 +935,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 font_base=self.font(),
             ),
         )
+        self._ai_annotation.hover_highlight_requested.connect(
+            self._highlight_ai_buttons
+        )
 
     def _setup_app_state(
         self,
@@ -1372,6 +1376,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.set_disabled_models(_AI_MODELS_WITHOUT_POINT_SUPPORT)
         else:
             self._ai_annotation.set_disabled_models(())
+
+    def _highlight_ai_buttons(self, highlight: bool) -> None:
+        HIGHLIGHT_COLOR: Final = "#FFFFCC"
+        BORDER_COLOR: Final = "#E6E6A0"
+        bg = HIGHLIGHT_COLOR if highlight else "transparent"
+        border = BORDER_COLOR if highlight else "transparent"
+        style = (
+            "QToolButton:!checked:!pressed {"
+            f" background-color: {bg}; border: 1px solid {border};"
+            " }"
+        )
+        for mode, action in self._actions.draw:
+            if mode in _AI_CREATE_MODES:
+                for widget in action.associatedWidgets():
+                    if isinstance(widget, QtWidgets.QToolButton):
+                        widget.setStyleSheet(style)
 
     def popLabelListMenu(self, point: QtCore.QPoint) -> None:
         # PyQt5 stubs type QMenu.exec() argument too narrowly

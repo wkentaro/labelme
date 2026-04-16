@@ -14,6 +14,8 @@ from ._info_button import InfoButton
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
+    hover_highlight_requested = QtCore.pyqtSignal(bool)
+
     _available_models: list[tuple[str, str]] = [
         ("efficientsam:10m", "EfficientSam (speed)"),
         ("efficientsam:latest", "EfficientSam (accuracy)"),
@@ -71,6 +73,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         layout.addLayout(header_layout)
 
         self._body = body = QtWidgets.QWidget()
+        self.installEventFilter(self)
         body.installEventFilter(self)
         body_layout = QtWidgets.QVBoxLayout()
         body_layout.setContentsMargins(0, 0, 0, 0)
@@ -123,9 +126,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     def setEnabled(self, a0: bool) -> None:
         self._body.setEnabled(a0)
+        self.hover_highlight_requested.emit(False)
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
-        if a0 == self._body and not self._body.isEnabled():
+        if a0 in (self, self._body) and not self._body.isEnabled():
             if a1.type() == QtCore.QEvent.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
@@ -133,6 +137,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
                         "Select 'AI-Points' or 'AI-Box' mode "
                         "to enable AI-Assisted Annotation"
                     ),
-                    self._body,
+                    self,
                 )
+                self.hover_highlight_requested.emit(True)
+            elif a1.type() == QtCore.QEvent.Leave:
+                self.hover_highlight_requested.emit(False)
         return super().eventFilter(a0, a1)
