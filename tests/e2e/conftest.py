@@ -20,6 +20,11 @@ from labelme.app import MainWindow
 from labelme.widgets.canvas import Canvas
 
 
+@pytest.fixture(scope="session")
+def session_home(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    return tmp_path_factory.mktemp("home")
+
+
 def image_to_widget_pos(canvas: Canvas, image_pos: QPointF) -> QPoint:
     widget_pos = (image_pos + canvas.offsetToCenter()) * canvas.scale
     return QPoint(int(widget_pos.x()), int(widget_pos.y()))
@@ -56,7 +61,7 @@ class _QAppProxy:
 
 @pytest.fixture()
 def main_win(
-    qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, session_home: Path
 ) -> Generator[MainWinFactory, None, None]:
     created: list[MainWindow] = []
 
@@ -92,7 +97,7 @@ def main_win(
             argv.append(str(file_or_dir))
 
         monkeypatch.setattr(sys, "argv", argv)
-        monkeypatch.setenv("HOME", str(tmp_path))
+        monkeypatch.setenv("HOME", str(session_home))
 
         app = QApplication.instance()
         assert isinstance(app, QApplication)
