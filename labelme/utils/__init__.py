@@ -1,3 +1,8 @@
+import warnings
+
+import imgviz.io
+import numpy
+
 from .image import apply_exif_orientation
 from .image import img_arr_to_b64
 from .image import img_arr_to_data
@@ -18,3 +23,12 @@ from .qt import newIcon
 from .shape import masks_to_bboxes
 from .shape import shape_to_mask
 from .shape import shapes_to_label
+
+
+def lblsave(filename: str, lbl: numpy.ndarray) -> None:
+    warnings.warn(
+        "labelme.utils.lblsave is deprecated; use imgviz.io.lblsave",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    imgviz.io.lblsave(filename, lbl)
