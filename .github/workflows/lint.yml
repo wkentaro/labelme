@@ -17,4 +17,4 @@ jobs:
           packages: qttools5-dev
           version: 1.0
       - run: make setup
-      - run: make check
+      - run: make lint

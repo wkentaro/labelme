@@ -2,7 +2,7 @@ ifneq ($(OS),Windows_NT)
 	SHELL := bash
 endif
 
-.PHONY: help setup format lint test coverage
+.PHONY: help setup format lint test coverage update_translate
 .DEFAULT_GOAL := help
 
 PYTEST_ARGS ?= --numprocesses=auto
@@ -18,7 +18,7 @@ help:
 setup:  # Setup the development environment
 	$(call exec,uv sync)
 
-lint:  # Lint code
+lint: update_translate  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
@@ -26,6 +26,11 @@ lint:  # Lint code
 	$(call exec,uv run mdformat --check $(shell git ls-files "*.md"))
 	$(call exec,uv run yamlfix --check $(shell git ls-files "*.yml" "*.yaml"))
 	$(call exec,uv run typos)
+	$(call exec,git diff --exit-code labelme/translate)
+	@if grep -r 'type="unfinished"' labelme/translate/*.ts; then \
+		printf '\033[1;31mError: unfinished translations found\033[0m\n'; \
+		exit 1; \
+	fi
 
 format:  # Format code
 	$(call exec,uv run ruff format)
@@ -33,15 +38,6 @@ format:  # Format code
 	$(call exec,uv run taplo fmt $(shell git ls-files "*.toml"))
 	$(call exec,uv run mdformat $(shell git ls-files "*.md"))
 	$(call exec,uv run yamlfix $(shell git ls-files "*.yml" "*.yaml"))
-
-check_translate: update_translate
-	$(call exec,git diff --exit-code labelme/translate)
-	@if grep -r 'type="unfinished"' labelme/translate/*.ts; then \
-		echo "$(RED)Error: unfinished translations found$(NC)"; \
-		exit 1; \
-	fi
-
-check: lint check_translate # Run checks
 
 test:  # Run tests
 	$(call exec,QT_QPA_PLATFORM=offscreen uv run pytest -v tests/ $(PYTEST_ARGS))
