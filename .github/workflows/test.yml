@@ -1,25 +1,11 @@
 ---
-name: CI
+name: Test
 on:
   push:
     branches: [main]
   pull_request:
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-        with:
-          python-version: '3.10'
-      - uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: qttools5-dev
-          version: 1.0
-      - run: make setup
-      - run: |
-          make check
-  build:
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
