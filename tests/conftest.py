@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import os.path as osp
 import shutil
 from pathlib import Path
@@ -20,6 +21,17 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Pause after each GUI test until the window is closed manually.",
     )
+    parser.addoption(
+        "--headed",
+        action="store_true",
+        default=False,
+        help="Run GUI tests with a visible window (skip QT_QPA_PLATFORM=offscreen).",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    if not config.getoption("--headed"):
+        os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 
 @pytest.fixture()

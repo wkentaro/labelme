@@ -40,10 +40,10 @@ format:  # Format code
 	$(call exec,uv run yamlfix $(shell git ls-files "*.yml" "*.yaml"))
 
 test:  # Run tests
-	$(call exec,QT_QPA_PLATFORM=offscreen uv run pytest -v tests/ $(PYTEST_ARGS))
+	$(call exec,uv run pytest -v tests/ $(PYTEST_ARGS))
 
 update_translate:
 	$(call exec,uv run --no-sync tools/update_translate.py)
 
 coverage:  # Run tests with coverage
-	$(call exec,QT_QPA_PLATFORM=offscreen uv run pytest -v tests/ --numprocesses=auto --cov=labelme --cov-report=term-missing)
+	$(call exec,uv run pytest -v tests/ --numprocesses=auto --cov=labelme --cov-report=term-missing)
