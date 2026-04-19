@@ -945,30 +945,36 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
     def finalise(self) -> None:
-        assert self.current
-        new_shapes: list[Shape] = []
-        if self.createMode == "ai_points_to_shape":
-            new_shapes = self._shapes_from_points_ai(
-                points=self.current.points,
-                point_labels=self.current.point_labels,
-            )
-        elif self.createMode == "ai_box_to_shape":
-            new_shapes = self._shapes_from_bbox_ai(
-                bbox_points=self.current.points,
-            )
-        else:
-            self.current.close()
-            new_shapes = [self.current]
-
+        assert self.current is not None
+        new_shapes: list[Shape] = self._build_new_shapes_from_current()
         if not new_shapes:
             self.current = None
             return
-
         self.shapes.extend(new_shapes)
         self.storeShapes()
+        self._reset_after_shape_creation()
+
+    def _build_new_shapes_from_current(self) -> list[Shape]:
+        assert self.current is not None
+        if self.createMode == "ai_points_to_shape":
+            return self._shapes_from_points_ai(
+                points=self.current.points,
+                point_labels=self.current.point_labels,
+            )
+        if self.createMode == "ai_box_to_shape":
+            return self._shapes_from_bbox_ai(bbox_points=self.current.points)
+        self.current.close()
+        return [self.current]
+
+    def _reset_after_shape_creation(self) -> None:
         self.current = None
         self.setHiding(False)
         self.newShape.emit()
+        self.update()
+
+    def _cancel_current_shape(self) -> None:
+        self.current = None
+        self.drawingPolygon.emit(False)
         self.update()
 
     def closeEnough(self, p1: QPointF, p2: QPointF) -> bool:
@@ -1018,9 +1024,7 @@ class Canvas(QtWidgets.QWidget):
         key = a0.key()
         if self.drawing():
             if key == Qt.Key_Escape and self.current:
-                self.current = None
-                self.drawingPolygon.emit(False)
-                self.update()
+                self._cancel_current_shape()
             elif (
                 key in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Space)
                 and self.canCloseShape()
@@ -1076,40 +1080,33 @@ class Canvas(QtWidgets.QWidget):
 
     def undoLastLine(self) -> None:
         assert self.shapes
-        if self.createMode in ["ai_points_to_shape", "ai_box_to_shape"]:
+        if self.createMode in ("ai_points_to_shape", "ai_box_to_shape"):
             # Remove all unlabeled shapes at the tail (added by AI in one shot)
             while self.shapes and self.shapes[-1].label is None:
                 self.shapes.pop()
-            self.current = None
-            self.drawingPolygon.emit(False)
-            self.update()
+            self._cancel_current_shape()
             return
         self.current = self.shapes.pop()
         self.current.setOpen()
         self.current.restoreShapeRaw()
-        if self.createMode in ["polygon", "linestrip"]:
+        if self.createMode in ("polygon", "linestrip"):
             self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in [
-            "rectangle",
-            "line",
-            "circle",
-            "ai_box_to_shape",
-        ]:
+        elif self.createMode in ("rectangle", "line", "circle", "ai_box_to_shape"):
             self.current.points = self.current.points[0:1]
         elif self.createMode == "point":
             self.current = None
         self.drawingPolygon.emit(True)
 
     def undoLastPoint(self) -> None:
-        if not self.current or self.current.isClosed():
+        current = self.current
+        if current is None or current.isClosed():
             return
-        self.current.popPoint()
-        if len(self.current) > 0:
-            self.line[0] = self.current[-1]
+        current.popPoint()
+        if len(current) > 0:
+            self.line[0] = current[-1]
+            self.update()
         else:
-            self.current = None
-            self.drawingPolygon.emit(False)
-        self.update()
+            self._cancel_current_shape()
 
     def loadPixmap(self, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         self.pixmap = pixmap
