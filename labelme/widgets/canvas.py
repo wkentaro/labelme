@@ -844,86 +844,102 @@ class Canvas(QtWidgets.QWidget):
         if not self.pixmap:
             return super().paintEvent(a0)
 
-        p = self._painter
-        p.begin(self)
-        p.setRenderHint(QtGui.QPainter.Antialiasing)
-        p.setRenderHint(QtGui.QPainter.HighQualityAntialiasing)
-        p.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
+        painter: QtGui.QPainter = self._painter
+        painter.begin(self)
+        try:
+            for hint in (
+                QtGui.QPainter.Antialiasing,
+                QtGui.QPainter.HighQualityAntialiasing,
+                QtGui.QPainter.SmoothPixmapTransform,
+            ):
+                painter.setRenderHint(hint)
+            painter.translate(self._compute_image_origin_offset() * self.scale)
+            self._paint_background(painter=painter)
+            self._paint_crosshair(painter=painter)
+            self._paint_shapes(painter=painter)
+            self._paint_current_shape_preview(painter=painter)
+        finally:
+            painter.end()
 
-        p.scale(self.scale, self.scale)
-        p.translate(self._compute_image_origin_offset())
+    def _paint_background(self, painter: QtGui.QPainter) -> None:
+        painter.save()
+        painter.scale(self.scale, self.scale)
+        painter.drawPixmap(0, 0, self.pixmap)
+        painter.restore()
 
-        p.drawPixmap(0, 0, self.pixmap)
-
-        p.scale(1 / self.scale, 1 / self.scale)
-
-        # draw crosshair
-        if (
-            self._crosshair[self._createMode]
-            and self.drawing()
-            and self.prevMovePoint is not None
-            and not self.outOfPixmap(self.prevMovePoint)
-        ):
-            p.setPen(QtGui.QColor(0, 0, 0))
-            p.drawLine(
-                0,
-                int(self.prevMovePoint.y() * self.scale),
-                int(self.pixmap.width() * self.scale) - 1,
-                int(self.prevMovePoint.y() * self.scale),
-            )
-            p.drawLine(
-                int(self.prevMovePoint.x() * self.scale),
-                0,
-                int(self.prevMovePoint.x() * self.scale),
-                int(self.pixmap.height() * self.scale) - 1,
-            )
-
-        Shape.scale = self.scale
-        for shape in self.shapes:
-            if (shape.selected or not self._hideBackground) and self.isVisible(shape):
-                shape.fill = shape.selected or shape == self.hShape
-                shape.paint(p)
-        if self.current:
-            self.current.paint(p)
-            assert len(self.line.points) == len(self.line.point_labels)
-            self.line.paint(p)
-        if self.selectedShapesCopy:
-            for s in self.selectedShapesCopy:
-                s.paint(p)
-
-        if not self.current or self.createMode not in [
-            "polygon",
-            "ai_points_to_shape",
-        ]:
-            p.end()
+    def _paint_crosshair(self, painter: QtGui.QPainter) -> None:
+        if not self._crosshair[self._createMode]:
+            return
+        if not self.drawing():
             return
 
-        drawing_shape: Shape = self.current.copy()
+        cursor: QPointF | None = self.prevMovePoint
+        if cursor is None or self.outOfPixmap(cursor):
+            return
+
+        painter.setPen(QtGui.QColor(0, 0, 0))
+        painter.drawLine(
+            0,
+            int(cursor.y() * self.scale),
+            int(self.pixmap.width() * self.scale) - 1,
+            int(cursor.y() * self.scale),
+        )
+        painter.drawLine(
+            int(cursor.x() * self.scale),
+            0,
+            int(cursor.x() * self.scale),
+            int(self.pixmap.height() * self.scale) - 1,
+        )
+
+    def _paint_shapes(self, painter: QtGui.QPainter) -> None:
+        Shape.scale = self.scale
+        for shape in self.shapes:
+            if not self.isVisible(shape):
+                continue
+            if not shape.selected and self._hideBackground:
+                continue
+            shape.fill = shape.selected or shape is self.hShape
+            shape.paint(painter)
+        if self.current is not None:
+            self.current.paint(painter)
+            assert len(self.line.points) == len(self.line.point_labels)
+            self.line.paint(painter)
+        for copy_shape in self.selectedShapesCopy:
+            copy_shape.paint(painter)
+
+    def _paint_current_shape_preview(self, painter: QtGui.QPainter) -> None:
+        if self.current is None or self.createMode not in (
+            "polygon",
+            "ai_points_to_shape",
+        ):
+            return
+
+        preview: Shape = self.current.copy()
         if self.createMode == "polygon":
-            if self.fillDrawing() and len(self.current.points) >= 2:
-                assert drawing_shape.fill_color is not None
-                if drawing_shape.fill_color.getRgb()[3] == 0:
+            if self.fillDrawing() and len(preview.points) >= 2:
+                assert preview.fill_color is not None
+                if preview.fill_color.getRgb()[3] == 0:
                     logger.warning(
                         "fill_drawing=true, but fill_color is transparent,"
                         " so forcing to be opaque."
                     )
-                    drawing_shape.fill_color.setAlpha(64)
-                drawing_shape.addPoint(self.line[1])
-        elif self.createMode == "ai_points_to_shape":
-            drawing_shape.addPoint(
+                    preview.fill_color.setAlpha(64)
+                preview.addPoint(point=self.line[1])
+        else:
+            assert self.createMode == "ai_points_to_shape"
+            preview.addPoint(
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
-            shapes = self._shapes_from_points_ai(
-                points=drawing_shape.points,
-                point_labels=drawing_shape.point_labels,
+            ai_shapes = self._shapes_from_points_ai(
+                points=preview.points,
+                point_labels=preview.point_labels,
             )
-            if shapes:
-                drawing_shape = shapes[0]
-        drawing_shape.fill = self.fillDrawing()
-        drawing_shape.selected = self.fillDrawing()
-        drawing_shape.paint(p)
-        p.end()
+            if ai_shapes:
+                preview = ai_shapes[0]
+        preview.fill = self.fillDrawing()
+        preview.selected = self.fillDrawing()
+        preview.paint(painter)
 
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
         return point / self.scale - self._compute_image_origin_offset()
