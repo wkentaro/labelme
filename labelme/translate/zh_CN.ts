@@ -6,17 +6,17 @@
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
-        <translation>AI辅助标注</translation>
+        <translation>AI 辅助标注</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI在'AI-Points'和'AI-Box'模式下建议标注</translation>
+        <translation>在 'AI-Points' 和 'AI-Box' 模式下，AI 会提供标注建议</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>选择'AI-Points'或'AI-Box'模式以启用AI辅助标注</translation>
+        <translation>请选择 'AI-Points' 或 'AI-Box' 模式以启用 AI 辅助标注</translation>
     </message>
 </context>
 <context>
@@ -24,12 +24,12 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
-        <translation>AI提示</translation>
+        <translation>AI 文本转标注</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
-        <translation>例如：狗,猫,鸟</translation>
+        <translation>例如：dog,cat,bird</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -39,7 +39,7 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
-        <translation>分数</translation>
+        <translation>得分</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -49,12 +49,12 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI creates annotations from the text prompt</source>
-        <translation>AI根据文本提示创建标注</translation>
+        <translation>AI 将根据文本提示生成标注</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>选择'Polygon'、'Rectangle'或'AI-Points'模式以启用</translation>
+        <translation>请选择 'Polygon'、'Rectangle' 或 'AI-Points' 模式以启用</translation>
     </message>
 </context>
 <context>
@@ -70,12 +70,12 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
-        <translation>点击并拖拽以移动控制点</translation>
+        <translation>按住鼠标拖动以移动顶点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
-        <translation>点击并拖拽以移动形状</translation>
+        <translation>按住鼠标拖动以移动形状</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -85,92 +85,92 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ESC to cancel</source>
-        <translation>按 ESC 取消</translation>
+        <translation>按 ESC 键取消</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Enter or Space to finalize</source>
-        <translation>按 Enter 或空格键完成</translation>
+        <translation>按 Enter 或空格键确认</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
-        <translation>编辑形状</translation>
+        <translation>正在编辑形状</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for line</source>
-        <translation>点击线段起点</translation>
+        <translation>单击确定直线起点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click end point for line</source>
-        <translation>点击线段终点</translation>
+        <translation>单击确定直线终点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for linestrip</source>
-        <translation>点击折线起点</translation>
+        <translation>单击确定折线起点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>点击下一个点或 Ctrl/Cmd+点击完成折线</translation>
+        <translation>单击添加下一个顶点；按住 Ctrl/Cmd 并单击以结束折线</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click center point for circle</source>
-        <translation>点击圆形中心点</translation>
+        <translation>单击确定圆心</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click point on circumference for circle</source>
-        <translation>点击圆周上的点</translation>
+        <translation>单击圆周上的点以确定圆形</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for rectangle</source>
-        <translation>点击矩形第一个角</translation>
+        <translation>单击确定矩形的第一个角</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
-        <translation>点击以添加点</translation>
+        <translation>单击以添加顶点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + 点击以删除点</translation>
+        <translation>按住 ALT + SHIFT 并单击以删除顶点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + Click to create point on shape</source>
-        <translation>ALT + 点击在形状上创建点</translation>
+        <translation>按住 ALT 并单击以在形状上添加顶点</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
-        <translation>右键点击并拖拽以复制形状</translation>
+        <translation>按住鼠标右键拖动以复制形状</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>点击矩形对角（Shift绘制正方形）</translation>
+        <translation>单击对角以确定矩形（按住 Shift 绘制正方形）</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>点击添加包含点或Shift+Click添加排除点。Ctrl+LeftClick结束创建。</translation>
+        <translation>单击添加包含点；按住 Shift 并单击添加排除点；按住 Ctrl 并单击结束创建。</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner of bbox for AI segmentation</source>
-        <translation>点击bbox的第一个角进行AI分割</translation>
+        <translation>单击确定 AI 分割边界框的第一个角</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner to segment object</source>
-        <translation>点击对角以分割对象</translation>
+        <translation>单击对角以分割对象</translation>
     </message>
 </context>
 <context>
@@ -183,12 +183,12 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Annotation List</source>
-        <translation>批注列表</translation>
+        <translation>标注列表</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>选择标签类型并开始以其标注。按'Esc'取消选择。</translation>
+        <translation>选择标签以开始标注；按 'Esc' 取消选择。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -198,7 +198,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
-        <translation>按文件名检索</translation>
+        <translation>搜索文件名</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -234,22 +234,22 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>下一幅(&amp;N)</translation>
+        <translation>下一张图像(&amp;N)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打开下一幅 (按Ctl+Shift拷贝标签)</translation>
+        <translation>打开下一张（按住 Ctrl+Shift 可复制标签）</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>上一幅(&amp;P)</translation>
+        <translation>上一张图像(&amp;P)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打开上一幅 (按Ctl+Shift拷贝标签)</translation>
+        <translation>打开上一张（按住 Ctrl+Shift 可复制标签）</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -260,7 +260,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
-        <translation>保存标签到文件</translation>
+        <translation>保存标签至文件</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -270,27 +270,27 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
-        <translation>保存标签到不同的文件</translation>
+        <translation>将标签另存至其他文件</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>删除(&amp;D)</translation>
+        <translation>删除文件(&amp;D)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
-        <translation>删除当前标签文件</translation>
+        <translation>删除当前的标签文件</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>更改输出路径(&amp;C)</translation>
+        <translation>更改输出目录(&amp;C)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
-        <translation>更改载入、保存标注的路径</translation>
+        <translation>更改标注的加载与保存位置</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -305,12 +305,12 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
-        <translation>同时保存图像数据</translation>
+        <translation>连同图像数据一并保存</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
-        <translation>将图像数据保存到标签文件中</translation>
+        <translation>将图像数据写入标签文件</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -325,7 +325,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
-        <translation>保留最后的标注</translation>
+        <translation>保留上一次的标注</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -345,87 +345,87 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>开始创建直线</translation>
+        <translation>开始绘制直线</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
-        <translation>开始绘制控制点</translation>
+        <translation>开始绘制点</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>开始绘制折线。Ctrl+单击左键结束绘制。</translation>
+        <translation>开始绘制折线；按住 Ctrl 并单击结束创建。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Edit Shapes</source>
-        <translation>编辑图形</translation>
+        <translation>编辑形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Move and edit the selected shapes</source>
-        <translation>移动、编辑选中的图形</translation>
+        <translation>移动并编辑所选形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete Shapes</source>
-        <translation>删除图形</translation>
+        <translation>删除形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete the selected shapes</source>
-        <translation>删除选中的图形</translation>
+        <translation>删除所选形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Duplicate Shapes</source>
-        <translation>复制图形</translation>
+        <translation>创建形状副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected shapes</source>
-        <translation>为选中的图形创建副本</translation>
+        <translation>为所选形状创建副本</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy Shapes</source>
-        <translation>复制图形</translation>
+        <translation>复制形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Copy selected shapes to clipboard</source>
-        <translation>复制选中图形到剪贴板</translation>
+        <translation>将所选形状复制至剪贴板</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste Shapes</source>
-        <translation>粘贴图形</translation>
+        <translation>粘贴形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Paste copied shapes</source>
-        <translation>粘贴已复制的图形</translation>
+        <translation>粘贴已复制的形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
-        <translation>撤销最后的控制点</translation>
+        <translation>撤销上一个顶点</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
-        <translation>撤销最后一次绘制的控制点</translation>
+        <translation>撤销上一次绘制的顶点</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
-        <translation>移除选中的控制点</translation>
+        <translation>移除所选顶点</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
-        <translation>从多边形中移除选中的控制点</translation>
+        <translation>从多边形中移除所选顶点</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -436,50 +436,50 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
-        <translation>撤销最近一次添加和编辑</translation>
+        <translation>撤销对形状的最近一次添加或编辑</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Shapes</source>
-        <translation>隐藏图形(&amp;H)</translation>
+        <translation>隐藏形状(&amp;H)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Hide all shapes</source>
-        <translation>隐藏所有图形</translation>
+        <translation>隐藏全部形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Shapes</source>
-        <translation>显示图形(&amp;S)</translation>
+        <translation>显示形状(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show all shapes</source>
-        <translation>显示所有图形</translation>
+        <translation>显示全部形状</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Shapes</source>
-        <translation>开关图形(&amp;S)</translation>
+        <translation>切换形状显示(&amp;S)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle all shapes</source>
-        <translation>开关所有图形</translation>
+        <translation>切换全部形状的显示状态</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
-        <translation>教程[&amp;T]</translation>
+        <translation>教程(&amp;T)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
-        <translation>显示教程网页</translation>
+        <translation>打开教程页面</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -489,7 +489,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom in or out of the image. Also accessible with {} and {} from the canvas.</source>
-        <translation>缩放图像。亦可从画布的{}和{}访问</translation>
+        <translation>放大或缩小图像；也可在画布上使用 {} 与 {}。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -504,7 +504,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
-        <translation>增加缩放水平</translation>
+        <translation>提高缩放级别</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -514,57 +514,57 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
-        <translation>减小缩放水平</translation>
+        <translation>降低缩放级别</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>原始大小(&amp;O)</translation>
+        <translation>原始尺寸(&amp;O)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
-        <translation>缩放至原始大小</translation>
+        <translation>缩放至原始尺寸</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>保留最后的比例(&amp;K)</translation>
+        <translation>保留上一次的缩放比例(&amp;K)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>保留最后的缩放比例</translation>
+        <translation>保留上一次的缩放比例</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
-        <translation>适应窗口(&amp;F)</translation>
+        <translation>适合窗口(&amp;F)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
-        <translation>跟随窗口大小缩放</translation>
+        <translation>随窗口大小自动缩放</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
-        <translation>适应宽度(&amp;W)</translation>
+        <translation>适合宽度(&amp;W)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
-        <translation>跟随窗口宽度缩放</translation>
+        <translation>随窗口宽度自动缩放</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
-        <translation>亮度 对比度(&amp;B)</translation>
+        <translation>亮度与对比度(&amp;B)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
-        <translation>调节亮度和对比度</translation>
+        <translation>调整亮度与对比度</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -574,17 +574,17 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected shape</source>
-        <translation>修改选中图形的标签</translation>
+        <translation>修改所选形状的标签</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
-        <translation>填充所绘多边形</translation>
+        <translation>填充正在绘制的多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
-        <translation>绘制时填充多边形</translation>
+        <translation>绘制过程中填充多边形</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -609,22 +609,22 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s 启动完了</translation>
+        <translation>%s 已启动。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
-        <translation>无效的标签</translation>
+        <translation>标签无效</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>无效的标签'{}'，验证类型'{}'</translation>
+        <translation>标签 '{}' 无效（验证类型为 '{}'）</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
-        <translation>保存标签发生错误</translation>
+        <translation>保存标签数据时出错</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -634,27 +634,27 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
-        <translation>打开文件发生错误</translation>
+        <translation>打开文件时出错</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>文件不存在: &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>文件未找到：&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>正在载入 %s...</translation>
+        <translation>正在加载 %s...</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Error reading %s</source>
-        <translation>打开文件发生错误 %s</translation>
+        <translation>读取 %s 时出错</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;Make sure &lt;i&gt;{0}&lt;/i&gt; is a valid image file.&lt;br/&gt;Supported image formats: {1}&lt;/p&gt;</source>
-        <translation>lt;p&gt;请确认&lt;i&gt;{0}&lt;/i&gt;是一个合法的图像文件。&lt;br/&gt;支持的格式包括: {1}&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;请确认 &lt;i&gt;{0}&lt;/i&gt; 是有效的图像文件。&lt;br/&gt;支持的图像格式：{1}&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -664,7 +664,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
-        <translation>图像和标签文件(%s)</translation>
+        <translation>图像与标签文件 (%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -674,12 +674,12 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 保存和加载批注的路径</translation>
+        <translation>%s - 在目录中加载与保存标注</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 批注会被加载和保存在 %s</translation>
+        <translation>%s。标注将在 %s 中加载与保存</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -689,7 +689,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
-        <translation>标签文件(*%s)</translation>
+        <translation>标签文件 (*%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -699,7 +699,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete this label file, proceed anyway?</source>
-        <translation>即将永久性删除此标签文件。还要继续吗?</translation>
+        <translation>即将永久删除该标签文件，是否继续？</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -709,17 +709,17 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>关闭前保存批注到&quot;{}&quot;吗?</translation>
+        <translation>关闭前是否将标注保存至 &quot;{}&quot;？</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
-        <translation>保存批注吗?</translation>
+        <translation>是否保存标注？</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>You are about to permanently delete {} shapes, proceed anyway?</source>
-        <translation>即将永久性删除图形{}。还要继续吗?</translation>
+        <translation>即将永久删除 {} 个形状，是否继续？</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -729,12 +729,12 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>切换「保留上一个标注」模式</translation>
+        <translation>切换“保留上一次的标注”模式</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
-        <translation>保留之前的亮度/对比度</translation>
+        <translation>保留上一次的亮度/对比度</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -749,7 +749,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No Config File</source>
-        <translation>没有配置文件</translation>
+        <translation>未找到配置文件</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -757,9 +757,9 @@ Shapes</source>
 
 To use the preferences editor, start Labelme with a config file:
   labelme --config ~/.labelmerc</source>
-        <translation>配置已通过命令行以YAML表达式的形式提供。
+        <translation>配置是通过命令行以 YAML 表达式的形式传入的。
 
-要使用偏好设置编辑器，请使用配置文件启动Labelme：
+若要使用偏好设置编辑器，请使用配置文件启动 Labelme：
   labelme --config ~/.labelmerc</translation>
     </message>
     <message>
@@ -770,17 +770,17 @@ To use the preferences editor, start Labelme with a config file:
     <message>
         <location filename="../app.py" line="0"/>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>加载配置时发现错误。请检查以下错误并重新加载配置，或忽略错误的行。</translation>
+        <translation>加载配置时发现错误。请查看下方的错误信息，并重新加载配置或忽略有误的行。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid label file.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请确认&lt;i&gt;%s&lt;/i&gt;是一个合法的标签文件。&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请确认 &lt;i&gt;%s&lt;/i&gt; 是有效的标签文件。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Make sure &lt;i&gt;%s&lt;/i&gt; is a valid image file.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请确认&lt;i&gt;%s&lt;/i&gt;是一个合法的图像文件。&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;%s&lt;/b&gt;&lt;/p&gt;&lt;p&gt;请确认 &lt;i&gt;%s&lt;/i&gt; 是有效的图像文件。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -810,7 +810,7 @@ To use the preferences editor, start Labelme with a config file:
     <message>
         <location filename="../app.py" line="0"/>
         <source>Point</source>
-        <translation>控制点</translation>
+        <translation>点</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -825,7 +825,7 @@ To use the preferences editor, start Labelme with a config file:
     <message>
         <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>点击添加点以分割对象。Ctrl+LeftClick结束创建。</translation>
+        <translation>单击添加点以分割对象；按住 Ctrl 并单击结束创建。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -847,12 +847,12 @@ To use the preferences editor, start Labelme with a config file:
         <source>%s does not support point prompts.
 Please select a different model or use AI-Box mode.</source>
         <translation>%s 不支持点提示。
-请选择其他模型或使用 AI-Box 模式。</translation>
+请另选模型，或改用 AI-Box 模式。</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
-        <translation>打开标签文件时，文件列表已禁用</translation>
+        <translation>打开标签文件时，文件列表不可用</translation>
     </message>
 </context>
 </TS>
