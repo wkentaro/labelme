@@ -924,23 +924,22 @@ class Canvas(QtWidgets.QWidget):
         p.end()
 
     def transformPos(self, point: QPointF) -> QPointF:
-        """Convert from widget-logical coordinates to painter-logical ones."""
         return point / self.scale - self.offsetToCenter()
 
     def enableDragging(self, enabled: bool) -> None:
         self._is_dragging_enabled = enabled
 
     def offsetToCenter(self) -> QPointF:
-        s = self.scale
         area = super().size()
-        w, h = self.pixmap.width() * s, self.pixmap.height() * s
-        aw, ah = area.width(), area.height()
-        x = (aw - w) / (2 * s) if aw > w else 0
-        y = (ah - h) / (2 * s) if ah > h else 0
-        return QPointF(x, y)
+        scaled_w = self.pixmap.width() * self.scale
+        scaled_h = self.pixmap.height() * self.scale
+        slack_w = max(area.width() - scaled_w, 0.0)
+        slack_h = max(area.height() - scaled_h, 0.0)
+        return QPointF(slack_w, slack_h) / (2.0 * self.scale)
 
     def outOfPixmap(self, p: QPointF) -> bool:
-        w, h = self.pixmap.width(), self.pixmap.height()
+        w = self.pixmap.width()
+        h = self.pixmap.height()
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
     def finalise(self) -> None:
