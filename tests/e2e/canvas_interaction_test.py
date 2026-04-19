@@ -264,6 +264,26 @@ def test_move_shape_by_arrow_key(
 
 
 @pytest.mark.gui
+def test_select_all_shapes_from_canvas(
+    qtbot: QtBot,
+    _annotated_win: MainWindow,
+    pause: bool,
+) -> None:
+    canvas = _annotated_win._canvas_widgets.canvas
+    assert len(canvas.shapes) > 1
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
+    assert len(canvas.selectedShapes) == 1
+
+    qtbot.keyClick(canvas, Qt.Key_A, modifier=Qt.ControlModifier)
+    qtbot.wait(50)
+
+    assert set(map(id, canvas.selectedShapes)) == set(map(id, canvas.shapes))
+    assert len(_annotated_win._docks.label_list.selectedItems()) == len(canvas.shapes)
+
+    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+
+
+@pytest.mark.gui
 def test_add_point_on_edge(
     qtbot: QtBot,
     _annotated_win: MainWindow,
