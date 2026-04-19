@@ -1037,6 +1037,8 @@ class Canvas(QtWidgets.QWidget):
                 self.moveByKeyboard(QPointF(-MOVE_SPEED, 0.0))
             elif key == Qt.Key_Right:
                 self.moveByKeyboard(QPointF(MOVE_SPEED, 0.0))
+            elif a0.matches(QtGui.QKeySequence.SelectAll):
+                self.selectShapes(shapes=self.shapes[:])
         self._update_status()
 
     def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
