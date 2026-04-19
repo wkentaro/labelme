@@ -278,12 +278,13 @@ class Canvas(QtWidgets.QWidget):
     def _set_highlight(
         self, hShape: Shape | None, hEdge: int | None, hVertex: int | None
     ) -> bool:
+        previous_shape: Shape | None = self.hShape
         need_update: bool = hShape is not None
-        if self.hShape:
-            self.hShape.highlightClear()
+        if previous_shape is not None:
+            previous_shape.highlightClear()
             need_update = True
         # NOTE: Store last highlighted for adding/removing points.
-        self._lasthShape = self.hShape if hShape is None else hShape
+        self._lasthShape = previous_shape if hShape is None else hShape
         self._lasthVertex = self.hVertex if hVertex is None else hVertex
         self._lasthEdge = self.hEdge if hEdge is None else hEdge
         self.hShape = hShape
@@ -527,7 +528,7 @@ class Canvas(QtWidgets.QWidget):
         if shape is None or index is None or point is None:
             return
         shape.insertPoint(index, point)
-        shape.highlightVertex(index, shape.MOVE_VERTEX)
+        shape.highlightVertex(i=index, action=shape.MOVE_VERTEX)
         self.hShape = shape
         self.hVertex = index
         self.hEdge = None
