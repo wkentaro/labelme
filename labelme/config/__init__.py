@@ -38,11 +38,9 @@ def _validate_config_item(key: str, value: object) -> None:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
     if key == "shape_color" and value not in [None, "auto", "manual"]:
         raise ValueError(f"Unexpected value for config key 'shape_color': {value}")
-    if (
-        key == "labels"
-        and isinstance(value, Sized)
-        and len(value) != len(set(cast(list[object], value)))
-    ):
+    if key == "dark_mode" and value not in [True, False, None]:
+        raise ValueError(f"Unexpected value for config key 'dark_mode': {value}")
+    if key == "labels" and value is not None and len(value) != len(set(value)):
         raise ValueError(f"Duplicates are detected for config key 'labels': {value}")
 
 
