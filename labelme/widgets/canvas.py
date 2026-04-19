@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections
 import enum
-from collections.abc import Iterator
 from typing import Any
 from typing import Literal
 
@@ -1247,60 +1246,30 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
 def _compute_intersection_edges_image(
     p1: QPointF, p2: QPointF, image_size: QtCore.QSize
 ) -> QPointF:
-    # Cycle through each image edge in clockwise fashion,
-    # and find the one intersecting the current line segment.
-    # http://paulbourke.net/geometry/lineline2d/
-    points = [
-        (0, 0),
-        (image_size.width(), 0),
-        (image_size.width(), image_size.height()),
-        (0, image_size.height()),
-    ]
-    # x1, y1 should be in the pixmap, x2, y2 should be out of the pixmap
-    x1 = min(max(p1.x(), 0), image_size.width())
-    y1 = min(max(p1.y(), 0), image_size.height())
-    x2, y2 = p2.x(), p2.y()
-    d, i, (x, y) = min(_compute_intersection_edges((x1, y1), (x2, y2), points))
-    x3, y3 = points[i]
-    x4, y4 = points[(i + 1) % 4]
-    if (x, y) == (x1, y1):
-        # Handle cases where previous point is on one of the edges.
-        if x3 == x4:
-            return QPointF(x3, min(max(0, y2), max(y3, y4)))
-        else:  # y3 == y4
-            return QPointF(min(max(0, x2), max(x3, x4)), y3)
-    return QPointF(x, y)
+    width = image_size.width()
+    height = image_size.height()
 
+    start_x = np.clip(p1.x(), 0.0, width)
+    start_y = np.clip(p1.y(), 0.0, height)
+    delta_x = p2.x() - start_x
+    delta_y = p2.y() - start_y
 
-def _compute_intersection_edges(
-    point1: tuple[float, float],
-    point2: tuple[float, float],
-    points: list[tuple[int, int]],
-) -> Iterator[tuple[float, int, tuple[float, float]]]:
-    """Find intersecting edges.
+    # Liang-Barsky line clipping.
+    boundary_pairs = (
+        (start_x, -delta_x),
+        (width - start_x, delta_x),
+        (start_y, -delta_y),
+        (height - start_y, delta_y),
+    )
+    t_exit = 1.0
+    for numerator, denominator in boundary_pairs:
+        if denominator > 0.0:
+            t_exit = min(t_exit, numerator / denominator)
 
-    For each edge formed by `points', yield the intersection
-    with the line segment `(x1,y1) - (x2,y2)`, if it exists.
-    Also return the distance of `(x2,y2)' to the middle of the
-    edge along with its index, so that the one closest can be chosen.
-    """
-    (x1, y1) = point1
-    (x2, y2) = point2
-    for i in range(4):
-        x3, y3 = points[i]
-        x4, y4 = points[(i + 1) % 4]
-        denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
-        nua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)
-        nub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)
-        if denom == 0:
-            # This covers two cases:
-            #   nua == nub == 0: Coincident
-            #   otherwise: Parallel
-            continue
-        ua, ub = nua / denom, nub / denom
-        if 0 <= ua <= 1 and 0 <= ub <= 1:
-            x = x1 + ua * (x2 - x1)
-            y = y1 + ua * (y2 - y1)
-            m = QPointF((x3 + x4) / 2, (y3 + y4) / 2)
-            d = labelme.utils.distance(m - QPointF(x2, y2))
-            yield d, i, (x, y)
+    if t_exit > 0.0:
+        return QPointF(start_x + t_exit * delta_x, start_y + t_exit * delta_y)
+
+    # t_exit == 0: start is on a boundary, p2 is exterior — slide along the edge.
+    if start_x <= 0.0 or start_x >= width:
+        return QPointF(start_x, np.clip(p2.y(), 0.0, height))
+    return QPointF(np.clip(p2.x(), 0.0, width), start_y)
