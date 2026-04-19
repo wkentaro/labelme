@@ -198,7 +198,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
-        <translation>Dosya Adı Ara</translation>
+        <translation>Dosya Adında Ara</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -229,7 +229,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>Dizini Aç</translation>
+        <translation>Klasörü Aç</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -280,12 +280,12 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
-        <translation>Geçerli etiket dosyasını sil</translation>
+        <translation>Açık olan etiket dosyasını sil</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>Çıktı Dizinini &amp;Değiştir</translation>
+        <translation>Çıktı Klasörünü &amp;Değiştir</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -320,7 +320,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Close current file</source>
-        <translation>Geçerli dosyayı kapat</translation>
+        <translation>Açık olan dosyayı kapat</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -522,7 +522,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>&amp;Orijinal boyut</translation>
+        <translation>&amp;Orijinal Boyut</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -642,12 +642,12 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Böyle bir dosya yok: &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>Belirtilen dosya bulunamadı: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>%s yükleniyor...</translation>
+        <translation>%s yükleniyor…</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -677,7 +677,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Dizindeki Açıklamaları Kaydet/Yükle</translation>
+        <translation>%s - Klasördeki Açıklamaları Kaydet/Yükle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -727,7 +727,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
-        <translation>%s - Dizini Aç</translation>
+        <translation>%s - Klasörü Aç</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
