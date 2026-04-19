@@ -34,7 +34,7 @@
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
-        <translation>Yürüt</translation>
+        <translation>Çalıştır</translation>
     </message>
     <message>
         <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
@@ -80,7 +80,7 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Creating %r</source>
-        <translation>%r yaratılıyor</translation>
+        <translation>%r oluşturuluyor</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -95,7 +95,7 @@
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
-        <translation>Şekil düzenleme modu etkin</translation>
+        <translation>Şekiller düzenleniyor</translation>
     </message>
     <message>
         <location filename="../widgets/canvas.py" line="0"/>
@@ -178,7 +178,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Flags</source>
-        <translation>İşaretler</translation>
+        <translation>Bayraklar</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -193,7 +193,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label List</source>
-        <translation>Etiketler Listesi</translation>
+        <translation>Etiket Listesi</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -203,7 +203,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>File List</source>
-        <translation>Dosyalar Listesi</translation>
+        <translation>Dosya Listesi</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -213,7 +213,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Quit application</source>
-        <translation>Programdan çık</translation>
+        <translation>Uygulamadan çık</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -229,12 +229,12 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
-        <translation>Dizini Aç</translation>
+        <translation>Klasörü Aç</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
-        <translation>Sonraki &amp;Resim</translation>
+        <translation>&amp;Sonraki Görüntü</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -244,7 +244,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
-        <translation>Önceki &amp;Resim</translation>
+        <translation>&amp;Önceki Görüntü</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -260,7 +260,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
-        <translation>Etiketleri bir dosyaya yaz</translation>
+        <translation>Etiketleri dosyaya kaydet</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -275,7 +275,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
-        <translation>&amp;Dosyayı Sil</translation>
+        <translation>Dosyayı &amp;Sil</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -285,7 +285,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
-        <translation>Çıktı &amp;Klasörünü Değiştir</translation>
+        <translation>Çıktı Klasörünü &amp;Değiştir</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -305,7 +305,7 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
-        <translation>Resim Verilerini de Sakla</translation>
+        <translation>Görüntü Verisiyle Kaydet</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -330,27 +330,27 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
-        <translation>Çokgen çizimini başlat</translation>
+        <translation>Çokgen çizmeye başla</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
-        <translation>Dikdörtgen çizimini başlat</translation>
+        <translation>Dikdörtgen çizmeye başla</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
-        <translation>Daire çizimini başlat</translation>
+        <translation>Daire çizmeye başla</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
-        <translation>Çizgi çizimini başlat</translation>
+        <translation>Çizgi çizmeye başla</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
-        <translation>Nokta çizimini başlat</translation>
+        <translation>Nokta çizmeye başla</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -410,12 +410,12 @@
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
-        <translation>En son noktayı sil</translation>
+        <translation>Son noktayı geri al</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
-        <translation>En son eklenen noktayı geri al</translation>
+        <translation>Çizilen son noktayı geri al</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -431,7 +431,7 @@
         <location filename="../app.py" line="0"/>
         <source>Undo
 </source>
-        <translation>Geri Dön</translation>
+        <translation>Geri Al</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -477,17 +477,17 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
-        <translation>&amp;Eğitim</translation>
+        <translation>&amp;Öğretici</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
-        <translation>Eğitim sayfasını aç</translation>
+        <translation>Öğretici sayfasını göster</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom</source>
-        <translation>Büyütme</translation>
+        <translation>Yakınlaştırma</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -497,12 +497,12 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Fare Tekerleği</translation>
+        <translation>Ctrl+Tekerlek</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
-        <translation>&amp;Büyüt</translation>
+        <translation>&amp;Yakınlaştır</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -512,7 +512,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Küçült</translation>
+        <translation>&amp;Uzaklaştır</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -522,22 +522,22 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
-        <translation>Asıl &amp;Boyut</translation>
+        <translation>&amp;Orijinal Boyut</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
-        <translation>Asıl boyutuna döndür</translation>
+        <translation>Orijinal boyuta getir</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Scale</source>
-        <translation>Bir Önceki Ölçeği &amp;Sakla</translation>
+        <translation>Önceki Ölçeği &amp;Koru</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep previous zoom scale</source>
-        <translation>Bir önceki büyütme oranını sakla</translation>
+        <translation>Önceki yakınlaştırma ölçeğini koru</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -547,17 +547,17 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
-        <translation>Büyütme oranı pencerenin boyutuna göre ayarlanır</translation>
+        <translation>Yakınlaştırma pencere boyutunu izler</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
-        <translation>Genişliğe &amp;Uydur</translation>
+        <translation>&amp;Genişliğe Sığdır</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
-        <translation>Büyütme oranı pencerenin genişliğine göre ayarlanır</translation>
+        <translation>Yakınlaştırma pencere genişliğini izler</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -572,7 +572,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
-        <translation>&amp;Etiketi Değiştir</translation>
+        <translation>Etiketi &amp;Düzenle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -582,7 +582,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
-        <translation>Çokgenin İçini Çizim Sırasında Doldur</translation>
+        <translation>Çizerken Çokgeni Doldur</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -612,12 +612,12 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s started.</source>
-        <translation>%s çalışmaya başladı.</translation>
+        <translation>%s başlatıldı.</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
-        <translation>Etiket geçerli değil</translation>
+        <translation>Geçersiz etiket</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -647,7 +647,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
-        <translation>%s şu an yükleniyor…</translation>
+        <translation>%s yükleniyor…</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -662,12 +662,12 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
-        <translation>%s yüklenmiş</translation>
+        <translation>%s yüklendi</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
-        <translation>Resim ile etiket dosyalarının tümü (%s)</translation>
+        <translation>Görüntü ve Etiket dosyaları (%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -677,7 +677,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Dizindeki Açıklamaları Kaydet/Yükle</translation>
+        <translation>%s - Klasördeki Açıklamaları Kaydet/Yükle</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -692,7 +692,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
-        <translation>Yalnızca etiket dosyaları (*%s)</translation>
+        <translation>Etiket dosyaları (*%s)</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -707,7 +707,7 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Attention</source>
-        <translation>Uyarı</translation>
+        <translation>Dikkat</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -737,22 +737,22 @@ Shapes</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
-        <translation>Bir Önceki Parlaklık ile Kontrast Ayarlarını Sakla</translation>
+        <translation>Önceki Parlaklık/Kontrastı Koru</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Preferences…</source>
-        <translation>Ayarlar…</translation>
+        <translation>Tercihler…</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Open config file in text editor</source>
-        <translation>Ayar dosyasını bir metin editöründe görüntüle</translation>
+        <translation>Yapılandırma dosyasını metin düzenleyicide aç</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>No Config File</source>
-        <translation>Ayar Dosyası Bulunamadı</translation>
+        <translation>Yapılandırma Dosyası Yok</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
@@ -768,7 +768,7 @@ Tercihler düzenleyicisini kullanmak için Labelme'i bir yapılandırma dosyası
     <message>
         <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
-        <translation>Ayar Dosyasındaki Hatalar</translation>
+        <translation>Yapılandırma Hataları</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
