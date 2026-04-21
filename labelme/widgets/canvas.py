@@ -106,6 +106,7 @@ class Canvas(QtWidgets.QWidget):
         )
         super().__init__(*args, **kwargs)
 
+        self._cursor = CURSOR_DEFAULT
         self.resetState()
 
         # self.line represents:
@@ -238,17 +239,17 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
-        self.overrideCursor(self._cursor)
+        self._apply_cursor(self._cursor)
         self._update_status()
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
         if self._set_highlight(hShape=None, hEdge=None, hVertex=None):
             self.update()
-        self.restoreCursor()
+        self._release_cursor()
         self._update_status()
 
     def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
-        self.restoreCursor()
+        self._release_cursor()
         self._update_status()
 
     def isVisible(self, shape: Shape) -> bool:  # type: ignore[override]
@@ -277,12 +278,13 @@ class Canvas(QtWidgets.QWidget):
     def _set_highlight(
         self, hShape: Shape | None, hEdge: int | None, hVertex: int | None
     ) -> bool:
+        previous_shape: Shape | None = self.hShape
         need_update: bool = hShape is not None
-        if self.hShape:
-            self.hShape.highlightClear()
+        if previous_shape is not None:
+            previous_shape.highlightClear()
             need_update = True
         # NOTE: Store last highlighted for adding/removing points.
-        self._lasthShape = self.hShape if hShape is None else hShape
+        self._lasthShape = previous_shape if hShape is None else hShape
         self._lasthVertex = self.hVertex if hVertex is None else hVertex
         self._lasthEdge = self.hEdge if hEdge is None else hEdge
         self.hShape = hShape
@@ -363,7 +365,7 @@ class Canvas(QtWidgets.QWidget):
         is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
         if self._is_dragging:
-            self.overrideCursor(CURSOR_GRAB)
+            self._apply_cursor(CURSOR_GRAB)
             delta: QPointF = pos - self._dragging_start_pos
             self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
             self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
@@ -378,7 +380,7 @@ class Canvas(QtWidgets.QWidget):
             else:
                 self.line.shape_type = self.createMode
 
-            self.overrideCursor(CURSOR_DRAW)
+            self._apply_cursor(CURSOR_DRAW)
             if not self.current:
                 self.update()  # draw crosshair
                 self._update_status()
@@ -399,7 +401,7 @@ class Canvas(QtWidgets.QWidget):
                 # Attract line to starting point and
                 # colorise to alert the user.
                 pos = self.current[0]
-                self.overrideCursor(CURSOR_POINT)
+                self._apply_cursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
             if self.createMode in ["polygon", "linestrip"]:
                 self.line.points = [self.current[-1], pos]
@@ -439,7 +441,7 @@ class Canvas(QtWidgets.QWidget):
         # Polygon copy moving.
         if Qt.RightButton & a0.buttons():
             if self.selectedShapesCopy and self.prevPoint is not None:
-                self.overrideCursor(CURSOR_MOVE)
+                self._apply_cursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapesCopy, pos)
                 self.update()
             elif self.selectedShapes:
@@ -459,7 +461,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
                 self.movingShape = True
             elif self.selectedShapes and self.prevPoint is not None:
-                self.overrideCursor(CURSOR_MOVE)
+                self._apply_cursor(CURSOR_MOVE)
                 self.boundedMoveShapes(self.selectedShapes, pos)
                 self.update()
                 self.movingShape = True
@@ -484,7 +486,7 @@ class Canvas(QtWidgets.QWidget):
             if index is not None:
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=index)
                 shape.highlightVertex(index, shape.MOVE_VERTEX)
-                self.overrideCursor(CURSOR_POINT)
+                self._apply_cursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to move point"))
                 if shape.canRemovePoint():
                     status_messages.append(
@@ -497,7 +499,7 @@ class Canvas(QtWidgets.QWidget):
             index_edge: int | None = shape.nearestEdge(pos, self.epsilon)
             if index_edge is not None and shape.canAddPoint():
                 self._set_highlight(hShape=shape, hEdge=index_edge, hVertex=None)
-                self.overrideCursor(CURSOR_POINT)
+                self._apply_cursor(CURSOR_POINT)
                 status_messages.append(self.tr("ALT + Click to create point on shape"))
                 self.update()
                 return
@@ -511,11 +513,11 @@ class Canvas(QtWidgets.QWidget):
                         self.tr("Right-click & drag to copy shape"),
                     ]
                 )
-                self.overrideCursor(CURSOR_GRAB)
+                self._apply_cursor(CURSOR_GRAB)
                 self.update()
                 return
 
-        self.restoreCursor()
+        self._release_cursor()
         if self._set_highlight(hShape=None, hEdge=None, hVertex=None):
             self.update()
 
@@ -526,7 +528,7 @@ class Canvas(QtWidgets.QWidget):
         if shape is None or index is None or point is None:
             return
         shape.insertPoint(index, point)
-        shape.highlightVertex(index, shape.MOVE_VERTEX)
+        shape.highlightVertex(i=index, action=shape.MOVE_VERTEX)
         self.hShape = shape
         self.hVertex = index
         self.hEdge = None
@@ -638,7 +640,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
             self.prevPoint = pos
         elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
-            self.overrideCursor(CURSOR_GRAB)
+            self._apply_cursor(CURSOR_GRAB)
             self._dragging_start_pos = pos
             self._is_dragging = True
         self._update_status()
@@ -646,7 +648,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         if a0.button() == Qt.RightButton:
             menu = self.menus[len(self.selectedShapesCopy) > 0]
-            self.restoreCursor()
+            self._release_cursor()
             if not menu.exec_(self.mapToGlobal(a0.pos())) and self.selectedShapesCopy:  # type: ignore
                 # Cancel the move by deleting the shadow copy.
                 self.selectedShapesCopy = []
@@ -663,7 +665,7 @@ class Canvas(QtWidgets.QWidget):
                     )
         elif a0.button() == Qt.MiddleButton:
             self._is_dragging = False
-            self.restoreCursor()
+            self._release_cursor()
 
         if self.movingShape and self.hShape and self.hShape in self.shapes:
             index = self.shapes.index(self.hShape)
@@ -943,30 +945,36 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
     def finalise(self) -> None:
-        assert self.current
-        new_shapes: list[Shape] = []
-        if self.createMode == "ai_points_to_shape":
-            new_shapes = self._shapes_from_points_ai(
-                points=self.current.points,
-                point_labels=self.current.point_labels,
-            )
-        elif self.createMode == "ai_box_to_shape":
-            new_shapes = self._shapes_from_bbox_ai(
-                bbox_points=self.current.points,
-            )
-        else:
-            self.current.close()
-            new_shapes = [self.current]
-
+        assert self.current is not None
+        new_shapes: list[Shape] = self._build_new_shapes_from_current()
         if not new_shapes:
             self.current = None
             return
-
         self.shapes.extend(new_shapes)
         self.storeShapes()
+        self._reset_after_shape_creation()
+
+    def _build_new_shapes_from_current(self) -> list[Shape]:
+        assert self.current is not None
+        if self.createMode == "ai_points_to_shape":
+            return self._shapes_from_points_ai(
+                points=self.current.points,
+                point_labels=self.current.point_labels,
+            )
+        if self.createMode == "ai_box_to_shape":
+            return self._shapes_from_bbox_ai(bbox_points=self.current.points)
+        self.current.close()
+        return [self.current]
+
+    def _reset_after_shape_creation(self) -> None:
         self.current = None
         self.setHiding(False)
         self.newShape.emit()
+        self.update()
+
+    def _cancel_current_shape(self) -> None:
+        self.current = None
+        self.drawingPolygon.emit(False)
         self.update()
 
     def closeEnough(self, p1: QPointF, p2: QPointF) -> bool:
@@ -1016,9 +1024,7 @@ class Canvas(QtWidgets.QWidget):
         key = a0.key()
         if self.drawing():
             if key == Qt.Key_Escape and self.current:
-                self.current = None
-                self.drawingPolygon.emit(False)
-                self.update()
+                self._cancel_current_shape()
             elif (
                 key in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Space)
                 and self.canCloseShape()
@@ -1074,40 +1080,33 @@ class Canvas(QtWidgets.QWidget):
 
     def undoLastLine(self) -> None:
         assert self.shapes
-        if self.createMode in ["ai_points_to_shape", "ai_box_to_shape"]:
+        if self.createMode in ("ai_points_to_shape", "ai_box_to_shape"):
             # Remove all unlabeled shapes at the tail (added by AI in one shot)
             while self.shapes and self.shapes[-1].label is None:
                 self.shapes.pop()
-            self.current = None
-            self.drawingPolygon.emit(False)
-            self.update()
+            self._cancel_current_shape()
             return
         self.current = self.shapes.pop()
         self.current.setOpen()
         self.current.restoreShapeRaw()
-        if self.createMode in ["polygon", "linestrip"]:
+        if self.createMode in ("polygon", "linestrip"):
             self.line.points = [self.current[-1], self.current[0]]
-        elif self.createMode in [
-            "rectangle",
-            "line",
-            "circle",
-            "ai_box_to_shape",
-        ]:
+        elif self.createMode in ("rectangle", "line", "circle", "ai_box_to_shape"):
             self.current.points = self.current.points[0:1]
         elif self.createMode == "point":
             self.current = None
         self.drawingPolygon.emit(True)
 
     def undoLastPoint(self) -> None:
-        if not self.current or self.current.isClosed():
+        current = self.current
+        if current is None or current.isClosed():
             return
-        self.current.popPoint()
-        if len(self.current) > 0:
-            self.line[0] = self.current[-1]
+        current.popPoint()
+        if len(current) > 0:
+            self.line[0] = current[-1]
+            self.update()
         else:
-            self.current = None
-            self.drawingPolygon.emit(False)
-        self.update()
+            self._cancel_current_shape()
 
     def loadPixmap(self, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         self.pixmap = pixmap
@@ -1134,19 +1133,24 @@ class Canvas(QtWidgets.QWidget):
         self.visible[shape] = value
         self.update()
 
-    def overrideCursor(self, cursor: QtCore.Qt.CursorShape) -> None:
+    def _apply_cursor(self, cursor: QtCore.Qt.CursorShape) -> None:
         if cursor == self._cursor:
             return
-        self.restoreCursor()
+        # Push on first apply; swap the top of the stack we already own afterwards.
+        if self._cursor == CURSOR_DEFAULT:
+            QtWidgets.QApplication.setOverrideCursor(cursor)
+        else:
+            QtWidgets.QApplication.changeOverrideCursor(cursor)
         self._cursor = cursor
-        QtWidgets.QApplication.setOverrideCursor(cursor)
 
-    def restoreCursor(self) -> None:
+    def _release_cursor(self) -> None:
+        if self._cursor == CURSOR_DEFAULT:
+            return
         self._cursor = CURSOR_DEFAULT
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def resetState(self) -> None:
-        self.restoreCursor()
+        self._release_cursor()
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
         self.shapes = []
