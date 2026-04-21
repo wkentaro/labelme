@@ -352,7 +352,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         """Update line with last point and current coordinates."""
         try:
-            pos = self.transformPos(a0.localPos())
+            pos = self._transform_point_widget_to_image(a0.localPos())
         except AttributeError:
             return
 
@@ -544,7 +544,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pos: QPointF = self.transformPos(a0.localPos())
+        pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
 
         is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
@@ -923,7 +923,7 @@ class Canvas(QtWidgets.QWidget):
         drawing_shape.paint(p)
         p.end()
 
-    def transformPos(self, point: QPointF) -> QPointF:
+    def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
         return point / self.scale - self.offsetToCenter()
 
     def enableDragging(self, enabled: bool) -> None:
