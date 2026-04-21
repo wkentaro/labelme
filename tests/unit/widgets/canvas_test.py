@@ -65,6 +65,31 @@ def test_outOfPixmap(canvas: Canvas, point: QPointF, is_outside: bool) -> None:
             QPointF(_WIDTH / 2, _HEIGHT + 30),  # to the bottom
             QPointF(_WIDTH / 2, _HEIGHT),  # bottom edge
         ),
+        (
+            QPointF(0, _HEIGHT / 2),  # on left edge
+            QPointF(-5, _HEIGHT / 2),  # further left
+            QPointF(0, _HEIGHT / 2),  # stays on left edge
+        ),
+        (
+            QPointF(_WIDTH / 2, 0),  # on top edge
+            QPointF(_WIDTH / 2, -5),  # further up
+            QPointF(_WIDTH / 2, 0),  # stays on top edge
+        ),
+        (
+            QPointF(0, _HEIGHT / 2),  # on left edge
+            QPointF(-5, _HEIGHT / 2 + 10),  # further left and down
+            QPointF(0, _HEIGHT / 2 + 10),  # slides down along left edge
+        ),
+        (
+            QPointF(0, 0),  # top-left corner
+            QPointF(-5, -5),  # diagonally out
+            QPointF(0, 0),  # stays at corner
+        ),
+        (
+            QPointF(_WIDTH, _HEIGHT),  # bottom-right corner
+            QPointF(_WIDTH + 5, _HEIGHT + 5),  # diagonally out
+            QPointF(_WIDTH, _HEIGHT),  # stays at corner
+        ),
     ],
 )
 def test_intersectionPoint(
