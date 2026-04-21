@@ -851,7 +851,7 @@ class Canvas(QtWidgets.QWidget):
         p.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
 
         p.scale(self.scale, self.scale)
-        p.translate(self._compute_offset_to_image_center())
+        p.translate(self._compute_image_origin_offset())
 
         p.drawPixmap(0, 0, self.pixmap)
 
@@ -926,12 +926,12 @@ class Canvas(QtWidgets.QWidget):
         p.end()
 
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
-        return point / self.scale - self._compute_offset_to_image_center()
+        return point / self.scale - self._compute_image_origin_offset()
 
     def enableDragging(self, enabled: bool) -> None:
         self._is_dragging_enabled = enabled
 
-    def _compute_offset_to_image_center(self) -> QPointF:
+    def _compute_image_origin_offset(self) -> QPointF:
         area = super().size()
         scaled_w = self.pixmap.width() * self.scale
         scaled_h = self.pixmap.height() * self.scale
