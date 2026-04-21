@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections
 import enum
-from collections.abc import Iterator
 from typing import Any
 from typing import Literal
 
@@ -353,7 +352,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         """Update line with last point and current coordinates."""
         try:
-            pos = self.transformPos(a0.localPos())
+            pos = self._transform_point_widget_to_image(a0.localPos())
         except AttributeError:
             return
 
@@ -545,7 +544,7 @@ class Canvas(QtWidgets.QWidget):
         self.movingShape = True  # Save changes
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pos: QPointF = self.transformPos(a0.localPos())
+        pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
 
         is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
@@ -850,7 +849,7 @@ class Canvas(QtWidgets.QWidget):
         p.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
 
         p.scale(self.scale, self.scale)
-        p.translate(self.offsetToCenter())
+        p.translate(self._compute_offset_to_image_center())
 
         p.drawPixmap(0, 0, self.pixmap)
 
@@ -924,24 +923,23 @@ class Canvas(QtWidgets.QWidget):
         drawing_shape.paint(p)
         p.end()
 
-    def transformPos(self, point: QPointF) -> QPointF:
-        """Convert from widget-logical coordinates to painter-logical ones."""
-        return point / self.scale - self.offsetToCenter()
+    def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
+        return point / self.scale - self._compute_offset_to_image_center()
 
     def enableDragging(self, enabled: bool) -> None:
         self._is_dragging_enabled = enabled
 
-    def offsetToCenter(self) -> QPointF:
-        s = self.scale
+    def _compute_offset_to_image_center(self) -> QPointF:
         area = super().size()
-        w, h = self.pixmap.width() * s, self.pixmap.height() * s
-        aw, ah = area.width(), area.height()
-        x = (aw - w) / (2 * s) if aw > w else 0
-        y = (ah - h) / (2 * s) if ah > h else 0
-        return QPointF(x, y)
+        scaled_w = self.pixmap.width() * self.scale
+        scaled_h = self.pixmap.height() * self.scale
+        slack_w = max(area.width() - scaled_w, 0.0)
+        slack_h = max(area.height() - scaled_h, 0.0)
+        return QPointF(slack_w, slack_h) / (2.0 * self.scale)
 
     def outOfPixmap(self, p: QPointF) -> bool:
-        w, h = self.pixmap.width(), self.pixmap.height()
+        w = self.pixmap.width()
+        h = self.pixmap.height()
         return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
     def finalise(self) -> None:
@@ -1247,60 +1245,30 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
 def _compute_intersection_edges_image(
     p1: QPointF, p2: QPointF, image_size: QtCore.QSize
 ) -> QPointF:
-    # Cycle through each image edge in clockwise fashion,
-    # and find the one intersecting the current line segment.
-    # http://paulbourke.net/geometry/lineline2d/
-    points = [
-        (0, 0),
-        (image_size.width(), 0),
-        (image_size.width(), image_size.height()),
-        (0, image_size.height()),
-    ]
-    # x1, y1 should be in the pixmap, x2, y2 should be out of the pixmap
-    x1 = min(max(p1.x(), 0), image_size.width())
-    y1 = min(max(p1.y(), 0), image_size.height())
-    x2, y2 = p2.x(), p2.y()
-    d, i, (x, y) = min(_compute_intersection_edges((x1, y1), (x2, y2), points))
-    x3, y3 = points[i]
-    x4, y4 = points[(i + 1) % 4]
-    if (x, y) == (x1, y1):
-        # Handle cases where previous point is on one of the edges.
-        if x3 == x4:
-            return QPointF(x3, min(max(0, y2), max(y3, y4)))
-        else:  # y3 == y4
-            return QPointF(min(max(0, x2), max(x3, x4)), y3)
-    return QPointF(x, y)
+    width = image_size.width()
+    height = image_size.height()
 
+    start_x = np.clip(p1.x(), 0.0, width)
+    start_y = np.clip(p1.y(), 0.0, height)
+    delta_x = p2.x() - start_x
+    delta_y = p2.y() - start_y
 
-def _compute_intersection_edges(
-    point1: tuple[float, float],
-    point2: tuple[float, float],
-    points: list[tuple[int, int]],
-) -> Iterator[tuple[float, int, tuple[float, float]]]:
-    """Find intersecting edges.
+    # Liang-Barsky line clipping.
+    boundary_pairs = (
+        (start_x, -delta_x),
+        (width - start_x, delta_x),
+        (start_y, -delta_y),
+        (height - start_y, delta_y),
+    )
+    t_exit = 1.0
+    for numerator, denominator in boundary_pairs:
+        if denominator > 0.0:
+            t_exit = min(t_exit, numerator / denominator)
 
-    For each edge formed by `points', yield the intersection
-    with the line segment `(x1,y1) - (x2,y2)`, if it exists.
-    Also return the distance of `(x2,y2)' to the middle of the
-    edge along with its index, so that the one closest can be chosen.
-    """
-    (x1, y1) = point1
-    (x2, y2) = point2
-    for i in range(4):
-        x3, y3 = points[i]
-        x4, y4 = points[(i + 1) % 4]
-        denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
-        nua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)
-        nub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)
-        if denom == 0:
-            # This covers two cases:
-            #   nua == nub == 0: Coincident
-            #   otherwise: Parallel
-            continue
-        ua, ub = nua / denom, nub / denom
-        if 0 <= ua <= 1 and 0 <= ub <= 1:
-            x = x1 + ua * (x2 - x1)
-            y = y1 + ua * (y2 - y1)
-            m = QPointF((x3 + x4) / 2, (y3 + y4) / 2)
-            d = labelme.utils.distance(m - QPointF(x2, y2))
-            yield d, i, (x, y)
+    if t_exit > 0.0:
+        return QPointF(start_x + t_exit * delta_x, start_y + t_exit * delta_y)
+
+    # t_exit == 0: start is on a boundary, p2 is exterior — slide along the edge.
+    if start_x <= 0.0 or start_x >= width:
+        return QPointF(start_x, np.clip(p2.y(), 0.0, height))
+    return QPointF(np.clip(p2.x(), 0.0, width), start_y)
