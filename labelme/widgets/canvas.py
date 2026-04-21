@@ -386,6 +386,7 @@ class Canvas(QtWidgets.QWidget):
                 self._update_status()
                 return
 
+            self.current.highlightClear()
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
@@ -434,7 +435,6 @@ class Canvas(QtWidgets.QWidget):
                 self.line.close()
             assert len(self.line.points) == len(self.line.point_labels)
             self.update()
-            self.current.highlightClear()
             self._update_status()
             return
 
