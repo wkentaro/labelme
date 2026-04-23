@@ -43,7 +43,7 @@ test:  # Run tests
 	$(call exec,uv run pytest -v tests/ $(PYTEST_ARGS))
 
 update_translate:
-	$(call exec,uv run --no-sync tools/update_translate.py)
+	$(call exec,uv run tools/update_translate.py)
 
 coverage:  # Run tests with coverage
 	$(call exec,uv run pytest -v tests/ --numprocesses=auto --cov=labelme --cov-report=term-missing)
