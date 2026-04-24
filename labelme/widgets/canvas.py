@@ -386,7 +386,6 @@ class Canvas(QtWidgets.QWidget):
                 self._update_status()
                 return
 
-            self.current.highlightClear()
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
@@ -860,6 +859,8 @@ class Canvas(QtWidgets.QWidget):
             self._paint_current_shape_preview(painter=painter)
         finally:
             painter.end()
+        if self.current is not None:
+            self.current.highlightClear()
 
     def _paint_background(self, painter: QtGui.QPainter) -> None:
         painter.save()
