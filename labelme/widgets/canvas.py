@@ -385,7 +385,6 @@ class Canvas(QtWidgets.QWidget):
                 self._update_status()
                 return
 
-            self.current.highlightClear()
             if self.outOfPixmap(pos):
                 # Don't allow the user to draw outside the pixmap.
                 # Project the point to the pixmap's edges.
@@ -895,6 +894,8 @@ class Canvas(QtWidgets.QWidget):
             "ai_points_to_shape",
         ]:
             p.end()
+            if self.current is not None:
+                self.current.highlightClear()
             return
 
         drawing_shape: Shape = self.current.copy()
@@ -923,6 +924,8 @@ class Canvas(QtWidgets.QWidget):
         drawing_shape.selected = self.fillDrawing()
         drawing_shape.paint(p)
         p.end()
+        if self.current is not None:
+            self.current.highlightClear()
 
     def transformPos(self, point: QPointF) -> QPointF:
         """Convert from widget-logical coordinates to painter-logical ones."""
