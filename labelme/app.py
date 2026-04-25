@@ -166,6 +166,34 @@ class _Menus(NamedTuple):
     label_list: QtWidgets.QMenu
 
 
+def _color_bullet_html(label_text: str, fill_color: QtGui.QColor) -> str:
+    r, g, b, _ = fill_color.getRgb()
+    return f'{html.escape(label_text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
+
+
+def _make_checkable_item(label: str, checked: bool) -> QtWidgets.QListWidgetItem:
+    item = QtWidgets.QListWidgetItem(label)
+    item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+    item.setCheckState(Qt.Checked if checked else Qt.Unchecked)
+    return item
+
+
+def _read_flags_from_widget(widget: QtWidgets.QListWidget) -> dict[str, bool]:
+    result: dict[str, bool] = {}
+    for i in range(widget.count()):
+        row_item = widget.item(i)
+        if row_item is not None:
+            result[row_item.text()] = row_item.checkState() == Qt.Checked
+    return result
+
+
+def _make_file_list_item(path: str, label_exists: bool) -> QtWidgets.QListWidgetItem:
+    item = QtWidgets.QListWidgetItem(path)
+    item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+    item.setCheckState(Qt.Checked if label_exists else Qt.Unchecked)
+    return item
+
+
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
@@ -184,7 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_dialog: LabelDialog
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
-
+    # Application state
     _output_dir: str | None
     _image: QtGui.QImage
     _label_file: LabelFile | None
@@ -657,7 +685,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     "{} and {} from the canvas."
                 )
             ).format(
-                utils.fmtShortcut(f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"),
+                utils.fmtShortcut(
+                    str(shortcuts["zoom_in"]) + "," + str(shortcuts["zoom_out"])
+                ),
                 utils.fmtShortcut(self.tr("Ctrl+Wheel")),
             )
         )
@@ -955,8 +985,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_values = {}
         self._brightness_contrast_values = {}
         self._scroll_values = {
-            Qt.Horizontal: {},
-            Qt.Vertical: {},
+            orientation: {} for orientation in (Qt.Horizontal, Qt.Vertical)
         }
 
         if self._config["file_search"]:
@@ -1151,10 +1180,10 @@ class MainWindow(QtWidgets.QMainWindow):
         title: str,
         actions: tuple[QtWidgets.QAction | QtWidgets.QMenu | None, ...] | None = None,
     ) -> QtWidgets.QMenu:
-        menu = self.menuBar().addMenu(title)
+        new_menu = self.menuBar().addMenu(title)
         if actions:
-            utils.addActions(menu, actions)
-        return menu
+            utils.addActions(new_menu, actions)
+        return new_menu
 
     # Support Functions
 
@@ -1205,8 +1234,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def setClean(self) -> None:
         self._is_changed = False
         self._actions.save.setEnabled(False)
-        for _, action in self._actions.draw:
-            action.setEnabled(True)
+        for _, draw_action in self._actions.draw:
+            draw_action.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=False))
 
         if self.hasLabelFile():
@@ -1225,7 +1254,8 @@ class MainWindow(QtWidgets.QMainWindow):
         QtCore.QTimer.singleShot(0, function)
 
     def show_status_message(self, message: str, delay: int = 500) -> None:
-        self.statusBar().showMessage(message, delay)
+        status_bar = self.statusBar()
+        status_bar.showMessage(message, delay)
 
     def _submit_ai_prompt(self, _: bool) -> None:
         create_mode = self._canvas_widgets.canvas.createMode
@@ -1490,11 +1520,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._update_shape_color(shape)
             assert shape.label is not None
             if shape.group_id is None:
-                r, g, b = shape.fill_color.getRgb()[:3]
-                item.setText(
-                    f"{html.escape(shape.label)} "
-                    f'<font color="#{r:02x}{g:02x}{b:02x}">●</font>'
-                )
+                item.setText(_color_bullet_html(shape.label, shape.fill_color))
             else:
                 item.setText(f"{shape.label} ({shape.group_id})")
             self.setDirty()
@@ -1563,10 +1589,7 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
-        r, g, b = shape.fill_color.getRgb()[:3]
-        label_list_item.setText(
-            f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
-        )
+        label_list_item.setText(_color_bullet_html(text, shape.fill_color))
 
     def _update_shape_color(self, shape: Shape) -> None:
         assert shape.label is not None
@@ -1676,13 +1699,8 @@ class MainWindow(QtWidgets.QMainWindow):
         widget: QtWidgets.QListWidget,
     ) -> None:
         widget.clear()
-        key: str
-        flag: bool
         for key, flag in flags.items():
-            item: QtWidgets.QListWidgetItem = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            widget.addItem(item)
+            widget.addItem(_make_checkable_item(label=key, checked=flag))
 
     def saveLabels(self, label_path: str) -> bool:
         lf = LabelFile()
@@ -1709,13 +1727,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for item in self._docks.label_list
             if (s := item.shape()) is not None
         ]
-        flags = {}
-        for i in range(self._docks.flag_list.count()):
-            item = self._docks.flag_list.item(i)
-            assert item
-            key = item.text()
-            flag = item.checkState() == Qt.Checked
-            flags[key] = flag
+        flags = _read_flags_from_widget(self._docks.flag_list)
         try:
             assert self._image_path
             imagePath = osp.relpath(self._image_path, osp.dirname(label_path))
@@ -1793,10 +1805,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         position MUST be in global coordinates.
         """
-        items = self._docks.unique_label_list.selectedItems()
-        text = None
-        if items:
-            text = items[0].data(Qt.UserRole)
+        selected = self._docks.unique_label_list.selectedItems()
+        text = selected[0].data(Qt.UserRole) if selected else None
         flags = {}
         group_id = None
         description = ""
@@ -1833,8 +1843,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def scrollRequest(self, delta: int, orientation: Qt.Orientation) -> None:
         units = -delta * 0.1  # natural scroll
         bar = self._canvas_widgets.scroll_bars[orientation]
-        value = bar.value() + bar.singleStep() * units
-        self.setScroll(orientation, value)
+        self.setScroll(orientation, bar.value() + bar.singleStep() * units)
 
     def setScroll(self, orientation: Qt.Orientation, value: float) -> None:
         self._canvas_widgets.scroll_bars[orientation].setValue(int(value))
@@ -1866,14 +1875,9 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas_scale_factor = canvas_width_new / canvas_width_old
         x_shift: float = pos.x() * canvas_scale_factor - pos.x()
         y_shift: float = pos.y() * canvas_scale_factor - pos.y()
-        self.setScroll(
-            Qt.Horizontal,
-            self._canvas_widgets.scroll_bars[Qt.Horizontal].value() + x_shift,
-        )
-        self.setScroll(
-            Qt.Vertical,
-            self._canvas_widgets.scroll_bars[Qt.Vertical].value() + y_shift,
-        )
+        scroll_bars = self._canvas_widgets.scroll_bars
+        self.setScroll(Qt.Horizontal, scroll_bars[Qt.Horizontal].value() + x_shift)
+        self.setScroll(Qt.Vertical, scroll_bars[Qt.Vertical].value() + y_shift)
 
     def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
@@ -1979,12 +1983,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _load_file(self, image_or_label_path: str) -> None:
         # changing fileListWidget loads file
-        if image_or_label_path in self.imageList and (
+        if image_or_label_path in self._image_list and (
             self._docks.file_list.currentRow()
-            != self.imageList.index(image_or_label_path)
+            != self._image_list.index(image_or_label_path)
         ):
             self._docks.file_list.setCurrentRow(
-                self.imageList.index(image_or_label_path)
+                self._image_list.index(image_or_label_path)
             )
             self._docks.file_list.repaint()
             return
@@ -2053,7 +2057,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.imageData:
                 self._image_path = image_path
             self._label_file = None
-        assert self.imageData is not None
+        if self.imageData is None:
+            raise RuntimeError("imageData is None after loading")
         t0 = time.time()
         image = QtGui.QImage.fromData(self.imageData)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
@@ -2255,19 +2260,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._output_dir = output_dir
 
-        self.statusBar().showMessage(
+        status_bar = self.statusBar()
+        status_bar.showMessage(
             self.tr("%s . Annotations will be saved/loaded in %s")
             % ("Change Annotations Dir", self._output_dir)
         )
-        self.statusBar().show()
+        status_bar.show()
 
         current_image_path = self._image_path
         self._import_images_from_dir(root_dir=self._prev_opened_dir)
 
-        if current_image_path in self.imageList:
+        if current_image_path in self._image_list:
             # retain currently selected file
             self._docks.file_list.setCurrentRow(
-                self.imageList.index(current_image_path)
+                self._image_list.index(current_image_path)
             )
             self._docks.file_list.repaint()
 
@@ -2324,13 +2330,13 @@ class MainWindow(QtWidgets.QMainWindow):
         return f"{osp.splitext(self._image_path)[0]}.json"
 
     def deleteFile(self) -> None:
-        msg = self.tr(
+        confirm_msg = self.tr(
             "You are about to permanently delete this label file, proceed anyway?"
         )
         answer = QtWidgets.QMessageBox.warning(
             self,
             self.tr("Attention"),
-            msg,
+            confirm_msg,
             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
         )
         if answer != QtWidgets.QMessageBox.Yes:
@@ -2343,9 +2349,9 @@ class MainWindow(QtWidgets.QMainWindow):
         os.remove(annotation_path)
         logger.info(f"Label file is removed: {annotation_path}")
 
-        item = self._docks.file_list.currentItem()
-        if item:
-            item.setCheckState(Qt.Unchecked)
+        current_item = self._docks.file_list.currentItem()
+        if current_item is not None:
+            current_item.setCheckState(Qt.Unchecked)
 
         self.resetState()
 
@@ -2507,13 +2513,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_from_file_or_dir(file_or_dir=dir_path)
 
     @property
-    def imageList(self) -> list[str]:
-        lst = []
-        for i in range(self._docks.file_list.count()):
-            item = self._docks.file_list.item(i)
-            assert item
-            lst.append(item.text())
-        return lst
+    def _image_list(self) -> list[str]:
+        file_list = self._docks.file_list
+        return [
+            row_item.text()
+            for i in range(file_list.count())
+            if (row_item := file_list.item(i)) is not None
+        ]
 
     def importDroppedImageFiles(self, imageFiles: list[str]) -> None:
         extensions = [
@@ -2523,17 +2529,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._image_path = None
         for file in imageFiles:
-            if file in self.imageList or not file.lower().endswith(tuple(extensions)):
+            if file in self._image_list or not file.lower().endswith(tuple(extensions)):
                 continue
-            item = QtWidgets.QListWidgetItem(file)
-            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(self._get_label_path(image_or_label_path=file)):
-                item.setCheckState(Qt.Checked)
-            else:
-                item.setCheckState(Qt.Unchecked)
-            self._docks.file_list.addItem(item)
+            label_exists = QtCore.QFile.exists(
+                self._get_label_path(image_or_label_path=file)
+            )
+            self._docks.file_list.addItem(_make_file_list_item(file, label_exists))
 
-        if len(self.imageList) > 1:
+        if len(self._image_list) > 1:
             self._actions.open_next_img.setEnabled(True)
             self._actions.open_prev_img.setEnabled(True)
 
@@ -2562,15 +2565,12 @@ class MainWindow(QtWidgets.QMainWindow):
             except re.error:
                 pass
         for image_path in image_paths:
-            item = QtWidgets.QListWidgetItem(image_path)
-            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(
+            label_exists = QtCore.QFile.exists(
                 self._get_label_path(image_or_label_path=image_path)
-            ):
-                item.setCheckState(Qt.Checked)
-            else:
-                item.setCheckState(Qt.Unchecked)
-            self._docks.file_list.addItem(item)
+            )
+            self._docks.file_list.addItem(
+                _make_file_list_item(image_path, label_exists)
+            )
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
