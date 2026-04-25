@@ -828,23 +828,35 @@ class Canvas(QtWidgets.QWidget):
             self.hovered_shape.highlight_vertex(
                 i=self.hovered_vertex, action=self.hovered_shape.MOVE_VERTEX
             )
+            if self.deselect_shape():
+                self.update()
+            return
+
+        clicked_shape = self._find_shape_at_point(point)
+        if clicked_shape is None:
+            if self.deselect_shape():
+                self.update()
+            return
+
+        self.set_hide_background()
+        already_selected = clicked_shape in self.selected_shapes
+        if already_selected:
+            self.hovered_shape_is_selected = True
         else:
-            shape: Shape
-            for shape in reversed(self.shapes):
-                if self.is_shape_visible(shape) and shape.contains_point(point):
-                    self.set_hide_background()
-                    if shape not in self.selected_shapes:
-                        if multiple_selection_mode:
-                            self.selection_changed.emit(self.selected_shapes + [shape])
-                        else:
-                            self.selection_changed.emit([shape])
-                        self.hovered_shape_is_selected = False
-                    else:
-                        self.hovered_shape_is_selected = True
-                    self.calculate_offsets(point)
-                    return
-        if self.deselect_shape():
-            self.update()
+            new_selection = (
+                self.selected_shapes + [clicked_shape]
+                if multiple_selection_mode
+                else [clicked_shape]
+            )
+            self.selection_changed.emit(new_selection)
+            self.hovered_shape_is_selected = False
+        self.calculate_offsets(point)
+
+    def _find_shape_at_point(self, point: QPointF) -> Shape | None:
+        for shape in reversed(self.shapes):
+            if self.is_shape_visible(shape) and shape.contains_point(point):
+                return shape
+        return None
 
     def calculate_offsets(self, point: QPointF) -> None:
         if not self.selected_shapes:
