@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import os.path as osp
 import shutil
 from pathlib import Path
 
@@ -40,17 +39,17 @@ def pause(request: pytest.FixtureRequest) -> bool:
 
 
 def assert_labelfile_sanity(filename: str) -> None:
-    assert osp.exists(filename)
+    label_path = Path(filename)
+    assert label_path.exists()
 
-    with open(filename) as f:
+    with open(label_path) as f:
         data = json.load(f)
 
     assert "imagePath" in data
     image_data = data.get("imageData", None)
     if image_data is None:
-        parent_dir = osp.dirname(filename)
-        img_file = osp.join(parent_dir, data["imagePath"])
-        assert osp.exists(img_file)
+        img_file = label_path.parent / data["imagePath"]
+        assert img_file.exists()
         img = imgviz.io.imread(img_file)
     else:
         img = labelme.utils.img_b64_to_arr(image_data)
