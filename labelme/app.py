@@ -2517,6 +2517,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 def _shapes_from_dicts(
+    *,
     shape_dicts: list[ShapeDict],
     label_flags: dict[str, list[str]] | None,
 ) -> list[Shape]:
@@ -2623,7 +2624,7 @@ def _format_window_title(
     return title
 
 
-def _resolve_label_path(image_or_label_path: str, output_dir: Path | None) -> str:
+def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) -> str:
     if LabelFile.is_label_file(filename=image_or_label_path):
         return image_or_label_path
     image_path = Path(image_or_label_path)
