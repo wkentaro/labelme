@@ -1416,8 +1416,8 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("No label is selected, so cannot edit label.")
             return
 
-        first_shape = items[0].shape()
-        assert first_shape is not None
+        shapes = [cast(Shape, item.shape()) for item in items]
+        first_shape = shapes[0]
 
         if len(items) == 1:
             edit_text = True
@@ -1425,21 +1425,13 @@ class MainWindow(QtWidgets.QMainWindow):
             edit_group_id = True
             edit_description = True
         else:
-            edit_text = all(
-                item.shape().label == first_shape.label  # ty: ignore[unresolved-attribute]
-                for item in items[1:]
-            )
-            edit_flags = all(
-                item.shape().flags == first_shape.flags  # ty: ignore[unresolved-attribute]
-                for item in items[1:]
-            )
+            edit_text = all(shape.label == first_shape.label for shape in shapes[1:])
+            edit_flags = all(shape.flags == first_shape.flags for shape in shapes[1:])
             edit_group_id = all(
-                item.shape().group_id == first_shape.group_id  # ty: ignore[unresolved-attribute]
-                for item in items[1:]
+                shape.group_id == first_shape.group_id for shape in shapes[1:]
             )
             edit_description = all(
-                item.shape().description == first_shape.description  # ty: ignore[unresolved-attribute]
-                for item in items[1:]
+                shape.description == first_shape.description for shape in shapes[1:]
             )
 
         if not edit_text:
