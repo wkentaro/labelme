@@ -15,8 +15,8 @@ def main() -> None:
     args = parser.parse_args()
 
     label_file = LabelFile(args.json_file)
-    assert label_file.imageData is not None
-    img = utils.img_data_to_arr(label_file.imageData)
+    assert label_file.image_data is not None
+    img = utils.img_data_to_arr(label_file.image_data)
 
     label_name_to_value = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):

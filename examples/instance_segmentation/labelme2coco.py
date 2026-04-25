@@ -93,8 +93,8 @@ def main() -> None:
         base = path.stem
         out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
 
-        assert label_file.imageData is not None
-        img = labelme.utils.img_data_to_arr(label_file.imageData)
+        assert label_file.image_data is not None
+        img = labelme.utils.img_data_to_arr(label_file.image_data)
         if img.ndim == 3 and img.shape[2] == 4:
             img = imgviz.rgba2rgb(img)
         imgviz.io.imsave(out_img_file, img)

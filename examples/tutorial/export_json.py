@@ -26,8 +26,8 @@ def main() -> None:
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
-    assert label_file.imageData is not None
-    image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.imageData)
+    assert label_file.image_data is not None
+    image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.image_data)
 
     label_name_to_value: dict[str, int] = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):

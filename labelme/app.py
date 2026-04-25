@@ -1649,17 +1649,17 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             assert self._image_path
             label_dir = Path(label_path).parent
-            imagePath = os.path.relpath(self._image_path, label_dir)
-            imageData = self._image_data if self._config["with_image_data"] else None
+            image_path = os.path.relpath(self._image_path, label_dir)
+            image_data = self._image_data if self._config["with_image_data"] else None
             label_dir.mkdir(parents=True, exist_ok=True)
             lf.save(
                 filename=label_path,
                 shapes=shapes,
-                imagePath=imagePath,
-                imageData=imageData,
-                imageHeight=self._image.height(),
-                imageWidth=self._image.width(),
-                otherData=self._other_data,
+                image_path=image_path,
+                image_data=image_data,
+                image_height=self._image.height(),
+                image_width=self._image.width(),
+                other_data=self._other_data,
                 flags=flags,
             )
             self._label_file = lf
@@ -1955,10 +1955,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.show_status_message(self.tr("Error reading %s") % label_path)
                 return
             assert self._label_file is not None
-            self._image_data = self._label_file.imageData
-            assert self._label_file.imagePath
-            self._image_path = str(Path(label_path).parent / self._label_file.imagePath)
-            self._other_data = self._label_file.otherData
+            self._image_data = self._label_file.image_data
+            assert self._label_file.image_path
+            self._image_path = str(
+                Path(label_path).parent / self._label_file.image_path
+            )
+            self._other_data = self._label_file.other_data
         else:
             image_path: str = image_or_label_path
             try:
