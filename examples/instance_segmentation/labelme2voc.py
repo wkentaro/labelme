@@ -97,8 +97,8 @@ def main() -> None:
                     output_dir / "SegmentationObjectVisualization" / f"{base}.jpg"
                 )
 
-        assert label_file.imageData is not None
-        img = labelme.utils.img_data_to_arr(label_file.imageData)
+        assert label_file.image_data is not None
+        img = labelme.utils.img_data_to_arr(label_file.image_data)
         imgviz.io.imsave(out_img_file, img)
 
         cls, ins = labelme.utils.shapes_to_label(

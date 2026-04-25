@@ -39,7 +39,7 @@ def test_toggle_all_shapes(
     for shape in canvas.shapes:
         assert canvas.is_shape_visible(shape)
 
-    _win.toggleShapes(False)
+    _win.toggle_shape_visibility(False)
     qtbot.wait(50)
 
     for item in label_list:
@@ -47,7 +47,7 @@ def test_toggle_all_shapes(
     for shape in canvas.shapes:
         assert not canvas.is_shape_visible(shape)
 
-    _win.toggleShapes(True)
+    _win.toggle_shape_visibility(True)
     qtbot.wait(50)
 
     for item in label_list:

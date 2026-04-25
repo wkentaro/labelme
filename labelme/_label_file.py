@@ -4,6 +4,7 @@ import base64
 import io
 import json
 import time
+import warnings
 from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
@@ -132,11 +133,72 @@ class LabelFile:
 
     def __init__(self, filename: str | None = None) -> None:
         self.shapes: list[ShapeDict] = []
-        self.imagePath: str | None = None
-        self.imageData: bytes | None = None
+        self.image_path: str | None = None
+        self.image_data: bytes | None = None
+        self.other_data: dict[str, Any] = {}
         if filename is not None:
             self.load(filename)
         self.filename: str | None = filename
+
+    @property
+    def imagePath(self) -> str | None:
+        warnings.warn(
+            "LabelFile.imagePath is deprecated and will be removed in a future "
+            "release; use image_path",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.image_path
+
+    @imagePath.setter
+    def imagePath(self, value: str | None) -> None:
+        warnings.warn(
+            "LabelFile.imagePath is deprecated and will be removed in a future "
+            "release; use image_path",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.image_path = value
+
+    @property
+    def imageData(self) -> bytes | None:
+        warnings.warn(
+            "LabelFile.imageData is deprecated and will be removed in a future "
+            "release; use image_data",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.image_data
+
+    @imageData.setter
+    def imageData(self, value: bytes | None) -> None:
+        warnings.warn(
+            "LabelFile.imageData is deprecated and will be removed in a future "
+            "release; use image_data",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.image_data = value
+
+    @property
+    def otherData(self) -> dict[str, Any]:
+        warnings.warn(
+            "LabelFile.otherData is deprecated and will be removed in a future "
+            "release; use other_data",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.other_data
+
+    @otherData.setter
+    def otherData(self, value: dict[str, Any]) -> None:
+        warnings.warn(
+            "LabelFile.otherData is deprecated and will be removed in a future "
+            "release; use other_data",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        self.other_data = value
 
     @staticmethod
     def load_image_file(filename: str) -> bytes:
@@ -148,18 +210,18 @@ class LabelFile:
         if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
             # no encoding needed
             with open(filename, "rb") as f:
-                imageData = f.read()
+                image_data = f.read()
         else:
             with io.BytesIO() as f:
                 format = "PNG" if "A" in oriented.mode else "JPEG"
                 oriented.save(f, format=format, quality=95)
                 f.seek(0)
-                imageData = f.read()
+                image_data = f.read()
 
         logger.debug(
             "Loaded image file: {!r} in {:.0f}ms", filename, (time.time() - t0) * 1000
         )
-        return imageData
+        return image_data
 
     def load(self, filename: str) -> None:
         keys = [
@@ -176,16 +238,18 @@ class LabelFile:
                 data = json.load(f)
 
             # Normalize Windows-style backslash paths to POSIX forward slashes
-            imagePath = PureWindowsPath(data["imagePath"]).as_posix()
+            image_path = PureWindowsPath(data["imagePath"]).as_posix()
 
             if data["imageData"] is not None:
-                imageData = base64.b64decode(data["imageData"])
+                image_data = base64.b64decode(data["imageData"])
             else:
                 # relative path from label file to relative path from cwd
-                imageData = self.load_image_file(str(Path(filename).parent / imagePath))
+                image_data = self.load_image_file(
+                    str(Path(filename).parent / image_path)
+                )
             flags = data.get("flags") or {}
             self._check_image_height_and_width(
-                imageData,
+                image_data,
                 data.get("imageHeight"),
                 data.get("imageWidth"),
             )
@@ -195,70 +259,71 @@ class LabelFile:
         except Exception as e:
             raise LabelFileError(e)
 
-        otherData = {}
+        other_data = {}
         for key, value in data.items():
             if key not in keys:
-                otherData[key] = value
+                other_data[key] = value
 
         # Only replace data after everything is loaded.
         self.flags = flags
         self.shapes = shapes
-        self.imagePath = imagePath
-        self.imageData = imageData
+        self.image_path = image_path
+        self.image_data = image_data
         self.filename = filename
-        self.otherData = otherData
+        self.other_data = other_data
 
     @staticmethod
     def _check_image_height_and_width(
-        imageData: bytes, imageHeight: int | None, imageWidth: int | None
+        image_data: bytes, image_height: int | None, image_width: int | None
     ) -> tuple[int | None, int | None]:
-        img_pil = utils.img_data_to_pil(imageData)
+        img_pil = utils.img_data_to_pil(image_data)
         actual_w, actual_h = img_pil.size
-        if imageHeight is not None and actual_h != imageHeight:
+        if image_height is not None and actual_h != image_height:
             logger.error(
                 "imageHeight does not match with imageData or imagePath, "
                 "so getting imageHeight from actual image."
             )
-            imageHeight = actual_h
-        if imageWidth is not None and actual_w != imageWidth:
+            image_height = actual_h
+        if image_width is not None and actual_w != image_width:
             logger.error(
                 "imageWidth does not match with imageData or imagePath, "
                 "so getting imageWidth from actual image."
             )
-            imageWidth = actual_w
-        return imageHeight, imageWidth
+            image_width = actual_w
+        return image_height, image_width
 
     def save(
         self,
         filename: str,
         shapes: list[dict[str, Any]],
-        imagePath: str,
-        imageHeight: int | None,
-        imageWidth: int | None,
-        imageData: bytes | None = None,
-        otherData: dict[str, Any] | None = None,
+        image_path: str,
+        image_height: int | None,
+        image_width: int | None,
+        image_data: bytes | None = None,
+        other_data: dict[str, Any] | None = None,
         flags: dict[str, bool] | None = None,
     ) -> None:
-        imageData_b64: str | None = None
-        if imageData is not None:
-            imageHeight, imageWidth = self._check_image_height_and_width(
-                imageData, imageHeight, imageWidth
+        image_data_b64: str | None = None
+        if image_data is not None:
+            image_height, image_width = self._check_image_height_and_width(
+                image_data, image_height, image_width
             )
-            imageData_b64 = base64.b64encode(imageData).decode("utf-8")
-        if otherData is None:
-            otherData = {}
+            image_data_b64 = base64.b64encode(image_data).decode("utf-8")
+        if other_data is None:
+            other_data = {}
         if flags is None:
             flags = {}
-        data = dict(
-            version=__version__,
-            flags=flags,
-            shapes=shapes,
-            imagePath=imagePath,
-            imageData=imageData_b64,
-            imageHeight=imageHeight,
-            imageWidth=imageWidth,
-        )
-        for key, value in otherData.items():
+        # JSON keys stay camelCase — on-disk format, breaks existing .json files.
+        data = {
+            "version": __version__,
+            "flags": flags,
+            "shapes": shapes,
+            "imagePath": image_path,
+            "imageData": image_data_b64,
+            "imageHeight": image_height,
+            "imageWidth": image_width,
+        }
+        for key, value in other_data.items():
             assert key not in data
             data[key] = value
         try:

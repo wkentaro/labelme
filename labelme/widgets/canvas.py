@@ -223,7 +223,7 @@ class Canvas(QtWidgets.QWidget):
 
     def restore_last_shape(self) -> None:
         # This does _part_ of the job of restoring shapes.
-        # The complete process is also done in app.py::undoShapeEdit
+        # The complete process is also done in app.py::undo_shape_edit
         # and app.py::load_shapes and our own Canvas::load_shapes function.
         if not self.can_restore_shape:
             return
