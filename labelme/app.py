@@ -1597,25 +1597,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 + item_index
                 + self._config["shift_auto_shape_color"]
             )
-            rgb: tuple[int, int, int] = tuple(
-                LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
+            return _rgb_from_colormap_id(label_id=label_id)
+        if self._config["shape_color"] == "manual":
+            rgb = _rgb_from_label_colors(
+                label=label, label_colors=self._config["label_colors"]
             )
-            return rgb
-        elif (
-            self._config["shape_color"] == "manual"
-            and self._config["label_colors"]
-            and label in self._config["label_colors"]
-        ):
-            if not (
-                len(self._config["label_colors"][label]) == 3
-                and all(0 <= c <= 255 for c in self._config["label_colors"][label])
-            ):
-                raise ValueError(
-                    "Color for label must be 0-255 RGB tuple, but got: "
-                    f"{self._config['label_colors'][label]}"
-                )
-            return tuple(self._config["label_colors"][label])
-        elif self._config["default_shape_color"]:
+            if rgb is not None:
+                return rgb
+        if self._config["default_shape_color"]:
             return self._config["default_shape_color"]
         return (0, 255, 0)
 
@@ -2566,6 +2555,22 @@ def _shapes_from_dicts(
 
         shapes.append(shape)
     return shapes
+
+
+def _rgb_from_colormap_id(*, label_id: int) -> tuple[int, int, int]:
+    return tuple(LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist())
+
+
+def _rgb_from_label_colors(
+    *, label: str, label_colors: dict[str, list[int]] | None
+) -> tuple[int, int, int] | None:
+    if not label_colors or label not in label_colors:
+        return None
+    rgb = label_colors[label]
+    if len(rgb) != 3 or not all(0 <= c <= 255 for c in rgb):
+        raise ValueError(f"Color for label must be 0-255 RGB tuple, but got: {rgb}")
+    r, g, b = rgb
+    return r, g, b
 
 
 def _is_valid_label(
