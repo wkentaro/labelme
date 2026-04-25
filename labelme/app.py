@@ -2084,21 +2084,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_zoom(value=int(self._scalers[self._zoom_mode]() * 100))
 
     def scaleFitWindow(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: float = 2.0
-        viewport_w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        viewport_h = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
-
-        pixmap_w = self._canvas_widgets.canvas.pixmap.width()
-        pixmap_h = self._canvas_widgets.canvas.pixmap.height()
-
-        scale_by_width = viewport_w / pixmap_w
-        scale_by_height = viewport_h / pixmap_h
-        return min(scale_by_width, scale_by_height)
+        EPSILON_TO_HIDE_SCROLLBAR: Final[float] = 2.0
+        return _scale_to_fit_window(
+            viewport_w=self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR,
+            viewport_h=self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR,
+            pixmap_w=self._canvas_widgets.canvas.pixmap.width(),
+            pixmap_h=self._canvas_widgets.canvas.pixmap.height(),
+        )
 
     def scaleFitWidth(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
-        w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        return w / self._canvas_widgets.canvas.pixmap.width()
+        EPSILON_TO_HIDE_SCROLLBAR: Final[float] = 15.0
+        viewport_w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
+        return viewport_w / self._canvas_widgets.canvas.pixmap.width()
 
     def enableSaveImageWithData(self, enabled: bool) -> None:
         self._config["with_image_data"] = enabled
@@ -2568,6 +2565,18 @@ def _shapes_from_dicts(
 
         shapes.append(shape)
     return shapes
+
+
+def _scale_to_fit_window(
+    *,
+    viewport_w: float,
+    viewport_h: float,
+    pixmap_w: int,
+    pixmap_h: int,
+) -> float:
+    scale_by_width = viewport_w / pixmap_w
+    scale_by_height = viewport_h / pixmap_h
+    return min(scale_by_width, scale_by_height)
 
 
 def _format_window_title(
