@@ -702,19 +702,22 @@ class Canvas(QtWidgets.QWidget):
         ):
             self.remove_selected_point()
 
-        group_mode = int(modifiers) == Qt.ControlModifier
-        self.select_shape_point(pos, multiple_selection_mode=group_mode)
+        self.select_shape_point(
+            pos, multiple_selection_mode=int(modifiers) == Qt.ControlModifier
+        )
         self.prev_point = pos
         self.update()
 
     def _handle_mouse_right_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        group_mode = int(event.modifiers()) == Qt.ControlModifier
         clicked_outside_selection = (
             self.hovered_shape is not None
             and self.hovered_shape not in self.selected_shapes
         )
         if not self.selected_shapes or clicked_outside_selection:
-            self.select_shape_point(pos, multiple_selection_mode=group_mode)
+            self.select_shape_point(
+                pos,
+                multiple_selection_mode=int(event.modifiers()) == Qt.ControlModifier,
+            )
             self.update()
         self.prev_point = pos
 
