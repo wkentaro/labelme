@@ -232,9 +232,9 @@ class Canvas(QtWidgets.QWidget):
         # The application will eventually call Canvas.load_shapes which will
         # push this right back onto the stack.
         self.shapes = self.shape_backups.pop()
-        self.selected_shapes = []
         for shape in self.shapes:
             shape.selected = False
+        self.selected_shapes.clear()
         self.update()
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
@@ -478,7 +478,7 @@ class Canvas(QtWidgets.QWidget):
     def _handle_mouse_right_button_drag(self, pos: QPointF) -> None:
         if self.selected_shapes_copy and self.prev_point is not None:
             self._apply_cursor(CURSOR_MOVE)
-            self.bounded_move_shapes(self.selected_shapes_copy, pos)
+            self.bounded_move_shapes(shapes=self.selected_shapes_copy, pos=pos)
             self.update()
         elif self.selected_shapes:
             self.selected_shapes_copy = [s.copy() for s in self.selected_shapes]
@@ -501,7 +501,7 @@ class Canvas(QtWidgets.QWidget):
             self.is_moving_shape = True
         elif self.selected_shapes and self.prev_point is not None:
             self._apply_cursor(CURSOR_MOVE)
-            self.bounded_move_shapes(self.selected_shapes, pos)
+            self.bounded_move_shapes(shapes=self.selected_shapes, pos=pos)
             self.update()
             self.is_moving_shape = True
 
@@ -702,19 +702,22 @@ class Canvas(QtWidgets.QWidget):
         ):
             self.remove_selected_point()
 
-        group_mode = int(modifiers) == Qt.ControlModifier
-        self.select_shape_point(pos, multiple_selection_mode=group_mode)
+        self.select_shape_point(
+            pos, multiple_selection_mode=int(modifiers) == Qt.ControlModifier
+        )
         self.prev_point = pos
         self.update()
 
     def _handle_mouse_right_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        group_mode = int(event.modifiers()) == Qt.ControlModifier
         clicked_outside_selection = (
             self.hovered_shape is not None
             and self.hovered_shape not in self.selected_shapes
         )
         if not self.selected_shapes or clicked_outside_selection:
-            self.select_shape_point(pos, multiple_selection_mode=group_mode)
+            self.select_shape_point(
+                pos,
+                multiple_selection_mode=int(event.modifiers()) == Qt.ControlModifier,
+            )
             self.update()
         self.prev_point = pos
 
@@ -725,12 +728,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         if a0.button() == Qt.RightButton:
-            menu = self.menus[len(self.selected_shapes_copy) > 0]
-            self._release_cursor()
-            if not menu.exec_(self.mapToGlobal(a0.pos())) and self.selected_shapes_copy:  # type: ignore
-                # Cancel the move by deleting the shadow copy.
-                self.selected_shapes_copy = []
-                self.update()
+            self._handle_right_button_release(event=a0)
         elif a0.button() == Qt.LeftButton:
             if self.editing():
                 if (
@@ -739,7 +737,7 @@ class Canvas(QtWidgets.QWidget):
                     and not self.is_moving_shape
                 ):
                     self.selection_changed.emit(
-                        [x for x in self.selected_shapes if x != self.hovered_shape]
+                        [s for s in self.selected_shapes if s != self.hovered_shape]
                     )
         elif a0.button() == Qt.MiddleButton:
             self._is_dragging = False
@@ -758,21 +756,37 @@ class Canvas(QtWidgets.QWidget):
             self.is_moving_shape = False
         self._update_status()
 
+    def _handle_right_button_release(self, event: QtGui.QMouseEvent) -> None:
+        menu = self.menus[len(self.selected_shapes_copy) > 0]
+        self._release_cursor()
+        if not menu.exec_(self.mapToGlobal(event.pos())) and self.selected_shapes_copy:  # type: ignore
+            # Cancel the move by discarding the shadow copy.
+            self.selected_shapes_copy.clear()
+            self.update()
+
     def end_move(self, copy: bool) -> bool:
         assert self.selected_shapes and self.selected_shapes_copy
         assert len(self.selected_shapes_copy) == len(self.selected_shapes)
         if copy:
-            for i, shape in enumerate(self.selected_shapes_copy):
-                self.shapes.append(shape)
-                self.selected_shapes[i].selected = False
-                self.selected_shapes[i] = shape
+            self._apply_copy_move()
         else:
-            for i, shape in enumerate(self.selected_shapes_copy):
-                self.selected_shapes[i].points = shape.points
-        self.selected_shapes_copy = []
+            self._apply_in_place_move()
+        self.selected_shapes_copy.clear()
         self.update()
         self.backup_shapes()
         return True
+
+    def _apply_copy_move(self) -> None:
+        for i, (original, copy) in enumerate(
+            zip(self.selected_shapes, self.selected_shapes_copy)
+        ):
+            self.shapes.append(copy)
+            original.selected = False
+            self.selected_shapes[i] = copy
+
+    def _apply_in_place_move(self) -> None:
+        for original, copy in zip(self.selected_shapes, self.selected_shapes_copy):
+            original.points = copy.points
 
     def hide_background_shapes(self, value: bool) -> None:
         self.hide_background = value
@@ -814,23 +828,35 @@ class Canvas(QtWidgets.QWidget):
             self.hovered_shape.highlight_vertex(
                 i=self.hovered_vertex, action=self.hovered_shape.MOVE_VERTEX
             )
+            if self.deselect_shape():
+                self.update()
+            return
+
+        clicked_shape = self._find_shape_at_point(point)
+        if clicked_shape is None:
+            if self.deselect_shape():
+                self.update()
+            return
+
+        self.set_hide_background()
+        already_selected = clicked_shape in self.selected_shapes
+        if already_selected:
+            self.hovered_shape_is_selected = True
         else:
-            shape: Shape
-            for shape in reversed(self.shapes):
-                if self.is_shape_visible(shape) and shape.contains_point(point):
-                    self.set_hide_background()
-                    if shape not in self.selected_shapes:
-                        if multiple_selection_mode:
-                            self.selection_changed.emit(self.selected_shapes + [shape])
-                        else:
-                            self.selection_changed.emit([shape])
-                        self.hovered_shape_is_selected = False
-                    else:
-                        self.hovered_shape_is_selected = True
-                    self.calculate_offsets(point)
-                    return
-        if self.deselect_shape():
-            self.update()
+            new_selection = (
+                self.selected_shapes + [clicked_shape]
+                if multiple_selection_mode
+                else [clicked_shape]
+            )
+            self.selection_changed.emit(new_selection)
+            self.hovered_shape_is_selected = False
+        self.calculate_offsets(point)
+
+    def _find_shape_at_point(self, point: QPointF) -> Shape | None:
+        for shape in reversed(self.shapes):
+            if self.is_shape_visible(shape) and shape.contains_point(point):
+                return shape
+        return None
 
     def calculate_offsets(self, point: QPointF) -> None:
         if not self.selected_shapes:
@@ -896,30 +922,27 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def deselect_shape(self) -> bool:
-        need_update: bool = False
-        if self.selected_shapes:
-            self.set_hide_background(False)
-            self.selection_changed.emit([])
-            self.hovered_shape_is_selected = False
-            need_update = True
-        return need_update
+        if not self.selected_shapes:
+            return False
+        self.set_hide_background(False)
+        self.selection_changed.emit([])
+        self.hovered_shape_is_selected = False
+        return True
 
     def delete_selected(self) -> list[Shape]:
-        deleted_shapes = []
-        if self.selected_shapes:
-            for shape in self.selected_shapes:
-                self.shapes.remove(shape)
-                deleted_shapes.append(shape)
-            self.backup_shapes()
-            self.selected_shapes = []
-            self.update()
-        return deleted_shapes
+        if not self.selected_shapes:
+            return []
+        removed = list(self.selected_shapes)
+        self.shapes = [s for s in self.shapes if s not in self.selected_shapes]
+        self.backup_shapes()
+        self.selected_shapes.clear()
+        self.update()
+        return removed
 
     def delete_shape(self, shape: Shape) -> None:
         if shape in self.selected_shapes:
             self.selected_shapes.remove(shape)
-        if shape in self.shapes:
-            self.shapes.remove(shape)
+        self.shapes = [s for s in self.shapes if s is not shape]
         self.backup_shapes()
         self.update()
 
@@ -1115,10 +1138,13 @@ class Canvas(QtWidgets.QWidget):
         a0.accept()
 
     def move_by_keyboard(self, offset: QPointF) -> None:
-        if self.selected_shapes:
-            self.bounded_move_shapes(self.selected_shapes, self.prev_point + offset)
-            self.update()
-            self.is_moving_shape = True
+        if not self.selected_shapes:
+            return
+        self.bounded_move_shapes(
+            shapes=self.selected_shapes, pos=self.prev_point + offset
+        )
+        self.update()
+        self.is_moving_shape = True
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
         modifiers = a0.modifiers()
