@@ -768,17 +768,25 @@ class Canvas(QtWidgets.QWidget):
         assert self.selected_shapes and self.selected_shapes_copy
         assert len(self.selected_shapes_copy) == len(self.selected_shapes)
         if copy:
-            for i, shape in enumerate(self.selected_shapes_copy):
-                self.shapes.append(shape)
-                self.selected_shapes[i].selected = False
-                self.selected_shapes[i] = shape
+            self._apply_copy_move()
         else:
-            for i, shape in enumerate(self.selected_shapes_copy):
-                self.selected_shapes[i].points = shape.points
-        self.selected_shapes_copy = []
+            self._apply_in_place_move()
+        self.selected_shapes_copy.clear()
         self.update()
         self.backup_shapes()
         return True
+
+    def _apply_copy_move(self) -> None:
+        for i, (original, copy) in enumerate(
+            zip(self.selected_shapes, self.selected_shapes_copy)
+        ):
+            self.shapes.append(copy)
+            original.selected = False
+            self.selected_shapes[i] = copy
+
+    def _apply_in_place_move(self) -> None:
+        for original, copy in zip(self.selected_shapes, self.selected_shapes_copy):
+            original.points = copy.points
 
     def hide_background_shapes(self, value: bool) -> None:
         self.hide_background = value
