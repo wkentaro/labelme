@@ -1431,13 +1431,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not edit_text:
             self._label_dialog.edit.setDisabled(True)
-            self._label_dialog.labelList.setDisabled(True)
+            self._label_dialog.label_list.setDisabled(True)
         if not edit_group_id:
             self._label_dialog.edit_group_id.setDisabled(True)
         if not edit_description:
-            self._label_dialog.editDescription.setDisabled(True)
+            self._label_dialog.edit_description.setDisabled(True)
 
-        text, flags, group_id, description = self._label_dialog.popUp(
+        text, flags, group_id, description = self._label_dialog.popup(
             text=first_shape.label if edit_text else "",
             flags=first_shape.flags if edit_flags else None,
             group_id=first_shape.group_id if edit_group_id else None,
@@ -1447,11 +1447,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not edit_text:
             self._label_dialog.edit.setDisabled(False)
-            self._label_dialog.labelList.setDisabled(False)
+            self._label_dialog.label_list.setDisabled(False)
         if not edit_group_id:
             self._label_dialog.edit_group_id.setDisabled(False)
         if not edit_description:
-            self._label_dialog.editDescription.setDisabled(False)
+            self._label_dialog.edit_description.setDisabled(False)
 
         if text is None:
             assert flags is None
@@ -1553,7 +1553,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     unique_label_list=self._docks.unique_label_list,
                 ),
             )
-        self._label_dialog.addLabelHistory(shape.label)
+        self._label_dialog.add_label_history(shape.label)
         for action in self._actions.on_shapes_present:
             action.setEnabled(True)
 
@@ -1738,7 +1738,7 @@ class MainWindow(QtWidgets.QMainWindow):
         description = ""
         if self._config["display_label_popup"] or not text:
             previous_text = self._label_dialog.edit.text()
-            text, flags, group_id, description = self._label_dialog.popUp(text)
+            text, flags, group_id, description = self._label_dialog.popup(text)
             if not text:
                 self._label_dialog.edit.setText(previous_text)
 
