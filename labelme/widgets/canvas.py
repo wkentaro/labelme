@@ -566,103 +566,137 @@ class Canvas(QtWidgets.QWidget):
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
-
         is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
-
-        if a0.button() == Qt.LeftButton:
-            if self.drawing():
-                if self.current:
-                    # Add point to existing shape.
-                    if self.createMode == "polygon":
-                        self.current.addPoint(self.line[1])
-                        self.line[0] = self.current[-1]
-                        if self.current.isClosed():
-                            self.finalise()
-                    elif self.createMode in [
-                        "rectangle",
-                        "circle",
-                        "line",
-                        "ai_box_to_shape",
-                    ]:
-                        assert len(self.current.points) == 1
-                        self.current.points = self.line.points
-                        self.finalise()
-                    elif self.createMode == "linestrip":
-                        self.current.addPoint(self.line[1])
-                        self.line[0] = self.current[-1]
-                        if int(a0.modifiers()) == Qt.ControlModifier:
-                            self.finalise()
-                    elif self.createMode == "ai_points_to_shape":
-                        self.current.addPoint(
-                            self.line.points[1],
-                            label=self.line.point_labels[1],
-                        )
-                        self.line.points[0] = self.current.points[-1]
-                        self.line.point_labels[0] = self.current.point_labels[-1]
-                        if a0.modifiers() & Qt.ControlModifier:
-                            self.finalise()
-                elif not self.outOfPixmap(pos):
-                    if self.createMode in [
-                        "ai_points_to_shape",
-                        "ai_box_to_shape",
-                    ]:
-                        if not download_ai_model(
-                            model_name=self._osam_session_model_name, parent=self
-                        ):
-                            return
-
-                    # Create new shape.
-                    if self.createMode == "ai_points_to_shape":
-                        initial_shape_type = "points"
-                    elif self.createMode == "ai_box_to_shape":
-                        initial_shape_type = "rectangle"
-                    else:
-                        initial_shape_type = self.createMode
-                    self.current = Shape(shape_type=initial_shape_type)
-                    self.current.addPoint(pos, label=0 if is_shift_pressed else 1)
-                    if self.createMode == "point":
-                        self.finalise()
-                    elif (
-                        self.createMode == "ai_points_to_shape"
-                        and a0.modifiers() & Qt.ControlModifier
-                    ):
-                        self.finalise()
-                    else:
-                        if self.createMode == "circle":
-                            self.current.shape_type = "circle"
-                        self.line.points = [pos, pos]
-                        if self.createMode == "ai_points_to_shape" and is_shift_pressed:
-                            self.line.point_labels = [0, 0]
-                        else:
-                            self.line.point_labels = [1, 1]
-                        self.setHiding()
-                        self.drawingPolygon.emit(True)
-                        self.update()
-            elif self.editing():
-                if self.selectedEdge() and a0.modifiers() == Qt.AltModifier:
-                    self.addPointToEdge()
-                elif self.selectedVertex() and a0.modifiers() == (
-                    Qt.AltModifier | Qt.ShiftModifier
-                ):
-                    self.removeSelectedPoint()
-
-                group_mode = int(a0.modifiers()) == Qt.ControlModifier
-                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
-                self.prevPoint = pos
-                self.update()
-        elif a0.button() == Qt.RightButton and self.editing():
-            group_mode = int(a0.modifiers()) == Qt.ControlModifier
-            if not self.selectedShapes or (
-                self.hShape is not None and self.hShape not in self.selectedShapes
-            ):
-                self.selectShapePoint(pos, multiple_selection_mode=group_mode)
-                self.update()
-            self.prevPoint = pos
-        elif a0.button() == Qt.MiddleButton and self._is_dragging_enabled:
-            self._apply_cursor(CURSOR_GRAB)
-            self._dragging_start_pos = pos
-            self._is_dragging = True
+        button = a0.button()
+        if button == Qt.LeftButton:
+            self._handle_mouse_left_press(
+                pos=pos, event=a0, is_shift_pressed=is_shift_pressed
+            )
+        elif button == Qt.RightButton and self.editing():
+            self._handle_mouse_right_press(pos=pos, event=a0)
+        elif button == Qt.MiddleButton and self._is_dragging_enabled:
+            self._handle_mouse_middle_press(pos=pos)
         self._update_status()
+
+    def _handle_mouse_left_press(
+        self,
+        pos: QPointF,
+        event: QtGui.QMouseEvent,
+        is_shift_pressed: bool,
+    ) -> None:
+        if self.drawing():
+            self._handle_mouse_left_press_while_drawing(
+                pos=pos, event=event, is_shift_pressed=is_shift_pressed
+            )
+        elif self.editing():
+            self._handle_mouse_left_press_while_editing(pos=pos, event=event)
+
+    def _handle_mouse_left_press_while_drawing(
+        self,
+        pos: QPointF,
+        event: QtGui.QMouseEvent,
+        is_shift_pressed: bool,
+    ) -> None:
+        current = self.current
+        if current is not None:
+            self._extend_current_shape(current=current, event=event)
+            return
+        if self.outOfPixmap(pos):
+            return
+        self._start_new_shape(pos=pos, event=event, is_shift_pressed=is_shift_pressed)
+
+    def _extend_current_shape(self, current: Shape, event: QtGui.QMouseEvent) -> None:
+        mode = self.createMode
+        modifiers = event.modifiers()
+        if mode == "polygon":
+            current.addPoint(self.line[1])
+            self.line[0] = current[-1]
+            if current.isClosed():
+                self.finalise()
+        elif mode in ("rectangle", "circle", "line", "ai_box_to_shape"):
+            assert len(current.points) == 1
+            current.points = self.line.points
+            self.finalise()
+        elif mode == "linestrip":
+            current.addPoint(self.line[1])
+            self.line[0] = current[-1]
+            if int(modifiers) == Qt.ControlModifier:
+                self.finalise()
+        elif mode == "ai_points_to_shape":
+            current.addPoint(
+                self.line.points[1],
+                label=self.line.point_labels[1],
+            )
+            self.line.points[0] = current.points[-1]
+            self.line.point_labels[0] = current.point_labels[-1]
+            if modifiers & Qt.ControlModifier:
+                self.finalise()
+
+    def _start_new_shape(
+        self,
+        pos: QPointF,
+        event: QtGui.QMouseEvent,
+        is_shift_pressed: bool,
+    ) -> None:
+        mode = self.createMode
+        if mode in ("ai_points_to_shape", "ai_box_to_shape") and not download_ai_model(
+            model_name=self._osam_session_model_name, parent=self
+        ):
+            return
+
+        initial_shape_type = {
+            "ai_points_to_shape": "points",
+            "ai_box_to_shape": "rectangle",
+        }.get(mode, mode)
+        new_shape = Shape(shape_type=initial_shape_type)
+        new_shape.addPoint(pos, label=0 if is_shift_pressed else 1)
+        self.current = new_shape
+
+        if mode == "point":
+            self.finalise()
+            return
+        if mode == "ai_points_to_shape" and event.modifiers() & Qt.ControlModifier:
+            self.finalise()
+            return
+
+        if mode == "circle":
+            new_shape.shape_type = "circle"
+        self.line.points = [pos, pos]
+        self.line.point_labels = (
+            [0, 0] if mode == "ai_points_to_shape" and is_shift_pressed else [1, 1]
+        )
+        self.setHiding()
+        self.drawingPolygon.emit(True)
+        self.update()
+
+    def _handle_mouse_left_press_while_editing(
+        self, pos: QPointF, event: QtGui.QMouseEvent
+    ) -> None:
+        modifiers = event.modifiers()
+        if self.selectedEdge() and modifiers == Qt.AltModifier:
+            self.addPointToEdge()
+        elif self.selectedVertex() and modifiers == (Qt.AltModifier | Qt.ShiftModifier):
+            self.removeSelectedPoint()
+
+        group_mode = int(modifiers) == Qt.ControlModifier
+        self.selectShapePoint(pos, multiple_selection_mode=group_mode)
+        self.prevPoint = pos
+        self.update()
+
+    def _handle_mouse_right_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+        group_mode = int(event.modifiers()) == Qt.ControlModifier
+        clicked_outside_selection = (
+            self.hShape is not None and self.hShape not in self.selectedShapes
+        )
+        if not self.selectedShapes or clicked_outside_selection:
+            self.selectShapePoint(pos, multiple_selection_mode=group_mode)
+            self.update()
+        self.prevPoint = pos
+
+    def _handle_mouse_middle_press(self, pos: QPointF) -> None:
+        self._apply_cursor(CURSOR_GRAB)
+        self._dragging_start_pos = pos
+        self._is_dragging = True
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         if a0.button() == Qt.RightButton:
@@ -713,11 +747,10 @@ class Canvas(QtWidgets.QWidget):
 
     def hideBackgroundShapes(self, value: bool) -> None:
         self.hideBackground = value
-        if self.selectedShapes:
-            # Only hide other shapes if there is a current selection.
-            # Otherwise the user will not be able to select a shape.
-            self.setHiding(True)
-            self.update()
+        if not self.selectedShapes:
+            return
+        self.setHiding(True)
+        self.update()
 
     def setHiding(self, enable: bool = True) -> None:
         self._hideBackground = self.hideBackground if enable else False
