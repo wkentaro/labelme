@@ -129,7 +129,7 @@ def main_win(
 
 
 def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
-    shape_center = canvas.shapes[shape_index].boundingRect().center()
+    shape_center = canvas.shapes[shape_index].bounding_rect().center()
     pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)

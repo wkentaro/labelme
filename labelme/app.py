@@ -2533,7 +2533,7 @@ def _shapes_from_dicts(
             mask=shape_dict["mask"],
         )
         for x, y in shape_dict["points"]:
-            shape.addPoint(QtCore.QPointF(x, y))
+            shape.add_point(QtCore.QPointF(x, y))
         shape.close()
 
         default_flags: dict[str, bool] = {}

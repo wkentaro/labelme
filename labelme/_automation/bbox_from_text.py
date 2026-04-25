@@ -147,6 +147,6 @@ def get_shapes_from_bboxes(
             description=json.dumps(dict(score=score.item(), text=text)),
         )
         for point in points:
-            shape.addPoint(QtCore.QPointF(point[0], point[1]))
+            shape.add_point(QtCore.QPointF(point[0], point[1]))
         shapes.append(shape)
     return shapes

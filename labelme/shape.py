@@ -71,7 +71,7 @@ class Shape:
             # Per-instance line color override (used for the pending line).
             self.line_color = line_color
 
-    def setShapeRefined(
+    def refine(
         self,
         shape_type: str,
         points: list[QtCore.QPointF],
@@ -84,7 +84,7 @@ class Shape:
         self.point_labels = point_labels
         self.mask = mask
 
-    def restoreShapeRaw(self) -> None:
+    def unrefine(self) -> None:
         if self._shape_raw is None:
             return
         self.shape_type, self.points, self.point_labels = self._shape_raw
@@ -114,29 +114,29 @@ class Shape:
     def close(self) -> None:
         self._closed = True
 
-    def addPoint(self, point: QtCore.QPointF, label: int = 1) -> None:
+    def add_point(self, point: QtCore.QPointF, label: int = 1) -> None:
         if self.points and self.points[0] == point:
             self.close()
             return
         self.points.append(point)
         self.point_labels.append(label)
 
-    def canAddPoint(self) -> bool:
+    def can_add_point(self) -> bool:
         return self.shape_type in ["polygon", "linestrip"]
 
-    def popPoint(self) -> QtCore.QPointF | None:
+    def pop_point(self) -> QtCore.QPointF | None:
         if not self.points:
             return None
         if self.point_labels:
             self.point_labels.pop()
         return self.points.pop()
 
-    def insertPoint(self, i: int, point: QtCore.QPointF, label: int = 1) -> None:
+    def insert_point(self, i: int, point: QtCore.QPointF, label: int = 1) -> None:
         self.points.insert(i, point)
         self.point_labels.insert(i, label)
 
-    def canRemovePoint(self) -> bool:
-        if not self.canAddPoint():
+    def can_remove_point(self) -> bool:
+        if not self.can_add_point():
             return False
 
         if self.shape_type == "polygon" and len(self.points) <= 3:
@@ -147,8 +147,8 @@ class Shape:
 
         return True
 
-    def removePoint(self, i: int) -> None:
-        if not self.canRemovePoint():
+    def remove_point(self, i: int) -> None:
+        if not self.can_remove_point():
             logger.warning(
                 "Cannot remove point from: shape_type=%r, len(points)=%d",
                 self.shape_type,
@@ -159,26 +159,26 @@ class Shape:
         self.points.pop(i)
         self.point_labels.pop(i)
 
-    def isClosed(self) -> bool:
+    def is_closed(self) -> bool:
         return self._closed
 
-    def setOpen(self) -> None:
+    def open(self) -> None:
         self._closed = False
 
     def paint(self, painter: QtGui.QPainter) -> None:
         _paint_shape(painter=painter, shape=self)
 
-    def nearestVertex(self, point: QtCore.QPointF, epsilon: float) -> int | None:
+    def nearest_vertex(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         return _nearest_vertex_index(
             point=point, points=self.points, scale=self.scale, epsilon=epsilon
         )
 
-    def nearestEdge(self, point: QtCore.QPointF, epsilon: float) -> int | None:
+    def nearest_edge(self, point: QtCore.QPointF, epsilon: float) -> int | None:
         return _nearest_edge_index(
             point=point, points=self.points, scale=self.scale, epsilon=epsilon
         )
 
-    def containsPoint(self, point: QtCore.QPointF) -> bool:
+    def contains_point(self, point: QtCore.QPointF) -> bool:
         return _shape_contains_point(
             point=point,
             shape_type=self.shape_type,
@@ -187,22 +187,22 @@ class Shape:
             point_size=self.point_size,
         )
 
-    def makePath(self) -> QtGui.QPainterPath:
+    def to_path(self) -> QtGui.QPainterPath:
         return _make_shape_path(shape_type=self.shape_type, points=self.points)
 
-    def boundingRect(self) -> QtCore.QRectF:
-        return self.makePath().boundingRect()
+    def bounding_rect(self) -> QtCore.QRectF:
+        return self.to_path().boundingRect()
 
-    def moveBy(self, offset: QtCore.QPointF) -> None:
+    def move_by(self, offset: QtCore.QPointF) -> None:
         self.points = [p + offset for p in self.points]
 
-    def moveVertex(self, i: int, pos: QtCore.QPointF) -> None:
+    def move_vertex(self, i: int, pos: QtCore.QPointF) -> None:
         self.points[i] = pos
 
-    def highlightVertex(self, i: int, action: int) -> None:
+    def highlight_vertex(self, i: int, action: int) -> None:
         self.highlight = _Highlight(index=i, mode=action)
 
-    def highlightClear(self) -> None:
+    def clear_highlight(self) -> None:
         self.highlight = None
 
     def copy(self) -> Shape:
@@ -485,5 +485,5 @@ def _build_shape_paths(
         for i, p in enumerate(shape.points):
             line_path.lineTo(_scale_point(point=p, scale=shape.scale))
             _add_shape_vertex(vrtx_path, shape=shape, vertex_index=i)
-        if shape.isClosed():
+        if shape.is_closed():
             line_path.lineTo(_scale_point(point=shape.points[0], scale=shape.scale))

@@ -184,7 +184,7 @@ def test_move_shape_by_drag(
     shape = canvas.shapes[_SHAPE_INDEX]
     original_points = [QPointF(p) for p in shape.points]
 
-    center = shape.boundingRect().center()
+    center = shape.bounding_rect().center()
     offset = QPointF(15, 10)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     _hover_and_drag(
@@ -249,14 +249,14 @@ def test_move_shape_by_arrow_key(
     canvas = _annotated_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     shape = canvas.selectedShapes[0]
-    original_center = QPointF(shape.boundingRect().center())
+    original_center = QPointF(shape.bounding_rect().center())
 
     qtbot.keyPress(canvas, key)
     qtbot.wait(50)
     qtbot.keyRelease(canvas, key)
     qtbot.wait(50)
 
-    new_center = shape.boundingRect().center()
+    new_center = shape.bounding_rect().center()
     assert abs((new_center.x() - original_center.x()) - expected_dx) < 1.0
     assert abs((new_center.y() - original_center.y()) - expected_dy) < 1.0
 
@@ -514,7 +514,7 @@ def test_select_nonpolygon_shape(
     _raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
-    click_pos = shape.boundingRect().center() + QPointF(*select_offset)
+    click_pos = shape.bounding_rect().center() + QPointF(*select_offset)
     click_widget = image_to_widget_pos(canvas=canvas, image_pos=click_pos)
     qtbot.mouseMove(canvas, pos=click_widget)
     qtbot.wait(50)

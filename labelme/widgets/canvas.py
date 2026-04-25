@@ -281,7 +281,7 @@ class Canvas(QtWidgets.QWidget):
         previous_shape: Shape | None = self.hShape
         need_update: bool = hShape is not None
         if previous_shape is not None:
-            previous_shape.highlightClear()
+            previous_shape.clear_highlight()
             need_update = True
         # NOTE: Store last highlighted for adding/removing points.
         self._lasthShape = previous_shape if hShape is None else hShape
@@ -424,7 +424,7 @@ class Canvas(QtWidgets.QWidget):
         ):
             pos = current[0]
             self._apply_cursor(CURSOR_POINT)
-            current.highlightVertex(i=0, action=Shape.NEAR_VERTEX)
+            current.highlight_vertex(i=0, action=Shape.NEAR_VERTEX)
 
         pos = self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
         assert len(self.line.points) == len(self.line.point_labels)
@@ -501,13 +501,13 @@ class Canvas(QtWidgets.QWidget):
         ]
 
         for shape in ordered_shapes:
-            index: int | None = shape.nearestVertex(pos, self.epsilon)
+            index: int | None = shape.nearest_vertex(pos, self.epsilon)
             if index is not None:
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=index)
-                shape.highlightVertex(i=index, action=shape.MOVE_VERTEX)
+                shape.highlight_vertex(i=index, action=shape.MOVE_VERTEX)
                 self._apply_cursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to move point"))
-                if shape.canRemovePoint():
+                if shape.can_remove_point():
                     status_messages.append(
                         self.tr("ALT + SHIFT + Click to delete point")
                     )
@@ -515,8 +515,8 @@ class Canvas(QtWidgets.QWidget):
                 return
 
         for shape in ordered_shapes:
-            index_edge: int | None = shape.nearestEdge(pos, self.epsilon)
-            if index_edge is not None and shape.canAddPoint():
+            index_edge: int | None = shape.nearest_edge(pos, self.epsilon)
+            if index_edge is not None and shape.can_add_point():
                 self._set_highlight(hShape=shape, hEdge=index_edge, hVertex=None)
                 self._apply_cursor(CURSOR_POINT)
                 status_messages.append(self.tr("ALT + Click to create point on shape"))
@@ -524,7 +524,7 @@ class Canvas(QtWidgets.QWidget):
                 return
 
         for shape in ordered_shapes:
-            if shape.containsPoint(pos):
+            if shape.contains_point(pos):
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=None)
                 status_messages.extend(
                     [
@@ -546,8 +546,8 @@ class Canvas(QtWidgets.QWidget):
         point = self.prevMovePoint
         if shape is None or index is None or point is None:
             return
-        shape.insertPoint(index, point)
-        shape.highlightVertex(i=index, action=shape.MOVE_VERTEX)
+        shape.insert_point(index, point)
+        shape.highlight_vertex(i=index, action=shape.MOVE_VERTEX)
         self.hShape = shape
         self.hVertex = index
         self.hEdge = None
@@ -558,8 +558,8 @@ class Canvas(QtWidgets.QWidget):
         index = self._lasthVertex
         if shape is None or index is None:
             return
-        shape.removePoint(index)
-        shape.highlightClear()
+        shape.remove_point(index)
+        shape.clear_highlight()
         self.hShape = shape
         self._lasthVertex = None
         self.movingShape = True  # Save changes
@@ -609,21 +609,21 @@ class Canvas(QtWidgets.QWidget):
         mode = self.createMode
         modifiers = event.modifiers()
         if mode == "polygon":
-            current.addPoint(self.line[1])
+            current.add_point(self.line[1])
             self.line[0] = current[-1]
-            if current.isClosed():
+            if current.is_closed():
                 self.finalise()
         elif mode in ("rectangle", "circle", "line", "ai_box_to_shape"):
             assert len(current.points) == 1
             current.points = self.line.points
             self.finalise()
         elif mode == "linestrip":
-            current.addPoint(self.line[1])
+            current.add_point(self.line[1])
             self.line[0] = current[-1]
             if int(modifiers) == Qt.ControlModifier:
                 self.finalise()
         elif mode == "ai_points_to_shape":
-            current.addPoint(
+            current.add_point(
                 self.line.points[1],
                 label=self.line.point_labels[1],
             )
@@ -649,7 +649,7 @@ class Canvas(QtWidgets.QWidget):
             "ai_box_to_shape": "rectangle",
         }.get(mode, mode)
         new_shape = Shape(shape_type=initial_shape_type)
-        new_shape.addPoint(pos, label=0 if is_shift_pressed else 1)
+        new_shape.add_point(pos, label=0 if is_shift_pressed else 1)
         self.current = new_shape
 
         if mode == "point":
@@ -782,11 +782,11 @@ class Canvas(QtWidgets.QWidget):
         """Select the first shape created which contains this point."""
         if self.hVertex is not None:
             assert self.hShape is not None
-            self.hShape.highlightVertex(i=self.hVertex, action=self.hShape.MOVE_VERTEX)
+            self.hShape.highlight_vertex(i=self.hVertex, action=self.hShape.MOVE_VERTEX)
         else:
             shape: Shape
             for shape in reversed(self.shapes):
-                if self.isVisible(shape) and shape.containsPoint(point):
+                if self.isVisible(shape) and shape.contains_point(point):
                     self.setHiding()
                     if shape not in self.selectedShapes:
                         if multiple_selection_mode:
@@ -806,7 +806,7 @@ class Canvas(QtWidgets.QWidget):
             self.offsets = QPointF(0.0, 0.0), QPointF(0.0, 0.0)
             return
 
-        rects = [s.boundingRect() for s in self.selectedShapes]
+        rects = [s.bounding_rect() for s in self.selectedShapes]
         left = min(r.left() for r in rects)
         top = min(r.top() for r in rects)
         right = max(r.right() for r in rects)
@@ -838,7 +838,7 @@ class Canvas(QtWidgets.QWidget):
                 pos=pos, opposite_vertex=shape[1 - vertex_index]
             )
 
-        shape.moveVertex(i=vertex_index, pos=pos)
+        shape.move_vertex(i=vertex_index, pos=pos)
 
     def boundedMoveShapes(self, shapes: list[Shape], pos: QPointF) -> bool:
         if self.outOfPixmap(pos):
@@ -860,7 +860,7 @@ class Canvas(QtWidgets.QWidget):
             return False
 
         for shape in shapes:
-            shape.moveBy(dp)
+            shape.move_by(dp)
         self.prevPoint = pos
         return True
 
@@ -913,7 +913,7 @@ class Canvas(QtWidgets.QWidget):
         finally:
             painter.end()
         if self.current is not None:
-            self.current.highlightClear()
+            self.current.clear_highlight()
 
     def _paint_background(self, painter: QtGui.QPainter) -> None:
         painter.save()
@@ -978,10 +978,10 @@ class Canvas(QtWidgets.QWidget):
                         " so forcing to be opaque."
                     )
                     preview.fill_color.setAlpha(64)
-                preview.addPoint(point=self.line[1])
+                preview.add_point(point=self.line[1])
         else:
             assert self.createMode == "ai_points_to_shape"
-            preview.addPoint(
+            preview.add_point(
                 point=self.line.points[1],
                 label=self.line.point_labels[1],
             )
@@ -1157,8 +1157,8 @@ class Canvas(QtWidgets.QWidget):
             self._cancel_current_shape()
             return
         self.current = self.shapes.pop()
-        self.current.setOpen()
-        self.current.restoreShapeRaw()
+        self.current.open()
+        self.current.unrefine()
         if self.createMode in ("polygon", "linestrip"):
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ("rectangle", "line", "circle", "ai_box_to_shape"):
@@ -1169,9 +1169,9 @@ class Canvas(QtWidgets.QWidget):
 
     def undoLastPoint(self) -> None:
         current = self.current
-        if current is None or current.isClosed():
+        if current is None or current.is_closed():
             return
-        current.popPoint()
+        current.pop_point()
         if len(current) > 0:
             self.line[0] = current[-1]
             self.update()
@@ -1252,7 +1252,7 @@ def _shape_from_annotation(
             return None
         bb = annotation.bounding_box
         shape = Shape()
-        shape.setShapeRefined(
+        shape.refine(
             shape_type="mask",
             points=[QPointF(bb.xmin, bb.ymin), QPointF(bb.xmax, bb.ymax)],
             point_labels=[1, 1],
@@ -1268,7 +1268,7 @@ def _shape_from_annotation(
             bb = annotation.bounding_box
             points = points + np.array([bb.xmin, bb.ymin], dtype=np.float32)
         shape = Shape()
-        shape.setShapeRefined(
+        shape.refine(
             shape_type="polygon",
             points=[QPointF(point[0], point[1]) for point in points],
             point_labels=[1] * len(points),
