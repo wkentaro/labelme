@@ -45,7 +45,6 @@ from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
 from labelme.widgets import BrightnessContrastDialog
 from labelme.widgets import Canvas
-from labelme.widgets import FileDialogPreview
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
@@ -2139,7 +2138,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _open_file_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
             return
-        path = self.current_path()
         formats = [
             f"*.{fmt.data().decode()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
@@ -2147,17 +2145,13 @@ class MainWindow(QtWidgets.QMainWindow):
         filters = self.tr("Image & Label files (%s)") % " ".join(
             formats + [f"*{LabelFile.suffix}"]
         )
-        file_dialog = FileDialogPreview(self)
-        file_dialog.setFileMode(FileDialogPreview.ExistingFile)
-        file_dialog.setNameFilter(filters)
-        file_dialog.setWindowTitle(
+        image_or_label_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
             self.tr("%s - Choose Image or Label file") % __appname__,
+            self.current_path(),
+            filters,
         )
-        file_dialog.setWindowFilePath(path)
-        file_dialog.setViewMode(FileDialogPreview.Detail)
-        if file_dialog.exec_() and (
-            image_or_label_path := file_dialog.selectedFiles()[0]
-        ):
+        if image_or_label_path:
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
     def prompt_output_dir(self, _value: bool = False) -> None:
