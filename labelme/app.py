@@ -1195,7 +1195,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
             self.saveLabels(
-                label_path=self._get_label_path(image_or_label_path=self._image_path)
+                label_path=_resolve_label_path(
+                    image_or_label_path=self._image_path,
+                    output_dir=self._output_dir,
+                )
             )
             return
         self._is_changed = True
@@ -1952,13 +1955,6 @@ class MainWindow(QtWidgets.QMainWindow):
             target = item.checkState() == Qt.Unchecked if value is None else value
             item.setCheckState(Qt.Checked if target else Qt.Unchecked)
 
-    def _get_label_path(self, image_or_label_path: str) -> str:
-        if LabelFile.is_label_file(filename=image_or_label_path):
-            return image_or_label_path
-        image_path = Path(image_or_label_path)
-        parent = Path(self._output_dir) if self._output_dir else image_path.parent
-        return str(parent / f"{image_path.stem}{LabelFile.suffix}")
-
     def _load_file(self, image_or_label_path: str) -> None:
         # changing fileListWidget loads file
         if image_or_label_path in self.imageList and (
@@ -1994,7 +1990,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         t0_load_file = time.time()
         if QtCore.QFile.exists(
-            label_path := self._get_label_path(image_or_label_path=image_or_label_path)
+            label_path := _resolve_label_path(
+                image_or_label_path=image_or_label_path,
+                output_dir=self._output_dir,
+            )
         ):
             try:
                 self._label_file = LabelFile(label_path)
@@ -2283,7 +2282,10 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path, _ = dlg.getSaveFileName(
             parent=self,
             caption=self.tr("Choose File"),
-            directory=self._get_label_path(image_or_label_path=self._image_path),
+            directory=_resolve_label_path(
+                image_or_label_path=self._image_path,
+                output_dir=self._output_dir,
+            ),
             filter=self.tr("Label files (*%s)") % LabelFile.suffix,
         )
         return label_path
@@ -2506,7 +2508,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             item = QtWidgets.QListWidgetItem(file)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(self._get_label_path(image_or_label_path=file)):
+            if QtCore.QFile.exists(
+                _resolve_label_path(
+                    image_or_label_path=file, output_dir=self._output_dir
+                )
+            ):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
@@ -2544,7 +2550,9 @@ class MainWindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem(image_path)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(
-                self._get_label_path(image_or_label_path=image_path)
+                _resolve_label_path(
+                    image_or_label_path=image_path, output_dir=self._output_dir
+                )
             ):
                 item.setCheckState(Qt.Checked)
             else:
@@ -2556,6 +2564,14 @@ class MainWindow(QtWidgets.QMainWindow):
         stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self._status_bar.stats.setText(" | ".join(stats))
+
+
+def _resolve_label_path(image_or_label_path: str, output_dir: Path | None) -> str:
+    if LabelFile.is_label_file(filename=image_or_label_path):
+        return image_or_label_path
+    image_path = Path(image_or_label_path)
+    parent = output_dir if output_dir is not None else image_path.parent
+    return str(parent / f"{image_path.stem}{LabelFile.suffix}")
 
 
 def _shape_to_dict(shape: Shape) -> dict[str, Any]:
