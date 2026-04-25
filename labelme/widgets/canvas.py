@@ -728,12 +728,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         if a0.button() == Qt.RightButton:
-            menu = self.menus[len(self.selected_shapes_copy) > 0]
-            self._release_cursor()
-            if not menu.exec_(self.mapToGlobal(a0.pos())) and self.selected_shapes_copy:  # type: ignore
-                # Cancel the move by deleting the shadow copy.
-                self.selected_shapes_copy = []
-                self.update()
+            self._handle_right_button_release(event=a0)
         elif a0.button() == Qt.LeftButton:
             if self.editing():
                 if (
@@ -760,6 +755,14 @@ class Canvas(QtWidgets.QWidget):
 
             self.is_moving_shape = False
         self._update_status()
+
+    def _handle_right_button_release(self, event: QtGui.QMouseEvent) -> None:
+        menu = self.menus[len(self.selected_shapes_copy) > 0]
+        self._release_cursor()
+        if not menu.exec_(self.mapToGlobal(event.pos())) and self.selected_shapes_copy:  # type: ignore
+            # Cancel the move by discarding the shadow copy.
+            self.selected_shapes_copy.clear()
+            self.update()
 
     def end_move(self, copy: bool) -> bool:
         assert self.selected_shapes and self.selected_shapes_copy
