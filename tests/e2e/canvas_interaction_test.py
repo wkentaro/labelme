@@ -278,7 +278,7 @@ def test_select_all_shapes_from_canvas(
     qtbot.wait(50)
 
     assert set(map(id, canvas.selectedShapes)) == set(map(id, canvas.shapes))
-    assert len(_annotated_win._docks.label_list.selectedItems()) == len(canvas.shapes)
+    assert len(_annotated_win._docks.label_list.selected_items()) == len(canvas.shapes)
 
     close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
 

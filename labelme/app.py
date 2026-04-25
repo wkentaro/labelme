@@ -1048,10 +1048,10 @@ class MainWindow(QtWidgets.QMainWindow):
         flag_list.itemChanged.connect(self.setDirty)
 
         label_list = LabelListWidget()
-        label_list.itemSelectionChanged.connect(self._label_selection_changed)
-        label_list.itemDoubleClicked.connect(self._edit_label)
-        label_list.itemChanged.connect(self.labelItemChanged)
-        label_list.itemDropped.connect(self.labelOrderChanged)
+        label_list.item_selection_changed.connect(self._label_selection_changed)
+        label_list.item_double_clicked.connect(self._edit_label)
+        label_list.item_changed.connect(self.labelItemChanged)
+        label_list.item_dropped.connect(self.labelOrderChanged)
         shape = QtWidgets.QDockWidget(self.tr("Annotation List"), self)
         shape.setObjectName("Labels")
         shape.setWidget(label_list)
@@ -1307,7 +1307,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.resetState()
 
     def currentItem(self) -> LabelListWidgetItem | None:
-        items = self._docks.label_list.selectedItems()
+        items = self._docks.label_list.selected_items()
         if items:
             return items[0]
         return None
@@ -1406,7 +1406,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _edit_label(self, value: object | None = None) -> None:
-        items = self._docks.label_list.selectedItems()
+        items = self._docks.label_list.selected_items()
         if not items:
             logger.warning("No label is selected, so cannot edit label.")
             return
@@ -1516,7 +1516,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes: list[Shape]) -> None:
-        self._docks.label_list.itemSelectionChanged.disconnect(
+        self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
         for shape in self._canvas_widgets.canvas.selectedShapes:
@@ -1525,10 +1525,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.selectedShapes = selected_shapes
         for shape in self._canvas_widgets.canvas.selectedShapes:
             shape.selected = True
-            item = self._docks.label_list.findItemByShape(shape)
-            self._docks.label_list.selectItem(item)
-            self._docks.label_list.scrollToItem(item)
-        self._docks.label_list.itemSelectionChanged.connect(
+            item = self._docks.label_list.find_item_by_shape(shape)
+            self._docks.label_list.select_item(item)
+            self._docks.label_list.scroll_to_item(item)
+        self._docks.label_list.item_selection_changed.connect(
             self._label_selection_changed
         )
         n_selected = len(selected_shapes) > 0
@@ -1544,7 +1544,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = f"{shape.label} ({shape.group_id})"
         label_list_item = LabelListWidgetItem(text, shape)
-        self._docks.label_list.addItem(label_list_item)
+        self._docks.label_list.add_item(label_list_item)
         if self._docks.unique_label_list.find_label_item(shape.label) is None:
             self._docks.unique_label_list.add_label_item(
                 label=shape.label,
@@ -1604,21 +1604,21 @@ class MainWindow(QtWidgets.QMainWindow):
         return (0, 255, 0)
 
     def remLabels(self, shapes: list[Shape]) -> None:
-        self._docks.label_list.itemDropped.disconnect(self.labelOrderChanged)
+        self._docks.label_list.item_dropped.disconnect(self.labelOrderChanged)
         for shape in shapes:
-            item = self._docks.label_list.findItemByShape(shape)
-            self._docks.label_list.removeItem(item)
-        self._docks.label_list.itemDropped.connect(self.labelOrderChanged)
+            item = self._docks.label_list.find_item_by_shape(shape)
+            self._docks.label_list.remove_item(item)
+        self._docks.label_list.item_dropped.connect(self.labelOrderChanged)
 
     def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
-        self._docks.label_list.itemSelectionChanged.disconnect(
+        self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
         shape: Shape
         for shape in shapes:
             self.addLabel(shape)
         self._docks.label_list.clearSelection()
-        self._docks.label_list.itemSelectionChanged.connect(
+        self._docks.label_list.item_selection_changed.connect(
             self._label_selection_changed
         )
         self._canvas_widgets.canvas.loadShapes(shapes=shapes, replace=replace)
@@ -1698,7 +1698,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []
-        for item in self._docks.label_list.selectedItems():
+        for item in self._docks.label_list.selected_items():
             shape = item.shape()
             assert shape is not None
             selected_shapes.append(shape)

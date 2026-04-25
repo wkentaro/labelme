@@ -14,9 +14,9 @@ def test_LabelListWidget(qtbot: QtBot, pause: bool) -> None:
     widget = LabelListWidget()
 
     item = LabelListWidgetItem(text="person <font color='red'>●</fon>")
-    widget.addItem(item)
+    widget.add_item(item)
     item = LabelListWidgetItem(text="dog <font color='blue'>●</fon>")
-    widget.addItem(item)
+    widget.add_item(item)
 
     qtbot.addWidget(widget)
     widget.show()
