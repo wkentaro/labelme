@@ -737,7 +737,7 @@ class Canvas(QtWidgets.QWidget):
                     and not self.is_moving_shape
                 ):
                     self.selection_changed.emit(
-                        [x for x in self.selected_shapes if x != self.hovered_shape]
+                        [s for s in self.selected_shapes if s != self.hovered_shape]
                     )
         elif a0.button() == Qt.MiddleButton:
             self._is_dragging = False
