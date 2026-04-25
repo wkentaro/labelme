@@ -1642,37 +1642,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.loadShapes(shapes=shapes, replace=replace)
 
-    def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
-        shapes: list[Shape] = []
-        shape_dict: ShapeDict
-        for shape_dict in shape_dicts:
-            shape: Shape = Shape(
-                label=shape_dict["label"],
-                shape_type=shape_dict["shape_type"],
-                group_id=shape_dict["group_id"],
-                description=shape_dict["description"],
-                mask=shape_dict["mask"],
-            )
-            for x, y in shape_dict["points"]:
-                shape.addPoint(QtCore.QPointF(x, y))
-            shape.close()
-
-            default_flags = {}
-            if self._config["label_flags"]:
-                for pattern, keys in self._config["label_flags"].items():
-                    if not isinstance(shape.label, str):
-                        logger.warning("shape.label is not str: {}", shape.label)
-                        continue
-                    if re.match(pattern, shape.label):
-                        for key in keys:
-                            default_flags[key] = False
-            shape.flags = default_flags
-            shape.flags.update(shape_dict["flags"])
-            shape.other_data = shape_dict["other_data"]
-
-            shapes.append(shape)
-        self._load_shapes(shapes=shapes)
-
     def _load_flags(
         self,
         flags: dict[str, bool],
@@ -2056,7 +2025,12 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
         if self._label_file:
-            self._load_shape_dicts(shape_dicts=self._label_file.shapes)
+            self._load_shapes(
+                shapes=_shapes_from_dicts(
+                    shape_dicts=self._label_file.shapes,
+                    label_flags=self._config["label_flags"],
+                )
+            )
             if self._label_file.flags is not None:
                 flags.update(self._label_file.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
@@ -2564,6 +2538,40 @@ class MainWindow(QtWidgets.QMainWindow):
         stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self._status_bar.stats.setText(" | ".join(stats))
+
+
+def _shapes_from_dicts(
+    shape_dicts: list[ShapeDict],
+    label_flags: dict[str, list[str]] | None,
+) -> list[Shape]:
+    shapes: list[Shape] = []
+    for shape_dict in shape_dicts:
+        shape = Shape(
+            label=shape_dict["label"],
+            shape_type=shape_dict["shape_type"],
+            group_id=shape_dict["group_id"],
+            description=shape_dict["description"],
+            mask=shape_dict["mask"],
+        )
+        for x, y in shape_dict["points"]:
+            shape.addPoint(QtCore.QPointF(x, y))
+        shape.close()
+
+        default_flags: dict[str, bool] = {}
+        if label_flags:
+            for pattern, keys in label_flags.items():
+                if not isinstance(shape.label, str):
+                    logger.warning("shape.label is not str: {}", shape.label)
+                    continue
+                if re.match(pattern, shape.label):
+                    for key in keys:
+                        default_flags[key] = False
+        shape.flags = default_flags
+        shape.flags.update(shape_dict["flags"])
+        shape.other_data = shape_dict["other_data"]
+
+        shapes.append(shape)
+    return shapes
 
 
 def _resolve_label_path(image_or_label_path: str, output_dir: Path | None) -> str:
