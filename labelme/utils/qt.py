@@ -110,3 +110,39 @@ def distancetoline(
 def fmtShortcut(text: str) -> str:
     mod, key = text.split("+", 1)
     return f"<b>{mod}</b>+<b>{key}</b>"
+
+
+def angleRad(p1: QtCore.QPointF, p2: QtCore.QPointF, *, flip_y: bool = False) -> float:
+    delta = p2 - p1
+    y = -delta.y() if flip_y else delta.y()
+    return float(np.arctan2(y, delta.x()))
+
+
+def _project_point_along_direction(
+    base: QtCore.QPointF, direction: np.ndarray, point: QtCore.QPointF
+) -> QtCore.QPointF:
+    denominator = float(np.dot(direction, direction))
+    if denominator == 0.0:
+        return QtCore.QPointF(point)
+    base_to_point = np.array([point.x() - base.x(), point.y() - base.y()])
+    offset = direction * (np.dot(direction, base_to_point) / denominator)
+    return QtCore.QPointF(float(base.x() + offset[0]), float(base.y() + offset[1]))
+
+
+def projectPointAtRightAngle(
+    p1: QtCore.QPointF,
+    p2: QtCore.QPointF,
+    p3: QtCore.QPointF,
+) -> QtCore.QPointF:
+    """Project p3 onto the line through p2 perpendicular to (p2 -> p1)."""
+    perpendicular = np.array([p1.y() - p2.y(), -(p1.x() - p2.x())])
+    return _project_point_along_direction(base=p2, direction=perpendicular, point=p3)
+
+
+def projectPointOnLine(
+    p1: QtCore.QPointF,
+    p2: QtCore.QPointF,
+    p3: QtCore.QPointF,
+) -> QtCore.QPointF:
+    direction = np.array([p1.x() - p2.x(), p1.y() - p2.y()])
+    return _project_point_along_direction(base=p2, direction=direction, point=p3)

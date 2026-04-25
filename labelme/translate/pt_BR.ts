@@ -172,6 +172,26 @@
         <source>Click opposite corner to segment object</source>
         <translation>Clique no canto oposto para segmentar o objeto</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for oriented rectangle</source>
+        <translation>Clique na primeira esquina do retângulo orientado</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click second corner to set orientation</source>
+        <translation>Clique na segunda esquina para definir a orientação</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click third corner to close oriented rectangle</source>
+        <translation>Clique na terceira esquina para fechar o retângulo orientado</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click &amp; drag to rotate the shape</source>
+        <translation>Clique e arraste para girar a forma</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -853,6 +873,16 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>A lista de arquivos está desativada quando um arquivo de rótulos é aberto</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Oriented Rectangle</source>
+        <translation>Retângulo Orientado</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Start drawing oriented rectangles</source>
+        <translation>Começar a desenhar retângulos orientados</translation>
     </message>
 </context>
 </TS>

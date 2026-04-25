@@ -172,6 +172,26 @@
         <source>Click opposite corner to segment object</source>
         <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for oriented rectangle</source>
+        <translation>Kattintson az irányított téglalap első sarkára</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click second corner to set orientation</source>
+        <translation>Kattintson a második sarokra az irány beállításához</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click third corner to close oriented rectangle</source>
+        <translation>Kattintson a harmadik sarokra az irányított téglalap bezárásához</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click &amp; drag to rotate the shape</source>
+        <translation>Kattintson és húzza az alakzat elforgatásához</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -859,6 +879,16 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>A fájllista le van tiltva, ha egy címke fájl van megnyitva</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Oriented Rectangle</source>
+        <translation>Irányított téglalap</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Start drawing oriented rectangles</source>
+        <translation>Irányított téglalapok rajzolásának megkezdése</translation>
     </message>
 </context>
 </TS>

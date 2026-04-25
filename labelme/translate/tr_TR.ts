@@ -172,6 +172,26 @@
         <source>Click opposite corner to segment object</source>
         <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for oriented rectangle</source>
+        <translation>Yönlü dikdörtgenin ilk köşesine tıklayın</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click second corner to set orientation</source>
+        <translation>Yönü belirlemek için ikinci köşeye tıklayın</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click third corner to close oriented rectangle</source>
+        <translation>Yönlü dikdörtgeni kapatmak için üçüncü köşeye tıklayın</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click &amp; drag to rotate the shape</source>
+        <translation>Şekli döndürmek için tıklayıp sürükleyin</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -856,6 +876,16 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>Bir etiket dosyası açıkken dosya listesi devre dışı kalır</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Oriented Rectangle</source>
+        <translation>Yönlü Dikdörtgen</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Start drawing oriented rectangles</source>
+        <translation>Yönlü dikdörtgen çizmeye başla</translation>
     </message>
 </context>
 </TS>
