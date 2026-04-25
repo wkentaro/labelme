@@ -279,7 +279,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.populateModeActions()
 
     def _setup_actions(self) -> _Actions:
-        action = functools.partial(utils.newAction, self)
+        action = functools.partial(utils.new_action, self)
         shortcuts = self._config["shortcuts"]
 
         about = action(
@@ -657,8 +657,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     "{} and {} from the canvas."
                 )
             ).format(
-                utils.fmtShortcut(f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"),
-                utils.fmtShortcut(self.tr("Ctrl+Wheel")),
+                utils.format_shortcut(
+                    f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"
+                ),
+                utils.format_shortcut(self.tr("Ctrl+Wheel")),
             )
         )
         self._canvas_widgets.zoom_widget.setEnabled(False)
@@ -779,7 +781,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _setup_menus(self) -> _Menus:
-        action = functools.partial(utils.newAction, self)
+        action = functools.partial(utils.new_action, self)
         shortcuts = self._config["shortcuts"]
 
         quit_ = action(
@@ -809,11 +811,11 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu = self.menu(self.tr("&View"))
         help_menu = self.menu(self.tr("&Help"))
         label_menu = QtWidgets.QMenu()
-        utils.addActions(label_menu, (self._actions.edit, self._actions.delete))
+        utils.add_actions(label_menu, (self._actions.edit, self._actions.delete))
         self._docks.label_list.setContextMenuPolicy(Qt.CustomContextMenu)
         self._docks.label_list.customContextMenuRequested.connect(self.popLabelListMenu)
 
-        utils.addActions(
+        utils.add_actions(
             file_menu,
             (
                 self._actions.open,
@@ -833,8 +835,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 quit_,
             ),
         )
-        utils.addActions(help_menu, (help_, self._actions.about))
-        utils.addActions(
+        utils.add_actions(help_menu, (help_, self._actions.about))
+        utils.add_actions(
             view_menu,
             (
                 self._docks.flag_dock.toggleViewAction(),
@@ -863,10 +865,10 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        utils.addActions(
+        utils.add_actions(
             self._canvas_widgets.canvas.menus[0], self._actions.context_menu
         )
-        utils.addActions(
+        utils.add_actions(
             self._canvas_widgets.canvas.menus[1],
             (
                 action("&Copy here", self.copyShape),
@@ -1153,7 +1155,7 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> QtWidgets.QMenu:
         menu = self.menuBar().addMenu(title)
         if actions:
-            utils.addActions(menu, actions)
+            utils.add_actions(menu, actions)
         return menu
 
     # Support Functions
@@ -1163,7 +1165,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def populateModeActions(self) -> None:
         self._canvas_widgets.canvas.menus[0].clear()
-        utils.addActions(
+        utils.add_actions(
             self._canvas_widgets.canvas.menus[0], self._actions.context_menu
         )
         self._menus.edit.clear()
@@ -1172,7 +1174,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._actions.edit_mode,
             *self._actions.edit_menu,
         )
-        utils.addActions(self._menus.edit, actions)
+        utils.add_actions(self._menus.edit, actions)
 
     def _get_window_title(self, *, dirty: bool) -> str:
         file_list = self._docks.file_list

@@ -14,26 +14,26 @@ from PyQt5 import QtWidgets
 here = Path(__file__).resolve().parent
 
 
-def newIcon(icon_file_name: str) -> QtGui.QIcon:
+def new_icon(icon_file_name: str) -> QtGui.QIcon:
     if Path(icon_file_name).suffix == "":
         icon_file_name = f"{icon_file_name}.png"  # XXX: convention
     return QtGui.QIcon(str(here.parent / "icons" / icon_file_name))
 
 
-def newButton(
+def new_button(
     text: str,
     icon: str | None = None,
     slot: Callable[..., object] | None = None,
 ) -> QtWidgets.QPushButton:
     b = QtWidgets.QPushButton(text)
     if icon is not None:
-        b.setIcon(newIcon(icon))
+        b.setIcon(new_icon(icon))
     if slot is not None:
         b.clicked.connect(slot)
     return b
 
 
-def newAction(
+def new_action(
     parent: QtWidgets.QWidget,
     text: str,
     slot: Callable[..., object] | None = None,
@@ -48,7 +48,7 @@ def newAction(
     a = QtWidgets.QAction(text, parent)
     if icon is not None:
         a.setIconText(text.replace(" ", "\n"))
-        a.setIcon(newIcon(icon))
+        a.setIcon(new_icon(icon))
     if shortcut is not None:
         if isinstance(shortcut, list | tuple):
             a.setShortcuts(shortcut)
@@ -66,7 +66,7 @@ def newAction(
     return a
 
 
-def addActions(
+def add_actions(
     widget: QtWidgets.QMenu | QtWidgets.QToolBar,
     actions: Sequence[QtWidgets.QAction | QtWidgets.QMenu | None],
 ) -> None:
@@ -79,7 +79,7 @@ def addActions(
             widget.addAction(action)
 
 
-def labelValidator() -> QtGui.QRegExpValidator:
+def label_validator() -> QtGui.QRegExpValidator:
     return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
 
 
@@ -87,7 +87,7 @@ def distance(p: QtCore.QPointF) -> float:
     return sqrt(p.x() * p.x() + p.y() * p.y())
 
 
-def distancetoline(
+def distance_to_line(
     point: QtCore.QPointF,
     line: tuple[QtCore.QPointF, QtCore.QPointF],
 ) -> np.floating[Any]:
@@ -107,6 +107,6 @@ def distancetoline(
     return abs(cross) / np.linalg.norm(d)
 
 
-def fmtShortcut(text: str) -> str:
+def format_shortcut(text: str) -> str:
     mod, key = text.split("+", 1)
     return f"<b>{mod}</b>+<b>{key}</b>"

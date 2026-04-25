@@ -41,7 +41,7 @@ class ToolBar(QtWidgets.QToolBar):
                 "QToolBar::separator { height: 1px; margin: 4px 2px;"
                 " background: palette(mid); }"
             )
-        utils.addActions(widget=self, actions=actions)
+        utils.add_actions(widget=self, actions=actions)
         if orientation == Qt.Vertical:
             self._equalize_button_widths()
 
