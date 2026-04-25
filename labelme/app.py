@@ -515,7 +515,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 edit=False, createMode="ai_points_to_shape"
             ),
             None,
-            "ai-polygon.svg",
+            "ai-points.svg",
             self.tr("Click points to segment object. Ctrl+LeftClick ends creation."),
             enabled=False,
         )
@@ -523,7 +523,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("AI-Box"),
             lambda: self._switch_canvas_mode(edit=False, createMode="ai_box_to_shape"),
             None,
-            "ai-mask.svg",
+            "ai-box.svg",
             self.tr("Draw a bounding box to segment object."),
             enabled=False,
         )
