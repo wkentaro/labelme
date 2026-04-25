@@ -12,6 +12,15 @@ from PyQt5 import QtGui
 import labelme.utils
 
 
+def rotate_point_around_origin(
+    point: npt.NDArray[np.floating], angle_rad: float
+) -> npt.NDArray[np.floating]:
+    cos_a = np.cos(angle_rad)
+    sin_a = np.sin(angle_rad)
+    rotation = np.array([[cos_a, -sin_a], [sin_a, cos_a]])
+    return rotation @ point
+
+
 class Shape:
     # Handle point styles: square or round
     P_SQUARE = 0
@@ -38,6 +47,7 @@ class Shape:
     scale = 1.0
 
     _current_vertex_fill_color: QtGui.QColor
+    _current_rotation_point_fill_color: QtGui.QColor
 
     def __init__(
         self,
@@ -65,13 +75,14 @@ class Shape:
         self.mask = mask
 
         # Highlight state: which vertex is highlighted and how it looks
-        self._highlightIndex = None
+        self._highlightIndex: int | None = None
         self._highlightMode = self.NEAR_VERTEX
         self._highlight_sizes = {self.NEAR_VERTEX: 4, self.MOVE_VERTEX: 1.5}
         self._highlight_shapes = {
             self.NEAR_VERTEX: self.P_ROUND,
             self.MOVE_VERTEX: self.P_SQUARE,
         }
+        self._highlight_rotation_point_index: int | None = None
 
         self._closed = False
 
@@ -112,6 +123,7 @@ class Shape:
         if value not in [
             "polygon",
             "rectangle",
+            "oriented_rectangle",
             "point",
             "line",
             "circle",
@@ -126,6 +138,10 @@ class Shape:
         self._closed = True
 
     def addPoint(self, point: QtCore.QPointF, label: int = 1) -> None:
+        if self.shape_type == "oriented_rectangle":
+            self.points.append(point)
+            self.point_labels.append(label)
+            return
         if self.points and self.points[0] == point:
             self.close()
             return
@@ -219,6 +235,8 @@ class Shape:
         if self.points:
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
+            rotation_points_path = QtGui.QPainterPath()
+            orientation_arrow_path = QtGui.QPainterPath()
             negative_vrtx_path = QtGui.QPainterPath()
 
             if self.shape_type in ["rectangle", "mask"]:
@@ -232,6 +250,20 @@ class Shape:
                 if self.shape_type == "rectangle":
                     for i in range(len(self.points)):
                         self.drawVertex(vrtx_path, i)
+            elif self.shape_type == "oriented_rectangle":
+                assert len(self.points) in [1, 2, 4]
+                line_path.moveTo(self._scale_point(self.points[0]))
+                if self.isClosed():
+                    for i, p in enumerate(self.points):
+                        line_path.lineTo(self._scale_point(p))
+                        self.drawVertex(vrtx_path, i)
+                    line_path.lineTo(self._scale_point(self.points[0]))
+                    self.drawRotationPoints(rotation_points_path)
+                    self._drawOrientationArrow(orientation_arrow_path)
+                elif len(self.points) == 2:
+                    line_path.lineTo(self._scale_point(self.points[1]))
+                    self.drawVertex(vrtx_path, 0)
+                    self.drawVertex(vrtx_path, 1)
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
@@ -272,6 +304,11 @@ class Shape:
             if vrtx_path.length() > 0:
                 painter.drawPath(vrtx_path)
                 painter.fillPath(vrtx_path, self._current_vertex_fill_color)
+            if rotation_points_path.length() > 0:
+                painter.drawPath(rotation_points_path)
+                painter.fillPath(
+                    rotation_points_path, self._current_rotation_point_fill_color
+                )
             if self.fill and self.shape_type not in [
                 "line",
                 "linestrip",
@@ -281,10 +318,78 @@ class Shape:
                 color = self.select_fill_color if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
 
+            if orientation_arrow_path.length() > 0:
+                pen.setColor(self.vertex_fill_color)
+                painter.setPen(pen)
+                painter.drawPath(orientation_arrow_path)
+
             pen.setColor(QtGui.QColor(255, 0, 0, 255))
             painter.setPen(pen)
             painter.drawPath(negative_vrtx_path)
             painter.fillPath(negative_vrtx_path, QtGui.QColor(255, 0, 0, 255))
+
+    def getCenter(self) -> QtCore.QPointF:
+        assert self.points, "getCenter requires at least one point"
+        center = QtCore.QPointF(0.0, 0.0)
+        for p in self.points:
+            center += p
+        return center / len(self.points)
+
+    def getAngleRad(self) -> float:
+        if self.shape_type == "oriented_rectangle" and len(self.points) >= 2:
+            return labelme.utils.angleRad(self.points[0], self.points[1])
+        return 0.0
+
+    def getRotationPoints(self) -> list[QtCore.QPointF]:
+        if self.shape_type != "oriented_rectangle":
+            return []
+        return [
+            (self.points[i] + self.points[i - 1]) / 2 for i in range(len(self.points))
+        ]
+
+    def drawRotationPoints(self, path: QtGui.QPainterPath) -> None:
+        is_highlighted = self._highlight_rotation_point_index is not None
+        self._current_rotation_point_fill_color = (
+            self.hvertex_fill_color if is_highlighted else self.vertex_fill_color
+        )
+        for i, p in enumerate(self.getRotationPoints()):
+            d = self.point_size
+            vertex_shape = self.point_type
+            point = self._scale_point(p)
+            if i == self._highlight_rotation_point_index:
+                d *= self._highlight_sizes[self._highlightMode]
+                vertex_shape = self._highlight_shapes[self._highlightMode]
+            half = d / 2.0
+            if vertex_shape == self.P_SQUARE:
+                path.addRect(point.x() - half, point.y() - half, d, d)
+            elif vertex_shape == self.P_ROUND:
+                path.addEllipse(point, half, half)
+            else:
+                raise ValueError(f"Unsupported vertex shape: {vertex_shape}")
+
+    def _drawOrientationArrow(self, path: QtGui.QPainterPath) -> None:
+        # Arrow geometry in shape-local space, before centring/rotation/scale.
+        ARROW_HALF_LENGTH = 5.0
+        head_back_offset = 0.22
+        local_points = [
+            np.array([head_back_offset, -0.5]) * ARROW_HALF_LENGTH,  # head_right
+            np.array([1.0, 0.0]) * ARROW_HALF_LENGTH,  # tip
+            np.array([head_back_offset, 0.5]) * ARROW_HALF_LENGTH,  # head_left
+            np.array([-1.0, 0.0]) * ARROW_HALF_LENGTH,  # tail
+        ]
+        center = self.getCenter()
+        angle_rad = self.getAngleRad()
+        rotated = [rotate_point_around_origin(p, angle_rad) for p in local_points]
+        translated = np.add(rotated, [center.x(), center.y()])
+        head_right, tip, head_left, tail = (
+            self._scale_point(QtCore.QPointF(float(p[0]), float(p[1])))
+            for p in translated
+        )
+        path.moveTo(head_right)
+        path.lineTo(tip)
+        path.lineTo(head_left)
+        path.moveTo(tail)
+        path.lineTo(tip)
 
     def drawVertex(self, path: QtGui.QPainterPath, i: int) -> None:
         d = self.point_size
@@ -317,6 +422,20 @@ class Shape:
         for i, p in enumerate(self.points):
             p = self._scale_point(p)
             dist = labelme.utils.distance(p - point)
+            if dist <= epsilon and dist < min_distance:
+                min_distance = dist
+                min_i = i
+        return min_i
+
+    def nearestRotationPoint(self, point: QtCore.QPointF, epsilon: float) -> int | None:
+        if self.shape_type != "oriented_rectangle":
+            return None
+        min_distance = float("inf")
+        min_i = None
+        scaled_target = self._scale_point(point)
+        for i, p in enumerate(self.getRotationPoints()):
+            scaled_p = self._scale_point(p)
+            dist = labelme.utils.distance(scaled_p - scaled_target)
             if dist <= epsilon and dist < min_distance:
                 min_distance = dist
                 min_i = i
@@ -366,6 +485,12 @@ class Shape:
             if len(self.points) == 2:
                 raidus = labelme.utils.distance(self.points[0] - self.points[1])
                 path.addEllipse(self.points[0], raidus, raidus)
+        elif self.shape_type == "oriented_rectangle":
+            path = QtGui.QPainterPath(self.points[0])
+            for p in self.points[1:]:
+                path.lineTo(p)
+            if self.isClosed():
+                path.lineTo(self.points[0])
         else:
             path = QtGui.QPainterPath(self.points[0])
             for p in self.points[1:]:
@@ -384,9 +509,16 @@ class Shape:
     def highlightVertex(self, i: int, action: int) -> None:
         self._highlightIndex = i
         self._highlightMode = action
+        self._highlight_rotation_point_index = None
+
+    def highlightRotationPoint(self, i: int, action: int) -> None:
+        self._highlight_rotation_point_index = i
+        self._highlightMode = action
+        self._highlightIndex = None
 
     def highlightClear(self) -> None:
         self._highlightIndex = None
+        self._highlight_rotation_point_index = None
 
     def copy(self) -> Shape:
         return copy.deepcopy(self)
