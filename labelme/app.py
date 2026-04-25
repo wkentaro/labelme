@@ -12,6 +12,7 @@ import time
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
@@ -1686,25 +1687,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveLabels(self, label_path: str) -> bool:
         lf = LabelFile()
 
-        def format_shape(s: Shape) -> dict:
-            data = s.other_data.copy()
-            data.update(
-                dict(
-                    label=s.label,
-                    points=[(p.x(), p.y()) for p in s.points],
-                    group_id=s.group_id,
-                    description=s.description,
-                    shape_type=s.shape_type,
-                    flags=s.flags,
-                    mask=None
-                    if s.mask is None
-                    else utils.img_arr_to_b64(s.mask.astype(np.uint8)),
-                )
-            )
-            return data
-
         shapes = [
-            format_shape(s)
+            _shape_to_dict(s)
             for item in self._docks.label_list
             if (s := item.shape()) is not None
         ]
@@ -2570,6 +2554,22 @@ class MainWindow(QtWidgets.QMainWindow):
         stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self._status_bar.stats.setText(" | ".join(stats))
+
+
+def _shape_to_dict(shape: Shape) -> dict[str, Any]:
+    data = shape.other_data.copy()
+    data.update(
+        label=shape.label,
+        points=[(p.x(), p.y()) for p in shape.points],
+        group_id=shape.group_id,
+        description=shape.description,
+        shape_type=shape.shape_type,
+        flags=shape.flags,
+        mask=None
+        if shape.mask is None
+        else utils.img_arr_to_b64(shape.mask.astype(np.uint8)),
+    )
+    return data
 
 
 def _scan_image_files(root_dir: str) -> list[str]:
