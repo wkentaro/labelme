@@ -172,6 +172,26 @@
         <source>Click opposite corner to segment object</source>
         <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for oriented rectangle</source>
+        <translation>คลิกมุมแรกของสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click second corner to set orientation</source>
+        <translation>คลิกมุมที่สองเพื่อกำหนดทิศทาง</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click third corner to close oriented rectangle</source>
+        <translation>คลิกมุมที่สามเพื่อปิดสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click &amp; drag to rotate the shape</source>
+        <translation>คลิกและลากเพื่อหมุนรูปร่าง</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -853,6 +873,16 @@ Please select a different model or use AI-Box mode.</source>
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>รายการไฟล์ถูกปิดใช้งานเมื่อเปิดไฟล์ป้ายกำกับ</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Oriented Rectangle</source>
+        <translation>สี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Start drawing oriented rectangles</source>
+        <translation>เริ่มวาดสี่เหลี่ยมมีทิศทาง</translation>
     </message>
 </context>
 </TS>

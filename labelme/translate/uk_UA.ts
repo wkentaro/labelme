@@ -172,6 +172,26 @@
         <source>Click opposite corner to segment object</source>
         <translation>Натисніть на протилежний кут для сегментації об'єкта</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for oriented rectangle</source>
+        <translation>Натисніть перший кут для орієнтованого прямокутника</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click second corner to set orientation</source>
+        <translation>Натисніть другий кут для задання орієнтації</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click third corner to close oriented rectangle</source>
+        <translation>Натисніть третій кут для замикання орієнтованого прямокутника</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click &amp; drag to rotate the shape</source>
+        <translation>Натисніть і перетягніть, щоб обертати фігуру</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -856,6 +876,16 @@ Please select a different model or use AI-Box mode.</source>
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>Список файлів вимкнено, коли відкрито файл міток</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Oriented Rectangle</source>
+        <translation>Орієнтований прямокутник</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Start drawing oriented rectangles</source>
+        <translation>Почніть малювати орієнтовані прямокутники</translation>
     </message>
 </context>
 </TS>

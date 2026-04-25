@@ -172,6 +172,26 @@
         <source>Click opposite corner to segment object</source>
         <translation>Κάντε κλικ στην απέναντι γωνία για τμηματοποίηση αντικειμένου</translation>
     </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click first corner for oriented rectangle</source>
+        <translation>Κάντε κλικ στην πρώτη γωνία για προσανατολισμένο ορθογώνιο</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click second corner to set orientation</source>
+        <translation>Κάντε κλικ στη δεύτερη γωνία για να ορίσετε τον προσανατολισμό</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click third corner to close oriented rectangle</source>
+        <translation>Κάντε κλικ στην τρίτη γωνία για να κλείσετε το προσανατολισμένο ορθογώνιο</translation>
+    </message>
+    <message>
+        <location filename="../widgets/canvas.py" line="0"/>
+        <source>Click &amp; drag to rotate the shape</source>
+        <translation>Κάντε κλικ και σύρετε για να περιστρέψετε το σχήμα</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -855,6 +875,16 @@ Please select a different model or use AI-Box mode.</source>
         <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>Η λίστα αρχείων είναι απενεργοποιημένη όταν ανοίγεται ένα αρχείο ετικετών</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Oriented Rectangle</source>
+        <translation>Προσανατολισμένο Ορθογώνιο</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Start drawing oriented rectangles</source>
+        <translation>Ξεκινήστε να σχεδιάζετε προσανατολισμένα ορθογώνια</translation>
     </message>
 </context>
 </TS>
