@@ -12,6 +12,7 @@ import time
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
@@ -184,7 +185,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
-    _output_dir: str | None
+    _output_dir: Path | None
     _image: QtGui.QImage
     _label_file: LabelFile | None
     _image_path: str | None
@@ -944,7 +945,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_or_dir: str | None,
         output_dir: str | None,
     ) -> None:
-        self._output_dir = output_dir
+        self._output_dir = Path(output_dir) if output_dir else None
 
         self._image = QtGui.QImage()
         self._label_file = None
@@ -1173,19 +1174,15 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         utils.addActions(self._menus.edit, actions)
 
-    def _get_window_title(self, dirty: bool) -> str:
-        window_title: str = __appname__
-        if self._image_path:
-            window_title = f"{window_title} - {self._image_path}"
-            if self._docks.file_list.count() and self._docks.file_list.currentItem():
-                window_title = (
-                    f"{window_title} "
-                    f"[{self._docks.file_list.currentRow() + 1}"
-                    f"/{self._docks.file_list.count()}]"
-                )
-        if dirty:
-            window_title = f"{window_title}*"
-        return window_title
+    def _get_window_title(self, *, dirty: bool) -> str:
+        file_list = self._docks.file_list
+        file_index = file_list.currentRow() if file_list.currentItem() else None
+        return _format_window_title(
+            image_path=self._image_path,
+            file_index=file_index,
+            file_count=file_list.count(),
+            dirty=dirty,
+        )
 
     def setDirty(self) -> None:
         # Even if we autosave the file, we keep the ability to undo
@@ -1194,7 +1191,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
             self.saveLabels(
-                label_path=self._get_label_path(image_or_label_path=self._image_path)
+                label_path=_resolve_label_path(
+                    image_or_label_path=self._image_path,
+                    output_dir=self._output_dir,
+                )
             )
             return
         self._is_changed = True
@@ -1228,12 +1228,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _submit_ai_prompt(self, _: bool) -> None:
         create_mode = self._canvas_widgets.canvas.createMode
-        shape_type: Literal["rectangle", "polygon", "mask"]
-        if create_mode in _AI_CREATE_MODES:
-            shape_type = self._ai_annotation.output_format
-        elif create_mode in get_args(_TextToAnnotationCreateMode):
-            shape_type = cast(_TextToAnnotationCreateMode, create_mode)
-        else:
+        shape_type = _resolve_text_annotation_shape_type(
+            create_mode=create_mode,
+            ai_output_format=self._ai_annotation.output_format,
+        )
+        if shape_type is None:
             logger.warning("Unsupported createMode={!r}", create_mode)
             return
 
@@ -1257,17 +1256,11 @@ class MainWindow(QtWidgets.QMainWindow):
             texts=texts,
         )
 
-        SCORE_FOR_EXISTING_SHAPE: float = 1.01
+        SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
         for shape in self._canvas_widgets.canvas.shapes:
             if shape.shape_type != shape_type or shape.label not in texts:
                 continue
-            points: NDArray[np.float64] = np.array(
-                [[p.x(), p.y()] for p in shape.points]
-            )
-            xmin, ymin = points.min(axis=0)
-            xmax, ymax = points.max(axis=0)
-            box = np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
-            boxes = np.r_[boxes, [box]]
+            boxes = np.r_[boxes, [_shape_to_xyxy_bbox(shape)]]
             scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
             labels = np.r_[labels, [texts.index(shape.label)]]
 
@@ -1397,17 +1390,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # ty: ignore[invalid-argument-type]
 
     def validateLabel(self, label: str) -> bool:
-        # no validation
-        if self._config["validate_label"] is None:
+        policy = self._config["validate_label"]
+        if policy is None:
             return True
-
-        for i in range(self._docks.unique_label_list.count()):
+        unique_label_list = self._docks.unique_label_list
+        existing_labels = [
             # PyQt5 stubs: item() typed as Optional and .data() unrecognized
-            label_i = self._docks.unique_label_list.item(i).data(Qt.UserRole)  # ty: ignore[unresolved-attribute]
-            if self._config["validate_label"] in ["exact"]:
-                if label_i == label:
-                    return True
-        return False
+            unique_label_list.item(i).data(Qt.UserRole)  # ty: ignore[unresolved-attribute]
+            for i in range(unique_label_list.count())
+        ]
+        return _is_valid_label(
+            label=label, existing_labels=existing_labels, policy=policy
+        )
 
     def _edit_label(self, value: object | None = None) -> None:
         items = self._docks.label_list.selectedItems()
@@ -1596,25 +1590,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 + item_index
                 + self._config["shift_auto_shape_color"]
             )
-            rgb: tuple[int, int, int] = tuple(
-                LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
+            return _rgb_from_colormap_id(label_id=label_id)
+        if self._config["shape_color"] == "manual":
+            rgb = _rgb_from_label_colors(
+                label=label, label_colors=self._config["label_colors"]
             )
-            return rgb
-        elif (
-            self._config["shape_color"] == "manual"
-            and self._config["label_colors"]
-            and label in self._config["label_colors"]
-        ):
-            if not (
-                len(self._config["label_colors"][label]) == 3
-                and all(0 <= c <= 255 for c in self._config["label_colors"][label])
-            ):
-                raise ValueError(
-                    "Color for label must be 0-255 RGB tuple, but got: "
-                    f"{self._config['label_colors'][label]}"
-                )
-            return tuple(self._config["label_colors"][label])
-        elif self._config["default_shape_color"]:
+            if rgb is not None:
+                return rgb
+        if self._config["default_shape_color"]:
             return self._config["default_shape_color"]
         return (0, 255, 0)
 
@@ -1638,37 +1621,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.loadShapes(shapes=shapes, replace=replace)
 
-    def _load_shape_dicts(self, shape_dicts: list[ShapeDict]) -> None:
-        shapes: list[Shape] = []
-        shape_dict: ShapeDict
-        for shape_dict in shape_dicts:
-            shape: Shape = Shape(
-                label=shape_dict["label"],
-                shape_type=shape_dict["shape_type"],
-                group_id=shape_dict["group_id"],
-                description=shape_dict["description"],
-                mask=shape_dict["mask"],
-            )
-            for x, y in shape_dict["points"]:
-                shape.addPoint(QtCore.QPointF(x, y))
-            shape.close()
-
-            default_flags = {}
-            if self._config["label_flags"]:
-                for pattern, keys in self._config["label_flags"].items():
-                    if not isinstance(shape.label, str):
-                        logger.warning("shape.label is not str: {}", shape.label)
-                        continue
-                    if re.match(pattern, shape.label):
-                        for key in keys:
-                            default_flags[key] = False
-            shape.flags = default_flags
-            shape.flags.update(shape_dict["flags"])
-            shape.other_data = shape_dict["other_data"]
-
-            shapes.append(shape)
-        self._load_shapes(shapes=shapes)
-
     def _load_flags(
         self,
         flags: dict[str, bool],
@@ -1686,25 +1638,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveLabels(self, label_path: str) -> bool:
         lf = LabelFile()
 
-        def format_shape(s: Shape) -> dict:
-            data = s.other_data.copy()
-            data.update(
-                dict(
-                    label=s.label,
-                    points=[(p.x(), p.y()) for p in s.points],
-                    group_id=s.group_id,
-                    description=s.description,
-                    shape_type=s.shape_type,
-                    flags=s.flags,
-                    mask=None
-                    if s.mask is None
-                    else utils.img_arr_to_b64(s.mask.astype(np.uint8)),
-                )
-            )
-            return data
-
         shapes = [
-            format_shape(s)
+            _shape_to_dict(s)
             for item in self._docks.label_list
             if (s := item.shape()) is not None
         ]
@@ -1968,13 +1903,6 @@ class MainWindow(QtWidgets.QMainWindow):
             target = item.checkState() == Qt.Unchecked if value is None else value
             item.setCheckState(Qt.Checked if target else Qt.Unchecked)
 
-    def _get_label_path(self, image_or_label_path: str) -> str:
-        if LabelFile.is_label_file(filename=image_or_label_path):
-            return image_or_label_path
-        image_path = Path(image_or_label_path)
-        parent = Path(self._output_dir) if self._output_dir else image_path.parent
-        return str(parent / f"{image_path.stem}{LabelFile.suffix}")
-
     def _load_file(self, image_or_label_path: str) -> None:
         # changing fileListWidget loads file
         if image_or_label_path in self.imageList and (
@@ -2010,7 +1938,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         t0_load_file = time.time()
         if QtCore.QFile.exists(
-            label_path := self._get_label_path(image_or_label_path=image_or_label_path)
+            label_path := _resolve_label_path(
+                image_or_label_path=image_or_label_path,
+                output_dir=self._output_dir,
+            )
         ):
             try:
                 self._label_file = LabelFile(label_path)
@@ -2073,7 +2004,12 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
         if self._label_file:
-            self._load_shape_dicts(shape_dicts=self._label_file.shapes)
+            self._load_shapes(
+                shapes=_shapes_from_dicts(
+                    shape_dicts=self._label_file.shapes,
+                    label_flags=self._config["label_flags"],
+                )
+            )
             if self._label_file.flags is not None:
                 flags.update(self._label_file.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
@@ -2131,21 +2067,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_zoom(value=int(self._scalers[self._zoom_mode]() * 100))
 
     def scaleFitWindow(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: float = 2.0
-        viewport_w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        viewport_h = self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR
-
-        pixmap_w = self._canvas_widgets.canvas.pixmap.width()
-        pixmap_h = self._canvas_widgets.canvas.pixmap.height()
-
-        scale_by_width = viewport_w / pixmap_w
-        scale_by_height = viewport_h / pixmap_h
-        return min(scale_by_width, scale_by_height)
+        EPSILON_TO_HIDE_SCROLLBAR: Final[float] = 2.0
+        return _scale_to_fit_window(
+            viewport_w=self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR,
+            viewport_h=self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR,
+            pixmap_w=self._canvas_widgets.canvas.pixmap.width(),
+            pixmap_h=self._canvas_widgets.canvas.pixmap.height(),
+        )
 
     def scaleFitWidth(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: float = 15.0
-        w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        return w / self._canvas_widgets.canvas.pixmap.width()
+        EPSILON_TO_HIDE_SCROLLBAR: Final[float] = 15.0
+        viewport_w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
+        return viewport_w / self._canvas_widgets.canvas.pixmap.width()
 
     def enableSaveImageWithData(self, enabled: bool) -> None:
         self._config["with_image_data"] = enabled
@@ -2228,10 +2161,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
     def changeOutputDirDialog(self, _value: bool = False) -> None:
-        default_output_dir = self._output_dir
-        if default_output_dir is None and self._image_path:
+        default_output_dir: str
+        if self._output_dir is not None:
+            default_output_dir = str(self._output_dir)
+        elif self._image_path:
             default_output_dir = str(Path(self._image_path).parent)
-        if default_output_dir is None:
+        else:
             default_output_dir = self.currentPath()
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
@@ -2246,7 +2181,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not output_dir:
             return
 
-        self._output_dir = output_dir
+        self._output_dir = Path(output_dir)
 
         self.statusBar().showMessage(
             self.tr("%s . Annotations will be saved/loaded in %s")
@@ -2287,7 +2222,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg = QtWidgets.QFileDialog(
             parent=self,
             caption=caption,
-            directory=self._output_dir or str(Path(self._image_path).parent),
+            directory=str(self._output_dir or Path(self._image_path).parent),
             filter=filters,
         )
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
@@ -2297,7 +2232,10 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path, _ = dlg.getSaveFileName(
             parent=self,
             caption=self.tr("Choose File"),
-            directory=self._get_label_path(image_or_label_path=self._image_path),
+            directory=_resolve_label_path(
+                image_or_label_path=self._image_path,
+                output_dir=self._output_dir,
+            ),
             filter=self.tr("Label files (*%s)") % LabelFile.suffix,
         )
         return label_path
@@ -2520,7 +2458,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             item = QtWidgets.QListWidgetItem(file)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-            if QtCore.QFile.exists(self._get_label_path(image_or_label_path=file)):
+            if QtCore.QFile.exists(
+                _resolve_label_path(
+                    image_or_label_path=file, output_dir=self._output_dir
+                )
+            ):
                 item.setCheckState(Qt.Checked)
             else:
                 item.setCheckState(Qt.Unchecked)
@@ -2558,7 +2500,9 @@ class MainWindow(QtWidgets.QMainWindow):
             item = QtWidgets.QListWidgetItem(image_path)
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             if QtCore.QFile.exists(
-                self._get_label_path(image_or_label_path=image_path)
+                _resolve_label_path(
+                    image_or_label_path=image_path, output_dir=self._output_dir
+                )
             ):
                 item.setCheckState(Qt.Checked)
             else:
@@ -2570,6 +2514,138 @@ class MainWindow(QtWidgets.QMainWindow):
         stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
         self._status_bar.stats.setText(" | ".join(stats))
+
+
+def _shapes_from_dicts(
+    *,
+    shape_dicts: list[ShapeDict],
+    label_flags: dict[str, list[str]] | None,
+) -> list[Shape]:
+    shapes: list[Shape] = []
+    for shape_dict in shape_dicts:
+        shape = Shape(
+            label=shape_dict["label"],
+            shape_type=shape_dict["shape_type"],
+            group_id=shape_dict["group_id"],
+            description=shape_dict["description"],
+            mask=shape_dict["mask"],
+        )
+        for x, y in shape_dict["points"]:
+            shape.addPoint(QtCore.QPointF(x, y))
+        shape.close()
+
+        default_flags: dict[str, bool] = {}
+        if label_flags:
+            for pattern, keys in label_flags.items():
+                if not isinstance(shape.label, str):
+                    logger.warning("shape.label is not str: {}", shape.label)
+                    continue
+                if re.match(pattern, shape.label):
+                    for key in keys:
+                        default_flags[key] = False
+        shape.flags = default_flags
+        shape.flags.update(shape_dict["flags"])
+        shape.other_data = shape_dict["other_data"]
+
+        shapes.append(shape)
+    return shapes
+
+
+def _resolve_text_annotation_shape_type(
+    *, create_mode: str, ai_output_format: Literal["rectangle", "polygon", "mask"]
+) -> Literal["rectangle", "polygon", "mask"] | None:
+    if create_mode in _AI_CREATE_MODES:
+        return ai_output_format
+    if create_mode in get_args(_TextToAnnotationCreateMode):
+        return cast(_TextToAnnotationCreateMode, create_mode)
+    return None
+
+
+def _shape_to_xyxy_bbox(shape: Shape) -> NDArray[np.float32]:
+    points = np.array([[p.x(), p.y()] for p in shape.points])
+    xmin, ymin = points.min(axis=0)
+    xmax, ymax = points.max(axis=0)
+    return np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
+
+
+def _rgb_from_colormap_id(*, label_id: int) -> tuple[int, int, int]:
+    r, g, b = LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
+    return r, g, b
+
+
+def _rgb_from_label_colors(
+    *, label: str, label_colors: dict[str, list[int]] | None
+) -> tuple[int, int, int] | None:
+    if not label_colors or label not in label_colors:
+        return None
+    rgb = label_colors[label]
+    if len(rgb) != 3 or not all(0 <= c <= 255 for c in rgb):
+        raise ValueError(f"Color for label must be 0-255 RGB tuple, but got: {rgb}")
+    r, g, b = rgb
+    return r, g, b
+
+
+def _is_valid_label(
+    *, label: str, existing_labels: list[str], policy: str | None
+) -> bool:
+    if policy is None:
+        return True
+    if policy == "exact":
+        return label in existing_labels
+    return False
+
+
+def _scale_to_fit_window(
+    *,
+    viewport_w: float,
+    viewport_h: float,
+    pixmap_w: int,
+    pixmap_h: int,
+) -> float:
+    scale_by_width = viewport_w / pixmap_w
+    scale_by_height = viewport_h / pixmap_h
+    return min(scale_by_width, scale_by_height)
+
+
+def _format_window_title(
+    *,
+    image_path: str | None,
+    file_index: int | None,
+    file_count: int,
+    dirty: bool,
+) -> str:
+    title = __appname__
+    if image_path:
+        title = f"{title} - {image_path}"
+        if file_count and file_index is not None:
+            title = f"{title} [{file_index + 1}/{file_count}]"
+    if dirty:
+        title = f"{title}*"
+    return title
+
+
+def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) -> str:
+    if LabelFile.is_label_file(filename=image_or_label_path):
+        return image_or_label_path
+    image_path = Path(image_or_label_path)
+    parent = output_dir if output_dir is not None else image_path.parent
+    return str(parent / f"{image_path.stem}{LabelFile.suffix}")
+
+
+def _shape_to_dict(shape: Shape) -> dict[str, Any]:
+    data = shape.other_data.copy()
+    data.update(
+        label=shape.label,
+        points=[(p.x(), p.y()) for p in shape.points],
+        group_id=shape.group_id,
+        description=shape.description,
+        shape_type=shape.shape_type,
+        flags=shape.flags,
+        mask=None
+        if shape.mask is None
+        else utils.img_arr_to_b64(shape.mask.astype(np.uint8)),
+    )
+    return data
 
 
 def _scan_image_files(root_dir: str) -> list[str]:
