@@ -478,7 +478,7 @@ class Canvas(QtWidgets.QWidget):
     def _handle_mouse_right_button_drag(self, pos: QPointF) -> None:
         if self.selected_shapes_copy and self.prev_point is not None:
             self._apply_cursor(CURSOR_MOVE)
-            self.bounded_move_shapes(self.selected_shapes_copy, pos)
+            self.bounded_move_shapes(shapes=self.selected_shapes_copy, pos=pos)
             self.update()
         elif self.selected_shapes:
             self.selected_shapes_copy = [s.copy() for s in self.selected_shapes]
@@ -501,7 +501,7 @@ class Canvas(QtWidgets.QWidget):
             self.is_moving_shape = True
         elif self.selected_shapes and self.prev_point is not None:
             self._apply_cursor(CURSOR_MOVE)
-            self.bounded_move_shapes(self.selected_shapes, pos)
+            self.bounded_move_shapes(shapes=self.selected_shapes, pos=pos)
             self.update()
             self.is_moving_shape = True
 
