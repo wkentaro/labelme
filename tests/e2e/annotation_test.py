@@ -49,6 +49,15 @@ _AI_MODEL = "efficientsam:10m"
             id="rectangle",
         ),
         pytest.param(
+            "oriented_rectangle",
+            [(0.25, 0.5), (0.5, 0.5)],
+            (0.5, 0.75),
+            Qt.NoModifier,
+            4,
+            None,
+            id="oriented_rectangle",
+        ),
+        pytest.param(
             "circle",
             [(0.5, 0.5)],
             (0.75, 0.5),

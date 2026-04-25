@@ -28,6 +28,20 @@ def test_shape_to_mask() -> None:
         assert mask.shape == img.shape[:2]
 
 
+def test_shape_to_mask_oriented_rectangle_marks_inside_pixels() -> None:
+    # Rect spans x in [0, 10], y in [0, 4]; mask is indexed (row=y, col=x).
+    mask = shape_module.shape_to_mask(
+        img_shape=(20, 20),
+        points=[[0.0, 0.0], [10.0, 0.0], [10.0, 4.0], [0.0, 4.0]],
+        shape_type="oriented_rectangle",
+    )
+    assert mask.dtype == bool
+    inside_row, inside_col = 2, 5
+    outside_row, outside_col = 15, 15
+    assert mask[inside_row, inside_col]
+    assert not mask[outside_row, outside_col]
+
+
 def test_shape_to_mask_rectangle_reversed_coords() -> None:
     img_shape = (100, 100)
     mask_tl_br = shape_module.shape_to_mask(
