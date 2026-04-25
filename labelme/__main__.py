@@ -4,7 +4,6 @@ import argparse
 import contextlib
 import io
 import os
-import os.path as osp
 import sys
 import traceback
 import types
@@ -57,15 +56,14 @@ def _setup_loguru(logger_level: str) -> None:
     if sys.stderr:
         logger.add(sys.stderr, level=logger_level)
 
-    cache_dir: str
     if os.name == "nt":
-        cache_dir = os.path.join(os.environ["LOCALAPPDATA"], "labelme")
+        cache_dir = Path(os.environ["LOCALAPPDATA"]) / "labelme"
     else:
-        cache_dir = os.path.expanduser("~/.cache/labelme")
+        cache_dir = Path("~/.cache/labelme").expanduser()
 
-    os.makedirs(cache_dir, exist_ok=True)
+    cache_dir.mkdir(parents=True, exist_ok=True)
 
-    log_file = os.path.join(cache_dir, "labelme.log")
+    log_file = cache_dir / "labelme.log"
     logger.add(
         log_file,
         colorize=True,
@@ -234,21 +232,21 @@ def main() -> None:
     sys.excepthook = _handle_exception
 
     if hasattr(args, "flags"):
-        if os.path.isfile(args.flags):
+        if Path(args.flags).is_file():
             with open(args.flags, encoding="utf-8") as f:
                 args.flags = [line.strip() for line in f if line.strip()]
         else:
             args.flags = [line for line in args.flags.split(",") if line]
 
     if hasattr(args, "labels"):
-        if os.path.isfile(args.labels):
+        if Path(args.labels).is_file():
             with open(args.labels, encoding="utf-8") as f:
                 args.labels = [line.strip() for line in f if line.strip()]
         else:
             args.labels = [line for line in args.labels.split(",") if line]
 
     if hasattr(args, "label_flags"):
-        if os.path.isfile(args.label_flags):
+        if Path(args.label_flags).is_file():
             with open(args.label_flags, encoding="utf-8") as f:
                 args.label_flags = yaml.safe_load(f)
         else:
@@ -289,7 +287,7 @@ def main() -> None:
     translator = QtCore.QTranslator()
     translator.load(
         QtCore.QLocale.system().name(),
-        f"{osp.dirname(osp.abspath(__file__))}/translate",
+        str(Path(__file__).resolve().parent / "translate"),
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms

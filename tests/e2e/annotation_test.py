@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Literal
 
@@ -226,8 +225,8 @@ def test_ai_model_download(
     def patched_path(self: osam.types._blob.Blob) -> str:
         if self.attachments:
             safe_hash = self.hash.replace("sha256:", "sha256-")
-            return os.path.join(blob_base, safe_hash, self.filename)
-        return os.path.join(blob_base, self.hash)
+            return str(Path(blob_base) / safe_hash / self.filename)
+        return str(Path(blob_base) / self.hash)
 
     monkeypatch.setattr(osam.types._blob.Blob, "path", property(patched_path))
 

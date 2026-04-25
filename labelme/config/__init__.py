@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os.path as osp
 import re
 from collections.abc import Callable
 from collections.abc import Sized
@@ -10,7 +9,7 @@ from typing import cast
 import yaml
 from loguru import logger
 
-here = osp.dirname(osp.abspath(__file__))
+here = Path(__file__).resolve().parent
 
 
 def _update_dict(
@@ -99,10 +98,10 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
 
 
 def get_user_config_file(create_if_missing: bool = True) -> str:
-    user_config_file: str = osp.join(osp.expanduser("~"), ".labelmerc")
-    if not osp.exists(user_config_file) and create_if_missing:
+    user_config_path = Path("~/.labelmerc").expanduser()
+    if not user_config_path.exists() and create_if_missing:
         try:
-            with open(user_config_file, "w") as f:
+            with open(user_config_path, "w") as f:
                 f.write(
                     "# Labelme config file.\n"
                     "# Only add settings you want to override.\n"
@@ -115,13 +114,13 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
                     "# labels: [cat, dog]\n"
                 )
         except Exception:
-            logger.warning("Failed to save config: {!r}", user_config_file)
-    return user_config_file
+            logger.warning("Failed to save config: {!r}", str(user_config_path))
+    return str(user_config_path)
 
 
 def load_config(config_file: Path | None, config_overrides: dict) -> dict:
     config: dict
-    with open(osp.join(here, "default_config.yaml")) as f:
+    with open(here / "default_config.yaml") as f:
         config = yaml.safe_load(f)
 
     if config_file is not None:

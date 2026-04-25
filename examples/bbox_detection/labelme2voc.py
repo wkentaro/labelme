@@ -2,10 +2,8 @@
 
 
 import argparse
-import glob
-import os
-import os.path as osp
 import sys
+from pathlib import Path
 
 import imgviz
 
@@ -29,15 +27,16 @@ def main() -> None:
     parser.add_argument("--noviz", help="no visualization", action="store_true")
     args = parser.parse_args()
 
-    if osp.exists(args.output_dir):
-        print("Output directory already exists:", args.output_dir)
+    output_dir = Path(args.output_dir)
+    if output_dir.exists():
+        print("Output directory already exists:", output_dir)
         sys.exit(1)
-    os.makedirs(args.output_dir)
-    os.makedirs(osp.join(args.output_dir, "JPEGImages"))
-    os.makedirs(osp.join(args.output_dir, "Annotations"))
+    output_dir.mkdir(parents=True)
+    (output_dir / "JPEGImages").mkdir(parents=True)
+    (output_dir / "Annotations").mkdir(parents=True)
     if not args.noviz:
-        os.makedirs(osp.join(args.output_dir, "AnnotationsVisualization"))
-    print("Creating dataset:", args.output_dir)
+        (output_dir / "AnnotationsVisualization").mkdir(parents=True)
+    print("Creating dataset:", output_dir)
 
     class_names = []
     class_name_to_id = {}
@@ -53,23 +52,21 @@ def main() -> None:
         class_names.append(class_name)
     class_names = tuple(class_names)
     print("class_names:", class_names)
-    out_class_names_file = osp.join(args.output_dir, "class_names.txt")
+    out_class_names_file = output_dir / "class_names.txt"
     with open(out_class_names_file, "w") as f:
         f.writelines("\n".join(class_names))
     print("Saved class_names:", out_class_names_file)
 
-    for filename in glob.glob(osp.join(args.input_dir, "*.json")):
-        print("Generating dataset from:", filename)
+    for path in sorted(Path(args.input_dir).glob("*.json")):
+        print("Generating dataset from:", path)
 
-        label_file = labelme.LabelFile(filename=filename)
+        label_file = labelme.LabelFile(filename=str(path))
 
-        base = osp.splitext(osp.basename(filename))[0]
-        out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
-        out_xml_file = osp.join(args.output_dir, "Annotations", f"{base}.xml")
+        base = path.stem
+        out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
+        out_xml_file = output_dir / "Annotations" / f"{base}.xml"
         if not args.noviz:
-            out_viz_file = osp.join(
-                args.output_dir, "AnnotationsVisualization", f"{base}.jpg"
-            )
+            out_viz_file = output_dir / "AnnotationsVisualization" / f"{base}.jpg"
 
         assert label_file.imageData is not None
         img = labelme.utils.img_data_to_arr(label_file.imageData)

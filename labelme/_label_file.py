@@ -3,8 +3,8 @@ from __future__ import annotations
 import base64
 import io
 import json
-import os.path as osp
 import time
+from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import TypedDict
@@ -144,7 +144,7 @@ class LabelFile:
         image_pil = _imread(filename=filename)
 
         oriented: PIL.Image.Image = utils.apply_exif_orientation(image_pil)
-        ext = osp.splitext(filename)[1].lower()
+        ext = Path(filename).suffix.lower()
         if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
             # no encoding needed
             with open(filename, "rb") as f:
@@ -182,9 +182,7 @@ class LabelFile:
                 imageData = base64.b64decode(data["imageData"])
             else:
                 # relative path from label file to relative path from cwd
-                imageData = self.load_image_file(
-                    osp.join(osp.dirname(filename), imagePath)
-                )
+                imageData = self.load_image_file(str(Path(filename).parent / imagePath))
             flags = data.get("flags") or {}
             self._check_image_height_and_width(
                 imageData,
@@ -272,14 +270,14 @@ class LabelFile:
 
     @staticmethod
     def is_label_file(filename: str) -> bool:
-        return osp.splitext(filename)[1].lower() == LabelFile.suffix
+        return Path(filename).suffix.lower() == LabelFile.suffix
 
 
 _DISPLAYABLE_MODES = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
 
 def _imread(filename: str) -> PIL.Image.Image:
-    ext: str = osp.splitext(filename)[1].lower()
+    ext: str = Path(filename).suffix.lower()
     try:
         image_pil = PIL.Image.open(filename)
         if image_pil.mode not in _DISPLAYABLE_MODES:

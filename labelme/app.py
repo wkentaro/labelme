@@ -5,7 +5,6 @@ import functools
 import html
 import math
 import os
-import os.path as osp
 import platform
 import re
 import subprocess
@@ -1718,10 +1717,10 @@ class MainWindow(QtWidgets.QMainWindow):
             flags[key] = flag
         try:
             assert self._image_path
-            imagePath = osp.relpath(self._image_path, osp.dirname(label_path))
+            label_dir = Path(label_path).parent
+            imagePath = os.path.relpath(self._image_path, label_dir)
             imageData = self.imageData if self._config["with_image_data"] else None
-            if osp.dirname(label_path) and not osp.exists(osp.dirname(label_path)):
-                os.makedirs(osp.dirname(label_path))
+            label_dir.mkdir(parents=True, exist_ok=True)
             lf.save(
                 filename=label_path,
                 shapes=shapes,
@@ -1972,10 +1971,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _get_label_path(self, image_or_label_path: str) -> str:
         if LabelFile.is_label_file(filename=image_or_label_path):
             return image_or_label_path
-        return osp.join(
-            self._output_dir or osp.dirname(image_or_label_path),
-            f"{osp.splitext(osp.basename(image_or_label_path))[0]}{LabelFile.suffix}",
-        )
+        image_path = Path(image_or_label_path)
+        parent = Path(self._output_dir) if self._output_dir else image_path.parent
+        return str(parent / f"{image_path.stem}{LabelFile.suffix}")
 
     def _load_file(self, image_or_label_path: str) -> None:
         # changing fileListWidget loads file
@@ -2007,7 +2005,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         # assumes same name, but json extension
         self.show_status_message(
-            self.tr("Loading %s...") % osp.basename(image_or_label_path)
+            self.tr("Loading %s...") % Path(image_or_label_path).name
         )
 
         t0_load_file = time.time()
@@ -2030,10 +2028,7 @@ class MainWindow(QtWidgets.QMainWindow):
             assert self._label_file is not None
             self.imageData = self._label_file.imageData
             assert self._label_file.imagePath
-            self._image_path = osp.join(
-                osp.dirname(label_path),
-                self._label_file.imagePath,
-            )
+            self._image_path = str(Path(label_path).parent / self._label_file.imagePath)
             self._other_data = self._label_file.otherData
         else:
             image_path: str = image_or_label_path
@@ -2106,9 +2101,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._paint_canvas()
         self.toggleActions(True)
         self._canvas_widgets.canvas.setFocus()
-        self.show_status_message(
-            self.tr("Loaded %s") % osp.basename(image_or_label_path)
-        )
+        self.show_status_message(self.tr("Loaded %s") % Path(image_or_label_path).name)
         logger.info(
             "Loaded file: {!r} in {:.0f}ms",
             image_or_label_path,
@@ -2213,7 +2206,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _open_file_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
             return
-        path = osp.dirname(str(self._image_path)) if self._image_path else "."
+        path = self.currentPath()
         formats = [
             f"*.{fmt.data().decode()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
@@ -2237,7 +2230,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def changeOutputDirDialog(self, _value: bool = False) -> None:
         default_output_dir = self._output_dir
         if default_output_dir is None and self._image_path:
-            default_output_dir = osp.dirname(self._image_path)
+            default_output_dir = str(Path(self._image_path).parent)
         if default_output_dir is None:
             default_output_dir = self.currentPath()
 
@@ -2294,7 +2287,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg = QtWidgets.QFileDialog(
             parent=self,
             caption=caption,
-            directory=self._output_dir or osp.dirname(self._image_path),
+            directory=self._output_dir or str(Path(self._image_path).parent),
             filter=filters,
         )
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
@@ -2321,7 +2314,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def getLabelFile(self) -> str:
         assert self._image_path is not None
-        return f"{osp.splitext(self._image_path)[0]}.json"
+        return str(Path(self._image_path).with_suffix(".json"))
 
     def deleteFile(self) -> None:
         msg = self.tr(
@@ -2336,11 +2329,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if answer != QtWidgets.QMessageBox.Yes:
             return
 
-        annotation_path = self.getLabelFile()
-        if not osp.exists(annotation_path):
+        annotation_path = Path(self.getLabelFile())
+        if not annotation_path.exists():
             return
 
-        os.remove(annotation_path)
+        annotation_path.unlink()
         logger.info(f"Label file is removed: {annotation_path}")
 
         item = self._docks.file_list.currentItem()
@@ -2387,7 +2380,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
         label_file = self.getLabelFile()
-        return osp.exists(label_file)
+        return Path(label_file).exists()
 
     def _can_continue(self) -> bool:
         if not self._is_changed:
@@ -2415,7 +2408,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def currentPath(self) -> str:
-        return osp.dirname(str(self._image_path)) if self._image_path else "."
+        return str(Path(self._image_path).parent) if self._image_path else "."
 
     def toggleKeepPrevMode(self) -> None:
         self._config["keep_prev"] = not self._config["keep_prev"]
@@ -2470,14 +2463,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("File list is disabled when a label file is opened")
             )
             self._load_file(image_or_label_path=file_or_dir)
-        elif osp.isdir(file_or_dir):
+        elif Path(file_or_dir).is_dir():
             self._import_images_from_dir(
                 root_dir=file_or_dir, pattern=self._docks.file_search.text()
             )
             self._open_next_image()
         else:
             self._import_images_from_dir(
-                root_dir=osp.dirname(file_or_dir) or ".",
+                root_dir=str(Path(file_or_dir).parent),
                 pattern=self._docks.file_search.text(),
             )
             self._load_file(image_or_label_path=file_or_dir)
@@ -2487,11 +2480,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         defaultOpenDirPath: str
-        if self._prev_opened_dir and osp.exists(self._prev_opened_dir):
+        if self._prev_opened_dir and Path(self._prev_opened_dir).exists():
             defaultOpenDirPath = self._prev_opened_dir
         else:
             defaultOpenDirPath = (
-                osp.dirname(self._image_path) if self._image_path else "."
+                str(Path(self._image_path).parent) if self._image_path else "."
             )
 
         dir_path = str(
@@ -2589,7 +2582,7 @@ def _scan_image_files(root_dir: str) -> list[str]:
     for root, dirs, files in os.walk(root_dir):
         for file in files:
             if file.lower().endswith(tuple(extensions)):
-                relativePath = os.path.normpath(osp.join(root, file))
+                relativePath = os.path.normpath(os.path.join(root, file))
                 images.append(relativePath)
 
     logger.debug("found {:d} images in {!r}", len(images), root_dir)

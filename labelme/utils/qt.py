@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import os.path as osp
 from collections.abc import Callable
 from collections.abc import Sequence
 from math import sqrt
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -11,14 +11,13 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
-here = osp.dirname(osp.abspath(__file__))
+here = Path(__file__).resolve().parent
 
 
 def newIcon(icon_file_name: str) -> QtGui.QIcon:
-    if osp.splitext(icon_file_name)[1] == "":
+    if Path(icon_file_name).suffix == "":
         icon_file_name = f"{icon_file_name}.png"  # XXX: convention
-    icons_dir: str = osp.join(here, "../icons")
-    return QtGui.QIcon(osp.join(":/", icons_dir, icon_file_name))
+    return QtGui.QIcon(str(here.parent / "icons" / icon_file_name))
 
 
 def newButton(
