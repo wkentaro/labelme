@@ -47,6 +47,9 @@ def shape_to_mask(
         cx, cy = xy[0]
         r = point_size
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=1, fill=1)
+    elif shape_type == "oriented_rectangle":
+        assert len(xy) == 4, "Shape of shape_type=oriented_rectangle must have 4 points"
+        draw.polygon(xy=xy, outline=1, fill=1)  # ty: ignore[invalid-argument-type]
     elif shape_type in [None, "polygon"]:
         assert len(xy) > 2, "Polygon must have points more than 2"
         draw.polygon(xy=xy, outline=1, fill=1)  # ty: ignore[invalid-argument-type]
