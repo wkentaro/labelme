@@ -3,12 +3,10 @@
 import argparse
 import collections
 import datetime
-import glob
 import json
-import os
-import os.path as osp
 import sys
 import uuid
+from pathlib import Path
 from typing import Any
 
 import imgviz
@@ -33,14 +31,15 @@ def main() -> None:
     parser.add_argument("--noviz", help="no visualization", action="store_true")
     args = parser.parse_args()
 
-    if osp.exists(args.output_dir):
-        print("Output directory already exists:", args.output_dir)
+    output_dir = Path(args.output_dir)
+    if output_dir.exists():
+        print("Output directory already exists:", output_dir)
         sys.exit(1)
-    os.makedirs(args.output_dir)
-    os.makedirs(osp.join(args.output_dir, "JPEGImages"))
+    output_dir.mkdir(parents=True)
+    (output_dir / "JPEGImages").mkdir(parents=True)
     if not args.noviz:
-        os.makedirs(osp.join(args.output_dir, "Visualization"))
-    print("Creating dataset:", args.output_dir)
+        (output_dir / "Visualization").mkdir(parents=True)
+    print("Creating dataset:", output_dir)
 
     now = datetime.datetime.now()
 
@@ -84,15 +83,15 @@ def main() -> None:
             )
         )
 
-    out_ann_file = osp.join(args.output_dir, "annotations.json")
-    label_files = glob.glob(osp.join(args.input_dir, "*.json"))
-    for image_id, filename in enumerate(label_files):
-        print("Generating dataset from:", filename)
+    out_ann_file = output_dir / "annotations.json"
+    label_files = sorted(Path(args.input_dir).glob("*.json"))
+    for image_id, path in enumerate(label_files):
+        print("Generating dataset from:", path)
 
-        label_file = labelme.LabelFile(filename=filename)
+        label_file = labelme.LabelFile(filename=str(path))
 
-        base = osp.splitext(osp.basename(filename))[0]
-        out_img_file = osp.join(args.output_dir, "JPEGImages", f"{base}.jpg")
+        base = path.stem
+        out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
 
         assert label_file.imageData is not None
         img = labelme.utils.img_data_to_arr(label_file.imageData)
@@ -103,7 +102,7 @@ def main() -> None:
             dict(
                 license=0,
                 url=None,
-                file_name=osp.relpath(out_img_file, osp.dirname(out_ann_file)),
+                file_name=str(out_img_file.relative_to(output_dir)),
                 height=img.shape[0],
                 width=img.shape[1],
                 date_captured=None,
@@ -193,7 +192,7 @@ def main() -> None:
                     font_size=15,
                     line_width=2,
                 )
-            out_viz_file = osp.join(args.output_dir, "Visualization", f"{base}.jpg")
+            out_viz_file = output_dir / "Visualization" / f"{base}.jpg"
             imgviz.io.imsave(out_viz_file, viz)
 
     with open(out_ann_file, "w") as f:

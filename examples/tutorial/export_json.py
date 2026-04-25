@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import os
-import os.path as osp
+from pathlib import Path
 
 import imgviz
 import numpy as np
@@ -22,12 +21,8 @@ def main() -> None:
 
     json_file = args.json_file
 
-    if args.out is None:
-        out_dir = osp.splitext(osp.basename(json_file))[0]
-        out_dir = osp.join(osp.dirname(json_file), out_dir)
-    else:
-        out_dir = args.out
-    os.makedirs(out_dir, exist_ok=True)
+    out_dir = Path(json_file).with_suffix("") if args.out is None else Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     label_file: LabelFile = LabelFile(filename=json_file)
 
@@ -55,11 +50,11 @@ def main() -> None:
         loc="rb",
     )
 
-    PIL.Image.fromarray(image).save(osp.join(out_dir, "img.png"))
-    imgviz.io.lblsave(osp.join(out_dir, "label.png"), lbl.astype(np.uint8))
-    PIL.Image.fromarray(lbl_viz).save(osp.join(out_dir, "label_viz.png"))
+    PIL.Image.fromarray(image).save(out_dir / "img.png")
+    imgviz.io.lblsave(out_dir / "label.png", lbl.astype(np.uint8))
+    PIL.Image.fromarray(lbl_viz).save(out_dir / "label_viz.png")
 
-    with open(osp.join(out_dir, "label_names.txt"), "w") as f:
+    with open(out_dir / "label_names.txt", "w") as f:
         for lbl_name in label_names:
             f.write(f"{lbl_name}\n")
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import os
+from pathlib import Path
 
 import imgviz
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.labels is not None:
-        if os.path.exists(args.labels):
+        if Path(args.labels).exists():
             with open(args.labels) as f:
                 label_names = [label.strip() for label in f]
         else:
