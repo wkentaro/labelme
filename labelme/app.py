@@ -2558,7 +2558,8 @@ def _shapes_from_dicts(
 
 
 def _rgb_from_colormap_id(*, label_id: int) -> tuple[int, int, int]:
-    return tuple(LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist())
+    r, g, b = LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
+    return r, g, b
 
 
 def _rgb_from_label_colors(
