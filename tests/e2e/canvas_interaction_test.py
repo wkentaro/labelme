@@ -184,7 +184,7 @@ def test_move_shape_by_drag(
     shape = canvas.shapes[_SHAPE_INDEX]
     original_points = [QPointF(p) for p in shape.points]
 
-    center = shape.boundingRect().center()
+    center = shape.bounding_rect().center()
     offset = QPointF(15, 10)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     _hover_and_drag(
@@ -248,15 +248,15 @@ def test_move_shape_by_arrow_key(
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
-    shape = canvas.selectedShapes[0]
-    original_center = QPointF(shape.boundingRect().center())
+    shape = canvas.selected_shapes[0]
+    original_center = QPointF(shape.bounding_rect().center())
 
     qtbot.keyPress(canvas, key)
     qtbot.wait(50)
     qtbot.keyRelease(canvas, key)
     qtbot.wait(50)
 
-    new_center = shape.boundingRect().center()
+    new_center = shape.bounding_rect().center()
     assert abs((new_center.x() - original_center.x()) - expected_dx) < 1.0
     assert abs((new_center.y() - original_center.y()) - expected_dy) < 1.0
 
@@ -272,13 +272,13 @@ def test_select_all_shapes_from_canvas(
     canvas = _annotated_win._canvas_widgets.canvas
     assert len(canvas.shapes) > 1
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
-    assert len(canvas.selectedShapes) == 1
+    assert len(canvas.selected_shapes) == 1
 
     qtbot.keyClick(canvas, Qt.Key_A, modifier=Qt.ControlModifier)
     qtbot.wait(50)
 
-    assert set(map(id, canvas.selectedShapes)) == set(map(id, canvas.shapes))
-    assert len(_annotated_win._docks.label_list.selectedItems()) == len(canvas.shapes)
+    assert set(map(id, canvas.selected_shapes)) == set(map(id, canvas.shapes))
+    assert len(_annotated_win._docks.label_list.selected_items()) == len(canvas.shapes)
 
     close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
 
@@ -291,7 +291,7 @@ def test_add_point_on_edge(
     pause: bool,
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
-    _annotated_win._switch_canvas_mode(edit=False, createMode="polygon")
+    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     # Large polygon so edge midpoints are far from vertices at any canvas scale
@@ -354,7 +354,7 @@ def test_cancel_drawing_with_escape(
     pause: bool,
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
-    _annotated_win._switch_canvas_mode(edit=False, createMode="polygon")
+    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3)]:
@@ -378,7 +378,7 @@ def test_undo_last_point_while_drawing(
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _annotated_win._switch_canvas_mode(edit=False, createMode="polygon")
+    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -387,7 +387,7 @@ def test_undo_last_point_while_drawing(
     assert canvas.current is not None
     assert len(canvas.current.points) == 3
 
-    canvas.undoLastPoint()
+    canvas.undo_last_point()
     qtbot.wait(50)
 
     assert canvas.current is not None
@@ -424,7 +424,7 @@ def test_finalize_polygon_with_enter(
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _annotated_win._switch_canvas_mode(edit=False, createMode="polygon")
+    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -454,7 +454,7 @@ def test_undo_shape_creation(
 ) -> None:
     canvas = _annotated_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _annotated_win._switch_canvas_mode(edit=False, createMode="polygon")
+    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -499,7 +499,7 @@ def test_select_nonpolygon_shape(
     select_offset: tuple[float, float],
 ) -> None:
     canvas = _raw_win._canvas_widgets.canvas
-    _raw_win._switch_canvas_mode(edit=False, createMode=create_mode)
+    _raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
     _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=setup_click)
@@ -514,14 +514,14 @@ def test_select_nonpolygon_shape(
     _raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
-    click_pos = shape.boundingRect().center() + QPointF(*select_offset)
+    click_pos = shape.bounding_rect().center() + QPointF(*select_offset)
     click_widget = image_to_widget_pos(canvas=canvas, image_pos=click_pos)
     qtbot.mouseMove(canvas, pos=click_widget)
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.LeftButton, pos=click_widget)
     qtbot.wait(50)
 
-    assert shape in canvas.selectedShapes
+    assert shape in canvas.selected_shapes
 
     _save_and_check(win=_raw_win, tmp_path=tmp_path)
     close_or_pause(qtbot=qtbot, widget=_raw_win, pause=pause)
@@ -535,7 +535,7 @@ def test_cancel_label_reopens_shape(
 ) -> None:
     canvas = _raw_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _raw_win._switch_canvas_mode(edit=False, createMode="polygon")
+    _raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -595,7 +595,7 @@ def test_remove_point_blocked_at_minimum(
     expected_points: int,
 ) -> None:
     canvas = _raw_win._canvas_widgets.canvas
-    _raw_win._switch_canvas_mode(edit=False, createMode=create_mode)
+    _raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
     for xy in setup_clicks:

@@ -13,8 +13,8 @@ def _make_mask_shape(
 ) -> Shape:
     shape = Shape(shape_type="mask")
     h, w = mask.shape
-    shape.addPoint(QtCore.QPointF(origin_x, origin_y))
-    shape.addPoint(QtCore.QPointF(origin_x + w, origin_y + h))
+    shape.add_point(QtCore.QPointF(origin_x, origin_y))
+    shape.add_point(QtCore.QPointF(origin_x + w, origin_y + h))
     shape.mask = mask
     return shape
 
@@ -32,4 +32,4 @@ def _make_mask_shape(
 def test_mask_contains_point(point: tuple[int, int], expected: bool) -> None:
     mask = np.ones((5, 5), dtype=bool)
     shape = _make_mask_shape(mask, origin_x=0, origin_y=0)
-    assert shape.containsPoint(QtCore.QPointF(*point)) is expected
+    assert shape.contains_point(QtCore.QPointF(*point)) is expected

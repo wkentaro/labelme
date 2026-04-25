@@ -63,7 +63,7 @@ def test_select_shape(
         main_win=main_win, qtbot=qtbot, data_path=data_path
     )
 
-    assert canvas.selectedShapes[0].label == "person"
+    assert canvas.selected_shapes[0].label == "person"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -84,7 +84,7 @@ def test_copy_paste_shape(
         output_dir=str(tmp_path),
     )
 
-    original_label = canvas.selectedShapes[0].label
+    original_label = canvas.selected_shapes[0].label
     num_shapes_before = len(canvas.shapes)
 
     win.copySelectedShape()

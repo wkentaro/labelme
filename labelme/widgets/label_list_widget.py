@@ -80,7 +80,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
     def __init__(self, text: str | None = None, shape: Shape | None = None) -> None:
         super().__init__()
         self.setText(text or "")
-        self.setShape(shape)
+        self.set_shape(shape)
 
         self.setCheckable(True)
         self.setCheckState(Qt.Checked)
@@ -90,7 +90,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
     def clone(self) -> LabelListWidgetItem:
         return LabelListWidgetItem(self.text(), self.shape())
 
-    def setShape(self, shape: Shape | None) -> None:
+    def set_shape(self, shape: Shape | None) -> None:
         self.setData(shape, Qt.UserRole)
 
     def shape(self) -> Shape | None:
@@ -104,7 +104,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
 
 class _ItemModel(QtGui.QStandardItemModel):
-    itemDropped = QtCore.pyqtSignal()
+    item_dropped = QtCore.pyqtSignal()
 
     def removeRows(
         self,
@@ -113,7 +113,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         parent: QtCore.QModelIndex = QtCore.QModelIndex(),
     ) -> bool:
         ret = super().removeRows(row, count, parent)
-        self.itemDropped.emit()
+        self.item_dropped.emit()
         return ret
 
     def dropMimeData(
@@ -141,12 +141,11 @@ class _ItemModel(QtGui.QStandardItemModel):
 
 
 class LabelListWidget(QtWidgets.QListView):
-    itemDoubleClicked = QtCore.pyqtSignal(LabelListWidgetItem)
-    itemSelectionChanged = QtCore.pyqtSignal(list, list)
+    item_double_clicked = QtCore.pyqtSignal(LabelListWidgetItem)
+    item_selection_changed = QtCore.pyqtSignal(list, list)
 
     def __init__(self) -> None:
         super().__init__()
-        self._selectedItems: list[LabelListWidgetItem] = []
 
         self.setWindowFlags(Qt.Window)
 
@@ -159,8 +158,8 @@ class LabelListWidget(QtWidgets.QListView):
         self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.setDefaultDropAction(Qt.MoveAction)
 
-        self.doubleClicked.connect(self.itemDoubleClickedEvent)
-        self.selectionModel().selectionChanged.connect(self.itemSelectionChangedEvent)
+        self.doubleClicked.connect(self._on_item_double_clicked)
+        self.selectionModel().selectionChanged.connect(self._on_item_selection_changed)
 
     def __len__(self) -> int:
         return self._model.rowCount()
@@ -173,49 +172,49 @@ class LabelListWidget(QtWidgets.QListView):
             yield self[i]
 
     @property
-    def itemDropped(self) -> QtCore.pyqtBoundSignal:
-        return self._model.itemDropped
+    def item_dropped(self) -> QtCore.pyqtBoundSignal:
+        return self._model.item_dropped
 
     @property
-    def itemChanged(self) -> QtCore.pyqtBoundSignal:
+    def item_changed(self) -> QtCore.pyqtBoundSignal:
         return self._model.itemChanged
 
-    def itemSelectionChangedEvent(
+    def _on_item_selection_changed(
         self,
         selected: QtCore.QItemSelection,
         deselected: QtCore.QItemSelection,
     ) -> None:
         selected_items = [self._model.itemFromIndex(i) for i in selected.indexes()]
         deselected_items = [self._model.itemFromIndex(i) for i in deselected.indexes()]
-        self.itemSelectionChanged.emit(selected_items, deselected_items)
+        self.item_selection_changed.emit(selected_items, deselected_items)
 
-    def itemDoubleClickedEvent(self, index: QtCore.QModelIndex) -> None:
-        self.itemDoubleClicked.emit(self._model.itemFromIndex(index))
+    def _on_item_double_clicked(self, index: QtCore.QModelIndex) -> None:
+        self.item_double_clicked.emit(self._model.itemFromIndex(index))
 
-    def selectedItems(self) -> list[LabelListWidgetItem]:
+    def selected_items(self) -> list[LabelListWidgetItem]:
         return [
             cast(LabelListWidgetItem, self._model.itemFromIndex(i))
             for i in self.selectedIndexes()
         ]
 
-    def scrollToItem(self, item: LabelListWidgetItem) -> None:
+    def scroll_to_item(self, item: LabelListWidgetItem) -> None:
         self.scrollTo(self._model.indexFromItem(item))
 
-    def addItem(self, item: LabelListWidgetItem) -> None:
+    def add_item(self, item: LabelListWidgetItem) -> None:
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
         self._model.setItem(self._model.rowCount(), 0, item)
         item.setSizeHint(self.itemDelegate().sizeHint(None, None))  # ty: ignore[invalid-argument-type]
 
-    def removeItem(self, item: LabelListWidgetItem) -> None:
+    def remove_item(self, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)
         self._model.removeRows(index.row(), 1)
 
-    def selectItem(self, item: LabelListWidgetItem) -> None:
+    def select_item(self, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)
         self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
 
-    def findItemByShape(self, shape: Shape) -> LabelListWidgetItem:
+    def find_item_by_shape(self, shape: Shape) -> LabelListWidgetItem:
         for row in range(self._model.rowCount()):
             item = self._model.item(row, 0)
             item = cast(LabelListWidgetItem, item)

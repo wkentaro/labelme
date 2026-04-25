@@ -153,7 +153,7 @@ def test_annotate_shape_types(
             int(canvas_size.height() * xy[1]),
         )
 
-    win._switch_canvas_mode(edit=False, createMode=create_mode)
+    win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
     def click(
@@ -214,7 +214,7 @@ def test_ai_model_download(
     canvas.set_ai_model_name(_AI_MODEL)
     canvas.set_ai_output_format("polygon")
 
-    win._switch_canvas_mode(edit=False, createMode="ai_box_to_shape")
+    win._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape")
     qtbot.wait(50)
 
     # Redirect osam blob storage to a temp directory so it thinks the model is not
