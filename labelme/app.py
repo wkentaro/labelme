@@ -1174,19 +1174,15 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         utils.addActions(self._menus.edit, actions)
 
-    def _get_window_title(self, dirty: bool) -> str:
-        window_title: str = __appname__
-        if self._image_path:
-            window_title = f"{window_title} - {self._image_path}"
-            if self._docks.file_list.count() and self._docks.file_list.currentItem():
-                window_title = (
-                    f"{window_title} "
-                    f"[{self._docks.file_list.currentRow() + 1}"
-                    f"/{self._docks.file_list.count()}]"
-                )
-        if dirty:
-            window_title = f"{window_title}*"
-        return window_title
+    def _get_window_title(self, *, dirty: bool) -> str:
+        file_list = self._docks.file_list
+        file_index = file_list.currentRow() if file_list.currentItem() else None
+        return _format_window_title(
+            image_path=self._image_path,
+            file_index=file_index,
+            file_count=file_list.count(),
+            dirty=dirty,
+        )
 
     def setDirty(self) -> None:
         # Even if we autosave the file, we keep the ability to undo
@@ -2572,6 +2568,23 @@ def _shapes_from_dicts(
 
         shapes.append(shape)
     return shapes
+
+
+def _format_window_title(
+    *,
+    image_path: str | None,
+    file_index: int | None,
+    file_count: int,
+    dirty: bool,
+) -> str:
+    title = __appname__
+    if image_path:
+        title = f"{title} - {image_path}"
+        if file_count and file_index is not None:
+            title = f"{title} [{file_index + 1}/{file_count}]"
+    if dirty:
+        title = f"{title}*"
+    return title
 
 
 def _resolve_label_path(image_or_label_path: str, output_dir: Path | None) -> str:
