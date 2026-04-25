@@ -21,7 +21,7 @@ def _file_preview_widget(qtbot: QtBot) -> FileDialogPreview:
 
 
 @pytest.mark.gui
-def test_onChange_valid_json(
+def test_on_change_valid_json(
     _file_preview_widget: FileDialogPreview,
     tmp_path: Path,
     qtbot: QtBot,
@@ -30,10 +30,10 @@ def test_onChange_valid_json(
     path = tmp_path / "valid.json"
     path.write_text(json.dumps({"version": "5.0.0", "shapes": []}))
 
-    _file_preview_widget.onChange(str(path))
+    _file_preview_widget._on_change(str(path))
 
-    assert _file_preview_widget.labelPreview.isHidden() is False
-    assert '"version"' in _file_preview_widget.labelPreview.label.text()
+    assert _file_preview_widget.label_preview.isHidden() is False
+    assert '"version"' in _file_preview_widget.label_preview.label.text()
 
     close_or_pause(qtbot=qtbot, widget=_file_preview_widget, pause=pause)
 
@@ -47,7 +47,7 @@ def test_onChange_valid_json(
     ],
     ids=["malformed_json", "binary_file"],
 )
-def test_onChange_bad_json_no_crash(
+def test_on_change_bad_json_no_crash(
     _file_preview_widget: FileDialogPreview,
     tmp_path: Path,
     content_bytes: bytes,
@@ -57,18 +57,18 @@ def test_onChange_bad_json_no_crash(
     path = tmp_path / "bad.json"
     path.write_bytes(content_bytes)
 
-    _file_preview_widget.onChange(str(path))
+    _file_preview_widget._on_change(str(path))
 
-    assert _file_preview_widget.labelPreview.isHidden() is False
-    assert "Cannot preview" in _file_preview_widget.labelPreview.label.text()
+    assert _file_preview_widget.label_preview.isHidden() is False
+    assert "Cannot preview" in _file_preview_widget.label_preview.label.text()
 
     close_or_pause(qtbot=qtbot, widget=_file_preview_widget, pause=pause)
 
 
 @pytest.mark.gui
-def test_onChange_non_json_non_image_hides_preview(
+def test_on_change_non_json_non_image_hides_preview(
     _file_preview_widget: FileDialogPreview,
 ) -> None:
-    _file_preview_widget.onChange("/nonexistent/path.txt")
+    _file_preview_widget._on_change("/nonexistent/path.txt")
 
-    assert _file_preview_widget.labelPreview.isHidden() is True
+    assert _file_preview_widget.label_preview.isHidden() is True
