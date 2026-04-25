@@ -1397,17 +1397,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # ty: ignore[invalid-argument-type]
 
     def validateLabel(self, label: str) -> bool:
-        # no validation
-        if self._config["validate_label"] is None:
-            return True
-
-        for i in range(self._docks.unique_label_list.count()):
+        unique_label_list = self._docks.unique_label_list
+        existing_labels = [
             # PyQt5 stubs: item() typed as Optional and .data() unrecognized
-            label_i = self._docks.unique_label_list.item(i).data(Qt.UserRole)  # ty: ignore[unresolved-attribute]
-            if self._config["validate_label"] in ["exact"]:
-                if label_i == label:
-                    return True
-        return False
+            unique_label_list.item(i).data(Qt.UserRole)  # ty: ignore[unresolved-attribute]
+            for i in range(unique_label_list.count())
+        ]
+        return _is_valid_label(
+            label=label,
+            existing_labels=existing_labels,
+            policy=self._config["validate_label"],
+        )
 
     def _edit_label(self, value: object | None = None) -> None:
         items = self._docks.label_list.selectedItems()
@@ -2565,6 +2565,16 @@ def _shapes_from_dicts(
 
         shapes.append(shape)
     return shapes
+
+
+def _is_valid_label(
+    *, label: str, existing_labels: list[str], policy: str | None
+) -> bool:
+    if policy is None:
+        return True
+    if policy == "exact":
+        return label in existing_labels
+    return False
 
 
 def _scale_to_fit_window(
