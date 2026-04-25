@@ -111,7 +111,7 @@ def get_shapes_from_bboxes(
         text: str = texts[label]
         xmin, ymin, xmax, ymax = box
 
-        points: list[list[float]]  # ty: ignore[invalid-declaration]
+        points: list[list[float]] = []
         mask: NDArray[np.bool_] | None = None
         if shape_type == "rectangle":
             points = [[xmin, ymin], [xmax, ymax]]
