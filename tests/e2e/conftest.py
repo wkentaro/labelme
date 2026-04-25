@@ -135,7 +135,7 @@ def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
     qtbot.wait(50)
-    assert len(canvas.selectedShapes) == 1
+    assert len(canvas.selected_shapes) == 1
 
 
 def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:

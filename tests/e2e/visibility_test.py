@@ -37,7 +37,7 @@ def test_toggle_all_shapes(
 
     assert len(canvas.shapes) == 5
     for shape in canvas.shapes:
-        assert canvas.isVisible(shape)
+        assert canvas.is_shape_visible(shape)
 
     _win.toggleShapes(False)
     qtbot.wait(50)
@@ -45,7 +45,7 @@ def test_toggle_all_shapes(
     for item in label_list:
         assert item.checkState() == Qt.Unchecked
     for shape in canvas.shapes:
-        assert not canvas.isVisible(shape)
+        assert not canvas.is_shape_visible(shape)
 
     _win.toggleShapes(True)
     qtbot.wait(50)
@@ -53,7 +53,7 @@ def test_toggle_all_shapes(
     for item in label_list:
         assert item.checkState() == Qt.Checked
     for shape in canvas.shapes:
-        assert canvas.isVisible(shape)
+        assert canvas.is_shape_visible(shape)
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
@@ -72,14 +72,14 @@ def test_toggle_individual_shape(
     first_item = label_list[0]
     first_shape = first_item.shape()
     assert first_shape is not None
-    assert canvas.isVisible(first_shape)
+    assert canvas.is_shape_visible(first_shape)
 
     first_item.setCheckState(Qt.Unchecked)
     qtbot.wait(50)
-    assert not canvas.isVisible(first_shape)
+    assert not canvas.is_shape_visible(first_shape)
 
     first_item.setCheckState(Qt.Checked)
     qtbot.wait(50)
-    assert canvas.isVisible(first_shape)
+    assert canvas.is_shape_visible(first_shape)
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)

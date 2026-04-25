@@ -91,7 +91,7 @@ def _run_text_prompt(
     create_mode: str,
     score_threshold: float = 0.1,
 ) -> None:
-    win._switch_canvas_mode(edit=False, createMode=create_mode)
+    win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
     win._ai_text._text_input.setText(text)

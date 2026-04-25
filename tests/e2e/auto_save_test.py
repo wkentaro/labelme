@@ -47,14 +47,14 @@ def test_auto_save_on_shape_move(
 
     canvas = _auto_save_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
-    original_center = QPointF(canvas.selectedShapes[0].bounding_rect().center())
+    original_center = QPointF(canvas.selected_shapes[0].bounding_rect().center())
 
     qtbot.keyPress(canvas, Qt.Key_Right)
     qtbot.wait(50)
     qtbot.keyRelease(canvas, Qt.Key_Right)
     qtbot.wait(50)
 
-    new_center = canvas.selectedShapes[0].bounding_rect().center()
+    new_center = canvas.selected_shapes[0].bounding_rect().center()
     assert abs((new_center.x() - original_center.x()) - 5.0) < 1.0
 
     assert label_file.exists()

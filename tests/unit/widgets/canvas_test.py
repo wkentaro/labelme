@@ -37,8 +37,8 @@ def canvas(qtbot: QtBot) -> Canvas:
         (QPointF(_WIDTH / 2, -0.1), True),
     ],
 )
-def test_outOfPixmap(canvas: Canvas, point: QPointF, is_outside: bool) -> None:
-    assert canvas.outOfPixmap(point) is is_outside
+def test_is_out_of_pixmap(canvas: Canvas, point: QPointF, is_outside: bool) -> None:
+    assert canvas.is_out_of_pixmap(point) is is_outside
 
 
 @pytest.mark.gui

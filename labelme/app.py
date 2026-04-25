@@ -431,7 +431,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         undo_last_point = action(
             self.tr("Undo last point"),
-            self._canvas_widgets.canvas.undoLastPoint,
+            self._canvas_widgets.canvas.undo_last_point,
             shortcuts["undo_last_point"],
             icon="phosphor/arrow-u-up-left.svg",
             tip=self.tr("Undo last drawn point"),
@@ -455,7 +455,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_mode = action(
             text=self.tr("Polygon"),
-            slot=lambda: self._switch_canvas_mode(edit=False, createMode="polygon"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="polygon"),
             shortcut=shortcuts["create_polygon"],
             icon="phosphor/polygon.svg",
             tip=self.tr("Start drawing polygons"),
@@ -471,7 +471,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_rectangle_mode = action(
             text=self.tr("Rectangle"),
-            slot=lambda: self._switch_canvas_mode(edit=False, createMode="rectangle"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
             icon="phosphor/rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
@@ -479,7 +479,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_circle_mode = action(
             text=self.tr("Circle"),
-            slot=lambda: self._switch_canvas_mode(edit=False, createMode="circle"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle"),
             shortcut=shortcuts["create_circle"],
             icon="phosphor/circle.svg",
             tip=self.tr("Start drawing circles"),
@@ -487,7 +487,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_line_mode = action(
             text=self.tr("Line"),
-            slot=lambda: self._switch_canvas_mode(edit=False, createMode="line"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
             shortcut=shortcuts["create_line"],
             icon="phosphor/line-segment.svg",
             tip=self.tr("Start drawing lines"),
@@ -495,7 +495,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_point_mode = action(
             text=self.tr("Point"),
-            slot=lambda: self._switch_canvas_mode(edit=False, createMode="point"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="point"),
             shortcut=shortcuts["create_point"],
             icon="phosphor/circles-four.svg",
             tip=self.tr("Start drawing points"),
@@ -503,7 +503,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_line_strip_mode = action(
             text=self.tr("LineStrip"),
-            slot=lambda: self._switch_canvas_mode(edit=False, createMode="linestrip"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
             icon="phosphor/line-segments.svg",
             tip=self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
@@ -512,7 +512,7 @@ class MainWindow(QtWidgets.QMainWindow):
         create_ai_points_to_shape_mode = action(
             self.tr("AI-Points"),
             lambda: self._switch_canvas_mode(
-                edit=False, createMode="ai_points_to_shape"
+                edit=False, create_mode="ai_points_to_shape"
             ),
             None,
             "ai-points.svg",
@@ -521,7 +521,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         create_ai_box_to_shape_mode = action(
             self.tr("AI-Box"),
-            lambda: self._switch_canvas_mode(edit=False, createMode="ai_box_to_shape"),
+            lambda: self._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape"),
             None,
             "ai-box.svg",
             self.tr("Draw a bounding box to segment object."),
@@ -608,7 +608,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing = action(
             self.tr("Fill Drawing Polygon"),
-            self._canvas_widgets.canvas.setFillDrawing,
+            self._canvas_widgets.canvas.set_fill_drawing,
             None,
             icon="phosphor/paint-bucket.svg",
             tip=self.tr("Fill polygon while drawing"),
@@ -668,7 +668,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode = _ZoomMode.FIT_WINDOW
         fit_window.setChecked(Qt.Checked)
 
-        self._canvas_widgets.canvas.vertexSelected.connect(remove_point.setEnabled)
+        self._canvas_widgets.canvas.vertex_selected.connect(remove_point.setEnabled)
 
         draw = [
             ("polygon", create_mode),
@@ -1007,9 +1007,9 @@ class MainWindow(QtWidgets.QMainWindow):
             num_backups=self._config["canvas"]["num_backups"],
             crosshair=self._config["canvas"]["crosshair"],
         )
-        canvas.zoomRequest.connect(self._zoom_requested)
-        canvas.mouseMoved.connect(self._update_status_stats)
-        canvas.statusUpdated.connect(
+        canvas.zoom_request.connect(self._zoom_requested)
+        canvas.mouse_moved.connect(self._update_status_stats)
+        canvas.status_updated.connect(
             lambda text: self._status_bar.message.setText(text)
         )
 
@@ -1020,12 +1020,12 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Vertical: scroll_area.verticalScrollBar(),
             Qt.Horizontal: scroll_area.horizontalScrollBar(),
         }
-        canvas.scrollRequest.connect(self.scrollRequest)
+        canvas.scroll_request.connect(self.scrollRequest)
 
-        canvas.newShape.connect(self.newShape)
-        canvas.shapeMoved.connect(self.setDirty)
-        canvas.selectionChanged.connect(self.shapeSelectionChanged)
-        canvas.drawingPolygon.connect(self.toggleDrawingSensitive)
+        canvas.new_shape.connect(self.newShape)
+        canvas.shape_moved.connect(self.setDirty)
+        canvas.selection_changed.connect(self.shapeSelectionChanged)
+        canvas.drawing_polygon.connect(self.toggleDrawingSensitive)
 
         self.setCentralWidget(scroll_area)
 
@@ -1188,7 +1188,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setDirty(self) -> None:
         # Even if we autosave the file, we keep the ability to undo
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
+        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
 
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
@@ -1229,13 +1229,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _: bool) -> None:
-        create_mode = self._canvas_widgets.canvas.createMode
+        create_mode = self._canvas_widgets.canvas.create_mode
         shape_type = _resolve_text_annotation_shape_type(
             create_mode=create_mode,
             ai_output_format=self._ai_annotation.output_format,
         )
         if shape_type is None:
-            logger.warning("Unsupported createMode={!r}", create_mode)
+            logger.warning("Unsupported create_mode={!r}", create_mode)
             return
 
         texts = self._ai_text.get_text_prompt().split(",")
@@ -1294,7 +1294,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shape_type=shape_type,
         )
 
-        self._canvas_widgets.canvas.storeShapes()
+        self._canvas_widgets.canvas.backup_shapes()
         self._load_shapes(shapes, replace=False)
         self.setDirty()
 
@@ -1304,7 +1304,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.imageData = None
         self._label_file = None
         self._other_data = None
-        self._canvas_widgets.canvas.resetState()
+        self._canvas_widgets.canvas.reset_state()
 
     def currentItem(self) -> LabelListWidgetItem | None:
         items = self._docks.label_list.selected_items()
@@ -1315,10 +1315,10 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callbacks
 
     def undoShapeEdit(self) -> None:
-        self._canvas_widgets.canvas.restoreShape()
+        self._canvas_widgets.canvas.restore_last_shape()
         self._docks.label_list.clear()
         self._load_shapes(self._canvas_widgets.canvas.shapes)
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.isShapeRestorable)
+        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
 
     def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
@@ -1335,9 +1335,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(not drawing)
 
     def _switch_canvas_mode(
-        self, edit: bool = True, createMode: str | None = None
+        self, edit: bool = True, create_mode: str | None = None
     ) -> None:
-        if createMode == "ai_points_to_shape":
+        if create_mode == "ai_points_to_shape":
             model_name = self._canvas_widgets.canvas.get_ai_model_name()
             if model_name in _AI_MODELS_WITHOUT_POINT_SUPPORT:
                 QtWidgets.QMessageBox.warning(
@@ -1350,23 +1350,23 @@ class MainWindow(QtWidgets.QMainWindow):
                     % model_name,
                 )
                 return
-        self._canvas_widgets.canvas.setEditing(edit)
-        if createMode is not None:
-            self._canvas_widgets.canvas.createMode = createMode
+        self._canvas_widgets.canvas.set_editing(edit)
+        if create_mode is not None:
+            self._canvas_widgets.canvas.create_mode = create_mode
         if edit:
             for _, draw_action in self._actions.draw:
                 draw_action.setEnabled(True)
         else:
             for draw_mode, draw_action in self._actions.draw:
-                draw_action.setEnabled(createMode != draw_mode)
+                draw_action.setEnabled(create_mode != draw_mode)
         self._actions.edit_mode.setEnabled(not edit)
         self._ai_text.setEnabled(
             not edit
-            and createMode
+            and create_mode
             in (*get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
-        self._ai_annotation.setEnabled(not edit and createMode in _AI_CREATE_MODES)
-        if createMode == "ai_points_to_shape":
+        self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
+        if create_mode == "ai_points_to_shape":
             self._ai_annotation.set_disabled_models(_AI_MODELS_WITHOUT_POINT_SUPPORT)
         else:
             self._ai_annotation.set_disabled_models(())
@@ -1468,7 +1468,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        self._canvas_widgets.canvas.storeShapes()
+        self._canvas_widgets.canvas.backup_shapes()
         for item in items:
             shape = item.shape()
             assert shape is not None
@@ -1519,11 +1519,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
-        for shape in self._canvas_widgets.canvas.selectedShapes:
+        for shape in self._canvas_widgets.canvas.selected_shapes:
             shape.selected = False
         self._docks.label_list.clearSelection()
-        self._canvas_widgets.canvas.selectedShapes = selected_shapes
-        for shape in self._canvas_widgets.canvas.selectedShapes:
+        self._canvas_widgets.canvas.selected_shapes = selected_shapes
+        for shape in self._canvas_widgets.canvas.selected_shapes:
             shape.selected = True
             item = self._docks.label_list.find_item_by_shape(shape)
             self._docks.label_list.select_item(item)
@@ -1621,7 +1621,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.item_selection_changed.connect(
             self._label_selection_changed
         )
-        self._canvas_widgets.canvas.loadShapes(shapes=shapes, replace=replace)
+        self._canvas_widgets.canvas.load_shapes(shapes=shapes, replace=replace)
 
     def _load_flags(
         self,
@@ -1687,12 +1687,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def pasteSelectedShape(self) -> None:
         self._load_shapes(shapes=self._copied_shapes, replace=False)
-        self._canvas_widgets.canvas.selectShapes(self._copied_shapes)
+        self._canvas_widgets.canvas.select_shapes(self._copied_shapes)
         self.setDirty()
 
     def copySelectedShape(self) -> None:
         self._copied_shapes = [
-            s.copy() for s in self._canvas_widgets.canvas.selectedShapes
+            s.copy() for s in self._canvas_widgets.canvas.selected_shapes
         ]
         self._actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
@@ -1703,15 +1703,15 @@ class MainWindow(QtWidgets.QMainWindow):
             assert shape is not None
             selected_shapes.append(shape)
         if selected_shapes:
-            self._canvas_widgets.canvas.selectShapes(selected_shapes)
+            self._canvas_widgets.canvas.select_shapes(selected_shapes)
         else:
-            if self._canvas_widgets.canvas.deSelectShape():
+            if self._canvas_widgets.canvas.deselect_shape():
                 self._canvas_widgets.canvas.update()
 
     def labelItemChanged(self, item: LabelListWidgetItem) -> None:
         shape = item.shape()
         assert shape is not None
-        self._canvas_widgets.canvas.setShapeVisible(
+        self._canvas_widgets.canvas.set_shape_visible(
             shape, item.checkState() == Qt.Checked
         )
 
@@ -1720,7 +1720,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes = [
             s for item in self._docks.label_list if (s := item.shape()) is not None
         ]
-        self._canvas_widgets.canvas.loadShapes(shapes)
+        self._canvas_widgets.canvas.load_shapes(shapes)
 
     # Callback functions:
 
@@ -1753,7 +1753,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if text:
             self._docks.label_list.clearSelection()
             assert isinstance(flags, dict)
-            shapes = self._canvas_widgets.canvas.setLastLabel(text, flags)
+            shapes = self._canvas_widgets.canvas.set_last_label(text, flags)
             for shape in shapes:
                 shape.group_id = group_id
                 shape.description = description
@@ -1763,8 +1763,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._actions.undo.setEnabled(True)
             self.setDirty()
         else:
-            self._canvas_widgets.canvas.undoLastLine()
-            self._canvas_widgets.canvas.shapesBackups.pop()
+            self._canvas_widgets.canvas.undo_last_line()
+            self._canvas_widgets.canvas.shape_backups.pop()
 
     def scrollRequest(self, delta: int, orientation: Qt.Orientation) -> None:
         units = -delta * 0.1  # natural scroll
@@ -1790,7 +1790,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._actions.fit_width.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
         self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
-        self._canvas_widgets.canvas.enableDragging(
+        self._canvas_widgets.canvas.enable_dragging(
             enabled=value > int(self._scalers[_ZoomMode.FIT_WINDOW]() * 100)
         )
         self._canvas_widgets.zoom_widget.setValue(value)  # triggers self._paint_canvas
@@ -1846,7 +1846,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.keep_prev_scale.setChecked(enabled)
 
     def onNewBrightnessContrast(self, qimage: QtGui.QImage) -> None:
-        self._canvas_widgets.canvas.loadPixmap(
+        self._canvas_widgets.canvas.load_pixmap(
             QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
 
@@ -2002,7 +2002,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self._image = image
         t0 = time.time()
-        self._canvas_widgets.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
+        self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
         if self._label_file:
@@ -2354,14 +2354,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["keep_prev"] = not self._config["keep_prev"]
 
     def removeSelectedPoint(self) -> None:
-        self._canvas_widgets.canvas.removeSelectedPoint()
+        self._canvas_widgets.canvas.remove_selected_point()
         self._canvas_widgets.canvas.update()
         if (
-            self._canvas_widgets.canvas.hShape
-            and not self._canvas_widgets.canvas.hShape.points
+            self._canvas_widgets.canvas.hovered_shape
+            and not self._canvas_widgets.canvas.hovered_shape.points
         ):
-            self._canvas_widgets.canvas.deleteShape(self._canvas_widgets.canvas.hShape)
-            self.remLabels([self._canvas_widgets.canvas.hShape])
+            self._canvas_widgets.canvas.delete_shape(
+                self._canvas_widgets.canvas.hovered_shape
+            )
+            self.remLabels([self._canvas_widgets.canvas.hovered_shape])
             if self.noShapes():
                 for action in self._actions.on_shapes_present:
                     action.setEnabled(False)
@@ -2371,25 +2373,25 @@ class MainWindow(QtWidgets.QMainWindow):
         yes, no = QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No
         msg = self.tr(
             "You are about to permanently delete {} shapes, proceed anyway?"
-        ).format(len(self._canvas_widgets.canvas.selectedShapes))
+        ).format(len(self._canvas_widgets.canvas.selected_shapes))
         if yes == QtWidgets.QMessageBox.warning(
             self, self.tr("Attention"), msg, yes | no, yes
         ):
-            self.remLabels(self._canvas_widgets.canvas.deleteSelected())
+            self.remLabels(self._canvas_widgets.canvas.delete_selected())
             self.setDirty()
             if self.noShapes():
                 for action in self._actions.on_shapes_present:
                     action.setEnabled(False)
 
     def copyShape(self) -> None:
-        self._canvas_widgets.canvas.endMove(copy=True)
-        for shape in self._canvas_widgets.canvas.selectedShapes:
+        self._canvas_widgets.canvas.end_move(copy=True)
+        for shape in self._canvas_widgets.canvas.selected_shapes:
             self.addLabel(shape)
         self._docks.label_list.clearSelection()
         self.setDirty()
 
     def moveShape(self) -> None:
-        self._canvas_widgets.canvas.endMove(copy=False)
+        self._canvas_widgets.canvas.end_move(copy=False)
         self.setDirty()
 
     def _load_from_file_or_dir(self, file_or_dir: str) -> None:
