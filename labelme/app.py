@@ -185,7 +185,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
-    _output_dir: str | None
+    _output_dir: Path | None
     _image: QtGui.QImage
     _label_file: LabelFile | None
     _image_path: str | None
@@ -945,7 +945,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_or_dir: str | None,
         output_dir: str | None,
     ) -> None:
-        self._output_dir = output_dir
+        self._output_dir = Path(output_dir) if output_dir else None
 
         self._image = QtGui.QImage()
         self._label_file = None
@@ -2212,10 +2212,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
     def changeOutputDirDialog(self, _value: bool = False) -> None:
-        default_output_dir = self._output_dir
-        if default_output_dir is None and self._image_path:
+        default_output_dir: str
+        if self._output_dir is not None:
+            default_output_dir = str(self._output_dir)
+        elif self._image_path:
             default_output_dir = str(Path(self._image_path).parent)
-        if default_output_dir is None:
+        else:
             default_output_dir = self.currentPath()
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
@@ -2230,7 +2232,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not output_dir:
             return
 
-        self._output_dir = output_dir
+        self._output_dir = Path(output_dir)
 
         self.statusBar().showMessage(
             self.tr("%s . Annotations will be saved/loaded in %s")
@@ -2271,7 +2273,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg = QtWidgets.QFileDialog(
             parent=self,
             caption=caption,
-            directory=self._output_dir or str(Path(self._image_path).parent),
+            directory=str(self._output_dir or Path(self._image_path).parent),
             filter=filters,
         )
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
