@@ -1397,6 +1397,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # ty: ignore[invalid-argument-type]
 
     def validateLabel(self, label: str) -> bool:
+        policy = self._config["validate_label"]
+        if policy is None:
+            return True
         unique_label_list = self._docks.unique_label_list
         existing_labels = [
             # PyQt5 stubs: item() typed as Optional and .data() unrecognized
@@ -1404,9 +1407,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for i in range(unique_label_list.count())
         ]
         return _is_valid_label(
-            label=label,
-            existing_labels=existing_labels,
-            policy=self._config["validate_label"],
+            label=label, existing_labels=existing_labels, policy=policy
         )
 
     def _edit_label(self, value: object | None = None) -> None:
