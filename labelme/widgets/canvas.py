@@ -232,9 +232,9 @@ class Canvas(QtWidgets.QWidget):
         # The application will eventually call Canvas.load_shapes which will
         # push this right back onto the stack.
         self.shapes = self.shape_backups.pop()
-        self.selected_shapes = []
         for shape in self.shapes:
             shape.selected = False
+        self.selected_shapes.clear()
         self.update()
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
