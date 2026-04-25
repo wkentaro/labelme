@@ -1138,10 +1138,13 @@ class Canvas(QtWidgets.QWidget):
         a0.accept()
 
     def move_by_keyboard(self, offset: QPointF) -> None:
-        if self.selected_shapes:
-            self.bounded_move_shapes(self.selected_shapes, self.prev_point + offset)
-            self.update()
-            self.is_moving_shape = True
+        if not self.selected_shapes:
+            return
+        self.bounded_move_shapes(
+            shapes=self.selected_shapes, pos=self.prev_point + offset
+        )
+        self.update()
+        self.is_moving_shape = True
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
         modifiers = a0.modifiers()
