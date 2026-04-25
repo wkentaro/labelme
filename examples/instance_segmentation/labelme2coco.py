@@ -9,6 +9,7 @@ import os
 import os.path as osp
 import sys
 import uuid
+from typing import Any
 
 import imgviz
 import numpy as np
@@ -43,7 +44,7 @@ def main() -> None:
 
     now = datetime.datetime.now()
 
-    data = dict(
+    data: dict[str, Any] = dict(
         info=dict(
             description=None,
             url=None,

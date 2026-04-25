@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import base64
-import contextlib
 import io
 import json
 import os.path as osp
 import time
-from collections.abc import Iterator
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import TypedDict
@@ -21,14 +19,6 @@ from labelme import __version__
 from labelme import utils
 
 PIL.Image.MAX_IMAGE_PIXELS = None
-
-
-@contextlib.contextmanager
-def _open(name: str, mode: str) -> Iterator[io.TextIOWrapper]:
-    assert mode in ["r", "w"]
-    encoding = "utf-8"
-    yield open(name, mode, encoding=encoding)
-    return
 
 
 class ShapeDict(TypedDict):
@@ -182,7 +172,7 @@ class LabelFile:
             "imageWidth",
         ]
         try:
-            with _open(filename, "r") as f:
+            with open(filename, encoding="utf-8") as f:
                 data = json.load(f)
 
             # Normalize Windows-style backslash paths to POSIX forward slashes
@@ -274,7 +264,7 @@ class LabelFile:
             assert key not in data
             data[key] = value
         try:
-            with _open(filename, "w") as f:
+            with open(filename, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
         except Exception as e:

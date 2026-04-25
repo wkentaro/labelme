@@ -75,7 +75,7 @@ def addActions(
         if action is None:
             widget.addSeparator()
         elif isinstance(action, QtWidgets.QMenu):
-            widget.addMenu(action)  # type: ignore[union-attr]
+            widget.addMenu(action)  # ty: ignore[unresolved-attribute]
         else:
             widget.addAction(action)
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import codecs
 import contextlib
 import io
 import os
@@ -236,21 +235,21 @@ def main() -> None:
 
     if hasattr(args, "flags"):
         if os.path.isfile(args.flags):
-            with codecs.open(args.flags, "r", encoding="utf-8") as f:
+            with open(args.flags, encoding="utf-8") as f:
                 args.flags = [line.strip() for line in f if line.strip()]
         else:
             args.flags = [line for line in args.flags.split(",") if line]
 
     if hasattr(args, "labels"):
         if os.path.isfile(args.labels):
-            with codecs.open(args.labels, "r", encoding="utf-8") as f:
+            with open(args.labels, encoding="utf-8") as f:
                 args.labels = [line.strip() for line in f if line.strip()]
         else:
             args.labels = [line for line in args.labels.split(",") if line]
 
     if hasattr(args, "label_flags"):
         if os.path.isfile(args.label_flags):
-            with codecs.open(args.label_flags, "r", encoding="utf-8") as f:
+            with open(args.label_flags, encoding="utf-8") as f:
                 args.label_flags = yaml.safe_load(f)
         else:
             args.label_flags = yaml.safe_load(args.label_flags)

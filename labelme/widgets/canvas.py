@@ -252,7 +252,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status()
 
-    def isVisible(self, shape: Shape) -> bool:  # type: ignore[override]
+    def isVisible(self, shape: Shape) -> bool:  # ty: ignore[invalid-method-override]
         return self.visible.get(shape, True)
 
     def drawing(self) -> bool:

@@ -72,7 +72,7 @@ def img_qt_to_arr(img_qt: QtGui.QImage) -> NDArray[np.uint8]:
 
 def apply_exif_orientation(image: PIL.Image.Image) -> PIL.Image.Image:
     try:
-        exif = image._getexif()  # type: ignore[attr-defined]
+        exif = image._getexif()  # ty: ignore[unresolved-attribute]
     except AttributeError:
         exif = None
 
