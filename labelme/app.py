@@ -1886,7 +1886,7 @@ class MainWindow(QtWidgets.QMainWindow):
             dialog.slider_contrast.setValue(contrast)
 
         if is_initial_load:
-            dialog.onNewValue(None)
+            dialog.apply()
         else:
             dialog.exec_()
             brightness = dialog.slider_brightness.value()

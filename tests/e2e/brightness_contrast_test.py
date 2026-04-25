@@ -38,7 +38,7 @@ def test_brightness_contrast_dialog(
 
     dialog.slider_brightness.setValue(75)
     dialog.slider_contrast.setValue(25)
-    dialog.onNewValue(None)
+    dialog.apply()
 
     updated_pixmap = canvas.pixmap
     assert original_pixmap.toImage() != updated_pixmap.toImage()
