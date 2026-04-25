@@ -141,8 +141,8 @@ def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
 def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:
     win.show()
 
-    def check_imageData() -> None:
-        assert hasattr(win, "imageData")
-        assert win.imageData is not None
+    def check_image_data() -> None:
+        assert hasattr(win, "_image_data")
+        assert win._image_data is not None
 
-    qtbot.waitUntil(check_imageData)
+    qtbot.waitUntil(check_image_data)

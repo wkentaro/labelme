@@ -169,7 +169,7 @@ def _save_and_check(
     tmp_path: Path,
 ) -> None:
     label_path = str(tmp_path / Path(_TEST_FILE_NAME).name)
-    win.saveLabels(label_path=label_path)
+    win.save_labels(label_path=label_path)
     assert_labelfile_sanity(label_path)
 
 
@@ -471,7 +471,7 @@ def test_undo_shape_creation(
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == label
 
-    _annotated_win.undoShapeEdit()
+    _annotated_win.undo_shape_edit()
     qtbot.wait(100)
 
     assert len(canvas.shapes) == num_shapes_before

@@ -48,7 +48,7 @@ def _delete_selected_shape(
         "warning",
         lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
     )
-    win.deleteSelectedShape()
+    win.delete_selected_shapes()
     qtbot.wait(50)
 
 
@@ -87,8 +87,8 @@ def test_copy_paste_shape(
     original_label = canvas.selected_shapes[0].label
     num_shapes_before = len(canvas.shapes)
 
-    win.copySelectedShape()
-    win.pasteSelectedShape()
+    win.copy_selected_shapes()
+    win.paste_selected_shapes()
     qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
@@ -118,7 +118,7 @@ def test_duplicate_shape(
 
     num_shapes_before = len(canvas.shapes)
 
-    win.duplicateSelectedShape()
+    win.duplicate_selected_shapes()
     qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
@@ -176,7 +176,7 @@ def test_delete_undo_shape(
     _delete_selected_shape(win=win, monkeypatch=monkeypatch, qtbot=qtbot)
     assert len(canvas.shapes) == 4
 
-    win.undoShapeEdit()
+    win.undo_shape_edit()
     qtbot.wait(50)
     assert len(canvas.shapes) == 5
     assert canvas.shapes[0].label == "person"

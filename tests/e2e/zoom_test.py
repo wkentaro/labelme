@@ -35,7 +35,7 @@ def test_zoom_fit_window(
     _win: MainWindow,
     pause: bool,
 ) -> None:
-    _win.setFitWindow(True)
+    _win.set_fit_window_mode(True)
 
     zoom_value = _win._canvas_widgets.zoom_widget.value()
     assert zoom_value != 100
@@ -51,8 +51,8 @@ def test_zoom_fit_width(
     _win: MainWindow,
     pause: bool,
 ) -> None:
-    _win.setFitWindow(True)
-    _win.setFitWidth(True)
+    _win.set_fit_window_mode(True)
+    _win.set_fit_width_mode(True)
 
     fit_width_zoom = _win._canvas_widgets.zoom_widget.value()
     assert fit_width_zoom > 0
@@ -67,7 +67,7 @@ def test_zoom_to_original(
     _win: MainWindow,
     pause: bool,
 ) -> None:
-    _win.setFitWindow(True)
+    _win.set_fit_window_mode(True)
     assert _win._canvas_widgets.zoom_widget.value() != 100
 
     _win._set_zoom_to_original()

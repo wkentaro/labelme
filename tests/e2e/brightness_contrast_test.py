@@ -28,10 +28,10 @@ def test_brightness_contrast_dialog(
     canvas = win._canvas_widgets.canvas
     original_pixmap = canvas.pixmap.copy()
 
-    assert win.imageData is not None
+    assert win._image_data is not None
     dialog = BrightnessContrastDialog(
-        img=labelme.utils.img_data_to_pil(win.imageData),
-        callback=win.onNewBrightnessContrast,
+        img=labelme.utils.img_data_to_pil(win._image_data),
+        callback=win._on_brightness_contrast_changed,
         parent=win,
     )
     qtbot.addWidget(dialog)

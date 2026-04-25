@@ -24,14 +24,14 @@ def test_close_file(
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
-    assert win.imageData is not None
+    assert win._image_data is not None
     assert win._canvas_widgets.canvas.isEnabled()
 
-    win.closeFile()
+    win.close_file()
     qtbot.wait(50)
 
     assert not win._canvas_widgets.canvas.isEnabled()
-    assert win.imageData is None
+    assert win._image_data is None
     assert win.windowTitle() == "Labelme"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -62,7 +62,7 @@ def test_delete_label_file(
         "warning",
         lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
     )
-    win.deleteFile()
+    win.delete_file()
     qtbot.wait(50)
 
     assert not label_file.exists()
