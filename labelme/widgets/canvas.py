@@ -352,128 +352,148 @@ class Canvas(QtWidgets.QWidget):
         return self.tr("Click to add point")
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
-        """Update line with last point and current coordinates."""
         try:
             pos = self._transform_point_widget_to_image(a0.localPos())
         except AttributeError:
             return
 
         self.mouseMoved.emit(pos)
-
         self.prevMovePoint = pos
 
         is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
 
         if self._is_dragging:
-            self._apply_cursor(CURSOR_GRAB)
-            delta: QPointF = pos - self._dragging_start_pos
-            self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
-            self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
+            self._handle_mouse_drag_scroll(pos=pos)
             return
 
-        # Polygon drawing.
         if self.drawing():
-            if self.createMode == "ai_points_to_shape":
-                self.line.shape_type = "points"
-            elif self.createMode == "ai_box_to_shape":
-                self.line.shape_type = "rectangle"
-            else:
-                self.line.shape_type = self.createMode
-
-            self._apply_cursor(CURSOR_DRAW)
-            if not self.current:
-                self.update()  # draw crosshair
-                self._update_status()
-                return
-
-            if self.outOfPixmap(pos):
-                # Don't allow the user to draw outside the pixmap.
-                # Project the point to the pixmap's edges.
-                pos = _compute_intersection_edges_image(
-                    self.current[-1], pos, image_size=self.pixmap.size()
-                )
-            elif (
-                self.snapping
-                and len(self.current) > 1
-                and self.createMode == "polygon"
-                and self.closeEnough(pos, self.current[0])
-            ):
-                # Attract line to starting point and
-                # colorise to alert the user.
-                pos = self.current[0]
-                self._apply_cursor(CURSOR_POINT)
-                self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            if self.createMode in ["polygon", "linestrip"]:
-                self.line.points = [self.current[-1], pos]
-                self.line.point_labels = [1, 1]
-            elif self.createMode == "ai_points_to_shape":
-                self.line.points = [self.current.points[-1], pos]
-                self.line.point_labels = [
-                    self.current.point_labels[-1],
-                    0 if is_shift_pressed else 1,
-                ]
-            elif self.createMode in ["rectangle", "ai_box_to_shape"]:
-                if is_shift_pressed:
-                    self.prevMovePoint = pos = _snap_cursor_pos_for_square(  # override
-                        pos=pos, opposite_vertex=self.current[0]
-                    )
-                self.line.points = [self.current[0], pos]
-                self.line.point_labels = [1, 1]
-                self.line.close()
-            elif self.createMode == "circle":
-                self.line.points = [self.current[0], pos]
-                self.line.point_labels = [1, 1]
-                self.line.shape_type = "circle"
-            elif self.createMode == "line":
-                self.line.points = [self.current[0], pos]
-                self.line.point_labels = [1, 1]
-                self.line.close()
-            elif self.createMode == "point":
-                self.line.points = [self.current[0]]
-                self.line.point_labels = [1]
-                self.line.close()
-            assert len(self.line.points) == len(self.line.point_labels)
-            self.update()
-            self._update_status()
+            self._handle_mouse_move_while_drawing(
+                pos=pos, is_shift_pressed=is_shift_pressed
+            )
             return
 
-        # Polygon copy moving.
-        if Qt.RightButton & a0.buttons():
-            if self.selectedShapesCopy and self.prevPoint is not None:
-                self._apply_cursor(CURSOR_MOVE)
-                self.boundedMoveShapes(self.selectedShapesCopy, pos)
-                self.update()
-            elif self.selectedShapes:
-                self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-                self.update()
-            self._update_status()
+        buttons = a0.buttons()
+        if Qt.RightButton & buttons:
+            self._handle_mouse_right_button_drag(pos=pos)
             return
 
-        # Polygon/Vertex moving.
-        if Qt.LeftButton & a0.buttons():
-            if self.selectedVertex():
-                assert self.hVertex is not None
-                assert self.hShape is not None
-                self.boundedMoveVertex(
-                    self.hShape, self.hVertex, pos, is_shift_pressed=is_shift_pressed
-                )
-                self.update()
-                self.movingShape = True
-            elif self.selectedShapes and self.prevPoint is not None:
-                self._apply_cursor(CURSOR_MOVE)
-                self.boundedMoveShapes(self.selectedShapes, pos)
-                self.update()
-                self.movingShape = True
+        if Qt.LeftButton & buttons:
+            self._handle_mouse_left_button_drag(
+                pos=pos, is_shift_pressed=is_shift_pressed
+            )
             return
 
-        # Just hovering over the canvas, 2 possibilities:
-        # - Highlight shapes
-        # - Highlight vertex
-        # Update shape/vertex fill and tooltip value accordingly.
         status_messages: list[str] = []
         self._highlight_hover_shape(pos=pos, status_messages=status_messages)
         self.vertexSelected.emit(self.hVertex is not None)
         self._update_status(extra_messages=status_messages)
+
+    def _handle_mouse_drag_scroll(self, pos: QPointF) -> None:
+        self._apply_cursor(CURSOR_GRAB)
+        delta: QPointF = pos - self._dragging_start_pos
+        self.scrollRequest.emit(int(delta.x()), Qt.Horizontal)
+        self.scrollRequest.emit(int(delta.y()), Qt.Vertical)
+
+    def _handle_mouse_move_while_drawing(
+        self, pos: QPointF, is_shift_pressed: bool
+    ) -> None:
+        mode = self.createMode
+        if mode == "ai_points_to_shape":
+            self.line.shape_type = "points"
+        elif mode == "ai_box_to_shape":
+            self.line.shape_type = "rectangle"
+        else:
+            self.line.shape_type = mode
+
+        self._apply_cursor(CURSOR_DRAW)
+        current = self.current
+        if current is None:
+            self.update()
+            self._update_status()
+            return
+
+        if self.outOfPixmap(pos):
+            pos = _compute_intersection_edges_image(
+                current[-1], pos, image_size=self.pixmap.size()
+            )
+        elif (
+            self.snapping
+            and len(current) > 1
+            and mode == "polygon"
+            and self.closeEnough(pos, current[0])
+        ):
+            pos = current[0]
+            self._apply_cursor(CURSOR_POINT)
+            current.highlightVertex(i=0, action=Shape.NEAR_VERTEX)
+
+        pos = self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
+        assert len(self.line.points) == len(self.line.point_labels)
+        self.update()
+        self._update_status()
+
+    def _update_drawing_line(self, pos: QPointF, is_shift_pressed: bool) -> QPointF:
+        current = self.current
+        assert current is not None
+        mode = self.createMode
+        if mode in ("polygon", "linestrip"):
+            self.line.points = [current[-1], pos]
+            self.line.point_labels = [1, 1]
+        elif mode == "ai_points_to_shape":
+            self.line.points = [current.points[-1], pos]
+            self.line.point_labels = [
+                current.point_labels[-1],
+                0 if is_shift_pressed else 1,
+            ]
+        elif mode in ("rectangle", "ai_box_to_shape"):
+            if is_shift_pressed:
+                pos = _snap_cursor_pos_for_square(pos=pos, opposite_vertex=current[0])
+                self.prevMovePoint = pos
+            self.line.points = [current[0], pos]
+            self.line.point_labels = [1, 1]
+            self.line.close()
+        elif mode == "circle":
+            self.line.points = [current[0], pos]
+            self.line.point_labels = [1, 1]
+            self.line.shape_type = "circle"
+        elif mode == "line":
+            self.line.points = [current[0], pos]
+            self.line.point_labels = [1, 1]
+            self.line.close()
+        elif mode == "point":
+            self.line.points = [current[0]]
+            self.line.point_labels = [1]
+            self.line.close()
+        return pos
+
+    def _handle_mouse_right_button_drag(self, pos: QPointF) -> None:
+        if self.selectedShapesCopy and self.prevPoint is not None:
+            self._apply_cursor(CURSOR_MOVE)
+            self.boundedMoveShapes(self.selectedShapesCopy, pos)
+            self.update()
+        elif self.selectedShapes:
+            self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
+            self.update()
+        self._update_status()
+
+    def _handle_mouse_left_button_drag(
+        self, pos: QPointF, is_shift_pressed: bool
+    ) -> None:
+        if self.selectedVertex():
+            assert self.hVertex is not None
+            assert self.hShape is not None
+            self.boundedMoveVertex(
+                self.hShape,
+                self.hVertex,
+                pos,
+                is_shift_pressed=is_shift_pressed,
+            )
+            self.update()
+            self.movingShape = True
+        elif self.selectedShapes and self.prevPoint is not None:
+            self._apply_cursor(CURSOR_MOVE)
+            self.boundedMoveShapes(self.selectedShapes, pos)
+            self.update()
+            self.movingShape = True
 
     def _highlight_hover_shape(self, pos: QPointF, status_messages: list[str]) -> None:
         ordered_shapes: list[Shape] = ([self.hShape] if self.hShape else []) + [
@@ -484,7 +504,7 @@ class Canvas(QtWidgets.QWidget):
             index: int | None = shape.nearestVertex(pos, self.epsilon)
             if index is not None:
                 self._set_highlight(hShape=shape, hEdge=None, hVertex=index)
-                shape.highlightVertex(index, shape.MOVE_VERTEX)
+                shape.highlightVertex(i=index, action=shape.MOVE_VERTEX)
                 self._apply_cursor(CURSOR_POINT)
                 status_messages.append(self.tr("Click & drag to move point"))
                 if shape.canRemovePoint():
