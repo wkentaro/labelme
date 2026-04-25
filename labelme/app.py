@@ -1395,7 +1395,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def popLabelListMenu(self, point: QtCore.QPoint) -> None:
         # PyQt5 stubs type QMenu.exec() argument too narrowly
-        self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # type: ignore[invalid-argument-type]
+        self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # ty: ignore[invalid-argument-type]
 
     def validateLabel(self, label: str) -> bool:
         # no validation
@@ -1404,7 +1404,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for i in range(self._docks.unique_label_list.count()):
             # PyQt5 stubs: item() typed as Optional and .data() unrecognized
-            label_i = self._docks.unique_label_list.item(i).data(Qt.UserRole)  # type: ignore[attr-defined,union-attr]
+            label_i = self._docks.unique_label_list.item(i).data(Qt.UserRole)  # ty: ignore[unresolved-attribute]
             if self._config["validate_label"] in ["exact"]:
                 if label_i == label:
                     return True
@@ -1416,7 +1416,8 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("No label is selected, so cannot edit label.")
             return
 
-        first_shape = items[0].shape()
+        shapes = [cast(Shape, item.shape()) for item in items]
+        first_shape = shapes[0]
 
         if len(items) == 1:
             edit_text = True
@@ -1424,18 +1425,13 @@ class MainWindow(QtWidgets.QMainWindow):
             edit_group_id = True
             edit_description = True
         else:
-            edit_text = all(
-                item.shape().label == first_shape.label for item in items[1:]
-            )
-            edit_flags = all(
-                item.shape().flags == first_shape.flags for item in items[1:]
-            )
+            edit_text = all(shape.label == first_shape.label for shape in shapes[1:])
+            edit_flags = all(shape.flags == first_shape.flags for shape in shapes[1:])
             edit_group_id = all(
-                item.shape().group_id == first_shape.group_id for item in items[1:]
+                shape.group_id == first_shape.group_id for shape in shapes[1:]
             )
             edit_description = all(
-                item.shape().description == first_shape.description
-                for item in items[1:]
+                shape.description == first_shape.description for shape in shapes[1:]
             )
 
         if not edit_text:
@@ -2372,7 +2368,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if system == "Darwin":
             subprocess.Popen(["open", "-t", config_file])
         elif system == "Windows":
-            os.startfile(config_file)  # type: ignore[attr-defined]  # Windows-only
+            os.startfile(config_file)  # ty: ignore[unresolved-attribute]  # Windows-only
         else:
             subprocess.Popen(["xdg-open", config_file])
 

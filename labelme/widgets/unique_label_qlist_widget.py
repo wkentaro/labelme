@@ -10,7 +10,7 @@ from .label_list_widget import HTMLDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
-    def keyPressEvent(self, keyEvent: QtGui.QKeyEvent) -> None:  # type: ignore[override]
+    def keyPressEvent(self, keyEvent: QtGui.QKeyEvent) -> None:  # ty: ignore[invalid-method-override]
         super().keyPressEvent(keyEvent)
         if keyEvent.key() == Qt.Key_Escape:
             self.clearSelection()
@@ -21,7 +21,7 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
         super().__init__(parent=parent)
         self.setItemDelegate(HTMLDelegate(parent=self))
 
-    def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:  # type: ignore[override]
+    def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:  # ty: ignore[invalid-method-override]
         super().mousePressEvent(mouseEvent)
         if not self.indexAt(mouseEvent.pos()).isValid():
             self.clearSelection()
