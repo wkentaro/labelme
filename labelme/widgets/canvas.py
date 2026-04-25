@@ -922,13 +922,12 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def deselect_shape(self) -> bool:
-        need_update: bool = False
-        if self.selected_shapes:
-            self.set_hide_background(False)
-            self.selection_changed.emit([])
-            self.hovered_shape_is_selected = False
-            need_update = True
-        return need_update
+        if not self.selected_shapes:
+            return False
+        self.set_hide_background(False)
+        self.selection_changed.emit([])
+        self.hovered_shape_is_selected = False
+        return True
 
     def delete_selected(self) -> list[Shape]:
         deleted_shapes = []
