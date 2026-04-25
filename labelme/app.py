@@ -1228,12 +1228,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _submit_ai_prompt(self, _: bool) -> None:
         create_mode = self._canvas_widgets.canvas.createMode
-        shape_type: Literal["rectangle", "polygon", "mask"]
-        if create_mode in _AI_CREATE_MODES:
-            shape_type = self._ai_annotation.output_format
-        elif create_mode in get_args(_TextToAnnotationCreateMode):
-            shape_type = cast(_TextToAnnotationCreateMode, create_mode)
-        else:
+        shape_type = _resolve_text_annotation_shape_type(
+            create_mode=create_mode,
+            ai_output_format=self._ai_annotation.output_format,
+        )
+        if shape_type is None:
             logger.warning("Unsupported createMode={!r}", create_mode)
             return
 
@@ -1257,17 +1256,11 @@ class MainWindow(QtWidgets.QMainWindow):
             texts=texts,
         )
 
-        SCORE_FOR_EXISTING_SHAPE: float = 1.01
+        SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
         for shape in self._canvas_widgets.canvas.shapes:
             if shape.shape_type != shape_type or shape.label not in texts:
                 continue
-            points: NDArray[np.float64] = np.array(
-                [[p.x(), p.y()] for p in shape.points]
-            )
-            xmin, ymin = points.min(axis=0)
-            xmax, ymax = points.max(axis=0)
-            box = np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
-            boxes = np.r_[boxes, [box]]
+            boxes = np.r_[boxes, [_shape_to_xyxy_bbox(shape)]]
             scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
             labels = np.r_[labels, [texts.index(shape.label)]]
 
@@ -2555,6 +2548,23 @@ def _shapes_from_dicts(
 
         shapes.append(shape)
     return shapes
+
+
+def _resolve_text_annotation_shape_type(
+    *, create_mode: str, ai_output_format: Literal["rectangle", "polygon", "mask"]
+) -> Literal["rectangle", "polygon", "mask"] | None:
+    if create_mode in _AI_CREATE_MODES:
+        return ai_output_format
+    if create_mode in get_args(_TextToAnnotationCreateMode):
+        return cast(_TextToAnnotationCreateMode, create_mode)
+    return None
+
+
+def _shape_to_xyxy_bbox(shape: Shape) -> NDArray[np.float32]:
+    points = np.array([[p.x(), p.y()] for p in shape.points])
+    xmin, ymin = points.min(axis=0)
+    xmax, ymax = points.max(axis=0)
+    return np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
 
 
 def _rgb_from_colormap_id(*, label_id: int) -> tuple[int, int, int]:
