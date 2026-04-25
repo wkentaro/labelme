@@ -20,7 +20,7 @@ from labelme import __appname__
 from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_user_config_file
-from labelme.utils import newIcon
+from labelme.utils import new_icon
 
 
 class _LoggerIO(io.StringIO):
@@ -294,7 +294,7 @@ def main() -> None:
     # Force light mode to avoid dark mode UI issues (e.g., invisible icons)
     app.setPalette(QtWidgets.QStyleFactory.create("Fusion").standardPalette())
     app.setApplicationName(__appname__)
-    app.setWindowIcon(newIcon("icon"))
+    app.setWindowIcon(new_icon("icon"))
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,

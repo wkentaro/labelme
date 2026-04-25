@@ -43,7 +43,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             value_label.setAlignment(Qt.AlignRight)
             layout.addWidget(value_label)
             #
-            slider.valueChanged.connect(self.onNewValue)
+            slider.valueChanged.connect(lambda _: self.apply())
             slider.valueChanged.connect(
                 lambda _,
                 value_label_=value_label,
@@ -71,7 +71,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             img = img.convert("RGB")
         self.img = img
 
-    def onNewValue(self, _: int | None) -> None:
+    def apply(self) -> None:
         brightness = self.slider_brightness.value() / self._base_value
         contrast = self.slider_contrast.value() / self._base_value
 

@@ -14,7 +14,7 @@ def test_LabelQLineEdit(qtbot: QtBot) -> None:
     list_widget = QtWidgets.QListWidget()
     list_widget.addItems(["cat", "dog", "person"])
     widget = LabelQLineEdit()
-    widget.setListWidget(list_widget)
+    widget.set_list_widget(list_widget)
     qtbot.addWidget(widget)
 
     # key press to navigate in label list
@@ -39,27 +39,27 @@ def test_LabelQLineEdit(qtbot: QtBot) -> None:
 
 
 @pytest.mark.gui
-def test_LabelDialog_addLabelHistory(qtbot: QtBot) -> None:
+def test_LabelDialog_add_label_history(qtbot: QtBot) -> None:
     labels = ["cat", "dog", "person"]
     widget = LabelDialog(labels=labels, sort_labels=True)
     qtbot.addWidget(widget)
 
-    widget.addLabelHistory("bicycle")
-    assert widget.labelList.count() == 4
-    widget.addLabelHistory("bicycle")
-    assert widget.labelList.count() == 4
-    item: QtWidgets.QListWidgetItem | None = widget.labelList.item(0)
+    widget.add_label_history("bicycle")
+    assert widget.label_list.count() == 4
+    widget.add_label_history("bicycle")
+    assert widget.label_list.count() == 4
+    item: QtWidgets.QListWidgetItem | None = widget.label_list.item(0)
     assert item
     assert item.text() == "bicycle"
 
 
 @pytest.mark.gui
-def test_LabelDialog_popUp(qtbot: QtBot) -> None:
+def test_LabelDialog_popup(qtbot: QtBot) -> None:
     labels = ["cat", "dog", "person"]
     widget = LabelDialog(labels=labels, sort_labels=True)
     qtbot.addWidget(widget)
 
-    # popUp(text='cat')
+    # popup(text='cat')
 
     def interact() -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_P)  # enter 'p' for 'person'  # NOQA
@@ -67,26 +67,26 @@ def test_LabelDialog_popUp(qtbot: QtBot) -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
-    label, flags, group_id, description = widget.popUp("cat")
+    label, flags, group_id, description = widget.popup("cat")
     assert label == "person"
     assert flags == {}
     assert group_id is None
     assert description == ""
 
-    # popUp()
+    # popup()
 
     def interact() -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
-    label, flags, group_id, description = widget.popUp()
+    label, flags, group_id, description = widget.popup()
     assert label == "person"
     assert flags == {}
     assert group_id is None
     assert description == ""
 
-    # popUp() + key_Up
+    # popup() + key_Up
 
     def interact() -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Up)  # 'person' -> 'dog'  # NOQA
@@ -94,7 +94,7 @@ def test_LabelDialog_popUp(qtbot: QtBot) -> None:
         qtbot.keyClick(widget.edit, QtCore.Qt.Key_Enter)  # NOQA
 
     QtCore.QTimer.singleShot(500, interact)
-    label, flags, group_id, description = widget.popUp()
+    label, flags, group_id, description = widget.popup()
     assert label == "dog"
     assert flags == {}
     assert group_id is None

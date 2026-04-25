@@ -279,7 +279,7 @@ def _nearest_edge_index(
     for i in range(len(points)):
         start = _scale_point(point=points[i - 1], scale=scale)
         end = _scale_point(point=points[i], scale=scale)
-        dist = labelme.utils.distancetoline(scaled, (start, end))
+        dist = labelme.utils.distance_to_line(scaled, (start, end))
         if dist <= epsilon and dist < min_distance:
             min_distance = dist
             post_i = i
