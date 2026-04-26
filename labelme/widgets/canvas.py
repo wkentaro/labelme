@@ -599,40 +599,38 @@ class Canvas(QtWidgets.QWidget):
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
-        is_shift_pressed = a0.modifiers() & Qt.ShiftModifier
-        button = a0.button()
-        if button == Qt.LeftButton:
-            self._handle_mouse_left_press(
-                pos=pos, event=a0, is_shift_pressed=is_shift_pressed
-            )
-        elif button == Qt.RightButton and self.editing():
-            self._handle_mouse_right_press(pos=pos, event=a0)
-        elif button == Qt.MiddleButton and self._is_dragging_enabled:
-            self._handle_mouse_middle_press(pos=pos)
+        self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status()
 
-    def _handle_mouse_left_press(
-        self,
-        pos: QPointF,
-        event: QtGui.QMouseEvent,
-        is_shift_pressed: bool,
-    ) -> None:
+    def _dispatch_pointer_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+        button = event.button()
+        if button == Qt.LeftButton:
+            self._press_left(pos=pos, event=event)
+            return
+        if button == Qt.RightButton and self.editing():
+            self._press_right(pos=pos, event=event)
+            return
+        if button == Qt.MiddleButton and self._is_dragging_enabled:
+            self._press_middle(pos=pos)
+
+    def _press_left(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+        is_shift_pressed = bool(event.modifiers() & Qt.ShiftModifier)
         if self.drawing():
-            self._handle_mouse_left_press_while_drawing(
+            self._press_left_while_drawing(
                 pos=pos, event=event, is_shift_pressed=is_shift_pressed
             )
-        elif self.editing():
-            self._handle_mouse_left_press_while_editing(pos=pos, event=event)
+            return
+        if self.editing():
+            self._press_left_while_editing(pos=pos, event=event)
 
-    def _handle_mouse_left_press_while_drawing(
+    def _press_left_while_drawing(
         self,
         pos: QPointF,
         event: QtGui.QMouseEvent,
         is_shift_pressed: bool,
     ) -> None:
-        current = self.current
-        if current is not None:
-            self._extend_current_shape(current=current, event=event)
+        if self.current is not None:
+            self._extend_current_shape(current=self.current, event=event)
             return
         if self.is_out_of_pixmap(pos):
             return
@@ -702,29 +700,27 @@ class Canvas(QtWidgets.QWidget):
         self.drawing_polygon.emit(True)
         self.update()
 
-    def _handle_mouse_left_press_while_editing(
-        self, pos: QPointF, event: QtGui.QMouseEvent
-    ) -> None:
+    def _press_left_while_editing(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         modifiers = event.modifiers()
-        if self.is_edge_selected() and modifiers == Qt.AltModifier:
-            self.add_point_to_edge()
-        elif self.is_vertex_selected() and modifiers == (
-            Qt.AltModifier | Qt.ShiftModifier
-        ):
-            self.remove_selected_point()
-
+        self._maybe_modify_polygon_topology(modifiers=modifiers)
         self.select_shape_point(
-            pos, multiple_selection_mode=int(modifiers) == Qt.ControlModifier
+            pos,
+            multiple_selection_mode=int(modifiers) == Qt.ControlModifier,
         )
         self.prev_point = pos
         self.update()
 
-    def _handle_mouse_right_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        clicked_outside_selection = (
-            self.hovered_shape is not None
-            and self.hovered_shape not in self.selected_shapes
-        )
-        if not self.selected_shapes or clicked_outside_selection:
+    def _maybe_modify_polygon_topology(self, modifiers: Qt.KeyboardModifiers) -> None:
+        if self.is_edge_selected() and modifiers == Qt.AltModifier:
+            self.add_point_to_edge()
+            return
+        if self.is_vertex_selected() and modifiers == (
+            Qt.AltModifier | Qt.ShiftModifier
+        ):
+            self.remove_selected_point()
+
+    def _press_right(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+        if self._right_press_should_reselect():
             self.select_shape_point(
                 pos,
                 multiple_selection_mode=int(event.modifiers()) == Qt.ControlModifier,
@@ -732,48 +728,79 @@ class Canvas(QtWidgets.QWidget):
             self.update()
         self.prev_point = pos
 
-    def _handle_mouse_middle_press(self, pos: QPointF) -> None:
+    def _right_press_should_reselect(self) -> bool:
+        if not self.selected_shapes:
+            return True
+        if self.hovered_shape is None:
+            return False
+        return self.hovered_shape not in self.selected_shapes
+
+    def _press_middle(self, pos: QPointF) -> None:
         self._apply_cursor(CURSOR_GRAB)
         self._dragging_start_pos = pos
         self._is_dragging = True
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
-        if a0.button() == Qt.RightButton:
-            self._handle_right_button_release(event=a0)
-        elif a0.button() == Qt.LeftButton:
-            if self.editing():
-                if (
-                    self.hovered_shape is not None
-                    and self.hovered_shape_is_selected
-                    and not self.is_moving_shape
-                ):
-                    self.selection_changed.emit(
-                        [s for s in self.selected_shapes if s != self.hovered_shape]
-                    )
-        elif a0.button() == Qt.MiddleButton:
-            self._is_dragging = False
-            self._release_cursor()
-
-        if (
-            self.is_moving_shape
-            and self.hovered_shape
-            and self.hovered_shape in self.shapes
-        ):
-            index = self.shapes.index(self.hovered_shape)
-            if self.shape_backups[-1][index].points != self.shapes[index].points:
-                self.backup_shapes()
-                self.shape_moved.emit()
-
-            self.is_moving_shape = False
+        self._dispatch_pointer_release(event=a0)
+        self._commit_pending_shape_move()
         self._update_status()
 
-    def _handle_right_button_release(self, event: QtGui.QMouseEvent) -> None:
+    def _dispatch_pointer_release(self, event: QtGui.QMouseEvent) -> None:
+        button = event.button()
+        if button == Qt.RightButton:
+            self._release_right(event=event)
+            return
+        if button == Qt.LeftButton:
+            self._release_left()
+            return
+        if button == Qt.MiddleButton:
+            self._end_pan_drag()
+
+    def _release_right(self, event: QtGui.QMouseEvent) -> None:
         menu = self.menus[len(self.selected_shapes_copy) > 0]
         self._release_cursor()
-        if not menu.exec_(self.mapToGlobal(event.pos())) and self.selected_shapes_copy:  # type: ignore
-            # Cancel the move by discarding the shadow copy.
-            self.selected_shapes_copy.clear()
-            self.update()
+        if menu.exec_(self.mapToGlobal(event.pos())):  # type: ignore
+            return
+        if not self.selected_shapes_copy:
+            return
+        self.selected_shapes_copy.clear()
+        self.update()
+
+    def _release_left(self) -> None:
+        if not self.editing():
+            return
+        if self.hovered_shape is None:
+            return
+        if not self.hovered_shape_is_selected:
+            return
+        if self.is_moving_shape:
+            return
+        self.selection_changed.emit(
+            [s for s in self.selected_shapes if s != self.hovered_shape]
+        )
+
+    def _end_pan_drag(self) -> None:
+        self._is_dragging = False
+        self._release_cursor()
+
+    def _commit_pending_shape_move(self) -> None:
+        moved = self._pending_moved_shape()
+        if moved is None:
+            return
+        index = self.shapes.index(moved)
+        if self.shape_backups[-1][index].points != self.shapes[index].points:
+            self.backup_shapes()
+            self.shape_moved.emit()
+        self.is_moving_shape = False
+
+    def _pending_moved_shape(self) -> Shape | None:
+        if not self.is_moving_shape:
+            return None
+        if self.hovered_shape is None:
+            return None
+        if self.hovered_shape not in self.shapes:
+            return None
+        return self.hovered_shape
 
     def end_move(self, copy: bool) -> bool:
         assert self.selected_shapes and self.selected_shapes_copy
