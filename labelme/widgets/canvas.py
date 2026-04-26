@@ -4,6 +4,7 @@ import collections
 import enum
 from collections.abc import Callable
 from typing import Any
+from typing import Final
 from typing import Literal
 
 import imgviz
@@ -394,7 +395,13 @@ class Canvas(QtWidgets.QWidget):
         self.scroll_request.emit(int(delta.y()), Qt.Vertical)
 
     def _track_drawing_cursor(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        self._sync_drawing_line_shape_type()
+        LINE_SHAPE_TYPE_OVERRIDES: Final[dict[str, str]] = {
+            "ai_points_to_shape": "points",
+            "ai_box_to_shape": "rectangle",
+        }
+        self.line.shape_type = LINE_SHAPE_TYPE_OVERRIDES.get(
+            self.create_mode, self.create_mode
+        )
         self._apply_cursor(CURSOR_DRAW)
         if self.current is None:
             self.update()
@@ -406,13 +413,6 @@ class Canvas(QtWidgets.QWidget):
         assert len(self.line.points) == len(self.line.point_labels)
         self.update()
         self._update_status()
-
-    def _sync_drawing_line_shape_type(self) -> None:
-        line_shape_types: dict[str, str] = {
-            "ai_points_to_shape": "points",
-            "ai_box_to_shape": "rectangle",
-        }
-        self.line.shape_type = line_shape_types.get(self.create_mode, self.create_mode)
 
     def _project_drawing_pos_into_image(self, pos: QPointF) -> QPointF:
         current = self.current
@@ -720,20 +720,15 @@ class Canvas(QtWidgets.QWidget):
             self.remove_selected_point()
 
     def _press_right(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        if self._right_press_should_reselect():
+        if _should_reselect_on_right_press(
+            selected_shapes=self.selected_shapes, hovered_shape=self.hovered_shape
+        ):
             self.select_shape_point(
                 pos,
                 multiple_selection_mode=int(event.modifiers()) == Qt.ControlModifier,
             )
             self.update()
         self.prev_point = pos
-
-    def _right_press_should_reselect(self) -> bool:
-        if not self.selected_shapes:
-            return True
-        if self.hovered_shape is None:
-            return False
-        return self.hovered_shape not in self.selected_shapes
 
     def _press_middle(self, pos: QPointF) -> None:
         self._apply_cursor(CURSOR_GRAB)
@@ -784,7 +779,11 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
 
     def _commit_pending_shape_move(self) -> None:
-        moved = self._pending_moved_shape()
+        moved = _pick_pending_moved_shape(
+            is_moving_shape=self.is_moving_shape,
+            hovered_shape=self.hovered_shape,
+            shapes=self.shapes,
+        )
         if moved is None:
             return
         index = self.shapes.index(moved)
@@ -792,15 +791,6 @@ class Canvas(QtWidgets.QWidget):
             self.backup_shapes()
             self.shape_moved.emit()
         self.is_moving_shape = False
-
-    def _pending_moved_shape(self) -> Shape | None:
-        if not self.is_moving_shape:
-            return None
-        if self.hovered_shape is None:
-            return None
-        if self.hovered_shape not in self.shapes:
-            return None
-        return self.hovered_shape
 
     def end_move(self, copy: bool) -> bool:
         assert self.selected_shapes and self.selected_shapes_copy
@@ -1056,20 +1046,14 @@ class Canvas(QtWidgets.QWidget):
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter) -> None:
         for shape in self.shapes:
-            if not self._is_shape_paintable(shape=shape):
+            if not _is_shape_paintable(
+                shape=shape,
+                visible=self.is_shape_visible(shape),
+                hide_background=self._hide_background,
+            ):
                 continue
-            shape.fill = self._is_shape_filled(shape=shape)
+            shape.fill = _is_shape_filled(shape=shape, hovered_shape=self.hovered_shape)
             shape.paint(painter)
-
-    def _is_shape_paintable(self, shape: Shape) -> bool:
-        if not self.is_shape_visible(shape):
-            return False
-        if self._hide_background and not shape.selected:
-            return False
-        return True
-
-    def _is_shape_filled(self, shape: Shape) -> bool:
-        return shape.selected or shape is self.hovered_shape
 
     def _draw_active_shape_layer(self, painter: QtGui.QPainter) -> None:
         if self.current is None:
@@ -1483,3 +1467,37 @@ def _compute_intersection_edges_image(
     if start_x <= 0.0 or start_x >= width:
         return QPointF(start_x, np.clip(p2.y(), 0.0, height))
     return QPointF(np.clip(p2.x(), 0.0, width), start_y)
+
+
+def _should_reselect_on_right_press(
+    selected_shapes: list[Shape], hovered_shape: Shape | None
+) -> bool:
+    if not selected_shapes:
+        return True
+    if hovered_shape is None:
+        return False
+    return hovered_shape not in selected_shapes
+
+
+def _pick_pending_moved_shape(
+    is_moving_shape: bool, hovered_shape: Shape | None, shapes: list[Shape]
+) -> Shape | None:
+    if not is_moving_shape:
+        return None
+    if hovered_shape is None:
+        return None
+    if hovered_shape not in shapes:
+        return None
+    return hovered_shape
+
+
+def _is_shape_paintable(shape: Shape, visible: bool, hide_background: bool) -> bool:
+    if not visible:
+        return False
+    if hide_background and not shape.selected:
+        return False
+    return True
+
+
+def _is_shape_filled(shape: Shape, hovered_shape: Shape | None) -> bool:
+    return shape.selected or shape is hovered_shape
