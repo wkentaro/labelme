@@ -259,6 +259,16 @@ def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:
     qtbot.waitUntil(check_image_data)
 
 
+def dismiss_active_modal(qtbot: QtBot, timeout: int = 3000) -> None:
+    qtbot.waitUntil(
+        lambda: QApplication.activeModalWidget() is not None,
+        timeout=timeout,
+    )
+    dlg = QApplication.activeModalWidget()
+    assert dlg is not None
+    dlg.close()
+
+
 @pytest.fixture()
 def annotated_win(
     main_win: MainWinFactory,
