@@ -19,46 +19,11 @@ from labelme.widgets.label_dialog import LabelDialog
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
-from .conftest import MainWinFactory
 from .conftest import image_to_widget_pos
 from .conftest import select_shape
-from .conftest import show_window_and_wait_for_imagedata
 
 _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
-_RAW_FILE_NAME: Final[str] = "raw/2011_000003.jpg"
 _SHAPE_INDEX: Final[int] = 0
-
-
-@pytest.fixture()
-def _annotated_win(
-    main_win: MainWinFactory,
-    qtbot: QtBot,
-    data_path: Path,
-    tmp_path: Path,
-) -> MainWindow:
-    win = main_win(
-        file_or_dir=str(data_path / _TEST_FILE_NAME),
-        config_overrides=dict(auto_save=True),
-        output_dir=str(tmp_path),
-    )
-    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    return win
-
-
-@pytest.fixture()
-def _raw_win(
-    main_win: MainWinFactory,
-    qtbot: QtBot,
-    data_path: Path,
-    tmp_path: Path,
-) -> MainWindow:
-    win = main_win(
-        file_or_dir=str(data_path / _RAW_FILE_NAME),
-        config_overrides=dict(auto_save=True),
-        output_dir=str(tmp_path),
-    )
-    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    return win
 
 
 def _hover_and_drag(
@@ -176,11 +141,11 @@ def _save_and_check(
 @pytest.mark.gui
 def test_move_shape_by_drag(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     shape = canvas.shapes[_SHAPE_INDEX]
     original_points = [QPointF(p) for p in shape.points]
 
@@ -197,18 +162,18 @@ def test_move_shape_by_drag(
     for orig, moved in zip(original_points, shape.points):
         assert moved.x() != orig.x() or moved.y() != orig.y()
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_move_vertex_by_drag(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     shape = canvas.shapes[_SHAPE_INDEX]
     vertex_pos = QPointF(shape.points[0])
     target_pos = vertex_pos + QPointF(10, 10)
@@ -224,8 +189,8 @@ def test_move_vertex_by_drag(
         shape.points[0].x() != vertex_pos.x() or shape.points[0].y() != vertex_pos.y()
     )
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
@@ -240,13 +205,13 @@ def test_move_vertex_by_drag(
 )
 def test_move_shape_by_arrow_key(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     pause: bool,
     key: int,
     expected_dx: float,
     expected_dy: float,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     shape = canvas.selected_shapes[0]
     original_center = QPointF(shape.bounding_rect().center())
@@ -260,16 +225,16 @@ def test_move_shape_by_arrow_key(
     assert abs((new_center.x() - original_center.x()) - expected_dx) < 1.0
     assert abs((new_center.y() - original_center.y()) - expected_dy) < 1.0
 
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_select_all_shapes_from_canvas(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     assert len(canvas.shapes) > 1
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     assert len(canvas.selected_shapes) == 1
@@ -278,20 +243,20 @@ def test_select_all_shapes_from_canvas(
     qtbot.wait(50)
 
     assert set(map(id, canvas.selected_shapes)) == set(map(id, canvas.shapes))
-    assert len(_annotated_win._docks.label_list.selected_items()) == len(canvas.shapes)
+    assert len(annotated_win._docks.label_list.selected_items()) == len(canvas.shapes)
 
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_add_point_on_edge(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
-    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    canvas = annotated_win._canvas_widgets.canvas
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     # Large polygon so edge midpoints are far from vertices at any canvas scale
@@ -300,7 +265,7 @@ def test_add_point_on_edge(
     for xy in corners:
         _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
-    _enter_label(qtbot=qtbot, label_dialog=_annotated_win._label_dialog, label=label)
+    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
     _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=corners[0])
 
     def _shape_labeled() -> None:
@@ -311,7 +276,7 @@ def test_add_point_on_edge(
     shape = next(s for s in canvas.shapes if s.label == label)
     num_points_before = len(shape.points)
 
-    _annotated_win._switch_canvas_mode(edit=True)
+    annotated_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
     p0, p1 = shape.points[0], shape.points[1]
@@ -324,18 +289,18 @@ def test_add_point_on_edge(
 
     assert len(shape.points) == num_points_before + 1
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_remove_point_from_shape(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     shape = canvas.shapes[_SHAPE_INDEX]
     original_num_points = len(shape.points)
 
@@ -343,18 +308,18 @@ def test_remove_point_from_shape(
 
     assert len(shape.points) == original_num_points - 1
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_cancel_drawing_with_escape(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
-    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    canvas = annotated_win._canvas_widgets.canvas
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3)]:
@@ -366,19 +331,19 @@ def test_cancel_drawing_with_escape(
     qtbot.wait(50)
 
     assert canvas.current is None
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_undo_last_point_while_drawing(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -399,7 +364,7 @@ def test_undo_last_point_while_drawing(
     assert len(canvas.current.points) == 4
 
     label = "undo_polygon"
-    _enter_label(qtbot=qtbot, label_dialog=_annotated_win._label_dialog, label=label)
+    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
 
     _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
 
@@ -411,20 +376,20 @@ def test_undo_last_point_while_drawing(
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == label
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_finalize_polygon_with_enter(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -433,7 +398,7 @@ def test_finalize_polygon_with_enter(
     assert canvas.current is not None
 
     label = "enter_shape"
-    _enter_label(qtbot=qtbot, label_dialog=_annotated_win._label_dialog, label=label)
+    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
 
     qtbot.keyPress(canvas, Qt.Key_Return)
     qtbot.wait(200)
@@ -441,20 +406,20 @@ def test_finalize_polygon_with_enter(
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == label
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_undo_shape_creation(
     qtbot: QtBot,
-    _annotated_win: MainWindow,
+    annotated_win: MainWindow,
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    canvas = _annotated_win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -463,7 +428,7 @@ def test_undo_shape_creation(
     assert canvas.current is not None
 
     label = "undo_target"
-    _enter_label(qtbot=qtbot, label_dialog=_annotated_win._label_dialog, label=label)
+    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
 
     qtbot.keyPress(canvas, Qt.Key_Return)
     qtbot.wait(200)
@@ -471,13 +436,13 @@ def test_undo_shape_creation(
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == label
 
-    _annotated_win.undo_shape_edit()
+    annotated_win.undo_shape_edit()
     qtbot.wait(100)
 
     assert len(canvas.shapes) == num_shapes_before
 
-    _save_and_check(win=_annotated_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_annotated_win, pause=pause)
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
@@ -490,7 +455,7 @@ def test_undo_shape_creation(
 )
 def test_select_nonpolygon_shape(
     qtbot: QtBot,
-    _raw_win: MainWindow,
+    raw_win: MainWindow,
     tmp_path: Path,
     pause: bool,
     create_mode: str,
@@ -498,20 +463,20 @@ def test_select_nonpolygon_shape(
     finalize_click: tuple[float, float],
     select_offset: tuple[float, float],
 ) -> None:
-    canvas = _raw_win._canvas_widgets.canvas
-    _raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
+    canvas = raw_win._canvas_widgets.canvas
+    raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
     _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=setup_click)
 
     label = f"test_{create_mode}"
-    _enter_label(qtbot=qtbot, label_dialog=_raw_win._label_dialog, label=label)
+    _enter_label(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
     _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=finalize_click)
 
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert shape.shape_type == create_mode
 
-    _raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
     click_pos = shape.bounding_rect().center() + QPointF(*select_offset)
@@ -523,19 +488,19 @@ def test_select_nonpolygon_shape(
 
     assert shape in canvas.selected_shapes
 
-    _save_and_check(win=_raw_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_raw_win, pause=pause)
+    _save_and_check(win=raw_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_cancel_label_reopens_shape(
     qtbot: QtBot,
-    _raw_win: MainWindow,
+    raw_win: MainWindow,
     pause: bool,
 ) -> None:
-    canvas = _raw_win._canvas_widgets.canvas
+    canvas = raw_win._canvas_widgets.canvas
     num_shapes_before = len(canvas.shapes)
-    _raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
@@ -543,7 +508,7 @@ def test_cancel_label_reopens_shape(
 
     assert canvas.current is not None
 
-    _cancel_label(qtbot=qtbot, label_dialog=_raw_win._label_dialog)
+    _cancel_label(qtbot=qtbot, label_dialog=raw_win._label_dialog)
     _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
 
     def shape_reopened() -> None:
@@ -552,7 +517,7 @@ def test_cancel_label_reopens_shape(
 
     qtbot.waitUntil(shape_reopened)
 
-    close_or_pause(qtbot=qtbot, widget=_raw_win, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
 @pytest.mark.gui
@@ -585,7 +550,7 @@ def test_cancel_label_reopens_shape(
 )
 def test_remove_point_blocked_at_minimum(
     qtbot: QtBot,
-    _raw_win: MainWindow,
+    raw_win: MainWindow,
     tmp_path: Path,
     pause: bool,
     create_mode: str,
@@ -594,15 +559,15 @@ def test_remove_point_blocked_at_minimum(
     finalize_modifier: Qt.KeyboardModifier,
     expected_points: int,
 ) -> None:
-    canvas = _raw_win._canvas_widgets.canvas
-    _raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
+    canvas = raw_win._canvas_widgets.canvas
+    raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
     for xy in setup_clicks:
         _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     label = f"min_{create_mode}"
-    _enter_label(qtbot=qtbot, label_dialog=_raw_win._label_dialog, label=label)
+    _enter_label(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
     _click_canvas_fraction(
         qtbot=qtbot, canvas=canvas, xy=finalize_click, modifier=finalize_modifier
     )
@@ -610,12 +575,12 @@ def test_remove_point_blocked_at_minimum(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert len(shape.points) == expected_points
 
-    _raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
     _click_to_remove_point(qtbot=qtbot, canvas=canvas, vertex=shape.points[0])
 
     assert len(shape.points) == expected_points
 
-    _save_and_check(win=_raw_win, tmp_path=tmp_path)
-    close_or_pause(qtbot=qtbot, widget=_raw_win, pause=pause)
+    _save_and_check(win=raw_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

@@ -146,3 +146,33 @@ def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:
         assert win._image_data is not None
 
     qtbot.waitUntil(check_image_data)
+
+
+@pytest.fixture()
+def annotated_win(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
+
+
+@pytest.fixture()
+def raw_win(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
