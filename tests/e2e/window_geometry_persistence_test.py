@@ -21,7 +21,7 @@ def test_window_geometry_persists_across_sessions(
     qtbot: QtBot,
     pause: bool,
 ) -> None:
-    win1 = main_win()
+    win1 = main_win(size=None)
     win1.show()
     qtbot.wait(100)
 
@@ -35,7 +35,7 @@ def test_window_geometry_persists_across_sessions(
     win1.close()
     qtbot.wait(100)
 
-    win2 = main_win()
+    win2 = main_win(size=None)
     win2.show()
     qtbot.wait(100)
 

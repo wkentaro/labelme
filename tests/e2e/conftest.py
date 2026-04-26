@@ -11,6 +11,7 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
@@ -77,6 +78,7 @@ def main_win(
         config_file: str | Path | None = None,
         config_overrides: dict | None = None,
         output_dir: str | Path | None = None,
+        size: QSize | None = QSize(800, 600),
     ) -> MainWindow:
         argv = ["labelme"]
 
@@ -118,6 +120,8 @@ def main_win(
             if isinstance(widget, MainWindow) and widget not in existing:
                 created.append(widget)
                 qtbot.addWidget(widget)
+                if size is not None:
+                    widget.resize(size)
                 return widget
 
         raise RuntimeError("main() did not create a MainWindow")
