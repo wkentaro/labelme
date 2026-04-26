@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from functools import partial
 from pathlib import Path
 from typing import Final
 
@@ -20,7 +21,9 @@ from .conftest import show_window_and_wait_for_imagedata
 
 _RAW_FILE: Final[str] = "raw/2011_000003.jpg"
 _LABEL_FLAGS: Final[dict[str, list[str]]] = {"cat": ["a", "b"]}
-_CLOSE_POLYGON_CLICK: Final[tuple[float, float]] = (0.3, 0.3)
+_VERTICES: Final = ((0.3, 0.3), (0.6, 0.3), (0.6, 0.6))
+_CLOSE_POLYGON_CLICK: Final = _VERTICES[0]
+_draw_triangle = partial(draw_triangle, vertices=_VERTICES)
 
 
 def _check_flag(label_dialog: LabelDialog, name: str) -> None:
@@ -56,7 +59,7 @@ def test_label_flags_applied_to_shape(
     label_dialog = win._label_dialog
     num_shapes_before = len(canvas.shapes)
 
-    draw_triangle(qtbot=qtbot, win=win)
+    _draw_triangle(qtbot=qtbot, win=win)
 
     def _enter_cat() -> None:
         label_dialog.edit.clear()
@@ -96,7 +99,7 @@ def test_flags_survive_save_reload_roundtrip(
     label_dialog = win._label_dialog
     num_shapes_before = len(canvas.shapes)
 
-    draw_triangle(qtbot=qtbot, win=win)
+    _draw_triangle(qtbot=qtbot, win=win)
 
     def _enter_cat_a_true() -> None:
         label_dialog.edit.clear()

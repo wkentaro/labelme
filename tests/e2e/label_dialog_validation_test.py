@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import partial
 from pathlib import Path
 from typing import Final
 
@@ -16,7 +17,9 @@ from .conftest import schedule_on_dialog
 from .conftest import show_window_and_wait_for_imagedata
 
 _RAW_FILE: Final[str] = "raw/2011_000003.jpg"
-_CLOSE_POLYGON_CLICK: Final[tuple[float, float]] = (0.3, 0.3)
+_VERTICES: Final = ((0.3, 0.3), (0.6, 0.3), (0.6, 0.6))
+_CLOSE_POLYGON_CLICK: Final = _VERTICES[0]
+_draw_triangle = partial(draw_triangle, vertices=_VERTICES)
 
 
 @pytest.mark.gui
@@ -32,7 +35,7 @@ def test_blank_input_keeps_dialog_open(
     label_dialog = win._label_dialog
     num_shapes_before = len(canvas.shapes)
 
-    draw_triangle(qtbot=qtbot, win=win)
+    _draw_triangle(qtbot=qtbot, win=win)
 
     dialog_stayed_open: list[bool] = []
 
@@ -84,7 +87,7 @@ def test_validate_label_exact_rejects_unknown_label(
         qtbot.wait(50)
         qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
 
-    draw_triangle(qtbot=qtbot, win=win)
+    _draw_triangle(qtbot=qtbot, win=win)
     schedule_on_dialog(label_dialog=label_dialog, action=_enter_unknown_label)
     click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=_CLOSE_POLYGON_CLICK)
 
@@ -110,7 +113,7 @@ def test_trailing_whitespace_label_is_stripped(
     label_dialog = win._label_dialog
     num_shapes_before = len(canvas.shapes)
 
-    draw_triangle(qtbot=qtbot, win=win)
+    _draw_triangle(qtbot=qtbot, win=win)
 
     def _enter_trailing_space_label() -> None:
         label_dialog.edit.clear()
