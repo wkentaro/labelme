@@ -1172,8 +1172,8 @@ class Canvas(QtWidgets.QWidget):
         # divide by scale to allow more precision when zoomed in
         return labelme.utils.distance(p1 - p2) < (self.epsilon / self.scale)
 
-    # These two, along with a call to adjustSize are required for the
-    # scroll area.
+    # Required by QScrollArea: it queries these to compute the
+    # scrollable viewport whenever adjustSize() is called.
     def sizeHint(self) -> QtCore.QSize:
         return self.minimumSizeHint()
 
