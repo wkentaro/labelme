@@ -39,6 +39,7 @@ from labelme._automation._osam_session import OsamSession
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
+from labelme._shape_clipboard import ShapeClipboard
 from labelme.config import load_config
 from labelme.shape import Shape
 from labelme.widgets import AiAssistedAnnotationWidget
@@ -171,7 +172,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     _text_osam_session: OsamSession | None = None
     _is_changed: bool = False
-    _copied_shapes: list[Shape]
+    _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
     _prev_opened_dir: str | None
     _canvas_widgets: _CanvasWidgets
@@ -228,7 +229,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Set point size from config file
         Shape.point_size = self._config["shape"]["point_size"]
 
-        self._copied_shapes = []
+        self._shape_clipboard = ShapeClipboard(self)
 
         self._label_dialog = LabelDialog(
             parent=self,
@@ -247,6 +248,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._shape_clipboard.availability_changed.connect(
+            self._actions.paste.setEnabled
+        )
         self._menus = self._setup_menus()
 
         self._ai_annotation = AiAssistedAnnotationWidget(
@@ -401,7 +405,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         duplicate = action(
             self.tr("Duplicate Shapes"),
-            self.duplicate_selected_shapes,
+            lambda: self._insert_shapes(
+                [s.copy() for s in self._canvas_widgets.canvas.selected_shapes]
+            ),
             shortcuts["duplicate_shape"],
             icon="phosphor/copy.svg",
             tip=self.tr("Create a duplicate of the selected shapes"),
@@ -409,7 +415,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         copy = action(
             self.tr("Copy Shapes"),
-            self.copy_selected_shapes,
+            lambda: self._shape_clipboard.store(
+                self._canvas_widgets.canvas.selected_shapes
+            ),
             shortcuts["copy_shape"],
             "copy_clipboard",
             self.tr("Copy selected shapes to clipboard"),
@@ -417,7 +425,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         paste = action(
             self.tr("Paste Shapes"),
-            self.paste_selected_shapes,
+            lambda: self._insert_shapes(self._shape_clipboard.paste()),
             shortcuts["paste_shape"],
             "paste",
             self.tr("Paste copied shapes"),
@@ -1669,20 +1677,12 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
 
-    def duplicate_selected_shapes(self) -> None:
-        self.copy_selected_shapes()
-        self.paste_selected_shapes()
-
-    def paste_selected_shapes(self) -> None:
-        self._load_shapes(shapes=self._copied_shapes, replace=False)
-        self._canvas_widgets.canvas.select_shapes(self._copied_shapes)
+    def _insert_shapes(self, shapes: list[Shape]) -> None:
+        if not shapes:
+            return
+        self._load_shapes(shapes=shapes, replace=False)
+        self._canvas_widgets.canvas.select_shapes(shapes)
         self.mark_dirty()
-
-    def copy_selected_shapes(self) -> None:
-        self._copied_shapes = [
-            s.copy() for s in self._canvas_widgets.canvas.selected_shapes
-        ]
-        self._actions.paste.setEnabled(len(self._copied_shapes) > 0)
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []

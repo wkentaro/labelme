@@ -87,8 +87,8 @@ def test_copy_paste_shape(
     original_label = canvas.selected_shapes[0].label
     num_shapes_before = len(canvas.shapes)
 
-    win.copy_selected_shapes()
-    win.paste_selected_shapes()
+    win._actions.copy.trigger()
+    win._actions.paste.trigger()
     qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
@@ -118,7 +118,7 @@ def test_duplicate_shape(
 
     num_shapes_before = len(canvas.shapes)
 
-    win.duplicate_selected_shapes()
+    win._actions.duplicate.trigger()
     qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
