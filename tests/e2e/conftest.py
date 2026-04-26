@@ -11,6 +11,7 @@ from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
@@ -18,6 +19,7 @@ import labelme.app
 from labelme.__main__ import main
 from labelme.app import MainWindow
 from labelme.widgets.canvas import Canvas
+from labelme.widgets.label_dialog import LabelDialog
 
 
 @pytest.fixture(scope="session")
@@ -126,6 +128,40 @@ def main_win(
             win.close()
         except RuntimeError:
             pass
+
+
+def click_canvas_fraction(
+    qtbot: QtBot,
+    canvas: Canvas,
+    xy: tuple[float, float],
+    modifier: Qt.KeyboardModifier = Qt.NoModifier,
+) -> None:
+    canvas_size = canvas.size()
+    pos = QPoint(
+        int(canvas_size.width() * xy[0]),
+        int(canvas_size.height() * xy[1]),
+    )
+    qtbot.mouseMove(canvas, pos=pos)
+    qtbot.wait(50)
+    qtbot.mouseClick(canvas, Qt.LeftButton, modifier=modifier, pos=pos)
+    qtbot.wait(50)
+
+
+def submit_label_dialog(
+    qtbot: QtBot,
+    label_dialog: LabelDialog,
+    label: str,
+) -> None:
+    def _poll() -> None:
+        if not label_dialog.isVisible():
+            QTimer.singleShot(50, _poll)
+            return
+        label_dialog.edit.clear()
+        qtbot.keyClicks(label_dialog.edit, label)
+        qtbot.wait(50)
+        qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+
+    QTimer.singleShot(0, _poll)
 
 
 def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
