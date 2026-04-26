@@ -5,7 +5,6 @@ from typing import Final
 
 import pytest
 from PyQt5 import QtGui
-from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
@@ -19,8 +18,10 @@ from labelme.widgets.label_dialog import LabelDialog
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from .conftest import click_canvas_fraction
 from .conftest import image_to_widget_pos
 from .conftest import select_shape
+from .conftest import submit_label_dialog
 
 _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 _SHAPE_INDEX: Final[int] = 0
@@ -50,39 +51,6 @@ def _hover_and_drag(
     qtbot.wait(50)
     qtbot.mouseRelease(canvas, Qt.LeftButton, pos=end)
     qtbot.wait(50)
-
-
-def _click_canvas_fraction(
-    qtbot: QtBot,
-    canvas: Canvas,
-    xy: tuple[float, float],
-    modifier: Qt.KeyboardModifier = Qt.NoModifier,
-) -> None:
-    canvas_size = canvas.size()
-    pos = QPoint(
-        int(canvas_size.width() * xy[0]),
-        int(canvas_size.height() * xy[1]),
-    )
-    qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, modifier=modifier, pos=pos)
-    qtbot.wait(50)
-
-
-def _enter_label(
-    qtbot: QtBot,
-    label_dialog: LabelDialog,
-    label: str,
-) -> None:
-    def _poll() -> None:
-        if not label_dialog.isVisible():
-            QTimer.singleShot(50, _poll)
-            return
-        qtbot.keyClicks(label_dialog.edit, label)
-        qtbot.wait(50)
-        qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
-
-    QTimer.singleShot(0, _poll)
 
 
 def _cancel_label(
@@ -263,10 +231,12 @@ def test_add_point_on_edge(
     label = "big_rect"
     corners = [(0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8)]
     for xy in corners:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
-    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
-    _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=corners[0])
+    submit_label_dialog(
+        qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label
+    )
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=corners[0])
 
     def _shape_labeled() -> None:
         assert any(s.label == label for s in canvas.shapes)
@@ -323,7 +293,7 @@ def test_cancel_drawing_with_escape(
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3)]:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     assert canvas.current is not None
 
@@ -347,7 +317,7 @@ def test_undo_last_point_while_drawing(
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     assert canvas.current is not None
     assert len(canvas.current.points) == 3
@@ -359,14 +329,16 @@ def test_undo_last_point_while_drawing(
     assert len(canvas.current.points) == 2
 
     for xy in [(0.6, 0.6), (0.3, 0.6)]:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     assert len(canvas.current.points) == 4
 
     label = "undo_polygon"
-    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
+    submit_label_dialog(
+        qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label
+    )
 
-    _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
 
     def _shape_labeled() -> None:
         assert any(s.label == label for s in canvas.shapes)
@@ -393,12 +365,14 @@ def test_finalize_polygon_with_enter(
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     assert canvas.current is not None
 
     label = "enter_shape"
-    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
+    submit_label_dialog(
+        qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label
+    )
 
     qtbot.keyPress(canvas, Qt.Key_Return)
     qtbot.wait(200)
@@ -423,12 +397,14 @@ def test_undo_shape_creation(
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     assert canvas.current is not None
 
     label = "undo_target"
-    _enter_label(qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label)
+    submit_label_dialog(
+        qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label
+    )
 
     qtbot.keyPress(canvas, Qt.Key_Return)
     qtbot.wait(200)
@@ -467,11 +443,11 @@ def test_select_nonpolygon_shape(
     raw_win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
 
-    _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=setup_click)
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=setup_click)
 
     label = f"test_{create_mode}"
-    _enter_label(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
-    _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=finalize_click)
+    submit_label_dialog(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=finalize_click)
 
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert shape.shape_type == create_mode
@@ -504,12 +480,12 @@ def test_cancel_label_reopens_shape(
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3), (0.6, 0.6)]:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     assert canvas.current is not None
 
     _cancel_label(qtbot=qtbot, label_dialog=raw_win._label_dialog)
-    _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
 
     def shape_reopened() -> None:
         assert len(canvas.shapes) == num_shapes_before
@@ -564,11 +540,11 @@ def test_remove_point_blocked_at_minimum(
     qtbot.wait(50)
 
     for xy in setup_clicks:
-        _click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
     label = f"min_{create_mode}"
-    _enter_label(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
-    _click_canvas_fraction(
+    submit_label_dialog(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
+    click_canvas_fraction(
         qtbot=qtbot, canvas=canvas, xy=finalize_click, modifier=finalize_modifier
     )
 
