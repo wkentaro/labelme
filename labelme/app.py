@@ -179,7 +179,6 @@ class MainWindow(QtWidgets.QMainWindow):
     _docks: _DockWidgets
     _actions: _Actions
     _menus: _Menus
-    _scalers: dict[_ZoomMode, Callable[[], float]]
     _label_dialog: LabelDialog
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
@@ -248,11 +247,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
-        self._scalers = {
-            _ZoomMode.FIT_WINDOW: self.compute_fit_window_scale,
-            _ZoomMode.FIT_WIDTH: self.compute_fit_width_scale,
-            _ZoomMode.MANUAL_ZOOM: lambda: 1,
-        }
         self._menus = self._setup_menus()
 
         self._ai_annotation = AiAssistedAnnotationWidget(
@@ -1781,10 +1775,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         canvas_width_old: int = self._canvas_widgets.canvas.width()
 
-        self._actions.fit_width.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
-        self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
+        self._sync_zoom_mode_actions()
+        fit_window_zoom_percent = int(self._fit_window_scale() * 100)
         self._canvas_widgets.canvas.enable_dragging(
-            enabled=value > int(self._scalers[_ZoomMode.FIT_WINDOW]() * 100)
+            enabled=value > fit_window_zoom_percent
         )
         self._canvas_widgets.zoom_widget.setValue(value)  # triggers self._paint_canvas
         self._zoom_values[self._image_path] = (self._zoom_mode, value)
@@ -1823,16 +1817,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
 
     def set_fit_window_mode(self, value: bool = True) -> None:
-        if value:
-            self._actions.fit_width.setChecked(False)
-        self._zoom_mode = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
-        self._adjust_scale()
+        target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
+        self._switch_zoom_mode(target)
 
     def set_fit_width_mode(self, value: bool = True) -> None:
-        if value:
-            self._actions.fit_window.setChecked(False)
-        self._zoom_mode = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
+        target = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
+        self._switch_zoom_mode(target)
+
+    def _switch_zoom_mode(self, mode: _ZoomMode) -> None:
+        self._zoom_mode = mode
         self._adjust_scale()
+
+    def _sync_zoom_mode_actions(self) -> None:
+        self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
+        self._actions.fit_width.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
 
     def set_keep_prev_scale(self, enabled: bool) -> None:
         self._config["keep_prev_scale"] = enabled
@@ -2063,21 +2061,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.update()
 
     def _adjust_scale(self) -> None:
-        self._set_zoom(value=int(self._scalers[self._zoom_mode]() * 100))
+        if self._zoom_mode == _ZoomMode.FIT_WINDOW:
+            scale = self._fit_window_scale()
+        elif self._zoom_mode == _ZoomMode.FIT_WIDTH:
+            scale = self._fit_width_scale()
+        else:
+            scale = 1.0
+        self._set_zoom(value=int(scale * 100))
 
-    def compute_fit_window_scale(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: Final[float] = 2.0
-        return _scale_to_fit_window(
-            viewport_w=self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR,
-            viewport_h=self.centralWidget().height() - EPSILON_TO_HIDE_SCROLLBAR,
-            pixmap_w=self._canvas_widgets.canvas.pixmap.width(),
-            pixmap_h=self._canvas_widgets.canvas.pixmap.height(),
-        )
+    def _fit_window_scale(self) -> float:
+        FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0
+        viewport = self.centralWidget()
+        pixmap = self._canvas_widgets.canvas.pixmap
+        available_w = viewport.width() - FIT_WINDOW_SCROLLBAR_MARGIN
+        available_h = viewport.height() - FIT_WINDOW_SCROLLBAR_MARGIN
+        scale_by_width = available_w / pixmap.width()
+        scale_by_height = available_h / pixmap.height()
+        return min(scale_by_width, scale_by_height)
 
-    def compute_fit_width_scale(self) -> float:
-        EPSILON_TO_HIDE_SCROLLBAR: Final[float] = 15.0
-        viewport_w = self.centralWidget().width() - EPSILON_TO_HIDE_SCROLLBAR
-        return viewport_w / self._canvas_widgets.canvas.pixmap.width()
+    def _fit_width_scale(self) -> float:
+        FIT_WIDTH_SCROLLBAR_MARGIN: Final[float] = 15.0
+        available_w = self.centralWidget().width() - FIT_WIDTH_SCROLLBAR_MARGIN
+        return available_w / self._canvas_widgets.canvas.pixmap.width()
 
     def set_save_image_with_data(self, enabled: bool) -> None:
         self._config["with_image_data"] = enabled
@@ -2589,18 +2594,6 @@ def _is_valid_label(
     if policy == "exact":
         return label in existing_labels
     return False
-
-
-def _scale_to_fit_window(
-    *,
-    viewport_w: float,
-    viewport_h: float,
-    pixmap_w: int,
-    pixmap_h: int,
-) -> float:
-    scale_by_width = viewport_w / pixmap_w
-    scale_by_height = viewport_h / pixmap_h
-    return min(scale_by_width, scale_by_height)
 
 
 def _format_window_title(

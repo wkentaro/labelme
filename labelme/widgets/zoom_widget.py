@@ -8,16 +8,16 @@ from PyQt5 import QtWidgets
 class ZoomWidget(QtWidgets.QSpinBox):
     def __init__(self, value: int = 100) -> None:
         super().__init__()
-        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.setRange(1, 1000)
         self.setSuffix(" %")
         self.setValue(value)
+        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.setAlignment(QtCore.Qt.AlignCenter)
         self.setToolTip("Zoom Level")
         self.setStatusTip(self.toolTip())
-        self.setAlignment(QtCore.Qt.AlignCenter)
 
     def minimumSizeHint(self) -> QtCore.QSize:
-        height = super().minimumSizeHint().height()
-        fm = QtGui.QFontMetrics(self.font())
-        width = fm.width(str(self.maximum()))
-        return QtCore.QSize(width, height)
+        base = super().minimumSizeHint()
+        font_metrics = QtGui.QFontMetrics(self.font())
+        digits_width = font_metrics.horizontalAdvance(str(self.maximum()))
+        return QtCore.QSize(digits_width, base.height())
