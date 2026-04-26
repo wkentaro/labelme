@@ -1201,13 +1201,18 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
-
-        min_size = self.scale * self.pixmap.size()
-        if self._is_dragging_enabled:
-            # When drag buffer should be enabled, add a bit of buffer around the image
-            # This lets dragging the image around have a bit of give on the edges
-            min_size = 1.167 * min_size
-        return min_size
+        scaled_w = int(self.pixmap.width() * self.scale)
+        scaled_h = int(self.pixmap.height() * self.scale)
+        viewport = self._scroll_viewport()
+        if viewport is None:
+            return QtCore.QSize(scaled_w, scaled_h)
+        # Overscroll only along axes where the image actually overflows the
+        # viewport. Half a viewport of slack (split evenly around the centred
+        # image) lets each edge be panned a quarter-viewport past the viewport
+        # boundary, derived from the viewport rather than a fixed multiplier.
+        slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
+        slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
+        return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
