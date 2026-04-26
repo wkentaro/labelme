@@ -5,13 +5,13 @@ from typing import Final
 
 import pytest
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
+from .conftest import dismiss_active_modal
 from .conftest import show_window_and_wait_for_imagedata
 
 _STATUS_MESSAGE_TIMEOUT_MS: Final[int] = 5000
@@ -95,21 +95,10 @@ def test_status_bar_shows_error_message_on_corrupt_file(
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    DISMISS_TIMEOUT_MS: Final[int] = 3000
-
     corrupt_json = tmp_path / "corrupt.json"
     corrupt_json.write_text('{"version": "5.0", "shapes": [')
 
-    def _dismiss_error_dialog() -> None:
-        qtbot.waitUntil(
-            lambda: QApplication.activeModalWidget() is not None,
-            timeout=DISMISS_TIMEOUT_MS,
-        )
-        dlg = QApplication.activeModalWidget()
-        assert dlg is not None
-        dlg.close()
-
-    QTimer.singleShot(0, _dismiss_error_dialog)
+    QTimer.singleShot(0, lambda: dismiss_active_modal(qtbot=qtbot))
 
     win = main_win(file_or_dir=str(corrupt_json))
     win.show()
