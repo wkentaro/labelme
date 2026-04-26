@@ -128,22 +128,14 @@ class LabelDialog(QtWidgets.QDialog):
             self.accept()
             return
 
-        if self._get_stripped_text():
+        if self.edit.text().strip():
             self.accept()
-
-    def _get_stripped_text(self) -> str:
-        text = self.edit.text()
-        if hasattr(text, "strip"):
-            return str(text.strip())
-        if hasattr(text, "trimmed"):
-            return str(text.trimmed())
-        return str(text)
 
     def _on_label_double_clicked(self, _: QtWidgets.QListWidgetItem) -> None:
         self._validate()
 
     def _on_editing_finished(self) -> None:
-        self.edit.setText(self._get_stripped_text())
+        self.edit.setText(self.edit.text().strip())
 
     def _on_text_changed(self, label_new: str) -> None:
         # keep state of shared flags
