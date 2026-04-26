@@ -11,6 +11,7 @@ from pytestqt.qtbot import QtBot
 from labelme.app import MainWindow
 from labelme.shape import Shape
 from labelme.widgets.canvas import Canvas
+from labelme.widgets.canvas import CanvasMode
 from labelme.widgets.label_dialog import LabelDialog
 
 from ..conftest import assert_labelfile_sanity
@@ -262,6 +263,34 @@ def test_remove_point_from_shape(
     assert len(shape.points) == original_num_points - 1
 
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_draw_actions_disable_only_active_mode(
+    annotated_win: MainWindow,
+    qtbot: QtBot,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    qtbot.wait(50)
+    assert canvas.mode == CanvasMode.CREATE
+
+    for draw_mode, draw_action in annotated_win._actions.draw:
+        if draw_mode == "polygon":
+            assert not draw_action.isEnabled()
+        else:
+            assert draw_action.isEnabled()
+
+    annotated_win._switch_canvas_mode(edit=True)
+    qtbot.wait(50)
+    assert canvas.mode == CanvasMode.EDIT
+
+    for _, draw_action in annotated_win._actions.draw:
+        assert draw_action.isEnabled()
+
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
