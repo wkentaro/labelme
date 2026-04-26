@@ -850,9 +850,9 @@ class Canvas(QtWidgets.QWidget):
     def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent) -> None:
         if self.double_click != "close":
             return
-
-        if self.can_close_shape():
-            self.finalise()
+        if not self.can_close_shape():
+            return
+        self.finalise()
 
     def select_shapes(self, shapes: list[Shape]) -> None:
         self.set_hide_background()
