@@ -1017,6 +1017,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.Horizontal: scroll_area.horizontalScrollBar(),
         }
         canvas.scroll_request.connect(self._on_scroll_request)
+        canvas.pan_request.connect(self._on_pan_request)
 
         canvas.new_shape.connect(self._on_new_shape)
         canvas.shape_moved.connect(self.mark_dirty)
@@ -1759,6 +1760,14 @@ class MainWindow(QtWidgets.QMainWindow):
         value = bar.value() + bar.singleStep() * units
         self.set_scroll_value(orientation, value)
 
+    def _on_pan_request(self, step: QtCore.QPoint) -> None:
+        # Pan moves the viewport opposite to the cursor delta so the image
+        # tracks the grabbed point one-for-one in widget pixels.
+        h_bar = self._canvas_widgets.scroll_bars[Qt.Horizontal]
+        v_bar = self._canvas_widgets.scroll_bars[Qt.Vertical]
+        self.set_scroll_value(Qt.Horizontal, h_bar.value() - step.x())
+        self.set_scroll_value(Qt.Vertical, v_bar.value() - step.y())
+
     def set_scroll_value(self, orientation: Qt.Orientation, value: float) -> None:
         self._canvas_widgets.scroll_bars[orientation].setValue(int(value))
         if self._image_path is not None:
@@ -1776,10 +1785,6 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas_width_old: int = self._canvas_widgets.canvas.width()
 
         self._sync_zoom_mode_actions()
-        fit_window_zoom_percent = int(self._fit_window_scale() * 100)
-        self._canvas_widgets.canvas.enable_dragging(
-            enabled=value > fit_window_zoom_percent
-        )
         self._canvas_widgets.zoom_widget.setValue(value)  # triggers self._paint_canvas
         self._zoom_values[self._image_path] = (self._zoom_mode, value)
 
