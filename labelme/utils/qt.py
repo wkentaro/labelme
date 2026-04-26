@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from math import sqrt
 from pathlib import Path
 from typing import Any
+from typing import Final
 
 import numpy as np
 from PyQt5 import QtCore
@@ -15,9 +16,11 @@ here = Path(__file__).resolve().parent
 
 
 def new_icon(icon_file_name: str) -> QtGui.QIcon:
-    if Path(icon_file_name).suffix == "":
-        icon_file_name = f"{icon_file_name}.png"  # XXX: convention
-    return QtGui.QIcon(str(here.parent / "icons" / icon_file_name))
+    ICON_SUFFIX: Final[str] = ".png"
+    icon_path = here.parent / "icons" / icon_file_name
+    if icon_path.suffix == "":
+        icon_path = icon_path.with_suffix(ICON_SUFFIX)
+    return QtGui.QIcon(str(icon_path))
 
 
 def new_button(
@@ -25,12 +28,12 @@ def new_button(
     icon: str | None = None,
     slot: Callable[..., object] | None = None,
 ) -> QtWidgets.QPushButton:
-    b = QtWidgets.QPushButton(text)
+    button = QtWidgets.QPushButton(text)
     if icon is not None:
-        b.setIcon(new_icon(icon))
+        button.setIcon(new_icon(icon))
     if slot is not None:
-        b.clicked.connect(slot)
-    return b
+        button.clicked.connect(slot)
+    return button
 
 
 def new_action(
@@ -44,39 +47,38 @@ def new_action(
     enabled: bool = True,
     checked: bool = False,
 ) -> QtWidgets.QAction:
-    """Create a new action and assign callbacks, shortcuts, etc."""
-    a = QtWidgets.QAction(text, parent)
+    action = QtWidgets.QAction(text, parent)
     if icon is not None:
-        a.setIconText(text.replace(" ", "\n"))
-        a.setIcon(new_icon(icon))
-    if shortcut is not None:
-        if isinstance(shortcut, list | tuple):
-            a.setShortcuts(shortcut)
-        else:
-            a.setShortcut(shortcut)
+        action.setIconText(text.replace(" ", "\n"))
+        action.setIcon(new_icon(icon))
+    if isinstance(shortcut, list | tuple):
+        action.setShortcuts(shortcut)
+    elif shortcut is not None:
+        action.setShortcut(shortcut)
     if tip is not None:
-        a.setToolTip(tip)
-        a.setStatusTip(tip)
+        action.setToolTip(tip)
+        action.setStatusTip(tip)
     if slot is not None:
-        a.triggered.connect(slot)
+        action.triggered.connect(slot)
     if checkable:
-        a.setCheckable(True)
-    a.setEnabled(enabled)
-    a.setChecked(checked)
-    return a
+        action.setCheckable(True)
+    action.setEnabled(enabled)
+    action.setChecked(checked)
+    return action
 
 
 def add_actions(
     widget: QtWidgets.QMenu | QtWidgets.QToolBar,
     actions: Sequence[QtWidgets.QAction | QtWidgets.QMenu | None],
 ) -> None:
-    for action in actions:
-        if action is None:
+    for entry in actions:
+        if entry is None:
             widget.addSeparator()
-        elif isinstance(action, QtWidgets.QMenu):
-            widget.addMenu(action)  # ty: ignore[unresolved-attribute]
-        else:
-            widget.addAction(action)
+            continue
+        if isinstance(entry, QtWidgets.QMenu):
+            widget.addMenu(entry)  # ty: ignore[unresolved-attribute]
+            continue
+        widget.addAction(entry)
 
 
 def label_validator() -> QtGui.QRegExpValidator:
