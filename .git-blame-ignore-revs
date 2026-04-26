@@ -36,3 +36,5 @@ cbb6d829725f531bdb3cb30bcb13213604a4fe31
 4aba96809ca188f1a13f353a843cdb09c631ad22
 # chore: remove "simple" type:ignore comments
 f3ab366983d82c9dfabc576de9fd87f68a8417ea
+# Fix text width issues (pure line-wrap reformat of labelme/app.py)
+f6f03ddee51f984fd15f7ea6524849e316bc4be7
