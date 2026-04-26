@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import partial
 from typing import Final
 
 import pytest
@@ -12,12 +13,15 @@ from labelme.app import MainWindow
 from labelme.widgets.label_dialog import LabelDialog
 
 from ..conftest import close_or_pause
+from .conftest import draw_and_commit_polygon
 from .conftest import draw_triangle
 from .conftest import schedule_on_dialog
 from .conftest import select_shape
-from .conftest import submit_label_dialog
 
-_SHAPE_TIMEOUT_MS: Final[int] = 5_000
+_SHAPE_TIMEOUT_MS: Final = 5_000
+_VERTICES: Final = ((0.2, 0.2), (0.6, 0.2), (0.6, 0.6))
+_draw_triangle = partial(draw_triangle, vertices=_VERTICES)
+_draw_and_commit_polygon = partial(draw_and_commit_polygon, vertices=_VERTICES)
 
 
 def _schedule_capture_then_cancel(
@@ -29,29 +33,6 @@ def _schedule_capture_then_cancel(
         label_dialog.reject()
 
     schedule_on_dialog(label_dialog=label_dialog, action=_action)
-
-
-def _draw_triangle(qtbot: QtBot, win: MainWindow) -> None:
-    draw_triangle(
-        qtbot=qtbot,
-        win=win,
-        vertices=((0.2, 0.2), (0.6, 0.2), (0.6, 0.6)),
-    )
-
-
-def _draw_and_commit_polygon(qtbot: QtBot, win: MainWindow, label: str) -> None:
-    canvas = win._canvas_widgets.canvas
-    _draw_triangle(qtbot=qtbot, win=win)
-    # Schedule the dialog handler before pressing Return: the Return key closes
-    # the polygon which opens the dialog, at which point the queued poller fills
-    # it in. Swapping these two lines would deadlock the test.
-    submit_label_dialog(qtbot=qtbot, label_dialog=win._label_dialog, label=label)
-    qtbot.keyPress(canvas, Qt.Key_Return)
-
-    def shape_committed() -> None:
-        assert any(s.label == label for s in canvas.shapes)
-
-    qtbot.waitUntil(shape_committed, timeout=_SHAPE_TIMEOUT_MS)
 
 
 @pytest.mark.gui

@@ -201,17 +201,37 @@ def submit_label_dialog(
 def draw_triangle(
     qtbot: QtBot,
     win: MainWindow,
-    vertices: tuple[tuple[float, float], ...] = (
-        (0.3, 0.3),
-        (0.6, 0.3),
-        (0.6, 0.6),
-    ),
+    vertices: tuple[tuple[float, float], ...],
 ) -> None:
     canvas = win._canvas_widgets.canvas
     win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
     for xy in vertices:
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
+
+
+def draw_and_commit_polygon(
+    qtbot: QtBot,
+    win: MainWindow,
+    label: str,
+    vertices: tuple[tuple[float, float], ...],
+    timeout: int = 5_000,
+) -> None:
+    canvas = win._canvas_widgets.canvas
+    num_before = len(canvas.shapes)
+
+    draw_triangle(qtbot=qtbot, win=win, vertices=vertices)
+    # submit_label_dialog must be scheduled before Return: Return closes the
+    # polygon and opens the dialog, then the queued poller fills it in.
+    # Reversing the order deadlocks the test.
+    submit_label_dialog(qtbot=qtbot, label_dialog=win._label_dialog, label=label)
+    qtbot.keyPress(canvas, Qt.Key_Return)
+
+    def shape_committed() -> None:
+        assert len(canvas.shapes) == num_before + 1
+        assert canvas.shapes[-1].label == label
+
+    qtbot.waitUntil(shape_committed, timeout=timeout)
 
 
 def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
