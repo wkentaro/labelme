@@ -4,11 +4,9 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5 import QtGui
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -19,6 +17,7 @@ from labelme.widgets.label_dialog import LabelDialog
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import click_canvas_fraction
+from .conftest import drag_canvas
 from .conftest import image_to_widget_pos
 from .conftest import select_shape
 from .conftest import submit_label_dialog
@@ -37,20 +36,7 @@ def _hover_and_drag(
     end = image_to_widget_pos(canvas=canvas, image_pos=end_image_pos)
     qtbot.mouseMove(canvas, pos=start)
     qtbot.wait(50)
-    qtbot.mousePress(canvas, Qt.LeftButton, pos=start)
-    qtbot.wait(50)
-    # qtbot.mouseMove does not carry button state, so send a raw event
-    move_event = QtGui.QMouseEvent(
-        QtGui.QMouseEvent.MouseMove,
-        QPointF(end),
-        Qt.NoButton,
-        Qt.LeftButton,
-        Qt.NoModifier,
-    )
-    QApplication.sendEvent(canvas, move_event)
-    qtbot.wait(50)
-    qtbot.mouseRelease(canvas, Qt.LeftButton, pos=end)
-    qtbot.wait(50)
+    drag_canvas(qtbot=qtbot, canvas=canvas, button=Qt.LeftButton, start=start, end=end)
 
 
 def _cancel_label(

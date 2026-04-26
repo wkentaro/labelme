@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSettings
@@ -144,6 +145,29 @@ def click_canvas_fraction(
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.LeftButton, modifier=modifier, pos=pos)
+    qtbot.wait(50)
+
+
+def drag_canvas(
+    qtbot: QtBot,
+    canvas: Canvas,
+    button: Qt.MouseButton,
+    start: QPoint,
+    end: QPoint,
+) -> None:
+    qtbot.mousePress(canvas, button, pos=start)
+    qtbot.wait(50)
+    # qtbot.mouseMove does not carry button state, so send a raw event
+    move_event = QtGui.QMouseEvent(
+        QtGui.QMouseEvent.MouseMove,
+        QPointF(end),
+        Qt.NoButton,
+        button,
+        Qt.NoModifier,
+    )
+    QApplication.sendEvent(canvas, move_event)
+    qtbot.wait(50)
+    qtbot.mouseRelease(canvas, button, pos=end)
     qtbot.wait(50)
 
 
