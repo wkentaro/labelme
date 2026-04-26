@@ -22,25 +22,32 @@ def _diagonal_drag_endpoints(canvas: Canvas) -> tuple[QPoint, QPoint]:
     return start, end
 
 
+def _zoom_until_overflow(canvas: Canvas) -> None:
+    # Mutates canvas.scale directly to bypass the public zoom path because
+    # this fixture only needs to force overflow; if the zoom pipeline gains
+    # additional side effects relevant to a test, route through that instead.
+    viewport = canvas._scroll_viewport()
+    assert viewport is not None
+    while not (
+        canvas.pixmap.width() * canvas.scale > viewport.width()
+        or canvas.pixmap.height() * canvas.scale > viewport.height()
+    ):
+        canvas.scale *= 1.5
+        canvas.adjustSize()
+        canvas.update()
+
+
 @pytest.mark.gui
-def test_middle_drag_emits_scroll_request(
+def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    canvas.enable_dragging(enabled=True)
+    _zoom_until_overflow(canvas=canvas)
 
-    horizontal: list[int] = []
-    vertical: list[int] = []
-
-    def _on_scroll(delta: int, orientation: Qt.Orientation) -> None:
-        if orientation == Qt.Horizontal:
-            horizontal.append(delta)
-        else:
-            vertical.append(delta)
-
-    canvas.scroll_request.connect(_on_scroll)
+    deltas: list[QPoint] = []
+    canvas.pan_request.connect(deltas.append)
 
     start, end = _diagonal_drag_endpoints(canvas=canvas)
     drag_canvas(
@@ -51,24 +58,37 @@ def test_middle_drag_emits_scroll_request(
         end=end,
     )
 
-    assert any(d != 0 for d in horizontal)
-    assert any(d != 0 for d in vertical)
+    assert deltas, "pan_request was not emitted during middle-drag"
+    total_x = sum(p.x() for p in deltas)
+    total_y = sum(p.y() for p in deltas)
+    assert total_x == _DRAG_OFFSET_PX
+    assert total_y == _DRAG_OFFSET_PX
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui
-def test_middle_drag_disabled_is_noop(
+def test_middle_drag_no_pan_when_image_fits_viewport(
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    canvas.enable_dragging(enabled=False)
+    viewport = canvas._scroll_viewport()
+    assert viewport is not None
+    canvas.scale = (
+        min(
+            viewport.width() / canvas.pixmap.width(),
+            viewport.height() / canvas.pixmap.height(),
+        )
+        * 0.5
+    )
+    canvas.adjustSize()
+    canvas.update()
 
     start, end = _diagonal_drag_endpoints(canvas=canvas)
 
-    with qtbot.assertNotEmitted(canvas.scroll_request):
+    with qtbot.assertNotEmitted(canvas.pan_request):
         drag_canvas(
             qtbot=qtbot,
             canvas=canvas,
