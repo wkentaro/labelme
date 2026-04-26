@@ -7,6 +7,8 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme.app import MainWindow
+
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
@@ -14,27 +16,21 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_close_file(
-    main_win: MainWinFactory,
+    annotated_win: MainWindow,
     qtbot: QtBot,
-    data_path: Path,
     pause: bool,
 ) -> None:
-    win = main_win(
-        file_or_dir=str(data_path / "annotated/2011_000003.json"),
-    )
-    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert annotated_win._image_data is not None
+    assert annotated_win._canvas_widgets.canvas.isEnabled()
 
-    assert win._image_data is not None
-    assert win._canvas_widgets.canvas.isEnabled()
-
-    win.close_file()
+    annotated_win.close_file()
     qtbot.wait(50)
 
-    assert not win._canvas_widgets.canvas.isEnabled()
-    assert win._image_data is None
-    assert win.windowTitle() == "Labelme"
+    assert not annotated_win._canvas_widgets.canvas.isEnabled()
+    assert annotated_win._image_data is None
+    assert annotated_win.windowTitle() == "Labelme"
 
-    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
 @pytest.mark.gui

@@ -1,38 +1,29 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 from pytestqt.qtbot import QtBot
 
 import labelme.utils
+from labelme.app import MainWindow
 from labelme.widgets.brightness_contrast_dialog import BrightnessContrastDialog
 
 from ..conftest import close_or_pause
-from .conftest import MainWinFactory
-from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
 def test_brightness_contrast_dialog(
-    main_win: MainWinFactory,
+    annotated_win: MainWindow,
     qtbot: QtBot,
-    data_path: Path,
     pause: bool,
 ) -> None:
-    win = main_win(
-        file_or_dir=str(data_path / "annotated/2011_000003.json"),
-    )
-    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-
-    canvas = win._canvas_widgets.canvas
+    canvas = annotated_win._canvas_widgets.canvas
     original_pixmap = canvas.pixmap.copy()
 
-    assert win._image_data is not None
+    assert annotated_win._image_data is not None
     dialog = BrightnessContrastDialog(
-        img=labelme.utils.img_data_to_pil(win._image_data),
-        callback=win._on_brightness_contrast_changed,
-        parent=win,
+        img=labelme.utils.img_data_to_pil(annotated_win._image_data),
+        callback=annotated_win._on_brightness_contrast_changed,
+        parent=annotated_win,
     )
     qtbot.addWidget(dialog)
 
@@ -43,4 +34,4 @@ def test_brightness_contrast_dialog(
     updated_pixmap = canvas.pixmap
     assert original_pixmap.toImage() != updated_pixmap.toImage()
 
-    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
