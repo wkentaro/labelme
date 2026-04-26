@@ -38,3 +38,5 @@ cbb6d829725f531bdb3cb30bcb13213604a4fe31
 f3ab366983d82c9dfabc576de9fd87f68a8417ea
 # Fix text width issues (pure line-wrap reformat of labelme/app.py)
 f6f03ddee51f984fd15f7ea6524849e316bc4be7
+# chore: fix various miscellaneous type:ignores
+af7f402a4f6d93ac8fe5c71beb60cd9d11beb342
