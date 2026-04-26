@@ -58,6 +58,7 @@ class Canvas(QtWidgets.QWidget):
 
     zoom_request = QtCore.pyqtSignal(int, QPointF)
     scroll_request = QtCore.pyqtSignal(int, int)
+    pan_request = QtCore.pyqtSignal(QPoint)
     new_shape = QtCore.pyqtSignal()
     selection_changed = QtCore.pyqtSignal(list)
     shape_moved = QtCore.pyqtSignal()
@@ -77,9 +78,7 @@ class Canvas(QtWidgets.QWidget):
     prev_move_point: QPointF
     offsets: tuple[QPointF, QPointF]
 
-    _dragging_start_pos: QPointF
-    _is_dragging: bool
-    _is_dragging_enabled: bool
+    _pan_anchor: QPointF | None
 
     _osam_session_model_name: str = "sam2:latest"
     _osam_session: OsamSession | None
@@ -128,9 +127,7 @@ class Canvas(QtWidgets.QWidget):
         self.snapping = True
         self.hovered_shape_is_selected: bool = False
         self._painter = QtGui.QPainter()
-        self._dragging_start_pos = QPointF()
-        self._is_dragging = False
-        self._is_dragging_enabled = False
+        self._pan_anchor = None
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -373,8 +370,8 @@ class Canvas(QtWidgets.QWidget):
         self._dispatch_pointer_move(pos=pos, event=a0)
 
     def _dispatch_pointer_move(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        if self._is_dragging:
-            self._pan_image_by_drag(pos=pos)
+        if self._pan_anchor is not None:
+            self._advance_pan(event=event)
             return
         if self.drawing():
             self._track_drawing_cursor(pos=pos, event=event)
@@ -388,11 +385,15 @@ class Canvas(QtWidgets.QWidget):
             return
         self._refresh_hover_state(pos=pos)
 
-    def _pan_image_by_drag(self, pos: QPointF) -> None:
-        self._apply_cursor(CURSOR_GRAB)
-        delta: QPointF = pos - self._dragging_start_pos
-        self.scroll_request.emit(int(delta.x()), Qt.Horizontal)
-        self.scroll_request.emit(int(delta.y()), Qt.Vertical)
+    def _advance_pan(self, event: QtGui.QMouseEvent) -> None:
+        assert self._pan_anchor is not None
+        # Use screen coordinates so the anchor does not drift when our own
+        # pan emit shifts the canvas widget under the scroll area — a
+        # widget-local frame would oscillate and cause juggling.
+        cursor: QPointF = QPointF(self.mapToGlobal(event.pos()))
+        step: QPointF = cursor - self._pan_anchor
+        self._pan_anchor = cursor
+        self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
 
     def _track_drawing_cursor(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         LINE_SHAPE_TYPE_OVERRIDES: Final[dict[str, str]] = {
@@ -610,8 +611,8 @@ class Canvas(QtWidgets.QWidget):
         if button == Qt.RightButton and self.editing():
             self._press_right(pos=pos, event=event)
             return
-        if button == Qt.MiddleButton and self._is_dragging_enabled:
-            self._press_middle(pos=pos)
+        if button == Qt.MiddleButton and self._is_image_overflowing_viewport():
+            self._begin_pan(event=event)
 
     def _press_left(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         is_shift_pressed = bool(event.modifiers() & Qt.ShiftModifier)
@@ -730,10 +731,9 @@ class Canvas(QtWidgets.QWidget):
             self.update()
         self.prev_point = pos
 
-    def _press_middle(self, pos: QPointF) -> None:
+    def _begin_pan(self, event: QtGui.QMouseEvent) -> None:
         self._apply_cursor(CURSOR_GRAB)
-        self._dragging_start_pos = pos
-        self._is_dragging = True
+        self._pan_anchor = QPointF(self.mapToGlobal(event.pos()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         self._dispatch_pointer_release(event=a0)
@@ -749,7 +749,7 @@ class Canvas(QtWidgets.QWidget):
             self._release_left()
             return
         if button == Qt.MiddleButton:
-            self._end_pan_drag()
+            self._finish_pan()
 
     def _release_right(self, event: QtGui.QMouseEvent) -> None:
         menu = self.menus[len(self.selected_shapes_copy) > 0]
@@ -774,9 +774,33 @@ class Canvas(QtWidgets.QWidget):
             [s for s in self.selected_shapes if s != self.hovered_shape]
         )
 
-    def _end_pan_drag(self) -> None:
-        self._is_dragging = False
+    def _finish_pan(self) -> None:
+        # Reset state and cursor unconditionally so a stray middle-button
+        # release can never leave a grab cursor stuck on screen.
+        self._pan_anchor = None
         self._release_cursor()
+
+    def _is_image_overflowing_viewport(self) -> bool:
+        if self.pixmap.isNull():
+            return False
+        viewport = self._scroll_viewport()
+        if viewport is None:
+            return False
+        scaled_w = self.pixmap.width() * self.scale
+        scaled_h = self.pixmap.height() * self.scale
+        return scaled_w > viewport.width() or scaled_h > viewport.height()
+
+    def _scroll_viewport(self) -> QtWidgets.QWidget | None:
+        # Walk up the parent chain to the enclosing scroll area and return
+        # its viewport. Returning None when no scroll area is found lets
+        # callers degrade gracefully if the canvas is reparented (e.g. into
+        # a splitter or a test harness).
+        node: QtWidgets.QWidget | None = self.parentWidget()
+        while node is not None:
+            if isinstance(node, QtWidgets.QAbstractScrollArea):
+                return node.viewport()
+            node = node.parentWidget()
+        return None
 
     def _commit_pending_shape_move(self) -> None:
         moved = _pick_pending_moved_shape(
@@ -1116,9 +1140,6 @@ class Canvas(QtWidgets.QWidget):
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
         return point / self.scale - self._compute_image_origin_offset()
 
-    def enable_dragging(self, enabled: bool) -> None:
-        self._is_dragging_enabled = enabled
-
     def _compute_image_origin_offset(self) -> QPointF:
         area = super().size()
         scaled_w = self.pixmap.width() * self.scale
@@ -1180,13 +1201,18 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
-
-        min_size = self.scale * self.pixmap.size()
-        if self._is_dragging_enabled:
-            # When drag buffer should be enabled, add a bit of buffer around the image
-            # This lets dragging the image around have a bit of give on the edges
-            min_size = 1.167 * min_size
-        return min_size
+        scaled_w = int(self.pixmap.width() * self.scale)
+        scaled_h = int(self.pixmap.height() * self.scale)
+        viewport = self._scroll_viewport()
+        if viewport is None:
+            return QtCore.QSize(scaled_w, scaled_h)
+        # Overscroll only along axes where the image actually overflows the
+        # viewport. Half a viewport of slack (split evenly around the centred
+        # image) lets each edge be panned a quarter-viewport past the viewport
+        # boundary, derived from the viewport rather than a fixed multiplier.
+        slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
+        slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
+        return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
