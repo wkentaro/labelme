@@ -26,6 +26,16 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Run GUI tests with a visible window (skip QT_QPA_PLATFORM=offscreen).",
     )
+    parser.addoption(
+        "--update-snapshots",
+        action="store_true",
+        default=False,
+        help=(
+            "Regenerate snapshot files under tests/data/snapshots/ instead of "
+            "comparing against them. Run once to seed or update snapshots, then "
+            "commit the resulting files and re-run without this flag to verify."
+        ),
+    )
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -36,6 +46,17 @@ def pytest_configure(config: pytest.Config) -> None:
 @pytest.fixture()
 def pause(request: pytest.FixtureRequest) -> bool:
     return request.config.getoption("--pause", default=False)
+
+
+@pytest.fixture()
+def update_snapshots(request: pytest.FixtureRequest) -> bool:
+    return request.config.getoption("--update-snapshots")
+
+
+@pytest.fixture()
+def snapshot_dir() -> Path:
+    # ``--update-snapshots`` must write back to the real repo tree, not a tmp copy.
+    return Path(__file__).parent / "data" / "snapshots"
 
 
 def assert_labelfile_sanity(filename: str) -> None:
