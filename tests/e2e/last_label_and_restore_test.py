@@ -5,7 +5,6 @@ from typing import Final
 import pytest
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
@@ -13,7 +12,8 @@ from labelme.app import MainWindow
 from labelme.widgets.label_dialog import LabelDialog
 
 from ..conftest import close_or_pause
-from .conftest import click_canvas_fraction
+from .conftest import draw_triangle
+from .conftest import schedule_on_dialog
 from .conftest import select_shape
 from .conftest import submit_label_dialog
 
@@ -24,26 +24,19 @@ def _schedule_capture_then_cancel(
     label_dialog: LabelDialog,
     captured: list[str],
 ) -> None:
-    def _capture_when_visible() -> None:
-        if not label_dialog.isVisible():
-            QTimer.singleShot(50, _capture_when_visible)
-            return
+    def _action() -> None:
         captured.append(label_dialog.edit.text())
         label_dialog.reject()
 
-    QTimer.singleShot(0, _capture_when_visible)
+    schedule_on_dialog(label_dialog=label_dialog, action=_action)
 
 
 def _draw_triangle(qtbot: QtBot, win: MainWindow) -> None:
-    TRIANGLE_VERTICES: Final[tuple[tuple[float, float], ...]] = (
-        (0.2, 0.2),
-        (0.6, 0.2),
-        (0.6, 0.6),
+    draw_triangle(
+        qtbot=qtbot,
+        win=win,
+        vertices=((0.2, 0.2), (0.6, 0.2), (0.6, 0.6)),
     )
-    canvas = win._canvas_widgets.canvas
-    win._switch_canvas_mode(edit=False, create_mode="polygon")
-    for xy in TRIANGLE_VERTICES:
-        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
 
 def _draw_and_commit_polygon(qtbot: QtBot, win: MainWindow, label: str) -> None:

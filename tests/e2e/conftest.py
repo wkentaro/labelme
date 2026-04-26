@@ -171,21 +171,47 @@ def drag_canvas(
     qtbot.wait(50)
 
 
-def submit_label_dialog(
-    qtbot: QtBot,
+def schedule_on_dialog(
     label_dialog: LabelDialog,
-    label: str,
+    action: Callable[[], None],
 ) -> None:
     def _poll() -> None:
         if not label_dialog.isVisible():
             QTimer.singleShot(50, _poll)
             return
+        action()
+
+    QTimer.singleShot(0, _poll)
+
+
+def submit_label_dialog(
+    qtbot: QtBot,
+    label_dialog: LabelDialog,
+    label: str,
+) -> None:
+    def _action() -> None:
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, label)
         qtbot.wait(50)
         qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
 
-    QTimer.singleShot(0, _poll)
+    schedule_on_dialog(label_dialog=label_dialog, action=_action)
+
+
+def draw_triangle(
+    qtbot: QtBot,
+    win: MainWindow,
+    vertices: tuple[tuple[float, float], ...] = (
+        (0.3, 0.3),
+        (0.6, 0.3),
+        (0.6, 0.6),
+    ),
+) -> None:
+    canvas = win._canvas_widgets.canvas
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+    qtbot.wait(50)
+    for xy in vertices:
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
 
 def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
