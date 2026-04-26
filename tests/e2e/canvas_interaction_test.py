@@ -6,7 +6,6 @@ from typing import Final
 import pytest
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -19,6 +18,7 @@ from ..conftest import close_or_pause
 from .conftest import click_canvas_fraction
 from .conftest import drag_canvas
 from .conftest import image_to_widget_pos
+from .conftest import schedule_on_dialog
 from .conftest import select_shape
 from .conftest import submit_label_dialog
 
@@ -43,13 +43,10 @@ def _cancel_label(
     qtbot: QtBot,
     label_dialog: LabelDialog,
 ) -> None:
-    def poll() -> None:
-        if not label_dialog.isVisible():
-            QTimer.singleShot(50, poll)
-            return
-        qtbot.keyClick(label_dialog, Qt.Key_Escape)
-
-    QTimer.singleShot(0, poll)
+    schedule_on_dialog(
+        label_dialog=label_dialog,
+        action=lambda: qtbot.keyClick(label_dialog, Qt.Key_Escape),
+    )
 
 
 def _wait_for_shape(qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
