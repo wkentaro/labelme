@@ -137,11 +137,12 @@ def click_canvas_fraction(
     xy: tuple[float, float],
     modifier: Qt.KeyboardModifier = Qt.NoModifier,
 ) -> None:
-    canvas_size = canvas.size()
-    pos = QPoint(
-        int(canvas_size.width() * xy[0]),
-        int(canvas_size.height() * xy[1]),
-    )
+    # Fractions are interpreted in image-pixel space so callers stay valid
+    # regardless of window/canvas size or letterboxing.
+    pixmap = canvas.pixmap
+    assert pixmap is not None
+    image_pos = QPointF(pixmap.width() * xy[0], pixmap.height() * xy[1])
+    pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.LeftButton, modifier=modifier, pos=pos)
