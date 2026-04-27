@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import html
-
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 
 from .label_list_widget import HTMLDelegate
+from .label_list_widget import format_label_with_color_dot
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
@@ -39,8 +38,5 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
 
         item = QtWidgets.QListWidgetItem()
         item.setData(Qt.UserRole, label)  # for find_label_item
-        item.setText(
-            f"{html.escape(label)} "
-            f"<font color='#{color[0]:02x}{color[1]:02x}{color[2]:02x}'>●</font>"
-        )
+        item.setText(format_label_with_color_dot(text=label, color=color))
         self.addItem(item)

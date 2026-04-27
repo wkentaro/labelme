@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 from typing import cast
@@ -13,6 +14,20 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QStyle
+
+
+def format_label_with_color_dot(text: str, color: tuple[int, int, int]) -> str:
+    r, g, b = color
+    return f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
+
+
+def format_shape_label(shape: Shape) -> str:
+    assert shape.label is not None
+    if shape.group_id is None:
+        text = shape.label
+    else:
+        text = f"{shape.label} ({shape.group_id})"
+    return format_label_with_color_dot(text=text, color=shape.fill_color.getRgb()[:3])
 
 
 class HTMLDelegate(QtWidgets.QStyledItemDelegate):
