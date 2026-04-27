@@ -1221,10 +1221,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._actions.delete_file.setEnabled(False)
 
     def update_action_states(self, value: bool = True) -> None:
-        """Enable/Disable widgets which depend on an opened image."""
-        for z in self._actions.zoom:
-            z.setEnabled(value)
-        for action in self._actions.on_load_active:
+        for action in (*self._actions.zoom, *self._actions.on_load_active):
             action.setEnabled(value)
 
     def queue_event(self, function: Callable[[], None]) -> None:
