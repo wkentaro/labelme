@@ -1138,7 +1138,10 @@ class Canvas(QtWidgets.QWidget):
         return preview
 
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
-        return point / self.scale - self._compute_image_origin_offset()
+        origin = self._compute_image_origin_offset()
+        image_x = point.x() / self.scale - origin.x()
+        image_y = point.y() / self.scale - origin.y()
+        return QPointF(image_x, image_y)
 
     def _compute_image_origin_offset(self) -> QPointF:
         area = super().size()
