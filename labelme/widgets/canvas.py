@@ -1286,7 +1286,8 @@ class Canvas(QtWidgets.QWidget):
                 self.is_moving_shape = False
 
     def set_last_label(self, text: str, flags: dict[str, bool]) -> list[Shape]:
-        assert text
+        if not text:
+            raise ValueError("text must not be empty")
         shapes = []
         for shape in reversed(self.shapes):
             if shape.label is not None:
