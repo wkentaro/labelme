@@ -1221,6 +1221,11 @@ class Canvas(QtWidgets.QWidget):
             # with Ctrl/Command key
             # zoom
             self.zoom_request.emit(delta.y(), a0.posF())
+        elif int(mods) == int(Qt.ShiftModifier) and delta.x() == 0:
+            # Shift+wheel scrolls horizontally. macOS swaps the axis for us,
+            # but Linux/Windows deliver the delta on y and expect the app to
+            # remap it.
+            self.scroll_request.emit(delta.y(), Qt.Horizontal)
         else:
             # scroll
             self.scroll_request.emit(delta.x(), Qt.Horizontal)
