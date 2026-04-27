@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import enum
 import functools
-import html
 import math
 import os
 import platform
@@ -54,6 +53,7 @@ from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
 from labelme.widgets import ZoomWidget
 from labelme.widgets import download_ai_model
+from labelme.widgets import format_shape_label
 
 from . import utils
 
@@ -1480,14 +1480,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self._update_shape_color(shape)
             assert shape.label is not None
-            if shape.group_id is None:
-                r, g, b = shape.fill_color.getRgb()[:3]
-                item.setText(
-                    f"{html.escape(shape.label)} "
-                    f'<font color="#{r:02x}{g:02x}{b:02x}">●</font>'
-                )
-            else:
-                item.setText(f"{shape.label} ({shape.group_id})")
+            item.setText(format_shape_label(shape))
             self.mark_dirty()
             if self._docks.unique_label_list.find_label_item(shape.label) is None:
                 self._docks.unique_label_list.add_label_item(
@@ -1535,11 +1528,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def add_label(self, shape: Shape) -> None:
         assert shape.label is not None
-        if shape.group_id is None:
-            text = shape.label
-        else:
-            text = f"{shape.label} ({shape.group_id})"
-        label_list_item = LabelListWidgetItem(text, shape)
+        label_list_item = LabelListWidgetItem(shape=shape)
         self._docks.label_list.add_item(label_list_item)
         if self._docks.unique_label_list.find_label_item(shape.label) is None:
             self._docks.unique_label_list.add_label_item(
@@ -1554,10 +1543,7 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
 
         self._update_shape_color(shape)
-        r, g, b = shape.fill_color.getRgb()[:3]
-        label_list_item.setText(
-            f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
-        )
+        label_list_item.setText(format_shape_label(shape))
 
     def _update_shape_color(self, shape: Shape) -> None:
         assert shape.label is not None
