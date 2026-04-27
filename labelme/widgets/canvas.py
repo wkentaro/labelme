@@ -1202,10 +1202,7 @@ class Canvas(QtWidgets.QWidget):
 
     # Required by QScrollArea: it queries these to compute the
     # scrollable viewport whenever adjustSize() is called.
-    def sizeHint(self) -> QtCore.QSize:
-        return self.minimumSizeHint()
-
-    def minimumSizeHint(self) -> QtCore.QSize:
+    def _compute_canvas_size(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
         scaled_w = int(self.pixmap.width() * self.scale)
@@ -1220,6 +1217,12 @@ class Canvas(QtWidgets.QWidget):
         slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
         slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
         return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
+
+    def sizeHint(self) -> QtCore.QSize:
+        return self._compute_canvas_size()
+
+    def minimumSizeHint(self) -> QtCore.QSize:
+        return self._compute_canvas_size()
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
