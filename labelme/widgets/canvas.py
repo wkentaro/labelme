@@ -1138,7 +1138,10 @@ class Canvas(QtWidgets.QWidget):
         return preview
 
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
-        return point / self.scale - self._compute_image_origin_offset()
+        origin = self._compute_image_origin_offset()
+        image_x = point.x() / self.scale - origin.x()
+        image_y = point.y() / self.scale - origin.y()
+        return QPointF(image_x, image_y)
 
     def _compute_image_origin_offset(self) -> QPointF:
         area = super().size()
@@ -1149,9 +1152,13 @@ class Canvas(QtWidgets.QWidget):
         return QPointF(slack_w, slack_h) / (2.0 * self.scale)
 
     def is_out_of_pixmap(self, p: QPointF) -> bool:
-        w = self.pixmap.width()
-        h = self.pixmap.height()
-        return not (0 <= p.x() <= w and 0 <= p.y() <= h)
+        x = p.x()
+        y = p.y()
+        if x < 0 or y < 0:
+            return True
+        if x > self.pixmap.width() or y > self.pixmap.height():
+            return True
+        return False
 
     def finalise(self) -> None:
         assert self.current is not None
@@ -1195,10 +1202,7 @@ class Canvas(QtWidgets.QWidget):
 
     # Required by QScrollArea: it queries these to compute the
     # scrollable viewport whenever adjustSize() is called.
-    def sizeHint(self) -> QtCore.QSize:
-        return self.minimumSizeHint()
-
-    def minimumSizeHint(self) -> QtCore.QSize:
+    def _compute_canvas_size(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
         scaled_w = int(self.pixmap.width() * self.scale)
@@ -1213,6 +1217,12 @@ class Canvas(QtWidgets.QWidget):
         slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
         slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
         return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
+
+    def sizeHint(self) -> QtCore.QSize:
+        return self._compute_canvas_size()
+
+    def minimumSizeHint(self) -> QtCore.QSize:
+        return self._compute_canvas_size()
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
