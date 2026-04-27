@@ -86,7 +86,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.label_list.setFixedHeight(150)
         self.edit.set_list_widget(self.label_list)
         layout.addWidget(self.label_list)
-        # label_flags
         if flags is None:
             flags = {}
         self._flags = flags
@@ -171,12 +170,11 @@ class LabelDialog(QtWidgets.QDialog):
             item.show()
 
     def _current_flags(self) -> dict[str, bool]:
-        flags = {}
-        for i in range(self._flags_layout.count()):
-            item = self._flags_layout.itemAt(i).widget()
-            item = cast(QtWidgets.QCheckBox, item)
-            flags[item.text()] = item.isChecked()
-        return flags
+        return {
+            cb.text(): cb.isChecked()
+            for i in range(self._flags_layout.count())
+            if (cb := cast(QtWidgets.QCheckBox, self._flags_layout.itemAt(i).widget()))
+        }
 
     def _current_group_id(self) -> int | None:
         group_id = self.edit_group_id.text()
