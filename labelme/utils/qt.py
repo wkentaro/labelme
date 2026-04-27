@@ -110,5 +110,7 @@ def distance_to_line(
 
 
 def format_shortcut(text: str) -> str:
-    mod, key = text.split("+", 1)
-    return f"<b>{mod}</b>+<b>{key}</b>"
+    if "+" not in text:
+        raise ValueError(f"shortcut missing '+': {text!r}")
+    modifier, _, key = text.partition("+")
+    return f"<b>{modifier}</b>+<b>{key}</b>"
