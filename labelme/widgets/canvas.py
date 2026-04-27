@@ -1152,9 +1152,13 @@ class Canvas(QtWidgets.QWidget):
         return QPointF(slack_w, slack_h) / (2.0 * self.scale)
 
     def is_out_of_pixmap(self, p: QPointF) -> bool:
-        w = self.pixmap.width()
-        h = self.pixmap.height()
-        return not (0 <= p.x() <= w and 0 <= p.y() <= h)
+        x = p.x()
+        y = p.y()
+        if x < 0 or y < 0:
+            return True
+        if x > self.pixmap.width() or y > self.pixmap.height():
+            return True
+        return False
 
     def finalise(self) -> None:
         assert self.current is not None
