@@ -1692,9 +1692,38 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_label_item_changed(self, item: LabelListWidgetItem) -> None:
         shape = item.shape()
         assert shape is not None
-        self._canvas_widgets.canvas.set_shape_visible(
-            shape, item.checkState() == Qt.Checked
-        )
+        new_visible = item.checkState() == Qt.Checked
+
+        label_list = self._docks.label_list
+        prior = label_list.selection_at_press()
+        current = label_list.selected_items()
+        if item in prior and len(prior) > 1:
+            targets = prior
+        elif item in current and len(current) > 1:
+            targets = current
+        else:
+            targets = [item]
+
+        canvas = self._canvas_widgets.canvas
+        any_changed = False
+        target_state = Qt.Checked if new_visible else Qt.Unchecked
+        label_list.item_changed.disconnect(self._on_label_item_changed)
+        try:
+            for target in targets:
+                target_shape = target.shape()
+                assert target_shape is not None
+                if target_shape.visible == new_visible:
+                    continue
+                if target.checkState() != target_state:
+                    target.setCheckState(target_state)
+                canvas.set_shape_visible(target_shape, new_visible)
+                any_changed = True
+        finally:
+            label_list.item_changed.connect(self._on_label_item_changed)
+
+        if any_changed:
+            canvas.backup_shapes()
+        self._actions.undo.setEnabled(canvas.can_restore_shape)
 
     def _on_label_order_changed(self) -> None:
         self.mark_dirty()

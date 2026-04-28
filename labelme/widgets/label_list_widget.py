@@ -178,6 +178,51 @@ class LabelListWidget(QtWidgets.QListView):
         self.doubleClicked.connect(self._on_item_double_clicked)
         self.selectionModel().selectionChanged.connect(self._on_item_selection_changed)
 
+        self._selection_at_press: list[LabelListWidgetItem] = []
+        self._press_item: LabelListWidgetItem | None = None
+        self._press_check_state: Qt.CheckState | None = None
+
+    def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
+        self._selection_at_press = self.selected_items()
+        index = self.indexAt(e.pos())
+        item_at_pos = (
+            cast(LabelListWidgetItem, self._model.itemFromIndex(index))
+            if index.isValid()
+            else None
+        )
+        self._press_item = item_at_pos
+        self._press_check_state = (
+            item_at_pos.checkState() if item_at_pos is not None else None
+        )
+        super().mousePressEvent(e)
+
+    def mouseReleaseEvent(self, e: QtGui.QMouseEvent) -> None:
+        super().mouseReleaseEvent(e)
+        try:
+            press_item = self._press_item
+            prior_check = self._press_check_state
+            if (
+                press_item is not None
+                and prior_check is not None
+                and press_item.checkState() != prior_check
+                and press_item in self._selection_at_press
+                and len(self._selection_at_press) > 1
+            ):
+                sel_model = self.selectionModel()
+                sel_model.clearSelection()
+                for it in self._selection_at_press:
+                    sel_model.select(
+                        self._model.indexFromItem(it),
+                        QtCore.QItemSelectionModel.Select,
+                    )
+        finally:
+            self._press_item = None
+            self._press_check_state = None
+            self._selection_at_press = []
+
+    def selection_at_press(self) -> list[LabelListWidgetItem]:
+        return list(self._selection_at_press)
+
     def __len__(self) -> int:
         return self._model.rowCount()
 
