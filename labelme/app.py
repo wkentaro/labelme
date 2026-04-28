@@ -173,6 +173,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #EDITED ZOOM
         self._last_global_zoom = None
         self._last_global_zoom_mode = None
+        self._last_scroll_h_ratio = 0.0
+        self._last_scroll_v_ratio = 0.0
         #END
 
         self.canvas = Canvas(
@@ -466,7 +468,7 @@ class MainWindow(QtWidgets.QMainWindow):
         redoLastPoint = action(
             self.tr("Redo last point"),
             self.canvas.redoLastPoint,  # make sure this method exists in Canvas
-            shortcuts.get("redo_last_point", "Ctrl+Shift+Y"),
+            shortcuts.get("redo_last_point", "Ctrl+Y"),
             "redo_point",
             self.tr("Redo last undone point"),
             enabled=False,
@@ -577,7 +579,7 @@ class MainWindow(QtWidgets.QMainWindow):
         lassoLabel = QtWidgets.QLabel(self.tr("Lasso Step"))
         lassoLabel.setAlignment(Qt.AlignCenter)
         self.lassoSpin = QtWidgets.QDoubleSpinBox()
-        self.lassoSpin.setRange(0.1, 5.0)
+        self.lassoSpin.setRange(0.1, 50.0)
         self.lassoSpin.setSingleStep(0.1)
         self.lassoSpin.setValue(2.0)
         self.lassoSpin.setToolTip(self.tr("Distance between lasso points in freehand mode"))
@@ -647,6 +649,14 @@ class MainWindow(QtWidgets.QMainWindow):
             "color",
             self.tr("Adjust brightness and contrast"),
             enabled=False,
+        )
+        keepPrevBrightness = action(
+            self.tr("Keep\nBrightness"),
+            self.enableKeepPrevBrightness,
+            tip=self.tr("Carry brightness/contrast settings to each new image"),
+            checkable=True,
+            checked=self._config.get("keep_prev_brightness", False),
+            enabled=True,
         )
         # Group zoom controls into a list for easier toggling.
         zoomActions = (
@@ -730,6 +740,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             undoLastPoint=undoLastPoint,
             undo=undo,
+            redoLastPoint=redoLastPoint,
             redoShape=redoShape,
             removePoint=removePoint,
             createMode=createMode,
@@ -749,6 +760,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWindow=fitWindow,
             fitWidth=fitWidth,
             brightnessContrast=brightnessContrast,
+            keepPrevBrightness=keepPrevBrightness,
             zoomActions=zoomActions,
             openNextImg=openNextImg,
             openPrevImg=openPrevImg,
@@ -876,6 +888,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
                 #end
                 brightnessContrast,
+                keepPrevBrightness,
             ),
         )
 
@@ -965,6 +978,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #END
             None,
             keepPrevScale,
+            keepPrevBrightness,
             toggle_keep_prev_mode,
             showOriginal,
             fitWindow,
@@ -1221,33 +1235,38 @@ class MainWindow(QtWidgets.QMainWindow):
     def undoShapeEdit(self):
         if not self.canvas.isShapeRestorable():
             return
-        # self.canvas._backupShapes(self.canvas.shapeRedoStack)
         self.canvas.restoreShape()
+        # Rebuild the label list directly — do NOT call loadShapes() here because
+        # that would trigger canvas.loadShapes() → storeShapes(), which pushes the
+        # restored state back onto shapesBackups and creates an infinite undo loop.
         self.labelList.clear()
-        if self.canvas.shapes is None:
-            self.canvas.shapes = []
-        self.loadShapes(self.canvas.shapes, replace=True)
-
+        self._noSelectionSlot = True
+        for shape in self.canvas.shapes:
+            self.addLabel(shape)
+        self.labelList.clearSelection()
+        self._noSelectionSlot = False
+        self.canvas.update()
         self.actions.undo.setEnabled(self.canvas.isShapeRestorable())
         self.actions.redoShape.setEnabled(bool(self.canvas.shapeRedoStack))
 
     def redoShapeEdit(self):
         if not self.canvas.shapeRedoStack:
-            return  # nothing to redo
-
-        # self.canvas._backupShapes(self.canvas.shapesBackups)
-
+            return
         next_state = self.canvas.shapeRedoStack.pop()
+        # Push the redone state onto the undo stack so it can be undone again.
+        self.canvas.shapesBackups.append([s.copy() for s in next_state])
         self.canvas.shapes = [s.copy() for s in next_state]
-
+        self.canvas.selectedShapes = []
+        # Rebuild label list directly — same reason as undoShapeEdit.
         self.labelList.clear()
-        if self.canvas.shapes is None:
-            self.canvas.shapes = []
-            
-        self.loadShapes(self.canvas.shapes, replace=True)
-        self.actions.undo.setEnabled(bool(self.canvas.shapesBackups))
-        self.actions.redoShape.setEnabled(bool(self.canvas.shapeRedoStack))
+        self._noSelectionSlot = True
+        for shape in self.canvas.shapes:
+            self.addLabel(shape)
+        self.labelList.clearSelection()
+        self._noSelectionSlot = False
         self.canvas.update()
+        self.actions.undo.setEnabled(self.canvas.isShapeRestorable())
+        self.actions.redoShape.setEnabled(bool(self.canvas.shapeRedoStack))
     #END
 
     # def undoShapeEdit(self):
@@ -1390,7 +1409,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         self.actions.editMode.setEnabled(not drawing)  # type: ignore[attr-defined]
         self.actions.undoLastPoint.setEnabled(drawing)  # type: ignore[attr-defined]
+        self.actions.redoLastPoint.setEnabled(drawing)  # type: ignore[attr-defined]
         self.actions.undo.setEnabled(not drawing)  # type: ignore[attr-defined]
+        self.actions.redoShape.setEnabled(not drawing and bool(self.canvas.shapeRedoStack))  # type: ignore[attr-defined]
         self.actions.delete.setEnabled(not drawing)  # type: ignore[attr-defined]
 
     def toggleDrawMode(self, edit=True, createMode="polygon"):
@@ -1823,6 +1844,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.addLabel(shape)
             self.actions.editMode.setEnabled(True)  # type: ignore[attr-defined]
             self.actions.undoLastPoint.setEnabled(False)  # type: ignore[attr-defined]
+            self.actions.redoLastPoint.setEnabled(False)  # type: ignore[attr-defined]
             self.actions.undo.setEnabled(True)  # type: ignore[attr-defined]
             self.canvas.shapeRedoStack.clear()
             self.canvas.pointRedoStack.clear()
@@ -1840,6 +1862,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def setScroll(self, orientation, value):
         self.scrollBars[orientation].setValue(int(value))  # type: ignore[union-attr]
         self.scroll_values[orientation][self.filename] = value
+        #EDITED ZOOM
+        bar = self.scrollBars[orientation]  # type: ignore[union-attr]
+        if bar.maximum() > 0:
+            if orientation == Qt.Horizontal:  # type: ignore[attr-defined]
+                self._last_scroll_h_ratio = bar.value() / bar.maximum()
+            else:
+                self._last_scroll_v_ratio = bar.value() / bar.maximum()
+        #END
 
     def setZoom(self, value):
         self.actions.fitWidth.setChecked(False)  # type: ignore[attr-defined]
@@ -1916,6 +1946,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config["keep_prev_scale"] = enabled
         self.actions.keepPrevScale.setChecked(enabled)  # type: ignore[attr-defined]
 
+    def enableKeepPrevBrightness(self, enabled):
+        self._config["keep_prev_brightness"] = enabled
+        self._config["keep_prev_contrast"] = enabled
+        self.actions.keepPrevBrightness.setChecked(enabled)  # type: ignore[attr-defined]
+
     def onNewBrightnessContrast(self, qimage):
         #EDITED BRIGHTNESS
         if qimage is None or qimage.isNull():
@@ -1932,24 +1967,17 @@ class MainWindow(QtWidgets.QMainWindow):
         #EDITED BRIGHTNESS
         if self.imageData is None:
             return
-        #END
-        dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self.imageData),
-            self.onNewBrightnessContrast,
-            parent=self,
-        )
-        brightness, contrast = self.brightnessContrast_values.get(
-            self.filename, (None, None)
-        )
-        if brightness is not None:
-            dialog.slider_brightness.setValue(brightness)
-        if contrast is not None:
-            dialog.slider_contrast.setValue(contrast)
-        dialog.exec_()
-
-        brightness = dialog.slider_brightness.value()
-        contrast = dialog.slider_contrast.value()
+        if not hasattr(self, "brightnessContrastDialog") or self.brightnessContrastDialog is None:
+            self.brightnessContrastDialog = BrightnessContrastDialog(
+                utils.img_data_to_pil(self.imageData),
+                self.onNewBrightnessContrast,
+                parent=self,
+            )
+        self.brightnessContrastDialog.exec_()
+        brightness = self.brightnessContrastDialog.slider_brightness.value()
+        contrast = self.brightnessContrastDialog.slider_contrast.value()
         self.brightnessContrast_values[self.filename] = (brightness, contrast)
+        #END
 
     def togglePolygons(self, value):
         flag = value
@@ -1967,6 +1995,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.fileListWidget.setCurrentRow(self.imageList.index(filename))
             self.fileListWidget.repaint()
             return
+
+        #EDITED ZOOM
+        # Snapshot scroll ratios before resetState() zeroes the bars.
+        if self.filename is not None:
+            h_bar = self.scrollBars[Qt.Horizontal]  # type: ignore[attr-defined]
+            v_bar = self.scrollBars[Qt.Vertical]  # type: ignore[attr-defined]
+            if h_bar.maximum() > 0:
+                self._last_scroll_h_ratio = h_bar.value() / h_bar.maximum()
+            if v_bar.maximum() > 0:
+                self._last_scroll_v_ratio = v_bar.value() / v_bar.maximum()
+        #END
 
         self.resetState()
         self.canvas.setEnabled(False)
@@ -2029,7 +2068,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image = image
         self.filename = filename
         if self._config["keep_prev"]:
-            prev_shapes = self.canvas.shapes
+            # Deep-copy so mutations on the new image don't bleed back into
+            # the previous image's shape objects.
+            prev_shapes = [s.copy() for s in self.canvas.shapes]
         self.canvas.loadPixmap(QtGui.QPixmap.fromImage(image))
         flags = {k: False for k in self._config["flags"] or []}
         if self.labelFile:
@@ -2038,6 +2079,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags.update(self.labelFile.flags)
         self.loadFlags(flags)
         if self._config["keep_prev"] and self.noShapes():
+            # Seed an empty baseline so Ctrl+Z can undo the inherited shapes.
+            self.canvas.shapesBackups.append([])
             self.loadShapes(prev_shapes, replace=False)
             self.setDirty()
         else:
@@ -2049,7 +2092,6 @@ class MainWindow(QtWidgets.QMainWindow):
         is_initial_load = not self.zoom_values
 
         if self._config.get("keep_prev_scale") and self._last_global_zoom is not None:
-            # 🟢 Apply the last global zoom value
             self.zoomMode = self._last_global_zoom_mode
             self.setZoom(self._last_global_zoom)
         elif self.filename in self.zoom_values:
@@ -2057,85 +2099,60 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setZoom(zoom_value)
         elif is_initial_load or not self._config.get("keep_prev_scale"):
             self.adjustScale(initial=True)
-        #END
 
-        # set zoom values
-        # is_initial_load = not self.zoom_values
-        # if self.filename in self.zoom_values:
-        #     self.zoomMode = self.zoom_values[self.filename][0]
-        #     self.setZoom(self.zoom_values[self.filename][1])
-        # elif is_initial_load or not self._config["keep_prev_scale"]:
-        #     self.adjustScale(initial=True)
+        # Force the canvas to its correct size now so scroll bar maxima are
+        # accurate before we restore positions (setValue is a no-op when the
+        # zoom didn't change, so paintCanvas may not have been called yet).
+        self.paintCanvas()
 
         # set scroll values
         for orientation in self.scroll_values:
-            if self.filename in self.scroll_values[orientation]:
+            if self._config.get("keep_prev_scale") and not is_initial_load:
+                # keep_prev_scale ON: always carry the previous viewport ratio to
+                # every image — new or returning — so the view follows the user.
+                bar = self.scrollBars[orientation]  # type: ignore[attr-defined]
+                ratio = (
+                    self._last_scroll_h_ratio
+                    if orientation == Qt.Horizontal  # type: ignore[attr-defined]
+                    else self._last_scroll_v_ratio
+                )
+                self.setScroll(orientation, int(ratio * bar.maximum()))
+            elif not self._config.get("keep_prev_scale") and self.filename in self.scroll_values[orientation]:
+                # keep_prev_scale OFF: restore each image's own saved position.
                 self.setScroll(
                     orientation, self.scroll_values[orientation][self.filename]
                 )
+        #END
 
         #EDITED BRIGHTNESS
-        # set brightness contrast values
+        _base = BrightnessContrastDialog._base_value
         if not hasattr(self, "brightnessContrastDialog") or self.brightnessContrastDialog is None:
             self.brightnessContrastDialog = BrightnessContrastDialog(
                 utils.img_data_to_pil(self.imageData),
                 self.onNewBrightnessContrast,
                 parent=self,
             )
+            prev_b, prev_c = _base, _base
         else:
-            # Update the dialog with the new image
-            self.brightnessContrastDialog.setImage(utils.img_data_to_pil(self.imageData))
+            prev_b = self.brightnessContrastDialog.slider_brightness.value()
+            prev_c = self.brightnessContrastDialog.slider_contrast.value()
+            self.brightnessContrastDialog.img = utils.img_data_to_pil(self.imageData)
 
-        # Restore brightness/contrast values if they exist
-        brightness, contrast = self.brightnessContrast_values.get(
-            self.filename, (None, None)
-        )
-        if self._config.get("keep_prev_brightness") and self.recentFiles:
-            brightness, _ = self.brightnessContrast_values.get(
-                self.recentFiles[0], (brightness, contrast)
-            )
-        if self._config.get("keep_prev_contrast") and self.recentFiles:
-            _, contrast = self.brightnessContrast_values.get(
-                self.recentFiles[0], (brightness, contrast)
-            )
+        brightness, contrast = self.brightnessContrast_values.get(self.filename, (None, None))
 
         if brightness is not None:
-            self.brightnessContrastDialog.slider_brightness.setValue(brightness)
-        if contrast is not None:
-            self.brightnessContrastDialog.slider_contrast.setValue(contrast)
+            b_val = brightness
+            c_val = contrast if contrast is not None else _base
+        elif self._config.get("keep_prev_brightness"):
+            b_val, c_val = prev_b, prev_c
+        else:
+            b_val, c_val = _base, _base
 
-        self.brightnessContrast_values[self.filename] = (brightness, contrast)
-
-        # 👇 Apply the filter right away after sliders are set
+        self.brightnessContrastDialog.slider_brightness.setValue(b_val)
+        self.brightnessContrastDialog.slider_contrast.setValue(c_val)
         self.brightnessContrastDialog.onNewValue()
-
-
         #END
 
-        # set brightness contrast values
-        # dialog = BrightnessContrastDialog(
-        #     utils.img_data_to_pil(self.imageData),
-        #     self.onNewBrightnessContrast,
-        #     parent=self,
-        # )
-        # brightness, contrast = self.brightnessContrast_values.get(
-        #     self.filename, (None, None)
-        # )
-        # if self._config["keep_prev_brightness"] and self.recentFiles:
-        #     brightness, _ = self.brightnessContrast_values.get(
-        #         self.recentFiles[0], (None, None)
-        #     )
-        # if self._config["keep_prev_contrast"] and self.recentFiles:
-        #     _, contrast = self.brightnessContrast_values.get(
-        #         self.recentFiles[0], (None, None)
-        #     )
-        # if brightness is not None:
-        #     dialog.slider_brightness.setValue(brightness)
-        # if contrast is not None:
-        #     dialog.slider_contrast.setValue(contrast)
-        # self.brightnessContrast_values[self.filename] = (brightness, contrast)
-        # if brightness is not None or contrast is not None:
-        #     dialog.onNewValue(None)
         self.paintCanvas()
         self.addRecentFile(self.filename)
         self.toggleActions(True)

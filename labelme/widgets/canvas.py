@@ -468,16 +468,12 @@ class Canvas(QtWidgets.QWidget):
             and ev.modifiers() & QtCore.Qt.ControlModifier
             and self.current is not None
         ):
-            if self.current.shape_type == "polygon":
-                self.current.close()
-            self.shapes.append(self.current)
             self.finalise()
 
             #EDITED REDO
             self.pointRedoStack.clear()
             #END
 
-            self.current = None
             self.update()
             return
 
@@ -1152,7 +1148,11 @@ class Canvas(QtWidgets.QWidget):
                 self.snapping = True
         elif self.editing():
             if self.movingShape and self.selectedShapes:
-                index = self.shapes.index(self.selectedShapes[0])
+                shape = self.selectedShapes[0]
+                if shape not in self.shapes:
+                    self.movingShape = False
+                    return
+                index = self.shapes.index(shape)
                 if self.shapesBackups[-1][index].points != self.shapes[index].points:
                     self.storeShapes()
                     self.shapeMoved.emit()
@@ -1332,13 +1332,12 @@ class Canvas(QtWidgets.QWidget):
         if not self.isShapeRestorable():
             return
 
-        # Move the last state to redo stack
+        # Move the current state to the redo stack
         latest = self.shapesBackups.pop()
         self.shapeRedoStack.append(latest)
 
-        # Restore the previous state
-        shapesBackup = self.shapesBackups[-1]  # don't pop if you want redo to work multiple times
-        self.shapes = shapesBackup
+        # Restore the previous state using COPIES to avoid mutating the backup
+        self.shapes = [s.copy() for s in self.shapesBackups[-1]]
         self.selectedShapes = []
         for shape in self.shapes:
             shape.selected = False
