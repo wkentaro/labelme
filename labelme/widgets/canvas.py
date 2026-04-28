@@ -195,6 +195,7 @@ class Canvas(QtWidgets.QWidget):
     def _shapes_from_bbox_ai(self, bbox_points: list[QPointF]) -> list[Shape]:
         if len(bbox_points) != 2:
             raise ValueError(f"Expected 2 points for bbox AI, got {len(bbox_points)}")
+        bbox_points = _normalize_bbox_points(bbox_points)
         image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
         response: osam.types.GenerateResponse = self._get_osam_session().run(
             image=imgviz.asrgb(image),  # type: ignore[arg-type]
@@ -1138,10 +1139,7 @@ class Canvas(QtWidgets.QWidget):
         return preview
 
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
-        origin = self._compute_image_origin_offset()
-        image_x = point.x() / self.scale - origin.x()
-        image_y = point.y() / self.scale - origin.y()
-        return QPointF(image_x, image_y)
+        return point / self.scale - self._compute_image_origin_offset()
 
     def _compute_image_origin_offset(self) -> QPointF:
         area = super().size()
@@ -1152,13 +1150,9 @@ class Canvas(QtWidgets.QWidget):
         return QPointF(slack_w, slack_h) / (2.0 * self.scale)
 
     def is_out_of_pixmap(self, p: QPointF) -> bool:
-        x = p.x()
-        y = p.y()
-        if x < 0 or y < 0:
-            return True
-        if x > self.pixmap.width() or y > self.pixmap.height():
-            return True
-        return False
+        w = self.pixmap.width()
+        h = self.pixmap.height()
+        return not (0 <= p.x() <= w and 0 <= p.y() <= h)
 
     def finalise(self) -> None:
         assert self.current is not None
@@ -1202,7 +1196,10 @@ class Canvas(QtWidgets.QWidget):
 
     # Required by QScrollArea: it queries these to compute the
     # scrollable viewport whenever adjustSize() is called.
-    def _compute_canvas_size(self) -> QtCore.QSize:
+    def sizeHint(self) -> QtCore.QSize:
+        return self.minimumSizeHint()
+
+    def minimumSizeHint(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
         scaled_w = int(self.pixmap.width() * self.scale)
@@ -1217,12 +1214,6 @@ class Canvas(QtWidgets.QWidget):
         slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
         slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
         return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
-
-    def sizeHint(self) -> QtCore.QSize:
-        return self._compute_canvas_size()
-
-    def minimumSizeHint(self) -> QtCore.QSize:
-        return self._compute_canvas_size()
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
@@ -1296,8 +1287,7 @@ class Canvas(QtWidgets.QWidget):
                 self.is_moving_shape = False
 
     def set_last_label(self, text: str, flags: dict[str, bool]) -> list[Shape]:
-        if not text:
-            raise ValueError("text must not be empty")
+        assert text
         shapes = []
         for shape in reversed(self.shapes):
             if shape.label is not None:
@@ -1468,6 +1458,18 @@ def _shapes_from_ai_response(
         if shape is not None:
             shapes.append(shape)
     return shapes
+
+
+def _normalize_bbox_points(bbox_points: list[QPointF]) -> list[QPointF]:
+    if len(bbox_points) != 2:
+        raise ValueError(f"Expected 2 points for bbox, got {len(bbox_points)}")
+
+    p1, p2 = bbox_points
+    xmin = min(p1.x(), p2.x())
+    ymin = min(p1.y(), p2.y())
+    xmax = max(p1.x(), p2.x())
+    ymax = max(p1.y(), p2.y())
+    return [QPointF(xmin, ymin), QPointF(xmax, ymax)]
 
 
 def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPointF:
