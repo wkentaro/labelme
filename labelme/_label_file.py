@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import base64
+import contextlib
 import io
 import json
 import time
 import warnings
+from collections.abc import Iterator
 from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
@@ -127,6 +129,24 @@ class LabelFileError(Exception):
     pass
 
 
+@contextlib.contextmanager
+def _translate_label_file_errors(filename: str, action: str) -> Iterator[None]:
+    try:
+        yield
+    except OSError as exc:
+        raise LabelFileError(
+            f"Failed to {action} label file {filename!r}: {exc}"
+        ) from exc
+    except json.JSONDecodeError as exc:
+        raise LabelFileError(
+            f"Malformed JSON in label file {filename!r}: {exc}"
+        ) from exc
+    except (KeyError, TypeError, ValueError) as exc:
+        raise LabelFileError(
+            f"Invalid label file content in {filename!r}: {exc}"
+        ) from exc
+
+
 class LabelFile:
     shapes: list[ShapeDict]
     suffix = ".json"
@@ -233,7 +253,7 @@ class LabelFile:
             "imageHeight",
             "imageWidth",
         ]
-        try:
+        with _translate_label_file_errors(filename, action="load"):
             with open(filename, encoding="utf-8") as f:
                 data = json.load(f)
 
@@ -256,15 +276,8 @@ class LabelFile:
             shapes: list[ShapeDict] = [
                 _load_shape_json_obj(shape_json_obj=s) for s in data["shapes"]
             ]
-        except Exception as e:
-            raise LabelFileError(e)
+            other_data = {k: v for k, v in data.items() if k not in keys}
 
-        other_data = {}
-        for key, value in data.items():
-            if key not in keys:
-                other_data[key] = value
-
-        # Only replace data after everything is loaded.
         self.flags = flags
         self.shapes = shapes
         self.image_path = image_path
@@ -326,12 +339,10 @@ class LabelFile:
         for key, value in other_data.items():
             assert key not in data
             data[key] = value
-        try:
+        with _translate_label_file_errors(filename, action="save"):
             with open(filename, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             self.filename = filename
-        except Exception as e:
-            raise LabelFileError(e)
 
     @staticmethod
     def is_label_file(filename: str) -> bool:
@@ -355,7 +366,10 @@ def _imread(filename: str) -> PIL.Image.Image:
 
 
 def _imread_tiff(filename: str) -> PIL.Image.Image:
-    img_arr: NDArray = tifffile.imread(filename)
+    try:
+        img_arr: NDArray = tifffile.imread(filename)
+    except tifffile.TiffFileError as exc:
+        raise OSError(f"Failed to read TIFF image {filename!r}: {exc}") from exc
 
     if img_arr.ndim == 2:
         img_arr_normalized = _normalize_to_uint8(img_arr)
