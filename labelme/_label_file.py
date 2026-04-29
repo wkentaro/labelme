@@ -2,14 +2,17 @@ from __future__ import annotations
 
 import base64
 import contextlib
+import dataclasses
 import io
 import json
 import time
 import warnings
+from collections.abc import Callable
 from collections.abc import Iterator
 from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
+from typing import Final
 from typing import TypedDict
 
 import numpy as np
@@ -147,6 +150,61 @@ def _translate_label_file_errors(filename: str, action: str) -> Iterator[None]:
         ) from exc
 
 
+_RESERVED_LABEL_JSON_KEYS: Final[frozenset[str]] = frozenset(
+    {
+        "version",
+        "imageData",
+        "imagePath",
+        "shapes",
+        "flags",
+        "imageHeight",
+        "imageWidth",
+    }
+)
+
+
+@dataclasses.dataclass(frozen=True)
+class _ParsedLabel:
+    flags: dict[str, bool]
+    shapes: list[ShapeDict]
+    image_path: str
+    image_data: bytes
+    other_data: dict[str, Any]
+
+
+def _parse_label_json(
+    filename: str,
+    image_loader: Callable[[str], bytes],
+    check_dimensions: Callable[[bytes, int | None, int | None], object],
+) -> _ParsedLabel:
+    raw_path: Path = Path(filename)
+    payload: dict[str, Any] = json.loads(raw_path.read_text(encoding="utf-8"))
+
+    posix_image_path: str = PureWindowsPath(payload["imagePath"]).as_posix()
+    encoded_image: str | None = payload["imageData"]
+    image_bytes: bytes = (
+        base64.b64decode(encoded_image)
+        if encoded_image is not None
+        else image_loader(str(raw_path.parent / posix_image_path))
+    )
+
+    check_dimensions(
+        image_bytes,
+        payload.get("imageHeight"),
+        payload.get("imageWidth"),
+    )
+
+    return _ParsedLabel(
+        flags=payload.get("flags") or {},
+        shapes=[_load_shape_json_obj(shape_json_obj=s) for s in payload["shapes"]],
+        image_path=posix_image_path,
+        image_data=image_bytes,
+        other_data={
+            k: v for k, v in payload.items() if k not in _RESERVED_LABEL_JSON_KEYS
+        },
+    )
+
+
 class LabelFile:
     shapes: list[ShapeDict]
     suffix = ".json"
@@ -244,46 +302,18 @@ class LabelFile:
         return image_data
 
     def load(self, filename: str) -> None:
-        keys = [
-            "version",
-            "imageData",
-            "imagePath",
-            "shapes",  # polygonal annotations
-            "flags",  # image level flags
-            "imageHeight",
-            "imageWidth",
-        ]
         with _translate_label_file_errors(filename, action="load"):
-            with open(filename, encoding="utf-8") as f:
-                data = json.load(f)
-
-            # Normalize Windows-style backslash paths to POSIX forward slashes
-            image_path = PureWindowsPath(data["imagePath"]).as_posix()
-
-            if data["imageData"] is not None:
-                image_data = base64.b64decode(data["imageData"])
-            else:
-                # relative path from label file to relative path from cwd
-                image_data = self.load_image_file(
-                    str(Path(filename).parent / image_path)
-                )
-            flags = data.get("flags") or {}
-            self._check_image_height_and_width(
-                image_data,
-                data.get("imageHeight"),
-                data.get("imageWidth"),
+            parsed = _parse_label_json(
+                filename,
+                image_loader=self.load_image_file,
+                check_dimensions=self._check_image_height_and_width,
             )
-            shapes: list[ShapeDict] = [
-                _load_shape_json_obj(shape_json_obj=s) for s in data["shapes"]
-            ]
-            other_data = {k: v for k, v in data.items() if k not in keys}
+        self._adopt_parsed(parsed, filename=filename)
 
-        self.flags = flags
-        self.shapes = shapes
-        self.image_path = image_path
-        self.image_data = image_data
+    def _adopt_parsed(self, parsed: _ParsedLabel, filename: str) -> None:
+        for field in dataclasses.fields(parsed):
+            setattr(self, field.name, getattr(parsed, field.name))
         self.filename = filename
-        self.other_data = other_data
 
     @staticmethod
     def _check_image_height_and_width(
