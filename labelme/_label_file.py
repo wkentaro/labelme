@@ -207,16 +207,22 @@ def _parse_label_json(
 
 class LabelFile:
     shapes: list[ShapeDict]
+    flags: dict[str, bool]
+    image_path: str | None
+    image_data: bytes | None
+    other_data: dict[str, Any]
+    filename: str | None
     suffix = ".json"
 
     def __init__(self, filename: str | None = None) -> None:
-        self.shapes: list[ShapeDict] = []
-        self.image_path: str | None = None
-        self.image_data: bytes | None = None
-        self.other_data: dict[str, Any] = {}
+        self.shapes = []
+        self.flags = {}
+        self.image_path = None
+        self.image_data = None
+        self.other_data = {}
         if filename is not None:
             self.load(filename)
-        self.filename: str | None = filename
+        self.filename = filename
 
     @property
     def imagePath(self) -> str | None:
@@ -335,6 +341,12 @@ class LabelFile:
             image_width = actual_w
         return image_height, image_width
 
+    @classmethod
+    def from_filename(cls, filename: str) -> LabelFile:
+        instance = cls()
+        instance.filename = filename
+        return instance
+
     def save(
         self,
         filename: str,
@@ -346,37 +358,61 @@ class LabelFile:
         other_data: dict[str, Any] | None = None,
         flags: dict[str, bool] | None = None,
     ) -> None:
+        write_label_file(
+            filename=filename,
+            shapes=shapes,
+            image_path=image_path,
+            image_height=image_height,
+            image_width=image_width,
+            image_data=image_data,
+            other_data=other_data,
+            flags=flags,
+        )
+        self.filename = filename
+
+    @staticmethod
+    def is_label_file(filename: str) -> bool:
+        return Path(filename).suffix.lower() == LabelFile.suffix
+
+
+def write_label_file(
+    *,
+    filename: str,
+    shapes: list[dict[str, Any]],
+    image_path: str,
+    image_height: int | None,
+    image_width: int | None,
+    image_data: bytes | None = None,
+    other_data: dict[str, Any] | None = None,
+    flags: dict[str, bool] | None = None,
+) -> None:
+    with _translate_label_file_errors(filename, action="save"):
         image_data_b64: str | None = None
         if image_data is not None:
-            image_height, image_width = self._check_image_height_and_width(
+            image_height, image_width = LabelFile._check_image_height_and_width(
                 image_data, image_height, image_width
             )
             image_data_b64 = base64.b64encode(image_data).decode("utf-8")
-        if other_data is None:
-            other_data = {}
-        if flags is None:
-            flags = {}
-        # JSON keys stay camelCase — on-disk format, breaks existing .json files.
-        data = {
+        payload: dict[str, Any] = {
             "version": __version__,
-            "flags": flags,
+            "flags": flags or {},
             "shapes": shapes,
             "imagePath": image_path,
             "imageData": image_data_b64,
             "imageHeight": image_height,
             "imageWidth": image_width,
         }
-        for key, value in other_data.items():
-            assert key not in data
-            data[key] = value
-        with _translate_label_file_errors(filename, action="save"):
-            with open(filename, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            self.filename = filename
-
-    @staticmethod
-    def is_label_file(filename: str) -> bool:
-        return Path(filename).suffix.lower() == LabelFile.suffix
+        if other_data:
+            for extra_key, extra_value in other_data.items():
+                if extra_key in payload:
+                    raise ValueError(
+                        f"other_data may not override reserved key {extra_key!r}"
+                    )
+                payload[extra_key] = extra_value
+        Path(filename).write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
 
 
 _DISPLAYABLE_MODES = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}

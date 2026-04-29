@@ -38,6 +38,7 @@ from labelme._automation._osam_session import OsamSession
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
+from labelme._label_file import write_label_file
 from labelme._shape_clipboard import ShapeClipboard
 from labelme.config import load_config
 from labelme.shape import Shape
@@ -1627,42 +1628,43 @@ class MainWindow(QtWidgets.QMainWindow):
             widget.addItem(item)
 
     def save_labels(self, label_path: str) -> bool:
-        lf = LabelFile()
-
-        shapes = [
+        shape_dicts: list[dict[str, Any]] = [
             _shape_to_dict(s)
             for item in self._docks.label_list
             if (s := item.shape()) is not None
         ]
-        flags = {}
+        flag_states: dict[str, bool] = {}
         for i in range(self._docks.flag_list.count()):
             item = self._docks.flag_list.item(i)
             assert item
-            key = item.text()
-            flag = item.checkState() == Qt.Checked
-            flags[key] = flag
+            flag_states[item.text()] = item.checkState() == Qt.Checked
+
         try:
             assert self._image_path
-            label_dir = Path(label_path).parent
-            image_path = os.path.relpath(self._image_path, label_dir)
-            image_data = self._image_data if self._config["with_image_data"] else None
+            label_dir: Path = Path(label_path).parent
+            relative_image_path: str = os.path.relpath(self._image_path, label_dir)
+            embedded_image_data: bytes | None = (
+                self._image_data if self._config["with_image_data"] else None
+            )
             label_dir.mkdir(parents=True, exist_ok=True)
-            lf.save(
+            write_label_file(
                 filename=label_path,
-                shapes=shapes,
-                image_path=image_path,
-                image_data=image_data,
+                shapes=shape_dicts,
+                image_path=relative_image_path,
+                image_data=embedded_image_data,
                 image_height=self._image.height(),
                 image_width=self._image.width(),
                 other_data=self._other_data,
-                flags=flags,
+                flags=flag_states,
             )
-            self._label_file = lf
-            items = self._docks.file_list.findItems(self._image_path, Qt.MatchExactly)
-            if len(items) > 0:
-                if len(items) != 1:
+            self._label_file = LabelFile.from_filename(label_path)
+            matching_items = self._docks.file_list.findItems(
+                self._image_path, Qt.MatchExactly
+            )
+            if len(matching_items) > 0:
+                if len(matching_items) != 1:
                     raise RuntimeError("There are duplicate files.")
-                items[0].setCheckState(Qt.Checked)
+                matching_items[0].setCheckState(Qt.Checked)
             return True
         except LabelFileError as e:
             self.show_error_message(
