@@ -240,7 +240,7 @@ def draw_and_commit_polygon(
 
 
 def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
-    shape_center = canvas.shapes[shape_index].bounding_rect().center()
+    shape_center = canvas.shapes[shape_index].bounds().center()
     pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)

@@ -77,7 +77,7 @@ class Canvas(QtWidgets.QWidget):
 
     prev_point: QPointF
     prev_move_point: QPointF
-    offsets: tuple[QPointF, QPointF]
+    _drag_anchor: tuple[QPointF, QtCore.QRectF]
 
     _pan_anchor: QPointF | None
 
@@ -119,7 +119,10 @@ class Canvas(QtWidgets.QWidget):
         self.line = Shape()
         self.prev_point = QPointF()
         self.prev_move_point = QPointF()
-        self.offsets = QPointF(), QPointF()
+        self._drag_anchor: tuple[QPointF, QtCore.QRectF] = (
+            QPointF(),
+            QtCore.QRectF(),
+        )
         self.scale: float = 1.0
         self._osam_session = None
         self._hide_background: bool = False
@@ -477,7 +480,7 @@ class Canvas(QtWidgets.QWidget):
     def _continue_right_button_drag(self, pos: QPointF) -> None:
         if self.selected_shapes_copy:
             self._apply_cursor(CURSOR_MOVE)
-            self.bounded_move_shapes(shapes=self.selected_shapes_copy, pos=pos)
+            self._drag_shapes(shapes=self.selected_shapes_copy, cursor=pos)
             self.update()
         elif self.selected_shapes:
             self.selected_shapes_copy = [s.copy() for s in self.selected_shapes]
@@ -509,7 +512,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _drag_selected_shapes(self, pos: QPointF) -> None:
         self._apply_cursor(CURSOR_MOVE)
-        self.bounded_move_shapes(shapes=self.selected_shapes, pos=pos)
+        self._drag_shapes(shapes=self.selected_shapes, cursor=pos)
         self.update()
         self.is_moving_shape = True
 
@@ -898,7 +901,7 @@ class Canvas(QtWidgets.QWidget):
             )
             self.selection_changed.emit(new_selection)
             self.hovered_shape_is_selected = False
-        self.calculate_offsets(point)
+        self._record_drag_anchor(click=point)
 
     def _find_shape_at_point(self, point: QPointF) -> Shape | None:
         for shape in reversed(self.shapes):
@@ -906,21 +909,14 @@ class Canvas(QtWidgets.QWidget):
                 return shape
         return None
 
-    def calculate_offsets(self, point: QPointF) -> None:
+    def _record_drag_anchor(self, click: QPointF) -> None:
         if not self.selected_shapes:
-            self.offsets = QPointF(0.0, 0.0), QPointF(0.0, 0.0)
+            self._drag_anchor = (QPointF(), QtCore.QRectF())
             return
-
-        rects = [s.bounding_rect() for s in self.selected_shapes]
-        left = min(r.left() for r in rects)
-        top = min(r.top() for r in rects)
-        right = max(r.right() for r in rects)
-        bottom = max(r.bottom() for r in rects)
-
-        self.offsets = (
-            QPointF(left - point.x(), top - point.y()),
-            QPointF(right - point.x(), bottom - point.y()),
-        )
+        bounds = self.selected_shapes[0].bounds()
+        for s in self.selected_shapes[1:]:
+            bounds = bounds.united(s.bounds())
+        self._drag_anchor = (bounds.topLeft() - click, bounds)
 
     def bounded_move_vertex(
         self, shape: Shape, vertex_index: int, pos: QPointF, is_shift_pressed: bool
@@ -945,28 +941,28 @@ class Canvas(QtWidgets.QWidget):
 
         shape.move_vertex(i=vertex_index, pos=pos)
 
-    def bounded_move_shapes(self, shapes: list[Shape], pos: QPointF) -> bool:
-        if self.is_out_of_pixmap(pos):
+    def _drag_shapes(self, shapes: list[Shape], cursor: QPointF) -> bool:
+        if self.is_out_of_pixmap(cursor):
             return False
 
-        tl = pos + self.offsets[0]
-        if self.is_out_of_pixmap(tl):
-            pos -= QPointF(min(0, tl.x()), min(0, tl.y()))
+        rel_tl, bounds = self._drag_anchor
+        pw = float(self.pixmap.width())
+        ph = float(self.pixmap.height())
 
-        br = pos + self.offsets[1]
-        if self.is_out_of_pixmap(br):
-            pos += QPointF(
-                min(0, self.pixmap.width() - br.x()),
-                min(0, self.pixmap.height() - br.y()),
-            )
+        target = cursor + rel_tl
+        target.setX(max(0.0, target.x()))
+        target.setY(max(0.0, target.y()))
+        target.setX(min(target.x(), pw - bounds.width()))
+        target.setY(min(target.y(), ph - bounds.height()))
 
-        dp = pos - self.prev_point
-        if dp.isNull():
+        new_cursor = target - rel_tl
+        delta = new_cursor - self.prev_point
+        if delta.isNull():
             return False
 
         for shape in shapes:
-            shape.move_by(dp)
-        self.prev_point = pos
+            shape.translate(offset=delta)
+        self.prev_point = new_cursor
         return True
 
     def deselect_shape(self) -> bool:
@@ -1241,9 +1237,7 @@ class Canvas(QtWidgets.QWidget):
     def move_by_keyboard(self, offset: QPointF) -> None:
         if not self.selected_shapes:
             return
-        self.bounded_move_shapes(
-            shapes=self.selected_shapes, pos=self.prev_point + offset
-        )
+        self._drag_shapes(shapes=self.selected_shapes, cursor=self.prev_point + offset)
         self.update()
         self.is_moving_shape = True
 

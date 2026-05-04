@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from typing import Any
 from typing import Final
 from typing import NamedTuple
+from typing import Protocol
 
 import numpy as np
 import numpy.typing as npt
@@ -189,17 +190,16 @@ class Shape:
             point_size=self.point_size,
         )
 
-    def to_path(self) -> QtGui.QPainterPath:
-        return _make_shape_path(shape_type=self.shape_type, points=self.points)
-
-    def bounding_rect(self) -> QtCore.QRectF:
-        return self.to_path().boundingRect()
-
-    def move_by(self, offset: QtCore.QPointF) -> None:
-        self.points = [p + offset for p in self.points]
+    def bounds(self) -> QtCore.QRectF:
+        path = _make_shape_path(shape_type=self.shape_type, points=self.points)
+        return path.boundingRect()
 
     def move_vertex(self, i: int, pos: QtCore.QPointF) -> None:
         self.points[i] = pos
+
+    def translate(self, offset: QtCore.QPointF) -> None:
+        for i, point in enumerate(self.points):
+            self.points[i] = point + offset
 
     def highlight_vertex(self, i: int, action: int) -> None:
         self.highlight = _Highlight(index=i, mode=action)
@@ -230,24 +230,47 @@ def _scale_point(*, point: QtCore.QPointF, scale: float) -> QtCore.QPointF:
     return QtCore.QPointF(point.x() * scale, point.y() * scale)
 
 
+def _build_rectangle_path(*, points: list[QtCore.QPointF]) -> QtGui.QPainterPath:
+    out = QtGui.QPainterPath()
+    if len(points) == 2:
+        out.addRect(QtCore.QRectF(points[0], points[1]))
+    return out
+
+
+def _build_circle_path(*, points: list[QtCore.QPointF]) -> QtGui.QPainterPath:
+    out = QtGui.QPainterPath()
+    if len(points) == 2:
+        radius = labelme.utils.distance(points[0] - points[1])
+        out.addEllipse(points[0], radius, radius)
+    return out
+
+
+def _build_polyline_path(*, points: list[QtCore.QPointF]) -> QtGui.QPainterPath:
+    out = QtGui.QPainterPath()
+    if not points:
+        return out
+    out.moveTo(points[0])
+    for vertex in points[1:]:
+        out.lineTo(vertex)
+    return out
+
+
+class _PathBuilder(Protocol):
+    def __call__(self, *, points: list[QtCore.QPointF]) -> QtGui.QPainterPath: ...
+
+
+_PATH_BUILDERS: Final[dict[str, _PathBuilder]] = {
+    "rectangle": _build_rectangle_path,
+    "mask": _build_rectangle_path,
+    "circle": _build_circle_path,
+}
+
+
 def _make_shape_path(
     *, shape_type: str, points: list[QtCore.QPointF]
 ) -> QtGui.QPainterPath:
-    if shape_type in ["rectangle", "mask"]:
-        path = QtGui.QPainterPath()
-        if len(points) == 2:
-            path.addRect(QtCore.QRectF(points[0], points[1]))
-        return path
-    if shape_type == "circle":
-        path = QtGui.QPainterPath()
-        if len(points) == 2:
-            radius = labelme.utils.distance(points[0] - points[1])
-            path.addEllipse(points[0], radius, radius)
-        return path
-    path = QtGui.QPainterPath(points[0])
-    for vertex in points[1:]:
-        path.lineTo(vertex)
-    return path
+    builder = _PATH_BUILDERS.get(shape_type, _build_polyline_path)
+    return builder(points=points)
 
 
 def _argmin(values: Iterable[float]) -> tuple[int, float] | None:
@@ -320,20 +343,20 @@ def _mask_contour_path(
     origin: QtCore.QPointF,
     scale: float,
 ) -> QtGui.QPainterPath:
-    path = QtGui.QPainterPath()
     contours = skimage.measure.find_contours(np.pad(mask, pad_width=1))
+    output = QtGui.QPainterPath()
     for contour in contours:
         contour = contour + [origin.y(), origin.x()]
-        path.moveTo(
+        output.moveTo(
             _scale_point(
                 point=QtCore.QPointF(contour[0, 1], contour[0, 0]), scale=scale
             )
         )
         for point in contour[1:]:
-            path.lineTo(
+            output.lineTo(
                 _scale_point(point=QtCore.QPointF(point[1], point[0]), scale=scale)
             )
-    return path
+    return output
 
 
 def _vertex_size_and_type(
