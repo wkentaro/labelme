@@ -1742,7 +1742,7 @@ class MainWindow(QtWidgets.QMainWindow):
         flags = {}
         group_id = None
         description = ""
-        if self._config["display_label_popup"] or not text:
+        if not text or self._config["prompt_label_on_create"]:
             previous_text = self._label_dialog.edit.text()
             text, flags, group_id, description = self._label_dialog.popup(text)
             if not text:

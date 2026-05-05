@@ -1,6 +1,6 @@
 ---
 auto_save: true
-display_label_popup: true
+prompt_label_on_create: true
 with_image_data: false
 keep_prev: false
 keep_prev_scale: false

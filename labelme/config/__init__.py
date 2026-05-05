@@ -61,6 +61,14 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         logger.info("Migrating old config: store_data -> with_image_data")
         config_from_yaml["with_image_data"] = config_from_yaml.pop("store_data")
 
+    if "display_label_popup" in config_from_yaml:
+        logger.info(
+            "Migrating old config: display_label_popup -> prompt_label_on_create"
+        )
+        config_from_yaml["prompt_label_on_create"] = config_from_yaml.pop(
+            "display_label_popup"
+        )
+
     if config_from_yaml.get("shortcuts", {}).pop("add_point_to_edge", None):
         logger.info("Migrating old config: removing shortcuts.add_point_to_edge")
 
