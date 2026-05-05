@@ -2023,15 +2023,16 @@ class MainWindow(QtWidgets.QMainWindow):
         t0 = time.time()
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
-        flags = {k: False for k in self._config["flags"] or []}
+        config_flag_keys = self._config.get("flags") or []
+        flags = dict.fromkeys(config_flag_keys, False)
         if label_data is not None:
+            flags.update(label_data.flags)
             self._load_shapes(
                 shapes=_shapes_from_dicts(
                     shape_dicts=label_data.shapes,
                     label_flags=self._config["label_flags"],
                 )
             )
-            flags.update(label_data.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if prev_shapes and self.has_no_shapes():
             self._load_shapes(shapes=prev_shapes, replace=False)
