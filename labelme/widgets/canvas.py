@@ -27,6 +27,7 @@ from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
 from labelme._automation import OsamSession
 from labelme._automation import shapes_from_detections
+from labelme._automation import suppress_detections_overlapping_existing_shapes
 from labelme._shape import POLYLINE_SHAPE_TYPES
 from labelme._shape import Shape
 
@@ -221,8 +222,12 @@ class Canvas(QtWidgets.QWidget):
             # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
             point_labels=np.array([2, 3]),
         )
-        return shapes_from_detections(
+        detections = suppress_detections_overlapping_existing_shapes(
             detections=_detections_from_annotations(response.annotations),
+            existing_shapes=self.shapes,
+        )
+        return shapes_from_detections(
+            detections=detections,
             shape_type=self._ai_output_format,
         )
 

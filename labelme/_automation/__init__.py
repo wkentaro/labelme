@@ -1,3 +1,5 @@
+from ._bbox import shape_to_xyxy_bbox
+from ._bbox import suppress_detections_overlapping_existing_shapes
 from ._osam_session import OsamSession
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
