@@ -5,6 +5,7 @@ from typing import Final
 
 import pytest
 from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSize
 from pytestqt.qtbot import QtBot
@@ -290,3 +291,55 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
     )
     assert (perp.x(), perp.y()) == pytest.approx((0.0, 4.0))
     assert (para.x(), para.y()) == pytest.approx((15.0, 0.0))
+
+
+_VIEWPORT_SIZE: Final[QSize] = QSize(400, 300)
+
+
+@pytest.fixture()
+def scrolled_canvas(qtbot: QtBot) -> Canvas:
+    scroll_area = QtWidgets.QScrollArea()
+    scroll_area.viewport().setFixedSize(_VIEWPORT_SIZE)
+    canvas = Canvas()
+    canvas.pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    scroll_area.setWidget(canvas)
+    qtbot.addWidget(scroll_area)
+    # Keep a Python reference on the canvas so the scroll area survives the
+    # fixture's local scope; otherwise GC drops it and its C++ child canvas
+    # is destroyed before the test body runs.
+    canvas._test_scroll_area_keepalive = scroll_area  # ty: ignore[unresolved-attribute]
+    return canvas
+
+
+@pytest.mark.gui
+def test_compute_canvas_size_is_continuous_through_overflow_threshold(
+    scrolled_canvas: Canvas,
+) -> None:
+    # Pre-fix the slack jumped from 0 to V/2 the instant scaled_w crossed the
+    # viewport width, shifting the centered image by V/4 in one zoom step.
+    # Adjacent scales straddling the threshold should now differ only by
+    # rounding noise (pre-fix the gap was ~V/2, here ~2).
+    viewport_w: Final[int] = _VIEWPORT_SIZE.width()
+    pixmap_w: Final[int] = scrolled_canvas.pixmap.width()
+
+    scrolled_canvas.scale = (viewport_w - 1) / pixmap_w
+    just_below = scrolled_canvas._compute_canvas_size().width()
+    scrolled_canvas.scale = (viewport_w + 1) / pixmap_w
+    just_above = scrolled_canvas._compute_canvas_size().width()
+
+    assert just_above - just_below <= 3
+
+
+@pytest.mark.gui
+def test_compute_canvas_size_caps_overscroll_at_half_viewport(
+    scrolled_canvas: Canvas,
+) -> None:
+    # Slack saturates at V/2 so each image edge can be panned to the viewport
+    # center but no further. Sampling at the exact saturation point (1.5V)
+    # locks both the cap value and the scale at which it engages.
+    viewport_w: Final[int] = _VIEWPORT_SIZE.width()
+    pixmap_w: Final[int] = scrolled_canvas.pixmap.width()
+
+    scrolled_canvas.scale = 1.5 * viewport_w / pixmap_w
+    scaled_w = int(pixmap_w * scrolled_canvas.scale)
+    assert scrolled_canvas._compute_canvas_size().width() == scaled_w + viewport_w // 2

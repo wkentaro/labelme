@@ -1386,12 +1386,11 @@ class Canvas(QtWidgets.QWidget):
         viewport = self._scroll_viewport()
         if viewport is None:
             return QtCore.QSize(scaled_w, scaled_h)
-        # Overscroll only along axes where the image actually overflows the
-        # viewport. Half a viewport of slack (split evenly around the centered
-        # image) lets each edge be panned a quarter-viewport past the viewport
-        # boundary, derived from the viewport rather than a fixed multiplier.
-        slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
-        slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
+        # Ramp overscroll with the overflow, capped at V/2 so each image
+        # edge can be panned V/4 inside the viewport. A step from 0 to V/2
+        # at the threshold would snap the centered image sideways by V/4.
+        slack_w = max(0, min(viewport.width() // 2, scaled_w - viewport.width()))
+        slack_h = max(0, min(viewport.height() // 2, scaled_h - viewport.height()))
         return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
 
     def sizeHint(self) -> QtCore.QSize:
