@@ -12,6 +12,7 @@ from pytestqt.qtbot import QtBot
 from labelme._shape import Shape
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.canvas import _compute_intersection_edges_image
+from labelme.widgets.canvas import _compute_overscroll_slack
 from labelme.widgets.canvas import _normalize_bbox_points
 from labelme.widgets.canvas import _opposite_corner_in_parallelogram
 from labelme.widgets.canvas import _project_oriented_rectangle_corners
@@ -290,3 +291,19 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
     )
     assert (perp.x(), perp.y()) == pytest.approx((0.0, 4.0))
     assert (para.x(), para.y()) == pytest.approx((15.0, 0.0))
+
+
+@pytest.mark.parametrize(
+    ("scaled", "viewport", "expected"),
+    [
+        pytest.param(399, 400, 0, id="image_fits_below_threshold"),
+        pytest.param(400, 400, 0, id="image_exactly_fills_viewport"),
+        pytest.param(401, 400, 50, id="slight_overflow_floored_to_viewport_eighth"),
+        pytest.param(450, 400, 50, id="overflow_at_floor_boundary"),
+        pytest.param(500, 400, 100, id="ramp_grows_with_overflow_past_floor"),
+        pytest.param(600, 400, 200, id="overflow_at_cap_boundary"),
+        pytest.param(1000, 400, 200, id="large_overflow_capped_at_viewport_half"),
+    ],
+)
+def test_compute_overscroll_slack(scaled: int, viewport: int, expected: int) -> None:
+    assert _compute_overscroll_slack(scaled=scaled, viewport=viewport) == expected

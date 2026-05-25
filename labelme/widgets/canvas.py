@@ -1386,12 +1386,8 @@ class Canvas(QtWidgets.QWidget):
         viewport = self._scroll_viewport()
         if viewport is None:
             return QtCore.QSize(scaled_w, scaled_h)
-        # Overscroll only along axes where the image actually overflows the
-        # viewport. Half a viewport of slack (split evenly around the centered
-        # image) lets each edge be panned a quarter-viewport past the viewport
-        # boundary, derived from the viewport rather than a fixed multiplier.
-        slack_w = viewport.width() // 2 if scaled_w > viewport.width() else 0
-        slack_h = viewport.height() // 2 if scaled_h > viewport.height() else 0
+        slack_w = _compute_overscroll_slack(scaled=scaled_w, viewport=viewport.width())
+        slack_h = _compute_overscroll_slack(scaled=scaled_h, viewport=viewport.height())
         return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
 
     def sizeHint(self) -> QtCore.QSize:
@@ -1626,6 +1622,18 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
         np.sign(pos_from_opposite.x()) * square_size,
         np.sign(pos_from_opposite.y()) * square_size,
     )
+
+
+def _compute_overscroll_slack(*, scaled: int, viewport: int) -> int:
+    # Floor (viewport // 8) keeps middle-drag pan responsive at slight
+    # overflow; without it, scroll range equals the overflow and a
+    # 2-px-overflowing image feels locked under the cursor. The floor
+    # reintroduces a viewport/16 image shift at the threshold, 4x smaller
+    # than the original viewport/4 jump. Cap (viewport // 2) lets each
+    # image edge be panned to the viewport center but no further.
+    if scaled <= viewport:
+        return 0
+    return max(viewport // 8, min(viewport // 2, scaled - viewport))
 
 
 def _compute_intersection_edges_image(
