@@ -72,6 +72,7 @@ dev = [
   "types-pyyaml>=6.0.12.20241230",
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
+  "mdformat-gfm>=1.0.0",
 ]
 
 [project.scripts]
