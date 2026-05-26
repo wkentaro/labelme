@@ -7,6 +7,8 @@ from collections.abc import Iterable
 from typing import Any
 from typing import Final
 from typing import Literal
+from typing import TypeAlias
+from typing import cast
 
 import numpy as np
 import numpy.typing as npt
@@ -17,7 +19,19 @@ from PyQt5 import QtGui
 
 from . import utils
 
-POLYLINE_SHAPE_TYPES: Final[tuple[str, ...]] = ("polygon", "linestrip")
+_ShapeType: TypeAlias = Literal[
+    "polygon",
+    "rectangle",
+    "oriented_rectangle",
+    "point",
+    "line",
+    "circle",
+    "linestrip",
+    "points",
+    "mask",
+]
+
+POLYLINE_SHAPE_TYPES: Final[tuple[_ShapeType, ...]] = ("polygon", "linestrip")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -88,26 +102,16 @@ class Shape:
             self.line_color = line_color
 
     @property
-    def shape_type(self) -> str:
+    def shape_type(self) -> _ShapeType:
         return self._shape_type
 
     @shape_type.setter
     def shape_type(self, value: str | None) -> None:
         if value is None:
             value = "polygon"
-        if value not in [
-            "polygon",
-            "rectangle",
-            "oriented_rectangle",
-            "point",
-            "line",
-            "circle",
-            "linestrip",
-            "points",
-            "mask",
-        ]:
+        if value not in typing.get_args(_ShapeType):
             raise ValueError(f"Unexpected shape_type: {value}")
-        self._shape_type = value
+        self._shape_type = cast(_ShapeType, value)
 
     def close(self) -> None:
         self._closed = True
