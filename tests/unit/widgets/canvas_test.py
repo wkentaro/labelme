@@ -4,17 +4,21 @@ import math
 from typing import Final
 
 import pytest
+from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.canvas import _compute_intersection_edges_image
+from labelme.widgets.canvas import _is_degenerate_shape
 from labelme.widgets.canvas import _normalize_bbox_points
 from labelme.widgets.canvas import _opposite_corner_in_parallelogram
 from labelme.widgets.canvas import _project_oriented_rectangle_corners
+from labelme.widgets.canvas import _rebuild_line
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -156,6 +160,255 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     assert len(inference_no_shapes_emissions) == 1
     assert canvas._current is None
     assert canvas.shapes == []
+
+
+@pytest.mark.gui
+def test_create_mode_switch_retypes_one_point_partial(canvas: Canvas) -> None:
+    # Retype must update _current.shape_type and _line.shape_type, but must
+    # NOT re-seed _line.points (which would alias both slots and break the
+    # next extend click).
+    canvas.create_mode = "rectangle"
+    canvas._current = Shape(shape_type="rectangle")
+    canvas._current.add_point(QPointF(10, 10))
+    canvas._line = Shape(shape_type="rectangle")
+    canvas._line.points = [QPointF(10, 10), QPointF(50, 30)]
+    canvas._line.point_labels = [1, 1]
+    canvas._line.close()
+
+    canvas.create_mode = "polygon"
+
+    assert canvas._current is not None
+    assert canvas._current.shape_type == "polygon"
+    assert canvas._current.points == [QPointF(10, 10)]
+    assert canvas._line.shape_type == "polygon"
+    assert canvas._line.points == [QPointF(10, 10), QPointF(50, 30)]
+    assert canvas._line.point_labels == [1, 1]
+
+
+@pytest.mark.gui
+def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable(
+    canvas: Canvas,
+) -> None:
+    # Multi-point partial cancels, and listeners on drawing_polygon must
+    # observe the new create_mode synchronously.
+    canvas.create_mode = "polygon"
+    canvas._current = Shape(shape_type="polygon")
+    canvas._current.add_point(QPointF(10, 10))
+    canvas._current.add_point(QPointF(20, 20))
+    emissions: list[bool] = []
+    observed_modes: list[str] = []
+
+    def listener(drawing: bool) -> None:
+        emissions.append(drawing)
+        observed_modes.append(canvas.create_mode)
+
+    canvas.drawing_polygon.connect(listener)
+
+    canvas.create_mode = "rectangle"
+
+    assert canvas._current is None
+    assert emissions == [False]
+    assert observed_modes == ["rectangle"]
+
+
+@pytest.mark.gui
+def test_create_mode_switch_to_ai_target_cancels_one_point_partial(
+    canvas: Canvas,
+) -> None:
+    # AI modes carry per-point labels, so a non-AI seed can't be
+    # reinterpreted as an AI seed even with only 1 point.
+    canvas.create_mode = "rectangle"
+    canvas._current = Shape(shape_type="rectangle")
+    canvas._current.add_point(QPointF(10, 10))
+    emissions: list[bool] = []
+    canvas.drawing_polygon.connect(emissions.append)
+
+    canvas.create_mode = "ai_box_to_shape"
+
+    assert canvas._current is None
+    assert emissions == [False]
+
+
+@pytest.mark.gui
+def test_create_mode_switch_preserves_seed_point_label(canvas: Canvas) -> None:
+    # Retype must preserve _current.point_labels (a shift-click sets label=0).
+    canvas.create_mode = "polygon"
+    canvas._current = Shape(shape_type="polygon")
+    canvas._current.add_point(QPointF(10, 10), label=0)
+
+    canvas.create_mode = "rectangle"
+
+    assert canvas._current is not None
+    assert canvas._current.point_labels == [0]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("to_mode", ["rectangle", "circle", "line"])
+def test_extend_after_mode_switch_finalizes_at_last_cursor(
+    canvas: Canvas, to_mode: str
+) -> None:
+    # After mode switch, the preserved [seed, last_cursor] _line drives
+    # extend so finalize commits a non-degenerate shape.
+    canvas.create_mode = "rectangle"
+    canvas._current = Shape(shape_type="rectangle")
+    canvas._current.add_point(QPointF(10, 10))
+    canvas._line.points = [QPointF(10, 10), QPointF(50, 30)]
+    canvas._line.point_labels = [1, 1]
+
+    canvas.create_mode = to_mode
+
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.MouseButtonPress,
+        QPointF(50, 30),
+        Qt.LeftButton,
+        Qt.LeftButton,
+        Qt.NoModifier,
+    )
+    canvas._extend_current_shape(current=canvas._current, event=event)
+
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    assert canvas.shapes[0].shape_type == to_mode
+    assert canvas.shapes[0].points == [QPointF(10, 10), QPointF(50, 30)]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("to_mode", ["polygon", "linestrip", "oriented_rectangle"])
+def test_extend_after_mode_switch_grows_partial_at_last_cursor(
+    canvas: Canvas, to_mode: str
+) -> None:
+    # Non-finalizing modes grow at last_cursor; for oriented_rectangle the
+    # locked first edge has non-zero length.
+    canvas.create_mode = "rectangle"
+    canvas._current = Shape(shape_type="rectangle")
+    canvas._current.add_point(QPointF(10, 10))
+    canvas._line.points = [QPointF(10, 10), QPointF(50, 30)]
+    canvas._line.point_labels = [1, 1]
+
+    canvas.create_mode = to_mode
+
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.MouseButtonPress,
+        QPointF(50, 30),
+        Qt.LeftButton,
+        Qt.LeftButton,
+        Qt.NoModifier,
+    )
+    canvas._extend_current_shape(current=canvas._current, event=event)
+
+    assert canvas.shapes == []
+    assert canvas._current is not None
+    if to_mode == "oriented_rectangle":
+        assert canvas._current.points[0] == QPointF(10, 10)
+        assert canvas._current.points[1] == QPointF(50, 30)
+        assert canvas._current.points[0] != canvas._current.points[1]
+    else:
+        assert canvas._current.points == [QPointF(10, 10), QPointF(50, 30)]
+
+
+@pytest.mark.parametrize(
+    ("shape_type", "points", "expected"),
+    [
+        pytest.param("polygon", [(0, 0), (1, 0), (2, 0)], False, id="polygon_valid"),
+        pytest.param("polygon", [(0, 0), (1, 0)], True, id="polygon_two_points"),
+        pytest.param("polygon", [(0, 0), (0, 0), (0, 0)], True, id="polygon_collapsed"),
+        pytest.param("linestrip", [(0, 0), (1, 0)], False, id="linestrip_valid"),
+        pytest.param("linestrip", [(0, 0)], True, id="linestrip_one_point"),
+        pytest.param("linestrip", [(0, 0), (0, 0)], True, id="linestrip_collapsed"),
+        pytest.param("rectangle", [(0, 0), (1, 1)], False, id="rectangle_valid"),
+        pytest.param("rectangle", [(0, 0), (0, 1)], True, id="rectangle_zero_width"),
+        pytest.param("rectangle", [(0, 0), (1, 0)], True, id="rectangle_zero_height"),
+        pytest.param("rectangle", [(0, 0)], True, id="rectangle_one_point"),
+        pytest.param("circle", [(0, 0), (1, 0)], False, id="circle_valid"),
+        pytest.param("circle", [(0, 0), (0, 0)], True, id="circle_zero_radius"),
+        pytest.param("line", [(0, 0), (1, 0)], False, id="line_valid"),
+        pytest.param("line", [(0, 0), (0, 0)], True, id="line_zero_length"),
+        pytest.param(
+            "oriented_rectangle",
+            [(0, 0), (1, 0), (1, 1), (0, 1)],
+            False,
+            id="oriented_rectangle_valid",
+        ),
+        pytest.param(
+            "oriented_rectangle",
+            [(0, 0), (0, 0), (0, 0), (0, 0)],
+            True,
+            id="oriented_rectangle_zero_first_edge",
+        ),
+        pytest.param(
+            "oriented_rectangle",
+            [(0, 0), (1, 0), (1, 0), (0, 0)],
+            True,
+            id="oriented_rectangle_zero_width",
+        ),
+    ],
+)
+def test_is_degenerate_shape(
+    shape_type: str, points: list[tuple[float, float]], expected: bool
+) -> None:
+    shape = Shape(shape_type=shape_type)
+    for x, y in points:
+        shape.add_point(QPointF(x, y))
+    assert _is_degenerate_shape(shape) is expected
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("shape_type", ["rectangle", "circle", "line"])
+def test_finalize_rejects_degenerate_shape(canvas: Canvas, shape_type: str) -> None:
+    # Zero-area / zero-length shapes never enter canvas.shapes; the user gets
+    # a clean cancel instead of a silent malformed annotation, and the rejection
+    # is announced so the app can surface a status message.
+    canvas.create_mode = shape_type
+    canvas._current = Shape(shape_type=shape_type)
+    canvas._current.add_point(QPointF(10, 10))
+    canvas._current.add_point(QPointF(10, 10))
+    rejection_emissions: list[None] = []
+    canvas.degenerate_shape_rejected.connect(lambda: rejection_emissions.append(None))
+
+    canvas._finalize()
+
+    assert canvas.shapes == []
+    assert canvas._current is None
+    assert len(rejection_emissions) == 1
+
+
+@pytest.mark.gui
+def test_finalize_rejects_polygon_with_fewer_than_three_distinct_points(
+    canvas: Canvas,
+) -> None:
+    canvas.create_mode = "polygon"
+    canvas._current = Shape(shape_type="polygon")
+    canvas._current.add_point(QPointF(10, 10))
+    canvas._current.add_point(QPointF(20, 20))
+
+    canvas._finalize()
+
+    assert canvas.shapes == []
+    assert canvas._current is None
+
+
+def test_rebuild_line_does_not_alias_source_lists() -> None:
+    # _rebuild_line must hand back independent lists; otherwise mutating the
+    # old line later would silently corrupt the live one.
+    original = Shape(shape_type="polygon")
+    original.points = [QPointF(10, 10), QPointF(20, 20)]
+    original.point_labels = [1, 1]
+
+    rebuilt = _rebuild_line(original, shape_type="rectangle")
+
+    assert rebuilt.points is not original.points
+    assert rebuilt.point_labels is not original.point_labels
+    original.points.clear()
+    original.point_labels.clear()
+    assert rebuilt.points == [QPointF(10, 10), QPointF(20, 20)]
+    assert rebuilt.point_labels == [1, 1]
+
+
+@pytest.mark.gui
+def test_shape_type_is_immutable() -> None:
+    shape = Shape(shape_type="rectangle")
+    with pytest.raises(AttributeError):
+        setattr(shape, "shape_type", "polygon")
 
 
 _IMAGE_SIZE: Final[QSize] = QSize(100, 50)

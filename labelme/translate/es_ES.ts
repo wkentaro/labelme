@@ -894,5 +894,10 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <source>AI inference produced no new annotation.</source>
         <translation>La inferencia de IA no produjo una nueva anotación.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>La figura no tenía área; no se creó nada.</translation>
+    </message>
 </context>
 </TS>

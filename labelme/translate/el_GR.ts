@@ -896,5 +896,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>AI inference produced no new annotation.</source>
         <translation>Η συμπερασματική επεξεργασία ΤΝ δεν δημιούργησε νέο σχολιασμό.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>Το σχήμα δεν είχε εμβαδό· δεν δημιουργήθηκε τίποτα.</translation>
+    </message>
 </context>
 </TS>
