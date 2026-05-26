@@ -1062,6 +1062,11 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
+        canvas.degenerate_shape_rejected.connect(
+            lambda: self.show_status_message(
+                self.tr("Shape had no area; nothing created."), 5000
+            )
+        )
         canvas.shape_moved.connect(self.mark_dirty)
         canvas.selection_changed.connect(self._on_shape_selection_changed)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
@@ -1406,7 +1411,11 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             for draw_mode, draw_action in self._actions.draw:
                 draw_action.setEnabled(create_mode != draw_mode)
-        self._actions.edit_mode.setEnabled(not edit)
+        # Keep edit_mode disabled while a partial shape is alive so the user
+        # can't abandon it mid-draw.
+        self._actions.edit_mode.setEnabled(
+            not edit and not self._canvas_widgets.canvas.is_drawing
+        )
         self._ai_text.setEnabled(
             not edit
             and create_mode

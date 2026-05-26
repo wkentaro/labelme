@@ -900,5 +900,10 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <source>AI inference produced no new annotation.</source>
         <translation>KI-Inferenz hat keine neue Annotation erzeugt.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>Form hat keine Fläche – nichts wurde erstellt.</translation>
+    </message>
 </context>
 </TS>

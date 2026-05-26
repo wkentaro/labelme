@@ -894,5 +894,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>AI inference produced no new annotation.</source>
         <translation>استنتاج هوش مصنوعی حاشیه‌نویسی جدیدی تولید نکرد.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>شکل فاقد مساحت بود؛ چیزی ایجاد نشد.</translation>
+    </message>
 </context>
 </TS>
