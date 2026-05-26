@@ -19,7 +19,7 @@ from PyQt5 import QtGui
 
 from . import utils
 
-_ShapeType: TypeAlias = Literal[
+ShapeType: TypeAlias = Literal[
     "polygon",
     "rectangle",
     "oriented_rectangle",
@@ -31,7 +31,7 @@ _ShapeType: TypeAlias = Literal[
     "mask",
 ]
 
-POLYLINE_SHAPE_TYPES: Final[tuple[_ShapeType, ...]] = ("polygon", "linestrip")
+POLYLINE_SHAPE_TYPES: Final[tuple[ShapeType, ...]] = ("polygon", "linestrip")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -85,7 +85,11 @@ class Shape:
         self.group_id = group_id
         self.points: list[QtCore.QPointF] = []
         self.point_labels: list[int] = []
-        self.shape_type = shape_type
+        if shape_type is None:
+            shape_type = "polygon"
+        if shape_type not in typing.get_args(ShapeType):
+            raise ValueError(f"Unexpected shape_type: {shape_type}")
+        self._shape_type = cast(ShapeType, shape_type)
         self.fill = False
         self.selected = False
         self.visible = True
@@ -102,16 +106,8 @@ class Shape:
             self.line_color = line_color
 
     @property
-    def shape_type(self) -> _ShapeType:
+    def shape_type(self) -> ShapeType:
         return self._shape_type
-
-    @shape_type.setter
-    def shape_type(self, value: str | None) -> None:
-        if value is None:
-            value = "polygon"
-        if value not in typing.get_args(_ShapeType):
-            raise ValueError(f"Unexpected shape_type: {value}")
-        self._shape_type = cast(_ShapeType, value)
 
     def close(self) -> None:
         self._closed = True

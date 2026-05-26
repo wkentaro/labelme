@@ -26,6 +26,7 @@ from labelme import _automation
 from labelme import _shape
 from labelme._shape import POLYLINE_SHAPE_TYPES
 from labelme._shape import Shape
+from labelme._shape import ShapeType
 
 from .download import download_ai_model
 
@@ -417,13 +418,20 @@ class Canvas(QtWidgets.QWidget):
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
 
     def _track_drawing_cursor(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        LINE_SHAPE_TYPE_OVERRIDES: Final[dict[str, str]] = {
+        CREATE_MODE_TO_LINE_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
+            "polygon": "polygon",
+            "rectangle": "rectangle",
+            "oriented_rectangle": "oriented_rectangle",
+            "circle": "circle",
+            "line": "line",
+            "point": "point",
+            "linestrip": "linestrip",
             "ai_points_to_shape": "points",
             "ai_box_to_shape": "rectangle",
         }
-        self._line.shape_type = LINE_SHAPE_TYPE_OVERRIDES.get(
-            self.create_mode, self.create_mode
-        )
+        desired_line_shape_type = CREATE_MODE_TO_LINE_SHAPE_TYPE[self.create_mode]
+        if self._line.shape_type != desired_line_shape_type:
+            self._line = _rebuild_line(self._line, shape_type=desired_line_shape_type)
         self._apply_cursor(CURSOR_DRAW)
         if self._current is None:
             self.update()
@@ -511,7 +519,6 @@ class Canvas(QtWidgets.QWidget):
         elif mode == "circle":
             self._line.points = [current.points[0], pos]
             self._line.point_labels = [1, 1]
-            self._line.shape_type = "circle"
         elif mode == "line":
             self._line.points = [current.points[0], pos]
             self._line.point_labels = [1, 1]
@@ -824,8 +831,6 @@ class Canvas(QtWidgets.QWidget):
             self._finalize()
             return
 
-        if mode == "circle":
-            new_shape.shape_type = "circle"
         self._line.points = [pos, pos]
         self._line.point_labels = (
             [0, 0] if mode == "ai_points_to_shape" and is_shift_pressed else [1, 1]
@@ -1605,6 +1610,13 @@ def _detections_from_annotations(
             bbox = (bb.xmin, bb.ymin, bb.xmax, bb.ymax)
         detections.append(_automation.Detection(bbox=bbox, mask=annotation.mask))
     return detections
+
+
+def _rebuild_line(line: Shape, *, shape_type: ShapeType) -> Shape:
+    new_line = Shape(shape_type=shape_type)
+    new_line.points = list(line.points)
+    new_line.point_labels = list(line.point_labels)
+    return new_line
 
 
 def _normalize_bbox_points(bbox_points: list[QPointF]) -> list[QPointF]:
