@@ -55,6 +55,20 @@ _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
     "ai_box_to_shape",
 )
 
+
+_CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
+    "polygon": "polygon",
+    "rectangle": "rectangle",
+    "oriented_rectangle": "oriented_rectangle",
+    "circle": "circle",
+    "line": "line",
+    "point": "point",
+    "linestrip": "linestrip",
+    "ai_points_to_shape": "points",
+    "ai_box_to_shape": "rectangle",
+}
+
+
 # Modes whose seed point cannot be reinterpreted as the start of another mode.
 # `point` finalizes on click so never has a partial shape; AI modes carry
 # per-point positive/negative labels. Every other mode in _CreateMode shares a
@@ -467,18 +481,7 @@ class Canvas(QtWidgets.QWidget):
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
 
     def _track_drawing_cursor(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        CREATE_MODE_TO_LINE_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
-            "polygon": "polygon",
-            "rectangle": "rectangle",
-            "oriented_rectangle": "oriented_rectangle",
-            "circle": "circle",
-            "line": "line",
-            "point": "point",
-            "linestrip": "linestrip",
-            "ai_points_to_shape": "points",
-            "ai_box_to_shape": "rectangle",
-        }
-        desired_line_shape_type = CREATE_MODE_TO_LINE_SHAPE_TYPE[self.create_mode]
+        desired_line_shape_type = _CREATE_MODE_TO_SHAPE_TYPE[self.create_mode]
         if self._line.shape_type != desired_line_shape_type:
             self._line = _rebuild_line(self._line, shape_type=desired_line_shape_type)
         self._apply_cursor(CURSOR_DRAW)
@@ -865,11 +868,7 @@ class Canvas(QtWidgets.QWidget):
         ):
             return
 
-        initial_shape_type = {
-            "ai_points_to_shape": "points",
-            "ai_box_to_shape": "rectangle",
-        }.get(mode, mode)
-        new_shape = Shape(shape_type=initial_shape_type)
+        new_shape = Shape(shape_type=_CREATE_MODE_TO_SHAPE_TYPE[mode])
         new_shape.add_point(pos, label=0 if is_shift_pressed else 1)
         self._current = new_shape
 
