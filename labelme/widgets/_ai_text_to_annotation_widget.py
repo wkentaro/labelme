@@ -14,7 +14,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         ("sam3:latest", "SAM3 (smart)"),
         ("yoloworld:latest", "YOLO-World (fast)"),
     ]
-    _default_model_name: str = "yoloworld:latest"
+    _default_model_name: str = "sam3:latest"
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
 
