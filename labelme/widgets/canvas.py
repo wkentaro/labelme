@@ -715,7 +715,9 @@ class Canvas(QtWidgets.QWidget):
             return
 
         for shape in ordered_shapes:
-            if not _shape.contains_point(shape=shape, point=pos):
+            if not _shape.is_hit_by_point(
+                shape=shape, point=pos, epsilon=self._epsilon
+            ):
                 continue
             self._set_highlight(
                 hovered_shape=shape,
@@ -1088,7 +1090,9 @@ class Canvas(QtWidgets.QWidget):
 
     def _find_shape_at_point(self, point: QPointF) -> Shape | None:
         for shape in reversed(self.shapes):
-            if shape.visible and _shape.contains_point(shape=shape, point=point):
+            if shape.visible and _shape.is_hit_by_point(
+                shape=shape, point=point, epsilon=self._epsilon
+            ):
                 return shape
         return None
 

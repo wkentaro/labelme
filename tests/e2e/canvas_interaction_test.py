@@ -473,10 +473,46 @@ def test_undo_shape_creation(
 
 @pytest.mark.gui
 @pytest.mark.parametrize(
-    ("create_mode", "setup_click", "finalize_click", "select_offset"),
+    (
+        "create_mode",
+        "setup_click",
+        "finalize_click",
+        "finalize_modifier",
+        "select_offset",
+    ),
     [
-        pytest.param("rectangle", (0.2, 0.2), (0.8, 0.8), (0.0, 0.0), id="rectangle"),
-        pytest.param("circle", (0.5, 0.5), (0.75, 0.5), (0.0, -20.0), id="circle"),
+        pytest.param(
+            "rectangle",
+            (0.2, 0.2),
+            (0.8, 0.8),
+            Qt.NoModifier,
+            (0.0, 0.0),
+            id="rectangle",
+        ),
+        pytest.param(
+            "circle",
+            (0.5, 0.5),
+            (0.75, 0.5),
+            Qt.NoModifier,
+            (0.0, -20.0),
+            id="circle",
+        ),
+        pytest.param(
+            "line",
+            (0.2, 0.5),
+            (0.8, 0.5),
+            Qt.NoModifier,
+            (0.0, 0.0),
+            id="line",
+        ),
+        pytest.param(
+            "linestrip",
+            (0.2, 0.5),
+            (0.8, 0.5),
+            Qt.ControlModifier,
+            (0.0, 0.0),
+            id="two-point-linestrip",
+        ),
     ],
 )
 def test_select_nonpolygon_shape(
@@ -487,6 +523,7 @@ def test_select_nonpolygon_shape(
     create_mode: str,
     setup_click: tuple[float, float],
     finalize_click: tuple[float, float],
+    finalize_modifier: Qt.KeyboardModifier,
     select_offset: tuple[float, float],
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -497,7 +534,9 @@ def test_select_nonpolygon_shape(
 
     label = f"test_{create_mode}"
     submit_label_dialog(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)
-    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=finalize_click)
+    click_canvas_fraction(
+        qtbot=qtbot, canvas=canvas, xy=finalize_click, modifier=finalize_modifier
+    )
 
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert shape.shape_type == create_mode
@@ -690,7 +729,7 @@ def test_select_mask_shape_by_click(
 ) -> None:
     # Mask cells are indexed pixel-for-pixel from points[0]; clicking inside
     # the True region must land on a True cell to exercise the mask branch
-    # of `_shape.contains_point`.
+    # of `_shape.is_hit_by_point`.
     mask_arr = np.zeros((40, 40), dtype=np.uint8)
     mask_arr[10:30, 10:30] = 1
     mask_b64 = utils.img_arr_to_b64(mask_arr)
