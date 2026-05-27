@@ -902,5 +902,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>Shape had no area; nothing created.</source>
         <translation>Фігура не має площі; нічого не створено.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Утримуйте Shift, щоб пропустити підтвердження)</translation>
+    </message>
 </context>
 </TS>

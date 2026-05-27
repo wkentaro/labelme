@@ -899,5 +899,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <source>Shape had no area; nothing created.</source>
         <translation>Kształt nie ma obszaru; nic nie zostało utworzone.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Przytrzymaj Shift, aby pominąć potwierdzenie)</translation>
+    </message>
 </context>
 </TS>

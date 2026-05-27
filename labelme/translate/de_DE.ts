@@ -905,5 +905,10 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <source>Shape had no area; nothing created.</source>
         <translation>Form hat keine Fläche – nichts wurde erstellt.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Umschalt halten, um die Bestätigung zu überspringen)</translation>
+    </message>
 </context>
 </TS>

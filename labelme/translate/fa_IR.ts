@@ -899,5 +899,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>Shape had no area; nothing created.</source>
         <translation>شکل فاقد مساحت بود؛ چیزی ایجاد نشد.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(برای رد کردن تأیید، Shift را نگه دارید)</translation>
+    </message>
 </context>
 </TS>

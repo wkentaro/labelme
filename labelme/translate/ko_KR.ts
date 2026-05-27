@@ -899,5 +899,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>Shape had no area; nothing created.</source>
         <translation>도형에 면적이 없어 생성되지 않았습니다.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(확인을 건너뛰려면 Shift 키를 누르세요)</translation>
+    </message>
 </context>
 </TS>

@@ -905,5 +905,10 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <source>Shape had no area; nothing created.</source>
         <translation>La forma era vuota; nessun elemento creato.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Tieni premuto Maiusc per saltare la conferma)</translation>
+    </message>
 </context>
 </TS>

@@ -902,5 +902,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <source>Shape had no area; nothing created.</source>
         <translation>Şeklin alanı yoktu; hiçbir şey oluşturulmadı.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Onayı atlamak için Shift tuşunu basılı tutun)</translation>
+    </message>
 </context>
 </TS>

@@ -899,5 +899,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <source>Shape had no area; nothing created.</source>
         <translation>Vorm heeft geen oppervlak; niets aangemaakt.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Houd Shift ingedrukt om bevestiging over te slaan)</translation>
+    </message>
 </context>
 </TS>

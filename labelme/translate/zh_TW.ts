@@ -899,5 +899,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>Shape had no area; nothing created.</source>
         <translation>形狀面積為零，未建立。</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>（按住 Shift 略過確認）</translation>
+    </message>
 </context>
 </TS>

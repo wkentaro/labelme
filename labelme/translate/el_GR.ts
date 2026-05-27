@@ -901,5 +901,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>Shape had no area; nothing created.</source>
         <translation>Το σχήμα δεν είχε εμβαδό· δεν δημιουργήθηκε τίποτα.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Κρατήστε το Shift για να παραλείψετε την επιβεβαίωση)</translation>
+    </message>
 </context>
 </TS>

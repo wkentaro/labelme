@@ -899,5 +899,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <source>Shape had no area; nothing created.</source>
         <translation>Hình không có diện tích; không có gì được tạo.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Giữ phím Shift để bỏ qua xác nhận)</translation>
+    </message>
 </context>
 </TS>

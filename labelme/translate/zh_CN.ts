@@ -399,6 +399,11 @@
     </message>
     <message>
         <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>（按住 Shift 跳过确认）</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
         <source>Duplicate Shapes</source>
         <translation>创建形状副本</translation>
     </message>

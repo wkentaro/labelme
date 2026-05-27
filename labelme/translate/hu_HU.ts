@@ -905,5 +905,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>Shape had no area; nothing created.</source>
         <translation>Az alakzatnak nincs területe; nem jött létre semmi.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>(Hold Shift to skip confirmation)</source>
+        <translation>(Tartsd lenyomva a Shiftet a megerősítés átugrásához)</translation>
+    </message>
 </context>
 </TS>
