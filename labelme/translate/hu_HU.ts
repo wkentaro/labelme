@@ -908,12 +908,12 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Címke felugró ablak megjelenítése</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>Címke felugró ablak megjelenítése objektum létrehozásakor (ellenkező esetben a fent kijelölt címke lesz használva)</translation>
     </message>
 </context>
 </TS>

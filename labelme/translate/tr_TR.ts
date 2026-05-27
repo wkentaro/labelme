@@ -905,12 +905,12 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiket açılır penceresini göster</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nesne oluştururken etiket açılır penceresini göster (aksi halde yukarıda seçilen etiketi kullan)</translation>
     </message>
 </context>
 </TS>

@@ -902,12 +902,12 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Exibir popup de rótulo</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>Exibir popup de rótulo ao criar um objeto (caso contrário, use o rótulo selecionado acima)</translation>
     </message>
 </context>
 </TS>

@@ -905,12 +905,12 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать окно выбора метки</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать окно выбора метки при создании объекта (иначе используется метка, выбранная выше)</translation>
     </message>
 </context>
 </TS>

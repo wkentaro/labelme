@@ -902,12 +902,12 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>نمایش پنجره بازشوی برچسب</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>هنگام ایجاد یک شیء، پنجره بازشوی برچسب را نمایش بده (در غیر این صورت از برچسب انتخاب‌شده در بالا استفاده می‌شود)</translation>
     </message>
 </context>
 </TS>

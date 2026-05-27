@@ -902,12 +902,12 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>แสดงป๊อปอัปเลเบล</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>แสดงป๊อปอัปเลเบลเมื่อสร้างวัตถุ (มิฉะนั้นจะใช้เลเบลที่เลือกไว้ด้านบน)</translation>
     </message>
 </context>
 </TS>

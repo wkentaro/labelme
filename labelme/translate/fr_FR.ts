@@ -908,12 +908,12 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher la fenêtre contextuelle d'étiquette</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher la fenêtre contextuelle d'étiquette lors de la création d'un objet (sinon, utiliser l'étiquette sélectionnée ci-dessus)</translation>
     </message>
 </context>
 </TS>

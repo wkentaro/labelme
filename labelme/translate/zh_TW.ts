@@ -902,12 +902,12 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>顯示標籤彈出視窗</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>建立物件時顯示標籤彈出視窗（否則使用上方選取的標籤）</translation>
     </message>
 </context>
 </TS>

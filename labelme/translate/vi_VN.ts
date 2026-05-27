@@ -902,12 +902,12 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiển thị hộp thoại nhãn</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiển thị hộp thoại nhãn khi tạo đối tượng (nếu không, dùng nhãn đã chọn ở trên)</translation>
     </message>
 </context>
 </TS>

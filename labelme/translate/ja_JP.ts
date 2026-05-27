@@ -916,12 +916,12 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display Label Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>ラベルポップアップを表示</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
         <source>Display label popup when creating an object (otherwise, use label selected above)</source>
-        <translation type="unfinished"></translation>
+        <translation>オブジェクト作成時にラベルポップアップを表示 (それ以外の場合は上で選択したラベルを使用)</translation>
     </message>
 </context>
 </TS>
