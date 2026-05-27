@@ -309,8 +309,10 @@ def _rotate_point_around_origin(
     return rotation @ point
 
 
-def contains_point(*, shape: Shape, point: QtCore.QPointF) -> bool:
-    if shape.shape_type in ("line", "linestrip", "points"):
+def is_hit_by_point(*, shape: Shape, point: QtCore.QPointF, epsilon: float) -> bool:
+    if shape.shape_type in ("line", "linestrip"):
+        return nearest_edge_index(shape=shape, point=point, epsilon=epsilon) is not None
+    if shape.shape_type == "points":
         return False
     if shape.shape_type == "point":
         if not shape.points:
