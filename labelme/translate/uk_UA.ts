@@ -897,5 +897,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>AI inference produced no new annotation.</source>
         <translation>Інференс ШІ не створив нової анотації.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>Фігура не має площі; нічого не створено.</translation>
+    </message>
 </context>
 </TS>

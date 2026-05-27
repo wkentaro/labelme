@@ -908,5 +908,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>AI inference produced no new annotation.</source>
         <translation>AI推論で新しいアノテーションは生成されませんでした。</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>図形に面積がないため、作成されませんでした。</translation>
+    </message>
 </context>
 </TS>

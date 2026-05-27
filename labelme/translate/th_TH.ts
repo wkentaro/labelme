@@ -894,5 +894,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>AI inference produced no new annotation.</source>
         <translation>การอนุมานของ AI ไม่ได้สร้างคำอธิบายประกอบใหม่</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>รูปร่างไม่มีพื้นที่ จึงไม่มีการสร้างใดๆ</translation>
+    </message>
 </context>
 </TS>

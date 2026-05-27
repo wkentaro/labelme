@@ -894,5 +894,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>AI inference produced no new annotation.</source>
         <translation>AI 추론에서 새 주석이 생성되지 않았습니다.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>도형에 면적이 없어 생성되지 않았습니다.</translation>
+    </message>
 </context>
 </TS>

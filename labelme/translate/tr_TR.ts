@@ -897,5 +897,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <source>AI inference produced no new annotation.</source>
         <translation>Yapay zeka çıkarımı yeni bir açıklama oluşturmadı.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>Şeklin alanı yoktu; hiçbir şey oluşturulmadı.</translation>
+    </message>
 </context>
 </TS>

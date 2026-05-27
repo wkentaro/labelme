@@ -900,5 +900,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>AI inference produced no new annotation.</source>
         <translation>Az MI-következtetés nem hozott létre új annotációt.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>Az alakzatnak nincs területe; nem jött létre semmi.</translation>
+    </message>
 </context>
 </TS>

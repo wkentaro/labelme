@@ -56,6 +56,31 @@ _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
 )
 
 
+_CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
+    "polygon": "polygon",
+    "rectangle": "rectangle",
+    "oriented_rectangle": "oriented_rectangle",
+    "circle": "circle",
+    "line": "line",
+    "point": "point",
+    "linestrip": "linestrip",
+    "ai_points_to_shape": "points",
+    "ai_box_to_shape": "rectangle",
+}
+
+
+# Modes whose seed point cannot be reinterpreted as the start of another mode.
+# `point` finalizes on click so never has a partial shape; AI modes carry
+# per-point positive/negative labels. Every other mode in _CreateMode shares a
+# 1-click anchor and is seed-compatible by default — new modes participate
+# unless explicitly listed here.
+_SEED_INCOMPATIBLE_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
+    "point",
+    "ai_points_to_shape",
+    "ai_box_to_shape",
+)
+
+
 class _CanvasMode(enum.Enum):
     CREATE = enum.auto()
     EDIT = enum.auto()
@@ -85,6 +110,7 @@ class Canvas(QtWidgets.QWidget):
     pan_request = QtCore.pyqtSignal(QPoint)
     new_shape = QtCore.pyqtSignal()
     inference_produced_no_shapes = QtCore.pyqtSignal()
+    degenerate_shape_rejected = QtCore.pyqtSignal()
     selection_changed = QtCore.pyqtSignal(list)
     shape_moved = QtCore.pyqtSignal()
     drawing_polygon = QtCore.pyqtSignal(bool)
@@ -168,6 +194,10 @@ class Canvas(QtWidgets.QWidget):
         self._fill_drawing = value
 
     @property
+    def is_drawing(self) -> bool:
+        return self._current is not None
+
+    @property
     def create_mode(self) -> _CreateMode:
         return self._create_mode
 
@@ -175,7 +205,40 @@ class Canvas(QtWidgets.QWidget):
     def create_mode(self, value: str) -> None:
         if value not in typing.get_args(_CreateMode):
             raise ValueError(f"Unsupported create_mode: {value}")
-        self._create_mode = cast(_CreateMode, value)
+        new_mode = cast(_CreateMode, value)
+        if new_mode == self._create_mode:
+            return
+        old_mode = self._create_mode
+        # Update the mode before reconciling so any signals fired from a cancel
+        # observe the new mode rather than the one being left behind.
+        self._create_mode = new_mode
+        self._reconcile_partial_shape_on_mode_switch(
+            old_mode=old_mode, new_mode=new_mode
+        )
+
+    def _reconcile_partial_shape_on_mode_switch(
+        self, *, old_mode: _CreateMode, new_mode: _CreateMode
+    ) -> None:
+        if self._current is None:
+            return
+        if not (
+            len(self._current.points) == 1
+            and old_mode not in _SEED_INCOMPATIBLE_CREATE_MODES
+            and new_mode not in _SEED_INCOMPATIBLE_CREATE_MODES
+        ):
+            self._cancel_current_shape()
+            return
+        # Shape type is identity, not state: construct fresh shapes rather than
+        # mutating in place. The prior mode's _update_drawing_line left
+        # _line.points as a valid [seed, cursor] pair — carry it forward so a
+        # click before the next mouseMoveEvent extends at the real cursor.
+        seed_point = self._current.points[0]
+        seed_label = self._current.point_labels[0]
+        new_current = Shape(shape_type=new_mode)
+        new_current.add_point(seed_point, label=seed_label)
+        self._current = new_current
+        self._line = _rebuild_line(self._line, shape_type=new_mode)
+        self.update()
 
     def get_ai_model_name(self) -> str:
         return self._osam_session_model_name
@@ -418,18 +481,7 @@ class Canvas(QtWidgets.QWidget):
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
 
     def _track_drawing_cursor(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        CREATE_MODE_TO_LINE_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
-            "polygon": "polygon",
-            "rectangle": "rectangle",
-            "oriented_rectangle": "oriented_rectangle",
-            "circle": "circle",
-            "line": "line",
-            "point": "point",
-            "linestrip": "linestrip",
-            "ai_points_to_shape": "points",
-            "ai_box_to_shape": "rectangle",
-        }
-        desired_line_shape_type = CREATE_MODE_TO_LINE_SHAPE_TYPE[self.create_mode]
+        desired_line_shape_type = _CREATE_MODE_TO_SHAPE_TYPE[self.create_mode]
         if self._line.shape_type != desired_line_shape_type:
             self._line = _rebuild_line(self._line, shape_type=desired_line_shape_type)
         self._apply_cursor(CURSOR_DRAW)
@@ -816,11 +868,7 @@ class Canvas(QtWidgets.QWidget):
         ):
             return
 
-        initial_shape_type = {
-            "ai_points_to_shape": "points",
-            "ai_box_to_shape": "rectangle",
-        }.get(mode, mode)
-        new_shape = Shape(shape_type=initial_shape_type)
+        new_shape = Shape(shape_type=_CREATE_MODE_TO_SHAPE_TYPE[mode])
         new_shape.add_point(pos, label=0 if is_shift_pressed else 1)
         self._current = new_shape
 
@@ -1344,6 +1392,10 @@ class Canvas(QtWidgets.QWidget):
                 return
         else:
             self._current.close()
+            if _is_degenerate_shape(self._current):
+                self.degenerate_shape_rejected.emit()
+                self._cancel_current_shape()
+                return
             new_shapes = [self._current]
         self.shapes.extend(new_shapes)
         self.backup_shapes()
@@ -1613,6 +1665,26 @@ def _rebuild_line(line: Shape, *, shape_type: ShapeType) -> Shape:
     new_line.points = list(line.points)
     new_line.point_labels = list(line.point_labels)
     return new_line
+
+
+def _is_degenerate_shape(shape: Shape) -> bool:
+    points = shape.points
+    shape_type = shape.shape_type
+    if shape_type == "polygon":
+        return len({(p.x(), p.y()) for p in points}) < 3
+    if shape_type == "linestrip":
+        return len({(p.x(), p.y()) for p in points}) < 2
+    if shape_type == "rectangle":
+        return (
+            len(points) != 2
+            or points[0].x() == points[1].x()
+            or points[0].y() == points[1].y()
+        )
+    if shape_type in ("circle", "line"):
+        return len(points) != 2 or points[0] == points[1]
+    if shape_type == "oriented_rectangle":
+        return len(points) != 4 or points[0] == points[1] or points[1] == points[2]
+    return False
 
 
 def _normalize_bbox_points(bbox_points: list[QPointF]) -> list[QPointF]:

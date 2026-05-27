@@ -894,5 +894,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <source>AI inference produced no new annotation.</source>
         <translation>Suy luận AI không tạo ra chú thích mới nào.</translation>
     </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Shape had no area; nothing created.</source>
+        <translation>Hình không có diện tích; không có gì được tạo.</translation>
+    </message>
 </context>
 </TS>
