@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import typing
 from collections.abc import Callable
 
 from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
 
 from labelme._automation import AiOutputFormat
 
@@ -116,17 +114,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._output_format_combo.setCurrentIndex(0)
 
         self.setMaximumWidth(200)
-
-    def set_disabled_models(self, disabled_models: tuple[str, ...]) -> None:
-        model = typing.cast(QtGui.QStandardItemModel, self._model_combo.model())
-        for i in range(self._model_combo.count()):
-            model_id = self._model_combo.itemData(i)
-            item = model.item(i)
-            assert item is not None
-            if model_id in disabled_models:
-                item.setFlags(item.flags() & ~Qt.ItemIsEnabled)
-            else:
-                item.setFlags(item.flags() | Qt.ItemIsEnabled)
 
     def setEnabled(self, a0: bool) -> None:
         self._body.setEnabled(a0)
