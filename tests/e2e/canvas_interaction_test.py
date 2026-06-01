@@ -73,6 +73,24 @@ def _wait_for_shape(qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
     return result[0]
 
 
+def test_brush_actions_are_enabled_only_in_edit_mode(
+    annotated_win: MainWindow,
+) -> None:
+    annotated_win._sync_mask_brush_actions()
+    assert annotated_win._actions.mask_brush_erase.isEnabled()
+
+    annotated_win._set_mask_brush_mode("erase")
+    assert annotated_win._actions.mask_brush_erase.isChecked()
+
+    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+
+    assert not annotated_win._actions.mask_brush_erase.isEnabled()
+    assert not annotated_win._actions.mask_brush_add.isEnabled()
+    assert not annotated_win._actions.mask_brush_options.isEnabled()
+    assert not annotated_win._actions.mask_brush_erase.isChecked()
+    assert annotated_win._canvas_widgets.canvas._mask_brush_mode is None
+
+
 def _click_to_remove_point(
     qtbot: QtBot,
     canvas: Canvas,
