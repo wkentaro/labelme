@@ -4,6 +4,8 @@ The domain language of labelme, a desktop image-annotation tool. This glossary c
 
 ## Language
 
+### Data model
+
 **Annotation**:
 The complete bundle of labelme data attached to one Image — its image-level Flags, its Shapes, and the per-Shape Flags carried by each Shape. Persisted as one JSON file on disk.
 _Avoid_: using "annotation" for a single Shape.
@@ -60,9 +62,36 @@ _Avoid_: photo, picture, file, frame.
 The predefined set of allowed Label strings configured for an annotation session (via the `--labels` CLI flag, a labels file, or the user config). The Label List is the *permitted vocabulary*; it is not the same as the Labels that actually appear on Shapes.
 _Avoid_: labels (means actual labels in use), label vocabulary (verbose), classes.
 
+### Configuration
+
+**Settings**:
+The user-adjustable annotation and behavior values (auto-save, drawing colors, shortcuts, AI model, and so on). Each Setting is a *value*, not a control: the value is the source of truth (persisted in the Config File) and may be surfaced by more than one **Setting Control** at once, all bound to it and kept in sync.
+_Avoid_: preferences (only the historical menu label), config (that is the file, not the values), options.
+
+**Setting Control**:
+A UI element bound to a Setting that displays and edits its value: a checkable menu/toolbar action, an inline dock control, or a widget in the Settings dialog. Inline controls are reserved for Settings toggled frequently or meaningful only in context; the Settings dialog is the comprehensive home that exposes every Setting. Multiple Setting Controls for one Setting stay in sync through a single apply path.
+_Avoid_: toggle (only one kind), widget, knob.
+
+**Config File**:
+The on-disk YAML where Settings are persisted as sparse Overrides on top of the Default Config. Defaults to `~/.labelmerc`, but can be relocated, e.g. a `labelmerc` file beside the executable in standalone builds, or any path passed to `--config`. The file is called "config"; the values it carries are Settings.
+_Avoid_: settings file, rc file, labelmerc.
+
+**Default Config**:
+The baseline Settings shipped in `labelme/config/default_config.yaml`. Read-only, and the single source of both every default value and the set of allowed keys.
+_Avoid_: defaults file, base config, schema.
+
+**Override**:
+A single Setting in the Config File whose value differs from the Default Config. The Config File holds only Overrides; resetting a Setting to its default removes its Override and keeps the file sparse.
+_Avoid_: customization, change, diff.
+
+**Window State**:
+The window geometry and dock layout persisted via Qt's `QSettings` store (the `self._window_state` attribute in code), separate from Settings and never written to the Config File. Cleared by `--reset-config`.
+_Avoid_: settings (those are the annotation/behavior values), config, layout config.
+
 ## Flagged ambiguities
 
 - **`LabelFile` / `LabelData` in code**: legacy identifiers for what the glossary calls an **Annotation File**. A rename to `AnnotationFile` is under consideration but not decided.
+- **Concept vs file naming is an intentional split**: the user-facing values are **Settings**, but the file that persists them is the **Config File** (`~/.labelmerc`) and the CLI flag stays `--config`. The menu entry reads "Settings…" while keeping Qt's `PreferencesRole`. Do not "unify" the file/flag/role naming to "settings".
 
 ## Example dialogue
 
