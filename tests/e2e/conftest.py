@@ -6,7 +6,6 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
-import yaml
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
@@ -21,6 +20,7 @@ import labelme.app
 from labelme import _shape
 from labelme.__main__ import main
 from labelme.app import MainWindow
+from labelme.config import safe_dump
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.label_dialog import LabelDialog
 
@@ -103,7 +103,7 @@ def main_win(
                 if "labels" in config_overrides:
                     argv.extend(["--labels", ",".join(config_overrides["labels"])])
         elif config_overrides:
-            argv.extend(["--config", yaml.dump(config_overrides)])
+            argv.extend(["--config", safe_dump(config_overrides)])
 
         if output_dir is not None:
             argv.extend(["--output", str(output_dir)])

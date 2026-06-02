@@ -6,10 +6,22 @@ from collections.abc import Sized
 from pathlib import Path
 from typing import cast
 
-import yaml
 from loguru import logger
 
+from labelme.config._writer import USER_CONFIG_HEADER
+from labelme.config._writer import set_override
+from labelme.config._yaml import safe_dump
+from labelme.config._yaml import safe_load
+
 here = Path(__file__).resolve().parent
+
+__all__ = [
+    "get_user_config_file",
+    "load_config",
+    "safe_dump",
+    "safe_load",
+    "set_override",
+]
 
 
 def _update_dict(
@@ -102,17 +114,7 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
     if not user_config_path.exists() and create_if_missing:
         try:
             with open(user_config_path, "w") as f:
-                f.write(
-                    "# Labelme config file.\n"
-                    "# Only add settings you want to override.\n"
-                    "# For all available options and defaults, see:\n"
-                    "#   https://github.com/wkentaro/labelme/blob/main/labelme/config/default_config.yaml\n"
-                    "#\n"
-                    "# Example:\n"
-                    "# with_image_data: true\n"
-                    "# auto_save: false\n"
-                    "# labels: [cat, dog]\n"
-                )
+                f.write(USER_CONFIG_HEADER)
         except Exception:
             logger.warning("Failed to save config: {!r}", str(user_config_path))
     return str(user_config_path)
@@ -121,11 +123,11 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
 def load_config(config_file: Path | None, config_overrides: dict) -> dict:
     config: dict
     with open(here / "default_config.yaml") as f:
-        config = yaml.safe_load(f)
+        config = safe_load(f)
 
     if config_file is not None:
         with open(config_file) as f:
-            config_from_yaml = yaml.safe_load(f)
+            config_from_yaml = safe_load(f)
         if isinstance(config_from_yaml, dict):
             _migrate_config_from_file(config_from_yaml=config_from_yaml)
             _update_dict(config, config_from_yaml, validate_item=_validate_config_item)

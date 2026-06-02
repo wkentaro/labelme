@@ -3,11 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-import yaml
 
 from labelme.config import _migrate_config_from_file
 from labelme.config import get_user_config_file
 from labelme.config import load_config
+from labelme.config import safe_load
 
 
 def test_get_user_config_file_creates_sparse(
@@ -17,7 +17,7 @@ def test_get_user_config_file_creates_sparse(
     config_file = get_user_config_file()
     content = Path(config_file).read_text()
     assert content.startswith("# Labelme config file")
-    parsed = yaml.safe_load(content)
+    parsed = safe_load(content)
     assert parsed is None
 
 
