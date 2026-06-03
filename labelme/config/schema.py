@@ -9,7 +9,7 @@ SECTION_CANVAS: Final = "Canvas"
 
 SECTIONS: Final[tuple[str, ...]] = (SECTION_GENERAL, SECTION_LABELS, SECTION_CANVAS)
 
-KINDS: Final[frozenset[str]] = frozenset({"bool", "enum", "str_list"})
+KINDS: Final[frozenset[str]] = frozenset({"bool", "enum", "str_list", "language"})
 
 
 @dataclass(frozen=True)
@@ -22,6 +22,8 @@ class Setting:
     # "unset/disabled"; it round-trips to YAML null and the dialog renders it
     # as an explicit "(none)" option, never as the string "None".
     choices: tuple[object, ...] | None = None
+    # Optional muted caption rendered beneath the control.
+    note: str | None = None
 
 
 SETTINGS: Final[tuple[Setting, ...]] = (
@@ -48,6 +50,13 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         section=SECTION_GENERAL,
         label="Reopen last folder on launch",
         kind="bool",
+    ),
+    Setting(
+        key_path=("language",),
+        section=SECTION_GENERAL,
+        label="Language",
+        kind="language",
+        note="Takes effect after restart.",
     ),
     Setting(
         key_path=("labels",),

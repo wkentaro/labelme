@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import os.path as osp
 from collections.abc import Callable
 from typing import Final
@@ -26,6 +27,9 @@ _KNOB: Final = "#fdfdff"
 
 _ICONS_DIR: Final = osp.join(osp.dirname(osp.dirname(osp.abspath(__file__))), "icons")
 _CARET_ICON: Final = osp.join(_ICONS_DIR, "caret-down.svg").replace(osp.sep, "/")
+_TRANSLATE_DIR: Final = osp.join(
+    osp.dirname(osp.dirname(osp.abspath(__file__))), "translate"
+)
 
 _STYLESHEET: Final = f"""
 QDialog {{ background: {_BACKDROP}; }}
@@ -51,6 +55,7 @@ QWidget#contentPanel {{
 }}
 QLabel#sectionTitle {{ font-size: 16px; font-weight: 600; color: {_TEXT}; }}
 QLabel#settingLabel {{ font-size: 13px; color: {_TEXT}; }}
+QLabel#settingNote {{ font-size: 11px; color: rgba(31, 39, 51, 0.5); }}
 QLineEdit, QComboBox, QPlainTextEdit, QSpinBox, QDoubleSpinBox {{
     background: {_SURFACE};
     border: 1px solid {_BORDER};
@@ -279,20 +284,32 @@ class SettingsDialog(QtWidgets.QDialog):
         label.setObjectName("settingLabel")
         label.setWordWrap(True)
 
-        row = QtWidgets.QWidget()
+        line = QtWidgets.QWidget()
         if setting.kind == "str_list":
-            vertical = QtWidgets.QVBoxLayout(row)
+            vertical = QtWidgets.QVBoxLayout(line)
             vertical.setContentsMargins(0, 8, 0, 8)
             vertical.setSpacing(8)
             vertical.addWidget(label)
             vertical.addWidget(editor)
-            return row
+        else:
+            horizontal = QtWidgets.QHBoxLayout(line)
+            horizontal.setContentsMargins(0, 6, 0, 6)
+            horizontal.setSpacing(12)
+            horizontal.addWidget(label, stretch=1)
+            horizontal.addWidget(editor)
 
-        horizontal = QtWidgets.QHBoxLayout(row)
-        horizontal.setContentsMargins(0, 6, 0, 6)
-        horizontal.setSpacing(12)
-        horizontal.addWidget(label, stretch=1)
-        horizontal.addWidget(editor)
+        if not setting.note:
+            return line
+
+        row = QtWidgets.QWidget()
+        stacked = QtWidgets.QVBoxLayout(row)
+        stacked.setContentsMargins(0, 0, 0, 0)
+        stacked.setSpacing(2)
+        stacked.addWidget(line)
+        note = QtWidgets.QLabel(setting.note)
+        note.setObjectName("settingNote")
+        note.setWordWrap(True)
+        stacked.addWidget(note)
         return row
 
     def _create_editor(self, setting: Setting) -> QtWidgets.QWidget:
@@ -301,6 +318,8 @@ class SettingsDialog(QtWidgets.QDialog):
             return self._create_bool_editor(setting=setting, value=value)
         if setting.kind == "enum":
             return self._create_enum_editor(setting=setting, value=value)
+        if setting.kind == "language":
+            return self._create_language_editor(setting=setting, value=value)
         if setting.kind == "str_list":
             return self._create_str_list_editor(setting=setting, value=value)
         raise ValueError(f"Unsupported setting kind: {setting.kind}")
@@ -323,6 +342,21 @@ class SettingsDialog(QtWidgets.QDialog):
             combo.addItem("(none)" if choice is None else str(choice), choice)
         index = combo.findData(value)
         combo.setCurrentIndex(max(index, 0))
+        combo.currentIndexChanged.connect(
+            lambda: self._apply(setting=setting, value=combo.currentData())
+        )
+        return combo
+
+    def _create_language_editor(
+        self, setting: Setting, value: object
+    ) -> QtWidgets.QComboBox:
+        combo = QtWidgets.QComboBox()
+        combo.setMinimumWidth(160)
+        combo.addItem("System default", None)
+        combo.addItem("English", "en_US")
+        for code in _available_translation_locales():
+            combo.addItem(_language_name(code), code)
+        combo.setCurrentIndex(max(combo.findData(value), 0))
         combo.currentIndexChanged.connect(
             lambda: self._apply(setting=setting, value=combo.currentData())
         )
@@ -379,3 +413,15 @@ def _parse_str_list(edit: _PlainTextEdit) -> list[str] | None:
         if item and item not in items:
             items.append(item)
     return items or None
+
+
+def _available_translation_locales() -> list[str]:
+    if not osp.isdir(_TRANSLATE_DIR):
+        return []
+    return sorted(
+        name[:-3] for name in os.listdir(_TRANSLATE_DIR) if name.endswith(".qm")
+    )
+
+
+def _language_name(code: str) -> str:
+    return QtCore.QLocale(code).nativeLanguageName() or code

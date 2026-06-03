@@ -63,6 +63,33 @@ def test_accept_flushes_pending_str_list_edits(
     assert (("labels",), ["cat", "dog"]) in applied
 
 
+def test_language_default_selects_system(dialog: SettingsDialog) -> None:
+    combo = dialog._editors[("language",)]
+    assert combo.currentData() is None  # ty: ignore[unresolved-attribute]
+
+
+def test_language_applies_locale_code(dialog: SettingsDialog, applied: Applied) -> None:
+    combo = dialog._editors[("language",)]
+    combo.setCurrentIndex(combo.findData("en_US"))  # ty: ignore[unresolved-attribute]
+    assert (("language",), "en_US") in applied
+
+
+def test_language_unknown_code_falls_back_to_system(
+    qtbot: QtBot, applied: Applied
+) -> None:
+    config = load_config(config_file=None, config_overrides={})
+    config["language"] = "xx_ZZ"  # a stale code with no matching translation
+    dialog = SettingsDialog(
+        config=config,
+        apply_setting=lambda key_path, value: applied.append((key_path, value)),
+        open_as_text=lambda: None,
+    )
+    qtbot.addWidget(dialog)
+    combo = dialog._editors[("language",)]
+    assert combo.currentData() is None  # ty: ignore[unresolved-attribute]
+    assert applied == []
+
+
 def test_validate_label_gate_reverts_when_labels_emptied(
     qtbot: QtBot, applied: Applied
 ) -> None:
