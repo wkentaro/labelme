@@ -140,11 +140,7 @@ class Canvas(QtWidgets.QWidget):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
-        self._double_click = kwargs.pop("double_click", "close")
-        if self._double_click not in [None, "close"]:
-            raise ValueError(
-                f"Unexpected value for double_click event: {self._double_click}"
-            )
+        self.set_double_click(kwargs.pop("double_click", "close"))
         self._num_backups: int = kwargs.pop("num_backups", 10)
         self._crosshair = kwargs.pop(
             "crosshair",
@@ -192,6 +188,20 @@ class Canvas(QtWidgets.QWidget):
 
     def set_fill_drawing(self, value: bool) -> None:
         self._fill_drawing = value
+
+    def set_epsilon(self, value: float) -> None:
+        self._epsilon = value
+
+    def set_double_click(self, value: str | None) -> None:
+        if value not in (None, "close"):
+            raise ValueError(f"Unexpected value for double_click event: {value}")
+        self._double_click = value
+
+    def set_num_backups(self, value: int) -> None:
+        self._num_backups = value
+
+    def set_crosshair(self, value: dict[str, bool]) -> None:
+        self._crosshair = dict(value)
 
     @property
     def is_drawing(self) -> bool:
