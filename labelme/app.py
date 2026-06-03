@@ -1028,6 +1028,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if file_or_dir:
             self._load_from_file_or_dir(file_or_dir=file_or_dir)
+        elif self._config["reopen_last_dir"]:
+            last_dir = self._window_state.value("lastOpenDir", "", type=str)
+            if last_dir and Path(last_dir).is_dir():
+                self._load_from_file_or_dir(file_or_dir=last_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -2678,6 +2682,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
+        self._window_state.setValue("lastOpenDir", root_dir)
         self._image_path = None
         self._docks.file_list.clear()
 

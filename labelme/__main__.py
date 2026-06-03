@@ -19,6 +19,7 @@ from labelme import __appname__
 from labelme import __version__
 from labelme.app import MainWindow
 from labelme.config import get_user_config_file
+from labelme.config import load_config
 from labelme.config import safe_load
 from labelme.utils import new_icon
 
@@ -288,9 +289,16 @@ def main() -> None:
             )
         output_dir = output
 
+    try:
+        language = load_config(
+            config_file=config_file, config_overrides=config_overrides
+        ).get("language")
+    except Exception as e:
+        logger.debug("Could not read language from config: {}", e)
+        language = None
     translator = QtCore.QTranslator()
     translator.load(
-        QtCore.QLocale.system().name(),
+        language or QtCore.QLocale.system().name(),
         str(Path(__file__).resolve().parent / "translate"),
     )
     app = QtWidgets.QApplication(sys.argv)
