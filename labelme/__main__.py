@@ -258,6 +258,9 @@ def main() -> None:
     reset_config = config_from_args.pop("reset_config")
     file_or_dir = config_from_args.pop("path")
     output = config_from_args.pop("output")
+    # logger_level configures loguru (above), not the user config; keep it out
+    # of the overrides so it does not count as a settings override.
+    config_from_args.pop("logger_level")
 
     config_overrides: dict
     config_file: Path | None

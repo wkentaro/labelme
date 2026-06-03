@@ -53,6 +53,7 @@ from labelme.widgets import Canvas
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
+from labelme.widgets import SettingsDialog
 from labelme.widgets import StatusStats
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
@@ -176,6 +177,7 @@ class _Menus(NamedTuple):
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
+    _config_overrides: dict
 
     _text_osam_session: _automation.OsamSession | None = None
     _is_changed: bool = False
@@ -188,6 +190,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _actions: _Actions
     _menus: _Menus
     _label_dialog: LabelDialog
+    _settings_dialog: SettingsDialog | None = None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
@@ -216,6 +219,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config_file, self._config = self._load_config(
             config_file=config_file, config_overrides=config_overrides
         )
+        self._config_overrides = config_overrides or {}
 
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -238,15 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._shape_clipboard = ShapeClipboard(self)
 
-        self._label_dialog = LabelDialog(
-            parent=self,
-            labels=self._config["labels"],
-            sort_labels=self._config["sort_labels"],
-            show_text_field=self._config["show_label_text_field"],
-            completion=self._config["label_completion"],
-            fit_to_content=self._config["fit_to_content"],
-            flags=self._config["label_flags"],
-        )
+        self._label_dialog = self._make_label_dialog()
 
         self._prev_opened_dir = None
         self._docks = self._setup_dock_widgets()
@@ -824,12 +820,18 @@ class MainWindow(QtWidgets.QMainWindow):
             icon=None,
             tip=self.tr("Quit application"),
         )
+        settings_editable = self._config_file is not None and not self._config_overrides
         open_config = action(
-            text=self.tr("Preferences…"),
-            slot=self._open_config_file,
+            text="Settings…",
+            slot=self._open_settings,
             shortcut="Ctrl+," if platform.system() == "Darwin" else "Ctrl+Shift+,",
             icon=None,
-            tip=self.tr("Open config file in text editor"),
+            tip=(
+                "Edit settings"
+                if settings_editable
+                else "Settings are managed via --config for this session"
+            ),
+            enabled=settings_editable,
         )
         open_config.setMenuRole(QtWidgets.QAction.PreferencesRole)
         help_ = action(
@@ -2337,6 +2339,81 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Unchecked)
 
         self.reset_state()
+
+    def _make_label_dialog(self) -> LabelDialog:
+        return LabelDialog(
+            parent=self,
+            labels=self._config["labels"],
+            sort_labels=self._config["sort_labels"],
+            show_text_field=self._config["show_label_text_field"],
+            completion=self._config["label_completion"],
+            fit_to_content=self._config["fit_to_content"],
+            flags=self._config["label_flags"],
+        )
+
+    @staticmethod
+    def _set_action_checked(action: QtWidgets.QAction, checked: bool) -> None:
+        blocked = action.blockSignals(True)
+        action.setChecked(checked)
+        action.blockSignals(blocked)
+
+    def _apply_fill_drawing(self) -> None:
+        value = self._config["canvas"]["fill_drawing"]
+        self._canvas_widgets.canvas.set_fill_drawing(value)
+        self._set_action_checked(self._actions.fill_drawing, value)
+
+    def _on_setting_changed(self, key_path: tuple[str, ...], value: object) -> None:
+        if self._config_file is not None:
+            try:
+                _config.set_override(
+                    config_file=self._config_file, key_path=key_path, value=value
+                )
+            except (OSError, ValueError) as e:
+                QtWidgets.QMessageBox.warning(self, "Configuration Error", str(e))
+                return
+
+        node: dict = self._config
+        for key in key_path[:-1]:
+            node = node[key]
+        node[key_path[-1]] = value
+        self._apply_setting(key_path=key_path)
+
+    def _apply_setting(self, key_path: tuple[str, ...]) -> None:
+        # Apply only the changed key, so editing one setting never overwrites an
+        # unrelated runtime control (a closed dock, a typed file search, etc.).
+        head = key_path[0]
+        TOGGLE_ACTIONS: Final = {
+            "auto_save": self._actions.save_auto,
+            "with_image_data": self._actions.save_with_image_data,
+        }
+        if key_path == ("canvas", "fill_drawing"):
+            self._apply_fill_drawing()
+        elif head in TOGGLE_ACTIONS:
+            self._set_action_checked(TOGGLE_ACTIONS[head], self._config[head])
+        elif head == "labels":
+            self._label_dialog = self._make_label_dialog()
+        # Remaining keys (validate_label, display_label_popup, flags) are read
+        # from the config at use-time or apply on the next image, so they need
+        # no live widget update here.
+
+    def _open_settings(self) -> None:
+        if self._config_file is None or self._config_overrides:
+            return
+        # Reflect the in-memory config (what the app is using now, including
+        # session toggles). Hand-edits via "open as text" take effect on the next
+        # launch; set_override keeps them on disk in the meantime.
+        if self._settings_dialog is not None:
+            self._settings_dialog.hide()
+            self._settings_dialog.deleteLater()
+        dialog = SettingsDialog(
+            config=self._config,
+            apply_setting=self._on_setting_changed,
+            open_as_text=self._open_config_file,
+            parent=self,
+        )
+        self._settings_dialog = dialog
+        dialog.show()
+        dialog.raise_()
 
     def _open_config_file(self) -> None:
         if self._config_file is None:
