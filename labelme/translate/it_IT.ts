@@ -729,16 +729,6 @@ forme</translation>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Preferenze…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Apri file di configurazione nell'editor di testo</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>No Config File</source>
         <translation>Nessun file di configurazione</translation>
     </message>

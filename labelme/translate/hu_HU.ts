@@ -729,16 +729,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Beállítások…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Konfigurációs fájl megnyitása szövegszerkesztőben</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>No Config File</source>
         <translation>Nincs konfigurációs fájl</translation>
     </message>

@@ -723,16 +723,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Preferencje…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Otwórz plik konfiguracji w edytorze tekstu</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>No Config File</source>
         <translation>Brak pliku konfiguracji</translation>
     </message>

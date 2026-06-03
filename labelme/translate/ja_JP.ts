@@ -737,16 +737,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>設定…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>テキストエディタで設定ファイルを開く</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>No Config File</source>
         <translation>設定ファイルがありません</translation>
     </message>

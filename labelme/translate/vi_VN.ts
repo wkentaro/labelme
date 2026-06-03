@@ -723,16 +723,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Tùy chọn…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Mở tệp cấu hình trong trình soạn thảo văn bản</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
