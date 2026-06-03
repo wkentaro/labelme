@@ -54,6 +54,29 @@ def test_setting_change_persists_and_applies(
 
 
 @pytest.mark.gui
+def test_reopen_last_dir_loads_on_launch(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    raw_dir = data_path / "raw"
+    config_file = tmp_path / "labelmerc.yaml"
+    config_file.write_text("reopen_last_dir: true\n")
+
+    win = main_win(file_or_dir=str(raw_dir), config_file=config_file)
+    assert win._prev_opened_dir == str(raw_dir)
+    win.close()
+
+    reopened = main_win(config_file=config_file)
+    assert reopened._prev_opened_dir == str(raw_dir)
+    assert reopened.image_list
+
+    close_or_pause(qtbot=qtbot, widget=reopened, pause=pause)
+
+
+@pytest.mark.gui
 def test_settings_disabled_with_cli_overrides(
     main_win: MainWinFactory, qtbot: QtBot, tmp_path: Path, pause: bool
 ) -> None:

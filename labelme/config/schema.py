@@ -44,6 +44,12 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         kind="bool",
     ),
     Setting(
+        key_path=("reopen_last_dir",),
+        section=SECTION_GENERAL,
+        label="Reopen last folder on launch",
+        kind="bool",
+    ),
+    Setting(
         key_path=("labels",),
         section=SECTION_LABELS,
         label="Predefined labels",

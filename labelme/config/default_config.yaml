@@ -5,6 +5,7 @@ with_image_data: false
 keep_prev: false
 keep_prev_scale: false
 keep_prev_brightness_contrast: false
+reopen_last_dir: false
 logger_level: info
 flags:
 label_flags:
