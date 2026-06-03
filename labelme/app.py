@@ -46,6 +46,7 @@ from labelme._label_file import write_label_file
 from labelme._shape import Shape
 from labelme._shape_clipboard import ShapeClipboard
 from labelme.config import load_config
+from labelme.config import set_override
 from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
 from labelme.widgets import BrightnessContrastDialog
@@ -53,6 +54,7 @@ from labelme.widgets import Canvas
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
+from labelme.widgets import SettingsDialog
 from labelme.widgets import StatusStats
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
@@ -176,6 +178,7 @@ class _Menus(NamedTuple):
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
+    _config_overrides: dict
 
     _text_osam_session: _automation.OsamSession | None = None
     _is_changed: bool = False
@@ -188,6 +191,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _actions: _Actions
     _menus: _Menus
     _label_dialog: LabelDialog
+    _settings_dialog: SettingsDialog | None = None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
@@ -216,6 +220,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config_file, self._config = self._load_config(
             config_file=config_file, config_overrides=config_overrides
         )
+        self._config_overrides = config_overrides or {}
 
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -238,15 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._shape_clipboard = ShapeClipboard(self)
 
-        self._label_dialog = LabelDialog(
-            parent=self,
-            labels=self._config["labels"],
-            sort_labels=self._config["sort_labels"],
-            show_text_field=self._config["show_label_text_field"],
-            completion=self._config["label_completion"],
-            fit_to_content=self._config["fit_to_content"],
-            flags=self._config["label_flags"],
-        )
+        self._label_dialog = self._make_label_dialog()
 
         self._prev_opened_dir = None
         self._docks = self._setup_dock_widgets()
@@ -824,12 +821,18 @@ class MainWindow(QtWidgets.QMainWindow):
             icon=None,
             tip=self.tr("Quit application"),
         )
+        settings_editable = self._config_file is not None and not self._config_overrides
         open_config = action(
-            text=self.tr("Preferences…"),
-            slot=self._open_config_file,
+            text="Settings…",
+            slot=self._open_settings,
             shortcut="Ctrl+," if platform.system() == "Darwin" else "Ctrl+Shift+,",
             icon=None,
-            tip=self.tr("Open config file in text editor"),
+            tip=(
+                "Edit settings"
+                if settings_editable
+                else "Settings are managed via --config for this session"
+            ),
+            enabled=settings_editable,
         )
         open_config.setMenuRole(QtWidgets.QAction.PreferencesRole)
         help_ = action(
@@ -1002,19 +1005,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._default_state = self.saveState()
         #
         # XXX: Could be completely declarative.
-        # Restore application settings.
-        self.settings = QtCore.QSettings("labelme", "labelme")
+        # Restore the window geometry and dock layout (separate from the user
+        # Config; this Qt store holds only window state).
+        self._window_state = QtCore.QSettings("labelme", "labelme")
         #
         # Bump this when dock/toolbar layout changes to reset window state
         # for users upgrading from an older version.
         SETTINGS_VERSION: int = 1
-        if self.settings.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
+        if self._window_state.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
             self._reset_layout()
-            self.settings.setValue("settingsVersion", SETTINGS_VERSION)
+            self._window_state.setValue("settingsVersion", SETTINGS_VERSION)
         #
-        self.resize(self.settings.value("window/size", QtCore.QSize(900, 500)))
-        self.move(self.settings.value("window/position", QtCore.QPoint(0, 0)))
-        self.restoreState(self.settings.value("window/state", QtCore.QByteArray()))
+        self.resize(self._window_state.value("window/size", QtCore.QSize(900, 500)))
+        self.move(self._window_state.value("window/position", QtCore.QPoint(0, 0)))
+        self.restoreState(self._window_state.value("window/state", QtCore.QByteArray()))
         # Recover window position when the saved screen is no longer connected.
         if not any(
             s.availableGeometry().intersects(self.frameGeometry())
@@ -1138,14 +1142,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("shape_dock", shape),
             ("file_dock", file),
         ]:
-            features = QtWidgets.QDockWidget.DockWidgetFeatures()
-            if self._config[config_key]["closable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetClosable
-            if self._config[config_key]["floatable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
-            if self._config[config_key]["movable"]:
-                features = features | QtWidgets.QDockWidget.DockWidgetMovable
-            dock_widget.setFeatures(features)
+            dock_widget.setFeatures(self._dock_features(self._config[config_key]))
             if self._config[config_key]["show"] is False:
                 dock_widget.setVisible(False)
             self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
@@ -2147,15 +2144,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.save_with_image_data.setChecked(enabled)
 
     def _reset_layout(self) -> None:
-        self.settings.remove("window/state")
+        self._window_state.remove("window/state")
         self.restoreState(self._default_state)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if not self._can_continue():
             a0.ignore()
-        self.settings.setValue("window/size", self.size())
-        self.settings.setValue("window/position", self.pos())
-        self.settings.setValue("window/state", self.saveState())
+        self._window_state.setValue("window/size", self.size())
+        self._window_state.setValue("window/position", self.pos())
+        self._window_state.setValue("window/state", self.saveState())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
         extensions = [
@@ -2336,6 +2333,125 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Unchecked)
 
         self.reset_state()
+
+    def _make_label_dialog(self) -> LabelDialog:
+        return LabelDialog(
+            parent=self,
+            labels=self._config["labels"],
+            sort_labels=self._config["sort_labels"],
+            show_text_field=self._config["show_label_text_field"],
+            completion=self._config["label_completion"],
+            fit_to_content=self._config["fit_to_content"],
+            flags=self._config["label_flags"],
+        )
+
+    @staticmethod
+    def _dock_features(
+        dock_config: dict[str, bool],
+    ) -> QtWidgets.QDockWidget.DockWidgetFeatures:
+        features = QtWidgets.QDockWidget.DockWidgetFeatures()
+        if dock_config["closable"]:
+            features = features | QtWidgets.QDockWidget.DockWidgetClosable
+        if dock_config["floatable"]:
+            features = features | QtWidgets.QDockWidget.DockWidgetFloatable
+        if dock_config["movable"]:
+            features = features | QtWidgets.QDockWidget.DockWidgetMovable
+        return features
+
+    @staticmethod
+    def _set_action_checked(action: QtWidgets.QAction, checked: bool) -> None:
+        blocked = action.blockSignals(True)
+        action.setChecked(checked)
+        action.blockSignals(blocked)
+
+    def _apply_shape_appearance(self) -> None:
+        shape = self._config["shape"]
+        Shape.line_color = QtGui.QColor(*shape["line_color"])
+        Shape.fill_color = QtGui.QColor(*shape["fill_color"])
+        Shape.select_line_color = QtGui.QColor(*shape["select_line_color"])
+        Shape.select_fill_color = QtGui.QColor(*shape["select_fill_color"])
+        Shape.vertex_fill_color = QtGui.QColor(*shape["vertex_fill_color"])
+        Shape.hvertex_fill_color = QtGui.QColor(*shape["hvertex_fill_color"])
+        Shape.point_size = shape["point_size"]
+        self._canvas_widgets.canvas.update()
+
+    def _apply_canvas_geometry(self) -> None:
+        canvas = self._canvas_widgets.canvas
+        canvas.set_epsilon(self._config["epsilon"])
+        canvas.set_double_click(self._config["canvas"]["double_click"])
+        canvas.set_num_backups(self._config["canvas"]["num_backups"])
+        canvas.set_crosshair(self._config["canvas"]["crosshair"])
+        canvas.update()
+
+    def _apply_fill_drawing(self) -> None:
+        value = self._config["canvas"]["fill_drawing"]
+        self._canvas_widgets.canvas.set_fill_drawing(value)
+        self._set_action_checked(self._actions.fill_drawing, value)
+
+    def _on_setting_changed(self, key_path: tuple[str, ...], value: object) -> None:
+        if self._config_file is not None:
+            try:
+                set_override(
+                    config_file=self._config_file, key_path=key_path, value=value
+                )
+            except (OSError, ValueError) as e:
+                QtWidgets.QMessageBox.warning(self, "Configuration Error", str(e))
+                return
+
+        node: dict = self._config
+        for key in key_path[:-1]:
+            node = node[key]
+        node[key_path[-1]] = value
+        self._apply_setting(key_path=key_path)
+
+    def _apply_setting(self, key_path: tuple[str, ...]) -> None:
+        # Apply only the changed key, so editing one setting never overwrites an
+        # unrelated runtime control (a closed dock, a typed file search, etc.).
+        head = key_path[0]
+        TOGGLE_ACTIONS: Final = {
+            "auto_save": self._actions.save_auto,
+            "with_image_data": self._actions.save_with_image_data,
+        }
+        if key_path == ("canvas", "fill_drawing"):
+            self._apply_fill_drawing()
+        elif head in ("epsilon", "canvas"):
+            self._apply_canvas_geometry()
+        elif head in ("shape", "shape_color", "shift_auto_shape_color"):
+            self._apply_shape_appearance()
+        elif head in TOGGLE_ACTIONS:
+            self._set_action_checked(TOGGLE_ACTIONS[head], self._config[head])
+        # Remaining keys (validate_label, display_label_popup, flags) are read
+        # from the config at use-time or apply on the next image, so they need
+        # no live widget update here.
+
+        LABEL_DIALOG_KEYS: Final = {
+            "labels",
+            "sort_labels",
+            "show_label_text_field",
+            "label_completion",
+            "fit_to_content",
+        }
+        if head in LABEL_DIALOG_KEYS:
+            self._label_dialog = self._make_label_dialog()
+
+    def _open_settings(self) -> None:
+        if self._config_file is None or self._config_overrides:
+            return
+        # Reflect the in-memory config (what the app is using now, including
+        # session toggles). Hand-edits via "open as text" take effect on the next
+        # launch; set_override keeps them on disk in the meantime.
+        if self._settings_dialog is not None:
+            self._settings_dialog.hide()
+            self._settings_dialog.deleteLater()
+        dialog = SettingsDialog(
+            config=self._config,
+            apply_setting=self._on_setting_changed,
+            open_as_text=self._open_config_file,
+            parent=self,
+        )
+        self._settings_dialog = dialog
+        dialog.show()
+        dialog.raise_()
 
     def _open_config_file(self) -> None:
         if self._config_file is None:
