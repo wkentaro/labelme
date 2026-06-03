@@ -5,9 +5,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-from labelme.config import _migrate_config_from_file
-from labelme.config import get_user_config_file
-from labelme.config import load_config
+from labelme._config import _migrate_config_from_file
+from labelme._config import get_user_config_file
+from labelme._config import load_config
 
 
 def test_get_user_config_file_creates_sparse(

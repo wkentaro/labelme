@@ -35,6 +35,7 @@ from PyQt5.QtWidgets import QMessageBox
 from labelme import __appname__
 from labelme import __version__
 from labelme import _automation
+from labelme._config import load_config
 from labelme._label_file import LABEL_FILE_SUFFIX
 from labelme._label_file import LabelData
 from labelme._label_file import LabelFileError
@@ -45,7 +46,6 @@ from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
 from labelme._shape import Shape
 from labelme._shape_clipboard import ShapeClipboard
-from labelme.config import load_config
 from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
 from labelme.widgets import BrightnessContrastDialog

@@ -18,8 +18,8 @@ from PyQt5 import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
+from labelme._config import get_user_config_file
 from labelme.app import MainWindow
-from labelme.config import get_user_config_file
 from labelme.utils import new_icon
 
 
