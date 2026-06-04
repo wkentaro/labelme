@@ -106,7 +106,7 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
                     "# Labelme config file.\n"
                     "# Only add settings you want to override.\n"
                     "# For all available options and defaults, see:\n"
-                    "#   https://github.com/wkentaro/labelme/blob/main/labelme/config/default_config.yaml\n"
+                    "#   https://github.com/wkentaro/labelme/blob/main/labelme/_config/default_config.yaml\n"
                     "#\n"
                     "# Example:\n"
                     "# with_image_data: true\n"
