@@ -35,7 +35,7 @@ from PyQt5.QtWidgets import QMessageBox
 from labelme import __appname__
 from labelme import __version__
 from labelme import _automation
-from labelme._config import load_config
+from labelme import _config
 from labelme._label_file import LABEL_FILE_SUFFIX
 from labelme._label_file import LabelData
 from labelme._label_file import LabelFileError
@@ -1166,7 +1166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self, config_file: Path | None, config_overrides: dict | None
     ) -> tuple[Path | None, dict]:
         try:
-            config = load_config(
+            config = _config.load_config(
                 config_file=config_file, config_overrides=config_overrides or {}
             )
         except ValueError as e:
@@ -1187,7 +1187,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             config_file = None
             config_overrides = {}
-            config = load_config(
+            config = _config.load_config(
                 config_file=config_file, config_overrides=config_overrides
             )
         return config_file, config
