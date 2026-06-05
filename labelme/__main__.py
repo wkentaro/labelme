@@ -11,14 +11,14 @@ import warnings
 from pathlib import Path
 from typing import AnyStr
 
-import yaml
 from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
-from labelme._config import get_user_config_file
+from labelme import _config
+from labelme import _yaml
 from labelme.app import MainWindow
 from labelme.utils import new_icon
 
@@ -115,7 +115,7 @@ def main() -> None:
         "--output",
         help="output directory for saving annotation JSON files",
     )
-    default_config_file = get_user_config_file()
+    default_config_file = _config.get_user_config_file()
     parser.add_argument(
         "--config",
         dest="config",
@@ -245,9 +245,9 @@ def main() -> None:
     if hasattr(args, "label_flags"):
         if Path(args.label_flags).is_file():
             with open(args.label_flags, encoding="utf-8") as f:
-                args.label_flags = yaml.safe_load(f)
+                args.label_flags = _yaml.safe_load(f)
         else:
-            args.label_flags = yaml.safe_load(args.label_flags)
+            args.label_flags = _yaml.safe_load(args.label_flags)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")
@@ -258,7 +258,7 @@ def main() -> None:
     config_overrides: dict
     config_file: Path | None
     config_str: str = config_from_args.pop("config")
-    if isinstance(config_loaded := yaml.safe_load(config_str), dict):
+    if isinstance(config_loaded := _yaml.safe_load(config_str), dict):
         config_overrides = config_loaded
         config_file = None
     else:

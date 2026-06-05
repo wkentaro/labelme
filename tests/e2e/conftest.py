@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import json
 import sys
 from collections.abc import Callable
 from collections.abc import Generator
 from pathlib import Path
 
 import pytest
-import yaml
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QPointF
@@ -103,7 +103,7 @@ def main_win(
                 if "labels" in config_overrides:
                     argv.extend(["--labels", ",".join(config_overrides["labels"])])
         elif config_overrides:
-            argv.extend(["--config", yaml.dump(config_overrides)])
+            argv.extend(["--config", json.dumps(config_overrides)])
 
         if output_dir is not None:
             argv.extend(["--output", str(output_dir)])

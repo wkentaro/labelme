@@ -33,10 +33,10 @@ dependencies = [
   "pyqt5>=5.14.0",
   "pyqt5-qt5!=5.15.13 ; sys_platform == 'linux'",
   "pyqt5-qt5!=5.15.11,!=5.15.12,!=5.15.13,!=5.15.14,!=5.15.15,!=5.15.16 ; sys_platform == 'win32'",
-  "pyyaml>=6.0",
   "scipy>=1.8",
   "scikit-image>=0.21",
   "tifffile>=2024.1.30",
+  "ruamel-yaml>=0.18",
 ]
 dynamic = ["readme", "version"]
 
@@ -69,7 +69,6 @@ dev = [
   "twine>=6.1.0",
   "ty>=0.0.31",
   "types-pillow>=10.2.0.20240822",
-  "types-pyyaml>=6.0.12.20241230",
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "mdformat-gfm>=1.0.0",
