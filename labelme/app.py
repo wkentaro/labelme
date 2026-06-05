@@ -131,6 +131,9 @@ class _Actions(NamedTuple):
     undo: QtWidgets.QAction
     add_point_to_edge: QtWidgets.QAction
     remove_point: QtWidgets.QAction
+    mask_brush_add: QtWidgets.QAction
+    mask_brush_erase: QtWidgets.QAction
+    mask_brush_options: QtWidgets.QWidgetAction
     create_mode: QtWidgets.QAction
     edit_mode: QtWidgets.QAction
     create_rectangle_mode: QtWidgets.QAction
@@ -463,6 +466,30 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Remove selected point from polygon"),
             enabled=False,
         )
+        mask_brush_add = action(
+            text="Brush Add",
+            slot=lambda checked: self._set_mask_brush_mode("add" if checked else None),
+            icon="phosphor/paint-bucket.svg",
+            tip="Paint selected mask with the brush",
+            checkable=True,
+            enabled=False,
+        )
+        mask_brush_erase = action(
+            text="Brush Erase",
+            slot=lambda checked: self._set_mask_brush_mode(
+                "erase" if checked else None
+            ),
+            icon="phosphor/x-circle.svg",
+            tip="Erase selected mask with the brush",
+            checkable=True,
+            enabled=False,
+        )
+        mask_brush_mode_group = QtWidgets.QActionGroup(self)
+        mask_brush_mode_group.setExclusive(False)
+        mask_brush_mode_group.addAction(mask_brush_add)
+        mask_brush_mode_group.addAction(mask_brush_erase)
+        mask_brush_options = self._create_mask_brush_options_action()
+        mask_brush_options.setEnabled(False)
         add_point_to_edge = action(
             text=self.tr("Add Point to Edge"),
             slot=self._canvas_widgets.canvas.add_point_to_edge,
@@ -730,7 +757,13 @@ class MainWindow(QtWidgets.QMainWindow):
             create_ai_box_to_shape_mode,
             brightness_contrast,
         )
-        on_shapes_present = (save_as, hide_all, show_all, toggle_all)
+        on_shapes_present = (
+            save_as,
+            hide_all,
+            show_all,
+            toggle_all,
+            mask_brush_erase,
+        )
         context_menu = (
             *[draw_action for _, draw_action in draw],
             edit_mode,
@@ -743,6 +776,8 @@ class MainWindow(QtWidgets.QMainWindow):
             undo_last_point,
             add_point_to_edge,
             remove_point,
+            mask_brush_add,
+            mask_brush_erase,
         )
         edit_menu = (
             edit,
@@ -755,6 +790,9 @@ class MainWindow(QtWidgets.QMainWindow):
             undo_last_point,
             None,
             remove_point,
+            None,
+            mask_brush_add,
+            mask_brush_erase,
             None,
             keep_prev_action,
         )
@@ -778,6 +816,9 @@ class MainWindow(QtWidgets.QMainWindow):
             undo_last_point=undo_last_point,
             undo=undo,
             remove_point=remove_point,
+            mask_brush_add=mask_brush_add,
+            mask_brush_erase=mask_brush_erase,
+            mask_brush_options=mask_brush_options,
             add_point_to_edge=add_point_to_edge,
             create_mode=create_mode,
             edit_mode=edit_mode,
@@ -812,6 +853,47 @@ class MainWindow(QtWidgets.QMainWindow):
             context_menu=context_menu,
             edit_menu=edit_menu,
         )
+
+    def _create_mask_brush_options_action(self) -> QtWidgets.QWidgetAction:
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(container)
+        layout.setContentsMargins(2, 0, 2, 0)
+        layout.setSpacing(2)
+
+        label = QtWidgets.QLabel("Brush")
+        label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(label)
+
+        controls = QtWidgets.QHBoxLayout()
+        controls.setContentsMargins(0, 0, 0, 0)
+        controls.setSpacing(4)
+
+        shape_combo = QtWidgets.QComboBox()
+        shape_combo.addItem("Circle", "circle")
+        shape_combo.addItem("Rect", "rect")
+        shape_combo.setToolTip("Mask brush shape")
+        shape_combo.currentIndexChanged.connect(
+            lambda index: self._canvas_widgets.canvas.set_mask_brush_shape(
+                shape_combo.itemData(index)
+            )
+        )
+        controls.addWidget(shape_combo)
+
+        size_spin = QtWidgets.QSpinBox()
+        size_spin.setRange(1, 500)
+        size_spin.setValue(12)
+        size_spin.setSuffix(" px")
+        size_spin.setToolTip("Mask brush radius")
+        size_spin.valueChanged.connect(self._canvas_widgets.canvas.set_mask_brush_size)
+        controls.addWidget(size_spin)
+
+        layout.addLayout(controls)
+        container.setEnabled(False)
+
+        out = QtWidgets.QWidgetAction(self)
+        out.setDefaultWidget(container)
+        out.setEnabled(False)
+        return out
 
     def _setup_menus(self) -> _Menus:
         action = functools.partial(utils.new_action, self)
@@ -942,6 +1024,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.duplicate,
                     self._actions.delete,
                     self._actions.undo,
+                    self._actions.mask_brush_add,
+                    self._actions.mask_brush_erase,
+                    self._actions.mask_brush_options,
                     self._actions.brightness_contrast,
                     None,
                     self._actions.fit_window,
@@ -1007,7 +1092,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #
         # Bump this when dock/toolbar layout changes to reset window state
         # for users upgrading from an older version.
-        SETTINGS_VERSION: int = 1
+        SETTINGS_VERSION: int = 2
         if self.settings.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
             self._reset_layout()
             self.settings.setValue("settingsVersion", SETTINGS_VERSION)
@@ -1402,6 +1487,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     % model_name,
                 )
                 return
+        if not edit:
+            self._set_mask_brush_mode(None)
         self._canvas_widgets.canvas.set_editing(edit)
         if create_mode is not None:
             self._canvas_widgets.canvas.create_mode = create_mode
@@ -1426,6 +1513,50 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.set_disabled_models(_AI_MODELS_WITHOUT_POINT_SUPPORT)
         else:
             self._ai_annotation.set_disabled_models(())
+        self._sync_mask_brush_actions()
+
+    def _set_mask_brush_mode(self, mode: Literal["add", "erase"] | None) -> None:
+        if mode is not None:
+            self._canvas_widgets.canvas.set_editing(True)
+        self._canvas_widgets.canvas.set_mask_brush_mode(mode)
+        self._actions.mask_brush_add.setChecked(mode == "add")
+        self._actions.mask_brush_erase.setChecked(mode == "erase")
+        self._set_mask_brush_options_enabled(mode is not None)
+        for _, draw_action in self._actions.draw:
+            draw_action.setEnabled(True)
+        self._actions.edit_mode.setEnabled(False if mode else True)
+        self._ai_text.setEnabled(False)
+        self._ai_annotation.setEnabled(False)
+
+    def _set_mask_brush_options_enabled(self, enabled: bool) -> None:
+        self._actions.mask_brush_options.setEnabled(enabled)
+        widget = self._actions.mask_brush_options.defaultWidget()
+        if widget is not None:
+            widget.setEnabled(enabled)
+
+    def _sync_mask_brush_actions(self) -> None:
+        is_editing = self._canvas_widgets.canvas.is_editing
+        shapes = self._canvas_widgets.canvas.shapes
+        selected_shapes = self._canvas_widgets.canvas.selected_shapes
+        has_polygon = any(shape.shape_type == "polygon" for shape in shapes)
+        mask_selected = any(
+            shape.shape_type == "mask" and shape.mask is not None
+            for shape in selected_shapes
+        )
+        can_erase = has_polygon or mask_selected
+        self._actions.mask_brush_erase.setEnabled(is_editing and can_erase)
+        self._actions.mask_brush_add.setEnabled(is_editing and mask_selected)
+        if (
+            not is_editing or not can_erase
+        ) and self._actions.mask_brush_erase.isChecked():
+            self._set_mask_brush_mode(None)
+        if (
+            not is_editing or not mask_selected
+        ) and self._actions.mask_brush_add.isChecked():
+            self._set_mask_brush_mode(None)
+        self._set_mask_brush_options_enabled(
+            is_editing and self._canvas_widgets.canvas._mask_brush_mode is not None
+        )
 
     def _highlight_ai_buttons(self, highlight: bool) -> None:
         HIGHLIGHT_COLOR: Final = "#FFFFCC"
@@ -1585,6 +1716,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.duplicate.setEnabled(n_selected)
         self._actions.copy.setEnabled(n_selected)
         self._actions.edit.setEnabled(n_selected)
+        self._sync_mask_brush_actions()
 
     def add_label(self, shape: Shape) -> None:
         assert shape.label is not None
@@ -1601,6 +1733,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_dialog.add_label_history(shape.label)
         for action in self._actions.on_shapes_present:
             action.setEnabled(True)
+        self._sync_mask_brush_actions()
 
         self._update_shape_color(shape)
         label_list_item.setText(format_shape_label(shape))

@@ -55,6 +55,10 @@ _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
     "ai_box_to_shape",
 )
 
+_MaskBrushMode = Literal["add", "erase"]
+_MaskBrushShape = Literal["circle", "rect"]
+_MASK_BRUSH_DEFAULT_SIZE: Final[int] = 12
+
 
 _CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
     "polygon": "polygon",
@@ -137,6 +141,11 @@ class Canvas(QtWidgets.QWidget):
     _osam_session_model_name: str = "sam2:latest"
     _osam_session: _automation.OsamSession | None
     _ai_output_format: _automation.AiOutputFormat = "polygon"
+    _mask_brush_mode: _MaskBrushMode | None
+    _mask_brush_shape: _MaskBrushShape
+    _mask_brush_size: int
+    _mask_brush_painting: bool
+    _mask_brush_dirty: bool
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -179,6 +188,11 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = []
         self.scale: float = 1.0
         self._osam_session = None
+        self._mask_brush_mode = None
+        self._mask_brush_shape = "circle"
+        self._mask_brush_size = _MASK_BRUSH_DEFAULT_SIZE
+        self._mask_brush_painting = False
+        self._mask_brush_dirty = False
         self._snapping = True
         self._hovered_shape_is_selected: bool = False
         self._painter = QtGui.QPainter()
@@ -196,6 +210,10 @@ class Canvas(QtWidgets.QWidget):
     @property
     def is_drawing(self) -> bool:
         return self._current is not None
+
+    @property
+    def is_editing(self) -> bool:
+        return self.mode == _CanvasMode.EDIT
 
     @property
     def create_mode(self) -> _CreateMode:
@@ -248,6 +266,24 @@ class Canvas(QtWidgets.QWidget):
 
     def set_ai_output_format(self, output_format: _automation.AiOutputFormat) -> None:
         self._ai_output_format = output_format
+
+    def set_mask_brush_mode(self, mode: _MaskBrushMode | None) -> None:
+        self._mask_brush_mode = mode
+        self._mask_brush_painting = False
+        self._mask_brush_dirty = False
+        self._update_status()
+        self.update()
+
+    def set_mask_brush_shape(self, shape: _MaskBrushShape) -> None:
+        if shape not in typing.get_args(_MaskBrushShape):
+            raise ValueError(f"Unsupported mask brush shape: {shape}")
+        self._mask_brush_shape = shape
+        self._update_status()
+        self.update()
+
+    def set_mask_brush_size(self, size: int) -> None:
+        self._mask_brush_size = max(1, size)
+        self.update()
 
     def _get_osam_session(self) -> _automation.OsamSession:
         if (
@@ -335,6 +371,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()  # clear crosshair
         else:
             # EDIT -> CREATE
+            self.set_mask_brush_mode(None)
             need_update: bool = self._set_highlight(
                 hovered_shape=None,
                 hovered_edge=None,
@@ -396,7 +433,20 @@ class Canvas(QtWidgets.QWidget):
                 messages.append(self.tr("Enter or Space to finalize"))
         else:
             assert self.mode == _CanvasMode.EDIT
-            messages.append(self.tr("Editing shapes"))
+            if self._mask_brush_mode is not None:
+                brush_shape = {
+                    "circle": "circle",
+                    "rect": "rect",
+                }[self._mask_brush_shape]
+                brush_mode = {
+                    "add": "add",
+                    "erase": "erase",
+                }[self._mask_brush_mode]
+                messages.append(
+                    f"Editing masks with {brush_shape} brush ({brush_mode})"
+                )
+            else:
+                messages.append(self.tr("Editing shapes"))
         if extra_messages:
             messages.extend(extra_messages)
         self.status_updated.emit(" • ".join(messages))
@@ -534,6 +584,12 @@ class Canvas(QtWidgets.QWidget):
         return self._is_close_enough(pos, current.points[0])
 
     def _refresh_hover_state(self, pos: QPointF) -> None:
+        if self._mask_brush_mode is not None:
+            self._release_cursor()
+            self.update()
+            self._update_status()
+            return
+
         status_messages: list[str] = []
         self._highlight_hover_shape(pos=pos, status_messages=status_messages)
         self.vertex_selected.emit(self._hovered_vertex is not None)
@@ -594,6 +650,12 @@ class Canvas(QtWidgets.QWidget):
     def _continue_left_button_drag(
         self, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
+        if self._mask_brush_mode is not None and self._mask_brush_painting:
+            self._mask_brush_dirty |= self._paint_mask_brush(pos=pos)
+            self.update()
+            self._update_status()
+            return
+
         is_shift_pressed = bool(event.modifiers() & Qt.ShiftModifier)
         if self._is_vertex_selected():
             self._drag_hovered_vertex(pos=pos, is_shift_pressed=is_shift_pressed)
@@ -768,6 +830,102 @@ class Canvas(QtWidgets.QWidget):
         self._last_hovered_vertex = None
         self._is_moving_shape = True  # Save changes
 
+    def _paint_mask_brush(self, pos: QPointF) -> bool:
+        if self._mask_brush_mode is None:
+            return False
+        if self.selected_shapes:
+            changed = False
+            for shape in self.selected_shapes:
+                changed |= self._paint_shape_with_brush(shape=shape, pos=pos)
+            return changed
+
+        shape = self._mask_brush_target(pos=pos)
+        if shape is None:
+            return False
+        return self._paint_shape_with_brush(shape=shape, pos=pos)
+
+    def _paint_shape_with_brush(self, shape: Shape, pos: QPointF) -> bool:
+        if shape.shape_type == "mask":
+            return self._paint_mask_shape_with_brush(shape=shape, pos=pos)
+        if shape.shape_type == "polygon" and self._mask_brush_mode == "erase":
+            return self._erase_polygon_points_with_brush(shape=shape, pos=pos)
+        return False
+
+    def _paint_mask_shape_with_brush(self, shape: Shape, pos: QPointF) -> bool:
+        if shape is None or shape.mask is None:
+            return False
+
+        origin = shape.points[0]
+        cx = int(round(pos.x() - origin.x()))
+        cy = int(round(pos.y() - origin.y()))
+        mask = shape.mask
+        radius = self._mask_brush_size
+        y_min = max(cy - radius, 0)
+        y_max = min(cy + radius + 1, mask.shape[0])
+        x_min = max(cx - radius, 0)
+        x_max = min(cx + radius + 1, mask.shape[1])
+        if y_min >= y_max or x_min >= x_max:
+            return False
+
+        patch = mask[y_min:y_max, x_min:x_max]
+        before = patch.copy()
+        value = self._mask_brush_mode == "add"
+        if self._mask_brush_shape == "rect":
+            patch[:, :] = value
+        else:
+            ys, xs = np.ogrid[y_min:y_max, x_min:x_max]
+            brush = (xs - cx) ** 2 + (ys - cy) ** 2 <= radius**2
+            patch[brush] = value
+        return not np.array_equal(before, patch)
+
+    def _erase_polygon_points_with_brush(self, shape: Shape, pos: QPointF) -> bool:
+        if not shape.can_remove_point():
+            return False
+        removable_indices = [
+            i
+            for i, point in enumerate(shape.points)
+            if self._point_is_in_mask_brush(point=point, center=pos)
+        ]
+        if not removable_indices:
+            return False
+
+        changed = False
+        for index in reversed(removable_indices):
+            if not shape.can_remove_point():
+                break
+            shape.remove_point(index)
+            changed = True
+        if changed:
+            shape.clear_highlight()
+        return changed
+
+    def _point_is_in_mask_brush(self, point: QPointF, center: QPointF) -> bool:
+        radius = self._mask_brush_size
+        if self._mask_brush_shape == "rect":
+            return (
+                abs(point.x() - center.x()) <= radius
+                and abs(point.y() - center.y()) <= radius
+            )
+        return (point.x() - center.x()) ** 2 + (
+            point.y() - center.y()
+        ) ** 2 <= radius**2
+
+    def _mask_brush_target(self, pos: QPointF) -> Shape | None:
+        candidates = list(reversed(self.shapes))
+        for shape in candidates:
+            if shape.shape_type == "polygon" and self._mask_brush_mode == "erase":
+                if any(
+                    self._point_is_in_mask_brush(point=point, center=pos)
+                    for point in shape.points
+                ):
+                    return shape
+                continue
+            if shape.shape_type != "mask" or shape.mask is None:
+                continue
+            if _shape.is_hit_by_point(shape=shape, point=pos, epsilon=self._epsilon):
+                return shape
+        return None
+
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
         self._dispatch_pointer_press(pos=pos, event=a0)
@@ -889,6 +1047,12 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def _press_left_while_editing(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+        if self._mask_brush_mode is not None:
+            self._mask_brush_painting = True
+            self._mask_brush_dirty |= self._paint_mask_brush(pos=pos)
+            self.update()
+            return
+
         modifiers = event.modifiers()
         self._maybe_modify_polygon_topology(modifiers=modifiers)
         if self._is_rotation_point_selected():
@@ -951,6 +1115,14 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def _release_left(self) -> None:
+        if self._mask_brush_painting:
+            self._mask_brush_painting = False
+            if self._mask_brush_dirty:
+                self.backup_shapes()
+                self.shape_moved.emit()
+            self._mask_brush_dirty = False
+            return
+
         if self.mode != _CanvasMode.EDIT:
             return
         if self.hovered_shape is None:
@@ -1317,12 +1489,38 @@ class Canvas(QtWidgets.QWidget):
             _shape.paint(shape=copy_shape, painter=painter)
 
     def _draw_preview_overlay_layer(self, painter: QtGui.QPainter) -> None:
+        if self._mask_brush_mode is not None:
+            self._draw_mask_brush_preview(painter=painter)
         preview = self._build_preview_shape()
         if preview is None:
             return
         preview.fill = self._fill_drawing
         preview.selected = self._fill_drawing
         _shape.paint(shape=preview, painter=painter)
+
+    def _draw_mask_brush_preview(self, painter: QtGui.QPainter) -> None:
+        pos = self._prev_move_point
+        if pos.isNull():
+            return
+        radius = self._mask_brush_size * self.scale
+        center = pos * self.scale
+        rect = QtCore.QRectF(
+            center.x() - radius,
+            center.y() - radius,
+            radius * 2,
+            radius * 2,
+        )
+        color = QtGui.QColor(0, 180, 255, 180)
+        if self._mask_brush_mode == "erase":
+            color = QtGui.QColor(255, 80, 80, 180)
+        pen = QtGui.QPen(color)
+        pen.setWidth(2)
+        painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
+        if self._mask_brush_shape == "rect":
+            painter.drawRect(rect)
+        else:
+            painter.drawEllipse(rect)
 
     def _build_preview_shape(self) -> Shape | None:
         if self._current is None:
@@ -1640,6 +1838,9 @@ class Canvas(QtWidgets.QWidget):
         self._last_hovered_edge = None
         self._hovered_rotation = None
         self._last_hovered_rotation = None
+        self._mask_brush_mode = None
+        self._mask_brush_painting = False
+        self._mask_brush_dirty = False
         self.update()
 
 

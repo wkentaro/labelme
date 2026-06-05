@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import Final
 
+import numpy as np
 import pytest
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -36,6 +37,22 @@ def canvas(qtbot: QtBot) -> Canvas:
 def _make_oriented_rectangle(corners: list[tuple[float, float]]) -> Shape:
     shape = Shape(shape_type="oriented_rectangle")
     for x, y in corners:
+        shape.add_point(QPointF(x, y))
+    shape.close()
+    return shape
+
+
+def _make_mask_shape(mask: np.ndarray) -> Shape:
+    shape = Shape(shape_type="mask", mask=mask)
+    shape.points = [QPointF(0, 0), QPointF(mask.shape[1] - 1, mask.shape[0] - 1)]
+    shape.point_labels = [1, 1]
+    shape.close()
+    return shape
+
+
+def _make_polygon(points: list[tuple[float, float]]) -> Shape:
+    shape = Shape(shape_type="polygon")
+    for x, y in points:
         shape.add_point(QPointF(x, y))
     shape.close()
     return shape
@@ -210,6 +227,81 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     assert canvas._current is None
     assert emissions == [False]
     assert observed_modes == ["rectangle"]
+
+
+@pytest.mark.gui
+def test_circle_mask_brush_erases_round_footprint(canvas: Canvas) -> None:
+    shape = _make_mask_shape(np.ones((7, 7), dtype=bool))
+    canvas.load_shapes([shape])
+    canvas.selected_shapes = [shape]
+    canvas.set_mask_brush_mode("erase")
+    canvas.set_mask_brush_shape("circle")
+    canvas.set_mask_brush_size(1)
+
+    changed = canvas._paint_mask_brush(pos=QPointF(3, 3))
+
+    assert changed
+    expected = np.ones((7, 7), dtype=bool)
+    expected[3, 3] = False
+    expected[2, 3] = False
+    expected[4, 3] = False
+    expected[3, 2] = False
+    expected[3, 4] = False
+    assert shape.mask is not None
+    assert np.array_equal(shape.mask, expected)
+
+
+@pytest.mark.gui
+def test_rect_mask_brush_adds_square_footprint(canvas: Canvas) -> None:
+    shape = _make_mask_shape(np.zeros((7, 7), dtype=bool))
+    canvas.load_shapes([shape])
+    canvas.selected_shapes = [shape]
+    canvas.set_mask_brush_mode("add")
+    canvas.set_mask_brush_shape("rect")
+    canvas.set_mask_brush_size(1)
+
+    changed = canvas._paint_mask_brush(pos=QPointF(3, 3))
+
+    assert changed
+    expected = np.zeros((7, 7), dtype=bool)
+    expected[2:5, 2:5] = True
+    assert shape.mask is not None
+    assert np.array_equal(shape.mask, expected)
+
+
+@pytest.mark.gui
+def test_circle_brush_erases_polygon_points_inside_footprint(canvas: Canvas) -> None:
+    shape = _make_polygon([(0, 0), (5, 0), (10, 0), (10, 10), (0, 10)])
+    canvas.load_shapes([shape])
+    canvas.selected_shapes = [shape]
+    canvas.set_mask_brush_mode("erase")
+    canvas.set_mask_brush_shape("circle")
+    canvas.set_mask_brush_size(1)
+
+    changed = canvas._paint_mask_brush(pos=QPointF(5, 0))
+
+    assert changed
+    assert [(p.x(), p.y()) for p in shape.points] == [
+        (0.0, 0.0),
+        (10.0, 0.0),
+        (10.0, 10.0),
+        (0.0, 10.0),
+    ]
+
+
+@pytest.mark.gui
+def test_rect_brush_does_not_erase_polygon_below_minimum(canvas: Canvas) -> None:
+    shape = _make_polygon([(0, 0), (5, 0), (10, 0), (10, 10)])
+    canvas.load_shapes([shape])
+    canvas.selected_shapes = [shape]
+    canvas.set_mask_brush_mode("erase")
+    canvas.set_mask_brush_shape("rect")
+    canvas.set_mask_brush_size(6)
+
+    changed = canvas._paint_mask_brush(pos=QPointF(5, 0))
+
+    assert changed
+    assert len(shape.points) == 3
 
 
 @pytest.mark.gui
