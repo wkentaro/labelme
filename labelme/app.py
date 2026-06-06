@@ -12,7 +12,6 @@ import time
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
@@ -37,7 +36,7 @@ from labelme import __version__
 from labelme import _automation
 from labelme import _config
 from labelme._label_file import LABEL_FILE_SUFFIX
-from labelme._label_file import LabelData
+from labelme._label_file import Annotation
 from labelme._label_file import LabelFileError
 from labelme._label_file import ShapeDict
 from labelme._label_file import is_label_file_path
@@ -196,11 +195,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     _output_dir: Path | None
     _image: QtGui.QImage
-    _image_data: bytes | None
+    _annotation: Annotation | None
     _label_file_path: str | None
     _image_path: str | None
     _prev_image_path: str | None
-    _other_data: dict | None
     _zoom_values: dict[str, tuple[_ZoomMode, int]]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
     _scroll_values: dict[Qt.Orientation, dict[str, float]]
@@ -987,10 +985,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._output_dir = Path(output_dir) if output_dir else None
 
         self._image = QtGui.QImage()
+        self._annotation = None
         self._label_file_path = None
         self._image_path = None
         self._prev_image_path = None
-        self._other_data = None
         self._zoom_values = {}
         self._brightness_contrast_values = {}
         self._scroll_values = {
@@ -1364,10 +1362,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_state(self) -> None:
         self._docks.label_list.clear()
+        self._annotation = None
         self._image_path = None
-        self._image_data = None
         self._label_file_path = None
-        self._other_data = None
         self._canvas_widgets.canvas.reset_state()
 
     # Callbacks
@@ -1695,19 +1692,22 @@ class MainWindow(QtWidgets.QMainWindow):
             flags[item.text()] = item.checkState() == Qt.Checked
         try:
             assert self._image_path
+            assert self._annotation is not None
             label_dir = Path(label_path).parent
-            image_path = os.path.relpath(self._image_path, label_dir)
-            image_data = self._image_data if self._config["with_image_data"] else None
             label_dir.mkdir(parents=True, exist_ok=True)
+            annotation = Annotation(
+                image_path=os.path.relpath(self._image_path, label_dir),
+                image_data=self._annotation.image_data,
+                shapes=shapes,
+                flags=flags,
+                other_data=self._annotation.other_data,
+            )
             write_label_file(
                 filename=label_path,
-                shapes=shapes,
-                image_path=image_path,
-                image_data=image_data,
+                annotation=annotation,
                 image_height=self._image.height(),
                 image_width=self._image.width(),
-                other_data=self._other_data,
-                flags=flags,
+                save_image_data=self._config["with_image_data"],
             )
             self._label_file_path = label_path
             items = self._docks.file_list.findItems(self._image_path, Qt.MatchExactly)
@@ -1939,9 +1939,9 @@ class MainWindow(QtWidgets.QMainWindow):
             brightness,
             contrast,
         )
-        assert self._image_data is not None
+        assert self._annotation is not None
         dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self._image_data),
+            utils.img_data_to_pil(self._annotation.image_data),
             self._on_brightness_contrast_changed,
             parent=self,
         )
@@ -1971,17 +1971,16 @@ class MainWindow(QtWidgets.QMainWindow):
             target = item.checkState() == Qt.Unchecked if value is None else value
             item.setCheckState(Qt.Checked if target else Qt.Unchecked)
 
-    def _open_label_file_into_state(self, label_path: str) -> LabelData | None:
+    def _open_label_file_into_state(self, label_path: str) -> Annotation | None:
         try:
-            label_data = read_label_file(filename=label_path)
+            annotation = read_label_file(filename=label_path)
         except LabelFileError as e:
             self._show_file_open_error(path=label_path, file_kind="label", exc=e)
             return None
         self._label_file_path = label_path
-        self._image_data = label_data.image_data
-        self._image_path = str(Path(label_path).parent / label_data.image_path)
-        self._other_data = label_data.other_data
-        return label_data
+        self._annotation = annotation
+        self._image_path = str(Path(label_path).parent / annotation.image_path)
+        return annotation
 
     def _open_image_into_state(self, image_path: str) -> bool:
         try:
@@ -1989,7 +1988,13 @@ class MainWindow(QtWidgets.QMainWindow):
         except OSError as e:
             self._show_file_open_error(path=image_path, file_kind="image", exc=e)
             return False
-        self._image_data = image_data
+        self._annotation = Annotation(
+            image_path=os.path.basename(image_path),
+            image_data=image_data,
+            shapes=[],
+            flags={},
+            other_data={},
+        )
         self._image_path = image_path
         self._label_file_path = None
         return True
@@ -2032,17 +2037,17 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path=image_or_label_path,
             output_dir=self._output_dir,
         )
-        label_data: LabelData | None = None
+        annotation: Annotation | None = None
         if QtCore.QFile.exists(label_path):
-            label_data = self._open_label_file_into_state(label_path=label_path)
-            if label_data is None:
+            annotation = self._open_label_file_into_state(label_path=label_path)
+            if annotation is None:
                 return
         else:
             if not self._open_image_into_state(image_path=image_or_label_path):
                 return
-        assert self._image_data is not None
+        assert self._annotation is not None
         t0 = time.time()
-        image = QtGui.QImage.fromData(self._image_data)
+        image = QtGui.QImage.fromData(self._annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
@@ -2062,14 +2067,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
-        if label_data is not None:
+        if annotation is not None:
             self._load_shapes(
                 shapes=_shapes_from_dicts(
-                    shape_dicts=label_data.shapes,
+                    shape_dicts=annotation.shapes,
                     label_flags=self._config["label_flags"],
                 )
             )
-            flags.update(label_data.flags)
+            flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if prev_shapes and self.has_no_shapes():
             self._load_shapes(shapes=prev_shapes, replace=False)
@@ -2787,20 +2792,18 @@ def _make_image_list_item(
     return item
 
 
-def _shape_to_dict(shape: Shape) -> dict[str, Any]:
-    data = shape.other_data.copy()
-    data.update(
+def _shape_to_dict(shape: Shape) -> ShapeDict:
+    assert shape.label is not None
+    return ShapeDict(
         label=shape.label,
-        points=[(p.x(), p.y()) for p in shape.points],
-        group_id=shape.group_id,
-        description=shape.description,
+        points=[[p.x(), p.y()] for p in shape.points],
         shape_type=shape.shape_type,
-        flags=shape.flags,
-        mask=None
-        if shape.mask is None
-        else utils.img_arr_to_b64(shape.mask.astype(np.uint8)),
+        flags=shape.flags or {},
+        description=shape.description or "",
+        group_id=shape.group_id,
+        mask=shape.mask,
+        other_data=shape.other_data,
     )
-    return data
 
 
 def _scan_image_files(root_dir: str) -> list[str]:

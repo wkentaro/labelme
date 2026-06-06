@@ -274,8 +274,7 @@ def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:
     win.show()
 
     def check_image_data() -> None:
-        assert hasattr(win, "_image_data")
-        assert win._image_data is not None
+        assert win._annotation is not None
 
     qtbot.waitUntil(check_image_data)
 
