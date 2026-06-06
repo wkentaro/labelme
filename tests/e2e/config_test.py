@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from PyQt5 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from ..conftest import close_or_pause
@@ -23,7 +22,6 @@ def test_MainWindow_config(
     with_config_file: bool,
     qtbot: QtBot,
     tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
     pause: bool,
 ) -> None:
     config_file: Path | None = None
@@ -42,19 +40,10 @@ def test_MainWindow_config(
     assert win._config["labels"] == ["bird"]
     assert win._config_file == config_file
 
-    if not with_config_file:
-        message_box_shown: list[bool] = [False]
-
-        def mock_information(
-            parent: QtWidgets.QWidget, title: str, message: str
-        ) -> int:
-            message_box_shown[0] = True
-            assert "No Config File" in title
-            return QtWidgets.QMessageBox.Ok
-
-        monkeypatch.setattr(QtWidgets.QMessageBox, "information", mock_information)
-
-        win._open_config_file()
-        assert message_box_shown[0] is True
+    # Overrides are present, so settings are not editable and opening the
+    # dialog is a no-op regardless of whether a config file backs the session.
+    assert win._is_settings_editable is False
+    win._open_settings()
+    assert win._settings_dialog is None
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
