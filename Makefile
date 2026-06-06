@@ -22,9 +22,9 @@ lint: update_translate  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
-	$(call exec,uv run taplo fmt --check $(shell git ls-files "*.toml"))
-	$(call exec,uv run mdformat --check $(shell git ls-files "*.md"))
-	$(call exec,uv run yamlfix --check $(shell git ls-files "*.yml" "*.yaml"))
+	$(call exec,git ls-files "*.toml" | xargs uv run taplo fmt --check)
+	$(call exec,git ls-files "*.md" | xargs uv run mdformat --check)
+	$(call exec,git ls-files "*.yml" "*.yaml" | xargs uv run yamlfix --check)
 	$(call exec,uv run typos)
 	$(call exec,git diff --exit-code labelme/translate)
 	@if grep -r 'type="unfinished"' labelme/translate/*.ts; then \
@@ -35,9 +35,9 @@ lint: update_translate  # Lint code
 format:  # Format code
 	$(call exec,uv run ruff format)
 	$(call exec,uv run ruff check --fix)
-	$(call exec,uv run taplo fmt $(shell git ls-files "*.toml"))
-	$(call exec,uv run mdformat $(shell git ls-files "*.md"))
-	$(call exec,uv run yamlfix $(shell git ls-files "*.yml" "*.yaml"))
+	$(call exec,git ls-files "*.toml" | xargs uv run taplo fmt)
+	$(call exec,git ls-files "*.md" | xargs uv run mdformat)
+	$(call exec,git ls-files "*.yml" "*.yaml" | xargs uv run yamlfix)
 
 test:  # Run tests
 	$(call exec,uv run pytest -v tests/ $(PYTEST_ARGS))
