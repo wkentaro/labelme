@@ -723,32 +723,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Voorkeuren…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Configuratiebestand openen in teksteditor</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>No Config File</source>
-        <translation>Geen configuratiebestand</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Configuration was provided as a YAML expression via command line.
-
-To use the preferences editor, start Labelme with a config file:
-  labelme --config ~/.labelmerc</source>
-        <translation>De configuratie is als YAML-expressie via de opdrachtregel opgegeven.
-
-Om de voorkeureneditor te gebruiken, start Labelme met een configuratiebestand:
-  labelme --config ~/.labelmerc</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
         <translation>Configuratiefouten</translation>
     </message>
@@ -898,6 +872,94 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>Vorm heeft geen oppervlak; niets aangemaakt.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings…</source>
+        <translation>Instellingen…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Edit settings</source>
+        <translation>Instellingen bewerken</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings are managed via --config for this session</source>
+        <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Configuratiefout</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>General</source>
+        <translation>Algemeen</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Labels</source>
+        <translation>Labels</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show label popup on new shape</source>
+        <translation>Labeldialoog tonen bij nieuwe vorm</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined labels</source>
+        <translation>Voorgedefinieerde labels</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Label validation</source>
+        <translation>Labelvalidatie</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Settings</source>
+        <translation>Instellingen</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Open config file as text…</source>
+        <translation>Configuratiebestand openen als tekst…</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Edits made in the text file apply after restart</source>
+        <translation>Wijzigingen in het tekstbestand worden na herstart toegepast</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Close</source>
+        <translation>Sluiten</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>(none)</source>
+        <translation>(geen)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>one item per line</source>
+        <translation>één item per regel</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Configuratiefout</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
+        <translation>Voorgedefinieerde labels mogen niet leeg zijn wanneer labelvalidatie is ingesteld op 'exact'. Schakel eerst de 'exact'-validatie uit.</translation>
     </message>
 </context>
 </TS>

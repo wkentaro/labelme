@@ -723,32 +723,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>偏好设置…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>在文本编辑器中打开配置文件</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>No Config File</source>
-        <translation>未找到配置文件</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Configuration was provided as a YAML expression via command line.
-
-To use the preferences editor, start Labelme with a config file:
-  labelme --config ~/.labelmerc</source>
-        <translation>配置是通过命令行以 YAML 表达式的形式传入的。
-
-若要使用偏好设置编辑器，请使用配置文件启动 Labelme：
-  labelme --config ~/.labelmerc</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
         <translation>配置错误</translation>
     </message>
@@ -898,6 +872,94 @@ Please select a different model or use AI-Box mode.</source>
         <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>形状面积为零，未创建。</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings…</source>
+        <translation>设置…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Edit settings</source>
+        <translation>编辑设置</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings are managed via --config for this session</source>
+        <translation>本次会话的设置通过 --config 管理</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>配置错误</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>General</source>
+        <translation>通用</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Labels</source>
+        <translation>标签</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show label popup on new shape</source>
+        <translation>新建形状时显示标签弹窗</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined labels</source>
+        <translation>预定义标签</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Label validation</source>
+        <translation>标签验证</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Settings</source>
+        <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Open config file as text…</source>
+        <translation>以文本方式打开配置文件…</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Edits made in the text file apply after restart</source>
+        <translation>在文本文件中所做的修改将在重启后生效</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>(none)</source>
+        <translation>（无）</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>one item per line</source>
+        <translation>每行一项</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>配置错误</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
+        <translation>当标签验证设置为“exact”时，预定义标签不能为空。请先禁用“exact”验证。</translation>
     </message>
 </context>
 </TS>

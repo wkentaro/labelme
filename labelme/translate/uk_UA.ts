@@ -571,16 +571,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Налаштування…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Відкрити конфігураційний файл у текстовому редакторі</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
         <translation>&amp;Посібник</translation>
     </message>
@@ -736,22 +726,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>No Config File</source>
-        <translation>Немає файлу конфігурації</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Configuration was provided as a YAML expression via command line.
-
-To use the preferences editor, start Labelme with a config file:
-  labelme --config ~/.labelmerc</source>
-        <translation>Конфігурацію було надано як вираз YAML через командний рядок.
-
-Щоб скористатися редактором налаштувань, запустіть Labelme із файлом конфігурації:
-  labelme --config ~/.labelmerc</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Зберегти анотації до &quot;{}&quot; перед закриттям?</translation>
     </message>
@@ -901,6 +875,94 @@ Please select a different model or use AI-Box mode.</source>
         <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>Фігура не має площі; нічого не створено.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings…</source>
+        <translation>Параметри…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Edit settings</source>
+        <translation>Редагувати параметри</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings are managed via --config for this session</source>
+        <translation>Параметри керуються через --config для цього сеансу</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Помилка конфігурації</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>General</source>
+        <translation>Загальні</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Labels</source>
+        <translation>Мітки</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show label popup on new shape</source>
+        <translation>Показувати спливаюче вікно мітки для нової фігури</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined labels</source>
+        <translation>Попередньо визначені мітки</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Label validation</source>
+        <translation>Перевірка мітки</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Settings</source>
+        <translation>Параметри</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Open config file as text…</source>
+        <translation>Відкрити файл конфігурації як текст…</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Edits made in the text file apply after restart</source>
+        <translation>Зміни в текстовому файлі застосуються після перезапуску</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Close</source>
+        <translation>Закрити</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>(none)</source>
+        <translation>(немає)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>one item per line</source>
+        <translation>по одному елементу на рядок</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Помилка конфігурації</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
+        <translation>Попередньо визначені мітки не можуть бути порожніми, коли перевірка мітки встановлена на «exact». Спочатку вимкніть перевірку «exact».</translation>
     </message>
 </context>
 </TS>

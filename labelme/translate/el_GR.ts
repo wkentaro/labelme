@@ -570,16 +570,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Προτιμήσεις…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Άνοιγμα αρχείου ρυθμίσεων στο πρόγραμμα επεξεργασίας κειμένου</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
         <translation>&amp; Εκμάθηση</translation>
     </message>
@@ -735,22 +725,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>No Config File</source>
-        <translation>Δεν υπάρχει αρχείο ρυθμίσεων</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Configuration was provided as a YAML expression via command line.
-
-To use the preferences editor, start Labelme with a config file:
-  labelme --config ~/.labelmerc</source>
-        <translation>Η διαμόρφωση δόθηκε ως έκφραση YAML μέσω γραμμής εντολών.
-
-Για να χρησιμοποιήσετε τον επεξεργαστή προτιμήσεων, εκκινήστε το Labelme με αρχείο ρυθμίσεων:
-  labelme --config ~/.labelmerc</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Να αποθηκευτούν οι σχολιασμοί στο &quot;{}&quot; πριν το κλείσιμο;</translation>
     </message>
@@ -900,6 +874,94 @@ Please select a different model or use AI-Box mode.</source>
         <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>Το σχήμα δεν είχε εμβαδό· δεν δημιουργήθηκε τίποτα.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings…</source>
+        <translation>Ρυθμίσεις…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Edit settings</source>
+        <translation>Επεξεργασία ρυθμίσεων</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings are managed via --config for this session</source>
+        <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Σφάλμα διαμόρφωσης</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>General</source>
+        <translation>Γενικά</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Labels</source>
+        <translation>Ετικέτες</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show label popup on new shape</source>
+        <translation>Εμφάνιση αναδυόμενου παραθύρου ετικέτας σε νέο σχήμα</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined labels</source>
+        <translation>Προκαθορισμένες ετικέτες</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Label validation</source>
+        <translation>Επικύρωση ετικέτας</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Settings</source>
+        <translation>Ρυθμίσεις</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Open config file as text…</source>
+        <translation>Άνοιγμα αρχείου ρυθμίσεων ως κείμενο…</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Edits made in the text file apply after restart</source>
+        <translation>Οι αλλαγές στο αρχείο κειμένου εφαρμόζονται μετά την επανεκκίνηση</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Close</source>
+        <translation>Κλείσιμο</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>(none)</source>
+        <translation>(καμία)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>one item per line</source>
+        <translation>ένα στοιχείο ανά γραμμή</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Σφάλμα διαμόρφωσης</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
+        <translation>Οι προκαθορισμένες ετικέτες δεν μπορούν να είναι κενές όταν η επικύρωση ετικέτας έχει οριστεί σε «exact». Απενεργοποιήστε πρώτα την επικύρωση «exact».</translation>
     </message>
 </context>
 </TS>

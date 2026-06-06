@@ -723,32 +723,6 @@ Shapes</source>
     </message>
     <message>
         <location filename="../app.py" line="0"/>
-        <source>Preferences…</source>
-        <translation>Preferências…</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Open config file in text editor</source>
-        <translation>Abrir arquivo de configuração no editor de texto</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>No Config File</source>
-        <translation>Sem arquivo de configuração</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
-        <source>Configuration was provided as a YAML expression via command line.
-
-To use the preferences editor, start Labelme with a config file:
-  labelme --config ~/.labelmerc</source>
-        <translation>A configuração foi fornecida como uma expressão YAML via linha de comando.
-
-Para usar o editor de preferências, inicie o Labelme com um arquivo de configuração:
-  labelme --config ~/.labelmerc</translation>
-    </message>
-    <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
         <translation>Erros de Configuração</translation>
     </message>
@@ -898,6 +872,94 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>A forma não tinha área; nenhum objeto criado.</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings…</source>
+        <translation>Configurações…</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Edit settings</source>
+        <translation>Editar configurações</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Settings are managed via --config for this session</source>
+        <translation>As configurações desta sessão são gerenciadas via --config</translation>
+    </message>
+    <message>
+        <location filename="../app.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Erro de Configuração</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>General</source>
+        <translation>Geral</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Labels</source>
+        <translation>Rótulos</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show label popup on new shape</source>
+        <translation>Mostrar popup de rótulo ao criar nova forma</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined labels</source>
+        <translation>Rótulos predefinidos</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Label validation</source>
+        <translation>Validação de rótulo</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Settings</source>
+        <translation>Configurações</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Open config file as text…</source>
+        <translation>Abrir arquivo de configuração como texto…</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Edits made in the text file apply after restart</source>
+        <translation>Edições no arquivo de texto são aplicadas após reiniciar</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Close</source>
+        <translation>Fechar</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>(none)</source>
+        <translation>(nenhum)</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>one item per line</source>
+        <translation>um item por linha</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Configuration Error</source>
+        <translation>Erro de Configuração</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
+        <translation>Os rótulos predefinidos não podem ficar vazios enquanto a validação de rótulo estiver definida como «exact». Desative primeiro a validação «exact».</translation>
     </message>
 </context>
 </TS>
