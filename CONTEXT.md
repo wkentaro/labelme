@@ -90,7 +90,7 @@ _Avoid_: settings (those are the annotation/behavior values), config, layout con
 
 ## Flagged ambiguities
 
-- **`LabelFile` / `LabelData` in code**: legacy identifiers for what the glossary calls an **Annotation File**. A rename to `AnnotationFile` is under consideration but not decided.
+- **`Annotation` / `LabelFile` in code**: the `Annotation` type names the in-memory **Annotation** (the whole bundle); it supersedes the former `LabelData`. `LabelFile` stays as the legacy identifier for the **Annotation File** (the on-disk form). The previously-mooted `LabelFile` → `AnnotationFile` rename remains deferred.
 - **Concept vs file naming is an intentional split**: the user-facing values are **Settings**, but the file that persists them is the **Config File** (`~/.labelmerc`) and the CLI flag stays `--config`. The menu entry reads "Settings…" while keeping Qt's `PreferencesRole`. Do not "unify" the file/flag/role naming to "settings".
 
 ## Example dialogue
