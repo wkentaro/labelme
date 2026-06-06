@@ -6,11 +6,14 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pytest
 
+from labelme._label_file import Annotation
 from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
+from labelme._label_file import ShapeDict
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
 
@@ -143,16 +146,19 @@ def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
     src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
     dst = tmp_path / "out.json"
 
-    shapes: list[dict[str, Any]] = [{**s} for s in src.shapes]
+    annotation = Annotation(
+        image_path=src.image_path,
+        image_data=src.image_data,
+        shapes=src.shapes,
+        flags={"ok": True},
+        other_data={"customField": 42},
+    )
     write_label_file(
         filename=str(dst),
-        shapes=shapes,
-        image_path=src.image_path,
+        annotation=annotation,
         image_height=None,
         image_width=None,
-        image_data=src.image_data,
-        other_data={"customField": 42},
-        flags={"ok": True},
+        save_image_data=True,
     )
 
     reloaded = read_label_file(filename=str(dst))
@@ -162,6 +168,48 @@ def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
     assert [(s["label"], s["points"], s["shape_type"]) for s in reloaded.shapes] == [
         (s["label"], s["points"], s["shape_type"]) for s in src.shapes
     ]
+
+
+def test_write_label_file_round_trips_mask_shape(
+    data_path: Path, annotated_dst: Path
+) -> None:
+    src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
+    mask = np.zeros((4, 5), dtype=bool)
+    mask[1:3, 2:4] = True
+    shape = ShapeDict(
+        label="thing",
+        points=[[2.0, 1.0], [3.0, 2.0]],
+        shape_type="mask",
+        flags={"verified": True},
+        description="d",
+        group_id=7,
+        mask=mask,
+        other_data={"score": 0.5},
+    )
+    annotation = Annotation(
+        image_path=src.image_path,
+        image_data=src.image_data,
+        shapes=[shape],
+        flags={},
+        other_data={},
+    )
+    write_label_file(
+        filename=str(annotated_dst),
+        annotation=annotation,
+        image_height=None,
+        image_width=None,
+        save_image_data=True,
+    )
+
+    [reloaded_shape] = read_label_file(filename=str(annotated_dst)).shapes
+    assert reloaded_shape["label"] == "thing"
+    assert reloaded_shape["shape_type"] == "mask"
+    assert reloaded_shape["group_id"] == 7
+    assert reloaded_shape["description"] == "d"
+    assert reloaded_shape["flags"] == {"verified": True}
+    assert reloaded_shape["other_data"] == {"score": 0.5}
+    assert reloaded_shape["mask"] is not None
+    assert np.array_equal(reloaded_shape["mask"], mask)
 
 
 @pytest.mark.parametrize(
@@ -179,14 +227,20 @@ def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
 def test_write_label_file_rejects_reserved_other_data_key(
     tmp_path: Path, reserved_key: str
 ) -> None:
+    annotation = Annotation(
+        image_path="foo.jpg",
+        image_data=b"",
+        shapes=[],
+        flags={},
+        other_data={reserved_key: "x"},
+    )
     with pytest.raises(LabelFileWriteError, match=f"reserved key.*{reserved_key}"):
         write_label_file(
             filename=str(tmp_path / "out.json"),
-            shapes=[],
-            image_path="foo.jpg",
+            annotation=annotation,
             image_height=None,
             image_width=None,
-            other_data={reserved_key: "x"},
+            save_image_data=False,
         )
 
 
@@ -194,26 +248,39 @@ def test_write_label_file_raises_on_dimension_mismatch(
     data_path: Path, tmp_path: Path
 ) -> None:
     src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
+    annotation = Annotation(
+        image_path="foo.jpg",
+        image_data=src.image_data,
+        shapes=[],
+        flags={},
+        other_data={},
+    )
 
     with pytest.raises(LabelFileWriteError, match="imageHeight mismatch"):
         write_label_file(
             filename=str(tmp_path / "out.json"),
-            shapes=[],
-            image_path="foo.jpg",
+            annotation=annotation,
             image_height=1,
             image_width=None,
-            image_data=src.image_data,
+            save_image_data=True,
         )
 
 
 def test_write_label_file_raises_write_error_on_io_failure(tmp_path: Path) -> None:
     bad_path = tmp_path / "missing_dir" / "out.json"
+    annotation = Annotation(
+        image_path="foo.jpg",
+        image_data=b"",
+        shapes=[],
+        flags={},
+        other_data={},
+    )
 
     with pytest.raises(LabelFileWriteError, match="failed to write"):
         write_label_file(
             filename=str(bad_path),
-            shapes=[],
-            image_path="foo.jpg",
+            annotation=annotation,
             image_height=None,
             image_width=None,
+            save_image_data=False,
         )

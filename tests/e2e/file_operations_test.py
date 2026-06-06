@@ -20,14 +20,14 @@ def test_close_file(
     qtbot: QtBot,
     pause: bool,
 ) -> None:
-    assert annotated_win._image_data is not None
+    assert annotated_win._annotation is not None
     assert annotated_win._canvas_widgets.canvas.isEnabled()
 
     annotated_win.close_file()
     qtbot.wait(50)
 
     assert not annotated_win._canvas_widgets.canvas.isEnabled()
-    assert annotated_win._image_data is None
+    assert annotated_win._annotation is None
     assert annotated_win.windowTitle() == "Labelme"
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)

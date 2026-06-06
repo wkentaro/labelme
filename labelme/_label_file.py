@@ -125,6 +125,22 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     return loaded
 
 
+def _dump_shape_to_json_obj(shape: ShapeDict) -> dict[str, Any]:
+    json_obj: dict[str, Any] = dict(shape["other_data"])
+    json_obj.update(
+        label=shape["label"],
+        points=[list(point) for point in shape["points"]],
+        group_id=shape["group_id"],
+        description=shape["description"],
+        shape_type=shape["shape_type"],
+        flags=shape["flags"],
+        mask=None
+        if shape["mask"] is None
+        else utils.img_arr_to_b64(shape["mask"].astype(np.uint8)),
+    )
+    return json_obj
+
+
 class LabelFileError(Exception):
     """Base for read/write failures of labelme JSON annotation files."""
 
@@ -138,7 +154,7 @@ class LabelFileWriteError(LabelFileError):
 
 
 @dataclass(frozen=True)
-class LabelData:
+class Annotation:
     image_path: str
     image_data: bytes
     shapes: list[ShapeDict]
@@ -204,7 +220,7 @@ def _check_image_dimensions(
         )
 
 
-def read_label_file(filename: str) -> LabelData:
+def read_label_file(filename: str) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
@@ -234,7 +250,7 @@ def read_label_file(filename: str) -> LabelData:
     ) as e:
         raise LabelFileReadError(f"failed to load {filename!r}: {e}") from e
     other_data = {k: v for k, v in raw.items() if k not in _RESERVED_TOP_LEVEL_KEYS}
-    return LabelData(
+    return Annotation(
         image_path=image_path,
         image_data=image_data,
         shapes=shapes,
@@ -244,6 +260,26 @@ def read_label_file(filename: str) -> LabelData:
 
 
 def write_label_file(
+    filename: str,
+    annotation: Annotation,
+    *,
+    image_height: int | None,
+    image_width: int | None,
+    save_image_data: bool,
+) -> None:
+    _write_label_json_file(
+        filename=filename,
+        shapes=[_dump_shape_to_json_obj(shape) for shape in annotation.shapes],
+        image_path=annotation.image_path,
+        image_height=image_height,
+        image_width=image_width,
+        image_data=annotation.image_data if save_image_data else None,
+        other_data=annotation.other_data,
+        flags=annotation.flags,
+    )
+
+
+def _write_label_json_file(
     filename: str,
     *,
     shapes: list[dict[str, Any]],
@@ -362,7 +398,7 @@ class LabelFile:
         return read_image_file(filename=filename)
 
     def load(self, filename: str) -> None:
-        loaded: LabelData = read_label_file(filename=filename)
+        loaded: Annotation = read_label_file(filename=filename)
         self.flags = loaded.flags
         self.shapes = loaded.shapes
         self.image_path = loaded.image_path
@@ -381,7 +417,7 @@ class LabelFile:
         other_data: dict[str, Any] | None = None,
         flags: dict[str, bool] | None = None,
     ) -> None:
-        write_label_file(
+        _write_label_json_file(
             filename=filename,
             shapes=shapes,
             image_path=image_path,
