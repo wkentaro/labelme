@@ -103,7 +103,11 @@ def _handle_exception(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
-    parser.add_argument("--reset-config", action="store_true", help="reset qt config")
+    parser.add_argument(
+        "--reset-config",
+        action="store_true",
+        help="reset window geometry and dock layout",
+    )
     parser.add_argument(
         "--logger-level",
         default="debug",
@@ -301,8 +305,8 @@ def main() -> None:
     )
 
     if reset_config:
-        logger.info(f"Resetting Qt config: {win.settings.fileName()}")
-        win.settings.clear()
+        logger.info(f"Resetting window state: {win._window_state.fileName()}")
+        win._window_state.clear()
         sys.exit(0)
 
     with contextlib.redirect_stderr(new_target=_LoggerIO()):
