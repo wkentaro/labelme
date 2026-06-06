@@ -1002,19 +1002,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._default_state = self.saveState()
         #
         # XXX: Could be completely declarative.
-        # Restore application settings.
-        self.settings = QtCore.QSettings("labelme", "labelme")
+        # Restore the window geometry and dock layout (separate from the user
+        # Config; this Qt store holds only window state).
+        self._window_state = QtCore.QSettings("labelme", "labelme")
         #
         # Bump this when dock/toolbar layout changes to reset window state
         # for users upgrading from an older version.
         SETTINGS_VERSION: int = 1
-        if self.settings.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
+        if self._window_state.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
             self._reset_layout()
-            self.settings.setValue("settingsVersion", SETTINGS_VERSION)
+            self._window_state.setValue("settingsVersion", SETTINGS_VERSION)
         #
-        self.resize(self.settings.value("window/size", QtCore.QSize(900, 500)))
-        self.move(self.settings.value("window/position", QtCore.QPoint(0, 0)))
-        self.restoreState(self.settings.value("window/state", QtCore.QByteArray()))
+        self.resize(self._window_state.value("window/size", QtCore.QSize(900, 500)))
+        self.move(self._window_state.value("window/position", QtCore.QPoint(0, 0)))
+        self.restoreState(self._window_state.value("window/state", QtCore.QByteArray()))
         # Recover window position when the saved screen is no longer connected.
         if not any(
             s.availableGeometry().intersects(self.frameGeometry())
@@ -2147,15 +2148,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.save_with_image_data.setChecked(enabled)
 
     def _reset_layout(self) -> None:
-        self.settings.remove("window/state")
+        self._window_state.remove("window/state")
         self.restoreState(self._default_state)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if not self._can_continue():
             a0.ignore()
-        self.settings.setValue("window/size", self.size())
-        self.settings.setValue("window/position", self.pos())
-        self.settings.setValue("window/state", self.saveState())
+        self._window_state.setValue("window/size", self.size())
+        self._window_state.setValue("window/position", self.pos())
+        self._window_state.setValue("window/state", self.saveState())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
         extensions = [
