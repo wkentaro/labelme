@@ -53,6 +53,7 @@ from labelme.widgets import Canvas
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
+from labelme.widgets import SettingsDialog
 from labelme.widgets import StatusStats
 from labelme.widgets import ToolBar
 from labelme.widgets import UniqueLabelQListWidget
@@ -176,6 +177,7 @@ class _Menus(NamedTuple):
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
+    _config_overrides: dict
 
     _text_osam_session: _automation.OsamSession | None = None
     _is_changed: bool = False
@@ -188,6 +190,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _actions: _Actions
     _menus: _Menus
     _label_dialog: LabelDialog
+    _settings_dialog: SettingsDialog | None = None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
@@ -216,6 +219,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config_file, self._config = self._load_config(
             config_file=config_file, config_overrides=config_overrides
         )
+        self._config_overrides = config_overrides or {}
 
         # set default shape colors
         Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
@@ -238,15 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._shape_clipboard = ShapeClipboard(self)
 
-        self._label_dialog = LabelDialog(
-            parent=self,
-            labels=self._config["labels"],
-            sort_labels=self._config["sort_labels"],
-            show_text_field=self._config["show_label_text_field"],
-            completion=self._config["label_completion"],
-            fit_to_content=self._config["fit_to_content"],
-            flags=self._config["label_flags"],
-        )
+        self._label_dialog = self._make_label_dialog()
 
         self._prev_opened_dir = None
         self._docks = self._setup_dock_widgets()
@@ -824,12 +820,18 @@ class MainWindow(QtWidgets.QMainWindow):
             icon=None,
             tip=self.tr("Quit application"),
         )
+        settings_editable = self._is_settings_editable
         open_config = action(
-            text=self.tr("Preferences…"),
-            slot=self._open_config_file,
+            text=self.tr("Settings…"),
+            slot=self._open_settings,
             shortcut="Ctrl+," if platform.system() == "Darwin" else "Ctrl+Shift+,",
             icon=None,
-            tip=self.tr("Open config file in text editor"),
+            tip=(
+                self.tr("Edit settings")
+                if settings_editable
+                else self.tr("Settings are managed via --config for this session")
+            ),
+            enabled=settings_editable,
         )
         open_config.setMenuRole(QtWidgets.QAction.PreferencesRole)
         help_ = action(
@@ -2338,20 +2340,103 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.reset_state()
 
-    def _open_config_file(self) -> None:
+    @property
+    def _is_settings_editable(self) -> bool:
+        return self._config_file is not None and not self._config_overrides
+
+    def _make_label_dialog(self) -> LabelDialog:
+        return LabelDialog(
+            parent=self,
+            labels=self._config["labels"],
+            sort_labels=self._config["sort_labels"],
+            show_text_field=self._config["show_label_text_field"],
+            completion=self._config["label_completion"],
+            fit_to_content=self._config["fit_to_content"],
+            flags=self._config["label_flags"],
+        )
+
+    def _on_setting_changed(self, key_path: tuple[str, ...], value: object) -> bool:
+        # The dialog only opens with an editable config file (see _open_settings),
+        # so there is always a file to persist to.
         if self._config_file is None:
-            QtWidgets.QMessageBox.information(
-                self,
-                self.tr("No Config File"),
-                self.tr(
-                    "Configuration was provided as a YAML expression via "
-                    "command line.\n\n"
-                    "To use the preferences editor, start Labelme with a config file:\n"
-                    "  labelme --config ~/.labelmerc"
-                ),
+            return False
+        try:
+            _config.set_override(
+                config_file=self._config_file, key_path=key_path, value=value
             )
+        except (OSError, ValueError) as e:
+            QtWidgets.QMessageBox.warning(self, self.tr("Configuration Error"), str(e))
+            return False
+
+        node: dict = self._config
+        for key in key_path[:-1]:
+            node = node[key]
+        node[key_path[-1]] = value
+        self._apply_to_live_widgets(key_path=key_path)
+        return True
+
+    def _apply_to_live_widgets(self, key_path: tuple[str, ...]) -> None:
+        if key_path[0] == "labels":
+            # Rebuilding from config alone would drop labels accumulated via
+            # add_label_history (learned from loaded/created shapes), so carry the
+            # existing dialog's labels into the new one. Like the dock below, this
+            # keeps removed predefined labels until restart.
+            label_list = self._label_dialog.label_list
+            previous_labels = [
+                cast(QtWidgets.QListWidgetItem, label_list.item(i)).text()
+                for i in range(label_list.count())
+            ]
+            old_label_dialog = self._label_dialog
+            self._label_dialog = self._make_label_dialog()
+            old_label_dialog.deleteLater()
+            for label in previous_labels:
+                self._label_dialog.add_label_history(label)
+            # The Label List dock is append-only (a shape's label stays after the
+            # shape is deleted), so add new predefined labels and leave removed
+            # ones until restart.
+            for label in self._config["labels"] or []:
+                if (
+                    self._docks.unique_label_list.find_label_item(label=label)
+                    is not None
+                ):
+                    continue
+                self._docks.unique_label_list.add_label_item(
+                    label=label,
+                    color=self._get_rgb_by_label(
+                        label=label,
+                        unique_label_list=self._docks.unique_label_list,
+                    ),
+                )
+
+    def _open_settings(self) -> None:
+        if not self._is_settings_editable:
             return
+        # Keep a single dialog instance; it edits self._config by reference, so
+        # reopening it shows the current values without rebuilding.
+        if self._settings_dialog is None:
+            self._settings_dialog = SettingsDialog(
+                config=self._config,
+                apply_setting=self._on_setting_changed,
+                open_as_text=self._open_config_file,
+                parent=self,
+            )
+        self._settings_dialog.show()
+        self._settings_dialog.raise_()
+        self._settings_dialog.activateWindow()
+
+    def _open_config_file(self) -> None:
+        # Only reachable from the Settings dialog, which opens solely when the
+        # config is an editable file (see _is_settings_editable).
+        assert self._config_file is not None
         config_file: Path = self._config_file
+
+        # Hand off to the text editor: close the dialog first so flush-on-close
+        # persists current values, then drop it so a later Close cannot overwrite
+        # the hand-edits.
+        if self._settings_dialog is not None:
+            self._settings_dialog.close()
+            self._settings_dialog.deleteLater()
+            self._settings_dialog = None
 
         system: str = platform.system()
         if system == "Darwin":

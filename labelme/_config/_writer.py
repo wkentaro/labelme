@@ -5,6 +5,7 @@ import tempfile
 from collections.abc import Sequence
 from io import StringIO
 from pathlib import Path
+from typing import Final
 
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
@@ -14,9 +15,11 @@ from labelme import _yaml
 
 here = Path(__file__).resolve().parent
 
+_DEFAULT_CONFIG: Final = _yaml.safe_load((here / "default_config.yaml").read_text())
+
 
 def _default_value(key_path: Sequence[str]) -> object:
-    node: object = _yaml.safe_load((here / "default_config.yaml").read_text())
+    node: object = _DEFAULT_CONFIG
     for key in key_path:
         if not isinstance(node, dict) or key not in node:
             raise ValueError(f"Unknown config key: {'.'.join(key_path)}")
