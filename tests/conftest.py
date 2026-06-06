@@ -67,12 +67,19 @@ def assert_labelfile_sanity(filename: str) -> None:
         data = json.load(f)
 
     assert "imagePath" in data
+    assert isinstance(data["imagePath"], str)
+    assert "imageHeight" in data
+    assert isinstance(data["imageHeight"], int)
+    assert "imageWidth" in data
+    assert isinstance(data["imageWidth"], int)
+
     image_data = data.get("imageData", None)
     if image_data is None:
         img_file = label_path.parent / data["imagePath"]
         assert img_file.exists()
         img = imgviz.io.imread(img_file)
     else:
+        assert isinstance(image_data, str)
         img = labelme.utils.img_b64_to_arr(image_data)
 
     height, width = img.shape[:2]
@@ -80,10 +87,15 @@ def assert_labelfile_sanity(filename: str) -> None:
     assert width == data["imageWidth"]
 
     assert "shapes" in data
+    assert isinstance(data["shapes"], list)
     for shape in data["shapes"]:
         assert "label" in shape
+        assert isinstance(shape["label"], str)
         assert "points" in shape
+        assert isinstance(shape["points"], list)
         for x, y in shape["points"]:
+            assert isinstance(x, (int, float))
+            assert isinstance(y, (int, float))
             assert 0 <= x <= width
             assert 0 <= y <= height
 
