@@ -103,7 +103,6 @@ class Canvas(QtWidgets.QWidget):
     _hovered_edge: int | None
     _last_hovered_edge: int | None
     _hovered_rotation: int | None
-    _last_hovered_rotation: int | None
 
     zoom_request = QtCore.pyqtSignal(int, QPointF)
     scroll_request = QtCore.pyqtSignal(int, int)
@@ -366,9 +365,6 @@ class Canvas(QtWidgets.QWidget):
         )
         self._last_hovered_edge = (
             self._hovered_edge if hovered_edge is None else hovered_edge
-        )
-        self._last_hovered_rotation = (
-            self._hovered_rotation if hovered_rotation is None else hovered_rotation
         )
         self.hovered_shape = hovered_shape
         self._hovered_vertex = hovered_vertex
@@ -1639,7 +1635,6 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_edge = None
         self._last_hovered_edge = None
         self._hovered_rotation = None
-        self._last_hovered_rotation = None
         self.update()
 
 
