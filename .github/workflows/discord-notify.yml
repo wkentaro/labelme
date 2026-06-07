@@ -8,7 +8,8 @@ jobs:
   notify:
     if: |
       github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'feature')
+      (startsWith(github.event.pull_request.title, 'feat: ') ||
+       startsWith(github.event.pull_request.title, 'feat('))
     runs-on: ubuntu-latest
     steps:
       - name: Send to Discord
