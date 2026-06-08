@@ -90,6 +90,21 @@ def _click_to_remove_point(
     qtbot.wait(50)
 
 
+def _spy_on_update(
+    monkeypatch: pytest.MonkeyPatch,
+    canvas: Canvas,
+) -> list[int]:
+    counter = [0]
+    original = canvas.update
+
+    def _counting_update(*args: object, **kwargs: object) -> None:
+        counter[0] += 1
+        original(*args, **kwargs)
+
+    monkeypatch.setattr(canvas, "update", _counting_update)
+    return counter
+
+
 def _save_and_check(
     win: MainWindow,
     tmp_path: Path,
@@ -301,6 +316,63 @@ def test_remove_point_from_shape(
     assert len(shape.points) == original_num_points - 1
 
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_add_point_to_edge_repaints_canvas(
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    # Regression test for https://github.com/wkentaro/labelme/issues/890:
+    # adding a point must repaint the canvas immediately (e.g. when invoked via
+    # its shortcut), instead of waiting for the next mouse-move event.
+    canvas = annotated_win._canvas_widgets.canvas
+    shape = canvas.shapes[_SHAPE_INDEX]
+    num_points_before = len(shape.points)
+
+    p0, p1 = shape.points[0], shape.points[1]
+    qtbot.mouseMove(
+        canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=(p0 + p1) / 2)
+    )
+    qtbot.wait(100)
+
+    update_calls = _spy_on_update(monkeypatch=monkeypatch, canvas=canvas)
+    canvas.add_point_to_edge()
+
+    assert len(shape.points) == num_points_before + 1
+    assert update_calls[0] > 0
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_remove_selected_point_repaints_canvas(
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    # Regression test for https://github.com/wkentaro/labelme/issues/890:
+    # removing a point must repaint the canvas immediately (e.g. when invoked
+    # via its shortcut), instead of waiting for the next mouse-move event.
+    canvas = annotated_win._canvas_widgets.canvas
+    shape = canvas.shapes[_SHAPE_INDEX]
+    num_points_before = len(shape.points)
+
+    qtbot.mouseMove(
+        canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=shape.points[0])
+    )
+    qtbot.wait(100)
+
+    update_calls = _spy_on_update(monkeypatch=monkeypatch, canvas=canvas)
+    canvas.remove_selected_point()
+
+    assert len(shape.points) == num_points_before - 1
+    assert update_calls[0] > 0
+
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 

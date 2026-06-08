@@ -752,6 +752,7 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_vertex = index
         self._hovered_edge = None
         self._is_moving_shape = True
+        self.update()
 
     def remove_selected_point(self) -> None:
         shape = self._last_hovered_shape
@@ -763,6 +764,7 @@ class Canvas(QtWidgets.QWidget):
         self.hovered_shape = shape
         self._last_hovered_vertex = None
         self._is_moving_shape = True  # Save changes
+        self.update()
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
