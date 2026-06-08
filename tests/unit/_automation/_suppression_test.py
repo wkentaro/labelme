@@ -4,7 +4,6 @@ from collections.abc import Callable
 
 import numpy as np
 import pytest
-from PyQt5 import QtCore
 
 from labelme._automation import Detection
 from labelme._automation._suppression import suppress_detections_greedy
@@ -12,6 +11,7 @@ from labelme._automation._suppression import (
     suppress_detections_overlapping_existing_shapes,
 )
 from labelme._shape import Shape
+from labelme._shape import ShapeType
 
 
 @pytest.fixture
@@ -187,9 +187,10 @@ def test_redundant_rejects_mixed_mask_and_bbox_only() -> None:
 
 
 def test_overlapping_drops_polygon_detection_overlapping_existing_polygon() -> None:
-    existing = Shape(shape_type="polygon")
-    for x, y in [(0, 0), (10, 0), (10, 10), (0, 10)]:
-        existing.add_point(QtCore.QPointF(x, y))
+    existing = Shape(
+        shape_type="polygon",
+        points=np.array([(0, 0), (10, 0), (10, 10), (0, 10)], dtype=np.float64),
+    )
 
     detection_mask = np.ones((11, 11), dtype=bool)
     detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=detection_mask)
@@ -203,9 +204,9 @@ def test_overlapping_drops_polygon_detection_overlapping_existing_polygon() -> N
 
 
 def test_overlapping_keeps_when_iou_below_threshold() -> None:
-    existing = Shape(shape_type="rectangle")
-    existing.add_point(QtCore.QPointF(0, 0))
-    existing.add_point(QtCore.QPointF(10, 10))
+    existing = Shape(
+        shape_type="rectangle", points=np.array([(0, 0), (10, 10)], dtype=np.float64)
+    )
 
     detection = Detection(bbox=(8.0, 8.0, 18.0, 18.0))
 
@@ -220,9 +221,10 @@ def test_overlapping_keeps_when_iou_below_threshold() -> None:
 def test_overlapping_uses_mask_iou_not_bbox_iou() -> None:
     # Two right triangles share the same bbox but cover opposite halves,
     # so bbox IoU would be 1.0 while mask IoU is 0.
-    existing = Shape(shape_type="polygon")
-    for x, y in [(0, 0), (10, 0), (0, 10)]:
-        existing.add_point(QtCore.QPointF(x, y))
+    existing = Shape(
+        shape_type="polygon",
+        points=np.array([(0, 0), (10, 0), (0, 10)], dtype=np.float64),
+    )
 
     rows, cols = np.indices((11, 11))
     detection_mask = rows + cols > 10
@@ -237,9 +239,9 @@ def test_overlapping_uses_mask_iou_not_bbox_iou() -> None:
 
 
 def test_overlapping_empty_detections() -> None:
-    existing = Shape(shape_type="rectangle")
-    existing.add_point(QtCore.QPointF(0, 0))
-    existing.add_point(QtCore.QPointF(10, 10))
+    existing = Shape(
+        shape_type="rectangle", points=np.array([(0, 0), (10, 10)], dtype=np.float64)
+    )
 
     kept = suppress_detections_overlapping_existing_shapes(
         detections=[],
@@ -261,9 +263,9 @@ def test_overlapping_no_existing_shapes_passes_through() -> None:
 
 
 def test_overlapping_passes_through_detection_without_bbox() -> None:
-    existing = Shape(shape_type="rectangle")
-    existing.add_point(QtCore.QPointF(0, 0))
-    existing.add_point(QtCore.QPointF(10, 10))
+    existing = Shape(
+        shape_type="rectangle", points=np.array([(0, 0), (10, 10)], dtype=np.float64)
+    )
     no_bbox = Detection(mask=np.ones((11, 11), dtype=bool))
 
     kept = suppress_detections_overlapping_existing_shapes(
@@ -278,9 +280,9 @@ def test_overlapping_drops_detection_engulfing_smaller_existing_shape() -> None:
     # Small existing mask fully inside the new detection's mask: IoU is low
     # (small/big ratio) but containment of existing in new is ~1.0. The
     # nested-mask scenario the user hit on a crowded-tree image.
-    existing = Shape(shape_type="rectangle")
-    existing.add_point(QtCore.QPointF(5, 5))
-    existing.add_point(QtCore.QPointF(9, 9))
+    existing = Shape(
+        shape_type="rectangle", points=np.array([(5, 5), (9, 9)], dtype=np.float64)
+    )
 
     detection = Detection(
         bbox=(0.0, 0.0, 20.0, 20.0),
@@ -300,10 +302,11 @@ def test_overlapping_uses_existing_mask_shape_geometry() -> None:
     # its bbox should suppress a detection occupying the same triangle but
     # not one occupying the complementary upper-right triangle.
     rows, cols = np.indices((11, 11))
-    existing = Shape(shape_type="mask")
-    existing.add_point(QtCore.QPointF(0, 0))
-    existing.add_point(QtCore.QPointF(10, 10))
-    existing.mask = rows + cols <= 10
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        mask=rows + cols <= 10,
+    )
 
     lower_left = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=(rows + cols <= 10).copy())
     upper_right = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=rows + cols > 10)
@@ -320,20 +323,20 @@ def test_overlapping_uses_existing_mask_shape_geometry() -> None:
     ("shape_type", "extra_points"),
     [
         ("point", []),
-        ("points", [QtCore.QPointF(20, 20)]),
-        ("line", [QtCore.QPointF(20, 20)]),
-        ("linestrip", [QtCore.QPointF(20, 20)]),
+        ("points", [[20, 20]]),
+        ("line", [[20, 20]]),
+        ("linestrip", [[20, 20]]),
     ],
 )
 def test_overlapping_skips_existing_shape_without_bbox_interpretation(
-    shape_type: str, extra_points: list[QtCore.QPointF]
+    shape_type: ShapeType, extra_points: list[list[float]]
 ) -> None:
     # Canvas shapes without a bbox/mask interpretation (e.g. a stray point
     # landmark) must not break the AI suppression call.
-    existing = Shape(shape_type=shape_type)
-    existing.add_point(QtCore.QPointF(5, 5))
-    for point in extra_points:
-        existing.add_point(point)
+    existing = Shape(
+        shape_type=shape_type,
+        points=np.array([[5, 5], *extra_points], dtype=np.float64),
+    )
     detection = Detection(
         bbox=(0.0, 0.0, 10.0, 10.0), mask=np.ones((11, 11), dtype=bool)
     )

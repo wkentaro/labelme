@@ -18,9 +18,9 @@ from PyQt5.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 import labelme.app
-from labelme import _shape
 from labelme.__main__ import main
 from labelme.app import MainWindow
+from labelme.widgets._shape_render import bounds as _shape_bounds
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.label_dialog import LabelDialog
 
@@ -261,7 +261,7 @@ def draw_and_commit_polygon(
 
 
 def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
-    shape_center = _shape.bounds(shape=canvas.shapes[shape_index]).center()
+    shape_center = _shape_bounds(shape=canvas.shapes[shape_index]).center()
     pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)

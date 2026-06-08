@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import Final
 
+import numpy as np
 import pytest
 from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
@@ -19,29 +20,19 @@ from .conftest import image_to_widget_pos
 from .conftest import submit_label_dialog
 
 
-def _centroid(points: list[QPointF]) -> QPointF:
-    return QPointF(
-        sum(p.x() for p in points) / len(points),
-        sum(p.y() for p in points) / len(points),
-    )
+def _centroid(points: np.ndarray) -> QPointF:
+    return QPointF(float(points[:, 0].mean()), float(points[:, 1].mean()))
 
 
-def _edge_lengths(points: list[QPointF]) -> list[float]:
+def _edge_lengths(points: np.ndarray) -> list[float]:
+    n = len(points)
+    return [float(np.linalg.norm(points[(i + 1) % n] - points[i])) for i in range(n)]
+
+
+def _vertex_displacements(actual: np.ndarray, original: list[QPointF]) -> list[float]:
     return [
-        math.hypot(
-            points[(i + 1) % 4].x() - points[i].x(),
-            points[(i + 1) % 4].y() - points[i].y(),
-        )
-        for i in range(4)
-    ]
-
-
-def _vertex_displacements(
-    actual: list[QPointF], original: list[QPointF]
-) -> list[float]:
-    return [
-        math.hypot(a.x() - o.x(), a.y() - o.y())
-        for a, o in zip(actual, original, strict=True)
+        math.hypot(float(actual[i][0]) - o.x(), float(actual[i][1]) - o.y())
+        for i, o in enumerate(original)
     ]
 
 
@@ -74,9 +65,9 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
         clicks=((0.25, 0.5), (0.5, 0.5), (0.5, 0.75)),
     )
     shape = next(s for s in canvas.shapes if s.label == "rect")
-    original_points = [QPointF(p) for p in shape.points]
-    original_centroid = _centroid(original_points)
-    original_edges = _edge_lengths(original_points)
+    original_points = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
+    original_centroid = _centroid(shape.points)
+    original_edges = _edge_lengths(shape.points)
 
     raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
@@ -145,8 +136,8 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
-    original_points = [QPointF(p) for p in shape.points]
-    moving_vertex = QPointF(shape.points[2])
+    original_points = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
+    moving_vertex = QPointF(float(shape.points[2][0]), float(shape.points[2][1]))
     # Drag past the top edge of the image so the unclipped target lies above
     # the pixmap. The clip logic must keep all four corners inside the image
     # while preserving the parallelogram.
@@ -169,16 +160,16 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
 
     _CLIP_TOLERANCE: Final = 1e-3
     for point in shape.points:
-        assert -_CLIP_TOLERANCE <= point.x() <= pixmap_width + _CLIP_TOLERANCE
-        assert -_CLIP_TOLERANCE <= point.y() <= pixmap_height + _CLIP_TOLERANCE
+        assert -_CLIP_TOLERANCE <= float(point[0]) <= pixmap_width + _CLIP_TOLERANCE
+        assert -_CLIP_TOLERANCE <= float(point[1]) <= pixmap_height + _CLIP_TOLERANCE
 
     p0, p1, p2, p3 = shape.points
     side_01 = p1 - p0
     side_32 = p2 - p3
-    assert side_01.x() == pytest.approx(side_32.x(), abs=1e-3)
-    assert side_01.y() == pytest.approx(side_32.y(), abs=1e-3)
+    assert float(side_01[0]) == pytest.approx(float(side_32[0]), abs=1e-3)
+    assert float(side_01[1]) == pytest.approx(float(side_32[1]), abs=1e-3)
 
-    edges = _edge_lengths(list(shape.points))
+    edges = _edge_lengths(shape.points)
     assert min(edges) > 1.0
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
@@ -208,7 +199,9 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
     # leave the action disabled.
     assert shape.can_add_point() is False
     p0, p1 = shape.points[0], shape.points[1]
-    edge_midpoint = QPointF((p0.x() + p1.x()) / 2, (p0.y() + p1.y()) / 2)
+    edge_midpoint = QPointF(
+        (float(p0[0]) + float(p1[0])) / 2, (float(p0[1]) + float(p1[1])) / 2
+    )
     edge_widget = image_to_widget_pos(canvas=canvas, image_pos=edge_midpoint)
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=edge_widget)
     assert not raw_win._actions.add_point_to_edge.isEnabled()
@@ -216,7 +209,10 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
     # Alt+Shift+Click on a vertex removes points from polygons; for
     # oriented_rectangle `Shape.remove_point` bails out because
     # `can_remove_point()` is False, so the vertex count must not change.
-    vertex_widget = image_to_widget_pos(canvas=canvas, image_pos=shape.points[0])
+    vertex_widget = image_to_widget_pos(
+        canvas=canvas,
+        image_pos=QPointF(float(shape.points[0][0]), float(shape.points[0][1])),
+    )
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=vertex_widget)
     qtbot.mouseClick(
         canvas,

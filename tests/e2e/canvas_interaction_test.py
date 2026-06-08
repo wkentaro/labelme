@@ -12,10 +12,10 @@ from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme import _shape
 from labelme import utils
 from labelme._shape import Shape
 from labelme.app import MainWindow
+from labelme.widgets._shape_render import bounds as _shape_bounds
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.canvas import _CanvasMode
 from labelme.widgets.label_dialog import LabelDialog
@@ -108,9 +108,9 @@ def test_move_shape_by_drag(
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
     shape = canvas.shapes[_SHAPE_INDEX]
-    original_points = [QPointF(p) for p in shape.points]
+    original_points = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
 
-    center = _shape.bounds(shape=shape).center()
+    center = _shape_bounds(shape=shape).center()
     offset = QPointF(15, 10)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     _hover_and_drag(
@@ -121,7 +121,7 @@ def test_move_shape_by_drag(
     )
 
     for orig, moved in zip(original_points, shape.points):
-        assert moved.x() != orig.x() or moved.y() != orig.y()
+        assert float(moved[0]) != orig.x() or float(moved[1]) != orig.y()
 
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
@@ -136,7 +136,7 @@ def test_move_vertex_by_drag(
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
     shape = canvas.shapes[_SHAPE_INDEX]
-    vertex_pos = QPointF(shape.points[0])
+    vertex_pos = QPointF(float(shape.points[0][0]), float(shape.points[0][1]))
     target_pos = vertex_pos + QPointF(10, 10)
 
     _hover_and_drag(
@@ -147,7 +147,8 @@ def test_move_vertex_by_drag(
     )
 
     assert (
-        shape.points[0].x() != vertex_pos.x() or shape.points[0].y() != vertex_pos.y()
+        float(shape.points[0][0]) != vertex_pos.x()
+        or float(shape.points[0][1]) != vertex_pos.y()
     )
 
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
@@ -175,14 +176,14 @@ def test_move_shape_by_arrow_key(
     canvas = annotated_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     shape = canvas.selected_shapes[0]
-    original_center = QPointF(_shape.bounds(shape=shape).center())
+    original_center = QPointF(_shape_bounds(shape=shape).center())
 
     qtbot.keyPress(canvas, key)
     qtbot.wait(50)
     qtbot.keyRelease(canvas, key)
     qtbot.wait(50)
 
-    new_center = _shape.bounds(shape=shape).center()
+    new_center = _shape_bounds(shape=shape).center()
     assert abs((new_center.x() - original_center.x()) - expected_dx) < 1.0
     assert abs((new_center.y() - original_center.y()) - expected_dy) < 1.0
 
@@ -243,7 +244,9 @@ def test_add_point_on_edge(
     qtbot.wait(50)
 
     p0, p1 = shape.points[0], shape.points[1]
-    edge_mid = QPointF((p0.x() + p1.x()) / 2, (p0.y() + p1.y()) / 2)
+    edge_mid = QPointF(
+        (float(p0[0]) + float(p1[0])) / 2, (float(p0[1]) + float(p1[1])) / 2
+    )
     mid_widget = image_to_widget_pos(canvas=canvas, image_pos=edge_mid)
     qtbot.mouseMove(canvas, pos=mid_widget)
     qtbot.wait(100)
@@ -270,9 +273,10 @@ def test_add_point_via_context_menu_action(
     assert not annotated_win._actions.add_point_to_edge.isEnabled()
 
     p0, p1 = shape.points[0], shape.points[1]
-    qtbot.mouseMove(
-        canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=(p0 + p1) / 2)
+    midpoint = QPointF(
+        (float(p0[0]) + float(p1[0])) / 2, (float(p0[1]) + float(p1[1])) / 2
     )
+    qtbot.mouseMove(canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=midpoint))
     qtbot.wait(100)
 
     assert annotated_win._actions.add_point_to_edge.isEnabled()
@@ -296,7 +300,11 @@ def test_remove_point_from_shape(
     shape = canvas.shapes[_SHAPE_INDEX]
     original_num_points = len(shape.points)
 
-    _click_to_remove_point(qtbot=qtbot, canvas=canvas, vertex=shape.points[0])
+    _click_to_remove_point(
+        qtbot=qtbot,
+        canvas=canvas,
+        vertex=QPointF(float(shape.points[0][0]), float(shape.points[0][1])),
+    )
 
     assert len(shape.points) == original_num_points - 1
 
@@ -544,7 +552,7 @@ def test_select_nonpolygon_shape(
     raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
-    click_pos = _shape.bounds(shape=shape).center() + QPointF(*select_offset)
+    click_pos = _shape_bounds(shape=shape).center() + QPointF(*select_offset)
     click_widget = image_to_widget_pos(canvas=canvas, image_pos=click_pos)
     qtbot.mouseMove(canvas, pos=click_widget)
     qtbot.wait(50)
@@ -643,7 +651,11 @@ def test_remove_point_blocked_at_minimum(
     raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
-    _click_to_remove_point(qtbot=qtbot, canvas=canvas, vertex=shape.points[0])
+    _click_to_remove_point(
+        qtbot=qtbot,
+        canvas=canvas,
+        vertex=QPointF(float(shape.points[0][0]), float(shape.points[0][1])),
+    )
 
     assert len(shape.points) == expected_points
 
@@ -677,7 +689,11 @@ def test_select_point_shape_by_click(
     raw_win._switch_canvas_mode(edit=True)
     qtbot.wait(50)
 
-    _click_to_select(qtbot=qtbot, canvas=canvas, image_pos=QPointF(shape.points[0]))
+    _click_to_select(
+        qtbot=qtbot,
+        canvas=canvas,
+        image_pos=QPointF(float(shape.points[0][0]), float(shape.points[0][1])),
+    )
 
     assert shape in canvas.selected_shapes
 
@@ -707,7 +723,7 @@ def test_right_click_on_shape_opens_context_menu(
         lambda *args, **kwargs: menu_opened.append(1) or None,
     )
 
-    bounds_center = _shape.bounds(shape=canvas.shapes[_SHAPE_INDEX]).center()
+    bounds_center = _shape_bounds(shape=canvas.shapes[_SHAPE_INDEX]).center()
     pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)

@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pytest
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme import _shape
 from labelme.app import MainWindow
+from labelme.widgets._shape_render import bounds as _shape_bounds
 from labelme.widgets.canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
@@ -204,10 +204,10 @@ def test_right_drag_copy_here_duplicates_shape(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     original_shape = canvas.shapes[0]
     original_label = original_shape.label
-    original_first_point = QPointF(original_shape.points[0])
+    original_first_point = original_shape.points[0].copy()
     num_before = len(canvas.shapes)
 
-    bounds_center = _shape.bounds(shape=original_shape).center()
+    bounds_center = _shape_bounds(shape=original_shape).center()
     start_widget = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
     end_widget = QPoint(start_widget.x() + 30, start_widget.y() + 20)
 
@@ -238,8 +238,8 @@ def test_right_drag_copy_here_duplicates_shape(
     assert duplicated_shape is not original_shape
     assert duplicated_shape.points is not original_shape.points
     duplicated_shape.label = "mutated"
-    duplicated_shape.points[0].setX(duplicated_shape.points[0].x() + 999.0)
+    duplicated_shape.points[0][0] += 999.0
     assert original_shape.label == original_label
-    assert original_shape.points[0] == original_first_point
+    assert np.array_equal(original_shape.points[0], original_first_point)
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)

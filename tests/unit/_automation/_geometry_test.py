@@ -5,7 +5,6 @@ import math
 import numpy as np
 import pytest
 from numpy.typing import NDArray
-from PyQt5 import QtCore
 
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
@@ -111,9 +110,9 @@ def test_compute_oriented_rectangle_from_mask_square_mask_is_axis_aligned() -> N
 
 
 def test_shape_to_xyxy_bbox_circle() -> None:
-    shape = Shape(shape_type="circle")
-    shape.add_point(QtCore.QPointF(50, 40))
-    shape.add_point(QtCore.QPointF(53, 44))
+    shape = Shape(
+        shape_type="circle", points=np.array([(50, 40), (53, 44)], dtype=np.float64)
+    )
 
     bbox = shape_to_xyxy_bbox(shape=shape)
 
@@ -125,9 +124,10 @@ def test_shape_to_xyxy_bbox_circle() -> None:
 
 
 def test_shape_to_xyxy_bbox_polygon() -> None:
-    shape = Shape(shape_type="polygon")
-    for x, y in [(1, 2), (10, 4), (6, 12)]:
-        shape.add_point(QtCore.QPointF(x, y))
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(1, 2), (10, 4), (6, 12)], dtype=np.float64),
+    )
 
     bbox = shape_to_xyxy_bbox(shape=shape)
 
@@ -136,23 +136,21 @@ def test_shape_to_xyxy_bbox_polygon() -> None:
 
 
 def test_shape_to_xyxy_bbox_returns_none_when_polygon_has_too_few_points() -> None:
-    shape = Shape(shape_type="polygon")
-    shape.add_point(QtCore.QPointF(0, 0))
-    shape.add_point(QtCore.QPointF(10, 10))
+    shape = Shape(
+        shape_type="polygon", points=np.array([(0, 0), (10, 10)], dtype=np.float64)
+    )
 
     assert shape_to_xyxy_bbox(shape=shape) is None
 
 
 def test_shape_to_xyxy_bbox_returns_none_when_circle_has_only_center() -> None:
-    shape = Shape(shape_type="circle")
-    shape.add_point(QtCore.QPointF(5, 5))
+    shape = Shape(shape_type="circle", points=np.array([(5, 5)], dtype=np.float64))
 
     assert shape_to_xyxy_bbox(shape=shape) is None
 
 
 def test_shape_to_xyxy_bbox_raises_on_unsupported_shape_type() -> None:
-    shape = Shape(shape_type="point")
-    shape.add_point(QtCore.QPointF(1, 2))
+    shape = Shape(shape_type="point", points=np.array([(1, 2)], dtype=np.float64))
 
     with pytest.raises(ValueError, match="Unsupported shape_type"):
         shape_to_xyxy_bbox(shape=shape)
