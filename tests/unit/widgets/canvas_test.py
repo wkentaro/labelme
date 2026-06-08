@@ -137,6 +137,27 @@ def test_set_shape_visible_toggles_visibility(canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
+def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
+    # `visible` is the one ephemeral view flag kept on the Qt-free Shape so it
+    # rides along the deepcopy-based undo/backup stack.
+    shape = Shape(
+        label="a",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes([shape])
+
+    canvas.set_shape_visible(canvas.shapes[0], False)
+    canvas.backup_shapes()
+    canvas.load_shapes([shape.copy()])
+    assert canvas.shapes[0].visible is False
+
+    canvas.restore_last_shape()
+    assert canvas.shapes[0].visible is False
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_with_empty_inference_resets_state_and_notifies(
     canvas: Canvas,
