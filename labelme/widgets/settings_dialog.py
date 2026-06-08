@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Callable
+from collections.abc import Sequence
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -131,17 +132,13 @@ class SettingsDialog(QtWidgets.QDialog):
             return check
         if setting.kind == "enum":
             assert setting.choices is not None
-            combo = QtWidgets.QComboBox()
-            combo.setMinimumWidth(140)
-            for choice in setting.choices:
-                combo.addItem(
-                    self.tr("(none)") if choice is None else str(choice), choice
-                )
-            self._set_editor_value(editor=combo, value=value)
-            combo.currentIndexChanged.connect(
-                lambda: self._apply(setting.key_path, combo.currentData())
+            items = [
+                (self.tr("(none)") if choice is None else str(choice), choice)
+                for choice in setting.choices
+            ]
+            return self._create_combo(
+                setting=setting, value=value, items=items, min_width=140
             )
-            return combo
         if setting.kind == "str_list":
             edit = _PlainTextEdit()
             edit.setPlaceholderText(self.tr("one item per line"))
@@ -156,6 +153,23 @@ class SettingsDialog(QtWidgets.QDialog):
                 )
             return edit
         typing.assert_never(setting.kind)
+
+    def _create_combo(
+        self,
+        setting: schema.Setting,
+        value: object,
+        items: Sequence[tuple[str, object]],
+        min_width: int,
+    ) -> QtWidgets.QComboBox:
+        combo = QtWidgets.QComboBox()
+        combo.setMinimumWidth(min_width)
+        for label, data in items:
+            combo.addItem(label, data)
+        self._set_editor_value(editor=combo, value=value)
+        combo.currentIndexChanged.connect(
+            lambda: self._apply(setting.key_path, combo.currentData())
+        )
+        return combo
 
     def _set_editor_value(self, editor: QtWidgets.QWidget, value: object) -> None:
         if isinstance(editor, QtWidgets.QCheckBox):
