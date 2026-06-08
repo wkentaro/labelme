@@ -44,6 +44,7 @@ from labelme._label_file import read_image_file
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
 from labelme._shape import Shape
+from labelme._shape import ShapeType
 from labelme._shape_clipboard import ShapeClipboard
 from labelme.widgets import AiAssistedAnnotationWidget
 from labelme.widgets import AiTextToAnnotationWidget
@@ -52,6 +53,7 @@ from labelme.widgets import Canvas
 from labelme.widgets import LabelDialog
 from labelme.widgets import LabelListWidget
 from labelme.widgets import LabelListWidgetItem
+from labelme.widgets import Palette
 from labelme.widgets import SettingsDialog
 from labelme.widgets import StatusStats
 from labelme.widgets import ToolBar
@@ -218,25 +220,6 @@ class MainWindow(QtWidgets.QMainWindow):
             config_file=config_file, config_overrides=config_overrides
         )
         self._config_overrides = config_overrides or {}
-
-        # set default shape colors
-        Shape.line_color = QtGui.QColor(*self._config["shape"]["line_color"])
-        Shape.fill_color = QtGui.QColor(*self._config["shape"]["fill_color"])
-        Shape.select_line_color = QtGui.QColor(
-            *self._config["shape"]["select_line_color"]
-        )
-        Shape.select_fill_color = QtGui.QColor(
-            *self._config["shape"]["select_fill_color"]
-        )
-        Shape.vertex_fill_color = QtGui.QColor(
-            *self._config["shape"]["vertex_fill_color"]
-        )
-        Shape.hvertex_fill_color = QtGui.QColor(
-            *self._config["shape"]["hvertex_fill_color"]
-        )
-
-        # Set point size from config file
-        Shape.point_size = self._config["shape"]["point_size"]
 
         self._shape_clipboard = ShapeClipboard(self)
 
@@ -1043,6 +1026,22 @@ class MainWindow(QtWidgets.QMainWindow):
             num_backups=self._config["canvas"]["num_backups"],
             crosshair=self._config["canvas"]["crosshair"],
         )
+        canvas.set_point_size(self._config["shape"]["point_size"])
+        canvas.set_draft_palette(
+            Palette(
+                line=QtGui.QColor(*self._config["shape"]["line_color"]),
+                fill=QtGui.QColor(*self._config["shape"]["fill_color"]),
+                select_line=QtGui.QColor(*self._config["shape"]["select_line_color"]),
+                select_fill=QtGui.QColor(*self._config["shape"]["select_fill_color"]),
+                vertex_fill=QtGui.QColor(*self._config["shape"]["vertex_fill_color"]),
+                hvertex_fill=QtGui.QColor(*self._config["shape"]["hvertex_fill_color"]),
+            )
+        )
+        canvas.set_color_resolver(
+            lambda label: self._get_rgb_by_label(
+                label=label, unique_label_list=self._docks.unique_label_list
+            )
+        )
         canvas.zoom_request.connect(self._zoom_requested)
         canvas.mouse_moved.connect(self._update_status_stats)
         canvas.status_updated.connect(
@@ -1538,9 +1537,16 @@ class MainWindow(QtWidgets.QMainWindow):
             if edit_description:
                 shape.description = description
 
-            self._update_shape_color(shape)
             assert shape.label is not None
-            item.setText(format_shape_label(shape))
+            item.setText(
+                format_shape_label(
+                    shape,
+                    fill_rgb=self._get_rgb_by_label(
+                        label=shape.label,
+                        unique_label_list=self._docks.unique_label_list,
+                    ),
+                )
+            )
             self.mark_dirty()
             if self._docks.unique_label_list.find_label_item(shape.label) is None:
                 self._docks.unique_label_list.add_label_item(
@@ -1568,12 +1574,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
-        for shape in self._canvas_widgets.canvas.selected_shapes:
-            shape.selected = False
         self._docks.label_list.clearSelection()
         self._canvas_widgets.canvas.selected_shapes = selected_shapes
         for shape in self._canvas_widgets.canvas.selected_shapes:
-            shape.selected = True
             item = self._docks.label_list.find_item_by_shape(shape)
             self._docks.label_list.select_item(item)
             self._docks.label_list.scroll_to_item(item)
@@ -1602,20 +1605,15 @@ class MainWindow(QtWidgets.QMainWindow):
         for action in self._actions.on_shapes_present:
             action.setEnabled(True)
 
-        self._update_shape_color(shape)
-        label_list_item.setText(format_shape_label(shape))
-
-    def _update_shape_color(self, shape: Shape) -> None:
-        assert shape.label is not None
-        r, g, b = self._get_rgb_by_label(
-            shape.label, unique_label_list=self._docks.unique_label_list
+        label_list_item.setText(
+            format_shape_label(
+                shape,
+                fill_rgb=self._get_rgb_by_label(
+                    label=shape.label,
+                    unique_label_list=self._docks.unique_label_list,
+                ),
+            )
         )
-        shape.line_color = QtGui.QColor(r, g, b)
-        shape.vertex_fill_color = QtGui.QColor(r, g, b)
-        shape.hvertex_fill_color = QtGui.QColor(255, 255, 255)
-        shape.fill_color = QtGui.QColor(r, g, b, 128)
-        shape.select_line_color = QtGui.QColor(255, 255, 255)
-        shape.select_fill_color = QtGui.QColor(r, g, b, 155)
 
     def _get_rgb_by_label(
         self,
@@ -2524,7 +2522,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.update()
         if (
             self._canvas_widgets.canvas.hovered_shape
-            and not self._canvas_widgets.canvas.hovered_shape.points
+            and len(self._canvas_widgets.canvas.hovered_shape.points) == 0
         ):
             self._canvas_widgets.canvas.delete_shape(
                 self._canvas_widgets.canvas.hovered_shape
@@ -2691,14 +2689,13 @@ def _shapes_from_dicts(
     for shape_dict in shape_dicts:
         shape = Shape(
             label=shape_dict["label"],
-            shape_type=shape_dict["shape_type"],
+            shape_type=cast(ShapeType, shape_dict["shape_type"]),
             group_id=shape_dict["group_id"],
             description=shape_dict["description"],
             mask=shape_dict["mask"],
+            points=np.array(shape_dict["points"], dtype=np.float64),
+            closed=True,
         )
-        for x, y in shape_dict["points"]:
-            shape.add_point(QtCore.QPointF(x, y))
-        shape.close()
 
         default_flags: dict[str, bool] = {}
         if label_flags:
@@ -2796,7 +2793,7 @@ def _shape_to_dict(shape: Shape) -> ShapeDict:
     assert shape.label is not None
     return ShapeDict(
         label=shape.label,
-        points=[[p.x(), p.y()] for p in shape.points],
+        points=shape.points.tolist(),
         shape_type=shape.shape_type,
         flags=shape.flags or {},
         description=shape.description or "",

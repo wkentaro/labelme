@@ -20,7 +20,7 @@ def format_label_with_color_dot(text: str, color: tuple[int, int, int]) -> str:
     return f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
 
 
-def format_shape_label(shape: Shape) -> str:
+def format_shape_label(shape: Shape, fill_rgb: tuple[int, int, int]) -> str:
     assert shape.label is not None
     text = shape.label
     if shape.group_id is not None:
@@ -28,7 +28,7 @@ def format_shape_label(shape: Shape) -> str:
     enabled_flags = [key for key, value in (shape.flags or {}).items() if value]
     if enabled_flags:
         text += f" [{', '.join(enabled_flags)}]"
-    return format_label_with_color_dot(text=text, color=shape.fill_color.getRgb()[:3])
+    return format_label_with_color_dot(text=text, color=fill_rgb)
 
 
 class HTMLDelegate(QtWidgets.QStyledItemDelegate):
