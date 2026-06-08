@@ -25,13 +25,13 @@ def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
         if len(shape.points) != 2:
             return None
         center, edge = shape.points
-        radius = float(np.hypot(edge.x() - center.x(), edge.y() - center.y()))
+        radius = float(np.linalg.norm(edge - center))
         return np.array(
             [
-                center.x() - radius,
-                center.y() - radius,
-                center.x() + radius,
-                center.y() + radius,
+                center[0] - radius,
+                center[1] - radius,
+                center[0] + radius,
+                center[1] + radius,
             ],
             dtype=np.float32,
         )
@@ -45,9 +45,8 @@ def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
         raise ValueError(f"Unsupported shape_type: {shape.shape_type!r}")
     if len(shape.points) < minimum_points_by_shape_type[shape.shape_type]:
         return None
-    points = np.array([[p.x(), p.y()] for p in shape.points])
-    xmin, ymin = points.min(axis=0)
-    xmax, ymax = points.max(axis=0)
+    xmin, ymin = shape.points.min(axis=0)
+    xmax, ymax = shape.points.max(axis=0)
     return np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
 
 
