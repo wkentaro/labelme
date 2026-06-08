@@ -207,6 +207,7 @@ class Canvas(QtWidgets.QWidget):
     _point_size: int
     _point_type: Literal["square", "round"]
     _draft_palette: Palette
+    _palette_cache: dict[str, Palette]
 
     _osam_session_model_name: str = "sam2:latest"
     _osam_session: _automation.OsamSession | None
@@ -261,6 +262,7 @@ class Canvas(QtWidgets.QWidget):
         self._point_size: int = 8
         self._point_type: Literal["square", "round"] = "round"
         self._draft_palette = _DEFAULT_PALETTE
+        self._palette_cache = {}
         # Menus:
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
@@ -282,7 +284,15 @@ class Canvas(QtWidgets.QWidget):
     def _resolve_palette(self, label: str | None) -> Palette:
         if label is None or self._color_resolver is None:
             return _DEFAULT_PALETTE
-        return Palette.from_rgb(rgb=self._color_resolver(label))
+        # Auto colors depend on the live label ordering, so the palette cannot
+        # be cached on the shape. Memoize within a single paint pass instead:
+        # many shapes share a few labels, so this collapses the per-shape
+        # resolution into one lookup per distinct label per frame.
+        palette = self._palette_cache.get(label)
+        if palette is None:
+            palette = Palette.from_rgb(rgb=self._color_resolver(label))
+            self._palette_cache[label] = palette
+        return palette
 
     def set_draft_palette(self, palette: Palette) -> None:
         self._draft_palette = palette
@@ -1385,6 +1395,7 @@ class Canvas(QtWidgets.QWidget):
             self._clear_highlight_state()
 
     def _render_canvas(self) -> None:
+        self._palette_cache.clear()
         painter: QtGui.QPainter = self._painter
         painter.begin(self)
         try:
