@@ -2341,7 +2341,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if item:
             item.setCheckState(Qt.Unchecked)
 
-        self.reset_state()
+        # Only the label file was deleted, not the image: clear the annotations
+        # but keep the image on the canvas.
+        self._docks.label_list.clear()
+        self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
+        self.mark_clean()
 
     @property
     def _is_settings_editable(self) -> bool:
