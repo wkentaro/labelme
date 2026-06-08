@@ -1,5 +1,6 @@
 from ._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
 from ._ai_text_to_annotation_widget import AiTextToAnnotationWidget
+from ._shape_render import Palette
 from ._status import StatusStats
 from .brightness_contrast_dialog import BrightnessContrastDialog
 from .canvas import Canvas
