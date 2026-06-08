@@ -111,11 +111,11 @@ def get_user_config_file(create_if_missing: bool = True) -> str:
 
 def load_config(config_file: Path | None, config_overrides: dict) -> dict:
     config: dict
-    with open(here / "default_config.yaml") as f:
+    with open(here / "default_config.yaml", encoding="utf-8") as f:
         config = _yaml.safe_load(f)
 
     if config_file is not None:
-        with open(config_file) as f:
+        with open(config_file, encoding="utf-8") as f:
             config_from_yaml = _yaml.safe_load(f)
         if isinstance(config_from_yaml, dict):
             _migrate_config_from_file(config_from_yaml=config_from_yaml)
