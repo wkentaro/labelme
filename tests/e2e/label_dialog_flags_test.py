@@ -98,6 +98,48 @@ def test_label_flags_applied_to_shape(
 
 
 @pytest.mark.gui
+def test_enabled_flags_shown_in_label_list(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / _RAW_FILE),
+        config_overrides={"label_flags": _LABEL_FLAGS},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    label_dialog = win._label_dialog
+    label_list = win._docks.label_list
+    num_shapes_before = len(canvas.shapes)
+
+    _draw_triangle(qtbot=qtbot, win=win)
+
+    schedule_on_dialog(
+        label_dialog=label_dialog,
+        action=partial(
+            _enter_label,
+            qtbot=qtbot,
+            label_dialog=label_dialog,
+            name="cat",
+            flags=["b"],
+        ),
+    )
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=_CLOSE_POLYGON_CLICK)
+
+    qtbot.waitUntil(lambda: len(canvas.shapes) == num_shapes_before + 1, timeout=3000)
+
+    item = next(
+        it for it in label_list if (s := it.shape()) is not None and s.label == "cat"
+    )
+    assert "[b]" in item.text()
+    assert "[a" not in item.text()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_flags_survive_save_reload_roundtrip(
     main_win: MainWinFactory,
     qtbot: QtBot,

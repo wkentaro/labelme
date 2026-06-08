@@ -22,10 +22,12 @@ def format_label_with_color_dot(text: str, color: tuple[int, int, int]) -> str:
 
 def format_shape_label(shape: Shape) -> str:
     assert shape.label is not None
-    if shape.group_id is None:
-        text = shape.label
-    else:
-        text = f"{shape.label} ({shape.group_id})"
+    text = shape.label
+    if shape.group_id is not None:
+        text += f" ({shape.group_id})"
+    enabled_flags = [key for key, value in (shape.flags or {}).items() if value]
+    if enabled_flags:
+        text += f" [{', '.join(enabled_flags)}]"
     return format_label_with_color_dot(text=text, color=shape.fill_color.getRgb()[:3])
 
 
