@@ -15,7 +15,9 @@ from labelme import _yaml
 
 here = Path(__file__).resolve().parent
 
-_DEFAULT_CONFIG: Final = _yaml.safe_load((here / "default_config.yaml").read_text())
+_DEFAULT_CONFIG: Final = _yaml.safe_load(
+    (here / "default_config.yaml").read_text(encoding="utf-8")
+)
 
 
 def _default_value(key_path: Sequence[str]) -> object:
@@ -64,7 +66,7 @@ def _atomic_write(config_file: Path, content: str) -> None:
         dir=config_file.parent, prefix=f"{config_file.name}.", suffix=".tmp"
     )
     try:
-        with os.fdopen(fd, "w") as f:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(content)
         os.replace(tmp, config_file)
     except BaseException:
@@ -79,7 +81,11 @@ def set_override(config_file: Path, key_path: Sequence[str], value: object) -> N
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.indent(mapping=2, sequence=4, offset=2)
-    doc = yaml.load(config_file.read_text()) if config_file.exists() else None
+    doc = (
+        yaml.load(config_file.read_text(encoding="utf-8"))
+        if config_file.exists()
+        else None
+    )
     if not isinstance(doc, CommentedMap):
         doc = CommentedMap()
 
