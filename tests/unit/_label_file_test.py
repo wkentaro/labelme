@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import shutil
 from collections.abc import Callable
@@ -140,6 +141,59 @@ def test_read_label_file_raises_read_error_on_malformed(
 
     with pytest.raises(LabelFileReadError, match=error_match):
         read_label_file(filename=str(annotated_dst))
+
+
+def test_read_label_file_falls_back_to_basename_for_absolute_path(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_raw["imagePath"] = "/nonexistent/dir/2011_000003.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    label_data = read_label_file(filename=str(annotated_dst))
+
+    assert label_data.image_data
+
+
+def test_read_label_file_falls_back_to_basename_for_stale_relative_path(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_raw["imagePath"] = "../old/2011_000003.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    label_data = read_label_file(filename=str(annotated_dst))
+
+    assert label_data.image_data
+
+
+def test_read_label_file_raises_when_primary_and_basename_both_missing(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_raw["imagePath"] = "/nonexistent/dir/missing.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    with pytest.raises(LabelFileReadError) as excinfo:
+        read_label_file(filename=str(annotated_dst))
+
+    message = str(excinfo.value)
+    assert "/nonexistent/dir/missing.jpg" in message
+    assert str(annotated_dst.parent / "missing.jpg") in message
+
+
+def test_read_label_file_with_embedded_image_data_ignores_missing_imagepath(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    image_bytes = (annotated_dst.parent / "2011_000003.jpg").read_bytes()
+    annotated_raw["imageData"] = base64.b64encode(image_bytes).decode()
+    annotated_raw["imagePath"] = "/nonexistent/dir/whatever.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    label_data = read_label_file(filename=str(annotated_dst))
+
+    assert label_data.image_data
 
 
 def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:

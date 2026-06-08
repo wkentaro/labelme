@@ -220,6 +220,26 @@ def _check_image_dimensions(
         )
 
 
+def _read_image_with_basename_fallback(*, label_dir: Path, image_path: str) -> bytes:
+    # imagePath can be stale when a dataset moves between machines (absolute
+    # path, or a relative path with a now-missing subdirectory). The image often
+    # still sits next to its label file, so retry once with just the basename.
+    primary = label_dir / image_path
+    try:
+        return read_image_file(filename=str(primary))
+    except OSError as primary_error:
+        fallback = label_dir / Path(image_path).name
+        if fallback == primary:
+            raise
+        try:
+            return read_image_file(filename=str(fallback))
+        except OSError as fallback_error:
+            raise OSError(
+                f"failed to load image from {str(primary)!r} "
+                f"or {str(fallback)!r}: {fallback_error}"
+            ) from primary_error
+
+
 def read_label_file(filename: str) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
@@ -228,8 +248,8 @@ def read_label_file(filename: str) -> Annotation:
         if raw["imageData"] is not None:
             image_data = base64.b64decode(raw["imageData"])
         else:
-            image_data = read_image_file(
-                filename=str(Path(filename).parent / image_path)
+            image_data = _read_image_with_basename_fallback(
+                label_dir=Path(filename).parent, image_path=image_path
             )
         _check_image_dimensions(
             image_data=image_data,
