@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Final
 
 import numpy as np
+import numpy.typing as npt
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -118,9 +119,9 @@ def format_shortcut(text: str) -> str:
     return f"<b>{modifier}</b>+<b>{key}</b>"
 
 
-def direction_angle(*, start: QtCore.QPointF, end: QtCore.QPointF) -> float:
-    delta = end - start
-    return float(np.arctan2(delta.y(), delta.x()))
+def direction_angle(*, start: npt.ArrayLike, end: npt.ArrayLike) -> float:
+    delta = np.asarray(end, dtype=np.float64) - np.asarray(start, dtype=np.float64)
+    return float(np.arctan2(delta[1], delta[0]))
 
 
 def _project_point_along_direction(
