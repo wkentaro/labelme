@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
 from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -86,7 +85,7 @@ def test_visibility_preserved_when_undoing_unrelated_edit(
     qtbot.wait(50)
     assert not canvas.shapes[hidden_index].visible
 
-    canvas.shapes[0].points[0] += QPointF(5.0, 5.0)
+    canvas.shapes[0].points[0] += [5.0, 5.0]
     canvas.backup_shapes()
 
     annotated_win.undo_shape_edit()

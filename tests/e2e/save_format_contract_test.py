@@ -84,7 +84,7 @@ def test_round_trip_polygon_preserves_points(
     saved_shape = next(
         s for s in raw_win._canvas_widgets.canvas.shapes if s.label == label
     )
-    saved_points = [(p.x(), p.y()) for p in saved_shape.points]
+    saved_points = [(float(p[0]), float(p[1])) for p in saved_shape.points]
 
     raw_win.save_labels(label_path=str(label_path))
     assert label_path.exists()
@@ -99,7 +99,7 @@ def test_round_trip_polygon_preserves_points(
     )
 
     reopened = next(s for s in canvas2.shapes if s.label == label)
-    reopened_points = [(p.x(), p.y()) for p in reopened.points]
+    reopened_points = [(float(p[0]), float(p[1])) for p in reopened.points]
 
     assert reopened.shape_type == "polygon"
     assert len(reopened_points) == len(saved_points)

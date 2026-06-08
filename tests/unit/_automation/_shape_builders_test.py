@@ -17,8 +17,8 @@ def test_shapes_from_detections_rectangle_uses_bbox() -> None:
     )
 
     assert shape.shape_type == "rectangle"
-    assert (shape.points[0].x(), shape.points[0].y()) == pytest.approx((10, 20))
-    assert (shape.points[1].x(), shape.points[1].y()) == pytest.approx((30, 50))
+    assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((10, 20))
+    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((30, 50))
 
 
 def test_shapes_from_detections_rectangle_without_bbox_is_dropped() -> None:
@@ -45,10 +45,10 @@ def test_shapes_from_detections_circle_with_mask_uses_centroid_and_area() -> Non
     expected_cx = 10 + 10
     expected_cy = 20 + 15
     expected_radius = math.sqrt(21 * 31 / math.pi)
-    assert shape.points[0].x() == pytest.approx(expected_cx)
-    assert shape.points[0].y() == pytest.approx(expected_cy)
-    assert shape.points[1].x() == pytest.approx(expected_cx + expected_radius)
-    assert shape.points[1].y() == pytest.approx(expected_cy)
+    assert shape.points[0][0] == pytest.approx(expected_cx)
+    assert shape.points[0][1] == pytest.approx(expected_cy)
+    assert shape.points[1][0] == pytest.approx(expected_cx + expected_radius)
+    assert shape.points[1][1] == pytest.approx(expected_cy)
 
 
 def test_shapes_from_detections_circle_without_mask_falls_back_to_inscribed() -> None:
@@ -58,10 +58,10 @@ def test_shapes_from_detections_circle_without_mask_falls_back_to_inscribed() ->
     )
 
     assert shape.shape_type == "circle"
-    assert shape.points[0].x() == pytest.approx(5)
-    assert shape.points[0].y() == pytest.approx(10)
-    assert shape.points[1].x() == pytest.approx(10)
-    assert shape.points[1].y() == pytest.approx(10)
+    assert shape.points[0][0] == pytest.approx(5)
+    assert shape.points[0][1] == pytest.approx(10)
+    assert shape.points[1][0] == pytest.approx(10)
+    assert shape.points[1][1] == pytest.approx(10)
 
 
 def test_shapes_from_detections_oriented_rectangle_with_mask_uses_min_area_rect() -> (
@@ -83,7 +83,7 @@ def test_shapes_from_detections_oriented_rectangle_with_mask_uses_min_area_rect(
     assert shape.shape_type == "oriented_rectangle"
     expected = [(10, 20), (30, 20), (30, 30), (10, 30)]
     for i, (x, y) in enumerate(expected):
-        assert (shape.points[i].x(), shape.points[i].y()) == pytest.approx((x, y))
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
 def test_shapes_from_detections_oriented_rectangle_without_mask_falls_back() -> None:
@@ -95,7 +95,7 @@ def test_shapes_from_detections_oriented_rectangle_without_mask_falls_back() -> 
     assert shape.shape_type == "oriented_rectangle"
     expected = [(0, 0), (10, 0), (10, 20), (0, 20)]
     for i, (x, y) in enumerate(expected):
-        assert (shape.points[i].x(), shape.points[i].y()) == pytest.approx((x, y))
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
 def test_shapes_from_detections_oriented_rectangle_with_rotated_mask(
@@ -110,14 +110,14 @@ def test_shapes_from_detections_oriented_rectangle_with_rotated_mask(
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    edge_dx = shape.points[1].x() - shape.points[0].x()
-    edge_dy = shape.points[1].y() - shape.points[0].y()
+    edge_dx = shape.points[1][0] - shape.points[0][0]
+    edge_dy = shape.points[1][1] - shape.points[0][1]
     recovered_angle = math.atan2(edge_dy, edge_dx)
     assert recovered_angle == pytest.approx(
         rotated_rectangle_angle, abs=math.radians(3)
     )
-    center_x = sum(p.x() for p in shape.points) / 4
-    center_y = sum(p.y() for p in shape.points) / 4
+    center_x = sum(shape.points[i][0] for i in range(4)) / 4
+    center_y = sum(shape.points[i][1] for i in range(4)) / 4
     assert center_x == pytest.approx(70.0, abs=0.5)
     assert center_y == pytest.approx(120.0, abs=0.5)
 
@@ -133,7 +133,7 @@ def test_shapes_from_detections_oriented_rectangle_with_square_mask() -> None:
     assert shape.shape_type == "oriented_rectangle"
     expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
     for i, (x, y) in enumerate(expected):
-        assert (shape.points[i].x(), shape.points[i].y()) == pytest.approx((x, y))
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
 def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None:
@@ -147,7 +147,7 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
     assert shape.shape_type == "oriented_rectangle"
     expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
     for i, (x, y) in enumerate(expected):
-        assert (shape.points[i].x(), shape.points[i].y()) == pytest.approx((x, y))
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
 def test_shapes_from_detections_mask_drops_empty_mask() -> None:

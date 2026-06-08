@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
 import math
 from typing import Final
 
+import numpy as np
 import pytest
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -12,14 +14,15 @@ from PyQt5.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
+from labelme._shape import ShapeType
 from labelme.widgets.canvas import Canvas
 from labelme.widgets.canvas import _compute_intersection_edges_image
 from labelme.widgets.canvas import _compute_overscroll_slack
-from labelme.widgets.canvas import _is_degenerate_shape
+from labelme.widgets.canvas import _DraftShape
+from labelme.widgets.canvas import _is_degenerate_draft
 from labelme.widgets.canvas import _normalize_bbox_points
 from labelme.widgets.canvas import _opposite_corner_in_parallelogram
 from labelme.widgets.canvas import _project_oriented_rectangle_corners
-from labelme.widgets.canvas import _rebuild_line
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -34,11 +37,11 @@ def canvas(qtbot: QtBot) -> Canvas:
 
 
 def _make_oriented_rectangle(corners: list[tuple[float, float]]) -> Shape:
-    shape = Shape(shape_type="oriented_rectangle")
-    for x, y in corners:
-        shape.add_point(QPointF(x, y))
-    shape.close()
-    return shape
+    return Shape(
+        shape_type="oriented_rectangle",
+        points=np.array(corners, dtype=np.float64),
+        closed=True,
+    )
 
 
 @pytest.mark.gui
@@ -73,8 +76,8 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
         canvas._drag_hovered_rotation_point(pos=pos)
 
     for i, (x, y) in enumerate(original):
-        assert canvas.shapes[0].points[i].x() == pytest.approx(x)
-        assert canvas.shapes[0].points[i].y() == pytest.approx(y)
+        assert canvas.shapes[0].points[i][0] == pytest.approx(x)
+        assert canvas.shapes[0].points[i][1] == pytest.approx(y)
 
 
 @pytest.mark.gui
@@ -92,7 +95,7 @@ def test_bounded_move_oriented_rectangle_vertex_clips_when_perpendicular_corner_
 
     expected = [(50, 30), (76, 43), (91, 13), (65, 0)]
     for i, (x, y) in enumerate(expected):
-        assert (shape.points[i].x(), shape.points[i].y()) == pytest.approx((x, y))
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
 @pytest.mark.gui
@@ -110,15 +113,39 @@ def test_bounded_move_oriented_rectangle_vertex_clips_when_parallel_corner_outsi
 
     expected = [(50, 30), (90, 50), (93, 44), (53, 24)]
     for i, (x, y) in enumerate(expected):
-        assert (shape.points[i].x(), shape.points[i].y()) == pytest.approx((x, y))
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+
+
+@pytest.mark.gui
+def test_set_shape_visible_toggles_visibility(canvas: Canvas) -> None:
+    # Visibility is canvas state keyed by object identity.
+    shape = Shape(
+        label="a",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes([shape])
+
+    assert canvas.shapes[0].visible is True
+
+    canvas.set_shape_visible(canvas.shapes[0], False)
+    assert canvas.shapes[0].visible is False
+
+    canvas.set_shape_visible(canvas.shapes[0], True)
+    assert canvas.shapes[0].visible is True
 
 
 @pytest.mark.gui
 def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
-    shape = Shape(label="a", shape_type="rectangle")
-    shape.add_point(QPointF(0, 0))
-    shape.add_point(QPointF(10, 10))
-    shape.close()
+    # `visible` is the one ephemeral view flag kept on the Qt-free Shape so it
+    # rides along the deepcopy-based undo/backup stack.
+    shape = Shape(
+        label="a",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
     canvas.load_shapes([shape])
 
     canvas.set_shape_visible(canvas.shapes[0], False)
@@ -143,11 +170,13 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     # and notify the user that inference produced nothing.
     monkeypatch.setattr(canvas, "_shapes_from_ai_points", lambda **_: [])
     canvas.create_mode = create_mode
-    canvas._current = Shape(shape_type="rectangle")
     # ai_box_to_shape normalizes the two bbox corners before delegating to the
     # (monkeypatched) inference call, so the in-progress shape needs 2 points.
-    canvas._current.add_point(QPointF(0, 0))
-    canvas._current.add_point(QPointF(10, 10))
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
     drawing_polygon_emissions: list[bool] = []
     inference_no_shapes_emissions: list[None] = []
     canvas.drawing_polygon.connect(drawing_polygon_emissions.append)
@@ -169,21 +198,24 @@ def test_create_mode_switch_retypes_one_point_partial(canvas: Canvas) -> None:
     # NOT re-seed _line.points (which would alias both slots and break the
     # next extend click).
     canvas.create_mode = "rectangle"
-    canvas._current = Shape(shape_type="rectangle")
-    canvas._current.add_point(QPointF(10, 10))
-    canvas._line = Shape(shape_type="rectangle")
-    canvas._line.points = [QPointF(10, 10), QPointF(50, 30)]
-    canvas._line.point_labels = [1, 1]
-    canvas._line.close()
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(10, 10),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(10, 10), QPointF(50, 30)),
+        point_labels=(1, 1),
+        closed=True,
+    )
 
     canvas.create_mode = "polygon"
 
     assert canvas._current is not None
     assert canvas._current.shape_type == "polygon"
-    assert canvas._current.points == [QPointF(10, 10)]
+    assert canvas._current.points == (QPointF(10, 10),)
     assert canvas._line.shape_type == "polygon"
-    assert canvas._line.points == [QPointF(10, 10), QPointF(50, 30)]
-    assert canvas._line.point_labels == [1, 1]
+    assert canvas._line.points == (QPointF(10, 10), QPointF(50, 30))
+    assert canvas._line.point_labels == (1, 1)
 
 
 @pytest.mark.gui
@@ -193,9 +225,11 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     # Multi-point partial cancels, and listeners on drawing_polygon must
     # observe the new create_mode synchronously.
     canvas.create_mode = "polygon"
-    canvas._current = Shape(shape_type="polygon")
-    canvas._current.add_point(QPointF(10, 10))
-    canvas._current.add_point(QPointF(20, 20))
+    canvas._current = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(10, 10), QPointF(20, 20)),
+        point_labels=(1, 1),
+    )
     emissions: list[bool] = []
     observed_modes: list[str] = []
 
@@ -219,8 +253,9 @@ def test_create_mode_switch_to_ai_target_cancels_one_point_partial(
     # AI modes carry per-point labels, so a non-AI seed can't be
     # reinterpreted as an AI seed even with only 1 point.
     canvas.create_mode = "rectangle"
-    canvas._current = Shape(shape_type="rectangle")
-    canvas._current.add_point(QPointF(10, 10))
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(10, 10),), point_labels=(1,)
+    )
     emissions: list[bool] = []
     canvas.drawing_polygon.connect(emissions.append)
 
@@ -234,13 +269,14 @@ def test_create_mode_switch_to_ai_target_cancels_one_point_partial(
 def test_create_mode_switch_preserves_seed_point_label(canvas: Canvas) -> None:
     # Retype must preserve _current.point_labels (a shift-click sets label=0).
     canvas.create_mode = "polygon"
-    canvas._current = Shape(shape_type="polygon")
-    canvas._current.add_point(QPointF(10, 10), label=0)
+    canvas._current = _DraftShape(
+        shape_type="polygon", points=(QPointF(10, 10),), point_labels=(0,)
+    )
 
     canvas.create_mode = "rectangle"
 
     assert canvas._current is not None
-    assert canvas._current.point_labels == [0]
+    assert canvas._current.point_labels == (0,)
 
 
 @pytest.mark.gui
@@ -251,10 +287,14 @@ def test_extend_after_mode_switch_finalizes_at_last_cursor(
     # After mode switch, the preserved [seed, last_cursor] _line drives
     # extend so finalize commits a non-degenerate shape.
     canvas.create_mode = "rectangle"
-    canvas._current = Shape(shape_type="rectangle")
-    canvas._current.add_point(QPointF(10, 10))
-    canvas._line.points = [QPointF(10, 10), QPointF(50, 30)]
-    canvas._line.point_labels = [1, 1]
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(10, 10),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(10, 10), QPointF(50, 30)),
+        point_labels=(1, 1),
+    )
 
     canvas.create_mode = to_mode
 
@@ -270,7 +310,10 @@ def test_extend_after_mode_switch_finalizes_at_last_cursor(
     assert canvas._current is None
     assert len(canvas.shapes) == 1
     assert canvas.shapes[0].shape_type == to_mode
-    assert canvas.shapes[0].points == [QPointF(10, 10), QPointF(50, 30)]
+    assert canvas.shapes[0].points[0][0] == pytest.approx(10)
+    assert canvas.shapes[0].points[0][1] == pytest.approx(10)
+    assert canvas.shapes[0].points[1][0] == pytest.approx(50)
+    assert canvas.shapes[0].points[1][1] == pytest.approx(30)
 
 
 @pytest.mark.gui
@@ -281,10 +324,14 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
     # Non-finalizing modes grow at last_cursor; for oriented_rectangle the
     # locked first edge has non-zero length.
     canvas.create_mode = "rectangle"
-    canvas._current = Shape(shape_type="rectangle")
-    canvas._current.add_point(QPointF(10, 10))
-    canvas._line.points = [QPointF(10, 10), QPointF(50, 30)]
-    canvas._line.point_labels = [1, 1]
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(10, 10),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(10, 10), QPointF(50, 30)),
+        point_labels=(1, 1),
+    )
 
     canvas.create_mode = to_mode
 
@@ -304,7 +351,7 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
         assert canvas._current.points[1] == QPointF(50, 30)
         assert canvas._current.points[0] != canvas._current.points[1]
     else:
-        assert canvas._current.points == [QPointF(10, 10), QPointF(50, 30)]
+        assert canvas._current.points == (QPointF(10, 10), QPointF(50, 30))
 
 
 @pytest.mark.parametrize(
@@ -344,25 +391,31 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
         ),
     ],
 )
-def test_is_degenerate_shape(
-    shape_type: str, points: list[tuple[float, float]], expected: bool
+def test_is_degenerate_draft(
+    shape_type: ShapeType, points: list[tuple[float, float]], expected: bool
 ) -> None:
-    shape = Shape(shape_type=shape_type)
-    for x, y in points:
-        shape.add_point(QPointF(x, y))
-    assert _is_degenerate_shape(shape) is expected
+    draft = _DraftShape(
+        shape_type=shape_type,
+        points=tuple(QPointF(x, y) for x, y in points),
+        point_labels=tuple(1 for _ in points),
+    )
+    assert _is_degenerate_draft(draft) is expected
 
 
 @pytest.mark.gui
 @pytest.mark.parametrize("shape_type", ["rectangle", "circle", "line"])
-def test_finalize_rejects_degenerate_shape(canvas: Canvas, shape_type: str) -> None:
+def test_finalize_rejects_degenerate_shape(
+    canvas: Canvas, shape_type: ShapeType
+) -> None:
     # Zero-area / zero-length shapes never enter canvas.shapes; the user gets
     # a clean cancel instead of a silent malformed annotation, and the rejection
     # is announced so the app can surface a status message.
     canvas.create_mode = shape_type
-    canvas._current = Shape(shape_type=shape_type)
-    canvas._current.add_point(QPointF(10, 10))
-    canvas._current.add_point(QPointF(10, 10))
+    canvas._current = _DraftShape(
+        shape_type=shape_type,
+        points=(QPointF(10, 10), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
     rejection_emissions: list[None] = []
     canvas.degenerate_shape_rejected.connect(lambda: rejection_emissions.append(None))
 
@@ -378,9 +431,11 @@ def test_finalize_rejects_polygon_with_fewer_than_three_distinct_points(
     canvas: Canvas,
 ) -> None:
     canvas.create_mode = "polygon"
-    canvas._current = Shape(shape_type="polygon")
-    canvas._current.add_point(QPointF(10, 10))
-    canvas._current.add_point(QPointF(20, 20))
+    canvas._current = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(10, 10), QPointF(20, 20)),
+        point_labels=(1, 1),
+    )
 
     canvas._finalize()
 
@@ -388,28 +443,21 @@ def test_finalize_rejects_polygon_with_fewer_than_three_distinct_points(
     assert canvas._current is None
 
 
-def test_rebuild_line_does_not_alias_source_lists() -> None:
-    # _rebuild_line must hand back independent lists; otherwise mutating the
-    # old line later would silently corrupt the live one.
-    original = Shape(shape_type="polygon")
-    original.points = [QPointF(10, 10), QPointF(20, 20)]
-    original.point_labels = [1, 1]
+def test_retype_draft_into_fresh_shape_type() -> None:
+    # dataclasses.replace carries the points over to a distinct draft with the
+    # new shape_type; _DraftShape is frozen, so the two share no mutable state.
+    original = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(10, 10), QPointF(20, 20)),
+        point_labels=(1, 1),
+    )
 
-    rebuilt = _rebuild_line(original, shape_type="rectangle")
+    rebuilt = dataclasses.replace(original, shape_type="rectangle")
 
-    assert rebuilt.points is not original.points
-    assert rebuilt.point_labels is not original.point_labels
-    original.points.clear()
-    original.point_labels.clear()
-    assert rebuilt.points == [QPointF(10, 10), QPointF(20, 20)]
-    assert rebuilt.point_labels == [1, 1]
-
-
-@pytest.mark.gui
-def test_shape_type_is_immutable() -> None:
-    shape = Shape(shape_type="rectangle")
-    with pytest.raises(AttributeError):
-        setattr(shape, "shape_type", "polygon")
+    assert rebuilt is not original
+    assert rebuilt.shape_type == "rectangle"
+    assert rebuilt.points == (QPointF(10, 10), QPointF(20, 20))
+    assert rebuilt.point_labels == (1, 1)
 
 
 _IMAGE_SIZE: Final[QSize] = QSize(100, 50)

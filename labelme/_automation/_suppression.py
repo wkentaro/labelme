@@ -192,9 +192,9 @@ def _rasterize_shape(
         return np.ones((height, width), dtype=np.bool_)
     if shape.shape_type == "circle":
         center, edge = shape.points
-        cx_local = center.x() - xmin
-        cy_local = center.y() - ymin
-        radius = float(np.hypot(edge.x() - center.x(), edge.y() - center.y()))
+        cx_local = center[0] - xmin
+        cy_local = center[1] - ymin
+        radius = float(np.linalg.norm(edge - center))
         image = PIL.Image.new("L", (width, height), 0)
         draw = PIL.ImageDraw.Draw(image)
         draw.ellipse(
@@ -210,7 +210,7 @@ def _rasterize_shape(
     if shape.shape_type in ("polygon", "oriented_rectangle"):
         image = PIL.Image.new("L", (width, height), 0)
         draw = PIL.ImageDraw.Draw(image)
-        points_local = [(p.x() - xmin, p.y() - ymin) for p in shape.points]
+        points_local = (shape.points - [xmin, ymin]).tolist()
         draw.polygon(points_local, fill=1)
         return np.asarray(image, dtype=np.bool_)
     raise ValueError(f"Unsupported shape_type: {shape.shape_type!r}")

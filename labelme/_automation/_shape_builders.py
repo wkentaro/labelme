@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.typing import ArrayLike
 from numpy.typing import NDArray
-from PyQt5.QtCore import QPointF
 
 from labelme._shape import Shape
 
@@ -25,22 +25,20 @@ class Detection:
 
 def _build_shape(
     shape_type: AiOutputFormat,
-    points: list[QPointF],
+    points: ArrayLike,
     *,
     mask: NDArray[np.bool_] | None = None,
     label: str | None = None,
     description: str | None = None,
 ) -> Shape:
-    shape = Shape(
+    return Shape(
         label=label,
         shape_type=shape_type,
         mask=mask,
         description=description,
+        points=np.asarray(points, dtype=np.float64),
+        closed=True,
     )
-    shape.points = points
-    shape.point_labels = [1] * len(points)
-    shape.close()
-    return shape
 
 
 def _shape_from_detection(
@@ -53,7 +51,7 @@ def _shape_from_detection(
         xmin, ymin, xmax, ymax = detection.bbox
         return _build_shape(
             shape_type="rectangle",
-            points=[QPointF(xmin, ymin), QPointF(xmax, ymax)],
+            points=[[xmin, ymin], [xmax, ymax]],
             label=detection.label,
             description=detection.description,
         )
@@ -69,7 +67,7 @@ def _shape_from_detection(
             return None
         return _build_shape(
             shape_type="polygon",
-            points=[QPointF(p[0], p[1]) for p in polygon],
+            points=polygon,
             label=detection.label,
             description=detection.description,
         )
@@ -84,7 +82,7 @@ def _shape_from_detection(
         ymax = int(detection.bbox[3])
         return _build_shape(
             shape_type="mask",
-            points=[QPointF(xmin, ymin), QPointF(xmax, ymax)],
+            points=[[xmin, ymin], [xmax, ymax]],
             mask=detection.mask,
             label=detection.label,
             description=detection.description,
@@ -96,8 +94,8 @@ def _shape_from_detection(
         return _build_shape(
             shape_type="circle",
             points=[
-                QPointF(circle.cx, circle.cy),
-                QPointF(circle.cx + circle.radius, circle.cy),
+                [circle.cx, circle.cy],
+                [circle.cx + circle.radius, circle.cy],
             ],
             label=detection.label,
             description=detection.description,
@@ -108,7 +106,7 @@ def _shape_from_detection(
             return None
         return _build_shape(
             shape_type="oriented_rectangle",
-            points=[QPointF(float(x), float(y)) for x, y in corners],
+            points=corners,
             label=detection.label,
             description=detection.description,
         )

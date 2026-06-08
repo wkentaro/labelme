@@ -41,3 +41,22 @@ persistence layer remains usable without a GUI.
 - A future architecture review should not re-suggest collapsing `ShapeDict` or
   pushing `Shape` into `_label_file.py`; doing so breaks the headless consumers
   above.
+
+## Amendment (2026-06): `Shape` is now Qt-free
+
+The rejection of "delete `ShapeDict`" above rested entirely on one premise:
+`Shape` carried `QtCore.QPointF` points and Qt render state, so reusing it in the
+codec would drag PyQt5 into `_label_file.py`. That premise no longer holds.
+`Shape` has been refactored into a Qt-free `@dataclass` (`_shape.py`): `points` /
+`point_labels` are numpy arrays, render state moved to `widgets/_shape_render.py`
+and `widgets/canvas.py`, and the module imports no PyQt5. The in-progress drawing
+shape is a separate QPointF `_DraftShape` in the canvas; committed shapes are the
+Qt-free `Shape`.
+
+Consequently the prohibition is lifted: collapsing `ShapeDict` into the Qt-free
+`Shape` (so the codec exchanges one type) is now viable and no longer breaks the
+headless consumers — they would import a numpy-only `Shape`. That collapse
+(formerly "rejected") is now an unblocked but **deferred** follow-up; `ShapeDict`
+is retained for now so this refactor stayed scoped to making `Shape` Qt-free.
+Pushing `Shape` into `_label_file.py` remains inadvisable only for layering
+reasons, not Qt ones.

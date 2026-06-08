@@ -72,7 +72,9 @@ def test_restore_last_shape_via_undo(
     raw_win._switch_canvas_mode(edit=True)
 
     assert len(canvas.shapes) == 1
-    original_points = [QPointF(p) for p in canvas.shapes[0].points]
+    original_points = [
+        QPointF(float(p[0]), float(p[1])) for p in canvas.shapes[0].points
+    ]
 
     monkeypatch.setattr(
         QMessageBox,
@@ -89,6 +91,8 @@ def test_restore_last_shape_via_undo(
 
     restored = canvas.shapes[0]
     assert restored.label == "restore_me"
-    assert [QPointF(p) for p in restored.points] == original_points
+    assert [
+        QPointF(float(p[0]), float(p[1])) for p in restored.points
+    ] == original_points
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

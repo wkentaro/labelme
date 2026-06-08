@@ -24,14 +24,14 @@ def test_distance_to_line() -> None:
 @pytest.mark.parametrize(
     "end, expected",
     [
-        (QPointF(5.0, 0.0), 0.0),
-        (QPointF(0.0, 5.0), math.pi / 2),
-        (QPointF(-5.0, 0.0), math.pi),
-        (QPointF(0.0, -5.0), -math.pi / 2),
+        ((5.0, 0.0), 0.0),
+        ((0.0, 5.0), math.pi / 2),
+        ((-5.0, 0.0), math.pi),
+        ((0.0, -5.0), -math.pi / 2),
     ],
 )
-def test_direction_angle(end: QPointF, expected: float) -> None:
-    assert direction_angle(start=QPointF(0.0, 0.0), end=end) == pytest.approx(expected)
+def test_direction_angle(end: tuple[float, float], expected: float) -> None:
+    assert direction_angle(start=(0.0, 0.0), end=end) == pytest.approx(expected)
 
 
 @pytest.mark.parametrize(
