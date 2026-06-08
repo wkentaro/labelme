@@ -11,9 +11,7 @@ from typing import Final
 from typing import Literal
 from typing import cast
 
-import imgviz
 import numpy as np
-import osam
 from loguru import logger
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -209,9 +207,7 @@ class Canvas(QtWidgets.QWidget):
     _draft_palette: Palette
     _palette_cache: dict[str, Palette]
 
-    _osam_session_model_name: str = "sam2:latest"
-    _osam_session: _automation.OsamSession | None
-    _ai_output_format: _automation.AiOutputFormat = "polygon"
+    _ai_assist_session: _automation.AiAssistSession
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -253,7 +249,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_initial_angle = 0.0
         self._rotation_original_points = np.empty((0, 2))
         self.scale: float = 1.0
-        self._osam_session = None
+        self._ai_assist_session = _automation.AiAssistSession()
         self._snapping = True
         self._hovered_shape_is_selected: bool = False
         self._painter = QtGui.QPainter()
@@ -391,48 +387,24 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def get_ai_model_name(self) -> str:
-        return self._osam_session_model_name
+        return self._ai_assist_session.model_name
 
     def set_ai_model_name(self, model_name: str) -> None:
-        self._osam_session_model_name = model_name
+        self._ai_assist_session.model_name = model_name
 
     def set_ai_output_format(self, output_format: _automation.AiOutputFormat) -> None:
-        self._ai_output_format = output_format
-
-    def _get_osam_session(self) -> _automation.OsamSession:
-        if (
-            self._osam_session is None
-            or self._osam_session.model_name != self._osam_session_model_name
-        ):
-            self._osam_session = _automation.OsamSession(
-                model_name=self._osam_session_model_name
-            )
-        return self._osam_session
+        self._ai_assist_session.output_format = output_format
 
     def _shapes_from_ai_points(
         self, points: Sequence[QPointF], point_labels: Sequence[int]
     ) -> list[Shape]:
         image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
-        response: osam.types.GenerateResponse = self._get_osam_session().run(
-            image=imgviz.asrgb(image),  # type: ignore[arg-type]
+        return self._ai_assist_session.propose_shapes(
+            image=image[:, :, :3],
             image_id=str(self._pixmap_hash),
             points=np.array([[p.x(), p.y()] for p in points]),
             point_labels=np.array(point_labels),
-        )
-        # iou_threshold is hardcoded here because the ai-points/box flow has
-        # no user-facing IoU control (unlike app.py's ai-text flow). 0.5 is
-        # the same default the ai-text widget ships with.
-        detections = _automation.suppress_detections_greedy(
-            detections=_detections_from_annotations(response.annotations),
-            iou_threshold=0.5,
-        )
-        detections = _automation.suppress_detections_overlapping_existing_shapes(
-            detections=detections,
             existing_shapes=self.shapes,
-        )
-        return _automation.shapes_from_detections(
-            detections=detections,
-            shape_type=self._ai_output_format,
         )
 
     def backup_shapes(self) -> None:
@@ -1045,7 +1017,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         mode = self.create_mode
         if mode in ("ai_points_to_shape", "ai_box_to_shape") and not download_ai_model(
-            model_name=self._osam_session_model_name, parent=self
+            model_name=self.get_ai_model_name(), parent=self
         ):
             return
 
@@ -1823,27 +1795,6 @@ class Canvas(QtWidgets.QWidget):
         self._last_hovered_edge = None
         self._hovered_rotation = None
         self.update()
-
-
-def _detections_from_annotations(
-    annotations: list[osam.types.Annotation],
-) -> list[_automation.Detection]:
-    if not annotations:
-        logger.warning("No annotations returned")
-        return []
-    sorted_annotations = sorted(
-        annotations,
-        key=lambda a: a.score if a.score is not None else 0,
-        reverse=True,
-    )
-    detections: list[_automation.Detection] = []
-    for annotation in sorted_annotations:
-        bbox: tuple[float, float, float, float] | None = None
-        if annotation.bounding_box is not None:
-            bb = annotation.bounding_box
-            bbox = (bb.xmin, bb.ymin, bb.xmax, bb.ymax)
-        detections.append(_automation.Detection(bbox=bbox, mask=annotation.mask))
-    return detections
 
 
 def _is_degenerate_draft(draft: _DraftShape) -> bool:

@@ -1,3 +1,4 @@
+from ._ai_assist import AiAssistSession
 from ._geometry import shape_to_xyxy_bbox
 from ._osam_session import OsamSession
 from ._shape_builders import Detection

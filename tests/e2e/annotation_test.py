@@ -295,7 +295,7 @@ def test_ai_model_download(
     monkeypatch.setattr(osam.types._blob.Blob, "path", property(patched_path))
 
     # Reset cached osam session so the fresh model is loaded from temp dir
-    canvas._osam_session = None
+    canvas._ai_assist_session._session = None
 
     canvas_size = canvas.size()
     pos = QPoint(int(canvas_size.width() * 0.5), int(canvas_size.height() * 0.5))
