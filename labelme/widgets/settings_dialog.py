@@ -55,6 +55,8 @@ class SettingsDialog(QtWidgets.QDialog):
             if not settings:
                 continue
             tabs.addTab(self._build_page(settings=settings), self.tr(section))
+        self._tabs = tabs
+        tabs.currentChanged.connect(lambda _index: self._fit_height_to_active_tab())
 
         open_button = QtWidgets.QPushButton(self.tr("Open config file as text…"))
         open_button.setToolTip(
@@ -74,7 +76,7 @@ class SettingsDialog(QtWidgets.QDialog):
         layout.addWidget(tabs, stretch=1)
         layout.addLayout(button_layout)
         self.setLayout(layout)
-        self.resize(640, 460)
+        self._fit_height_to_active_tab()
 
         self._sync_validate_label_gate()
 
@@ -91,6 +93,28 @@ class SettingsDialog(QtWidgets.QDialog):
         # Immediate-apply dialog: Escape and the window-close button discard
         # nothing, so treat them like Close and flush pending edits.
         self.accept()
+
+    def _fit_height_to_active_tab(self) -> None:
+        # A tab dialog otherwise stays sized to its tallest tab, leaving a void on
+        # shorter tabs; size to the active tab instead, like a macOS settings pane.
+        # The pane is non-resizable: height tracks the active tab and width holds at
+        # 640 unless a tab needs more, so its content is never clipped.
+        active = self._tabs.currentIndex()
+        for index in range(self._tabs.count()):
+            page = self._tabs.widget(index)
+            policy = page.sizePolicy()
+            policy.setVerticalPolicy(
+                QtWidgets.QSizePolicy.Preferred
+                if index == active
+                else QtWidgets.QSizePolicy.Ignored
+            )
+            page.setSizePolicy(policy)
+        # Release the previous fixed size (setFixedSize pinned both min and max) so
+        # adjustSize can shrink or grow to the active tab before we re-pin it.
+        self.setMinimumSize(0, 0)
+        self.setMaximumSize(QtWidgets.QWIDGETSIZE_MAX, QtWidgets.QWIDGETSIZE_MAX)
+        self.adjustSize()
+        self.setFixedSize(max(640, self.width()), self.height())
 
     def _read_value(self, key_path: tuple[str, ...]) -> object:
         node: object = self._config
