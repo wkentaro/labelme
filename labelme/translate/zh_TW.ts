@@ -961,5 +961,20 @@ Please select a different model or use AI-Box mode.</source>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>當標籤驗證設定為「exact」時，預定義標籤不能為空。請先停用「exact」驗證。</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>語言</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>重新啟動後生效。</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>系統預設</translation>
+    </message>
 </context>
 </TS>

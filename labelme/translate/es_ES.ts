@@ -961,5 +961,20 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Las etiquetas predefinidas no pueden estar vacías mientras la validación de etiquetas esté configurada como «exact». Desactiva primero la validación «exact».</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>Idioma</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>Se aplica al reiniciar.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>Predeterminado del sistema</translation>
+    </message>
 </context>
 </TS>

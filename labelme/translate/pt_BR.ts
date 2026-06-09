@@ -961,5 +961,20 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Os rótulos predefinidos não podem ficar vazios enquanto a validação de rótulo estiver definida como «exact». Desative primeiro a validação «exact».</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>Idioma</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>Aplicado após reiniciar o aplicativo.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>Padrão do sistema</translation>
+    </message>
 </context>
 </TS>

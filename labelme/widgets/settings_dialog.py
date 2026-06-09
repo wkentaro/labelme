@@ -8,6 +8,7 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+from labelme import _locale
 from labelme._config import _schema as schema
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]
@@ -139,11 +140,38 @@ class SettingsDialog(QtWidgets.QDialog):
                 row_layout.addWidget(label)
             else:
                 row_layout = QtWidgets.QHBoxLayout(row)
-                row_layout.addWidget(label, stretch=1)
-            row_layout.addWidget(editor)
+                # A note sits below the control; top-align the label so it pairs with
+                # the control rather than centering against the control+note block.
+                if setting.note:
+                    row_layout.addWidget(label, stretch=1, alignment=QtCore.Qt.AlignTop)
+                else:
+                    row_layout.addWidget(label, stretch=1)
+            row_layout.addWidget(self._with_note(editor=editor, setting=setting))
             layout.addWidget(row)
         layout.addStretch(1)
         return page
+
+    def _with_note(
+        self, editor: QtWidgets.QWidget, setting: schema.Setting
+    ) -> QtWidgets.QWidget:
+        if not setting.note:
+            return editor
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(2)
+        layout.addWidget(editor)
+        note = QtWidgets.QLabel(self.tr(setting.note))
+        note.setWordWrap(True)
+        # Secondary text color, kept enabled: a disabled label would be announced
+        # as a disabled control and carry the platform's washed-out gray.
+        palette = note.palette()
+        palette.setColor(
+            QtGui.QPalette.WindowText, palette.color(QtGui.QPalette.PlaceholderText)
+        )
+        note.setPalette(palette)
+        layout.addWidget(note)
+        return container
 
     def _create_editor(self, setting: schema.Setting) -> QtWidgets.QWidget:
         value = self._read_value(setting.key_path)
@@ -162,6 +190,22 @@ class SettingsDialog(QtWidgets.QDialog):
             ]
             return self._create_combo(
                 setting=setting, value=value, items=items, min_width=140
+            )
+        if setting.kind == "language":
+            languages = sorted(
+                (
+                    (QtCore.QLocale(code).nativeLanguageName() or code, code)
+                    for code in _locale.available_translation_locales()
+                ),
+                key=lambda name_and_code: name_and_code[0].casefold(),
+            )
+            items = [
+                (self.tr("System default"), None),
+                ("English", _locale.SOURCE_LOCALE),
+                *languages,
+            ]
+            return self._create_combo(
+                setting=setting, value=value, items=items, min_width=160
             )
         if setting.kind == "str_list":
             edit = _PlainTextEdit()

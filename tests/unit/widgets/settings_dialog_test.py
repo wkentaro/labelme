@@ -57,6 +57,46 @@ def test_str_list_none_initial_is_blank(dialog: SettingsDialog) -> None:
     assert edit.toPlainText() == ""
 
 
+def test_language_default_selects_system(dialog: SettingsDialog) -> None:
+    combo = dialog._editors[("language",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    assert combo.currentData() is None
+
+
+def test_language_lists_bundled_locales(dialog: SettingsDialog) -> None:
+    combo = dialog._editors[("language",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    assert combo.findData("ja_JP") >= 0
+
+
+def test_language_applies_locale_code(dialog: SettingsDialog, applied: Applied) -> None:
+    combo = dialog._editors[("language",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    combo.setCurrentIndex(combo.findData("en_US"))
+    assert (("language",), "en_US") in applied
+
+
+def test_language_applies_discovered_locale(
+    dialog: SettingsDialog, applied: Applied
+) -> None:
+    combo = dialog._editors[("language",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    index = combo.findData("ja_JP")
+    assert index >= 0
+    combo.setCurrentIndex(index)
+    assert (("language",), "ja_JP") in applied
+
+
+def test_language_unknown_code_falls_back_to_system(
+    qtbot: QtBot, applied: Applied
+) -> None:
+    dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={"language": "xx_ZZ"})
+    combo = dialog._editors[("language",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    assert combo.currentData() is None
+    assert applied == []
+
+
 def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     qtbot: QtBot, applied: Applied, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -967,5 +967,20 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Az előre definiált címkék nem lehetnek üresek, amíg a címkeellenőrzés „exact” értékre van állítva. Először kapcsolja ki az „exact” ellenőrzést.</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>Nyelv</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>Az újraindítás után lép érvénybe.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>Rendszer alapértelmezése</translation>
+    </message>
 </context>
 </TS>

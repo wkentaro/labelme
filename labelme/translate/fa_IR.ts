@@ -961,5 +961,20 @@ Please select a different model or use AI-Box mode.</source>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>برچسب‌های از پیش تعریف‌شده نمی‌توانند خالی باشند در حالی که اعتبارسنجی برچسب روی «exact» تنظیم شده است. ابتدا اعتبارسنجی «exact» را غیرفعال کنید.</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>زبان</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>پس از راه‌اندازی مجدد اعمال می‌شود.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>پیش‌فرض سیستم</translation>
+    </message>
 </context>
 </TS>
