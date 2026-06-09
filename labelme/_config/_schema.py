@@ -8,7 +8,7 @@ from typing import get_args
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
 
 Section = Literal["General", "Labels"]
-Kind = Literal["bool", "enum", "str_list"]
+Kind = Literal["bool", "enum", "str_list", "language"]
 
 # Section names double as tab titles. QT_TRANSLATE_NOOP marks them for pylupdate
 # under the SettingsDialog context (where they are resolved via self.tr) without
@@ -32,6 +32,8 @@ class Setting:
     # "unset/disabled"; it round-trips to YAML null and the dialog renders it
     # as an explicit "(none)" option, never as the string "None".
     choices: tuple[object, ...] | None = None
+    # Optional muted caption rendered beneath the control.
+    note: str | None = None
 
 
 SETTINGS: Final[tuple[Setting, ...]] = (
@@ -40,6 +42,13 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         section="General",
         label=QT_TRANSLATE_NOOP("SettingsDialog", "Show label popup on new shape"),
         kind="bool",
+    ),
+    Setting(
+        key_path=("language",),
+        section="General",
+        label=QT_TRANSLATE_NOOP("SettingsDialog", "Language"),
+        kind="language",
+        note=QT_TRANSLATE_NOOP("SettingsDialog", "Takes effect after restart."),
     ),
     Setting(
         key_path=("labels",),

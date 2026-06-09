@@ -961,5 +961,20 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Nhãn định sẵn không được để trống khi kiểm tra nhãn được đặt thành 'exact'. Vui lòng tắt kiểm tra 'exact' trước.</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>Ngôn ngữ</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>Có hiệu lực sau khi khởi động lại.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>Mặc định của hệ thống</translation>
+    </message>
 </context>
 </TS>

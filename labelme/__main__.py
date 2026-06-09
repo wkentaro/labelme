@@ -18,6 +18,7 @@ from PyQt5 import QtWidgets
 from labelme import __appname__
 from labelme import __version__
 from labelme import _config
+from labelme import _locale
 from labelme import _yaml
 from labelme.app import MainWindow
 from labelme.utils import new_icon
@@ -288,10 +289,24 @@ def main() -> None:
             )
         output_dir = output
 
+    # Read the language before QApplication exists so the translator is installed
+    # before any widget is built. MainWindow re-reads the same config; both reads
+    # are pure (load_config never writes), so the duplicate parse is harmless.
+    try:
+        language = _config.load_config(
+            config_file=config_file, config_overrides=config_overrides
+        ).get("language")
+    except Exception as e:
+        logger.debug("Could not read language from config: {}", e)
+        language = None
+    # A stale or hand-edited language code with no bundled translation follows the
+    # system locale, matching the Settings dialog.
+    if not _locale.is_valid_language(language):
+        language = None
     translator = QtCore.QTranslator()
     translator.load(
-        QtCore.QLocale.system().name(),
-        str(Path(__file__).resolve().parent / "translate"),
+        language or QtCore.QLocale.system().name(),
+        str(_locale.TRANSLATE_DIR),
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms

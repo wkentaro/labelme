@@ -961,5 +961,20 @@ Please select a different model or use AI-Box mode.</source>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>레이블 검증이 'exact'로 설정된 동안에는 사전 정의된 레이블을 비울 수 없습니다. 먼저 'exact' 검증을 비활성화하세요.</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>언어</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>재시작 후 적용됩니다.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>시스템 기본값</translation>
+    </message>
 </context>
 </TS>

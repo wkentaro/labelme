@@ -963,5 +963,20 @@ Please select a different model or use AI-Box mode.</source>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Οι προκαθορισμένες ετικέτες δεν μπορούν να είναι κενές όταν η επικύρωση ετικέτας έχει οριστεί σε «exact». Απενεργοποιήστε πρώτα την επικύρωση «exact».</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>Γλώσσα</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>Εφαρμόζεται μετά την επανεκκίνηση.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>Προεπιλογή συστήματος</translation>
+    </message>
 </context>
 </TS>

@@ -961,5 +961,20 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Voorgedefinieerde labels mogen niet leeg zijn wanneer labelvalidatie is ingesteld op 'exact'. Schakel eerst de 'exact'-validatie uit.</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Language</source>
+        <translation>Taal</translation>
+    </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Takes effect after restart.</source>
+        <translation>Van kracht na opnieuw opstarten.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/settings_dialog.py" line="0"/>
+        <source>System default</source>
+        <translation>Systeemstandaard</translation>
+    </message>
 </context>
 </TS>

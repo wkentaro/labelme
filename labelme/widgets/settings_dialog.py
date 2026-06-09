@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Callable
+from collections.abc import Sequence
 
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
+from labelme import _locale
 from labelme._config import _schema as schema
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]
@@ -54,6 +56,8 @@ class SettingsDialog(QtWidgets.QDialog):
             if not settings:
                 continue
             tabs.addTab(self._build_page(settings=settings), self.tr(section))
+        self._tabs = tabs
+        tabs.currentChanged.connect(lambda _index: self._fit_height_to_active_tab())
 
         open_button = QtWidgets.QPushButton(self.tr("Open config file as text…"))
         open_button.setToolTip(
@@ -73,7 +77,7 @@ class SettingsDialog(QtWidgets.QDialog):
         layout.addWidget(tabs, stretch=1)
         layout.addLayout(button_layout)
         self.setLayout(layout)
-        self.resize(640, 460)
+        self._fit_height_to_active_tab()
 
         self._sync_validate_label_gate()
 
@@ -90,6 +94,28 @@ class SettingsDialog(QtWidgets.QDialog):
         # Immediate-apply dialog: Escape and the window-close button discard
         # nothing, so treat them like Close and flush pending edits.
         self.accept()
+
+    def _fit_height_to_active_tab(self) -> None:
+        # A tab dialog otherwise stays sized to its tallest tab, leaving a void on
+        # shorter tabs; size to the active tab instead, like a macOS settings pane.
+        # The pane is non-resizable: height tracks the active tab and width holds at
+        # 640 unless a tab needs more, so its content is never clipped.
+        active = self._tabs.currentIndex()
+        for index in range(self._tabs.count()):
+            page = self._tabs.widget(index)
+            policy = page.sizePolicy()
+            policy.setVerticalPolicy(
+                QtWidgets.QSizePolicy.Preferred
+                if index == active
+                else QtWidgets.QSizePolicy.Ignored
+            )
+            page.setSizePolicy(policy)
+        # Release the previous fixed size (setFixedSize pinned both min and max) so
+        # adjustSize can shrink or grow to the active tab before we re-pin it.
+        self.setMinimumSize(0, 0)
+        self.setMaximumSize(QtWidgets.QWIDGETSIZE_MAX, QtWidgets.QWIDGETSIZE_MAX)
+        self.adjustSize()
+        self.setFixedSize(max(640, self.width()), self.height())
 
     def _read_value(self, key_path: tuple[str, ...]) -> object:
         node: object = self._config
@@ -114,11 +140,38 @@ class SettingsDialog(QtWidgets.QDialog):
                 row_layout.addWidget(label)
             else:
                 row_layout = QtWidgets.QHBoxLayout(row)
-                row_layout.addWidget(label, stretch=1)
-            row_layout.addWidget(editor)
+                # A note sits below the control; top-align the label so it pairs with
+                # the control rather than centering against the control+note block.
+                if setting.note:
+                    row_layout.addWidget(label, stretch=1, alignment=QtCore.Qt.AlignTop)
+                else:
+                    row_layout.addWidget(label, stretch=1)
+            row_layout.addWidget(self._with_note(editor=editor, setting=setting))
             layout.addWidget(row)
         layout.addStretch(1)
         return page
+
+    def _with_note(
+        self, editor: QtWidgets.QWidget, setting: schema.Setting
+    ) -> QtWidgets.QWidget:
+        if not setting.note:
+            return editor
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(2)
+        layout.addWidget(editor)
+        note = QtWidgets.QLabel(self.tr(setting.note))
+        note.setWordWrap(True)
+        # Secondary text color, kept enabled: a disabled label would be announced
+        # as a disabled control and carry the platform's washed-out gray.
+        palette = note.palette()
+        palette.setColor(
+            QtGui.QPalette.WindowText, palette.color(QtGui.QPalette.PlaceholderText)
+        )
+        note.setPalette(palette)
+        layout.addWidget(note)
+        return container
 
     def _create_editor(self, setting: schema.Setting) -> QtWidgets.QWidget:
         value = self._read_value(setting.key_path)
@@ -131,17 +184,29 @@ class SettingsDialog(QtWidgets.QDialog):
             return check
         if setting.kind == "enum":
             assert setting.choices is not None
-            combo = QtWidgets.QComboBox()
-            combo.setMinimumWidth(140)
-            for choice in setting.choices:
-                combo.addItem(
-                    self.tr("(none)") if choice is None else str(choice), choice
-                )
-            self._set_editor_value(editor=combo, value=value)
-            combo.currentIndexChanged.connect(
-                lambda: self._apply(setting.key_path, combo.currentData())
+            items = [
+                (self.tr("(none)") if choice is None else str(choice), choice)
+                for choice in setting.choices
+            ]
+            return self._create_combo(
+                setting=setting, value=value, items=items, min_width=140
             )
-            return combo
+        if setting.kind == "language":
+            languages = sorted(
+                (
+                    (QtCore.QLocale(code).nativeLanguageName() or code, code)
+                    for code in _locale.available_translation_locales()
+                ),
+                key=lambda name_and_code: name_and_code[0].casefold(),
+            )
+            items = [
+                (self.tr("System default"), None),
+                ("English", _locale.SOURCE_LOCALE),
+                *languages,
+            ]
+            return self._create_combo(
+                setting=setting, value=value, items=items, min_width=160
+            )
         if setting.kind == "str_list":
             edit = _PlainTextEdit()
             edit.setPlaceholderText(self.tr("one item per line"))
@@ -156,6 +221,23 @@ class SettingsDialog(QtWidgets.QDialog):
                 )
             return edit
         typing.assert_never(setting.kind)
+
+    def _create_combo(
+        self,
+        setting: schema.Setting,
+        value: object,
+        items: Sequence[tuple[str, object]],
+        min_width: int,
+    ) -> QtWidgets.QComboBox:
+        combo = QtWidgets.QComboBox()
+        combo.setMinimumWidth(min_width)
+        for label, data in items:
+            combo.addItem(label, data)
+        self._set_editor_value(editor=combo, value=value)
+        combo.currentIndexChanged.connect(
+            lambda: self._apply(setting.key_path, combo.currentData())
+        )
+        return combo
 
     def _set_editor_value(self, editor: QtWidgets.QWidget, value: object) -> None:
         if isinstance(editor, QtWidgets.QCheckBox):
