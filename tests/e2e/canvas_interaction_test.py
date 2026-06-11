@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import base64
 import json
-import sys
 from pathlib import Path
 from typing import Final
 
@@ -688,14 +687,6 @@ def test_select_point_shape_by_click(
     raw_win: MainWindow,
     pause: bool,
 ) -> None:
-    if sys.platform.startswith("linux"):
-        # Under X11/xcb the hover lands the cursor on the point's only vertex,
-        # so the click is interpreted as "move vertex" and deselects instead of
-        # selecting. Point shapes have no body to click off-vertex, unlike other
-        # shape types. Fixing this needs a point-selection UX change tracked
-        # separately; macOS and Windows select the point as expected.
-        pytest.xfail("point-shape click-selection is vertex-ambiguous on X11/xcb")
-
     canvas = raw_win._canvas_widgets.canvas
     raw_win._switch_canvas_mode(edit=False, create_mode="point")
     qtbot.wait(50)

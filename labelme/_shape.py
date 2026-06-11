@@ -98,7 +98,7 @@ def nearest_vertex_index(
     scale: float,
     epsilon: float,
 ) -> int | None:
-    if shape.shape_type == "mask" or len(shape.points) == 0:
+    if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
     distances = np.linalg.norm((shape.points - point) * scale, axis=1)
     nearest = int(np.argmin(distances))
