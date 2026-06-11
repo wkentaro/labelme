@@ -46,7 +46,13 @@ def _hover_and_drag(
     end = image_to_widget_pos(canvas=canvas, image_pos=end_image_pos)
     qtbot.mouseMove(canvas, pos=start)
     qtbot.wait(50)
-    drag_canvas(qtbot=qtbot, canvas=canvas, button=Qt.LeftButton, start=start, end=end)
+    drag_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        button=Qt.MouseButton.LeftButton,
+        start=start,
+        end=end,
+    )
 
 
 def _cancel_label(
@@ -55,7 +61,7 @@ def _cancel_label(
 ) -> None:
     schedule_on_dialog(
         label_dialog=label_dialog,
-        action=lambda: qtbot.keyClick(label_dialog, Qt.Key_Escape),
+        action=lambda: qtbot.keyClick(label_dialog, Qt.Key.Key_Escape),
     )
 
 
@@ -83,8 +89,8 @@ def _click_to_remove_point(
     qtbot.wait(100)
     qtbot.mouseClick(
         canvas,
-        Qt.LeftButton,
-        Qt.AltModifier | Qt.ShiftModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier,
         pos=vtx_widget,
     )
     qtbot.wait(50)
@@ -159,10 +165,10 @@ def test_move_vertex_by_drag(
 @pytest.mark.parametrize(
     ("key", "expected_dx", "expected_dy"),
     [
-        pytest.param(Qt.Key_Up, 0, -5.0, id="up"),
-        pytest.param(Qt.Key_Down, 0, 5.0, id="down"),
-        pytest.param(Qt.Key_Left, -5.0, 0, id="left"),
-        pytest.param(Qt.Key_Right, 5.0, 0, id="right"),
+        pytest.param(Qt.Key.Key_Up, 0, -5.0, id="up"),
+        pytest.param(Qt.Key.Key_Down, 0, 5.0, id="down"),
+        pytest.param(Qt.Key.Key_Left, -5.0, 0, id="left"),
+        pytest.param(Qt.Key.Key_Right, 5.0, 0, id="right"),
     ],
 )
 def test_move_shape_by_arrow_key(
@@ -201,7 +207,7 @@ def test_select_all_shapes_from_canvas(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_SHAPE_INDEX)
     assert len(canvas.selected_shapes) == 1
 
-    qtbot.keyClick(canvas, Qt.Key_A, modifier=Qt.ControlModifier)
+    qtbot.keyClick(canvas, Qt.Key.Key_A, modifier=Qt.KeyboardModifier.ControlModifier)
     qtbot.wait(50)
 
     assert set(map(id, canvas.selected_shapes)) == set(map(id, canvas.shapes))
@@ -250,7 +256,12 @@ def test_add_point_on_edge(
     mid_widget = image_to_widget_pos(canvas=canvas, image_pos=edge_mid)
     qtbot.mouseMove(canvas, pos=mid_widget)
     qtbot.wait(100)
-    qtbot.mouseClick(canvas, Qt.LeftButton, Qt.AltModifier, pos=mid_widget)
+    qtbot.mouseClick(
+        canvas,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.AltModifier,
+        pos=mid_widget,
+    )
     qtbot.wait(50)
 
     assert len(shape.points) == num_points_before + 1
@@ -355,7 +366,7 @@ def test_cancel_drawing_with_escape(
 
     assert canvas._current is not None
 
-    qtbot.keyPress(canvas, Qt.Key_Escape)
+    qtbot.keyPress(canvas, Qt.Key.Key_Escape)
     qtbot.wait(50)
 
     assert canvas._current is None
@@ -432,7 +443,7 @@ def test_finalize_polygon_with_enter(
         qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label
     )
 
-    qtbot.keyPress(canvas, Qt.Key_Return)
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
     qtbot.wait(200)
 
     assert len(canvas.shapes) == num_shapes_before + 1
@@ -464,7 +475,7 @@ def test_undo_shape_creation(
         qtbot=qtbot, label_dialog=annotated_win._label_dialog, label=label
     )
 
-    qtbot.keyPress(canvas, Qt.Key_Return)
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
     qtbot.wait(200)
 
     assert len(canvas.shapes) == num_shapes_before + 1
@@ -493,7 +504,7 @@ def test_undo_shape_creation(
             "rectangle",
             (0.2, 0.2),
             (0.8, 0.8),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             (0.0, 0.0),
             id="rectangle",
         ),
@@ -501,7 +512,7 @@ def test_undo_shape_creation(
             "circle",
             (0.5, 0.5),
             (0.75, 0.5),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             (0.0, -20.0),
             id="circle",
         ),
@@ -509,7 +520,7 @@ def test_undo_shape_creation(
             "line",
             (0.2, 0.5),
             (0.8, 0.5),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             (0.0, 0.0),
             id="line",
         ),
@@ -517,7 +528,7 @@ def test_undo_shape_creation(
             "linestrip",
             (0.2, 0.5),
             (0.8, 0.5),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             (0.0, 0.0),
             id="two-point-linestrip",
         ),
@@ -556,7 +567,7 @@ def test_select_nonpolygon_shape(
     click_widget = image_to_widget_pos(canvas=canvas, image_pos=click_pos)
     qtbot.mouseMove(canvas, pos=click_widget)
     qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=click_widget)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=click_widget)
     qtbot.wait(50)
 
     assert shape in canvas.selected_shapes
@@ -607,7 +618,7 @@ def test_cancel_label_reopens_shape(
             "polygon",
             [(0.2, 0.2), (0.8, 0.2), (0.5, 0.8)],
             (0.2, 0.2),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             3,
             id="triangle",
         ),
@@ -615,7 +626,7 @@ def test_cancel_label_reopens_shape(
             "linestrip",
             [(0.3, 0.3)],
             (0.7, 0.7),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             2,
             id="two-point-linestrip",
         ),
@@ -666,7 +677,7 @@ def test_remove_point_blocked_at_minimum(
 def _click_to_select(qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> None:
     pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=pos)
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
     qtbot.wait(50)
 
 
@@ -727,7 +738,7 @@ def test_right_click_on_shape_opens_context_menu(
     pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.RightButton, pos=pos)
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
     qtbot.wait(50)
 
     assert menu_opened == [0]

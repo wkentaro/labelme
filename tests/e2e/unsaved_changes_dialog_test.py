@@ -74,7 +74,7 @@ def test_close_with_unsaved_changes_cancel_keeps_window_open(
     assert _is_dirty(win=_raw_win_no_autosave)
 
     prompt_shown = _intercept_question(
-        monkeypatch=monkeypatch, response=QMessageBox.Cancel
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Cancel
     )
 
     _raw_win_no_autosave.close()
@@ -98,7 +98,9 @@ def test_close_choose_save_writes_json_and_closes(
     expected_json = tmp_path / _OUTPUT_JSON_NAME
     assert not expected_json.exists()
 
-    _intercept_question(monkeypatch=monkeypatch, response=QMessageBox.Save)
+    _intercept_question(
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Save
+    )
     monkeypatch.setattr(
         _raw_win_no_autosave,
         "prompt_save_file_path",
@@ -125,7 +127,9 @@ def test_close_choose_discard_no_json_window_closes(
     expected_json = tmp_path / _OUTPUT_JSON_NAME
     assert not expected_json.exists()
 
-    _intercept_question(monkeypatch=monkeypatch, response=QMessageBox.Discard)
+    _intercept_question(
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Discard
+    )
 
     _raw_win_no_autosave.close()
     qtbot.waitUntil(lambda: not _raw_win_no_autosave.isVisible(), timeout=3000)
@@ -147,7 +151,7 @@ def test_navigate_with_unsaved_changes_shows_prompt(
     row_before = file_list.currentRow()
 
     prompt_shown = _intercept_question(
-        monkeypatch=monkeypatch, response=QMessageBox.Discard
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Discard
     )
 
     # _open_next_image does not call _can_continue itself; it bumps
@@ -172,7 +176,7 @@ def test_close_clean_window_no_prompt(
     assert not _is_dirty(win=_raw_win_no_autosave)
 
     prompt_shown = _intercept_question(
-        monkeypatch=monkeypatch, response=QMessageBox.Discard
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Discard
     )
 
     _raw_win_no_autosave.close()

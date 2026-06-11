@@ -50,7 +50,7 @@ def test_last_label_memo(
     _schedule_capture_then_cancel(label_dialog=label_dialog, captured=captured)
 
     _draw_triangle(qtbot=qtbot, win=raw_win)
-    qtbot.keyPress(canvas, Qt.Key_Return)
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
 
     qtbot.waitUntil(lambda: bool(captured), timeout=_SHAPE_TIMEOUT_MS)
 
@@ -79,7 +79,7 @@ def test_restore_last_shape_via_undo(
     monkeypatch.setattr(
         QMessageBox,
         "warning",
-        lambda *args, **kwargs: QMessageBox.Yes,
+        lambda *args, **kwargs: QMessageBox.StandardButton.Yes,
     )
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)

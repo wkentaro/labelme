@@ -15,8 +15,8 @@ class ZoomWidget(QtWidgets.QSpinBox):
         self.setRange(1, self.PERCENT_MAX)
         self.setValue(100)
         self.setSuffix(self.PERCENT_SUFFIX)
-        self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
         tooltip = "Zoom Level"
         self.setToolTip(tooltip)
         self.setStatusTip(tooltip)

@@ -19,7 +19,7 @@ class LabelQLineEdit(QtWidgets.QLineEdit):
         self.list_widget = list_widget
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
-        if a0.key() in [QtCore.Qt.Key_Up, QtCore.Qt.Key_Down]:
+        if a0.key() in [QtCore.Qt.Key.Key_Up, QtCore.Qt.Key.Key_Down]:
             self.list_widget.keyPressEvent(a0)
         else:
             super().keyPressEvent(a0)
@@ -88,15 +88,21 @@ class LabelDialog(QtWidgets.QDialog):
     def _build_label_list(self, labels: list[str] | None) -> QtWidgets.QListWidget:
         label_list = QtWidgets.QListWidget()
         if self._fit_to_content["row"]:
-            label_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+            label_list.setHorizontalScrollBarPolicy(
+                QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+            )
         if self._fit_to_content["column"]:
-            label_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+            label_list.setVerticalScrollBarPolicy(
+                QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+            )
         if labels:
             label_list.addItems(labels)
         if self._sort_labels:
             label_list.sortItems()
         else:
-            label_list.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+            label_list.setDragDropMode(
+                QtWidgets.QAbstractItemView.DragDropMode.InternalMove
+            )
         label_list.currentItemChanged.connect(self._on_label_selected)
         label_list.itemDoubleClicked.connect(self._on_label_double_clicked)
         label_list.setFixedHeight(150)
@@ -110,8 +116,9 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _build_button_box(self) -> QtWidgets.QDialogButtonBox:
         button_box = QtWidgets.QDialogButtonBox(
-            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel,
-            orientation=QtCore.Qt.Horizontal,
+            QtWidgets.QDialogButtonBox.StandardButton.Ok
+            | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
+            orientation=QtCore.Qt.Orientation.Horizontal,
             parent=self,
         )
         button_box.accepted.connect(self._validate)
@@ -121,10 +128,14 @@ class LabelDialog(QtWidgets.QDialog):
     def _build_completer(self, mode: str) -> QtWidgets.QCompleter:
         completer = QtWidgets.QCompleter()
         if mode == "startswith":
-            completer.setCompletionMode(QtWidgets.QCompleter.InlineCompletion)
+            completer.setCompletionMode(
+                QtWidgets.QCompleter.CompletionMode.InlineCompletion
+            )
         elif mode == "contains":
-            completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
-            completer.setFilterMode(QtCore.Qt.MatchContains)
+            completer.setCompletionMode(
+                QtWidgets.QCompleter.CompletionMode.PopupCompletion
+            )
+            completer.setFilterMode(QtCore.Qt.MatchFlag.MatchContains)
         else:
             raise ValueError(f"Unsupported completion: {mode}")
         completer.setModel(self.label_list.model())
@@ -133,7 +144,7 @@ class LabelDialog(QtWidgets.QDialog):
     def add_label_history(self, label: str) -> None:
         if label not in self._label_history:
             self._label_history.append(label)
-        if self.label_list.findItems(label, QtCore.Qt.MatchExactly):
+        if self.label_list.findItems(label, QtCore.Qt.MatchFlag.MatchExactly):
             return
         self.label_list.addItem(label)
         if self._sort_labels:
@@ -181,7 +192,10 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _delete_flags(self) -> None:
         while self._flags_layout.count() > 0:
-            widget = self._flags_layout.takeAt(0).widget()
+            item = self._flags_layout.takeAt(0)
+            if item is None:
+                break
+            widget = item.widget()
             if widget is not None:
                 widget.setParent(QtWidgets.QWidget())
 
@@ -205,7 +219,8 @@ class LabelDialog(QtWidgets.QDialog):
         return {
             cb.text(): cb.isChecked()
             for i in range(self._flags_layout.count())
-            if (cb := cast(QtWidgets.QCheckBox, self._flags_layout.itemAt(i).widget()))
+            if (item := self._flags_layout.itemAt(i)) is not None
+            and (cb := cast(QtWidgets.QCheckBox, item.widget())) is not None
         }
 
     def _current_group_id(self) -> int | None:
@@ -241,7 +256,7 @@ class LabelDialog(QtWidgets.QDialog):
             flags=flags,
             flags_disabled=flags_disabled,
         )
-        self.edit.setFocus(QtCore.Qt.PopupFocusReason)
+        self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
         if move:
             self.move(QtGui.QCursor.pos())
 
@@ -269,7 +284,11 @@ class LabelDialog(QtWidgets.QDialog):
         self._restore_or_reset_flags(text=text, flags=flags)
         if flags_disabled:
             for i in range(self._flags_layout.count()):
-                self._flags_layout.itemAt(i).widget().setDisabled(True)
+                item = self._flags_layout.itemAt(i)
+                if item is not None:
+                    widget = item.widget()
+                    if widget is not None:
+                        widget.setDisabled(True)
 
         self.edit.setText(text)
         self.edit.selectAll()
@@ -282,7 +301,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._highlight_matching_label(text)
 
     def _highlight_matching_label(self, text: str) -> None:
-        items = self.label_list.findItems(text, QtCore.Qt.MatchFixedString)
+        items = self.label_list.findItems(text, QtCore.Qt.MatchFlag.MatchFixedString)
         if not items:
             return
         if len(items) != 1:

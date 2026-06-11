@@ -51,12 +51,12 @@ def test_delete_label_file(
 
     item = win._docks.file_list.currentItem()
     assert item is not None
-    assert item.checkState() == Qt.Checked
+    assert item.checkState() == Qt.CheckState.Checked
 
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
     )
     win.delete_file()
     qtbot.wait(50)
@@ -65,7 +65,7 @@ def test_delete_label_file(
 
     item = win._docks.file_list.currentItem()
     assert item is not None
-    assert item.checkState() == Qt.Unchecked
+    assert item.checkState() == Qt.CheckState.Unchecked
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

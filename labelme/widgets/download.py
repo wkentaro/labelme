@@ -88,7 +88,7 @@ def download_ai_model(model_name: str, parent: QWidget) -> bool:
         0,
         parent,
     )
-    dialog.setWindowModality(Qt.WindowModal)
+    dialog.setWindowModality(Qt.WindowModality.WindowModal)
     dialog.setMinimumDuration(0)
     dialog.setMinimumWidth(400)
     dialog.setAutoClose(False)

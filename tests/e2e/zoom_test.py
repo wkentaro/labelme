@@ -85,7 +85,7 @@ def test_zoom_to_original(
 def _make_wheel_event(
     pos: QPointF,
     angle_delta: QPoint,
-    modifiers: Qt.KeyboardModifiers,
+    modifiers: Qt.KeyboardModifier,
 ) -> QtGui.QWheelEvent:
     # PySide6's QWheelEvent constructor takes positional args;
     # the 8-arg form matches the modern Qt6 signature.
@@ -94,9 +94,9 @@ def _make_wheel_event(
         pos,
         QPoint(0, 0),
         angle_delta,
-        Qt.NoButton,
+        Qt.MouseButton.NoButton,
         modifiers,
-        Qt.NoScrollPhase,
+        Qt.ScrollPhase.NoScrollPhase,
         False,
     )
 
@@ -106,20 +106,24 @@ def _make_wheel_event(
     ("modifiers", "angle_delta", "signal_attr", "expected_orientation"),
     [
         pytest.param(
-            Qt.ControlModifier, QPoint(0, 120), "zoom_request", None, id="ctrl_zoom"
+            Qt.KeyboardModifier.ControlModifier,
+            QPoint(0, 120),
+            "zoom_request",
+            None,
+            id="ctrl_zoom",
         ),
         pytest.param(
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             QPoint(0, 120),
             "scroll_request",
-            Qt.Vertical,
+            Qt.Orientation.Vertical,
             id="plain_scroll",
         ),
         pytest.param(
-            Qt.ShiftModifier,
+            Qt.KeyboardModifier.ShiftModifier,
             QPoint(0, 120),
             "scroll_request",
-            Qt.Horizontal,
+            Qt.Orientation.Horizontal,
             id="shift_horizontal_scroll",
         ),
     ],
@@ -128,7 +132,7 @@ def test_canvas_wheel_event_dispatches_signal(
     qtbot: QtBot,
     _win: MainWindow,
     pause: bool,
-    modifiers: Qt.KeyboardModifiers,
+    modifiers: Qt.KeyboardModifier,
     angle_delta: QPoint,
     signal_attr: str,
     expected_orientation: Qt.Orientation | None,

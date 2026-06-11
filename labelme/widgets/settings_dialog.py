@@ -103,11 +103,12 @@ class SettingsDialog(QtWidgets.QDialog):
         active = self._tabs.currentIndex()
         for index in range(self._tabs.count()):
             page = self._tabs.widget(index)
+            assert page is not None
             policy = page.sizePolicy()
             policy.setVerticalPolicy(
-                QtWidgets.QSizePolicy.Preferred
+                QtWidgets.QSizePolicy.Policy.Preferred
                 if index == active
-                else QtWidgets.QSizePolicy.Ignored
+                else QtWidgets.QSizePolicy.Policy.Ignored
             )
             page.setSizePolicy(policy)
         # Release the previous fixed size (setFixedSize pinned both min and max) so
@@ -143,7 +144,9 @@ class SettingsDialog(QtWidgets.QDialog):
                 # A note sits below the control; top-align the label so it pairs with
                 # the control rather than centering against the control+note block.
                 if setting.note:
-                    row_layout.addWidget(label, stretch=1, alignment=QtCore.Qt.AlignTop)
+                    row_layout.addWidget(
+                        label, stretch=1, alignment=QtCore.Qt.AlignmentFlag.AlignTop
+                    )
                 else:
                     row_layout.addWidget(label, stretch=1)
             row_layout.addWidget(self._with_note(editor=editor, setting=setting))
@@ -167,7 +170,8 @@ class SettingsDialog(QtWidgets.QDialog):
         # as a disabled control and carry the platform's washed-out gray.
         palette = note.palette()
         palette.setColor(
-            QtGui.QPalette.WindowText, palette.color(QtGui.QPalette.PlaceholderText)
+            QtGui.QPalette.ColorRole.WindowText,
+            palette.color(QtGui.QPalette.ColorRole.PlaceholderText),
         )
         note.setPalette(palette)
         layout.addWidget(note)

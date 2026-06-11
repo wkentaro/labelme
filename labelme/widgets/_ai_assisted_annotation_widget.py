@@ -124,9 +124,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             item = model.item(i)
             assert item is not None
             if model_id in disabled_models:
-                item.setFlags(item.flags() & ~Qt.ItemIsEnabled)
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEnabled)
             else:
-                item.setFlags(item.flags() | Qt.ItemIsEnabled)
+                item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEnabled)
 
     def setEnabled(self, a0: bool) -> None:
         self._body.setEnabled(a0)
@@ -134,7 +134,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
         if a0 in (self, self._body) and not self._body.isEnabled():
-            if a1.type() == QtCore.QEvent.Enter:
+            if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
@@ -144,6 +144,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
                     self,
                 )
                 self.hover_highlight_requested.emit(True)
-            elif a1.type() == QtCore.QEvent.Leave:
+            elif a1.type() == QtCore.QEvent.Type.Leave:
                 self.hover_highlight_requested.emit(False)
         return super().eventFilter(a0, a1)

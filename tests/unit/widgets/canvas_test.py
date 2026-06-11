@@ -299,11 +299,11 @@ def test_extend_after_mode_switch_finalizes_at_last_cursor(
     canvas.create_mode = to_mode
 
     event = QtGui.QMouseEvent(
-        QtCore.QEvent.MouseButtonPress,
+        QtCore.QEvent.Type.MouseButtonPress,
         QPointF(50, 30),
-        Qt.LeftButton,
-        Qt.LeftButton,
-        Qt.NoModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
     )
     canvas._extend_current_shape(current=canvas._current, event=event)
 
@@ -336,11 +336,11 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
     canvas.create_mode = to_mode
 
     event = QtGui.QMouseEvent(
-        QtCore.QEvent.MouseButtonPress,
+        QtCore.QEvent.Type.MouseButtonPress,
         QPointF(50, 30),
-        Qt.LeftButton,
-        Qt.LeftButton,
-        Qt.NoModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
     )
     canvas._extend_current_shape(current=canvas._current, event=event)
 

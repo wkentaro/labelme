@@ -50,9 +50,9 @@ def test_auto_save_on_shape_move(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     original_center = QPointF(_shape_bounds(shape=canvas.selected_shapes[0]).center())
 
-    qtbot.keyPress(canvas, Qt.Key_Right)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.wait(50)
-    qtbot.keyRelease(canvas, Qt.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
     qtbot.wait(50)
 
     new_center = _shape_bounds(shape=canvas.selected_shapes[0]).center()

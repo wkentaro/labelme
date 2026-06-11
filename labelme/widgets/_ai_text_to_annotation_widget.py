@@ -69,7 +69,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         run_button = QtWidgets.QToolButton()
         run_button.setText(self.tr("Run"))
         run_button.setFixedHeight(24)
-        run_button.setCursor(QtCore.Qt.PointingHandCursor)
+        run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(on_submit)
         grid.addWidget(run_button, 0, 1)
 
@@ -139,7 +139,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
         if a0 == self._body and not self._body.isEnabled():
-            if a1.type() == QtCore.QEvent.Enter:
+            if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(

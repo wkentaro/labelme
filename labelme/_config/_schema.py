@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 from typing import Final
 from typing import Literal
+from typing import cast
 from typing import get_args
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP
@@ -40,26 +41,30 @@ SETTINGS: Final[tuple[Setting, ...]] = (
     Setting(
         key_path=("display_label_popup",),
         section="General",
-        label=QT_TRANSLATE_NOOP("SettingsDialog", "Show label popup on new shape"),
+        label=cast(
+            str, QT_TRANSLATE_NOOP("SettingsDialog", "Show label popup on new shape")
+        ),
         kind="bool",
     ),
     Setting(
         key_path=("language",),
         section="General",
-        label=QT_TRANSLATE_NOOP("SettingsDialog", "Language"),
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Language")),
         kind="language",
-        note=QT_TRANSLATE_NOOP("SettingsDialog", "Takes effect after restart."),
+        note=cast(
+            str, QT_TRANSLATE_NOOP("SettingsDialog", "Takes effect after restart.")
+        ),
     ),
     Setting(
         key_path=("labels",),
         section="Labels",
-        label=QT_TRANSLATE_NOOP("SettingsDialog", "Predefined labels"),
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Predefined labels")),
         kind="str_list",
     ),
     Setting(
         key_path=("validate_label",),
         section="Labels",
-        label=QT_TRANSLATE_NOOP("SettingsDialog", "Label validation"),
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Label validation")),
         kind="enum",
         choices=(None, "exact"),
     ),

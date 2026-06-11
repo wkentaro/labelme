@@ -52,7 +52,7 @@ def _delete_selected_shape(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
     )
     win.delete_selected_shapes()
     qtbot.wait(50)
@@ -224,7 +224,7 @@ def test_right_drag_copy_here_duplicates_shape(
     drag_canvas(
         qtbot=qtbot,
         canvas=canvas,
-        button=Qt.RightButton,
+        button=Qt.MouseButton.RightButton,
         start=start_widget,
         end=end_widget,
     )

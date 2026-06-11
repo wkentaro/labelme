@@ -88,7 +88,9 @@ def test_MainWindow_open_dir(
 
     assert win._docks.file_list.count() == 3
     expected_check_state = (
-        Qt.Checked if scenario.startswith("annotated") else Qt.Unchecked
+        Qt.CheckState.Checked
+        if scenario.startswith("annotated")
+        else Qt.CheckState.Unchecked
     )
     for index in range(win._docks.file_list.count()):
         item: QtWidgets.QListWidgetItem | None = win._docks.file_list.item(index)
