@@ -23,7 +23,7 @@ jobs:
       - uses: awalsh128/cache-apt-pkgs-action@v1
         if: matrix.os == 'ubuntu-latest'
         with:
-          packages: xvfb libqt5widgets5
+          packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
           version: 1.0
       - name: Test
         shell: bash
