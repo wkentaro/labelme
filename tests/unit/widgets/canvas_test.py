@@ -6,11 +6,11 @@ from typing import Final
 
 import numpy as np
 import pytest
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import QSize
-from PyQt5.QtCore import Qt
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import QSize
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape

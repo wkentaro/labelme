@@ -13,13 +13,13 @@ from typing import cast
 
 import numpy as np
 from loguru import logger
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import QRectF
-from PyQt5.QtCore import Qt
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import QRectF
+from PySide6.QtCore import Qt
 
 import labelme.utils
 from labelme import _automation
@@ -170,19 +170,19 @@ class Canvas(QtWidgets.QWidget):
     _last_hovered_edge: int | None
     _hovered_rotation: int | None
 
-    zoom_request = QtCore.pyqtSignal(int, QPointF)
-    scroll_request = QtCore.pyqtSignal(int, int)
-    pan_request = QtCore.pyqtSignal(QPoint)
-    new_shape = QtCore.pyqtSignal()
-    inference_produced_no_shapes = QtCore.pyqtSignal()
-    degenerate_shape_rejected = QtCore.pyqtSignal()
-    selection_changed = QtCore.pyqtSignal(list)
-    shape_moved = QtCore.pyqtSignal()
-    drawing_polygon = QtCore.pyqtSignal(bool)
-    vertex_selected = QtCore.pyqtSignal(bool)
-    edge_selected = QtCore.pyqtSignal(bool)
-    mouse_moved = QtCore.pyqtSignal(QPointF)
-    status_updated = QtCore.pyqtSignal(str)
+    zoom_request = QtCore.Signal(int, QPointF)
+    scroll_request = QtCore.Signal(int, int)
+    pan_request = QtCore.Signal(QPoint)
+    new_shape = QtCore.Signal()
+    inference_produced_no_shapes = QtCore.Signal()
+    degenerate_shape_rejected = QtCore.Signal()
+    selection_changed = QtCore.Signal(list)
+    shape_moved = QtCore.Signal()
+    drawing_polygon = QtCore.Signal(bool)
+    vertex_selected = QtCore.Signal(bool)
+    edge_selected = QtCore.Signal(bool)
+    mouse_moved = QtCore.Signal(QPointF)
+    status_updated = QtCore.Signal(str)
 
     mode: _CanvasMode = _CanvasMode.EDIT
 
@@ -564,7 +564,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         try:
-            pos = self._transform_point_widget_to_image(a0.localPos())
+            pos = self._transform_point_widget_to_image(a0.position())
         except AttributeError:
             return
         self.mouse_moved.emit(pos)
@@ -592,7 +592,7 @@ class Canvas(QtWidgets.QWidget):
         # Use screen coordinates so the anchor does not drift when our own
         # pan emit shifts the canvas widget under the scroll area — a
         # widget-local frame would oscillate and cause juggling.
-        cursor: QPointF = QPointF(self.mapToGlobal(event.pos()))
+        cursor: QPointF = QPointF(self.mapToGlobal(event.position().toPoint()))
         step: QPointF = cursor - self._pan_anchor
         self._pan_anchor = cursor
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
@@ -903,7 +903,7 @@ class Canvas(QtWidgets.QWidget):
         self._is_moving_shape = True  # Save changes
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
+        pos: QPointF = self._transform_point_widget_to_image(a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status()
 
@@ -970,7 +970,7 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, points=(current.points[-1],) + self._line.points[1:]
             )
-            if int(modifiers) == Qt.ControlModifier:
+            if modifiers == Qt.ControlModifier:
                 self._finalize()
         elif mode == "ai_points_to_shape":
             current = current.add_point(
@@ -1049,7 +1049,7 @@ class Canvas(QtWidgets.QWidget):
             self._capture_rotation_anchors()
         self._select_shape_point(
             pos,
-            multiple_selection_mode=int(modifiers) == Qt.ControlModifier,
+            multiple_selection_mode=modifiers == Qt.ControlModifier,
         )
         self._prev_point = pos
         self.update()
@@ -1069,14 +1069,14 @@ class Canvas(QtWidgets.QWidget):
         ):
             self._select_shape_point(
                 pos,
-                multiple_selection_mode=int(event.modifiers()) == Qt.ControlModifier,
+                multiple_selection_mode=event.modifiers() == Qt.ControlModifier,
             )
             self.update()
         self._prev_point = pos
 
     def _begin_pan(self, event: QtGui.QMouseEvent) -> None:
         self._apply_cursor(CURSOR_GRAB)
-        self._pan_anchor = QPointF(self.mapToGlobal(event.pos()))
+        self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         self._dispatch_pointer_release(event=a0)
@@ -1097,7 +1097,7 @@ class Canvas(QtWidgets.QWidget):
     def _release_right(self, event: QtGui.QMouseEvent) -> None:
         menu = self.menus[len(self._selected_shapes_copy) > 0]
         self._release_cursor()
-        if menu.exec_(self.mapToGlobal(event.pos())):  # type: ignore
+        if menu.exec(self.mapToGlobal(event.position().toPoint())):  # type: ignore
             return
         if not self._selected_shapes_copy:
             return
@@ -1379,9 +1379,8 @@ class Canvas(QtWidgets.QWidget):
 
     def _setup_world_transform(self, painter: QtGui.QPainter) -> None:
         for hint in (
-            QtGui.QPainter.Antialiasing,
-            QtGui.QPainter.HighQualityAntialiasing,
-            QtGui.QPainter.SmoothPixmapTransform,
+            QtGui.QPainter.RenderHint.Antialiasing,
+            QtGui.QPainter.RenderHint.SmoothPixmapTransform,
         ):
             painter.setRenderHint(hint)
         painter.translate(self._compute_image_origin_offset() * self.scale)
@@ -1601,11 +1600,11 @@ class Canvas(QtWidgets.QWidget):
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
         mods: Qt.KeyboardModifiers = a0.modifiers()
         delta: QPoint = a0.angleDelta()
-        if Qt.ControlModifier == int(mods):
+        if mods == Qt.ControlModifier:
             # with Ctrl/Command key
             # zoom
-            self.zoom_request.emit(delta.y(), a0.posF())
-        elif int(mods) == int(Qt.ShiftModifier) and delta.x() == 0:
+            self.zoom_request.emit(delta.y(), a0.position())
+        elif mods == Qt.ShiftModifier and delta.x() == 0:
             # Shift+wheel scrolls horizontally. macOS swaps the axis for us,
             # but Linux/Windows deliver the delta on y and expect the app to
             # remap it.
@@ -1649,7 +1648,7 @@ class Canvas(QtWidgets.QWidget):
     def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
         modifiers = a0.modifiers()
         if self.mode == _CanvasMode.CREATE:
-            if int(modifiers) == 0:
+            if not modifiers:
                 self._snapping = True
         elif self.mode == _CanvasMode.EDIT:
             if (

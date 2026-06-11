@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Literal
 
 import pytest
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from ..conftest import assert_labelfile_sanity

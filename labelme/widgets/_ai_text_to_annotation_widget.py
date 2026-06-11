@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 from ._info_button import InfoButton
 
