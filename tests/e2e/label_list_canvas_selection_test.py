@@ -170,7 +170,7 @@ def test_delete_shape_removes_label_list_entry(
     monkeypatch.setattr(
         QMessageBox,
         "warning",
-        lambda *args, **kwargs: QMessageBox.Yes,
+        lambda *args, **kwargs: QMessageBox.StandardButton.Yes,
     )
     win.delete_selected_shapes()
     qtbot.waitUntil(lambda: len(label_list) == count_before - 1)
@@ -210,7 +210,7 @@ def test_edit_label_cancel_keeps_labels(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     schedule_on_dialog(
         label_dialog=label_dialog,
-        action=lambda: qtbot.keyClick(label_dialog, Qt.Key_Escape),
+        action=lambda: qtbot.keyClick(label_dialog, Qt.Key.Key_Escape),
     )
     label_list.item_double_clicked.emit(label_list[0])
     qtbot.waitUntil(lambda: not label_dialog.isVisible(), timeout=3000)
@@ -242,7 +242,8 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
     monkeypatch.setattr(
         QMessageBox,
         "critical",
-        lambda *args, **kwargs: error_shown.append(True) or QMessageBox.Ok,
+        lambda *args, **kwargs: error_shown.append(True)
+        or QMessageBox.StandardButton.Ok,
     )
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
@@ -250,7 +251,7 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
     def submit_unknown_label() -> None:
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, "tiger")
-        qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     schedule_on_dialog(label_dialog=label_dialog, action=submit_unknown_label)
     label_list.item_double_clicked.emit(label_list[0])
@@ -288,7 +289,7 @@ def test_edit_label_multi_shape_mismatch_disables_text_field(
 
     def capture_disabled_then_cancel() -> None:
         edit_disabled_during_popup.append(not label_dialog.edit.isEnabled())
-        qtbot.keyClick(label_dialog, Qt.Key_Escape)
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
 
     schedule_on_dialog(label_dialog=label_dialog, action=capture_disabled_then_cancel)
     label_list.item_double_clicked.emit(label_list[0])

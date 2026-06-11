@@ -39,7 +39,7 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         self,
         painter: QtGui.QPainter,
         option: QtWidgets.QStyleOptionViewItem,
-        index: QtCore.QModelIndex,
+        index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
     ) -> None:
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
@@ -50,17 +50,23 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         widget_style = (
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
-        widget_style.drawControl(QStyle.CE_ItemViewItem, opt, painter)
+        widget_style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter)
 
         doc = QtGui.QTextDocument()
-        if opt.state & QStyle.State_Selected:
-            text_color = opt.palette.color(QPalette.Active, QPalette.HighlightedText)
+        if opt.state & QStyle.StateFlag.State_Selected:
+            text_color = opt.palette.color(
+                QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText
+            )
         else:
-            text_color = opt.palette.color(QPalette.Active, QPalette.Text)
+            text_color = opt.palette.color(
+                QPalette.ColorGroup.Active, QPalette.ColorRole.Text
+            )
         doc.setDefaultStyleSheet(f"body {{ color: {text_color.name()}; }}")
         doc.setHtml(f"<body>{html}</body>")
 
-        text_rect = widget_style.subElementRect(QStyle.SE_ItemViewItemText, opt)
+        text_rect = widget_style.subElementRect(
+            QStyle.SubElement.SE_ItemViewItemText, opt
+        )
         if index.column() != 0:
             text_rect.adjust(5, 0, 0, 0)
 
@@ -76,17 +82,19 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
 
     def sizeHint(
         self,
-        option: QtWidgets.QStyleOptionViewItem | None,
-        index: QtCore.QModelIndex | None,
+        option: QtWidgets.QStyleOptionViewItem,
+        index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
     ) -> QtCore.QSize:
         VERT_FUDGE = 4
-        if option is not None and index is not None:
-            opt = QtWidgets.QStyleOptionViewItem(option)
-            self.initStyleOption(opt, index)
-            doc = QtGui.QTextDocument()
-            doc.setHtml(opt.text)
-            height = int(doc.size().height()) - VERT_FUDGE
-            return QtCore.QSize(int(doc.idealWidth()), height)
+        opt = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+        doc = QtGui.QTextDocument()
+        doc.setHtml(opt.text)
+        height = int(doc.size().height()) - VERT_FUDGE
+        return QtCore.QSize(int(doc.idealWidth()), height)
+
+    def default_size_hint(self) -> QtCore.QSize:
+        VERT_FUDGE = 4
         doc = QtGui.QTextDocument()
         height = int(doc.size().height()) - VERT_FUDGE
         return QtCore.QSize(int(doc.idealWidth()), height)
@@ -100,19 +108,21 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
         self.setCheckable(True)
         self.setCheckState(
-            Qt.Checked if shape is None or shape.visible else Qt.Unchecked
+            Qt.CheckState.Checked
+            if shape is None or shape.visible
+            else Qt.CheckState.Unchecked
         )
         self.setEditable(False)
-        self.setTextAlignment(Qt.AlignBottom)
+        self.setTextAlignment(Qt.AlignmentFlag.AlignBottom)
 
     def clone(self) -> LabelListWidgetItem:
         return LabelListWidgetItem(self.text(), self.shape())
 
     def set_shape(self, shape: Shape | None) -> None:
-        self.setData(shape, Qt.UserRole)
+        self.setData(shape, Qt.ItemDataRole.UserRole)
 
     def shape(self) -> Shape | None:
-        return self.data(Qt.UserRole)
+        return self.data(Qt.ItemDataRole.UserRole)
 
     def __hash__(self) -> int:
         return id(self)
@@ -128,7 +138,8 @@ class _ItemModel(QtGui.QStandardItemModel):
         self,
         row: int,
         count: int,
-        parent: QtCore.QModelIndex = QtCore.QModelIndex(),
+        parent: QtCore.QModelIndex
+        | QtCore.QPersistentModelIndex = QtCore.QModelIndex(),
     ) -> bool:
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()
@@ -140,7 +151,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         action: Qt.DropAction,
         row: int,
         column: int,
-        parent: QtCore.QModelIndex,
+        parent: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
     ) -> bool:
         # NOTE: By default, PyQt will overwrite items when dropped on them, so we need
         # to adjust the row/parent to insert after the item instead.
@@ -170,16 +181,18 @@ class LabelListWidget(QtWidgets.QListView):
     def __init__(self) -> None:
         super().__init__()
 
-        self.setWindowFlags(Qt.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self._model: _ItemModel = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
         self.setItemDelegate(HTMLDelegate())
-        self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
-        self.setDefaultDropAction(Qt.MoveAction)
+        self.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
+        )
+        self.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.InternalMove)
+        self.setDefaultDropAction(Qt.DropAction.MoveAction)
 
         self.doubleClicked.connect(self._on_item_double_clicked)
         self.selectionModel().selectionChanged.connect(self._on_item_selection_changed)
@@ -211,7 +224,7 @@ class LabelListWidget(QtWidgets.QListView):
             for item in items_at_press:
                 self.selectionModel().select(
                     self._model.indexFromItem(item),
-                    QtCore.QItemSelectionModel.Select,
+                    QtCore.QItemSelectionModel.SelectionFlag.Select,
                 )
 
         self._press_snapshot = ()
@@ -262,7 +275,8 @@ class LabelListWidget(QtWidgets.QListView):
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
         self._model.setItem(self._model.rowCount(), 0, item)
-        item.setSizeHint(self.itemDelegate().sizeHint(None, None))  # ty: ignore[invalid-argument-type]
+        delegate = cast(HTMLDelegate, self.itemDelegate())
+        item.setSizeHint(delegate.default_size_hint())
 
     def remove_item(self, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)
@@ -270,7 +284,9 @@ class LabelListWidget(QtWidgets.QListView):
 
     def select_item(self, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)
-        self.selectionModel().select(index, QtCore.QItemSelectionModel.Select)
+        self.selectionModel().select(
+            index, QtCore.QItemSelectionModel.SelectionFlag.Select
+        )
 
     def find_item_by_shape(self, shape: Shape) -> LabelListWidgetItem:
         for row in range(self._model.rowCount()):

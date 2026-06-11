@@ -40,7 +40,7 @@ def _isolated_qtsettings(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> Generator[None, None, None]:
     settings_file = tmp_path / "qtsettings.ini"
-    settings: QSettings = QSettings(str(settings_file), QSettings.IniFormat)
+    settings: QSettings = QSettings(str(settings_file), QSettings.Format.IniFormat)
     monkeypatch.setattr(
         labelme.app.QtCore, "QSettings", lambda *args, **kwargs: settings
     )
@@ -160,7 +160,7 @@ def click_canvas_fraction(
     qtbot: QtBot,
     canvas: Canvas,
     xy: tuple[float, float],
-    modifier: Qt.KeyboardModifier = Qt.NoModifier,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
 ) -> None:
     # Fractions are interpreted in image-pixel space so callers stay valid
     # regardless of window/canvas size or letterboxing.
@@ -170,7 +170,7 @@ def click_canvas_fraction(
     pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, modifier, pos=pos)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, modifier, pos=pos)
     qtbot.wait(50)
 
 
@@ -189,9 +189,9 @@ def drag_canvas(
         QtGui.QMouseEvent.Type.MouseMove,
         QPointF(end),
         global_pos,
-        Qt.NoButton,
+        Qt.MouseButton.NoButton,
         button,
-        Qt.NoModifier,
+        Qt.KeyboardModifier.NoModifier,
     )
     QApplication.sendEvent(canvas, move_event)
     qtbot.wait(50)
@@ -221,7 +221,7 @@ def submit_label_dialog(
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, label)
         qtbot.wait(50)
-        qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     schedule_on_dialog(label_dialog=label_dialog, action=_action)
 
@@ -253,7 +253,7 @@ def draw_and_commit_polygon(
     # polygon and opens the dialog, then the queued poller fills it in.
     # Reversing the order deadlocks the test.
     submit_label_dialog(qtbot=qtbot, label_dialog=win._label_dialog, label=label)
-    qtbot.keyPress(canvas, Qt.Key_Return)
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
 
     def shape_committed() -> None:
         assert len(canvas.shapes) == num_before + 1
@@ -267,7 +267,7 @@ def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
     pos = image_to_widget_pos(canvas=canvas, image_pos=shape_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
     qtbot.wait(50)
     assert len(canvas.selected_shapes) == 1
 

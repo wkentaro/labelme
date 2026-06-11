@@ -24,9 +24,9 @@ class InfoButton(QtWidgets.QToolButton):
             }
             """
         )
-        self.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.setToolTip(tooltip)
 
-    def enterEvent(self, a0: QtCore.QEvent) -> None:
+    def enterEvent(self, a0: QtGui.QEnterEvent) -> None:
         super().enterEvent(a0)
         QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), self.toolTip())

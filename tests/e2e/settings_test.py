@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import cast
 
 import pytest
 from PySide6 import QtWidgets
@@ -90,10 +89,7 @@ def test_label_edit_preserves_label_history(
     dialog.accept()
 
     label_list = win._label_dialog.label_list
-    labels = {
-        cast(QtWidgets.QListWidgetItem, label_list.item(i)).text()
-        for i in range(label_list.count())
-    }
+    labels = {label_list.item(i).text() for i in range(label_list.count())}
     assert labels == {"bird", "cat", "dog"}  # history kept, new labels added
     qtbot.waitUntil(lambda: bool(deleted))
 

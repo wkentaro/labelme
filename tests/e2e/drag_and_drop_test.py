@@ -28,10 +28,10 @@ def _make_drop_mime(paths: list[Path]) -> QMimeData:
 def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
     event = QDragEnterEvent(
         QPoint(0, 0),
-        Qt.CopyAction,
+        Qt.DropAction.CopyAction,
         mime,
-        Qt.LeftButton,
-        Qt.NoModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
     )
     QApplication.sendEvent(win, event)
     return event.isAccepted()
@@ -40,10 +40,10 @@ def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
 def _send_drop(win: MainWindow, mime: QMimeData) -> None:
     event = QDropEvent(
         QPointF(0, 0),
-        Qt.CopyAction,
+        Qt.DropAction.CopyAction,
         mime,
-        Qt.LeftButton,
-        Qt.NoModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
     )
     QApplication.sendEvent(win, event)
 

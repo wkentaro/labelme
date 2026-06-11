@@ -35,7 +35,7 @@ _AI_MODEL = "efficientsam:10m"
             "polygon",
             [(0.25, 0.25), (0.75, 0.25), (0.75, 0.75), (0.25, 0.75)],
             (0.25, 0.25),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             4,
             None,
             id="polygon",
@@ -44,7 +44,7 @@ _AI_MODEL = "efficientsam:10m"
             "rectangle",
             [(0.25, 0.25)],
             (0.75, 0.75),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             2,
             None,
             id="rectangle",
@@ -53,7 +53,7 @@ _AI_MODEL = "efficientsam:10m"
             "oriented_rectangle",
             [(0.25, 0.5), (0.5, 0.5)],
             (0.5, 0.75),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             4,
             None,
             id="oriented_rectangle",
@@ -62,7 +62,7 @@ _AI_MODEL = "efficientsam:10m"
             "circle",
             [(0.5, 0.5)],
             (0.75, 0.5),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             2,
             None,
             id="circle",
@@ -71,17 +71,19 @@ _AI_MODEL = "efficientsam:10m"
             "line",
             [(0.25, 0.25)],
             (0.75, 0.75),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             2,
             None,
             id="line",
         ),
-        pytest.param("point", [], (0.5, 0.5), Qt.NoModifier, 1, None, id="point"),
+        pytest.param(
+            "point", [], (0.5, 0.5), Qt.KeyboardModifier.NoModifier, 1, None, id="point"
+        ),
         pytest.param(
             "linestrip",
             [(0.25, 0.25), (0.5, 0.5)],
             (0.75, 0.75),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             3,
             None,
             id="linestrip",
@@ -90,7 +92,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_points_to_shape",
             [],
             (0.5, 0.5),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             None,
             "polygon",
             id="ai_points-polygon",
@@ -99,7 +101,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_points_to_shape",
             [],
             (0.5, 0.5),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             2,
             "mask",
             id="ai_points-mask",
@@ -108,7 +110,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_points_to_shape",
             [],
             (0.5, 0.5),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             2,
             "rectangle",
             id="ai_points-rectangle",
@@ -117,7 +119,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_points_to_shape",
             [],
             (0.5, 0.5),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             2,
             "circle",
             id="ai_points-circle",
@@ -126,7 +128,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_points_to_shape",
             [],
             (0.5, 0.5),
-            Qt.ControlModifier,
+            Qt.KeyboardModifier.ControlModifier,
             4,
             "oriented_rectangle",
             id="ai_points-oriented_rectangle",
@@ -135,7 +137,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_box_to_shape",
             [(0.3, 0.3)],
             (0.7, 0.7),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             None,
             "polygon",
             id="ai_box-polygon",
@@ -144,7 +146,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_box_to_shape",
             [(0.3, 0.3)],
             (0.7, 0.7),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             2,
             "mask",
             id="ai_box-mask",
@@ -153,7 +155,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_box_to_shape",
             [(0.3, 0.3)],
             (0.7, 0.7),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             2,
             "rectangle",
             id="ai_box-rectangle",
@@ -162,7 +164,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_box_to_shape",
             [(0.3, 0.3)],
             (0.7, 0.7),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             2,
             "circle",
             id="ai_box-circle",
@@ -171,7 +173,7 @@ _AI_MODEL = "efficientsam:10m"
             "ai_box_to_shape",
             [(0.3, 0.3)],
             (0.7, 0.7),
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             4,
             "oriented_rectangle",
             id="ai_box-oriented_rectangle",
@@ -221,12 +223,13 @@ def test_annotate_shape_types(
     qtbot.wait(50)
 
     def click(
-        xy: tuple[float, float], modifier: Qt.KeyboardModifier = Qt.NoModifier
+        xy: tuple[float, float],
+        modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
     ) -> None:
         pos = to_pos(xy)
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.wait(50)
-        qtbot.mouseClick(canvas, Qt.LeftButton, modifier, pos=pos)
+        qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, modifier, pos=pos)
         qtbot.wait(50)
 
     for xy in setup_clicks:
@@ -238,7 +241,7 @@ def test_annotate_shape_types(
             return
         qtbot.keyClicks(win._label_dialog.edit, label)
         qtbot.wait(50)
-        qtbot.keyClick(win._label_dialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(win._label_dialog.edit, Qt.Key.Key_Enter)
 
     QTimer.singleShot(0, enter_label_when_visible)
 
@@ -299,7 +302,7 @@ def test_ai_model_download(
 
     canvas_size = canvas.size()
     pos = QPoint(int(canvas_size.width() * 0.5), int(canvas_size.height() * 0.5))
-    qtbot.mouseClick(canvas, Qt.LeftButton, pos=pos)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
 
     # Verify the model was downloaded to the temp dir
     assert any(Path(blob_base).rglob("*"))

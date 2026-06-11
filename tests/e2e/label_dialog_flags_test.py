@@ -45,7 +45,7 @@ def _enter_label(
     qtbot.wait(100)
     for flag in flags:
         _check_flag(label_dialog=label_dialog, name=flag)
-    qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+    qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
 
 @pytest.mark.gui
