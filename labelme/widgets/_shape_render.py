@@ -373,7 +373,9 @@ def is_hit_by_point(
     if shape.shape_type == "point":
         if len(shape.points) == 0:
             return False
-        return bool(np.linalg.norm(point - shape.points[0]) <= point_size / 2)
+        return bool(
+            np.linalg.norm((point - shape.points[0]) * scale) <= point_size / 2
+        )
     if shape.mask is not None:
         raw_y = int(round(float(point[1]) - float(shape.points[0][1])))
         raw_x = int(round(float(point[0]) - float(shape.points[0][0])))
