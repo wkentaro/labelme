@@ -7,7 +7,7 @@ from pathlib import Path
 
 import imgviz
 import pytest
-from PyQt5.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
 import labelme.utils

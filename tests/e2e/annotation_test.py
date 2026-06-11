@@ -4,9 +4,9 @@ from pathlib import Path
 
 import osam.types._blob
 import pytest
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import Qt
+from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 from labelme._automation._types import AiOutputFormat

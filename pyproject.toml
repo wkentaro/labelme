@@ -30,9 +30,7 @@ dependencies = [
   "numpy>=1.24",
   "osam>=0.4.0",
   "pillow>=2.8",
-  "pyqt5>=5.14.0",
-  "pyqt5-qt5!=5.15.13 ; sys_platform == 'linux'",
-  "pyqt5-qt5!=5.15.11,!=5.15.12,!=5.15.13,!=5.15.14,!=5.15.15,!=5.15.16 ; sys_platform == 'win32'",
+  "pyside6>=6.5",
   "scipy>=1.8",
   "scikit-image>=0.21",
   "tifffile>=2024.1.30",
@@ -59,7 +57,6 @@ dev = [
   "ipython",
   "mdformat-frontmatter>=2.0.10",
   "mdformat>=0.7",
-  "pyqt5-stubs>=5.15.6.0",
   "pytest>=8.3.4",
   "pytest-cov>=7.1.0",
   "pytest-qt>=4.4.0",
@@ -78,7 +75,7 @@ dev = [
 labelme = "labelme.__main__:main"
 
 [tool.pytest.ini_options]
-qt_api = "pyqt5"
+qt_api = "pyside6"
 markers = ["gui: mark a test as a GUI test."]
 
 [tool.ruff.lint]

@@ -11,7 +11,7 @@ import PIL.ExifTags
 import PIL.Image
 import PIL.ImageOps
 from numpy.typing import NDArray
-from PyQt5 import QtGui
+from PySide6 import QtGui
 
 
 def img_data_to_pil(img_data: bytes) -> PIL.Image.Image:
@@ -65,7 +65,7 @@ def img_data_to_png_data(img_data: bytes) -> bytes:
 
 def img_qt_to_arr(img_qt: QtGui.QImage) -> NDArray[np.uint8]:
     w, h, d = img_qt.size().width(), img_qt.size().height(), img_qt.depth()
-    bytes_ = img_qt.bits().asstring(w * h * d // 8)
+    bytes_ = bytes(img_qt.bits())
     img_arr = np.frombuffer(bytes_, dtype=np.uint8).reshape((h, w, d // 8))
     return img_arr
 

@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow

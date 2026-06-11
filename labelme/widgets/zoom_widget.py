@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Final
 
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtWidgets
 
 
 class ZoomWidget(QtWidgets.QSpinBox):

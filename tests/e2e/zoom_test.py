@@ -4,10 +4,10 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5 import QtGui
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import Qt
+from PySide6 import QtGui
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -87,9 +87,8 @@ def _make_wheel_event(
     angle_delta: QPoint,
     modifiers: Qt.KeyboardModifiers,
 ) -> QtGui.QWheelEvent:
-    # PyQt5's QWheelEvent has overlapping qt4 and modern overloads; the
-    # all-positional 8-arg form is the only one that disambiguates without
-    # forcing a particular `KeyboardModifier`/`KeyboardModifiers` type.
+    # PySide6's QWheelEvent constructor takes positional args;
+    # the 8-arg form matches the modern Qt6 signature.
     return QtGui.QWheelEvent(
         pos,
         pos,

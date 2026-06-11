@@ -7,14 +7,14 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
-from PyQt5 import QtGui
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import QSettings
-from PyQt5.QtCore import QSize
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication
+from PySide6 import QtGui
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSize
+from PySide6.QtCore import Qt
+from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 import labelme.app
@@ -118,7 +118,7 @@ def main_win(
         assert isinstance(app, QApplication)
 
         monkeypatch.setattr("labelme.__main__.QtWidgets.QApplication", _QAppProxy(app))
-        monkeypatch.setattr(app, "exec_", lambda: 0)
+        monkeypatch.setattr(app, "exec", lambda: 0)
 
         existing = set(w for w in app.topLevelWidgets() if isinstance(w, MainWindow))
 
@@ -184,9 +184,11 @@ def drag_canvas(
     qtbot.mousePress(canvas, button, pos=start)
     qtbot.wait(50)
     # qtbot.mouseMove does not carry button state, so send a raw event
+    global_pos = QPointF(canvas.mapToGlobal(end))
     move_event = QtGui.QMouseEvent(
-        QtGui.QMouseEvent.MouseMove,
+        QtGui.QMouseEvent.Type.MouseMove,
         QPointF(end),
+        global_pos,
         Qt.NoButton,
         button,
         Qt.NoModifier,

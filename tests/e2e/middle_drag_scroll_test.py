@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Final
 
 import pytest
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PySide6 import QtGui
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 
 from .. import utils
 
@@ -11,7 +11,7 @@ class ToolBar(QtWidgets.QToolBar):
     def __init__(
         self,
         title: str,
-        actions: list[QtWidgets.QAction | None],
+        actions: list[QtGui.QAction | None],
         orientation: Qt.Orientation = Qt.Horizontal,
         button_style: Qt.ToolButtonStyle = Qt.ToolButtonTextUnderIcon,
         font_base: QtGui.QFont | None = None,
@@ -42,7 +42,7 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Vertical:
             self._equalize_button_widths()
 
-    def addAction(self, action: QtWidgets.QAction) -> None:  # ty: ignore[invalid-method-override]
+    def addAction(self, action: QtGui.QAction) -> None:  # ty: ignore[invalid-method-override]
         if isinstance(action, QtWidgets.QWidgetAction):
             super().addAction(action)
             return

@@ -4,9 +4,9 @@ import re
 from typing import cast
 
 from loguru import logger
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 import labelme.utils
 
@@ -80,7 +80,7 @@ class LabelDialog(QtWidgets.QDialog):
         edit_group_id = QtWidgets.QLineEdit()
         edit_group_id.setPlaceholderText("Group ID")
         edit_group_id.setValidator(
-            QtGui.QRegExpValidator(QtCore.QRegExp(r"\d*"), parent=None)
+            QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"\d*"))
         )
         return edit_group_id
 
@@ -230,7 +230,7 @@ class LabelDialog(QtWidgets.QDialog):
         if move:
             self.move(QtGui.QCursor.pos())
 
-        if not self.exec_():
+        if not self.exec():
             return None, None, None, None
         return self._read_dialog_state()
 

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5.QtCore import QTimer
+from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow

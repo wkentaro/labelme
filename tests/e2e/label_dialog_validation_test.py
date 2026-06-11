@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 from ..conftest import close_or_pause

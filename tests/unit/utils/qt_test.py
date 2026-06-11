@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 import pytest
-from PyQt5.QtCore import QPointF
+from PySide6.QtCore import QPointF
 
 from labelme.utils.qt import direction_angle
 from labelme.utils.qt import distance_to_line

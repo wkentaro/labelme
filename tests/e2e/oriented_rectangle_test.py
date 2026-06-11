@@ -5,8 +5,8 @@ from typing import Final
 
 import numpy as np
 import pytest
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow

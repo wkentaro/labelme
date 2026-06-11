@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PySide6 import QtGui
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 
 from .label_list_widget import HTMLDelegate
 from .label_list_widget import format_label_with_color_dot
@@ -22,7 +22,7 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
 
     def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:  # ty: ignore[invalid-method-override]
         super().mousePressEvent(mouseEvent)
-        if not self.indexAt(mouseEvent.pos()).isValid():
+        if not self.indexAt(mouseEvent.position().toPoint()).isValid():
             self.clearSelection()
 
     def find_label_item(self, label: str) -> QtWidgets.QListWidgetItem | None:

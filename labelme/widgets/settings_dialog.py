@@ -4,9 +4,9 @@ import typing
 from collections.abc import Callable
 from collections.abc import Sequence
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 from labelme import _locale
 from labelme._config import _schema as schema
@@ -15,7 +15,7 @@ ApplySetting = Callable[[tuple[str, ...], object], bool]
 
 
 class _PlainTextEdit(QtWidgets.QPlainTextEdit):
-    editing_finished = QtCore.pyqtSignal()
+    editing_finished = QtCore.Signal()
 
     _committed_text: str = ""
 
@@ -113,7 +113,7 @@ class SettingsDialog(QtWidgets.QDialog):
         # Release the previous fixed size (setFixedSize pinned both min and max) so
         # adjustSize can shrink or grow to the active tab before we re-pin it.
         self.setMinimumSize(0, 0)
-        self.setMaximumSize(QtWidgets.QWIDGETSIZE_MAX, QtWidgets.QWIDGETSIZE_MAX)
+        self.setMaximumSize(16777215, 16777215)
         self.adjustSize()
         self.setFixedSize(max(640, self.width()), self.height())
 

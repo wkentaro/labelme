@@ -8,8 +8,8 @@ from typing import Literal
 import numpy as np
 import numpy.typing as npt
 import skimage.measure
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PySide6 import QtCore
+from PySide6 import QtGui
 
 from labelme import utils
 from labelme._shape import Shape

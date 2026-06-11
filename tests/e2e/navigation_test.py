@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from ..conftest import close_or_pause

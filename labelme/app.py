@@ -25,11 +25,11 @@ import numpy as np
 import osam
 from loguru import logger
 from numpy.typing import NDArray
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
 
 from labelme import __appname__
 from labelme import __version__
@@ -63,14 +63,6 @@ from labelme.widgets import download_ai_model
 from labelme.widgets import format_shape_label
 
 from . import utils
-
-# handle high-dpi scaling issue
-# https://leomoon.com/journal/python/high-dpi-scaling-in-pyqt5
-if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-
 
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
@@ -113,58 +105,58 @@ class _DockWidgets(NamedTuple):
 
 
 class _Actions(NamedTuple):
-    about: QtWidgets.QAction
-    save: QtWidgets.QAction
-    save_as: QtWidgets.QAction
-    save_auto: QtWidgets.QAction
-    save_with_image_data: QtWidgets.QAction
-    change_output_dir: QtWidgets.QAction
-    open: QtWidgets.QAction
-    close: QtWidgets.QAction
-    delete_file: QtWidgets.QAction
-    toggle_keep_prev_mode: QtWidgets.QAction
-    toggle_keep_prev_brightness_contrast: QtWidgets.QAction
-    delete: QtWidgets.QAction
-    edit: QtWidgets.QAction
-    duplicate: QtWidgets.QAction
-    copy: QtWidgets.QAction
-    paste: QtWidgets.QAction
-    undo_last_point: QtWidgets.QAction
-    undo: QtWidgets.QAction
-    add_point_to_edge: QtWidgets.QAction
-    remove_point: QtWidgets.QAction
-    create_mode: QtWidgets.QAction
-    edit_mode: QtWidgets.QAction
-    create_rectangle_mode: QtWidgets.QAction
-    create_oriented_rectangle_mode: QtWidgets.QAction
-    create_circle_mode: QtWidgets.QAction
-    create_line_mode: QtWidgets.QAction
-    create_point_mode: QtWidgets.QAction
-    create_line_strip_mode: QtWidgets.QAction
-    create_ai_points_to_shape_mode: QtWidgets.QAction
-    create_ai_box_to_shape_mode: QtWidgets.QAction
-    open_next_img: QtWidgets.QAction
-    open_prev_img: QtWidgets.QAction
-    keep_prev_zoom: QtWidgets.QAction
-    fit_window: QtWidgets.QAction
-    fit_width: QtWidgets.QAction
-    brightness_contrast: QtWidgets.QAction
-    zoom_in: QtWidgets.QAction
-    zoom_out: QtWidgets.QAction
-    zoom_org: QtWidgets.QAction
-    reset_layout: QtWidgets.QAction
-    fill_drawing: QtWidgets.QAction
-    hide_all: QtWidgets.QAction
-    show_all: QtWidgets.QAction
-    toggle_all: QtWidgets.QAction
-    open_dir: QtWidgets.QAction
+    about: QtGui.QAction
+    save: QtGui.QAction
+    save_as: QtGui.QAction
+    save_auto: QtGui.QAction
+    save_with_image_data: QtGui.QAction
+    change_output_dir: QtGui.QAction
+    open: QtGui.QAction
+    close: QtGui.QAction
+    delete_file: QtGui.QAction
+    toggle_keep_prev_mode: QtGui.QAction
+    toggle_keep_prev_brightness_contrast: QtGui.QAction
+    delete: QtGui.QAction
+    edit: QtGui.QAction
+    duplicate: QtGui.QAction
+    copy: QtGui.QAction
+    paste: QtGui.QAction
+    undo_last_point: QtGui.QAction
+    undo: QtGui.QAction
+    add_point_to_edge: QtGui.QAction
+    remove_point: QtGui.QAction
+    create_mode: QtGui.QAction
+    edit_mode: QtGui.QAction
+    create_rectangle_mode: QtGui.QAction
+    create_oriented_rectangle_mode: QtGui.QAction
+    create_circle_mode: QtGui.QAction
+    create_line_mode: QtGui.QAction
+    create_point_mode: QtGui.QAction
+    create_line_strip_mode: QtGui.QAction
+    create_ai_points_to_shape_mode: QtGui.QAction
+    create_ai_box_to_shape_mode: QtGui.QAction
+    open_next_img: QtGui.QAction
+    open_prev_img: QtGui.QAction
+    keep_prev_zoom: QtGui.QAction
+    fit_window: QtGui.QAction
+    fit_width: QtGui.QAction
+    brightness_contrast: QtGui.QAction
+    zoom_in: QtGui.QAction
+    zoom_out: QtGui.QAction
+    zoom_org: QtGui.QAction
+    reset_layout: QtGui.QAction
+    fill_drawing: QtGui.QAction
+    hide_all: QtGui.QAction
+    show_all: QtGui.QAction
+    toggle_all: QtGui.QAction
+    open_dir: QtGui.QAction
     zoom_widget_action: QtWidgets.QWidgetAction
-    draw: list[tuple[str, QtWidgets.QAction]]
-    zoom: tuple[ZoomWidget | QtWidgets.QAction, ...]
-    on_load_active: tuple[QtWidgets.QAction, ...]
-    on_shapes_present: tuple[QtWidgets.QAction, ...]
-    context_menu: tuple[QtWidgets.QAction, ...]
-    edit_menu: tuple[QtWidgets.QAction | None, ...]
+    draw: list[tuple[str, QtGui.QAction]]
+    zoom: tuple[ZoomWidget | QtGui.QAction, ...]
+    on_load_active: tuple[QtGui.QAction, ...]
+    on_shapes_present: tuple[QtGui.QAction, ...]
+    context_menu: tuple[QtGui.QAction, ...]
+    edit_menu: tuple[QtGui.QAction | None, ...]
 
 
 class _Menus(NamedTuple):
@@ -670,7 +662,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.zoom_widget.setEnabled(False)
 
         self._zoom_mode = _ZoomMode.FIT_WINDOW
-        fit_window.setChecked(Qt.Checked)
+        fit_window.setChecked(True)
 
         self._canvas_widgets.canvas.vertex_selected.connect(remove_point.setEnabled)
         self._canvas_widgets.canvas.edge_selected.connect(add_point_to_edge.setEnabled)
@@ -814,7 +806,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
             enabled=settings_editable,
         )
-        open_config.setMenuRole(QtWidgets.QAction.PreferencesRole)
+        open_config.setMenuRole(QtGui.QAction.PreferencesRole)
         help_ = action(
             self.tr("&Tutorial"),
             self.tutorial,
@@ -1195,7 +1187,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def menu(
         self,
         title: str,
-        actions: tuple[QtWidgets.QAction | QtWidgets.QMenu | None, ...] | None = None,
+        actions: tuple[QtGui.QAction | QtWidgets.QMenu | None, ...] | None = None,
     ) -> QtWidgets.QMenu:
         menu = self.menuBar().addMenu(title)
         if actions:
@@ -1443,7 +1435,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         widget.setStyleSheet(style)
 
     def show_label_list_menu(self, point: QtCore.QPoint) -> None:
-        # PyQt5 stubs type QMenu.exec() argument too narrowly
+        # PySide6 type QMenu.exec() argument too narrowly
         self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # ty: ignore[invalid-argument-type]
 
     def validate_label(self, label: str) -> bool:
@@ -1452,7 +1444,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
         unique_label_list = self._docks.unique_label_list
         existing_labels = [
-            # PyQt5 stubs: item() typed as Optional and .data() unrecognized
             unique_label_list.item(i).data(Qt.UserRole)  # ty: ignore[unresolved-attribute]
             for i in range(unique_label_list.count())
         ]
@@ -1952,7 +1943,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if is_initial_load:
             dialog.apply()
         else:
-            dialog.exec_()
+            dialog.exec()
             brightness = dialog.slider_brightness.value()
             contrast = dialog.slider_contrast.value()
 

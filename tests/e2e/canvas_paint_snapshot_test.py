@@ -5,15 +5,15 @@ from typing import Final
 
 import numpy as np
 import pytest
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import QRect
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QImage
-from PyQt5.QtGui import QPainter
-from PyQt5.QtGui import QRegion
-from PyQt5.QtWidgets import QWidget
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import QRect
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
+from PySide6.QtGui import QImage
+from PySide6.QtGui import QPainter
+from PySide6.QtGui import QRegion
+from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -74,8 +74,7 @@ def _qimage_to_numpy(image: QImage) -> np.ndarray:
     width = image.width()
     height = image.height()
     bytes_per_line = image.bytesPerLine()
-    ptr = image.bits()
-    raw_bytes = ptr.asstring(bytes_per_line * height)
+    raw_bytes = bytes(image.bits())
     arr = np.frombuffer(raw_bytes, dtype=np.uint8).reshape(
         (height, bytes_per_line // 4, 4)
     )
