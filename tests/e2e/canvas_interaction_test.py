@@ -84,7 +84,7 @@ def _click_to_remove_point(
     qtbot.mouseClick(
         canvas,
         Qt.LeftButton,
-        modifier=Qt.AltModifier | Qt.ShiftModifier,
+        Qt.AltModifier | Qt.ShiftModifier,
         pos=vtx_widget,
     )
     qtbot.wait(50)
@@ -250,7 +250,7 @@ def test_add_point_on_edge(
     mid_widget = image_to_widget_pos(canvas=canvas, image_pos=edge_mid)
     qtbot.mouseMove(canvas, pos=mid_widget)
     qtbot.wait(100)
-    qtbot.mouseClick(canvas, Qt.LeftButton, modifier=Qt.AltModifier, pos=mid_widget)
+    qtbot.mouseClick(canvas, Qt.LeftButton, Qt.AltModifier, pos=mid_widget)
     qtbot.wait(50)
 
     assert len(shape.points) == num_points_before + 1
@@ -714,12 +714,12 @@ def test_right_click_on_shape_opens_context_menu(
     menu_opened: list[int] = []
     monkeypatch.setattr(
         canvas.menus[0],
-        "exec_",
+        "exec",
         lambda *args, **kwargs: menu_opened.append(0) or None,
     )
     monkeypatch.setattr(
         canvas.menus[1],
-        "exec_",
+        "exec",
         lambda *args, **kwargs: menu_opened.append(1) or None,
     )
 

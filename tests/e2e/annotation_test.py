@@ -226,7 +226,7 @@ def test_annotate_shape_types(
         pos = to_pos(xy)
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.wait(50)
-        qtbot.mouseClick(canvas, Qt.LeftButton, modifier=modifier, pos=pos)
+        qtbot.mouseClick(canvas, Qt.LeftButton, modifier, pos=pos)
         qtbot.wait(50)
 
     for xy in setup_clicks:
