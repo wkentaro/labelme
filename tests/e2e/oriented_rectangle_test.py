@@ -217,7 +217,7 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
     qtbot.mouseClick(
         canvas,
         Qt.LeftButton,
-        modifier=Qt.AltModifier | Qt.ShiftModifier,
+        Qt.AltModifier | Qt.ShiftModifier,
         pos=vertex_widget,
     )
     qtbot.wait(50)

@@ -1426,7 +1426,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         for mode, action in self._actions.draw:
             if mode in _AI_CREATE_MODES:
-                for widget in action.associatedWidgets():
+                for widget in action.associatedObjects():
                     if isinstance(widget, QtWidgets.QToolButton):
                         widget.setStyleSheet(style)
 

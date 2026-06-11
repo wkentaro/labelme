@@ -171,7 +171,7 @@ class Canvas(QtWidgets.QWidget):
     _hovered_rotation: int | None
 
     zoom_request = QtCore.Signal(int, QPointF)
-    scroll_request = QtCore.Signal(int, int)
+    scroll_request = QtCore.Signal(int, Qt.Orientation)
     pan_request = QtCore.Signal(QPoint)
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()

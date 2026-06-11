@@ -170,7 +170,7 @@ def click_canvas_fraction(
     pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
-    qtbot.mouseClick(canvas, Qt.LeftButton, modifier=modifier, pos=pos)
+    qtbot.mouseClick(canvas, Qt.LeftButton, modifier, pos=pos)
     qtbot.wait(50)
 
 

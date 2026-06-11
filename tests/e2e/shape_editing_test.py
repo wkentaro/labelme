@@ -219,7 +219,7 @@ def test_right_drag_copy_here_duplicates_shape(
         copy_here_action.trigger()
         return copy_here_action
 
-    monkeypatch.setattr(canvas.menus[1], "exec_", trigger_copy_here)
+    monkeypatch.setattr(canvas.menus[1], "exec", trigger_copy_here)
 
     drag_canvas(
         qtbot=qtbot,
