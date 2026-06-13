@@ -10,7 +10,6 @@ import re
 import subprocess
 import time
 import webbrowser
-from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 from typing import Literal
@@ -1263,9 +1262,6 @@ class MainWindow(QtWidgets.QMainWindow):
         for action in (*self._actions.zoom, *self._actions.on_load_active):
             action.setEnabled(value)
 
-    def queue_event(self, function: Callable[[], None]) -> None:
-        QtCore.QTimer.singleShot(0, function)
-
     def show_status_message(self, message: str, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
@@ -2443,16 +2439,6 @@ class MainWindow(QtWidgets.QMainWindow):
             os.startfile(config_file)  # ty: ignore[unresolved-attribute]  # Windows-only
         else:
             subprocess.Popen(["xdg-open", config_file])
-
-    # Message Dialogs. #
-    def has_labels(self) -> bool:
-        if self.has_no_shapes():
-            self.show_error_message(
-                "No objects labeled",
-                "You must label at least one object to save the file.",
-            )
-            return False
-        return True
 
     def has_label_file(self) -> bool:
         if self._image_path is None:
