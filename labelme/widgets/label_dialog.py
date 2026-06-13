@@ -44,7 +44,6 @@ class LabelDialog(QtWidgets.QDialog):
         self._fit_to_content = fit_to_content
         self._sort_labels = sort_labels
         self._flags = flags or {}
-        self._predefined_labels: list[str] = list(labels or [])
         self._label_history: list[str] = []
 
         self.edit = self._build_label_edit(placeholder=text, has_flags=bool(flags))
@@ -141,8 +140,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.label_list.sortItems()
 
     def set_predefined_labels(self, labels: list[str]) -> None:
-        self._predefined_labels = list(labels)
-        merged = list(dict.fromkeys(self._predefined_labels + self._label_history))
+        merged = list(dict.fromkeys(labels + self._label_history))
         # Mutate the existing list widget in place so the completer, which is
         # bound to its model, keeps working without being rebuilt.
         self.label_list.clear()
