@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import cast
 
 import pytest
-from PyQt5 import QtWidgets
+from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme.widgets.label_dialog import LabelDialog

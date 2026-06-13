@@ -91,7 +91,7 @@ def test_delete_label_file_keeps_image(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
     )
     win.delete_file()
     qtbot.wait(50)
