@@ -982,5 +982,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>System default</source>
         <translation>Rendszer alapértelmezése</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>Alakzatcímkék megjelenítése a vásznon</translation>
+    </message>
 </context>
 </TS>

@@ -28,6 +28,7 @@ shape:
   select_fill_color: [0, 255, 0, 64]
   hvertex_fill_color: [255, 255, 255, 255]
   point_size: 8
+  show_labels: false
 ai:
   default: Sam2 (balanced)
 # main

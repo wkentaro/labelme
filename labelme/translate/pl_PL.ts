@@ -976,5 +976,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <source>System default</source>
         <translation>Domyślny systemu</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>Pokaż etykiety kształtów na płótnie</translation>
+    </message>
 </context>
 </TS>

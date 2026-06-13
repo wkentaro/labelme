@@ -976,5 +976,10 @@ Shapes</source>
         <source>Label validation</source>
         <translation>Validasi label</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>Tampilkan label bentuk pada kanvas</translation>
+    </message>
 </context>
 </TS>

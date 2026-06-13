@@ -976,5 +976,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <source>System default</source>
         <translation>Mặc định của hệ thống</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>Hiển thị nhãn của hình dạng trên canvas</translation>
+    </message>
 </context>
 </TS>

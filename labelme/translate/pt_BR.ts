@@ -976,5 +976,10 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <source>System default</source>
         <translation>Padrão do sistema</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostrar rótulos das formas na tela</translation>
+    </message>
 </context>
 </TS>
