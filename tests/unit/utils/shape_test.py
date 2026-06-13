@@ -42,6 +42,40 @@ def test_shape_to_mask_oriented_rectangle_marks_inside_pixels() -> None:
     assert not mask[outside_row, outside_col]
 
 
+def test_shape_to_mask_linestrip_fills_notch_at_turning_point() -> None:
+    # Acute V with the apex at (50, 50) and both arms going up; the convex side
+    # is below the apex. A plain wide line leaves an unfilled notch there (#2124).
+    img_shape = (100, 100)
+    line_width = 25
+    apex_x, apex_y = 50, 50
+    mask = shape_module.shape_to_mask(
+        img_shape=img_shape,
+        points=[[40.0, 10.0], [apex_x, apex_y], [60.0, 10.0]],
+        shape_type="linestrip",
+        line_width=line_width,
+    )
+    join_below_apex = mask[apex_y : apex_y + line_width // 2, apex_x]
+    assert join_below_apex.all(), f"notch left unfilled below apex: {join_below_apex}"
+
+
+def test_shape_to_mask_linestrip_collinear_point_does_not_change_mask() -> None:
+    img_shape = (100, 100)
+    line_width = 25
+    with_midpoint = shape_module.shape_to_mask(
+        img_shape,
+        [[10.0, 50.0], [50.0, 50.0], [90.0, 50.0]],
+        shape_type="linestrip",
+        line_width=line_width,
+    )
+    without_midpoint = shape_module.shape_to_mask(
+        img_shape,
+        [[10.0, 50.0], [90.0, 50.0]],
+        shape_type="linestrip",
+        line_width=line_width,
+    )
+    assert np.array_equal(with_midpoint, without_midpoint)
+
+
 def test_shape_to_mask_rectangle_reversed_coords() -> None:
     img_shape = (100, 100)
     mask_tl_br = shape_module.shape_to_mask(
