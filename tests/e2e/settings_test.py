@@ -58,7 +58,7 @@ def test_setting_change_persists_and_applies(
 
     assert win._config["display_label_popup"] is False
     assert win._config["labels"] == ["cat", "dog"]
-    assert win._label_dialog is not label_dialog_before
+    assert win._label_dialog is label_dialog_before  # updated in place, not rebuilt
     unique_label_list = win._docks.unique_label_list
     assert unique_label_list.find_label_item("cat") is not None
     assert unique_label_list.find_label_item("dog") is not None
@@ -78,8 +78,6 @@ def test_label_edit_preserves_label_history(
     win._label_dialog.add_label_history("bird")  # learned from a loaded/created shape
 
     old_label_dialog = win._label_dialog
-    deleted: list[bool] = []
-    old_label_dialog.destroyed.connect(lambda: deleted.append(True))
 
     win._open_settings()
     dialog = win._settings_dialog
@@ -89,13 +87,13 @@ def test_label_edit_preserves_label_history(
     labels_editor.setPlainText("cat\ndog")
     dialog.accept()
 
+    assert win._label_dialog is old_label_dialog  # updated in place, not rebuilt
     label_list = win._label_dialog.label_list
     labels = {
         cast(QtWidgets.QListWidgetItem, label_list.item(i)).text()
         for i in range(label_list.count())
     }
     assert labels == {"bird", "cat", "dog"}  # history kept, new labels added
-    qtbot.waitUntil(lambda: bool(deleted))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
