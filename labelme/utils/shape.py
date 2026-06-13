@@ -41,7 +41,8 @@ def shape_to_mask(
         assert len(xy) == 2, "Shape of shape_type=line must have 2 points"
         draw.line(xy=xy, fill=1, width=line_width)  # ty: ignore[invalid-argument-type]
     elif shape_type == "linestrip":
-        draw.line(xy=xy, fill=1, width=line_width)  # ty: ignore[invalid-argument-type]
+        # joint="curve" rounds the joints so wide lines have no notch at turns.
+        draw.line(xy=xy, fill=1, width=line_width, joint="curve")  # ty: ignore[invalid-argument-type]
     elif shape_type == "point":
         assert len(xy) == 1, "Shape of shape_type=point must have 1 points"
         cx, cy = xy[0]
