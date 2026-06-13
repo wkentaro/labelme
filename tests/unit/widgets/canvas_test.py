@@ -608,3 +608,22 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
 )
 def test_compute_overscroll_slack(scaled: int, viewport: int, expected: int) -> None:
     assert _compute_overscroll_slack(scaled=scaled, viewport=viewport) == expected
+
+
+@pytest.mark.gui
+def test_remove_selected_point_deselects_vertex(canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(10, 10), (40, 10), (40, 40), (10, 40)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+    canvas._hovered_vertex = 1
+
+    canvas.remove_selected_point()
+
+    assert len(shape.points) == 3  # the point was removed
+    # Vertex is no longer selected, so the next move won't drag the neighbor (#968).
+    assert not canvas._is_vertex_selected()
