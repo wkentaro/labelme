@@ -976,5 +976,10 @@ Shapes</source>
         <source>Label validation</source>
         <translation>Validasi label</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
 </context>
 </TS>

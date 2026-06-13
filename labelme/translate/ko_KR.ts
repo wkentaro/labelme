@@ -976,5 +976,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>시스템 기본값</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>사전 정의된 이미지 플래그</translation>
+    </message>
 </context>
 </TS>

@@ -976,5 +976,10 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <source>System default</source>
         <translation>Predeterminado del sistema</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>Banderas de imagen predefinidas</translation>
+    </message>
 </context>
 </TS>

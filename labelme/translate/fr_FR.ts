@@ -982,5 +982,10 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <source>System default</source>
         <translation>Langue du système</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>Indicateurs d'image prédéfinis</translation>
+    </message>
 </context>
 </TS>

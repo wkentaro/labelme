@@ -978,5 +978,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>Προεπιλογή συστήματος</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
 </context>
 </TS>
