@@ -976,5 +976,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>系統預設</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>在畫布上顯示形狀標籤</translation>
+    </message>
 </context>
 </TS>

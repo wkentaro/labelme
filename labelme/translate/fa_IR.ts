@@ -976,5 +976,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>پیش‌فرض سیستم</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>نمایش برچسب شکل‌ها روی بوم</translation>
+    </message>
 </context>
 </TS>

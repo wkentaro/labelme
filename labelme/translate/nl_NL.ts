@@ -976,5 +976,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <source>System default</source>
         <translation>Systeemstandaard</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Show shape labels on canvas</source>
+        <translation>Vormlabels op canvas tonen</translation>
+    </message>
 </context>
 </TS>
