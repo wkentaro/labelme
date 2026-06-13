@@ -68,3 +68,40 @@ def test_delete_label_file(
     assert item.checkState() == Qt.Unchecked
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_delete_label_file_keeps_image(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated"),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    canvas = win._canvas_widgets.canvas
+    assert not canvas.pixmap.isNull()
+    assert canvas.shapes
+    assert len(win._docks.label_list) > 0
+
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "warning",
+        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+    )
+    win.delete_file()
+    qtbot.wait(50)
+
+    # The annotations are cleared, but the image stays on the canvas.
+    assert not canvas.pixmap.isNull()
+    assert canvas.isEnabled()
+    assert canvas.shapes == []
+    assert len(win._docks.label_list) == 0
+    assert win._image_path is not None
+    assert win._annotation is not None
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
