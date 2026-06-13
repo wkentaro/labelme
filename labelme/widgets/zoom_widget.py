@@ -6,12 +6,14 @@ from PySide6 import QtCore
 from PySide6 import QtWidgets
 
 
-class ZoomWidget(QtWidgets.QSpinBox):
+class ZoomWidget(QtWidgets.QDoubleSpinBox):
     PERCENT_MAX: Final = 1000
+    PERCENT_DECIMALS: Final = 1
     PERCENT_SUFFIX: Final = " %"
 
     def __init__(self) -> None:
         super().__init__()
+        self.setDecimals(self.PERCENT_DECIMALS)
         self.setRange(1, self.PERCENT_MAX)
         self.setValue(100)
         self.setSuffix(self.PERCENT_SUFFIX)
@@ -23,5 +25,5 @@ class ZoomWidget(QtWidgets.QSpinBox):
         self._apply_minimum_width()
 
     def _apply_minimum_width(self) -> None:
-        sample = f"{self.PERCENT_MAX}{self.PERCENT_SUFFIX}"
+        sample = f"{self.PERCENT_MAX:.{self.PERCENT_DECIMALS}f}{self.PERCENT_SUFFIX}"
         self.setMinimumWidth(self.fontMetrics().horizontalAdvance(sample))

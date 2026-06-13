@@ -3,7 +3,6 @@ from __future__ import annotations
 import enum
 import functools
 import json
-import math
 import os
 import platform
 import re
@@ -192,7 +191,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_file_path: str | None
     _image_path: str | None
     _prev_image_path: str | None
-    _zoom_values: dict[str, tuple[_ZoomMode, int]]
+    _zoom_values: dict[str, tuple[_ZoomMode, float]]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
     _scroll_values: dict[Qt.Orientation, dict[str, float]]
     _default_state: QtCore.QByteArray
@@ -1861,7 +1860,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._image_path is not None:
             self._scroll_values[orientation][self._image_path] = value
 
-    def _set_zoom(self, value: int, pos: QtCore.QPointF | None = None) -> None:
+    def _set_zoom(self, value: float, pos: QtCore.QPointF | None = None) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set zoom")
             return
@@ -1897,13 +1896,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_zoom(value=100)
 
     def _add_zoom(self, increment: float, pos: QtCore.QPointF | None = None) -> None:
-        zoom_value: int
-        if increment > 1:
-            zoom_value = math.ceil(self._canvas_widgets.zoom_widget.value() * increment)
-        else:
-            zoom_value = math.floor(
-                self._canvas_widgets.zoom_widget.value() * increment
-            )
+        # Multiplicative stepping on a float widget; the QDoubleSpinBox rounds to
+        # its decimal precision, so no integer ceil/floor clamping is needed.
+        zoom_value = self._canvas_widgets.zoom_widget.value() * increment
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
 
@@ -2154,7 +2149,7 @@ class MainWindow(QtWidgets.QMainWindow):
             scale = self._fit_width_scale()
         else:
             scale = 1.0
-        self._set_zoom(value=int(scale * 100))
+        self._set_zoom(value=scale * 100)
 
     def _fit_window_scale(self) -> float:
         FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0
