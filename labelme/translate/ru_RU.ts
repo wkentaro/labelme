@@ -789,5 +789,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>Системный язык</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Показывать метки фигур на холсте</translation>
+    </message>
 </context>
 </TS>

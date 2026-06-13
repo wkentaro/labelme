@@ -1034,6 +1034,7 @@ class MainWindow(QtWidgets.QMainWindow):
             crosshair=self._config["canvas"]["crosshair"],
         )
         canvas.set_point_size(self._config["shape"]["point_size"])
+        canvas.set_show_labels(self._config["shape"]["show_labels"])
         canvas.set_draft_palette(
             Palette(
                 line=QtGui.QColor(*self._config["shape"]["line_color"]),
@@ -2402,6 +2403,12 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def _apply_to_live_widgets(self, key_path: tuple[str, ...]) -> None:
+        if key_path == ("shape", "show_labels"):
+            self._canvas_widgets.canvas.set_show_labels(
+                self._config["shape"]["show_labels"]
+            )
+            self._canvas_widgets.canvas.update()
+            return
         if key_path[0] == "labels":
             # Update predefined labels in place so session history (labels learned
             # from loaded/created shapes via add_label_history) is preserved, while

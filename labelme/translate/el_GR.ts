@@ -788,5 +788,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>Προεπιλογή συστήματος</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Εμφάνιση ετικετών σχήματος στον καμβά</translation>
+    </message>
 </context>
 </TS>

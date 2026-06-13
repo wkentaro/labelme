@@ -786,5 +786,9 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <source>System default</source>
         <translation>Padrão do sistema</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostrar rótulos das formas na tela</translation>
+    </message>
 </context>
 </TS>

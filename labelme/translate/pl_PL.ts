@@ -786,5 +786,9 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <source>System default</source>
         <translation>Domyślny systemu</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Pokaż etykiety kształtów na płótnie</translation>
+    </message>
 </context>
 </TS>

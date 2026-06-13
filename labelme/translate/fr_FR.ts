@@ -792,5 +792,9 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <source>System default</source>
         <translation>Langue du système</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Afficher les étiquettes des formes sur le canevas</translation>
+    </message>
 </context>
 </TS>

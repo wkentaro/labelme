@@ -792,5 +792,9 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <source>System default</source>
         <translation>Predefinita di sistema</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostra le etichette delle forme sulla tela</translation>
+    </message>
 </context>
 </TS>

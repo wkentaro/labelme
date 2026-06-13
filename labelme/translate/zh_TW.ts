@@ -786,5 +786,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>系統預設</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>在畫布上顯示形狀標籤</translation>
+    </message>
 </context>
 </TS>

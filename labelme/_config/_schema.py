@@ -47,6 +47,14 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         kind="bool",
     ),
     Setting(
+        key_path=("shape", "show_labels"),
+        section="General",
+        label=cast(
+            str, QT_TRANSLATE_NOOP("SettingsDialog", "Show shape labels on canvas")
+        ),
+        kind="bool",
+    ),
+    Setting(
         key_path=("language",),
         section="General",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Language")),

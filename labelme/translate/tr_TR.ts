@@ -789,5 +789,9 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Şekil etiketlerini tuvalde göster</translation>
+    </message>
 </context>
 </TS>

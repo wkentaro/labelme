@@ -786,5 +786,9 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <source>System default</source>
         <translation>Predeterminado del sistema</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostrar etiquetas de forma en el lienzo</translation>
+    </message>
 </context>
 </TS>

@@ -786,5 +786,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>ค่าเริ่มต้นของระบบ</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>แสดงเลเบลรูปร่างบนผืนผ้าใบ</translation>
+    </message>
 </context>
 </TS>

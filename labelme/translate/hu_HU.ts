@@ -792,5 +792,9 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>System default</source>
         <translation>Rendszer alapértelmezése</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Alakzatcímkék megjelenítése a vásznon</translation>
+    </message>
 </context>
 </TS>

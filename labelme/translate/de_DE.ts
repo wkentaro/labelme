@@ -792,5 +792,9 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <source>System default</source>
         <translation>Systemstandard</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Formlabels auf der Leinwand anzeigen</translation>
+    </message>
 </context>
 </TS>

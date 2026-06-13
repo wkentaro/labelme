@@ -75,6 +75,7 @@ class ShapeRenderContext:
     fill: bool
     highlight: VertexHighlight | None
     rotation_highlight: VertexHighlight | None
+    show_labels: bool = False
 
 
 def render_shape(
@@ -94,6 +95,32 @@ def render_shape(
 
     if len(shape.points) > 0:
         _paint_shape_points(painter=painter, shape=shape, context=context)
+
+    if context.show_labels and shape.label and len(shape.points) > 0:
+        _paint_shape_label(painter=painter, shape=shape, context=context)
+
+
+def _paint_shape_label(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+) -> None:
+    assert shape.label is not None
+    # Anchor at the top-left of the bounding box so the text tracks the shape
+    # while panning and zooming, lifted a few pixels above the outline. The font
+    # is the painter's current (screen-space) font, so it stays legible at any
+    # zoom rather than scaling with the image.
+    LABEL_GAP: Final[int] = 4
+    top_left = shape.points.min(axis=0) * context.scale
+    anchor = QtCore.QPointF(top_left[0], top_left[1] - LABEL_GAP)
+
+    palette = context.palette
+    color = palette.select_line if context.selected else palette.line
+    pen = QtGui.QPen(QtGui.QColor(color.red(), color.green(), color.blue()))
+    pen.setWidth(PEN_WIDTH)
+    painter.setPen(pen)
+    painter.drawText(anchor, shape.label)
 
 
 def _paint_shape_mask(

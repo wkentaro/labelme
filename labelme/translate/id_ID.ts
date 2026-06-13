@@ -786,5 +786,9 @@ Shapes</source>
         <source>Label validation</source>
         <translation>Validasi label</translation>
     </message>
+    <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Tampilkan label bentuk pada kanvas</translation>
+    </message>
 </context>
 </TS>
