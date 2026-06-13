@@ -902,6 +902,8 @@ class Canvas(QtWidgets.QWidget):
         self._clear_highlight_state()
         self.hovered_shape = shape
         self._last_hovered_vertex = None
+        # Deselect the vertex; its index now aliases the adjacent point (#968).
+        self._hovered_vertex = None
         self._is_moving_shape = True  # Save changes
         # Repaint now; otherwise the edit is invisible until the next mouse move.
         self.update()

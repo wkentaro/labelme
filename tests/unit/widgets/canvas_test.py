@@ -656,3 +656,18 @@ def test_remove_selected_point_repaints(
 
     assert len(shape.points) == n_before - 1
     update.assert_called_once()  # repaint now, not only on the next mouse move (#890)
+
+
+@pytest.mark.gui
+def test_remove_selected_point_deselects_vertex(canvas: Canvas) -> None:
+    shape = _make_polygon()
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+    canvas._hovered_vertex = 1
+
+    canvas.remove_selected_point()
+
+    assert len(shape.points) == 3  # the point was removed
+    # Vertex is no longer selected, so the next move won't drag the neighbor (#968).
+    assert not canvas._is_vertex_selected()
