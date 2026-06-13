@@ -789,5 +789,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>Системный язык</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Предустановленные флаги изображения</translation>
+    </message>
 </context>
 </TS>

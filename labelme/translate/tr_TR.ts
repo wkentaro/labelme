@@ -789,5 +789,9 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Önceden tanımlı görüntü bayrakları</translation>
+    </message>
 </context>
 </TS>

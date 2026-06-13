@@ -786,5 +786,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>系统默认</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>预定义图像标记</translation>
+    </message>
 </context>
 </TS>

@@ -786,5 +786,9 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>시스템 기본값</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>사전 정의된 이미지 플래그</translation>
+    </message>
 </context>
 </TS>

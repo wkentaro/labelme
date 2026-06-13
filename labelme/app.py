@@ -1696,11 +1696,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for item in self._docks.label_list
             if (s := item.shape()) is not None
         ]
-        flags: dict[str, bool] = {}
-        for i in range(self._docks.flag_list.count()):
-            item = self._docks.flag_list.item(i)
-            assert item
-            flags[item.text()] = item.checkState() == Qt.CheckState.Checked
+        flags = self._read_flag_dock_states()
         try:
             assert self._image_path
             assert self._annotation is not None
@@ -2424,6 +2420,24 @@ class MainWindow(QtWidgets.QMainWindow):
                         unique_label_list=self._docks.unique_label_list,
                     ),
                 )
+        elif key_path[0] == "flags":
+            # The flag dock otherwise only repopulates on the next image load.
+            # Refresh it now additively: add newly predefined flags (unchecked) and
+            # keep every flag already in the dock with its checked state. Like the
+            # label docks, a flag removed from the config lingers until the next
+            # image load, so the edit never drops a flag the current image carries.
+            current = self._read_flag_dock_states()
+            flags = {key: False for key in self._config["flags"] or []}
+            flags.update(current)
+            self._load_flags(flags=flags, widget=self._docks.flag_list)
+
+    def _read_flag_dock_states(self) -> dict[str, bool]:
+        flags: dict[str, bool] = {}
+        for i in range(self._docks.flag_list.count()):
+            item = self._docks.flag_list.item(i)
+            assert item is not None
+            flags[item.text()] = item.checkState() == Qt.CheckState.Checked
+        return flags
 
     def _open_settings(self) -> None:
         if not self._is_settings_editable:

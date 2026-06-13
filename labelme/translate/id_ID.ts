@@ -786,5 +786,9 @@ Shapes</source>
         <source>Label validation</source>
         <translation>Validasi label</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
 </context>
 </TS>
