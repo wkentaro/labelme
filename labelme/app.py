@@ -2380,20 +2380,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _apply_to_live_widgets(self, key_path: tuple[str, ...]) -> None:
         if key_path[0] == "labels":
-            # Rebuilding from config alone would drop labels accumulated via
-            # add_label_history (learned from loaded/created shapes), so carry the
-            # existing dialog's labels into the new one. Like the dock below, this
-            # keeps removed predefined labels until restart.
-            label_list = self._label_dialog.label_list
-            previous_labels = [
-                cast(QtWidgets.QListWidgetItem, label_list.item(i)).text()
-                for i in range(label_list.count())
-            ]
-            old_label_dialog = self._label_dialog
-            self._label_dialog = self._make_label_dialog()
-            old_label_dialog.deleteLater()
-            for label in previous_labels:
-                self._label_dialog.add_label_history(label)
+            # Update predefined labels in place so session history (labels learned
+            # from loaded/created shapes via add_label_history) is preserved, while
+            # a removed predefined label drops from suggestions unless it was used
+            # this session.
+            self._label_dialog.set_predefined_labels(self._config["labels"] or [])
             # The Label List dock is append-only (a shape's label stays after the
             # shape is deleted), so add new predefined labels and leave removed
             # ones until restart.

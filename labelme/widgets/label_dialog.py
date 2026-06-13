@@ -44,6 +44,8 @@ class LabelDialog(QtWidgets.QDialog):
         self._fit_to_content = fit_to_content
         self._sort_labels = sort_labels
         self._flags = flags or {}
+        self._predefined_labels: list[str] = list(labels or [])
+        self._label_history: list[str] = []
 
         self.edit = self._build_label_edit(placeholder=text, has_flags=bool(flags))
         self.edit_group_id = self._build_group_id_edit()
@@ -130,13 +132,28 @@ class LabelDialog(QtWidgets.QDialog):
         return completer
 
     def add_label_history(self, label: str) -> None:
+        if label not in self._label_history:
+            self._label_history.append(label)
         if self.label_list.findItems(label, QtCore.Qt.MatchExactly):
             return
         self.label_list.addItem(label)
         if self._sort_labels:
             self.label_list.sortItems()
 
-    def _on_label_selected(self, item: QtWidgets.QListWidgetItem) -> None:
+    def set_predefined_labels(self, labels: list[str]) -> None:
+        self._predefined_labels = list(labels)
+        merged = list(dict.fromkeys(self._predefined_labels + self._label_history))
+        # Mutate the existing list widget in place so the completer, which is
+        # bound to its model, keeps working without being rebuilt.
+        self.label_list.clear()
+        self.label_list.addItems(merged)
+        if self._sort_labels:
+            self.label_list.sortItems()
+
+    def _on_label_selected(self, item: QtWidgets.QListWidgetItem | None) -> None:
+        # Clearing the list (e.g. set_predefined_labels) fires this with None.
+        if item is None:
+            return
         self.edit.setText(item.text())
 
     def _validate(self) -> None:
