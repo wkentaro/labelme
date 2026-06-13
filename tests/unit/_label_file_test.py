@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import shutil
 from collections.abc import Callable
@@ -8,6 +9,7 @@ from typing import Any
 
 import numpy as np
 import pytest
+from loguru import logger
 
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFile
@@ -140,6 +142,102 @@ def test_read_label_file_raises_read_error_on_malformed(
 
     with pytest.raises(LabelFileReadError, match=error_match):
         read_label_file(filename=str(annotated_dst))
+
+
+@pytest.fixture()
+def expected_image_data(data_path: Path) -> bytes:
+    return read_label_file(
+        filename=str(data_path / "annotated" / "2011_000003.json")
+    ).image_data
+
+
+def test_read_label_file_falls_back_to_basename_for_absolute_path(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+    expected_image_data: bytes,
+) -> None:
+    annotated_raw["imagePath"] = str(annotated_dst.parent / "gone" / "2011_000003.jpg")
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    label_data = read_label_file(filename=str(annotated_dst))
+
+    assert label_data.image_data == expected_image_data
+
+
+def test_read_label_file_falls_back_to_basename_for_stale_relative_path(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+    expected_image_data: bytes,
+) -> None:
+    annotated_raw["imagePath"] = "../old/2011_000003.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    label_data = read_label_file(filename=str(annotated_dst))
+
+    assert label_data.image_data == expected_image_data
+
+
+def test_read_label_file_warns_when_falling_back_to_basename(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+    expected_image_data: bytes,
+) -> None:
+    annotated_raw["imagePath"] = "/nonexistent/2011_000003.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    messages: list[str] = []
+    handler_id = logger.add(messages.append, level="WARNING")
+    try:
+        read_label_file(filename=str(annotated_dst))
+    finally:
+        logger.remove(handler_id)
+
+    assert any("basename" in message for message in messages)
+
+
+def test_read_label_file_raises_naming_both_paths_when_fallback_fails(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_raw["imagePath"] = "/nonexistent/subdir/missing.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    with pytest.raises(
+        LabelFileReadError, match=r"tried.*nonexistent/subdir.*and.*missing\.jpg"
+    ):
+        read_label_file(filename=str(annotated_dst))
+
+
+def test_read_label_file_raises_without_fallback_when_basename_missing(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_dst.parent.joinpath("2011_000003.jpg").unlink()
+    annotated_raw["imagePath"] = "2011_000003.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    with pytest.raises(LabelFileReadError) as excinfo:
+        read_label_file(filename=str(annotated_dst))
+    assert "tried" not in str(excinfo.value)
+
+
+def test_read_label_file_with_embedded_data_skips_disk(
+    monkeypatch: pytest.MonkeyPatch,
+    data_path: Path,
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
+    annotated_raw["imageData"] = base64.b64encode(src.image_data).decode("utf-8")
+    annotated_raw["imagePath"] = "does-not-exist.jpg"
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    def fail(*, filename: str) -> bytes:
+        raise AssertionError("read_image_file should not be called")
+
+    monkeypatch.setattr("labelme._label_file.read_image_file", fail)
+
+    assert read_label_file(filename=str(annotated_dst)).image_data == src.image_data
 
 
 def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
