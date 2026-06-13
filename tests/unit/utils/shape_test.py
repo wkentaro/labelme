@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
+from labelme._label_file import ShapeDict
 from labelme.utils import shape as shape_module
 
 from .util import get_img_and_data
@@ -18,6 +20,21 @@ def test_shapes_to_label() -> None:
         img.shape, data["shapes"], label_name_to_value
     )
     assert cls.shape == img.shape[:2]
+
+
+def test_shapes_to_label_raises_clear_error_for_unknown_label() -> None:
+    shape = ShapeDict(
+        label="car",
+        points=[[0.0, 0.0], [10.0, 0.0], [10.0, 10.0]],
+        shape_type="polygon",
+        flags={},
+        description="",
+        group_id=None,
+        mask=None,
+        other_data={},
+    )
+    with pytest.raises(ValueError, match="shape labels not in the provided labels"):
+        shape_module.shapes_to_label((20, 20), [shape], {"road": 1})
 
 
 def test_shape_to_mask() -> None:
