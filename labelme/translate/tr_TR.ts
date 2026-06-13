@@ -979,5 +979,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>Önceden tanımlı görüntü bayrakları</translation>
+    </message>
 </context>
 </TS>

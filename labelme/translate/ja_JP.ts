@@ -990,5 +990,10 @@ Please select a different model or use AI-Box mode.</source>
         <source>System default</source>
         <translation>システム言語</translation>
     </message>
+    <message>
+        <location filename="../_config/_schema.py" line="0"/>
+        <source>Predefined image flags</source>
+        <translation>定義済み画像フラグ</translation>
+    </message>
 </context>
 </TS>

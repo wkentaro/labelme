@@ -57,6 +57,12 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         kind="str_list",
     ),
     Setting(
+        key_path=("flags",),
+        section="Labels",
+        label=QT_TRANSLATE_NOOP("SettingsDialog", "Predefined image flags"),
+        kind="str_list",
+    ),
+    Setting(
         key_path=("validate_label",),
         section="Labels",
         label=QT_TRANSLATE_NOOP("SettingsDialog", "Label validation"),
