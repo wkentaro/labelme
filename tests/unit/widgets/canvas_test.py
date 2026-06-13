@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import math
 from typing import Final
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
@@ -608,3 +609,48 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
 )
 def test_compute_overscroll_slack(scaled: int, viewport: int, expected: int) -> None:
     assert _compute_overscroll_slack(scaled=scaled, viewport=viewport) == expected
+
+
+def _make_polygon() -> Shape:
+    return Shape(
+        shape_type="polygon",
+        points=np.array([(10, 10), (40, 10), (40, 40), (10, 40)], dtype=np.float64),
+        closed=True,
+    )
+
+
+@pytest.mark.gui
+def test_add_point_to_edge_repaints(
+    canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shape = _make_polygon()
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_edge = 0
+    canvas._prev_move_point = QPointF(25, 10)
+    update = Mock()
+    monkeypatch.setattr(canvas, "update", update)
+
+    n_before = len(shape.points)
+    canvas.add_point_to_edge()
+
+    assert len(shape.points) == n_before + 1
+    update.assert_called_once()  # repaint now, not only on the next mouse move (#890)
+
+
+@pytest.mark.gui
+def test_remove_selected_point_repaints(
+    canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shape = _make_polygon()
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+    update = Mock()
+    monkeypatch.setattr(canvas, "update", update)
+
+    n_before = len(shape.points)
+    canvas.remove_selected_point()
+
+    assert len(shape.points) == n_before - 1
+    update.assert_called_once()  # repaint now, not only on the next mouse move (#890)
