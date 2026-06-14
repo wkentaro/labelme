@@ -2541,7 +2541,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return str(Path(self._image_path).parent) if self._image_path else "."
 
     def remove_selected_point(self) -> None:
-        self._canvas_widgets.canvas.remove_selected_point()
+        if not self._canvas_widgets.canvas.remove_selected_point():
+            return
         if (
             self._canvas_widgets.canvas.hovered_shape
             and len(self._canvas_widgets.canvas.hovered_shape.points) == 0
