@@ -64,6 +64,13 @@ def shapes_to_label(
     shapes: list[ShapeDict],
     label_name_to_value: dict[str, int],
 ) -> tuple[NDArray[np.int32], NDArray[np.int32]]:
+    unknown = {s["label"] for s in shapes} - label_name_to_value.keys()
+    if unknown:
+        raise ValueError(
+            f"shape labels not in the provided labels: {sorted(unknown)!r}; "
+            f"add them so every shape label has a value"
+        )
+
     cls = np.zeros(img_shape[:2], dtype=np.int32)
     ins = np.zeros_like(cls)
     instances = []
@@ -75,13 +82,12 @@ def shapes_to_label(
             group_id = uuid.uuid1()
         shape_type = shape.get("shape_type")
 
-        cls_name = label
-        instance = (cls_name, group_id)
+        instance = (label, group_id)
 
         if instance not in instances:
             instances.append(instance)
         ins_id = instances.index(instance) + 1
-        cls_id = label_name_to_value[cls_name]
+        cls_id = label_name_to_value[label]
 
         mask: NDArray[np.bool_]
         if shape_type == "mask":
