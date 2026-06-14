@@ -30,11 +30,12 @@ jobs:
           fi
           TITLE_ESCAPED=$(printf '%s' "$PR_TITLE" | jq -Rs .)
           # Keep only the "## Summary" body: drop that heading and stop at the
-          # "## Test plan" section (per the PR template). Strip CRLF before awk
-          # so the heading anchors match. Cap well under Discord's 4096 limit.
+          # next heading of any kind, so trailing sections (Note for review,
+          # Test plan, etc.) are dropped. Strip CRLF before awk so the heading
+          # anchors match. Cap well under Discord's 4096 limit.
           BODY_ESCAPED=$(printf '%s' "$PR_BODY" | tr -d '\r' | awk '
-            /^#+ +[Tt]est +[Pp]lan/ { exit }
             /^#+ +[Ss]ummary *$/ { next }
+            /^#+ +/ { exit }
             { print }
           ' | jq -Rs '
             sub("^[[:space:]]+"; "") | sub("[[:space:]]+$"; "")
