@@ -4,63 +4,52 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
         <translation>MI-támogatott annotáció</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Az AI annotációt javasol 'AI-Points' és 'AI-Box' módokban</translation>
+        <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Válassza az 'AI-Points' vagy 'AI-Box' módot az AI-támogatott annotáció engedélyezéséhez</translation>
+        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az AI-támogatott annotáció engedélyezéséhez</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
         <translation>AI prompt</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
         <translation>pl. kutya,macska,madár</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
         <translation>Futtatás</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
         <translation>Pontszám</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>IoU</source>
         <translation>IoU</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI creates annotations from the text prompt</source>
         <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Válassza a 'Polygon', 'Rectangle' vagy 'AI-Points' módot az engedélyezéshez</translation>
+        <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
     </message>
 </context>
 <context>
     <name>BrightnessContrastDialog</name>
     <message>
-        <location filename="../widgets/brightness_contrast_dialog.py" line="0"/>
         <source>Brightness/Contrast</source>
         <translation>Fényerő/Kontraszt</translation>
     </message>
@@ -68,127 +57,102 @@
 <context>
     <name>Canvas</name>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Creating %r</source>
         <translation>%r létrehozása</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ESC to cancel</source>
         <translation>ESC a megszakításhoz</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Enter or Space to finalize</source>
         <translation>Enter vagy Szóköz a befejezéshez</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for line</source>
         <translation>Kattintson a vonal kezdőpontjára</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click end point for line</source>
         <translation>Kattintson a vonal végpontjára</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for linestrip</source>
         <translation>Kattintson a vonallánc kezdőpontjára</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
         <translation>Kattintson a következő pontra vagy Ctrl/Cmd+Kattintás a befejezéshez (vonallánc)</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click center point for circle</source>
         <translation>Kattintson a kör középpontjára</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click point on circumference for circle</source>
         <translation>Kattintson a kör kerületén lévő pontra</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for rectangle</source>
         <translation>Kattintson a téglalap első sarkára</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>Kattintson pont hozzáadásához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
         <translation>Kattintson és húzza a pont mozgatásához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Kattintás a pont törléséhez</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + Click to create point on shape</source>
         <translation>ALT + Kattintás pont létrehozásához az alakzaton</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
         <translation>Kattintson és húzza az alakzat mozgatásához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Jobb gombbal kattintás és húzás az alakzat másolásához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>Kattintson a téglalap ellentétes sarkára (Shift a négyzethez)</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Kattintson pontokra a hozzáadáshoz vagy Shift+Click a kizáráshoz. Ctrl+LeftClick befejezi a létrehozást.</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Kattintson a bbox első sarkára az AI szegmentáláshoz</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner to segment object</source>
         <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for oriented rectangle</source>
         <translation>Kattintson az irányított téglalap első sarkára</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click second corner to set orientation</source>
         <translation>Kattintson a második sarokra az irány beállításához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Kattintson a harmadik sarokra az irányított téglalap bezárásához</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Kattintson és húzza az alakzat elforgatásához</translation>
     </message>
@@ -196,706 +160,568 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Flags</source>
         <translation>Jelzők</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Annotation List</source>
         <translation>Annotációlista</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Válasszon címkét az annotálás megkezdéséhez. Nyomja meg az 'Esc' gombot a kijelölés megszüntetéséhez.</translation>
+        <translation>Válasszon címkét az annotálás megkezdéséhez. Nyomja meg az &apos;Esc&apos; gombot a kijelölés megszüntetéséhez.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Label List</source>
         <translation>Címkelista</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
         <translation>Fájlnév keresése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>File List</source>
         <translation>Fájllista</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Quit</source>
         <translation>&amp;Kilépés</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Quit application</source>
         <translation>Alkalmazás bezárása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
         <translation>&amp;Megnyitás
 </translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open image or label file</source>
         <translation>Kép vagy címke fájl megnyitása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
         <translation>Könyvtár megnyitása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
         <translation>&amp;Következő kép</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
         <translation>Következő megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
         <translation>&amp;Előző kép</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Előző megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
         <translation>&amp;Mentés
 </translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
         <translation>Címkék mentése fájlba</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Save As</source>
         <translation>Mentés &amp;másként</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
         <translation>Címkék mentése másik fájlba</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
         <translation>&amp;Fájl törlése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
         <translation>Jelenlegi címke fájl törlése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
         <translation>&amp;Kimeneti könyvtár módosítása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
         <translation>Az annotációk betöltési/mentési helyének módosítása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save &amp;Automatically</source>
         <translation>&amp;Automatikus mentés</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save automatically</source>
         <translation>Automatikus mentés</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
         <translation>Mentés kép adatokkal</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
         <translation>Kép adatok mentése a címke fájlba</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Close</source>
         <translation>&amp;Bezárás</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Close current file</source>
         <translation>Jelenlegi fájl bezárása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
         <translation>Előző annotáció megtartása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>&quot;Előző annotáció megtartása&quot; mód váltása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Sokszögek rajzolásának megkezdése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
         <translation>Téglalapok rajzolásának megkezdése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
         <translation>Körök rajzolásának megkezdése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
         <translation>Vonalak rajzolásának megkezdése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
         <translation>Pontok rajzolásának megkezdése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Vonallánc rajzolásának megkezdése. Ctrl+Bal klikk befejezi a létrehozást.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Edit Shapes</source>
         <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Move and edit the selected shapes</source>
         <translation>A kijelölt alakzatok mozgatása és szerkesztése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Delete Shapes</source>
         <translation>Alakzatok törlése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Delete the selected shapes</source>
         <translation>A kijelölt alakzatok törlése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Duplicate Shapes</source>
         <translation>Alakzatok duplikálása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected shapes</source>
         <translation>A kijelölt alakzatok másolatának létrehozása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Copy Shapes</source>
         <translation>Alakzatok másolása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Copy selected shapes to clipboard</source>
         <translation>Kijelölt alakzatok másolása a vágólapra</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Paste Shapes</source>
         <translation>Alakzatok beillesztése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Paste copied shapes</source>
         <translation>Másolt alakzatok beillesztése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
         <translation>Utolsó pont visszavonása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
         <translation>Utolsó rajzolt pont visszavonása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
         <translation>Kijelölt pont eltávolítása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
         <translation>Kijelölt pont eltávolítása a sokszögből</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo
 </source>
         <translation>Visszavonás
 </translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Shapes</source>
         <translation>Alakzatok
 &amp;elrejtése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Hide all shapes</source>
         <translation>Összes alakzat elrejtése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Shapes</source>
         <translation>Alakzatok
 &amp;megjelenítése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Show all shapes</source>
         <translation>Összes alakzat megjelenítése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Shapes</source>
         <translation>Alakzatok
 &amp;váltása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Toggle all shapes</source>
         <translation>Összes alakzat váltása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
         <translation>&amp;Oktatóanyag</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
         <translation>Oktatóanyag oldal megjelenítése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom</source>
         <translation>Nagyítás</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
         <translation>Ctrl+Görgő</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;Nagyítás</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
         <translation>Nagyítási szint növelése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Kicsinyítés</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
         <translation>Nagyítási szint csökkentése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
         <translation>&amp;Eredeti méret</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
         <translation>Nagyítás eredeti méretre</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
         <translation>&amp;Ablakhoz igazítás</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
         <translation>A nagyítás követi az ablak méretét</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
         <translation>&amp;Szélességhez igazítás</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
         <translation>A nagyítás követi az ablak szélességét</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
         <translation>&amp;Fényerő/Kontraszt</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
         <translation>Fényerő és kontraszt beállítása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
         <translation>&amp;Címke szerkesztése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected shape</source>
         <translation>A kijelölt alakzat címkéjének módosítása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
         <translation>Rajzolt sokszög kitöltése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
         <translation>Sokszög kitöltése rajzolás közben</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;File</source>
         <translation>&amp;Fájl</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Edit</source>
         <translation>&amp;Szerkesztés</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
         <translation>&amp;Nézet</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Help</source>
         <translation>&amp;Súgó</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s started.</source>
         <translation>%s elindítva.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
         <translation>Érvénytelen címke</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Érvénytelen címke '{}' '{}' validációs típussal</translation>
+        <translation>Érvénytelen címke &apos;{}&apos; &apos;{}&apos; validációs típussal</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
         <translation>Hiba a címke adatok mentésekor</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
         <translation>Hiba a fájl megnyitásakor</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
         <translation>Nincs ilyen fájl: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
         <translation>%s betöltése...</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
         <translation>%s betöltve</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
         <translation>Kép és címke fájlok (%s)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Choose Image or Label file</source>
         <translation>%s - Válasszon képet vagy címke fájlt</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
         <translation>%s - Annotációk mentése/betöltése könyvtárból</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
         <translation>%s . Az annotációk a %s könyvtárban lesznek mentve/betöltve</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Choose File</source>
         <translation>%s - Fájl kiválasztása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
         <translation>Címke fájlok (*%s)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Choose File</source>
         <translation>Fájl kiválasztása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Attention</source>
         <translation>Figyelem</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Mentse az annotációkat a &quot;{}&quot; fájlba bezárás előtt?</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
         <translation>Mentse az annotációkat?</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Könyvtár megnyitása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
         <translation>Konfigurációs Hibák</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
         <translation>Hibák találhatók a konfiguráció betöltése közben. Kérjük, tekintse át az alábbi hibákat, és töltse újra a konfigurációt, vagy hagyja figyelmen kívül a hibás sorokat.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>Elrendezés visszaállítása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Polygon</source>
         <translation>Sokszög</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Rectangle</source>
         <translation>Téglalap</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Circle</source>
         <translation>Kör</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Line</source>
         <translation>Vonal</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Point</source>
         <translation>Pont</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>LineStrip</source>
         <translation>Vonallánc</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Kattintson pontokra az objektum szegmentálásához. Ctrl+LeftClick befejezi a létrehozást.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Draw a bounding box to segment object.</source>
         <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points nem elérhető</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s does not support point prompts.
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nem támogatja a pont alapú promptokat.
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>A fájllista le van tiltva, ha egy címke fájl van megnyitva</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Add Point to Edge</source>
         <translation>Pont hozzáadása az élhez</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Insert a new point at the hovered polygon edge</source>
         <translation>Új pont beszúrása a kijelölt sokszög élre</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Zoom</source>
         <translation>&amp;Előző nagyítás megtartása</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Véglegesen törli ezt a címke fájlt? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Véglegesen törli a {} alakzatot? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
         <translation>Kép nagyítása vagy kicsinyítése. A {} és {} billentyűparancsok a vásznon is működnek.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Allowed formats: {formats}</source>
         <translation>Megengedett formátumok: {formats}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>The selected label file could not be opened: {path}</source>
         <translation>A kiválasztott címkefájl nem nyitható meg: {path}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>The selected image file could not be opened: {path}</source>
         <translation>A kiválasztott képfájl nem nyitható meg: {path}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Failed to load: {path}</source>
         <translation>A betöltés sikertelen: {path}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Oriented Rectangle</source>
         <translation>Irányított téglalap</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing oriented rectangles</source>
         <translation>Irányított téglalapok rajzolásának megkezdése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI inference produced no new annotation.</source>
         <translation>Az MI-következtetés nem hozott létre új annotációt.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>Az alakzatnak nincs területe; nem jött létre semmi.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Settings…</source>
         <translation>Beállítások…</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Edit settings</source>
         <translation>Beállítások szerkesztése</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Settings are managed via --config for this session</source>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Error</source>
         <translation>Konfigurációs hiba</translation>
     </message>
@@ -903,82 +729,66 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>General</source>
         <translation>Általános</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Labels</source>
         <translation>Címkék</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Show label popup on new shape</source>
         <translation>Címkefelugró ablak megjelenítése új alakzatnál</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Predefined labels</source>
         <translation>Előre definiált címkék</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Label validation</source>
         <translation>Címkeellenőrzés</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Settings</source>
         <translation>Beállítások</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Open config file as text…</source>
         <translation>Konfigurációs fájl megnyitása szövegként…</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Edits made in the text file apply after restart</source>
         <translation>A szövegfájlban végzett módosítások újraindítás után lépnek érvénybe</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Close</source>
         <translation>Bezárás</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>(none)</source>
         <translation>(nincs)</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>one item per line</source>
         <translation>soronként egy elem</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Configuration Error</source>
         <translation>Konfigurációs hiba</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
         <translation>Az előre definiált címkék nem lehetnek üresek, amíg a címkeellenőrzés „exact” értékre van állítva. Először kapcsolja ki az „exact” ellenőrzést.</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Language</source>
         <translation>Nyelv</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Takes effect after restart.</source>
         <translation>Az újraindítás után lép érvénybe.</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>System default</source>
         <translation>Rendszer alapértelmezése</translation>
     </message>
