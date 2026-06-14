@@ -4,9 +4,9 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PySide6 import QtWidgets
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -52,7 +52,7 @@ def _delete_selected_shape(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.Yes,
+        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
     )
     win.delete_selected_shapes()
     qtbot.wait(50)
@@ -219,12 +219,12 @@ def test_right_drag_copy_here_duplicates_shape(
         copy_here_action.trigger()
         return copy_here_action
 
-    monkeypatch.setattr(canvas.menus[1], "exec_", trigger_copy_here)
+    monkeypatch.setattr(canvas.menus[1], "exec", trigger_copy_here)
 
     drag_canvas(
         qtbot=qtbot,
         canvas=canvas,
-        button=Qt.RightButton,
+        button=Qt.MouseButton.RightButton,
         start=start_widget,
         end=end_widget,
     )

@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Final
 
 import pytest
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -53,7 +53,7 @@ def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
     drag_canvas(
         qtbot=qtbot,
         canvas=canvas,
-        button=Qt.MiddleButton,
+        button=Qt.MouseButton.MiddleButton,
         start=start,
         end=end,
     )
@@ -92,7 +92,7 @@ def test_middle_drag_no_pan_when_image_fits_viewport(
         drag_canvas(
             qtbot=qtbot,
             canvas=canvas,
-            button=Qt.MiddleButton,
+            button=Qt.MouseButton.MiddleButton,
             start=start,
             end=end,
         )

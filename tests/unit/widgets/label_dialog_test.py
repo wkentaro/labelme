@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import cast
-
 import pytest
-from PyQt5 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme.widgets.label_dialog import LabelDialog
@@ -11,10 +8,7 @@ from labelme.widgets.label_dialog import LabelDialog
 
 def _labels(dialog: LabelDialog) -> set[str]:
     label_list = dialog.label_list
-    return {
-        cast(QtWidgets.QListWidgetItem, label_list.item(i)).text()
-        for i in range(label_list.count())
-    }
+    return {label_list.item(i).text() for i in range(label_list.count())}
 
 
 @pytest.fixture

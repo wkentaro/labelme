@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -50,9 +50,9 @@ def test_auto_save_on_shape_move(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     original_center = QPointF(_shape_bounds(shape=canvas.selected_shapes[0]).center())
 
-    qtbot.keyPress(canvas, Qt.Key_Right)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.wait(50)
-    qtbot.keyRelease(canvas, Qt.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
     qtbot.wait(50)
 
     new_center = _shape_bounds(shape=canvas.selected_shapes[0]).center()

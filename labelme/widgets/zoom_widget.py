@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Final
 
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtWidgets
 
 
 class ZoomWidget(QtWidgets.QSpinBox):
@@ -15,8 +15,8 @@ class ZoomWidget(QtWidgets.QSpinBox):
         self.setRange(1, self.PERCENT_MAX)
         self.setValue(100)
         self.setSuffix(self.PERCENT_SUFFIX)
-        self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
         tooltip = "Zoom Level"
         self.setToolTip(tooltip)
         self.setStatusTip(tooltip)

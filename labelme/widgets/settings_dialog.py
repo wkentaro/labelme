@@ -4,9 +4,9 @@ import typing
 from collections.abc import Callable
 from collections.abc import Sequence
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 from labelme import _locale
 from labelme._config import _schema as schema
@@ -15,7 +15,7 @@ ApplySetting = Callable[[tuple[str, ...], object], bool]
 
 
 class _PlainTextEdit(QtWidgets.QPlainTextEdit):
-    editing_finished = QtCore.pyqtSignal()
+    editing_finished = QtCore.Signal()
 
     _committed_text: str = ""
 
@@ -103,17 +103,20 @@ class SettingsDialog(QtWidgets.QDialog):
         active = self._tabs.currentIndex()
         for index in range(self._tabs.count()):
             page = self._tabs.widget(index)
+            assert page is not None
             policy = page.sizePolicy()
             policy.setVerticalPolicy(
-                QtWidgets.QSizePolicy.Preferred
+                QtWidgets.QSizePolicy.Policy.Preferred
                 if index == active
-                else QtWidgets.QSizePolicy.Ignored
+                else QtWidgets.QSizePolicy.Policy.Ignored
             )
             page.setSizePolicy(policy)
         # Release the previous fixed size (setFixedSize pinned both min and max) so
         # adjustSize can shrink or grow to the active tab before we re-pin it.
+        # PySide6 does not export QWIDGETSIZE_MAX; 16777215 (0xFFFFFF) is its value.
+        QWIDGETSIZE_MAX: typing.Final = 16777215
         self.setMinimumSize(0, 0)
-        self.setMaximumSize(QtWidgets.QWIDGETSIZE_MAX, QtWidgets.QWIDGETSIZE_MAX)
+        self.setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX)
         self.adjustSize()
         self.setFixedSize(max(640, self.width()), self.height())
 
@@ -143,7 +146,9 @@ class SettingsDialog(QtWidgets.QDialog):
                 # A note sits below the control; top-align the label so it pairs with
                 # the control rather than centering against the control+note block.
                 if setting.note:
-                    row_layout.addWidget(label, stretch=1, alignment=QtCore.Qt.AlignTop)
+                    row_layout.addWidget(
+                        label, stretch=1, alignment=QtCore.Qt.AlignmentFlag.AlignTop
+                    )
                 else:
                     row_layout.addWidget(label, stretch=1)
             row_layout.addWidget(self._with_note(editor=editor, setting=setting))
@@ -167,7 +172,8 @@ class SettingsDialog(QtWidgets.QDialog):
         # as a disabled control and carry the platform's washed-out gray.
         palette = note.palette()
         palette.setColor(
-            QtGui.QPalette.WindowText, palette.color(QtGui.QPalette.PlaceholderText)
+            QtGui.QPalette.ColorRole.WindowText,
+            palette.color(QtGui.QPalette.ColorRole.PlaceholderText),
         )
         note.setPalette(palette)
         layout.addWidget(note)

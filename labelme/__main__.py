@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import AnyStr
 
 from loguru import logger
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
@@ -330,7 +330,7 @@ def main() -> None:
     with contextlib.redirect_stderr(new_target=_LoggerIO()):
         win.show()
         win.raise_()
-        sys.exit(app.exec_())
+        sys.exit(app.exec())
 
 
 # this main block is required to generate executable by pyinstaller

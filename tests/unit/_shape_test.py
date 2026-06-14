@@ -65,3 +65,20 @@ def test_nearest_vertex_index_returns_none_for_mask() -> None:
             )
             is None
         )
+
+
+def test_nearest_vertex_index_returns_none_for_point() -> None:
+    # A point shape's single point is the shape itself, not a draggable vertex;
+    # it is selected and moved as a whole, so it exposes no vertex to hit.
+    shape = Shape(
+        shape_type="point",
+        points=np.array([(5.0, 5.0)], dtype=np.float64),
+        closed=True,
+    )
+
+    assert (
+        _shape.nearest_vertex_index(
+            shape=shape, point=shape.points[0], scale=1.0, epsilon=10.0
+        )
+        is None
+    )

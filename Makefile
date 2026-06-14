@@ -18,7 +18,7 @@ help:
 setup:  # Setup the development environment
 	$(call exec,uv sync)
 
-lint: update_translate  # Lint code
+lint:  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)

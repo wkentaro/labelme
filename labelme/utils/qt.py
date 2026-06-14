@@ -8,9 +8,9 @@ from typing import Final
 
 import numpy as np
 import numpy.typing as npt
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 here = Path(__file__).resolve().parent
 
@@ -46,13 +46,13 @@ def new_action(
     checkable: bool = False,
     enabled: bool = True,
     checked: bool = False,
-) -> QtWidgets.QAction:
-    action = QtWidgets.QAction(text, parent)
+) -> QtGui.QAction:
+    action = QtGui.QAction(text, parent)
     if icon is not None:
         action.setIconText(text.replace(" ", "\n"))
         action.setIcon(new_icon(icon))
     if isinstance(shortcut, list | tuple):
-        action.setShortcuts(shortcut)
+        action.setShortcuts([QtGui.QKeySequence(s) for s in shortcut])
     elif shortcut is not None:
         action.setShortcut(shortcut)
     if tip is not None:
@@ -69,7 +69,7 @@ def new_action(
 
 def add_actions(
     widget: QtWidgets.QMenu | QtWidgets.QToolBar,
-    actions: Sequence[QtWidgets.QAction | QtWidgets.QMenu | None],
+    actions: Sequence[QtGui.QAction | QtWidgets.QMenu | None],
 ) -> None:
     for entry in actions:
         if entry is None:
@@ -81,8 +81,8 @@ def add_actions(
         widget.addAction(entry)
 
 
-def label_validator() -> QtGui.QRegExpValidator:
-    return QtGui.QRegExpValidator(QtCore.QRegExp(r"^[^ \t].+"), None)
+def label_validator() -> QtGui.QRegularExpressionValidator:
+    return QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"^[^ \t].+"))
 
 
 def distance(p: QtCore.QPointF) -> float:

@@ -4,10 +4,10 @@ import typing
 from collections.abc import Callable
 
 from loguru import logger
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 
 from labelme._automation import AiOutputFormat
 
@@ -15,7 +15,7 @@ from ._info_button import InfoButton
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
-    hover_highlight_requested = QtCore.pyqtSignal(bool)
+    hover_highlight_requested = QtCore.Signal(bool)
 
     _available_models: list[tuple[str, str]] = [
         ("efficientsam:10m", "EfficientSam (speed)"),
@@ -124,9 +124,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             item = model.item(i)
             assert item is not None
             if model_id in disabled_models:
-                item.setFlags(item.flags() & ~Qt.ItemIsEnabled)
+                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEnabled)
             else:
-                item.setFlags(item.flags() | Qt.ItemIsEnabled)
+                item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEnabled)
 
     def setEnabled(self, a0: bool) -> None:
         self._body.setEnabled(a0)
@@ -134,7 +134,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
         if a0 in (self, self._body) and not self._body.isEnabled():
-            if a1.type() == QtCore.QEvent.Enter:
+            if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
@@ -144,6 +144,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
                     self,
                 )
                 self.hover_highlight_requested.emit(True)
-            elif a1.type() == QtCore.QEvent.Leave:
+            elif a1.type() == QtCore.QEvent.Type.Leave:
                 self.hover_highlight_requested.emit(False)
         return super().eventFilter(a0, a1)

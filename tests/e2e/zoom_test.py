@@ -4,10 +4,10 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5 import QtGui
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import Qt
+from PySide6 import QtGui
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -85,19 +85,18 @@ def test_zoom_to_original(
 def _make_wheel_event(
     pos: QPointF,
     angle_delta: QPoint,
-    modifiers: Qt.KeyboardModifiers,
+    modifiers: Qt.KeyboardModifier,
 ) -> QtGui.QWheelEvent:
-    # PyQt5's QWheelEvent has overlapping qt4 and modern overloads; the
-    # all-positional 8-arg form is the only one that disambiguates without
-    # forcing a particular `KeyboardModifier`/`KeyboardModifiers` type.
+    # PySide6's QWheelEvent constructor takes positional args;
+    # the 8-arg form matches the modern Qt6 signature.
     return QtGui.QWheelEvent(
         pos,
         pos,
         QPoint(0, 0),
         angle_delta,
-        Qt.NoButton,
+        Qt.MouseButton.NoButton,
         modifiers,
-        Qt.NoScrollPhase,
+        Qt.ScrollPhase.NoScrollPhase,
         False,
     )
 
@@ -107,20 +106,24 @@ def _make_wheel_event(
     ("modifiers", "angle_delta", "signal_attr", "expected_orientation"),
     [
         pytest.param(
-            Qt.ControlModifier, QPoint(0, 120), "zoom_request", None, id="ctrl_zoom"
+            Qt.KeyboardModifier.ControlModifier,
+            QPoint(0, 120),
+            "zoom_request",
+            None,
+            id="ctrl_zoom",
         ),
         pytest.param(
-            Qt.NoModifier,
+            Qt.KeyboardModifier.NoModifier,
             QPoint(0, 120),
             "scroll_request",
-            Qt.Vertical,
+            Qt.Orientation.Vertical,
             id="plain_scroll",
         ),
         pytest.param(
-            Qt.ShiftModifier,
+            Qt.KeyboardModifier.ShiftModifier,
             QPoint(0, 120),
             "scroll_request",
-            Qt.Horizontal,
+            Qt.Orientation.Horizontal,
             id="shift_horizontal_scroll",
         ),
     ],
@@ -129,7 +132,7 @@ def test_canvas_wheel_event_dispatches_signal(
     qtbot: QtBot,
     _win: MainWindow,
     pause: bool,
-    modifiers: Qt.KeyboardModifiers,
+    modifiers: Qt.KeyboardModifier,
     angle_delta: QPoint,
     signal_attr: str,
     expected_orientation: Qt.Orientation | None,

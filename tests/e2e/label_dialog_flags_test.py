@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QCheckBox
 from pytestqt.qtbot import QtBot
 
 from labelme.widgets.label_dialog import LabelDialog
@@ -45,7 +45,7 @@ def _enter_label(
     qtbot.wait(100)
     for flag in flags:
         _check_flag(label_dialog=label_dialog, name=flag)
-    qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+    qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
 
 @pytest.mark.gui

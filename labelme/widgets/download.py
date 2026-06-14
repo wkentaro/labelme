@@ -5,11 +5,11 @@ from typing import Final
 import osam
 import osam.types
 from loguru import logger
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QThread
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QProgressDialog
-from PyQt5.QtWidgets import QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtCore import QThread
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QProgressDialog
+from PySide6.QtWidgets import QWidget
 
 
 class _Cancelled(Exception):
@@ -19,9 +19,9 @@ class _Cancelled(Exception):
 class _DownloadThread(QThread):
     UNKNOWN_SIZE: Final = -1
 
-    progress = pyqtSignal(int, int, str, int, int)
-    succeeded = pyqtSignal()
-    error = pyqtSignal(Exception)
+    progress = Signal(int, int, str, int, int)
+    succeeded = Signal()
+    error = Signal(Exception)
 
     def __init__(self, model_type: type[osam.types.Model], parent: QWidget) -> None:
         super().__init__(parent)
@@ -88,7 +88,7 @@ def download_ai_model(model_name: str, parent: QWidget) -> bool:
         0,
         parent,
     )
-    dialog.setWindowModality(Qt.WindowModal)
+    dialog.setWindowModality(Qt.WindowModality.WindowModal)
     dialog.setMinimumDuration(0)
     dialog.setMinimumWidth(400)
     dialog.setAutoClose(False)
@@ -139,7 +139,7 @@ def download_ai_model(model_name: str, parent: QWidget) -> bool:
 
     dialog.show()
     thread.start()
-    dialog.exec_()
+    dialog.exec()
 
     thread.progress.disconnect(_on_progress)
     thread.succeeded.disconnect(_on_succeeded)

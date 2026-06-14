@@ -5,8 +5,8 @@ from typing import Final
 
 import numpy as np
 import pytest
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import Qt
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -90,7 +90,7 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     drag_canvas(
         qtbot=qtbot,
         canvas=canvas,
-        button=Qt.LeftButton,
+        button=Qt.MouseButton.LeftButton,
         start=handle_widget,
         end=target_widget,
     )
@@ -150,7 +150,7 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     drag_canvas(
         qtbot=qtbot,
         canvas=canvas,
-        button=Qt.LeftButton,
+        button=Qt.MouseButton.LeftButton,
         start=start_widget,
         end=end_widget,
     )
@@ -216,8 +216,8 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=vertex_widget)
     qtbot.mouseClick(
         canvas,
-        Qt.LeftButton,
-        modifier=Qt.AltModifier | Qt.ShiftModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier,
         pos=vertex_widget,
     )
     qtbot.wait(50)

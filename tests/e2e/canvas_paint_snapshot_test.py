@@ -5,15 +5,15 @@ from typing import Final
 
 import numpy as np
 import pytest
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import QRect
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QImage
-from PyQt5.QtGui import QPainter
-from PyQt5.QtGui import QRegion
-from PyQt5.QtWidgets import QWidget
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import QRect
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
+from PySide6.QtGui import QImage
+from PySide6.QtGui import QPainter
+from PySide6.QtGui import QRegion
+from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -52,7 +52,7 @@ def _pin_canvas_for_snapshot(qtbot: QtBot, canvas: Canvas) -> None:
 
 
 def _render_canvas_offscreen(canvas: Canvas) -> QImage:
-    image = QImage(_RENDER_WIDTH, _RENDER_HEIGHT, QImage.Format_ARGB32)
+    image = QImage(_RENDER_WIDTH, _RENDER_HEIGHT, QImage.Format.Format_ARGB32)
     image.fill(_BACKGROUND_COLOR)
     painter = QPainter(image)
     try:
@@ -62,7 +62,7 @@ def _render_canvas_offscreen(canvas: Canvas) -> QImage:
             painter,
             QPoint(0, 0),
             QRegion(QRect(0, 0, _RENDER_WIDTH, _RENDER_HEIGHT)),
-            QWidget.DrawChildren,
+            QWidget.RenderFlag.DrawChildren,
         )
     finally:
         painter.end()
@@ -70,12 +70,11 @@ def _render_canvas_offscreen(canvas: Canvas) -> QImage:
 
 
 def _qimage_to_numpy(image: QImage) -> np.ndarray:
-    assert image.format() == QImage.Format_ARGB32
+    assert image.format() == QImage.Format.Format_ARGB32
     width = image.width()
     height = image.height()
     bytes_per_line = image.bytesPerLine()
-    ptr = image.bits()
-    raw_bytes = ptr.asstring(bytes_per_line * height)
+    raw_bytes = bytes(image.bits())
     arr = np.frombuffer(raw_bytes, dtype=np.uint8).reshape(
         (height, bytes_per_line // 4, 4)
     )
@@ -96,7 +95,9 @@ def _assert_matches_snapshot(actual: QImage, snapshot_path: Path) -> None:
             "Run with --update-snapshots to generate it."
         )
     actual_arr = _qimage_to_numpy(actual)
-    snapshot_qimage = QImage(str(snapshot_path)).convertToFormat(QImage.Format_ARGB32)
+    snapshot_qimage = QImage(str(snapshot_path)).convertToFormat(
+        QImage.Format.Format_ARGB32
+    )
     assert not snapshot_qimage.isNull(), f"Failed to load snapshot PNG: {snapshot_path}"
     snapshot_arr = _qimage_to_numpy(snapshot_qimage)
     assert actual_arr.shape == snapshot_arr.shape, (
@@ -226,7 +227,7 @@ def test_snapshot_polygon_mid_draw(
     )
 
     # Cancel the in-progress shape; without this close_or_pause triggers a dialog.
-    qtbot.keyPress(canvas, Qt.Key_Escape)
+    qtbot.keyPress(canvas, Qt.Key.Key_Escape)
     qtbot.wait(_MODE_SWITCH_SETTLE_MS)
     assert canvas._current is None
 

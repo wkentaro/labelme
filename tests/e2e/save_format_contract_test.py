@@ -7,7 +7,7 @@ from typing import Final
 
 import numpy as np
 import pytest
-from PyQt5.QtCore import QTimer
+from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 from labelme import utils

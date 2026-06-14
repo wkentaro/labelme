@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
-from PyQt5 import QtWidgets
+from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow

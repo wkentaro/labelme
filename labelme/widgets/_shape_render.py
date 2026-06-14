@@ -8,8 +8,8 @@ from typing import Literal
 import numpy as np
 import numpy.typing as npt
 import skimage.measure
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PySide6 import QtCore
+from PySide6 import QtGui
 
 from labelme import utils
 from labelme._shape import Shape
@@ -373,7 +373,7 @@ def is_hit_by_point(
     if shape.shape_type == "point":
         if len(shape.points) == 0:
             return False
-        return bool(np.linalg.norm(point - shape.points[0]) <= point_size / 2)
+        return bool(np.linalg.norm((point - shape.points[0]) * scale) <= point_size / 2)
     if shape.mask is not None:
         raw_y = int(round(float(point[1]) - float(shape.points[0][1])))
         raw_x = int(round(float(point[0]) - float(shape.points[0][0])))

@@ -13,13 +13,13 @@ from typing import cast
 
 import numpy as np
 from loguru import logger
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import QRectF
-from PyQt5.QtCore import Qt
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import QRectF
+from PySide6.QtCore import Qt
 
 import labelme.utils
 from labelme import _automation
@@ -96,11 +96,11 @@ def _shape_to_draft(shape: Shape) -> _DraftShape:
     )
 
 
-CURSOR_DEFAULT = Qt.ArrowCursor
-CURSOR_POINT = Qt.PointingHandCursor
-CURSOR_DRAW = Qt.CrossCursor
-CURSOR_MOVE = Qt.ClosedHandCursor
-CURSOR_GRAB = Qt.OpenHandCursor
+CURSOR_DEFAULT = Qt.CursorShape.ArrowCursor
+CURSOR_POINT = Qt.CursorShape.PointingHandCursor
+CURSOR_DRAW = Qt.CursorShape.CrossCursor
+CURSOR_MOVE = Qt.CursorShape.ClosedHandCursor
+CURSOR_GRAB = Qt.CursorShape.OpenHandCursor
 
 MOVE_SPEED: float = 5.0
 
@@ -170,19 +170,19 @@ class Canvas(QtWidgets.QWidget):
     _last_hovered_edge: int | None
     _hovered_rotation: int | None
 
-    zoom_request = QtCore.pyqtSignal(int, QPointF)
-    scroll_request = QtCore.pyqtSignal(int, int)
-    pan_request = QtCore.pyqtSignal(QPoint)
-    new_shape = QtCore.pyqtSignal()
-    inference_produced_no_shapes = QtCore.pyqtSignal()
-    degenerate_shape_rejected = QtCore.pyqtSignal()
-    selection_changed = QtCore.pyqtSignal(list)
-    shape_moved = QtCore.pyqtSignal()
-    drawing_polygon = QtCore.pyqtSignal(bool)
-    vertex_selected = QtCore.pyqtSignal(bool)
-    edge_selected = QtCore.pyqtSignal(bool)
-    mouse_moved = QtCore.pyqtSignal(QPointF)
-    status_updated = QtCore.pyqtSignal(str)
+    zoom_request = QtCore.Signal(int, QPointF)
+    scroll_request = QtCore.Signal(int, Qt.Orientation)
+    pan_request = QtCore.Signal(QPoint)
+    new_shape = QtCore.Signal()
+    inference_produced_no_shapes = QtCore.Signal()
+    degenerate_shape_rejected = QtCore.Signal()
+    selection_changed = QtCore.Signal(list)
+    shape_moved = QtCore.Signal()
+    drawing_polygon = QtCore.Signal(bool)
+    vertex_selected = QtCore.Signal(bool)
+    edge_selected = QtCore.Signal(bool)
+    mouse_moved = QtCore.Signal(QPointF)
+    status_updated = QtCore.Signal(str)
 
     mode: _CanvasMode = _CanvasMode.EDIT
 
@@ -264,7 +264,7 @@ class Canvas(QtWidgets.QWidget):
         # 1: right-click with selection and dragging of shapes
         self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
         self.setMouseTracking(True)
-        self.setFocusPolicy(Qt.WheelFocus)
+        self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
     def set_fill_drawing(self, value: bool) -> None:
         self._fill_drawing = value
@@ -564,7 +564,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         try:
-            pos = self._transform_point_widget_to_image(a0.localPos())
+            pos = self._transform_point_widget_to_image(a0.position())
         except AttributeError:
             return
         self.mouse_moved.emit(pos)
@@ -579,10 +579,10 @@ class Canvas(QtWidgets.QWidget):
             self._track_drawing_cursor(pos=pos, event=event)
             return
         buttons = event.buttons()
-        if buttons & Qt.RightButton:
+        if buttons & Qt.MouseButton.RightButton:
             self._continue_right_button_drag(pos=pos)
             return
-        if buttons & Qt.LeftButton:
+        if buttons & Qt.MouseButton.LeftButton:
             self._continue_left_button_drag(pos=pos, event=event)
             return
         self._refresh_hover_state(pos=pos)
@@ -592,7 +592,7 @@ class Canvas(QtWidgets.QWidget):
         # Use screen coordinates so the anchor does not drift when our own
         # pan emit shifts the canvas widget under the scroll area — a
         # widget-local frame would oscillate and cause juggling.
-        cursor: QPointF = QPointF(self.mapToGlobal(event.pos()))
+        cursor: QPointF = QPointF(self.mapToGlobal(event.position().toPoint()))
         step: QPointF = cursor - self._pan_anchor
         self._pan_anchor = cursor
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
@@ -608,7 +608,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()
             self._update_status()
             return
-        is_shift_pressed = bool(event.modifiers() & Qt.ShiftModifier)
+        is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         pos = self._project_drawing_pos_into_image(pos=pos)
         self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
         assert len(self._line.points) == len(self._line.point_labels)
@@ -723,7 +723,7 @@ class Canvas(QtWidgets.QWidget):
     def _continue_left_button_drag(
         self, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
-        is_shift_pressed = bool(event.modifiers() & Qt.ShiftModifier)
+        is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         if self._is_vertex_selected():
             self._drag_hovered_vertex(pos=pos, is_shift_pressed=is_shift_pressed)
             return
@@ -903,23 +903,26 @@ class Canvas(QtWidgets.QWidget):
         self._is_moving_shape = True  # Save changes
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pos: QPointF = self._transform_point_widget_to_image(a0.localPos())
+        pos: QPointF = self._transform_point_widget_to_image(a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status()
 
     def _dispatch_pointer_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         button = event.button()
-        if button == Qt.LeftButton:
+        if button == Qt.MouseButton.LeftButton:
             self._press_left(pos=pos, event=event)
             return
-        if button == Qt.RightButton and self.mode == _CanvasMode.EDIT:
+        if button == Qt.MouseButton.RightButton and self.mode == _CanvasMode.EDIT:
             self._press_right(pos=pos, event=event)
             return
-        if button == Qt.MiddleButton and self._is_image_overflowing_viewport():
+        if (
+            button == Qt.MouseButton.MiddleButton
+            and self._is_image_overflowing_viewport()
+        ):
             self._begin_pan(event=event)
 
     def _press_left(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        is_shift_pressed = bool(event.modifiers() & Qt.ShiftModifier)
+        is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         if self.mode == _CanvasMode.CREATE:
             self._press_left_while_drawing(
                 pos=pos, event=event, is_shift_pressed=is_shift_pressed
@@ -970,7 +973,7 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, points=(current.points[-1],) + self._line.points[1:]
             )
-            if int(modifiers) == Qt.ControlModifier:
+            if modifiers == Qt.KeyboardModifier.ControlModifier:
                 self._finalize()
         elif mode == "ai_points_to_shape":
             current = current.add_point(
@@ -982,7 +985,7 @@ class Canvas(QtWidgets.QWidget):
                 points=(current.points[-1],) + self._line.points[1:],
                 point_labels=(current.point_labels[-1],) + self._line.point_labels[1:],
             )
-            if modifiers & Qt.ControlModifier:
+            if modifiers & Qt.KeyboardModifier.ControlModifier:
                 self._finalize()
 
     def _lock_oriented_rectangle_first_edge(self, current: _DraftShape) -> None:
@@ -1028,7 +1031,10 @@ class Canvas(QtWidgets.QWidget):
         if mode == "point":
             self._finalize()
             return
-        if mode == "ai_points_to_shape" and event.modifiers() & Qt.ControlModifier:
+        if (
+            mode == "ai_points_to_shape"
+            and event.modifiers() & Qt.KeyboardModifier.ControlModifier
+        ):
             self._finalize()
             return
 
@@ -1049,17 +1055,17 @@ class Canvas(QtWidgets.QWidget):
             self._capture_rotation_anchors()
         self._select_shape_point(
             pos,
-            multiple_selection_mode=int(modifiers) == Qt.ControlModifier,
+            multiple_selection_mode=modifiers == Qt.KeyboardModifier.ControlModifier,
         )
         self._prev_point = pos
         self.update()
 
-    def _maybe_modify_polygon_topology(self, modifiers: Qt.KeyboardModifiers) -> None:
-        if self._is_edge_selected() and modifiers == Qt.AltModifier:
+    def _maybe_modify_polygon_topology(self, modifiers: Qt.KeyboardModifier) -> None:
+        if self._is_edge_selected() and modifiers == Qt.KeyboardModifier.AltModifier:
             self.add_point_to_edge()
             return
         if self._is_vertex_selected() and modifiers == (
-            Qt.AltModifier | Qt.ShiftModifier
+            Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier
         ):
             self.remove_selected_point()
 
@@ -1069,14 +1075,15 @@ class Canvas(QtWidgets.QWidget):
         ):
             self._select_shape_point(
                 pos,
-                multiple_selection_mode=int(event.modifiers()) == Qt.ControlModifier,
+                multiple_selection_mode=event.modifiers()
+                == Qt.KeyboardModifier.ControlModifier,
             )
             self.update()
         self._prev_point = pos
 
     def _begin_pan(self, event: QtGui.QMouseEvent) -> None:
         self._apply_cursor(CURSOR_GRAB)
-        self._pan_anchor = QPointF(self.mapToGlobal(event.pos()))
+        self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         self._dispatch_pointer_release(event=a0)
@@ -1085,19 +1092,19 @@ class Canvas(QtWidgets.QWidget):
 
     def _dispatch_pointer_release(self, event: QtGui.QMouseEvent) -> None:
         button = event.button()
-        if button == Qt.RightButton:
+        if button == Qt.MouseButton.RightButton:
             self._release_right(event=event)
             return
-        if button == Qt.LeftButton:
+        if button == Qt.MouseButton.LeftButton:
             self._release_left()
             return
-        if button == Qt.MiddleButton:
+        if button == Qt.MouseButton.MiddleButton:
             self._finish_pan()
 
     def _release_right(self, event: QtGui.QMouseEvent) -> None:
         menu = self.menus[len(self._selected_shapes_copy) > 0]
         self._release_cursor()
-        if menu.exec_(self.mapToGlobal(event.pos())):  # type: ignore
+        if menu.exec(self.mapToGlobal(event.position().toPoint())):  # type: ignore
             return
         if not self._selected_shapes_copy:
             return
@@ -1379,9 +1386,8 @@ class Canvas(QtWidgets.QWidget):
 
     def _setup_world_transform(self, painter: QtGui.QPainter) -> None:
         for hint in (
-            QtGui.QPainter.Antialiasing,
-            QtGui.QPainter.HighQualityAntialiasing,
-            QtGui.QPainter.SmoothPixmapTransform,
+            QtGui.QPainter.RenderHint.Antialiasing,
+            QtGui.QPainter.RenderHint.SmoothPixmapTransform,
         ):
             painter.setRenderHint(hint)
         painter.translate(self._compute_image_origin_offset() * self.scale)
@@ -1599,21 +1605,21 @@ class Canvas(QtWidgets.QWidget):
         return self._compute_canvas_size()
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
-        mods: Qt.KeyboardModifiers = a0.modifiers()
+        mods: Qt.KeyboardModifier = a0.modifiers()
         delta: QPoint = a0.angleDelta()
-        if Qt.ControlModifier == int(mods):
+        if mods == Qt.KeyboardModifier.ControlModifier:
             # with Ctrl/Command key
             # zoom
-            self.zoom_request.emit(delta.y(), a0.posF())
-        elif int(mods) == int(Qt.ShiftModifier) and delta.x() == 0:
+            self.zoom_request.emit(delta.y(), a0.position())
+        elif mods == Qt.KeyboardModifier.ShiftModifier and delta.x() == 0:
             # Shift+wheel scrolls horizontally. macOS swaps the axis for us,
             # but Linux/Windows deliver the delta on y and expect the app to
             # remap it.
-            self.scroll_request.emit(delta.y(), Qt.Horizontal)
+            self.scroll_request.emit(delta.y(), Qt.Orientation.Horizontal)
         else:
             # scroll
-            self.scroll_request.emit(delta.x(), Qt.Horizontal)
-            self.scroll_request.emit(delta.y(), Qt.Vertical)
+            self.scroll_request.emit(delta.x(), Qt.Orientation.Horizontal)
+            self.scroll_request.emit(delta.y(), Qt.Orientation.Vertical)
         a0.accept()
 
     def _move_by_keyboard(self, offset: QPointF) -> None:
@@ -1627,29 +1633,31 @@ class Canvas(QtWidgets.QWidget):
         modifiers = a0.modifiers()
         key = a0.key()
         if self.mode == _CanvasMode.CREATE:
-            if key == Qt.Key_Escape and self._current is not None:
+            if key == Qt.Key.Key_Escape and self._current is not None:
                 self._cancel_current_shape()
-            elif key in (Qt.Key_Return, Qt.Key_Space) and self._can_close_shape():
+            elif (
+                key in (Qt.Key.Key_Return, Qt.Key.Key_Space) and self._can_close_shape()
+            ):
                 self._finalize()
-            elif modifiers == Qt.AltModifier:
+            elif modifiers == Qt.KeyboardModifier.AltModifier:
                 self._snapping = False
         elif self.mode == _CanvasMode.EDIT:
-            if key == Qt.Key_Up:
+            if key == Qt.Key.Key_Up:
                 self._move_by_keyboard(QPointF(0.0, -MOVE_SPEED))
-            elif key == Qt.Key_Down:
+            elif key == Qt.Key.Key_Down:
                 self._move_by_keyboard(QPointF(0.0, MOVE_SPEED))
-            elif key == Qt.Key_Left:
+            elif key == Qt.Key.Key_Left:
                 self._move_by_keyboard(QPointF(-MOVE_SPEED, 0.0))
-            elif key == Qt.Key_Right:
+            elif key == Qt.Key.Key_Right:
                 self._move_by_keyboard(QPointF(MOVE_SPEED, 0.0))
-            elif a0.matches(QtGui.QKeySequence.SelectAll):
+            elif a0.matches(QtGui.QKeySequence.StandardKey.SelectAll):
                 self.select_shapes(shapes=self.shapes[:])
         self._update_status()
 
     def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
         modifiers = a0.modifiers()
         if self.mode == _CanvasMode.CREATE:
-            if int(modifiers) == 0:
+            if not modifiers:
                 self._snapping = True
         elif self.mode == _CanvasMode.EDIT:
             if (

@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from PyQt5 import QtCore
+from PySide6 import QtCore
 
 from labelme._shape import Shape
 
 
 class ShapeClipboard(QtCore.QObject):
-    availability_changed = QtCore.pyqtSignal(bool)
+    availability_changed = QtCore.Signal(bool)
 
     def __init__(self, parent: QtCore.QObject | None = None) -> None:
         super().__init__(parent)

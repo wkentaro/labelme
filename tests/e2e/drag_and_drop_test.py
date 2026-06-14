@@ -3,14 +3,14 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from PyQt5.QtCore import QMimeData
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import QPointF
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QUrl
-from PyQt5.QtGui import QDragEnterEvent
-from PyQt5.QtGui import QDropEvent
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtCore import QMimeData
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
+from PySide6.QtCore import QUrl
+from PySide6.QtGui import QDragEnterEvent
+from PySide6.QtGui import QDropEvent
+from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -28,10 +28,10 @@ def _make_drop_mime(paths: list[Path]) -> QMimeData:
 def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
     event = QDragEnterEvent(
         QPoint(0, 0),
-        Qt.CopyAction,
+        Qt.DropAction.CopyAction,
         mime,
-        Qt.LeftButton,
-        Qt.NoModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
     )
     QApplication.sendEvent(win, event)
     return event.isAccepted()
@@ -40,10 +40,10 @@ def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
 def _send_drop(win: MainWindow, mime: QMimeData) -> None:
     event = QDropEvent(
         QPointF(0, 0),
-        Qt.CopyAction,
+        Qt.DropAction.CopyAction,
         mime,
-        Qt.LeftButton,
-        Qt.NoModifier,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
     )
     QApplication.sendEvent(win, event)
 

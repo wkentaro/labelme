@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 from ..conftest import close_or_pause
@@ -52,11 +52,11 @@ def test_blank_input_keeps_dialog_open(
 
     def _try_blank_then_cancel() -> None:
         label_dialog.edit.clear()
-        qtbot.keyClick(label_dialog, Qt.Key_Return)
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Return)
         qtbot.wait(50)
         if label_dialog.isVisible():
             dialog_stayed_open.append(True)
-        qtbot.keyClick(label_dialog, Qt.Key_Escape)
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
 
     schedule_on_dialog(label_dialog=label_dialog, action=_try_blank_then_cancel)
     click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=_CLOSE_POLYGON_CLICK)
@@ -88,7 +88,7 @@ def test_validate_label_exact_rejects_unknown_label(
 
     def _record_critical(*args: object, **kwargs: object) -> int:
         error_shown.append(True)
-        return QMessageBox.Ok
+        return QMessageBox.StandardButton.Ok
 
     monkeypatch.setattr(QMessageBox, "critical", _record_critical)
 
@@ -96,7 +96,7 @@ def test_validate_label_exact_rejects_unknown_label(
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, "tiger")
         qtbot.wait(50)
-        qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     _draw_triangle(qtbot=qtbot, win=win)
     schedule_on_dialog(label_dialog=label_dialog, action=_enter_unknown_label)
@@ -129,12 +129,12 @@ def test_arrow_keys_in_label_edit_navigate_label_list(
         # Sorted labels: cat, dog, person. Pin selection to row 0 so Down
         # forwarded from the line edit advances to row 1.
         label_dialog.label_list.setCurrentRow(0)
-        qtbot.keyClick(label_dialog.edit, Qt.Key_Down)
+        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Down)
         qtbot.wait(50)
         item = label_dialog.label_list.currentItem()
         if item is not None:
             after_down.append(item.text())
-        qtbot.keyClick(label_dialog, Qt.Key_Escape)
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
 
     _draw_triangle(qtbot=qtbot, win=win)
     schedule_on_dialog(
@@ -206,10 +206,10 @@ def test_label_completer_autocompletes_typed_prefix(
         # and routes everything else to QLineEdit, so typing 'p' must drive
         # the QCompleter to suggest the only "p"-prefixed label.
         label_dialog.edit.clear()
-        qtbot.keyClick(label_dialog.edit, Qt.Key_P)
+        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_P)
         qtbot.wait(50)
         completion.append(label_dialog.edit.completer().currentCompletion())
-        qtbot.keyClick(label_dialog, Qt.Key_Escape)
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
 
     _draw_triangle(qtbot=qtbot, win=win)
     schedule_on_dialog(
@@ -246,7 +246,7 @@ def test_trailing_whitespace_label_is_stripped(
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, "cat  ")
         qtbot.wait(50)
-        qtbot.keyClick(label_dialog.edit, Qt.Key_Enter)
+        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     schedule_on_dialog(label_dialog=label_dialog, action=_enter_trailing_space_label)
     click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=_CLOSE_POLYGON_CLICK)
