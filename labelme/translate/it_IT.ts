@@ -792,5 +792,9 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <source>System default</source>
         <translation>Predefinita di sistema</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Flag immagine predefiniti</translation>
+    </message>
 </context>
 </TS>

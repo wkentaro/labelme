@@ -5,13 +5,31 @@ from pathlib import Path
 
 import pytest
 from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._yaml import safe_load
+from labelme.app import MainWindow
 from labelme.widgets import SettingsDialog
+from labelme.widgets.settings_dialog import _PlainTextEdit
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
+
+
+def _set_flag_checked(win: MainWindow, name: str) -> None:
+    flag_list = win._docks.flag_list
+    flag_list.blockSignals(True)  # avoid mark_dirty; we test only the flag refresh
+    try:
+        for i in range(flag_list.count()):
+            item = flag_list.item(i)
+            assert item is not None
+            if item.text() == name:
+                item.setCheckState(Qt.CheckState.Checked)
+                return
+        raise AssertionError(f"flag {name!r} not found in the dock")
+    finally:
+        flag_list.blockSignals(False)
 
 
 @pytest.fixture
@@ -90,6 +108,37 @@ def test_label_edit_preserves_label_history(
     label_list = win._label_dialog.label_list
     labels = {label_list.item(i).text() for i in range(label_list.count())}
     assert labels == {"bird", "cat", "dog"}  # history kept, new labels added
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_flags_setting_refreshes_flag_dock_live(
+    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+) -> None:
+    win = main_win(config_file=editable_config_file)
+
+    win._open_settings()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    flags_editor = dialog._editors[("flags",)]
+    assert isinstance(flags_editor, _PlainTextEdit)
+
+    flags_editor.setPlainText("occluded\ntruncated")
+    flags_editor.commit()
+
+    # The flag dock reflects the edit immediately, without navigating images.
+    assert win._config["flags"] == ["occluded", "truncated"]
+    assert win._read_flag_dock_states() == {"occluded": False, "truncated": False}
+    assert not win._is_changed  # a settings-driven refresh must not dirty the image
+
+    _set_flag_checked(win, "occluded")
+    flags_editor.setPlainText("occluded\ntruncated\nblurry")
+    flags_editor.commit()
+
+    states = win._read_flag_dock_states()
+    # The new "blurry" flag appears unchecked while "occluded" stays checked.
+    assert states == {"occluded": True, "truncated": False, "blurry": False}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

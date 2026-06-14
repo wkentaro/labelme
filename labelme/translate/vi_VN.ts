@@ -786,5 +786,9 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <source>System default</source>
         <translation>Mặc định của hệ thống</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Cờ hình ảnh định sẵn</translation>
+    </message>
 </context>
 </TS>

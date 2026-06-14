@@ -786,5 +786,9 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <source>System default</source>
         <translation>Systeemstandaard</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Voorgedefinieerde afbeeldingsvlaggen</translation>
+    </message>
 </context>
 </TS>

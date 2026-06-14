@@ -792,5 +792,9 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <source>System default</source>
         <translation>Rendszer alapértelmezése</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Előre definiált képjelzők</translation>
+    </message>
 </context>
 </TS>

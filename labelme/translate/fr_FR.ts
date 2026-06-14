@@ -792,5 +792,9 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <source>System default</source>
         <translation>Langue du système</translation>
     </message>
+    <message>
+        <source>Predefined image flags</source>
+        <translation>Indicateurs d&apos;image prédéfinis</translation>
+    </message>
 </context>
 </TS>
