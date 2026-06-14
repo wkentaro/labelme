@@ -82,6 +82,20 @@ def test_zoom_to_original(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
+@pytest.mark.gui
+def test_zoom_step_keeps_fractional_precision(
+    qtbot: QtBot,
+    _win: MainWindow,
+    pause: bool,
+) -> None:
+    _win._canvas_widgets.zoom_widget.setValue(105)
+    _win._add_zoom(increment=1.1)
+    # 105 * 1.1 = 115.5; the old integer widget clamped this up to 116.
+    assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(115.5)
+
+    close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
 def _make_wheel_event(
     pos: QPointF,
     angle_delta: QPoint,
