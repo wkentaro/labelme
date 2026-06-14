@@ -12,9 +12,5 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.10'
-      - uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: qttools5-dev
-          version: 1.0
       - run: make setup
       - run: make lint

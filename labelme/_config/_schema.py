@@ -11,7 +11,7 @@ from PySide6.QtCore import QT_TRANSLATE_NOOP
 Section = Literal["General", "Labels"]
 Kind = Literal["bool", "enum", "str_list", "language"]
 
-# Section names double as tab titles. QT_TRANSLATE_NOOP marks them for pylupdate
+# Section names double as tab titles. QT_TRANSLATE_NOOP marks them for pyside6-lupdate
 # under the SettingsDialog context (where they are resolved via self.tr) without
 # translating here; the labels below are marked the same way at their call site.
 # The assert keeps the markers in sync with Section so a newly added section

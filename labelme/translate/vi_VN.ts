@@ -4,63 +4,52 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI-Assisted Annotation</source>
         <translation>Chú thích dữ liệu với sự hỗ trợ của AI</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI gợi ý chú thích trong các chế độ 'AI-Points' và 'AI-Box'</translation>
+        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_assisted_annotation_widget.py" line="0"/>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Chọn chế độ 'AI-Points' hoặc 'AI-Box' để bật Chú thích Hỗ trợ AI</translation>
+        <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Chú thích Hỗ trợ AI</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI Text-to-Annotation</source>
         <translation>AI Văn bản sang Chú thích</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>e.g., dog,cat,bird</source>
         <translation>ví dụ: chó,mèo,chim</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Run</source>
         <translation>Chạy</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Score</source>
         <translation>Điểm số</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>IoU</source>
         <translation>IoU</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>AI creates annotations from the text prompt</source>
         <translation>AI tạo chú thích từ lời nhắc văn bản</translation>
     </message>
     <message>
-        <location filename="../widgets/_ai_text_to_annotation_widget.py" line="0"/>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Chọn chế độ 'Polygon', 'Rectangle' hoặc 'AI-Points' để bật</translation>
+        <translation>Chọn chế độ &apos;Polygon&apos;, &apos;Rectangle&apos; hoặc &apos;AI-Points&apos; để bật</translation>
     </message>
 </context>
 <context>
     <name>BrightnessContrastDialog</name>
     <message>
-        <location filename="../widgets/brightness_contrast_dialog.py" line="0"/>
         <source>Brightness/Contrast</source>
         <translation>Độ sáng/Độ tương phản</translation>
     </message>
@@ -68,127 +57,102 @@
 <context>
     <name>Canvas</name>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move point</source>
         <translation>Nhấn và kéo để di chuyển điểm</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to move shape</source>
         <translation>Nhấn và kéo để di chuyển hình dạng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Creating %r</source>
         <translation>Đang tạo %r</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ESC to cancel</source>
         <translation>Nhấn ESC để hủy</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Enter or Space to finalize</source>
         <translation>Nhấn Enter hoặc Space để hoàn tất</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Editing shapes</source>
         <translation>Chỉnh sửa hình dạng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for line</source>
         <translation>Nhấn điểm bắt đầu cho đường thẳng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click end point for line</source>
         <translation>Nhấn điểm kết thúc cho đường thẳng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click start point for linestrip</source>
         <translation>Nhấn điểm bắt đầu cho đường gấp khúc</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
         <translation>Nhấn điểm tiếp theo hoặc hoàn tất bằng Ctrl/Cmd+Nhấn cho đường gấp khúc</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click center point for circle</source>
         <translation>Nhấn điểm trung tâm cho hình tròn</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click point on circumference for circle</source>
         <translation>Nhấn điểm trên chu vi cho hình tròn</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for rectangle</source>
         <translation>Nhấn góc đầu tiên cho hình chữ nhật</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click to add point</source>
         <translation>Nhấn để thêm điểm</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Nhấn để xóa điểm</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>ALT + Click to create point on shape</source>
         <translation>ALT + Nhấn để tạo điểm trên hình dạng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>Nhấn chuột phải và kéo để sao chép hình dạng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner for rectangle (Shift for square)</source>
         <translation>Nhấn góc đối diện cho hình chữ nhật (Shift để tạo hình vuông)</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Nhấp điểm để bao gồm hoặc Shift+Click để loại trừ. Ctrl+LeftClick kết thúc tạo.</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Nhấp vào góc đầu tiên của bbox để phân đoạn AI</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click opposite corner to segment object</source>
         <translation>Nhấp vào góc đối diện để phân đoạn đối tượng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click first corner for oriented rectangle</source>
         <translation>Nhấn góc đầu tiên cho hình chữ nhật có hướng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click second corner to set orientation</source>
         <translation>Nhấn góc thứ hai để đặt hướng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Nhấn góc thứ ba để đóng hình chữ nhật có hướng</translation>
     </message>
     <message>
-        <location filename="../widgets/canvas.py" line="0"/>
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Nhấn và kéo để xoay hình dạng</translation>
     </message>
@@ -196,700 +160,562 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Flags</source>
         <translation>Cờ</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Annotation List</source>
         <translation>Danh sách Chú thích</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Chọn nhãn để bắt đầu chú thích. Nhấn 'Esc' để bỏ chọn.</translation>
+        <translation>Chọn nhãn để bắt đầu chú thích. Nhấn &apos;Esc&apos; để bỏ chọn.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Label List</source>
         <translation>Danh sách Nhãn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Search Filename</source>
         <translation>Tìm kiếm Tên tệp</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>File List</source>
         <translation>Danh sách Tệp</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Quit</source>
         <translation>Thoát(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Quit application</source>
         <translation>Thoát ứng dụng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Open
 </source>
         <translation>Mở(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open image or label file</source>
         <translation>Mở tệp hình ảnh hoặc nhãn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open Dir</source>
         <translation>Mở Thư mục</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Next Image</source>
         <translation>Hình ảnh Tiếp theo(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
         <translation>Mở tiếp theo (giữ Ctl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Prev Image</source>
         <translation>Hình ảnh Trước(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Mở trước đó (giữ Ctl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Save
 </source>
         <translation>Lưu(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save labels to file</source>
         <translation>Lưu nhãn vào tệp</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Save As</source>
         <translation>Lưu thành(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save labels to a different file</source>
         <translation>Lưu nhãn vào tệp khác</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Delete File</source>
         <translation>Xóa(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Delete current label file</source>
         <translation>Xóa tệp nhãn hiện tại</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Change Output Dir</source>
         <translation>Thay đổi Thư mục Đầu ra(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Change where annotations are loaded/saved</source>
         <translation>Thay đổi nơi chú thích được tải/lưu</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save &amp;Automatically</source>
         <translation>Tự động lưu (&amp;A)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save automatically</source>
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save With Image Data</source>
         <translation>Lưu với Dữ liệu Hình ảnh</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save image data in label file</source>
         <translation>Lưu dữ liệu hình ảnh trong tệp nhãn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Close</source>
         <translation>Đóng(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Close current file</source>
         <translation>Đóng tệp hiện tại</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Annotation</source>
         <translation>Giữ Chú thích Trước đó</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing polygons</source>
         <translation>Bắt đầu vẽ đa giác</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing rectangles</source>
         <translation>Bắt đầu vẽ hình chữ nhật</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing circles</source>
         <translation>Bắt đầu vẽ hình tròn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing lines</source>
         <translation>Bắt đầu vẽ đường thẳng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing points</source>
         <translation>Bắt đầu vẽ điểm</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
         <translation>Bắt đầu vẽ đường gấp khúc. Ctrl+Nhấn chuột trái để kết thúc tạo.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Edit Shapes</source>
         <translation>Chỉnh sửa Hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Move and edit the selected shapes</source>
         <translation>Di chuyển và chỉnh sửa các hình dạng đã chọn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Delete Shapes</source>
         <translation>Xóa Hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Delete the selected shapes</source>
         <translation>Xóa các hình dạng đã chọn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Duplicate Shapes</source>
         <translation>Nhân đôi Hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Create a duplicate of the selected shapes</source>
         <translation>Tạo bản sao của các hình dạng đã chọn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Copy Shapes</source>
         <translation>Sao chép Hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Copy selected shapes to clipboard</source>
         <translation>Sao chép các hình dạng đã chọn vào clipboard</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Paste Shapes</source>
         <translation>Dán Hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Paste copied shapes</source>
         <translation>Dán các hình dạng đã sao chép</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last point</source>
         <translation>Hoàn tác điểm cuối cùng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last drawn point</source>
         <translation>Hoàn tác điểm vẽ cuối cùng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Remove Selected Point</source>
         <translation>Xóa Điểm đã Chọn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Remove selected point from polygon</source>
         <translation>Xóa điểm đã chọn khỏi đa giác</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo
 </source>
         <translation>Hoàn tác</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Undo last add and edit of shape</source>
         <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Hide
 Shapes</source>
         <translation>Ẩn Hình dạng(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Hide all shapes</source>
         <translation>Ẩn tất cả hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Show
 Shapes</source>
         <translation>Hiển thị Hình dạng(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Show all shapes</source>
         <translation>Hiển thị tất cả hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Toggle
 Shapes</source>
         <translation>Bật/tắt Hình dạng(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Toggle all shapes</source>
         <translation>Bật/tắt tất cả hình dạng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Tutorial</source>
         <translation>Hướng dẫn(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Show tutorial page</source>
         <translation>Hiển thị trang hướng dẫn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Ctrl+Wheel</source>
         <translation>Ctrl+Bánh xe</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom &amp;In</source>
         <translation>Phóng to(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Increase zoom level</source>
         <translation>Tăng mức thu phóng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Zoom Out</source>
         <translation>Thu nhỏ(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Decrease zoom level</source>
         <translation>Giảm mức thu phóng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Original size</source>
         <translation>Kích thước Gốc(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom to original size</source>
         <translation>Thu phóng về kích thước gốc</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Fit Window</source>
         <translation>Vừa Cửa sổ(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom follows window size</source>
         <translation>Thu phóng theo kích thước cửa sổ</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Fit &amp;Width</source>
         <translation>Vừa Chiều rộng(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom follows window width</source>
         <translation>Thu phóng theo chiều rộng cửa sổ</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Brightness Contrast</source>
         <translation>Độ sáng Độ tương phản(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Adjust brightness and contrast</source>
         <translation>Điều chỉnh độ sáng và độ tương phản</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Edit Label</source>
         <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Modify the label of the selected shape</source>
         <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Fill Drawing Polygon</source>
         <translation>Tô Đa giác Vẽ</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Fill polygon while drawing</source>
         <translation>Tô đa giác khi vẽ</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;File</source>
         <translation>Tệp(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Edit</source>
         <translation>Chỉnh sửa(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;View</source>
         <translation>Xem(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Help</source>
         <translation>Trợ giúp(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s started.</source>
         <translation>%s đã khởi động.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Invalid label</source>
         <translation>Nhãn không hợp lệ</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>Nhãn không hợp lệ '{}' với loại xác thực '{}'</translation>
+        <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Error saving label data</source>
         <translation>Lỗi khi lưu dữ liệu nhãn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Error opening file</source>
         <translation>Lỗi khi mở tệp</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
         <translation>Không có tệp như vậy: &lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Loading %s...</source>
         <translation>Đang tải %s...</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Loaded %s</source>
         <translation>Đã tải %s</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Image &amp; Label files (%s)</source>
         <translation>Tệp Hình ảnh &amp; Nhãn (%s)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Choose Image or Label file</source>
         <translation>%s - Chọn tệp Hình ảnh hoặc Nhãn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Save/Load Annotations in Directory</source>
         <translation>%s - Lưu/Tải Chú thích trong Thư mục</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s . Annotations will be saved/loaded in %s</source>
         <translation>%s . Chú thích sẽ được lưu/tải trong %s</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Choose File</source>
         <translation>%s - Chọn Tệp</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Label files (*%s)</source>
         <translation>Tệp nhãn (*%s)</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Choose File</source>
         <translation>Chọn Tệp</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Attention</source>
         <translation>Chú ý</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Lưu chú thích vào &quot;{}&quot; trước khi đóng?</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Save annotations?</source>
         <translation>Lưu chú thích?</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s - Open Directory</source>
         <translation>%s - Mở Thư mục</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>Bật/tắt chế độ &quot;giữ chú thích trước đó&quot;</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Giữ Độ sáng/Độ tương phản Trước đó</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Errors</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
         <translation>Đã tìm thấy lỗi khi tải cấu hình. Vui lòng xem lại các lỗi bên dưới và tải lại cấu hình hoặc bỏ qua các dòng bị lỗi.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Reset Layout</source>
         <translation>Đặt lại bố cục</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Polygon</source>
         <translation>Đa giác</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Rectangle</source>
         <translation>Hình chữ nhật</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Circle</source>
         <translation>Hình tròn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Line</source>
         <translation>Đường thẳng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Point</source>
         <translation>Điểm</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>LineStrip</source>
         <translation>Đường gấp khúc</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
         <translation>Nhấp điểm để phân đoạn đối tượng. Ctrl+LeftClick kết thúc tạo.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Draw a bounding box to segment object.</source>
         <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points không khả dụng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>%s does not support point prompts.
 Please select a different model or use AI-Box mode.</source>
         <translation>%s không hỗ trợ gợi ý điểm.
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>File list is disabled when a label file is opened</source>
         <translation>Danh sách tệp bị tắt khi mở tệp nhãn</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Add Point to Edge</source>
         <translation>Thêm điểm vào cạnh</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Insert a new point at the hovered polygon edge</source>
         <translation>Chèn điểm mới vào cạnh đa giác đang trỏ tới</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>&amp;Keep Previous Zoom</source>
         <translation>Giữ &amp;Mức Phóng to Trước đó</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Xóa vĩnh viễn tệp nhãn này? Hành động này không thể hoàn tác.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Xóa vĩnh viễn {} hình dạng? Hành động này không thể hoàn tác.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
         <translation>Phóng to hoặc thu nhỏ hình ảnh. Các phím tắt {} và {} cũng hoạt động trên canvas.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Allowed formats: {formats}</source>
         <translation>Định dạng cho phép: {formats}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>The selected label file could not be opened: {path}</source>
         <translation>Không thể mở tệp nhãn đã chọn: {path}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>The selected image file could not be opened: {path}</source>
         <translation>Không thể mở tệp ảnh đã chọn: {path}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Failed to load: {path}</source>
         <translation>Không thể tải: {path}</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Oriented Rectangle</source>
         <translation>Hình chữ nhật có hướng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Start drawing oriented rectangles</source>
         <translation>Bắt đầu vẽ hình chữ nhật có hướng</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>AI inference produced no new annotation.</source>
         <translation>Suy luận AI không tạo ra chú thích mới nào.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Shape had no area; nothing created.</source>
         <translation>Hình không có diện tích; không có gì được tạo.</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Settings…</source>
         <translation>Cài đặt…</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Edit settings</source>
         <translation>Chỉnh sửa cài đặt</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Settings are managed via --config for this session</source>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
     </message>
     <message>
-        <location filename="../app.py" line="0"/>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
@@ -897,82 +723,66 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>General</source>
         <translation>Chung</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Labels</source>
         <translation>Nhãn</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Show label popup on new shape</source>
         <translation>Hiển thị cửa sổ nhãn khi tạo hình dạng mới</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Predefined labels</source>
         <translation>Nhãn định sẵn</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Label validation</source>
         <translation>Kiểm tra nhãn</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Settings</source>
         <translation>Cài đặt</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Open config file as text…</source>
         <translation>Mở tệp cấu hình dưới dạng văn bản…</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Edits made in the text file apply after restart</source>
         <translation>Chỉnh sửa trong tệp văn bản sẽ áp dụng sau khi khởi động lại</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Close</source>
         <translation>Đóng</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>(none)</source>
         <translation>(không có)</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>one item per line</source>
         <translation>mỗi dòng một mục</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>Predefined labels cannot be empty while Label validation is set to exact. Disable exact validation first.</source>
-        <translation>Nhãn định sẵn không được để trống khi kiểm tra nhãn được đặt thành 'exact'. Vui lòng tắt kiểm tra 'exact' trước.</translation>
+        <translation>Nhãn định sẵn không được để trống khi kiểm tra nhãn được đặt thành &apos;exact&apos;. Vui lòng tắt kiểm tra &apos;exact&apos; trước.</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Language</source>
         <translation>Ngôn ngữ</translation>
     </message>
     <message>
-        <location filename="../_config/_schema.py" line="0"/>
         <source>Takes effect after restart.</source>
         <translation>Có hiệu lực sau khi khởi động lại.</translation>
     </message>
     <message>
-        <location filename="../widgets/settings_dialog.py" line="0"/>
         <source>System default</source>
         <translation>Mặc định của hệ thống</translation>
     </message>
