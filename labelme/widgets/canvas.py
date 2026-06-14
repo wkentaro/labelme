@@ -899,20 +899,23 @@ class Canvas(QtWidgets.QWidget):
         # Repaint now; otherwise the edit is invisible until the next mouse move.
         self.update()
 
-    def remove_selected_point(self) -> None:
+    def remove_selected_point(self) -> bool:
         shape = self._last_hovered_shape
         index = self._last_hovered_vertex
-        if shape is None or index is None:
-            return
+        if shape is None or index is None or not shape.can_remove_point():
+            return False
         shape.remove_point(index)
         self._clear_highlight_state()
+        # Drop the hovered vertex and selection so the press that deleted the
+        # point cannot also drag the adjacent vertex (#968) or the whole shape.
+        self.deselect_shape()
         self.hovered_shape = shape
-        self._last_hovered_vertex = None
-        # Deselect the vertex; its index now aliases the adjacent point (#968).
         self._hovered_vertex = None
-        self._is_moving_shape = True  # Save changes
+        self._last_hovered_vertex = None
+        self._is_moving_shape = True  # commit the removal on release
         # Repaint now; otherwise the edit is invisible until the next mouse move.
         self.update()
+        return True
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos: QPointF = self._transform_point_widget_to_image(a0.position())
@@ -1062,7 +1065,9 @@ class Canvas(QtWidgets.QWidget):
 
     def _press_left_while_editing(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         modifiers = event.modifiers()
-        self._maybe_modify_polygon_topology(modifiers=modifiers)
+        if self._maybe_modify_polygon_topology(modifiers=modifiers):
+            # remove_selected_point already repainted; just consume the press.
+            return
         if self._is_rotation_point_selected():
             self._capture_rotation_anchors()
         self._select_shape_point(
@@ -1072,14 +1077,18 @@ class Canvas(QtWidgets.QWidget):
         self._prev_point = pos
         self.update()
 
-    def _maybe_modify_polygon_topology(self, modifiers: Qt.KeyboardModifier) -> None:
+    def _maybe_modify_polygon_topology(self, modifiers: Qt.KeyboardModifier) -> bool:
+        # Returns True only when the press is consumed as a terminal edit (a point
+        # removal), so the caller skips point selection and starts no drag. Adding
+        # a point intentionally falls through so the new vertex can be dragged.
         if self._is_edge_selected() and modifiers == Qt.KeyboardModifier.AltModifier:
             self.add_point_to_edge()
-            return
+            return False
         if self._is_vertex_selected() and modifiers == (
             Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier
         ):
-            self.remove_selected_point()
+            return self.remove_selected_point()
+        return False
 
     def _press_right(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         if _should_reselect_on_right_press(

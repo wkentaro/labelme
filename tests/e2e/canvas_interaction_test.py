@@ -8,6 +8,7 @@ from typing import Final
 import numpy as np
 import PIL.Image
 import pytest
+from PySide6.QtCore import QPoint
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
@@ -318,6 +319,47 @@ def test_remove_point_from_shape(
     )
 
     assert len(shape.points) == original_num_points - 1
+
+    _save_and_check(win=annotated_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("remove_index", [1, 4])
+def test_remove_point_does_not_drag_adjacent(
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+    remove_index: int,
+) -> None:
+    # Regression for #968: deleting a vertex (alt+shift press) must not start any
+    # drag on the held button. Two manifestations: index 1 leaves the deleted
+    # vertex's index aliasing the adjacent point (it would drag to the cursor);
+    # index 4 sits where the old position stays inside the polygon, so the press
+    # would otherwise select the shape and drag the whole thing.
+    canvas = annotated_win._canvas_widgets.canvas
+    shape = canvas.shapes[_SHAPE_INDEX]
+    original = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
+    vtx_widget = image_to_widget_pos(canvas=canvas, image_pos=original[remove_index])
+
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=vtx_widget)
+    # The alt+shift press deletes the vertex; the held-button drag to `far` must
+    # leave every remaining point put rather than dragging anything to the cursor.
+    drag_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        button=Qt.MouseButton.LeftButton,
+        start=vtx_widget,
+        end=vtx_widget + QPoint(40, 40),
+        modifier=Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier,
+    )
+
+    expected = original[:remove_index] + original[remove_index + 1 :]
+    assert len(shape.points) == len(expected)
+    for point, want in zip(shape.points, expected):
+        assert float(point[0]) == want.x()
+        assert float(point[1]) == want.y()
 
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)

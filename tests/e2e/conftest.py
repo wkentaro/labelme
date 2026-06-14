@@ -179,8 +179,9 @@ def drag_canvas(
     button: Qt.MouseButton,
     start: QPoint,
     end: QPoint,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
 ) -> None:
-    qtbot.mousePress(canvas, button, pos=start)
+    qtbot.mousePress(canvas, button, modifier, pos=start)
     qtbot.wait(50)
     # qtbot.mouseMove does not carry button state, so send a raw event
     global_pos = QPointF(canvas.mapToGlobal(end))
@@ -190,11 +191,11 @@ def drag_canvas(
         global_pos,
         Qt.MouseButton.NoButton,
         button,
-        Qt.KeyboardModifier.NoModifier,
+        modifier,
     )
     QApplication.sendEvent(canvas, move_event)
     qtbot.wait(50)
-    qtbot.mouseRelease(canvas, button, pos=end)
+    qtbot.mouseRelease(canvas, button, modifier, pos=end)
     qtbot.wait(50)
 
 
