@@ -15,10 +15,7 @@ from PyQt5 import QtGui
 
 
 def img_data_to_pil(img_data: bytes) -> PIL.Image.Image:
-    f = io.BytesIO()
-    f.write(img_data)
-    img_pil = PIL.Image.open(f)
-    return img_pil
+    return PIL.Image.open(io.BytesIO(img_data))
 
 
 def img_data_to_arr(img_data: bytes) -> NDArray[np.uint8]:
@@ -53,14 +50,7 @@ def img_arr_to_data(img_arr: NDArray[np.uint8]) -> bytes:
 
 
 def img_data_to_png_data(img_data: bytes) -> bytes:
-    with io.BytesIO() as f:
-        f.write(img_data)
-        img = PIL.Image.open(f)
-
-        with io.BytesIO() as f:
-            img.save(f, "PNG")
-            f.seek(0)
-            return f.read()
+    return img_pil_to_data(img_data_to_pil(img_data))
 
 
 def img_qt_to_arr(img_qt: QtGui.QImage) -> NDArray[np.uint8]:
