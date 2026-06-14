@@ -88,6 +88,29 @@ def test_setting_change_persists_and_applies(
 
 
 @pytest.mark.gui
+def test_show_labels_toggle_applies_to_canvas(
+    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    canvas = win._canvas_widgets.canvas
+    assert canvas._show_labels is False
+
+    win._open_settings()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    checkbox = dialog._editors[("shape", "show_labels")]
+    assert isinstance(checkbox, QtWidgets.QCheckBox)
+    checkbox.setChecked(True)  # toggling applies immediately, without restart
+    dialog.accept()
+
+    assert win._config["shape"]["show_labels"] is True
+    assert canvas._show_labels is True
+    assert safe_load(editable_config_file.read_text())["shape"]["show_labels"] is True
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_label_edit_preserves_label_history(
     main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:

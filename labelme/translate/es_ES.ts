@@ -735,6 +735,10 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <translation>Mostrar ventana emergente de etiqueta al crear una forma</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostrar etiquetas de forma en el lienzo</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Etiquetas predefinidas</translation>
     </message>

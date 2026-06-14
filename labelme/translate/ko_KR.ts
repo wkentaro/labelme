@@ -735,6 +735,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>새 도형에서 레이블 팝업 표시</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>캔버스에 도형 레이블 표시</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>사전 정의된 레이블</translation>
     </message>

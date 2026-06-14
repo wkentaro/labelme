@@ -738,6 +738,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Yeni şekilde etiket penceresi göster</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Şekil etiketlerini tuvalde göster</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Önceden tanımlı etiketler</translation>
     </message>

@@ -735,6 +735,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Pokaż okno etykiety przy nowym kształcie</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Pokaż etykiety kształtów na płótnie</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Predefiniowane etykiety</translation>
     </message>

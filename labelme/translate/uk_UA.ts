@@ -738,6 +738,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Показувати спливаюче вікно мітки для нової фігури</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Показувати мітки фігур на полотні</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Попередньо визначені мітки</translation>
     </message>

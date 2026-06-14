@@ -741,6 +741,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Címkefelugró ablak megjelenítése új alakzatnál</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Alakzatcímkék megjelenítése a vásznon</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Előre definiált címkék</translation>
     </message>

@@ -749,6 +749,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>新しい図形の作成時にラベルポップアップを表示</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>図形のラベルをキャンバスに表示</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>定義済みラベル</translation>
     </message>

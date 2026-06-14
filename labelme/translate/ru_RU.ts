@@ -738,6 +738,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Показывать всплывающее окно метки для новой фигуры</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Показывать метки фигур на холсте</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Предустановленные метки</translation>
     </message>

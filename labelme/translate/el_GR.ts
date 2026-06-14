@@ -737,6 +737,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Εμφάνιση αναδυόμενου παραθύρου ετικέτας σε νέο σχήμα</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Εμφάνιση ετικετών σχήματος στον καμβά</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Προκαθορισμένες ετικέτες</translation>
     </message>

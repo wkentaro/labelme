@@ -75,6 +75,7 @@ class ShapeRenderContext:
     fill: bool
     highlight: VertexHighlight | None
     rotation_highlight: VertexHighlight | None
+    show_label: bool = False
 
 
 def render_shape(
@@ -94,6 +95,27 @@ def render_shape(
 
     if len(shape.points) > 0:
         _paint_shape_points(painter=painter, shape=shape, context=context)
+
+    if context.show_label:
+        _paint_shape_label(painter=painter, shape=shape, context=context)
+
+
+def _paint_shape_label(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+) -> None:
+    if not shape.label or len(shape.points) == 0:
+        return
+    # Anchor at the points' top-left so the text stays close to the shape and
+    # tracks zoom/pan; lift it by the pen width to clear the outline stroke.
+    top_left = shape.points.min(axis=0) * context.scale
+    painter.setPen(QtGui.QPen(context.palette.line))
+    painter.drawText(
+        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - PEN_WIDTH),
+        shape.label,
+    )
 
 
 def _paint_shape_mask(

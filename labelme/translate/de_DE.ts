@@ -741,6 +741,10 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <translation>Label-Eingabe bei neuer Form anzeigen</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Formlabels auf der Leinwand anzeigen</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Vordefinierte Labels</translation>
     </message>

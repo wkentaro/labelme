@@ -735,6 +735,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>新建形状时显示标签弹窗</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>在画布上显示形状标签</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>预定义标签</translation>
     </message>

@@ -741,6 +741,10 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <translation>Mostra il popup dell&apos;etichetta per le nuove forme</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostra le etichette delle forme sulla tela</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Etichette predefinite</translation>
     </message>

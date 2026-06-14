@@ -735,6 +735,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>نمایش پنجره برچسب هنگام رسم شکل جدید</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>نمایش برچسب شکل‌ها روی بوم</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>برچسب‌های از پیش تعریف‌شده</translation>
     </message>
