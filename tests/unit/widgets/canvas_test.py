@@ -301,6 +301,7 @@ def test_extend_after_mode_switch_finalizes_at_last_cursor(
     event = QtGui.QMouseEvent(
         QtCore.QEvent.Type.MouseButtonPress,
         QPointF(50, 30),
+        QPointF(50, 30),
         Qt.MouseButton.LeftButton,
         Qt.MouseButton.LeftButton,
         Qt.KeyboardModifier.NoModifier,
@@ -337,6 +338,7 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
 
     event = QtGui.QMouseEvent(
         QtCore.QEvent.Type.MouseButtonPress,
+        QPointF(50, 30),
         QPointF(50, 30),
         Qt.MouseButton.LeftButton,
         Qt.MouseButton.LeftButton,
