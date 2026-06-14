@@ -1,4 +1,3 @@
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -25,32 +24,31 @@ def main() -> None:
 
     labelme_translate_path: Path = labelme_path / "translate"
 
-    pylupdate_version: str = (
-        subprocess.check_output(["pylupdate5", "-version"], stderr=subprocess.STDOUT)
+    lupdate_version: str = (
+        subprocess.check_output(
+            ["pyside6-lupdate", "-version"], stderr=subprocess.STDOUT
+        )
         .decode()
         .split()[-1]
-        .lstrip("v")
     )
-    logger.info("using pylupdate5 version: {}", pylupdate_version)
-    if pylupdate_version.split(".")[:2] != ["5", "15"]:
-        logger.warning("pylupdate5 version is not 5.15.x, skipping .ts generation")
-        return
+    logger.info("using pyside6-lupdate version: {}", lupdate_version)
 
     lrelease_version: str = (
-        subprocess.check_output(["lrelease", "-version"]).decode().split()[-1]
+        subprocess.check_output(["pyside6-lrelease", "-version"]).decode().split()[-1]
     )
-    logger.info("using lrelease version: {}", lrelease_version)
-    if lrelease_version.split(".")[:2] != ["5", "15"]:
-        logger.warning("lrelease version is not 5.15.x, skipping .qm generation")
-        return
+    logger.info("using pyside6-lrelease version: {}", lrelease_version)
 
     ts_paths: list[Path] = sorted(labelme_translate_path.glob("*.ts"))
 
-    # Batch all languages into a single pylupdate5 call (~10x faster)
+    # Batch all languages into a single pyside6-lupdate call (~10x faster).
+    # -locations none keeps diffs stable across code edits by omitting source
+    # file/line references that would otherwise churn on every change.
     subprocess.check_call(
         [
-            "pylupdate5",
-            "-noobsolete",
+            "pyside6-lupdate",
+            "-no-obsolete",
+            "-locations",
+            "none",
             *labelme_files,
             "-ts",
             *ts_paths,
@@ -58,20 +56,14 @@ def main() -> None:
     )
 
     for ts_path in ts_paths:
-        ts_content: str = ts_path.read_text()
-        new_ts_content: str = re.sub(r'line="\d+"', 'line="0"', ts_content)
-        if ts_content == new_ts_content:
-            raise RuntimeError(f"no line numbers found in {ts_path}")
-        ts_path.write_text(new_ts_content)
-
         qm_path: Path = ts_path.with_suffix(".qm")
         subprocess.check_call(
-            ["lrelease", ts_path, "-qm", qm_path],
+            ["pyside6-lrelease", ts_path, "-qm", qm_path],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
         if not qm_path.exists():
-            raise RuntimeError(f"lrelease did not produce {qm_path}")
+            raise RuntimeError(f"pyside6-lrelease did not produce {qm_path}")
 
     logger.info("updated {} languages", len(ts_paths))
 
