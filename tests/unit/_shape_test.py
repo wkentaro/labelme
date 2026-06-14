@@ -7,6 +7,7 @@ import pytest
 
 from labelme import _shape
 from labelme._shape import Shape
+from labelme._shape import ShapeType
 
 
 def _make_axis_aligned_oriented_rectangle() -> Shape:
@@ -82,3 +83,209 @@ def test_nearest_vertex_index_returns_none_for_point() -> None:
         )
         is None
     )
+
+
+def _make_square_polygon() -> Shape:
+    return Shape(
+        shape_type="polygon",
+        points=np.array(
+            [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)], dtype=np.float64
+        ),
+        closed=True,
+    )
+
+
+@pytest.mark.parametrize(
+    # One row per ShapeType member; changing an existing type's membership in
+    # POLYLINE_SHAPE_TYPES flips can_add_point and fails its row here.
+    ("shape_type", "expected"),
+    [
+        ("polygon", True),
+        ("linestrip", True),
+        ("rectangle", False),
+        ("oriented_rectangle", False),
+        ("point", False),
+        ("line", False),
+        ("circle", False),
+        ("points", False),
+        ("mask", False),
+    ],
+)
+def test_can_add_point(shape_type: ShapeType, expected: bool) -> None:
+    assert Shape(shape_type=shape_type).can_add_point() is expected
+
+
+def test_insert_point_keeps_points_and_labels_in_sync() -> None:
+    shape = _make_square_polygon()
+
+    shape.insert_point(i=1, point=(5.0, 0.0))
+
+    assert len(shape.points) == 5
+    assert len(shape.point_labels) == 5
+    assert shape.points[1] == pytest.approx((5.0, 0.0))
+    assert int(shape.point_labels[1]) == 1
+
+
+def test_insert_point_records_label() -> None:
+    shape = _make_square_polygon()
+
+    shape.insert_point(i=0, point=(1.0, 1.0), label=0)
+
+    assert int(shape.point_labels[0]) == 0
+
+
+def test_can_remove_point_polygon_requires_more_than_three() -> None:
+    shape = _make_square_polygon()
+    assert shape.can_remove_point() is True
+
+    shape.remove_point(i=0)
+    assert len(shape.points) == 3
+    assert shape.can_remove_point() is False
+
+
+def test_can_remove_point_linestrip_requires_more_than_two() -> None:
+    shape = Shape(
+        shape_type="linestrip",
+        points=np.array([(0.0, 0.0), (5.0, 0.0), (10.0, 0.0)], dtype=np.float64),
+    )
+    assert shape.can_remove_point() is True
+
+    shape.remove_point(i=1)
+    assert len(shape.points) == 2
+    assert shape.can_remove_point() is False
+
+
+def test_can_remove_point_false_for_non_polyline() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+    assert shape.can_remove_point() is False
+
+
+def test_remove_point_keeps_points_and_labels_in_sync() -> None:
+    shape = _make_square_polygon()
+
+    shape.remove_point(i=2)
+
+    assert len(shape.points) == 3
+    assert len(shape.point_labels) == 3
+    assert shape.points[2] == pytest.approx((0.0, 10.0))
+
+
+def test_remove_point_is_noop_at_polygon_minimum() -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(0.0, 0.0), (10.0, 0.0), (5.0, 10.0)], dtype=np.float64),
+    )
+
+    shape.remove_point(i=0)
+
+    assert len(shape.points) == 3
+    assert len(shape.point_labels) == 3
+
+
+def test_remove_point_is_noop_for_non_polyline() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+
+    shape.remove_point(i=0)
+
+    assert len(shape.points) == 2
+    assert len(shape.point_labels) == 2
+
+
+# Edge i is the segment from points[i-1] to points[i] (roll-by-1 convention),
+# so for the square below edge 1 is the bottom and edge 0 is the left side.
+@pytest.mark.parametrize(
+    ("point", "expected_edge"),
+    [
+        ((5.0, 0.0), 1),
+        ((0.0, 5.0), 0),
+        ((10.0, 5.0), 2),
+        ((5.0, 10.0), 3),
+    ],
+)
+def test_nearest_edge_index_matches_edge_under_point(
+    point: tuple[float, float], expected_edge: int
+) -> None:
+    shape = _make_square_polygon()
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array(point), scale=1.0, epsilon=1.0
+    )
+
+    assert index == expected_edge
+
+
+def test_nearest_edge_index_handles_zero_length_segment() -> None:
+    # Duplicate consecutive points make one edge zero-length; the divide-by-zero
+    # guard must keep the projection finite so a real edge still wins.
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array(
+            [(0.0, 0.0), (0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)],
+            dtype=np.float64,
+        ),
+    )
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=1.0
+    )
+
+    assert index == 2
+
+
+def test_nearest_edge_index_returns_none_when_far() -> None:
+    shape = _make_square_polygon()
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([5.0, 100.0]), scale=1.0, epsilon=1.0
+    )
+
+    assert index is None
+
+
+def test_nearest_edge_index_returns_none_for_empty_shape() -> None:
+    shape = Shape(shape_type="polygon")
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([0.0, 0.0]), scale=1.0, epsilon=10.0
+    )
+
+    assert index is None
+
+
+def test_nearest_vertex_index_returns_nearest_within_epsilon() -> None:
+    shape = _make_square_polygon()
+    # vertex 1 is at (10.0, 0.0); probe 0.4 units away, within epsilon=1.0
+    vertex_1 = shape.points[1]
+    point_within_epsilon = vertex_1 + np.array([0.4, 0.0])
+
+    index = _shape.nearest_vertex_index(
+        shape=shape, point=point_within_epsilon, scale=1.0, epsilon=1.0
+    )
+
+    assert index == 1
+
+
+def test_nearest_vertex_index_returns_none_when_far() -> None:
+    shape = _make_square_polygon()
+
+    index = _shape.nearest_vertex_index(
+        shape=shape, point=np.array([5.0, 5.0]), scale=1.0, epsilon=1.0
+    )
+
+    assert index is None
+
+
+def test_nearest_vertex_index_returns_none_for_empty_shape() -> None:
+    shape = Shape(shape_type="polygon")
+
+    index = _shape.nearest_vertex_index(
+        shape=shape, point=np.array([0.0, 0.0]), scale=1.0, epsilon=10.0
+    )
+
+    assert index is None
