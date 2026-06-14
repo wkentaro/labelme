@@ -735,6 +735,10 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <translation>Mostrar popup de rótulo ao criar nova forma</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Mostrar rótulos das formas na tela</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Rótulos predefinidos</translation>
     </message>

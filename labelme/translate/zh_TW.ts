@@ -735,6 +735,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>建立新形狀時顯示標籤快顯視窗</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>在畫布上顯示形狀標籤</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>預定義標籤</translation>
     </message>

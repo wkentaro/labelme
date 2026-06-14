@@ -771,6 +771,10 @@ Shapes</source>
         <translation>Tampilkan popup label pada bentuk baru</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Tampilkan label bentuk pada kanvas</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Bahasa</translation>
     </message>

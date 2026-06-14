@@ -735,6 +735,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Labeldialoog tonen bij nieuwe vorm</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Vormlabels op canvas tonen</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Voorgedefinieerde labels</translation>
     </message>

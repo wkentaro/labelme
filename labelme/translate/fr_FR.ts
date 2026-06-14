@@ -741,6 +741,10 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <translation>Afficher la fenêtre d&apos;étiquette à la création d&apos;une forme</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Afficher les étiquettes des formes sur le canevas</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Étiquettes prédéfinies</translation>
     </message>

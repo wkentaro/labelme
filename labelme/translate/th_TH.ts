@@ -735,6 +735,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>แสดงป๊อปอัปเลเบลเมื่อสร้างรูปร่างใหม่</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>แสดงเลเบลรูปร่างบนผืนผ้าใบ</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>เลเบลที่กำหนดไว้ล่วงหน้า</translation>
     </message>

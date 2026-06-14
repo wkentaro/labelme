@@ -735,6 +735,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Hiển thị cửa sổ nhãn khi tạo hình dạng mới</translation>
     </message>
     <message>
+        <source>Show shape labels on canvas</source>
+        <translation>Hiển thị nhãn của hình dạng trên canvas</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Nhãn định sẵn</translation>
     </message>
