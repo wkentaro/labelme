@@ -28,8 +28,19 @@ jobs:
           if [[ -z "$MILESTONE" ]]; then
             MILESTONE="None"
           fi
-          TITLE_ESCAPED=$(echo "$PR_TITLE" | jq -Rs '.[:-1]')
-          BODY_ESCAPED=$(echo "$PR_BODY" | jq -Rs '.[:-1] | if . == "" then "No description provided" elif length > 2000 then .[0:1997] + "..." else . end')
+          TITLE_ESCAPED=$(printf '%s' "$PR_TITLE" | jq -Rs .)
+          # Keep only the "## Summary" body: drop that heading and stop at the
+          # "## Test plan" section (per the PR template). Strip CRLF before awk
+          # so the heading anchors match. Cap well under Discord's 4096 limit.
+          BODY_ESCAPED=$(printf '%s' "$PR_BODY" | tr -d '\r' | awk '
+            /^#+ +[Tt]est +[Pp]lan/ { exit }
+            /^#+ +[Ss]ummary *$/ { next }
+            { print }
+          ' | jq -Rs '
+            sub("^[[:space:]]+"; "") | sub("[[:space:]]+$"; "")
+            | if . == "" then "No description provided"
+              elif length > 1800 then .[0:1797] + "..."
+              else . end')
           curl -fsS -X POST "$DISCORD_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d "{
@@ -38,6 +49,7 @@ jobs:
                 \"title\": $TITLE_ESCAPED,
                 \"url\": \"${{ github.event.pull_request.html_url }}\",
                 \"color\": $COLOR,
+                \"description\": $BODY_ESCAPED,
                 \"fields\": [
                   {
                     \"name\": \"Pull request\",
@@ -54,9 +66,6 @@ jobs:
                     \"value\": \"[Share your thoughts](https://github.com/wkentaro/labelme/discussions)\",
                     \"inline\": true
                   }
-                ],
-                \"footer\": {
-                  \"text\": $BODY_ESCAPED
-                }
+                ]
               }]
             }"
