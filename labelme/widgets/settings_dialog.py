@@ -113,8 +113,10 @@ class SettingsDialog(QtWidgets.QDialog):
             page.setSizePolicy(policy)
         # Release the previous fixed size (setFixedSize pinned both min and max) so
         # adjustSize can shrink or grow to the active tab before we re-pin it.
+        # PySide6 does not export QWIDGETSIZE_MAX; 16777215 (0xFFFFFF) is its value.
+        QWIDGETSIZE_MAX: typing.Final = 16777215
         self.setMinimumSize(0, 0)
-        self.setMaximumSize(16777215, 16777215)
+        self.setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX)
         self.adjustSize()
         self.setFixedSize(max(640, self.width()), self.height())
 
