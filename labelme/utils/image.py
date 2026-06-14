@@ -55,9 +55,13 @@ def img_data_to_png_data(img_data: bytes) -> bytes:
 
 def img_qt_to_arr(img_qt: QtGui.QImage) -> NDArray[np.uint8]:
     w, h, d = img_qt.size().width(), img_qt.size().height(), img_qt.depth()
-    bytes_ = bytes(img_qt.bits())
-    img_arr = np.frombuffer(bytes_, dtype=np.uint8).reshape((h, w, d // 8))
-    return img_arr
+    channels = d // 8
+    # bits() spans bytesPerLine() * height; Qt aligns each scanline to a 4-byte
+    # boundary, so a row may be wider than w * channels. Drop the padding.
+    rows = np.frombuffer(bytes(img_qt.bits()), dtype=np.uint8).reshape(
+        (h, img_qt.bytesPerLine())
+    )
+    return rows[:, : w * channels].reshape((h, w, channels))
 
 
 def apply_exif_orientation(image: PIL.Image.Image) -> PIL.Image.Image:
