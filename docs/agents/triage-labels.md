@@ -12,6 +12,4 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
 
-These labels do not yet exist on `wkentaro/labelme` — the triage skill will create them on first use via `gh label create`. Existing category labels (`issue:bug`, `feature`, `docs`, `refactor`, `test`, `ui`, `perf`, `i18n`, `dependencies`, `python:uv`, `others`) live in a separate namespace and are unaffected.
-
 Edit the right-hand column to remap any role to an existing label.
