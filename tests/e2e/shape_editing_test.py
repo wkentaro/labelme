@@ -4,7 +4,6 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from PySide6 import QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
@@ -49,11 +48,7 @@ def _delete_selected_shape(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
 ) -> None:
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
     win.delete_selected_shapes()
     qtbot.wait(50)
 

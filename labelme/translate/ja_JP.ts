@@ -588,6 +588,14 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>注意</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>閉じる前にアノテーションを &quot;{}&quot; に保存しますか？</translation>
     </message>

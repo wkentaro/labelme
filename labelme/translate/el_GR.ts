@@ -596,6 +596,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Προσοχή</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation>Διαγραφή</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Άκυρο</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Να αποθηκευτούν οι σχολιασμοί στο &quot;{}&quot; πριν το κλείσιμο;</translation>
     </message>

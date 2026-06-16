@@ -574,6 +574,14 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Uwaga</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation>Usuń</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Anuluj</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Zapisać adnotacje do &quot;{}&quot; przed zamknięciem?</translation>
     </message>

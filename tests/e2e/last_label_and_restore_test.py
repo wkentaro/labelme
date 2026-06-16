@@ -6,7 +6,6 @@ from typing import Final
 import pytest
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 from labelme.app import MainWindow
@@ -76,11 +75,7 @@ def test_restore_last_shape_via_undo(
         QPointF(float(p[0]), float(p[1])) for p in canvas.shapes[0].points
     ]
 
-    monkeypatch.setattr(
-        QMessageBox,
-        "warning",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(raw_win, "_confirm_deletion", lambda *args, **kwargs: True)
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     raw_win.delete_selected_shapes()
