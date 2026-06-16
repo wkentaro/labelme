@@ -512,6 +512,18 @@ Shapes</source>
         <translation>%s を起動しました</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>マスク出力は利用できません</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; アノテーションを作成できません。
+
+AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>無効なラベル</translation>
     </message>

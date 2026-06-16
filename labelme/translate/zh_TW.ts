@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s 已啟動</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>遮罩輸出無法使用</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 標註。
+
+請將 AI Text-to-Annotation 模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>無效的標籤</translation>
     </message>

@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s uruchomiono.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Wyjście maski niedostępne</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s wykrywa tylko ramki ograniczające i nie może utworzyć adnotacji &apos;%s&apos;.
+
+Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format wyjściowy na &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Nieprawidłowa etykieta</translation>
     </message>

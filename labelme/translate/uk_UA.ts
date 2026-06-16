@@ -521,6 +521,18 @@ Shapes</source>
         <translation>Під час завантаження конфігурації виявлено помилки. Перегляньте наведені нижче помилки та перезавантажте свою конфігурацію або проігноруйте помилкові рядки.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Вивід маски недоступний</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s виявляє лише обмежувальні рамки й не може створювати анотації &apos;%s&apos;.
+
+Перемкніть модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Недійсна мітка</translation>
     </message>

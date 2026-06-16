@@ -520,6 +520,18 @@ Shapes</source>
         <translation>Βρέθηκαν σφάλματα κατά τη φόρτωση της διαμόρφωσης. Ελέγξτε τα παρακάτω σφάλματα και φορτώστε ξανά τη διαμόρφωσή σας ή αγνοήστε τις λανθασμένες γραμμές.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχολιασμούς &apos;%s&apos;.
+
+Αλλάξτε το μοντέλο AI Text-to-Annotation σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>

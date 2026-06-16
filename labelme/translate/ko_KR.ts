@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s가 시작되었습니다.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>마스크 출력을 사용할 수 없음</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 주석을 생성할 수 없습니다.
+
+AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>잘못된 레이블</translation>
     </message>

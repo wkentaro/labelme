@@ -504,6 +504,18 @@ forme</translation>
         <translation>%s avviato.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Output maschera non disponibile</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s rileva solo i riquadri di delimitazione e non può creare annotazioni &apos;%s&apos;.
+
+Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure imposta il formato di output su &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Etichetta non valida</translation>
     </message>
