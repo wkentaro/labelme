@@ -113,6 +113,53 @@ def test_shape_to_mask_rectangle_reversed_coords() -> None:
     assert mask_tl_br.sum() > 0
 
 
+def test_shape_to_mask_circle_marks_center_and_clears_outside() -> None:
+    # points are (x, y); the 2nd point sets the radius (here dist=5). Center
+    # cx != cy so an x/y swap is caught. mask is indexed [row=y, col=x].
+    mask = shape_module.shape_to_mask(
+        img_shape=(30, 30),
+        points=[[12.0, 10.0], [12.0, 15.0]],
+        shape_type="circle",
+    )
+    assert mask.dtype == bool
+    assert mask[10, 12]
+    assert mask[12, 12]  # off the center row: a filled disk, not a horizontal line
+    assert not mask[5, 7]  # bbox corner: clear for an ellipse, set for a rectangle
+    assert not mask[10, 18]  # 1px past the radius-5 edge
+
+
+def test_shape_to_mask_line_marks_pixels_along_segment() -> None:
+    # points are (x, y); mask is indexed [row=y, col=x].
+    mask = shape_module.shape_to_mask(
+        img_shape=(100, 100),
+        points=[[10.0, 50.0], [90.0, 50.0]],
+        shape_type="line",
+        line_width=10,
+    )
+    assert mask.dtype == bool
+    assert mask[50, 10]
+    assert mask[50, 50]
+    assert mask[50, 90]
+    assert mask[48, 50]  # off the centerline, within line_width=10
+    assert not mask[10, 50]
+
+
+def test_shape_to_mask_point_marks_pixels_around_center() -> None:
+    # points are (x, y); cx != cy so an x/y swap is caught. mask is indexed
+    # [row=y, col=x].
+    mask = shape_module.shape_to_mask(
+        img_shape=(100, 100),
+        points=[[40.0, 60.0]],
+        shape_type="point",
+        point_size=5,
+    )
+    assert mask.dtype == bool
+    assert mask[60, 40]
+    assert mask[60, 43]  # 3px from center, inside point_size=5
+    assert mask[62, 40]  # off the center row: a filled disk, not a horizontal line
+    assert not mask[60, 46]  # 1px past the point_size=5 edge
+
+
 def test_masks_to_bboxes_returns_yxyx_bboxes() -> None:
     masks = np.zeros((2, 10, 10), dtype=bool)
     masks[0, 2:5, 3:7] = True
