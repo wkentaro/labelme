@@ -128,6 +128,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def get_model_name(self) -> str:
         return self._model_combo.currentData()
 
+    def get_model_display_name(self) -> str:
+        return self._model_combo.currentText()
+
     def get_score_threshold(self) -> float:
         return self._score_spinbox.value()
 

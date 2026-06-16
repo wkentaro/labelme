@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s เริ่มทำงานแล้ว</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างคำอธิบายประกอบ &apos;%s&apos; ได้
+
+เปลี่ยนโมเดล AI Text-to-Annotation เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>เลเบลไม่ถูกต้อง</translation>
     </message>

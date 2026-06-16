@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s gestart.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Maskeruitvoer niet beschikbaar</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-annotaties maken.
+
+Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Ongeldig label</translation>
     </message>

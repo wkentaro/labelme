@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s đã khởi động.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Không có đầu ra mặt nạ</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo chú thích &apos;%s&apos;.
+
+Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Nhãn không hợp lệ</translation>
     </message>

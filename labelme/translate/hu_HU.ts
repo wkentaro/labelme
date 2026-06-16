@@ -512,6 +512,18 @@ Shapes</source>
         <translation>%s elindítva.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>A maszk kimenet nem érhető el</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú annotációkat létrehozni.
+
+Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Érvénytelen címke</translation>
     </message>

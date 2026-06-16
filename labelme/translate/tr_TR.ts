@@ -501,6 +501,18 @@ Shapes</source>
         <translation>%s başlatıldı.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Maske çıktısı kullanılamıyor</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; ek açıklamaları oluşturamaz.
+
+AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Geçersiz etiket</translation>
     </message>

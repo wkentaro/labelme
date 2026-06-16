@@ -1312,6 +1312,21 @@ class MainWindow(QtWidgets.QMainWindow):
             texts=texts,
         )
 
+        MASK_REQUIRED_SHAPE_TYPES: Final[tuple[str, ...]] = ("polygon", "mask")
+        if masks is None and len(boxes) > 0 and shape_type in MASK_REQUIRED_SHAPE_TYPES:
+            QtWidgets.QMessageBox.warning(
+                self,
+                self.tr("Mask Output Unavailable"),
+                self.tr(
+                    "%s only detects bounding boxes and cannot create "
+                    "'%s' annotations.\n\n"
+                    "Switch the AI Text-to-Annotation model to 'SAM3 (smart)', "
+                    "or set the output format to 'Rectangle'."
+                )
+                % (self._ai_text.get_model_display_name(), shape_type),
+            )
+            return
+
         SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
         for shape in self._canvas_widgets.canvas.shapes:
             if shape.shape_type != shape_type or shape.label not in texts:

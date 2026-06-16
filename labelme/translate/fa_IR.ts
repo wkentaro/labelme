@@ -498,6 +498,18 @@ Shapes</source>
         <translation>%s راه‌اندازی شد.</translation>
     </message>
     <message>
+        <source>Mask Output Unavailable</source>
+        <translation>خروجی ماسک در دسترس نیست</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+
+Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s فقط کادرهای محصور‌کننده را تشخیص می‌دهد و نمی‌تواند حاشیه‌نویسی &apos;%s&apos; ایجاد کند.
+
+مدل AI Text-to-Annotation را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>برچسب نامعتبر</translation>
     </message>
