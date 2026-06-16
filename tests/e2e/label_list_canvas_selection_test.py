@@ -167,11 +167,7 @@ def test_delete_shape_removes_label_list_entry(
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
 
-    monkeypatch.setattr(
-        QMessageBox,
-        "warning",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
     win.delete_selected_shapes()
     qtbot.waitUntil(lambda: len(label_list) == count_before - 1)
     assert len(canvas.shapes) == count_before - 1

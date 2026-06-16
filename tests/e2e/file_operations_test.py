@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -53,11 +52,7 @@ def test_delete_label_file(
     assert item is not None
     assert item.checkState() == Qt.CheckState.Checked
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -88,11 +83,7 @@ def test_delete_label_file_keeps_image(
     assert canvas.shapes
     assert len(win._docks.label_list) > 0
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "warning",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 

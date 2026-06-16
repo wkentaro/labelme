@@ -577,6 +577,14 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Dikkat</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Kapatmadan önce açıklamalar &quot;{}&quot; konumuna kaydedilsin mi?</translation>
     </message>

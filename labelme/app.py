@@ -2347,18 +2347,26 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         return str(Path(self._image_path).with_suffix(".json"))
 
+    def _confirm_deletion(self, message: str) -> bool:
+        msg_box = QtWidgets.QMessageBox(self)
+        msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+        msg_box.setWindowTitle(self.tr("Attention"))
+        msg_box.setText(message)
+        delete_button = msg_box.addButton(
+            self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
+        )
+        cancel_button = msg_box.addButton(
+            self.tr("Cancel"), QtWidgets.QMessageBox.ButtonRole.RejectRole
+        )
+        msg_box.setDefaultButton(cancel_button)
+        msg_box.exec()
+        return msg_box.clickedButton() is delete_button
+
     def delete_file(self) -> None:
         msg = self.tr(
             "Permanently delete this label file? This action cannot be undone."
         )
-        answer = QtWidgets.QMessageBox.warning(
-            self,
-            self.tr("Attention"),
-            msg,
-            QtWidgets.QMessageBox.StandardButton.Yes
-            | QtWidgets.QMessageBox.StandardButton.No,
-        )
-        if answer != QtWidgets.QMessageBox.StandardButton.Yes:
+        if not self._confirm_deletion(message=msg):
             return
 
         annotation_path = Path(self.current_label_file_path())
@@ -2572,21 +2580,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mark_dirty()
 
     def delete_selected_shapes(self) -> None:
-        yes, no = (
-            QtWidgets.QMessageBox.StandardButton.Yes,
-            QtWidgets.QMessageBox.StandardButton.No,
-        )
         msg = self.tr(
             "Permanently delete {} shapes? This action cannot be undone."
         ).format(len(self._canvas_widgets.canvas.selected_shapes))
-        if yes == QtWidgets.QMessageBox.warning(
-            self, self.tr("Attention"), msg, yes | no, yes
-        ):
-            self.remove_labels(self._canvas_widgets.canvas.delete_selected())
-            self.mark_dirty()
-            if self.has_no_shapes():
-                for action in self._actions.on_shapes_present:
-                    action.setEnabled(False)
+        if not self._confirm_deletion(message=msg):
+            return
+        self.remove_labels(self._canvas_widgets.canvas.delete_selected())
+        self.mark_dirty()
+        if self.has_no_shapes():
+            for action in self._actions.on_shapes_present:
+                action.setEnabled(False)
 
     def copy_shape(self) -> None:
         self._canvas_widgets.canvas.end_move(copy=True)

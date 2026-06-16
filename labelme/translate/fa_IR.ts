@@ -574,6 +574,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>توجه</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <translation>حذف</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>لغو</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>قبل از بستن، حاشیه‌نویسی‌ها را در &quot;{}&quot; ذخیره کنید؟</translation>
     </message>
