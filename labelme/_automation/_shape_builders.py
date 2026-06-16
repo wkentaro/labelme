@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Final
+from typing import get_args
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -151,6 +153,19 @@ def _circle_for_detection(detection: Detection) -> Circle | None:
         if radius > 0:
             return Circle(cx=(xmin + xmax) / 2, cy=(ymin + ymax) / 2, radius=radius)
     return None
+
+
+# Output formats that drop a bbox-only detection (the builder returns None when
+# the mask is absent). Derived from _shape_from_detection so it cannot drift; the
+# probe mirrors the runtime warning condition (a box but no mask).
+MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
+    shape_type
+    for shape_type in get_args(AiOutputFormat)
+    if _shape_from_detection(
+        detection=Detection(bbox=(0, 0, 1, 1), mask=None), shape_type=shape_type
+    )
+    is None
+)
 
 
 def shapes_from_detections(

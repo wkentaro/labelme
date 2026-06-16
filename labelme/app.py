@@ -1312,8 +1312,11 @@ class MainWindow(QtWidgets.QMainWindow):
             texts=texts,
         )
 
-        MASK_REQUIRED_SHAPE_TYPES: Final[tuple[str, ...]] = ("polygon", "mask")
-        if masks is None and len(boxes) > 0 and shape_type in MASK_REQUIRED_SHAPE_TYPES:
+        if (
+            masks is None
+            and len(boxes) > 0
+            and shape_type in _automation.MASK_REQUIRED_SHAPE_TYPES
+        ):
             QtWidgets.QMessageBox.warning(
                 self,
                 self.tr("Mask Output Unavailable"),
