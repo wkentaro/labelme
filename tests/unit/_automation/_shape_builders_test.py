@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from labelme._automation import MASK_REQUIRED_SHAPE_TYPES
 from labelme._automation import Detection
 from labelme._automation import shapes_from_detections
 
@@ -160,3 +161,7 @@ def test_shapes_from_detections_mask_drops_empty_mask() -> None:
         shape_type="mask",
     )
     assert shapes == []
+
+
+def test_mask_required_shape_types_is_polygon_and_mask() -> None:
+    assert MASK_REQUIRED_SHAPE_TYPES == {"polygon", "mask"}

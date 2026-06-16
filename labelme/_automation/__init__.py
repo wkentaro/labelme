@@ -1,6 +1,7 @@
 from ._ai_assist import AiAssistSession
 from ._geometry import shape_to_xyxy_bbox
 from ._osam_session import OsamSession
+from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import suppress_detections_greedy
