@@ -34,6 +34,50 @@ def test_rotate_oriented_rectangle_around_origin() -> None:
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
+def test_oriented_rectangle_center_of_axis_aligned() -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+
+    center = _shape.oriented_rectangle_center(shape=shape)
+
+    assert (center[0], center[1]) == pytest.approx((5.0, 2.0))
+
+
+def test_oriented_rectangle_center_of_rotated_rectangle() -> None:
+    # A non-axis-aligned (45 deg) rectangle, so the center is exercised on a
+    # rotated shape rather than only the trivial axis-aligned case.
+    shape = Shape(
+        shape_type="oriented_rectangle",
+        points=np.array(
+            [(5.0, 0.0), (10.0, 5.0), (5.0, 10.0), (0.0, 5.0)], dtype=np.float64
+        ),
+        closed=True,
+    )
+
+    center = _shape.oriented_rectangle_center(shape=shape)
+
+    assert (center[0], center[1]) == pytest.approx((5.0, 5.0))
+
+
+def test_oriented_rectangle_center_raises_for_wrong_shape_type() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 4.0)], dtype=np.float64),
+    )
+
+    with pytest.raises(ValueError, match="only defined for oriented rectangles"):
+        _shape.oriented_rectangle_center(shape=shape)
+
+
+def test_oriented_rectangle_center_raises_for_wrong_point_count() -> None:
+    shape = Shape(
+        shape_type="oriented_rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 0.0), (10.0, 4.0)], dtype=np.float64),
+    )
+
+    with pytest.raises(ValueError, match="requires 4 points"):
+        _shape.oriented_rectangle_center(shape=shape)
+
+
 def test_rotate_non_oriented_rectangle_raises() -> None:
     shape = Shape(
         shape_type="rectangle",
