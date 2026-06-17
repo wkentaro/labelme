@@ -289,3 +289,76 @@ def test_nearest_vertex_index_returns_none_for_empty_shape() -> None:
     )
 
     assert index is None
+
+
+# Rotation handles sit at the edge midpoints; handle i is the midpoint of the
+# edge from points[i-1] to points[i] (roll-by-1 convention).
+@pytest.mark.parametrize(
+    ("index", "expected"),
+    [
+        (0, (0.0, 2.0)),
+        (1, (5.0, 0.0)),
+        (2, (10.0, 2.0)),
+        (3, (5.0, 4.0)),
+    ],
+)
+def test_get_rotation_handle_returns_edge_midpoints(
+    index: int, expected: tuple[float, float]
+) -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+
+    handle = _shape.get_rotation_handle(shape=shape, index=index)
+
+    assert handle == pytest.approx(expected)
+
+
+def test_get_rotation_handle_raises_for_non_oriented_rectangle() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 4.0)], dtype=np.float64),
+    )
+
+    with pytest.raises(ValueError, match="4-point oriented rectangles"):
+        _shape.get_rotation_handle(shape=shape, index=0)
+
+
+def test_nearest_rotation_point_index_returns_handle_within_epsilon() -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+    # handle 2 is the right-edge midpoint at (10, 2); probe just beside it.
+    point = np.array([10.3, 2.0])
+
+    index = _shape.nearest_rotation_point_index(
+        shape=shape, point=point, scale=1.0, epsilon=1.0
+    )
+
+    assert index == 2
+
+
+def test_nearest_rotation_point_index_returns_none_when_far() -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+
+    index = _shape.nearest_rotation_point_index(
+        shape=shape, point=np.array([20.0, 20.0]), scale=1.0, epsilon=1.0
+    )
+
+    assert index is None
+
+
+def test_nearest_rotation_point_index_returns_none_for_non_oriented_rectangle() -> None:
+    shape = _make_square_polygon()
+
+    index = _shape.nearest_rotation_point_index(
+        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=10.0
+    )
+
+    assert index is None
+
+
+def test_nearest_rotation_point_index_returns_none_for_empty_shape() -> None:
+    shape = Shape(shape_type="oriented_rectangle")
+
+    index = _shape.nearest_rotation_point_index(
+        shape=shape, point=np.array([0.0, 0.0]), scale=1.0, epsilon=10.0
+    )
+
+    assert index is None
