@@ -88,6 +88,16 @@ On some Linux distributions, labelme is also packaged in the system's native rep
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/labelme.svg)](https://repology.org/project/labelme/versions)
 
+### Supported Python and platforms
+
+|        | Supported (v7.x)               | Maintenance (v6.3.x) |
+| ------ | ------------------------------ | -------------------- |
+| Python | 3.11 - 3.14                    | 3.10 - 3.11          |
+| Qt     | Qt6 (PySide6)                  | Qt5                  |
+| OS     | 64-bit macOS / Windows / Linux | older OSes           |
+
+labelme follows [SPEC 0](https://scientific-python.org/specs/spec-0000/) (the successor to [NEP 29](https://numpy.org/neps/nep-0029-deprecation_policy.html)) for dropping Python versions, in step with its core scientific dependencies (numpy, scipy, scikit-image). v6.3.x is the maintenance line for Qt5 and Python 3.10 stragglers and receives critical fixes only.
+
 ## Usage
 
 Run `labelme --help` for detail.\
