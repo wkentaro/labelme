@@ -94,3 +94,29 @@ def test_migrate_polygon_shortcut_skips_when_new_key_exists() -> None:
     _config._migrate_config_from_file(config)
     assert config["shortcuts"]["edit_shape"] == "Ctrl+Y"
     assert "edit_polygon" in config["shortcuts"]
+
+
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    [
+        (
+            {"validate_label": "none"},
+            "Unexpected value for config key 'validate_label'",
+        ),
+        ({"shape_color": "random"}, "Unexpected value for config key 'shape_color'"),
+        ({"labels": ["cat", "cat"]}, "Duplicates are detected for config key 'labels'"),
+    ],
+    ids=["validate_label", "shape_color", "labels"],
+)
+def test_load_config_rejects_invalid_override(overrides: dict, message: str) -> None:
+    with pytest.raises(ValueError, match=message):
+        _config.load_config(config_file=None, config_overrides=overrides)
+
+
+def test_load_config_requires_labels_when_validate_label_enabled() -> None:
+    with pytest.raises(
+        ValueError, match="labels must be specified when validate_label is enabled"
+    ):
+        _config.load_config(
+            config_file=None, config_overrides={"validate_label": "exact"}
+        )
