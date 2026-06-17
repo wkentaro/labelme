@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
+from labelme._automation._geometry import compute_polygon_from_mask
 from labelme._automation._geometry import shape_to_xyxy_bbox
 from labelme._shape import Shape
 
@@ -154,6 +155,41 @@ def test_shape_to_xyxy_bbox_raises_on_unsupported_shape_type() -> None:
 
     with pytest.raises(ValueError, match="Unsupported shape_type"):
         shape_to_xyxy_bbox(shape=shape)
+
+
+def test_compute_polygon_from_mask_returns_empty_for_empty_mask() -> None:
+    polygon = compute_polygon_from_mask(mask=np.zeros((5, 5), dtype=bool))
+
+    assert polygon.shape == (0, 2)
+
+
+def test_compute_polygon_from_mask_traces_rectangle_extent_in_xy_order() -> None:
+    # Rows 1-3, cols 1-7 set. The result is xy-ordered, so the max extent is
+    # x=8.0, y=4.0 (a yx result would swap them, which the max assertion catches).
+    # The lower bound is the contour's half-pixel offset; the upper bound is
+    # clamped to mask size minus 1.
+    mask = np.zeros((5, 9), dtype=bool)
+    mask[1:4, 1:8] = True
+
+    polygon = compute_polygon_from_mask(mask=mask)
+
+    assert polygon.min(axis=0) == pytest.approx([1.5, 1.5])
+    assert polygon.max(axis=0) == pytest.approx([8.0, 4.0])
+
+
+def test_compute_polygon_from_mask_picks_largest_contour() -> None:
+    # Two blobs; the longer-perimeter 4x6 block wins over the 2x2 one, so the
+    # returned polygon spans the larger block only.  The large blob is
+    # non-square so a yx/xy transposition would swap the unequal extents and
+    # fail both the selection check and the axis-order check simultaneously.
+    mask = np.zeros((10, 12), dtype=bool)
+    mask[1:5, 1:7] = True
+    mask[6:8, 6:8] = True
+
+    polygon = compute_polygon_from_mask(mask=mask)
+
+    assert polygon.min(axis=0) == pytest.approx([1.5, 1.5])
+    assert polygon.max(axis=0) == pytest.approx([7.5, 5.5])
 
 
 def test_compute_oriented_rectangle_from_mask_l_shape_is_axis_aligned() -> None:
