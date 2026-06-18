@@ -67,6 +67,8 @@ canvas:
   double_click: close
   # max undo depth (number of edits kept on the backup stack)
   num_backups: 10
+  # allow annotation points to extend beyond the image boundary
+  allow_out_of_bounds_points: false
   # show crosshair
   crosshair:
     polygon: false

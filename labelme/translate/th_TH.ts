@@ -759,6 +759,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>แสดงเลเบลรูปร่างบนผืนผ้าใบ</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>อนุญาตให้มีจุดอยู่นอกขอบเขตของภาพ</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>อนุญาตให้จุดของรูปร่างขยายออกไปนอกภาพ เช่น สำหรับวัตถุที่มองเห็นได้บางส่วน</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>เลเบลที่กำหนดไว้ล่วงหน้า</translation>
     </message>

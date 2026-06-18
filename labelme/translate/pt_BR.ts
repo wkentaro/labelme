@@ -759,6 +759,14 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <translation>Mostrar rótulos das formas na tela</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Permitir pontos fora dos limites da imagem</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Permite que os pontos das formas se estendam além da imagem, por ex. para objetos parcialmente visíveis.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Rótulos predefinidos</translation>
     </message>

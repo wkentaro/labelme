@@ -24,6 +24,7 @@ from labelme.widgets.canvas import _is_degenerate_draft
 from labelme.widgets.canvas import _normalize_bbox_points
 from labelme.widgets.canvas import _opposite_corner_in_parallelogram
 from labelme.widgets.canvas import _project_oriented_rectangle_corners
+from labelme.widgets.canvas import _reproject_oriented_rectangle_corners
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -115,6 +116,113 @@ def test_bounded_move_oriented_rectangle_vertex_clips_when_parallel_corner_outsi
     expected = [(50, 30), (90, 50), (93, 44), (53, 24)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+
+
+@pytest.mark.gui
+def test_bounded_move_vertex_clamps_to_image_by_default(canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
+        closed=True,
+    )
+
+    canvas._bounded_move_vertex(
+        shape=shape, vertex_index=1, pos=QPointF(150, 80), is_shift_pressed=False
+    )
+
+    x, y = shape.points[1]
+    assert (x, y) == pytest.approx((75, 50))
+
+
+@pytest.mark.gui
+def test_bounded_move_vertex_keeps_out_of_bounds_when_enabled(canvas: Canvas) -> None:
+    canvas.set_allow_out_of_bounds_points(True)
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
+        closed=True,
+    )
+
+    canvas._bounded_move_vertex(
+        shape=shape, vertex_index=1, pos=QPointF(150, 80), is_shift_pressed=False
+    )
+
+    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((150, 80))
+
+
+@pytest.mark.gui
+def test_reproject_oriented_rectangle_skips_clip_when_out_of_bounds_allowed() -> None:
+    # Same tilted shape and drag as the perpendicular-clip test above; with the
+    # flag on, the moving corner stays at the raw cursor instead of being clipped.
+    corners = tuple(
+        QPointF(*point) for point in [(50, 30), (60, 35), (65, 25), (55, 20)]
+    )
+
+    new_corners = _reproject_oriented_rectangle_corners(
+        corners=corners,
+        vertex_index=2,
+        pos=QPointF(95, 5),
+        image_size=QSize(_WIDTH, _HEIGHT),
+        allow_out_of_bounds=True,
+    )
+
+    # The moving corner lands on the raw cursor, the anchor is fixed, and the
+    # shape stays a parallelogram (opposite corners share a midpoint) -- i.e. no
+    # corner was pulled back to the image edge.
+    assert (new_corners[2].x(), new_corners[2].y()) == pytest.approx((95, 5))
+    assert (new_corners[0].x(), new_corners[0].y()) == pytest.approx((50, 30))
+    assert new_corners[0].x() + new_corners[2].x() == pytest.approx(
+        new_corners[1].x() + new_corners[3].x()
+    )
+    assert new_corners[0].y() + new_corners[2].y() == pytest.approx(
+        new_corners[1].y() + new_corners[3].y()
+    )
+
+
+@pytest.mark.gui
+def test_drag_shapes_blocked_off_image_by_default(canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(40, 20), (60, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas._prev_point = QPointF(50, 25)
+    canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
+
+    moved = canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80))
+
+    assert moved is False
+    assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((40, 20))
+    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((60, 30))
+
+
+@pytest.mark.gui
+def test_drag_shapes_keeps_out_of_bounds_when_enabled(canvas: Canvas) -> None:
+    canvas.set_allow_out_of_bounds_points(True)
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(40, 20), (60, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas._prev_point = QPointF(50, 25)
+    canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
+
+    moved = canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80))
+
+    assert moved is True
+    assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((140, 75))
+    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((160, 85))
+
+
+@pytest.mark.gui
+def test_should_draw_crosshair_off_image_when_out_of_bounds_allowed(
+    canvas: Canvas,
+) -> None:
+    canvas.set_allow_out_of_bounds_points(True)
+    canvas._crosshair[canvas._create_mode] = True
+    canvas.set_editing(False)
+
+    assert canvas._should_draw_crosshair(cursor=QPointF(_WIDTH + 20, _HEIGHT + 20))
 
 
 @pytest.mark.gui

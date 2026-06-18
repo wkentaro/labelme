@@ -135,37 +135,32 @@ class SettingsDialog(QtWidgets.QDialog):
             editor = self._create_editor(setting=setting)
             self._editors[setting.key_path] = editor
 
-            label = QtWidgets.QLabel(self.tr(setting.label))
-            label.setWordWrap(True)
+            label_cell = self._build_label_cell(setting=setting)
             row = QtWidgets.QWidget()
             if setting.kind == "str_list":
                 row_layout = QtWidgets.QVBoxLayout(row)
-                row_layout.addWidget(label)
+                row_layout.addWidget(label_cell)
+                row_layout.addWidget(editor)
             else:
                 row_layout = QtWidgets.QHBoxLayout(row)
-                # A note sits below the control; top-align the label so it pairs with
-                # the control rather than centering against the control+note block.
-                if setting.note:
-                    row_layout.addWidget(
-                        label, stretch=1, alignment=QtCore.Qt.AlignmentFlag.AlignTop
-                    )
-                else:
-                    row_layout.addWidget(label, stretch=1)
-            row_layout.addWidget(self._with_note(editor=editor, setting=setting))
+                row_layout.addWidget(label_cell, stretch=1)
+                # Top-align the control so it pairs with the label's first line
+                # rather than centering against the label+note block.
+                row_layout.addWidget(editor, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
             layout.addWidget(row)
         layout.addStretch(1)
         return page
 
-    def _with_note(
-        self, editor: QtWidgets.QWidget, setting: schema.Setting
-    ) -> QtWidgets.QWidget:
+    def _build_label_cell(self, setting: schema.Setting) -> QtWidgets.QWidget:
+        label = QtWidgets.QLabel(self.tr(setting.label))
+        label.setWordWrap(True)
         if not setting.note:
-            return editor
-        container = QtWidgets.QWidget()
-        layout = QtWidgets.QVBoxLayout(container)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(2)
-        layout.addWidget(editor)
+            return label
+        cell = QtWidgets.QWidget()
+        cell_layout = QtWidgets.QVBoxLayout(cell)
+        cell_layout.setContentsMargins(0, 0, 0, 0)
+        cell_layout.setSpacing(2)
+        cell_layout.addWidget(label)
         note = QtWidgets.QLabel(self.tr(setting.note))
         note.setWordWrap(True)
         # Secondary text color, kept enabled: a disabled label would be announced
@@ -176,8 +171,8 @@ class SettingsDialog(QtWidgets.QDialog):
             palette.color(QtGui.QPalette.ColorRole.PlaceholderText),
         )
         note.setPalette(palette)
-        layout.addWidget(note)
-        return container
+        cell_layout.addWidget(note)
+        return cell
 
     def _create_editor(self, setting: schema.Setting) -> QtWidgets.QWidget:
         value = self._read_value(setting.key_path)

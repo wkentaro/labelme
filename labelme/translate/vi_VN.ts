@@ -759,6 +759,14 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Hiển thị nhãn của hình dạng trên canvas</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Cho phép các điểm nằm ngoài ranh giới ảnh</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Cho phép các điểm của hình vượt ra ngoài ảnh, ví dụ cho các đối tượng hiển thị một phần.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Nhãn định sẵn</translation>
     </message>

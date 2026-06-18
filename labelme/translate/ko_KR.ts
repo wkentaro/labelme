@@ -759,6 +759,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>캔버스에 도형 레이블 표시</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>이미지 경계 밖의 점 허용</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>도형의 점이 이미지 밖으로 확장되도록 허용합니다. 예: 부분적으로 보이는 객체.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>사전 정의된 레이블</translation>
     </message>

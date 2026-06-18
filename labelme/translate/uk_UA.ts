@@ -762,6 +762,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Показувати мітки фігур на полотні</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Дозволити точки за межами зображення</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Дозволяє точкам фігур виходити за межі зображення, напр. для частково видимих об&apos;єктів.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Попередньо визначені мітки</translation>
     </message>

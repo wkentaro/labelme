@@ -1032,6 +1032,9 @@ class MainWindow(QtWidgets.QMainWindow):
             double_click=self._config["canvas"]["double_click"],
             num_backups=self._config["canvas"]["num_backups"],
             crosshair=self._config["canvas"]["crosshair"],
+            allow_out_of_bounds_points=self._config["canvas"][
+                "allow_out_of_bounds_points"
+            ],
         )
         canvas.set_point_size(self._config["shape"]["point_size"])
         canvas.set_show_labels(self._config["shape"]["show_labels"])
@@ -2428,6 +2431,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if key_path == ("shape", "show_labels"):
             canvas = self._canvas_widgets.canvas
             canvas.set_show_labels(self._config["shape"]["show_labels"])
+            canvas.update()
+        elif key_path == ("canvas", "allow_out_of_bounds_points"):
+            canvas = self._canvas_widgets.canvas
+            canvas.set_allow_out_of_bounds_points(
+                self._config["canvas"]["allow_out_of_bounds_points"]
+            )
             canvas.update()
         elif key_path[0] == "labels":
             # Update predefined labels in place so session history (labels learned

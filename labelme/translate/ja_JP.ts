@@ -773,6 +773,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>図形のラベルをキャンバスに表示</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>画像の境界外への点の配置を許可する</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>図形の点が画像の外まで広がることを許可します（例: 部分的にしか見えない物体）。</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>定義済みラベル</translation>
     </message>

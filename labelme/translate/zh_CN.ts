@@ -759,6 +759,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>在画布上显示形状标签</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>允许点超出图像边界</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>允许形状的点延伸到图像之外，例如用于部分可见的对象。</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>预定义标签</translation>
     </message>

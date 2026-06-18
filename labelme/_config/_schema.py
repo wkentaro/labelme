@@ -55,6 +55,25 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         kind="bool",
     ),
     Setting(
+        key_path=("canvas", "allow_out_of_bounds_points"),
+        section="General",
+        label=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog", "Allow points outside the image boundary"
+            ),
+        ),
+        kind="bool",
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "Let shape points extend beyond the image, e.g. for partially "
+                "visible objects.",
+            ),
+        ),
+    ),
+    Setting(
         key_path=("language",),
         section="General",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Language")),

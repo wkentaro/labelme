@@ -765,6 +765,14 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Alakzatcímkék megjelenítése a vásznon</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Pontok engedélyezése a kép határain kívül</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Lehetővé teszi, hogy az alakzatpontok túlnyúljanak a képen, pl. részben látható objektumokhoz.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Előre definiált címkék</translation>
     </message>

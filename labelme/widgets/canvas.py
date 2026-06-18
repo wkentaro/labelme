@@ -219,6 +219,9 @@ class Canvas(QtWidgets.QWidget):
                 f"Unexpected value for double_click event: {self._double_click}"
             )
         self._num_backups: int = kwargs.pop("num_backups", 10)
+        self._allow_out_of_bounds_points: bool = kwargs.pop(
+            "allow_out_of_bounds_points", False
+        )
         self._crosshair = kwargs.pop(
             "crosshair",
             {
@@ -273,6 +276,9 @@ class Canvas(QtWidgets.QWidget):
 
     def set_show_labels(self, value: bool) -> None:
         self._show_labels = value
+
+    def set_allow_out_of_bounds_points(self, value: bool) -> None:
+        self._allow_out_of_bounds_points = value
 
     def set_color_resolver(
         self, resolver: Callable[[str], tuple[int, int, int]]
@@ -636,10 +642,11 @@ class Canvas(QtWidgets.QWidget):
                 vertex_index=MOVING_CORNER_INDEX,
                 pos=pos,
                 image_size=self.pixmap.size(),
+                allow_out_of_bounds=self._allow_out_of_bounds_points,
             )
             self._current = dataclasses.replace(current, points=new_corners)
             return self._current.points[MOVING_CORNER_INDEX]
-        if self.is_out_of_pixmap(pos):
+        if self._should_constrain_to_pixmap(pos):
             return _compute_intersection_edges_image(
                 current.points[-1], pos, image_size=self.pixmap.size()
             )
@@ -955,7 +962,7 @@ class Canvas(QtWidgets.QWidget):
         if self._current is not None:
             self._extend_current_shape(current=self._current, event=event)
             return
-        if self.is_out_of_pixmap(pos):
+        if self._should_constrain_to_pixmap(pos):
             return
         self._start_new_shape(pos=pos, event=event, is_shift_pressed=is_shift_pressed)
 
@@ -1312,7 +1319,7 @@ class Canvas(QtWidgets.QWidget):
             )
             return
 
-        if self.is_out_of_pixmap(pos):
+        if self._should_constrain_to_pixmap(pos):
             pos = _compute_intersection_edges_image(
                 QPointF(*shape.points[vertex_index]), pos, image_size=self.pixmap.size()
             )
@@ -1334,23 +1341,24 @@ class Canvas(QtWidgets.QWidget):
             vertex_index=vertex_index,
             pos=pos,
             image_size=self.pixmap.size(),
+            allow_out_of_bounds=self._allow_out_of_bounds_points,
         )
         for i, corner in enumerate(new_corners):
             shape.move_vertex(i=i, pos=(corner.x(), corner.y()))
 
     def _drag_shapes(self, shapes: list[Shape], cursor: QPointF) -> bool:
-        if self.is_out_of_pixmap(cursor):
+        if self._should_constrain_to_pixmap(cursor):
             return False
 
         rel_tl, bounds = self._drag_anchor
-        pw = float(self.pixmap.width())
-        ph = float(self.pixmap.height())
-
         target = cursor + rel_tl
-        target.setX(max(0.0, target.x()))
-        target.setY(max(0.0, target.y()))
-        target.setX(min(target.x(), pw - bounds.width()))
-        target.setY(min(target.y(), ph - bounds.height()))
+        if not self._allow_out_of_bounds_points:
+            pw = float(self.pixmap.width())
+            ph = float(self.pixmap.height())
+            target.setX(max(0.0, target.x()))
+            target.setY(max(0.0, target.y()))
+            target.setX(min(target.x(), pw - bounds.width()))
+            target.setY(min(target.y(), ph - bounds.height()))
 
         new_cursor = target - rel_tl
         delta = new_cursor - self._prev_point
@@ -1441,10 +1449,21 @@ class Canvas(QtWidgets.QWidget):
         painter.setPen(QtGui.QColor(0, 0, 0))
         cx = int(cursor.x() * self.scale)
         cy = int(cursor.y() * self.scale)
-        max_x = int(self.pixmap.width() * self.scale) - 1
-        max_y = int(self.pixmap.height() * self.scale) - 1
-        painter.drawLine(0, cy, max_x, cy)
-        painter.drawLine(cx, 0, cx, max_y)
+        if self._allow_out_of_bounds_points:
+            # The cursor may be in the margin around the image, so span the whole
+            # viewport instead of stopping the lines at the image edge.
+            offset = self._compute_image_origin_offset() * self.scale
+            area = super().size()
+            left = int(-offset.x())
+            top = int(-offset.y())
+            right = int(-offset.x() + area.width())
+            bottom = int(-offset.y() + area.height())
+        else:
+            left = top = 0
+            right = int(self.pixmap.width() * self.scale) - 1
+            bottom = int(self.pixmap.height() * self.scale) - 1
+        painter.drawLine(left, cy, right, cy)
+        painter.drawLine(cx, top, cx, bottom)
 
     def _should_draw_crosshair(self, cursor: QPointF | None) -> bool:
         if self.mode != _CanvasMode.CREATE:
@@ -1453,7 +1472,7 @@ class Canvas(QtWidgets.QWidget):
             return False
         if cursor is None:
             return False
-        return not self.is_out_of_pixmap(cursor)
+        return not self._should_constrain_to_pixmap(cursor)
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter) -> None:
         for shape in self.shapes:
@@ -1554,6 +1573,9 @@ class Canvas(QtWidgets.QWidget):
 
     def is_out_of_pixmap(self, p: QPointF) -> bool:
         return _is_out_of_image(p, self.pixmap.size())
+
+    def _should_constrain_to_pixmap(self, point: QPointF) -> bool:
+        return not self._allow_out_of_bounds_points and self.is_out_of_pixmap(point)
 
     def _finalize(self) -> None:
         assert self._current is not None
@@ -1967,10 +1989,12 @@ def _reproject_oriented_rectangle_corners(
     vertex_index: int,
     pos: QPointF,
     image_size: QtCore.QSize,
+    allow_out_of_bounds: bool,
 ) -> tuple[QPointF, ...]:
     """Given a 4-corner oriented rectangle and a dragged corner, return the new
     corner positions: the dragged corner and its two neighbors move so the shape
-    stays a parallelogram, clipped to the image; the opposite anchor is fixed."""
+    stays a parallelogram, clipped to the image unless out-of-bounds points are
+    allowed; the opposite anchor is fixed."""
     anchor = corners[(vertex_index - 2) % 4]
     edge_axis = corners[(vertex_index - 1) % 4]
     moving = pos
@@ -1978,35 +2002,36 @@ def _reproject_oriented_rectangle_corners(
         anchor=anchor, edge_axis=edge_axis, moving=moving
     )
 
-    if _is_out_of_image(moving, image_size):
-        edge_a = _compute_intersection_edges_image(
-            p1=adjacent_perp, p2=moving, image_size=image_size
-        )
-        edge_b = _compute_intersection_edges_image(
-            p1=adjacent_para, p2=moving, image_size=image_size
-        )
-        moving = labelme.utils.project_point_on_line(
-            point=moving, line_start=edge_a, line_end=edge_b
-        )
-        adjacent_perp, adjacent_para = _project_oriented_rectangle_corners(
-            anchor=anchor, edge_axis=adjacent_para, moving=moving
-        )
+    if not allow_out_of_bounds:
+        if _is_out_of_image(moving, image_size):
+            edge_a = _compute_intersection_edges_image(
+                p1=adjacent_perp, p2=moving, image_size=image_size
+            )
+            edge_b = _compute_intersection_edges_image(
+                p1=adjacent_para, p2=moving, image_size=image_size
+            )
+            moving = labelme.utils.project_point_on_line(
+                point=moving, line_start=edge_a, line_end=edge_b
+            )
+            adjacent_perp, adjacent_para = _project_oriented_rectangle_corners(
+                anchor=anchor, edge_axis=adjacent_para, moving=moving
+            )
 
-    if _is_out_of_image(adjacent_perp, image_size):
-        adjacent_perp = _compute_intersection_edges_image(
-            p1=anchor, p2=adjacent_perp, image_size=image_size
-        )
-        moving = _opposite_corner_in_parallelogram(
-            opposite_to=anchor, neighbor1=adjacent_perp, neighbor2=adjacent_para
-        )
+        if _is_out_of_image(adjacent_perp, image_size):
+            adjacent_perp = _compute_intersection_edges_image(
+                p1=anchor, p2=adjacent_perp, image_size=image_size
+            )
+            moving = _opposite_corner_in_parallelogram(
+                opposite_to=anchor, neighbor1=adjacent_perp, neighbor2=adjacent_para
+            )
 
-    if _is_out_of_image(adjacent_para, image_size):
-        adjacent_para = _compute_intersection_edges_image(
-            p1=anchor, p2=adjacent_para, image_size=image_size
-        )
-        moving = _opposite_corner_in_parallelogram(
-            opposite_to=anchor, neighbor1=adjacent_perp, neighbor2=adjacent_para
-        )
+        if _is_out_of_image(adjacent_para, image_size):
+            adjacent_para = _compute_intersection_edges_image(
+                p1=anchor, p2=adjacent_para, image_size=image_size
+            )
+            moving = _opposite_corner_in_parallelogram(
+                opposite_to=anchor, neighbor1=adjacent_perp, neighbor2=adjacent_para
+            )
 
     new_corners = list(corners)
     new_corners[vertex_index] = moving

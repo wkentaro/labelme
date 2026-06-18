@@ -765,6 +765,14 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <translation>Mostra le etichette delle forme sulla tela</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Consenti punti al di fuori dei bordi dell&apos;immagine</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Permette ai punti delle forme di estendersi oltre l&apos;immagine, ad es. per oggetti parzialmente visibili.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Etichette predefinite</translation>
     </message>
