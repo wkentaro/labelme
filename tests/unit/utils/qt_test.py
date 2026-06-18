@@ -6,7 +6,6 @@ import pytest
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
-from PySide6.QtCore import QRegularExpression
 from pytestqt.qtbot import QtBot
 
 from labelme.utils.qt import add_actions
@@ -134,26 +133,26 @@ def test_label_validator_returns_validator() -> None:
 
 def test_label_validator_rejects_leading_space() -> None:
     v = label_validator()
-    state, _, _ = v.validate(" label", 0)
+    state, _, _ = v.validate(" label", 0)  # ty: ignore[not-iterable]
     assert state == QtGui.QValidator.State.Invalid
 
 
 def test_label_validator_rejects_leading_tab() -> None:
     v = label_validator()
-    state, _, _ = v.validate("\tlabel", 0)
+    state, _, _ = v.validate("\tlabel", 0)  # ty: ignore[not-iterable]
     assert state == QtGui.QValidator.State.Invalid
 
 
 def test_label_validator_accepts_normal_label() -> None:
     v = label_validator()
-    state, _, _ = v.validate("cat", 3)
+    state, _, _ = v.validate("cat", 3)  # ty: ignore[not-iterable]
     assert state == QtGui.QValidator.State.Acceptable
 
 
 def test_label_validator_rejects_single_char() -> None:
     # A single non-whitespace character is not yet an acceptable label.
     v = label_validator()
-    state, _, _ = v.validate("c", 1)
+    state, _, _ = v.validate("c", 1)  # ty: ignore[not-iterable]
     assert state != QtGui.QValidator.State.Acceptable
 
 
