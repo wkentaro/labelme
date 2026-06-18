@@ -97,6 +97,27 @@ def test_migrate_polygon_shortcut_skips_when_new_key_exists() -> None:
 
 
 @pytest.mark.parametrize(
+    ("old_config", "expected"),
+    [
+        ({"keep_prev_brightness": True}, {"keep_prev_brightness_contrast": True}),
+        ({"keep_prev_contrast": True}, {"keep_prev_brightness_contrast": True}),
+        (
+            {"keep_prev_brightness": True, "keep_prev_contrast": True},
+            {"keep_prev_brightness_contrast": True},
+        ),
+        ({"keep_prev_brightness": False, "keep_prev_contrast": False}, {}),
+    ],
+    ids=["brightness", "contrast", "both", "both_disabled"],
+)
+def test_migrate_keep_prev_brightness_contrast(
+    old_config: dict[str, bool], expected: dict[str, bool]
+) -> None:
+    config = old_config.copy()
+    _config._migrate_config_from_file(config)
+    assert config == expected
+
+
+@pytest.mark.parametrize(
     ("overrides", "message"),
     [
         (
