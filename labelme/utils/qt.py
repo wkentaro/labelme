@@ -52,7 +52,7 @@ def new_action(
         action.setIcon(new_icon(icon))
         action.setIconText(text.replace(" ", "\n"))
     if shortcut is not None:
-        if isinstance(shortcut, (list, tuple)):
+        if isinstance(shortcut, list | tuple):
             action.setShortcuts([QtGui.QKeySequence(s) for s in shortcut])
         else:
             action.setShortcut(QtGui.QKeySequence(shortcut))
@@ -75,7 +75,7 @@ def add_actions(
         if action is None:
             widget.addSeparator()
         elif isinstance(action, QtWidgets.QMenu):
-            widget.addMenu(action)
+            widget.addMenu(action)  # ty: ignore[unresolved-attribute]
         else:
             widget.addAction(action)
 
@@ -83,9 +83,7 @@ def add_actions(
 def label_validator() -> QtGui.QRegularExpressionValidator:
     # Accepts strings of 2+ chars not starting with space or tab.
     # Single non-whitespace char is Intermediate (handled by regex partial match).
-    return QtGui.QRegularExpressionValidator(
-        QtCore.QRegularExpression(r"[^ \t].+")
-    )
+    return QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[^ \t].+"))
 
 
 def distance(p: QtCore.QPointF) -> float:
@@ -135,7 +133,9 @@ def project_point_on_line(
     length_sq = dx * dx + dy * dy
     if length_sq == 0.0:
         return QtCore.QPointF(point)
-    t = ((point.x() - line_start.x()) * dx + (point.y() - line_start.y()) * dy) / length_sq
+    t = (
+        (point.x() - line_start.x()) * dx + (point.y() - line_start.y()) * dy
+    ) / length_sq
     return QtCore.QPointF(line_start.x() + t * dx, line_start.y() + t * dy)
 
 
