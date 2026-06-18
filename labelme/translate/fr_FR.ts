@@ -765,6 +765,14 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <translation>Afficher les étiquettes des formes sur le canevas</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Autoriser les points en dehors des limites de l&apos;image</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Permet aux points des formes de dépasser l&apos;image, par exemple pour les objets partiellement visibles.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Étiquettes prédéfinies</translation>
     </message>

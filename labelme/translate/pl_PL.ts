@@ -759,6 +759,14 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Pokaż etykiety kształtów na płótnie</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Zezwalaj na punkty poza granicami obrazu</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Pozwala punktom kształtu wykraczać poza obraz, np. dla częściowo widocznych obiektów.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Predefiniowane etykiety</translation>
     </message>

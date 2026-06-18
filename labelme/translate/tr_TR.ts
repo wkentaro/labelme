@@ -762,6 +762,14 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Şekil etiketlerini tuvalde göster</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Görüntü sınırının dışındaki noktalara izin ver</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Şekil noktalarının görüntünün dışına taşmasına izin verir, örn. kısmen görünen nesneler için.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Önceden tanımlı etiketler</translation>
     </message>

@@ -759,6 +759,14 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Vormlabels op canvas tonen</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Punten buiten de afbeeldingsgrens toestaan</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Laat vormpunten buiten de afbeelding vallen, bijv. voor gedeeltelijk zichtbare objecten.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Voorgedefinieerde labels</translation>
     </message>

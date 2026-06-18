@@ -765,6 +765,14 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <translation>Formlabels auf der Leinwand anzeigen</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Punkte außerhalb der Bildgrenzen zulassen</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Erlaubt, dass Formpunkte über das Bild hinausragen, z. B. für teilweise sichtbare Objekte.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Vordefinierte Labels</translation>
     </message>

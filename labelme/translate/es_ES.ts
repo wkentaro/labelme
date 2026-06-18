@@ -759,6 +759,14 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <translation>Mostrar etiquetas de forma en el lienzo</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Permitir puntos fuera de los límites de la imagen</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Permite que los puntos de las formas se extiendan más allá de la imagen, p. ej. para objetos parcialmente visibles.</translation>
+    </message>
+    <message>
         <source>Predefined labels</source>
         <translation>Etiquetas predefinidas</translation>
     </message>

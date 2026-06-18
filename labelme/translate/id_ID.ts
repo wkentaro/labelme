@@ -795,6 +795,14 @@ Shapes</source>
         <translation>Tampilkan label bentuk pada kanvas</translation>
     </message>
     <message>
+        <source>Allow points outside the image boundary</source>
+        <translation>Izinkan titik di luar batas gambar</translation>
+    </message>
+    <message>
+        <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
+        <translation>Memungkinkan titik bentuk melampaui gambar, mis. untuk objek yang terlihat sebagian.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Bahasa</translation>
     </message>
