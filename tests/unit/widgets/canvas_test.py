@@ -277,7 +277,7 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     # an overlapping detection). The empty branch of _finalize must reset the
     # in-progress drawing state so the edit-mode button becomes usable again
     # and notify the user that inference produced nothing.
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", lambda **_: [])
+    monkeypatch.setattr(canvas, "_build_new_shapes_from_ai_inference", lambda: [])
     canvas.create_mode = create_mode
     # ai_box_to_shape normalizes the two bbox corners before delegating to the
     # (monkeypatched) inference call, so the in-progress shape needs 2 points.
@@ -299,6 +299,169 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     assert len(inference_no_shapes_emissions) == 1
     assert canvas._current is None
     assert canvas.shapes == []
+
+
+def _raise_inference_error(**_: object) -> list[Shape]:
+    raise RuntimeError("broken model")
+
+
+@pytest.fixture()
+def broken_inference(
+    canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> tuple[Canvas, list[str]]:
+    monkeypatch.setattr(
+        canvas._ai_assist_session, "propose_shapes", _raise_inference_error
+    )
+    failures: list[str] = []
+    canvas.inference_failed.connect(failures.append)
+    return canvas, failures
+
+
+def _drive_ai_preview(canvas: Canvas) -> Shape:
+    # The hover preview runs inference inside paintEvent via this method; drive
+    # it directly so the tests exercise the real per-repaint code path.
+    canvas._line = _DraftShape(
+        shape_type="points",
+        points=(QPointF(0, 0), QPointF(1, 1)),
+        point_labels=(1, 1),
+    )
+    return canvas._build_ai_points_preview(
+        current=_DraftShape(
+            shape_type="points", points=(QPointF(0, 0),), point_labels=(1,)
+        )
+    )
+
+
+@pytest.mark.gui
+def test_preview_swallows_inference_error(
+    broken_inference: tuple[Canvas, list[str]],
+) -> None:
+    # A model/runtime error during inference must not propagate (it would crash
+    # the app, since the preview path runs inference inside paintEvent). The
+    # preview falls back to the raw draft and reports the failure once.
+    canvas, failures = broken_inference
+
+    preview = _drive_ai_preview(canvas)
+
+    assert preview is not None
+    assert failures == ["RuntimeError: broken model"]
+
+
+@pytest.mark.gui
+def test_repeated_identical_inference_error_reported_once(
+    broken_inference: tuple[Canvas, list[str]],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The hover preview re-runs inference on every repaint; an identical failure
+    # must be reported once until inference recovers, not spammed per repaint.
+    canvas, failures = broken_inference
+
+    for _ in range(3):
+        _drive_ai_preview(canvas)
+    assert len(failures) == 1
+
+    # A successful inference clears the latch so the next failure is reported.
+    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", lambda **_: [])
+    _drive_ai_preview(canvas)
+    monkeypatch.setattr(
+        canvas._ai_assist_session, "propose_shapes", _raise_inference_error
+    )
+    _drive_ai_preview(canvas)
+    assert len(failures) == 2
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
+def test_finalize_after_inference_error_resets_without_no_shapes_notice(
+    broken_inference: tuple[Canvas, list[str]],
+    create_mode: str,
+) -> None:
+    # When finalize yields no shapes because inference *failed*, the user has
+    # already seen the failure message, so the misleading "produced no new
+    # annotation" notice must be suppressed while state still resets.
+    canvas, failures = broken_inference
+    canvas.create_mode = create_mode
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+    no_shapes_emissions: list[None] = []
+    canvas.inference_produced_no_shapes.connect(
+        lambda: no_shapes_emissions.append(None)
+    )
+
+    canvas._finalize()
+
+    assert no_shapes_emissions == []
+    assert failures == ["RuntimeError: broken model"]
+    assert canvas._current is None
+    assert canvas.shapes == []
+
+
+@pytest.mark.gui
+def test_commit_after_preview_error_reports_failure_again(
+    broken_inference: tuple[Canvas, list[str]],
+) -> None:
+    # The hover preview already reported the failure once. Committing re-runs the
+    # same failing inference; that explicit click must surface its own error
+    # instead of being swallowed by the preview dedup latch (which would leave
+    # the click with no feedback at all).
+    canvas, failures = broken_inference
+    canvas.create_mode = "ai_points_to_shape"
+
+    _drive_ai_preview(canvas)
+    assert len(failures) == 1
+
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+    no_shapes_emissions: list[None] = []
+    canvas.inference_produced_no_shapes.connect(
+        lambda: no_shapes_emissions.append(None)
+    )
+
+    canvas._finalize()
+
+    assert len(failures) == 2
+    assert no_shapes_emissions == []
+    assert canvas._current is None
+
+
+@pytest.mark.gui
+def test_load_pixmap_resets_inference_error_latch(
+    broken_inference: tuple[Canvas, list[str]],
+) -> None:
+    # The dedup latch is per-image; loading a new image is a new inference
+    # context whose first identical failure must surface, not be suppressed.
+    canvas, failures = broken_inference
+
+    _drive_ai_preview(canvas)
+    assert len(failures) == 1
+
+    canvas.load_pixmap(QtGui.QPixmap(_WIDTH, _HEIGHT))
+    _drive_ai_preview(canvas)
+    assert len(failures) == 2
+
+
+@pytest.mark.gui
+def test_entering_ai_mode_resets_inference_error_latch(
+    broken_inference: tuple[Canvas, list[str]],
+) -> None:
+    # Re-entering an AI mode is a fresh inference intent; the first failure after
+    # the switch must surface instead of being suppressed as a repeat.
+    canvas, failures = broken_inference
+    canvas.create_mode = "ai_points_to_shape"
+
+    _drive_ai_preview(canvas)
+    assert len(failures) == 1
+
+    canvas.create_mode = "polygon"
+    canvas.create_mode = "ai_points_to_shape"
+    _drive_ai_preview(canvas)
+    assert len(failures) == 2
 
 
 @pytest.mark.gui
