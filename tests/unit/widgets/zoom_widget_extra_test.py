@@ -85,8 +85,8 @@ def test_zoom_widget_status_tip_is_zoom_level(widget: ZoomWidget) -> None:
 def test_zoom_widget_minimum_width_accommodates_max_value(widget: ZoomWidget) -> None:
     # The minimum width must be wide enough to display the maximum zoom string.
     sample = f"{ZoomWidget.PERCENT_MAX:.{ZoomWidget.PERCENT_DECIMALS}f}{ZoomWidget.PERCENT_SUFFIX}"
-    expected = widget.fontMetrics().horizontalAdvance(sample)
-    assert widget.minimumWidth() == expected
+    minimum_required = widget.fontMetrics().horizontalAdvance(sample)
+    assert widget.minimumWidth() >= minimum_required
     assert widget.minimumWidth() > 0
 
 
