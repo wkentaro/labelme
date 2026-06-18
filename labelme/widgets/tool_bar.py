@@ -8,7 +8,9 @@ from PySide6.QtCore import Qt
 
 _OBJECT_NAME_SUFFIX: Final = "ToolBar"
 _FONT_SCALE_FACTOR: Final = 0.8
-_VERTICAL_SEPARATOR_STYLE: Final = "QToolBar::separator { height: 1px; background: palette(mid); margin: 2px 4px; }"
+_VERTICAL_SEPARATOR_STYLE: Final = (
+    "QToolBar::separator { height: 1px; background: palette(mid); margin: 2px 4px; }"
+)
 
 
 class ToolBar(QtWidgets.QToolBar):
@@ -50,7 +52,7 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Orientation.Vertical:
             self._equalize_button_widths()
 
-    def addAction(self, action: QtGui.QAction) -> None:  # type: ignore[override]
+    def addAction(self, action: QtGui.QAction) -> None:  # ty: ignore[invalid-method-override]
         if isinstance(action, QtWidgets.QWidgetAction):
             super().addAction(action)
             return
