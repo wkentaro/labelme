@@ -526,6 +526,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI-inferentie is mislukt: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Fout bij openen van bestand</translation>
     </message>

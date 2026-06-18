@@ -511,6 +511,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Инференс ИИ завершился ошибкой: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Ошибка при открытии файла</translation>
     </message>

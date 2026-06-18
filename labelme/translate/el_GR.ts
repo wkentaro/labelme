@@ -548,6 +548,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>

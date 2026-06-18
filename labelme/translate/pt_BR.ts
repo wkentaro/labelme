@@ -526,6 +526,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>A inferência de IA falhou: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Erro ao abrir arquivo</translation>
     </message>
