@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import math
+import os
 from collections.abc import Callable
 from collections.abc import Sequence
-from math import sqrt
-from pathlib import Path
 from typing import Final
 
 import numpy as np
@@ -12,15 +12,15 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-here = Path(__file__).resolve().parent
+_ICONS_DIR: Final = os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons")
+_DEFAULT_ICON_SUFFIX: Final = ".png"
 
 
-def new_icon(icon_file_name: str) -> QtGui.QIcon:
-    ICON_SUFFIX: Final[str] = ".png"
-    icon_path = here.parent / "icons" / icon_file_name
-    if icon_path.suffix == "":
-        icon_path = icon_path.with_suffix(ICON_SUFFIX)
-    return QtGui.QIcon(str(icon_path))
+def new_icon(name: str) -> QtGui.QIcon:
+    if not os.path.splitext(name)[1]:
+        name = name + _DEFAULT_ICON_SUFFIX
+    path = os.path.join(_ICONS_DIR, name)
+    return QtGui.QIcon(path)
 
 
 def new_button(
@@ -38,7 +38,7 @@ def new_button(
 
 def new_action(
     parent: QtWidgets.QWidget,
-    text: str,
+    text: str = "",
     slot: Callable[..., object] | None = None,
     shortcut: str | list[str] | tuple[str, ...] | None = None,
     icon: str | None = None,
@@ -49,21 +49,21 @@ def new_action(
 ) -> QtGui.QAction:
     action = QtGui.QAction(text, parent)
     if icon is not None:
-        action.setIconText(text.replace(" ", "\n"))
         action.setIcon(new_icon(icon))
-    if isinstance(shortcut, list | tuple):
-        action.setShortcuts([QtGui.QKeySequence(s) for s in shortcut])
-    elif shortcut is not None:
-        action.setShortcut(shortcut)
+        action.setIconText(text.replace(" ", "\n"))
+    if shortcut is not None:
+        if isinstance(shortcut, (list, tuple)):
+            action.setShortcuts([QtGui.QKeySequence(s) for s in shortcut])
+        else:
+            action.setShortcut(QtGui.QKeySequence(shortcut))
     if tip is not None:
         action.setToolTip(tip)
         action.setStatusTip(tip)
-    if slot is not None:
-        action.triggered.connect(slot)
-    if checkable:
-        action.setCheckable(True)
+    action.setCheckable(checkable)
     action.setEnabled(enabled)
     action.setChecked(checked)
+    if slot is not None:
+        action.triggered.connect(slot)
     return action
 
 
@@ -71,22 +71,25 @@ def add_actions(
     widget: QtWidgets.QMenu | QtWidgets.QToolBar,
     actions: Sequence[QtGui.QAction | QtWidgets.QMenu | None],
 ) -> None:
-    for entry in actions:
-        if entry is None:
+    for action in actions:
+        if action is None:
             widget.addSeparator()
-            continue
-        if isinstance(entry, QtWidgets.QMenu):
-            widget.addMenu(entry)  # ty: ignore[unresolved-attribute]
-            continue
-        widget.addAction(entry)
+        elif isinstance(action, QtWidgets.QMenu):
+            widget.addMenu(action)
+        else:
+            widget.addAction(action)
 
 
 def label_validator() -> QtGui.QRegularExpressionValidator:
-    return QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"^[^ \t].+"))
+    # Accepts strings of 2+ chars not starting with space or tab.
+    # Single non-whitespace char is Intermediate (handled by regex partial match).
+    return QtGui.QRegularExpressionValidator(
+        QtCore.QRegularExpression(r"[^ \t].+")
+    )
 
 
 def distance(p: QtCore.QPointF) -> float:
-    return sqrt(p.x() * p.x() + p.y() * p.y())
+    return math.hypot(p.x(), p.y())
 
 
 def distance_to_line(
@@ -94,47 +97,31 @@ def distance_to_line(
     line: tuple[QtCore.QPointF, QtCore.QPointF],
 ) -> float:
     start, end = line
-    sx, sy = start.x(), start.y()
-    ex, ey = end.x(), end.y()
-    px, py = point.x(), point.y()
-
-    edge_x = ex - sx
-    edge_y = ey - sy
-    length_sq = edge_x * edge_x + edge_y * edge_y
-    if length_sq == 0:
-        return float(np.hypot(px - sx, py - sy))
-
-    t = ((px - sx) * edge_x + (py - sy) * edge_y) / length_sq
-    t = min(1.0, max(0.0, t))
-
-    nearest_x = sx + t * edge_x
-    nearest_y = sy + t * edge_y
-    return float(np.hypot(px - nearest_x, py - nearest_y))
+    dx = end.x() - start.x()
+    dy = end.y() - start.y()
+    length_sq = dx * dx + dy * dy
+    if length_sq == 0.0:
+        return distance(point - start)
+    t = ((point.x() - start.x()) * dx + (point.y() - start.y()) * dy) / length_sq
+    t = max(0.0, min(1.0, t))
+    nearest = QtCore.QPointF(start.x() + t * dx, start.y() + t * dy)
+    return distance(point - nearest)
 
 
 def format_shortcut(text: str) -> str:
     if "+" not in text:
-        raise ValueError(f"shortcut missing '+': {text!r}")
-    modifier, _, key = text.partition("+")
+        raise ValueError(f"Not a modifier-plus-key shortcut: {text!r}")
+    idx = text.index("+")
+    modifier = text[:idx]
+    key = text[idx + 1 :]
     return f"<b>{modifier}</b>+<b>{key}</b>"
 
 
 def direction_angle(*, start: npt.ArrayLike, end: npt.ArrayLike) -> float:
-    delta = np.asarray(end, dtype=np.float64) - np.asarray(start, dtype=np.float64)
-    return float(np.arctan2(delta[1], delta[0]))
-
-
-def _project_point_along_direction(
-    *,
-    base: QtCore.QPointF,
-    direction: QtCore.QPointF,
-    point: QtCore.QPointF,
-) -> QtCore.QPointF:
-    length_sq = QtCore.QPointF.dotProduct(direction, direction)
-    if length_sq == 0.0:
-        return QtCore.QPointF(point)
-    t = QtCore.QPointF.dotProduct(direction, point - base) / length_sq
-    return base + direction * t
+    s = np.asarray(start, dtype=float)
+    e = np.asarray(end, dtype=float)
+    delta = e - s
+    return float(math.atan2(delta[1], delta[0]))
 
 
 def project_point_on_line(
@@ -143,9 +130,13 @@ def project_point_on_line(
     line_start: QtCore.QPointF,
     line_end: QtCore.QPointF,
 ) -> QtCore.QPointF:
-    return _project_point_along_direction(
-        base=line_end, direction=line_start - line_end, point=point
-    )
+    dx = line_end.x() - line_start.x()
+    dy = line_end.y() - line_start.y()
+    length_sq = dx * dx + dy * dy
+    if length_sq == 0.0:
+        return QtCore.QPointF(point)
+    t = ((point.x() - line_start.x()) * dx + (point.y() - line_start.y()) * dy) / length_sq
+    return QtCore.QPointF(line_start.x() + t * dx, line_start.y() + t * dy)
 
 
 def project_point_on_perpendicular_line(
@@ -154,9 +145,16 @@ def project_point_on_perpendicular_line(
     line_start: QtCore.QPointF,
     line_end: QtCore.QPointF,
 ) -> QtCore.QPointF:
-    delta = line_start - line_end
-    return _project_point_along_direction(
-        base=line_end,
-        direction=QtCore.QPointF(delta.y(), -delta.x()),
-        point=point,
-    )
+    # The perpendicular line passes through line_end and is orthogonal to
+    # the vector (line_end - line_start).
+    dx = line_end.x() - line_start.x()
+    dy = line_end.y() - line_start.y()
+    length_sq = dx * dx + dy * dy
+    if length_sq == 0.0:
+        return QtCore.QPointF(point)
+    # Direction of the perpendicular: (-dy, dx) (rotate 90 degrees).
+    # Project point onto the line through line_end with direction (-dy, dx).
+    px = point.x() - line_end.x()
+    py = point.y() - line_end.y()
+    t = (px * (-dy) + py * dx) / length_sq
+    return QtCore.QPointF(line_end.x() + t * (-dy), line_end.y() + t * dx)
