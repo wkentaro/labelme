@@ -98,6 +98,22 @@ On some Linux distributions, labelme is also packaged in the system's native rep
 
 labelme follows [SPEC 0](https://scientific-python.org/specs/spec-0000/) (the successor to [NEP 29](https://numpy.org/neps/nep-0029-deprecation_policy.html)) for dropping Python versions, in step with its core scientific dependencies (numpy, scipy, scikit-image). v6.3.x is the maintenance line for Qt5 and Python 3.10 stragglers and receives critical fixes only.
 
+### Upgrading from v6.x to v7
+
+v7.0.0 raises the platform floor:
+
+- **Qt binding:** the GUI moved from PyQt5 (Qt5) to PySide6 (Qt6). `pip install labelme` now pulls PySide6 instead of PyQt5. If you import labelme as a library, note that internal Qt imports are PySide6.
+- **Python:** the minimum is now Python 3.11 (3.10 is dropped).
+- **OS:** Qt6 requires a 64-bit macOS, Windows, or Linux; older OSes that only Qt5 supported are no longer covered.
+
+If you need to stay on PyQt5/Qt5, Python 3.10, or an older OS, pin to the v6.3.x maintenance line:
+
+```bash
+pip install 'labelme<7'
+```
+
+All previous releases remain installable from [PyPI](https://pypi.org/project/labelme/#history), so existing pins keep working.
+
 ## Usage
 
 Run `labelme --help` for detail.\
