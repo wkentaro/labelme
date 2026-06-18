@@ -46,4 +46,4 @@ update_translate:
 	$(call exec,uv run tools/update_translate.py)
 
 coverage:  # Run tests with coverage
-	$(call exec,uv run pytest -v tests/ --numprocesses=auto --cov=labelme --cov-report=term-missing)
+	$(MAKE) test PYTEST_ARGS="--cov=labelme --cov-report=term-missing"
