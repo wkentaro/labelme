@@ -10,14 +10,16 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 
 
-def _make_axis_aligned_oriented_rectangle() -> Shape:
+def _make_oriented_rectangle(points: list[tuple[float, float]]) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
-        points=np.array(
-            [(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)], dtype=np.float64
-        ),
+        points=np.array(points, dtype=np.float64),
         closed=True,
     )
+
+
+def _make_axis_aligned_oriented_rectangle() -> Shape:
+    return _make_oriented_rectangle([(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)])
 
 
 def test_rotate_oriented_rectangle_around_origin() -> None:
@@ -406,3 +408,41 @@ def test_nearest_rotation_point_index_returns_none_for_empty_shape() -> None:
     )
 
     assert index is None
+
+
+def test_oriented_rectangle_arrow_points_axis_aligned() -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+
+    arrow = _shape.oriented_rectangle_arrow_points(shape=shape)
+
+    # index 1 is the tip; index 3 is the tail
+    expected = np.array(
+        [[6.1, -0.5], [10.0, 2.0], [6.1, 4.5], [0.0, 2.0]], dtype=np.float64
+    )
+    assert arrow == pytest.approx(expected)
+
+
+def test_oriented_rectangle_arrow_points_rotates_tip_along_direction() -> None:
+    # direction = points[1] - points[0] = (0, 10), so angle = pi/2: the tip
+    # rotates from +x to +y. Center is (3, 5).
+    shape = _make_oriented_rectangle([(5.0, 0.0), (5.0, 10.0), (1.0, 10.0), (1.0, 0.0)])
+
+    arrow = _shape.oriented_rectangle_arrow_points(shape=shape)
+
+    expected = np.array(
+        [[5.5, 6.1], [3.0, 10.0], [0.5, 6.1], [3.0, 0.0]], dtype=np.float64
+    )
+    assert arrow == pytest.approx(expected)
+
+
+def test_oriented_rectangle_arrow_points_for_non_cardinal_direction() -> None:
+    # direction = (8, 6): a non-cardinal angle (cos 0.8, sin 0.6) so that
+    # swapping the arctan2 arguments would change the result. Center is (2.5, 5).
+    shape = _make_oriented_rectangle([(0.0, 0.0), (8.0, 6.0), (5.0, 10.0), (-3.0, 4.0)])
+
+    arrow = _shape.oriented_rectangle_arrow_points(shape=shape)
+
+    expected = np.array(
+        [[4.88, 3.66], [6.5, 8.0], [1.88, 7.66], [-1.5, 2.0]], dtype=np.float64
+    )
+    assert arrow == pytest.approx(expected)
