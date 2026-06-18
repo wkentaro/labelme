@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed a crash when switching drawing modes while a shape was partially drawn; the in-progress shape is now retyped when both modes accept a single click as a starting point, and cancelled otherwise. Degenerate shapes (zero-area rectangle, zero-length line, polygon with fewer than 3 distinct vertices) are now rejected at the point of completion. ([#2103](https://github.com/wkentaro/labelme/pull/2103))
+- Fixed a crash when switching drawing modes while a shape was partially drawn; the in-progress shape is now retyped when both modes accept a single click as a starting point, and cancelled otherwise. Degenerate shapes (zero-area rectangle, zero-length line, polygon with fewer than 3 distinct vertices) are now rejected at the point of completion ([#2103](https://github.com/wkentaro/labelme/pull/2103))
 
 ## [6.3.0] - 2026-05-19
 
@@ -87,7 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Stale snap highlight no longer stays on canvas after scroll, zoom, or resize. ([#1975](https://github.com/wkentaro/labelme/pull/1975))
+- Stale snap highlight no longer stays on canvas after scroll, zoom, or resize ([#1975](https://github.com/wkentaro/labelme/pull/1975))
 
 ## [6.1.2] - 2026-04-21
 
@@ -99,7 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed Ctrl/Cmd+A (Edit > Select All) not working when the canvas has focus. ([#1964](https://github.com/wkentaro/labelme/pull/1964))
+- Fixed Ctrl/Cmd+A (Edit > Select All) not working when the canvas has focus ([#1964](https://github.com/wkentaro/labelme/pull/1964))
 
 ## [6.1.0] - 2026-04-16
 
@@ -140,7 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed broken images on the PyPI project page by rewriting relative image paths to absolute GitHub raw URLs at build time. ([#1954](https://github.com/wkentaro/labelme/pull/1954))
+- Fixed broken images on the PyPI project page by rewriting relative image paths to absolute GitHub raw URLs at build time ([#1954](https://github.com/wkentaro/labelme/pull/1954))
 
 ## [6.0.1] - 2026-04-16
 
@@ -215,7 +215,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Forced light mode since dark mode is not yet supported.
+- Forced light mode since dark mode is not yet supported
 
 ## [5.11.2] - 2026-01-31
 
@@ -279,9 +279,9 @@ _No user-facing changes._
 
 ### Fixed
 
-- Fixed a crash when loading a new image while shapes were selected on the canvas.
-- Fixed a crash on double-click shape finalization by correctly checking whether the shape was closeable.
-- Fixed a startup crash on some systems by importing onnxruntime before PyQt5.
+- Fixed a crash when loading a new image while shapes were selected on the canvas
+- Fixed a crash on double-click shape finalization by correctly checking whether the shape was closeable
+- Fixed a startup crash on some systems by importing onnxruntime before PyQt5
 
 ## [5.10.0] - 2025-11-25
 
@@ -487,7 +487,7 @@ _No user-facing changes._
 
 ### Fixed
 
-- Fixed `labelme_export_json` CLI to strip only the file extension from the output directory name, so files with multiple dots (e.g. `image.v2.json`) no longer produce a mangled directory name.
+- Fixed `labelme_export_json` CLI to strip only the file extension from the output directory name, so files with multiple dots (e.g. `image.v2.json`) no longer produce a mangled directory name
 
 ## [5.3.0] - 2023-08-06
 
@@ -538,7 +538,7 @@ _No user-facing changes._
 
 ### Fixed
 
-- Removed the overly broad matplotlib version restriction from install requirements; the constraint is only needed when building the standalone executable, so regular installs can now use any matplotlib version.
+- Removed the overly broad matplotlib version restriction from install requirements; the constraint is only needed when building the standalone executable, so regular installs can now use any matplotlib version
 
 ## [5.1.0] - 2022-11-15
 
@@ -554,15 +554,15 @@ _No user-facing changes._
 
 ### Fixed
 
-- Fixed a TypeError when using the polygon annotation tool on Python 3.10 caused by an internal point type mismatch.
+- Fixed a TypeError when using the polygon annotation tool on Python 3.10 caused by an internal point type mismatch
 
 ## [5.0.4] - 2022-10-24
 
 ### Fixed
 
-- Fixed a crash when opening a directory caused by the label list widget returning a fractional size instead of an integer size.
-- Fixed a crash when scrolling annotations loaded from older JSON files due to a float value passed to the scroll bar.
-- Fixed removing the last point of a shape not always marking the annotation as modified.
+- Fixed a crash when opening a directory caused by the label list widget returning a fractional size instead of an integer size
+- Fixed a crash when scrolling annotations loaded from older JSON files due to a float value passed to the scroll bar
+- Fixed removing the last point of a shape not always marking the annotation as modified
 
 ## [5.0.3] - 2022-10-23
 
@@ -574,8 +574,8 @@ _No user-facing changes._
 
 ### Fixed
 
-- Fixed a crash when editing a label whose name does not exist in the label list.
-- Escaped label names so that labels containing angle brackets (e.g. `<cat>`, `<background>`) are displayed and handled correctly.
+- Fixed a crash when editing a label whose name does not exist in the label list
+- Escaped label names so that labels containing angle brackets (e.g. `<cat>`, `<background>`) are displayed and handled correctly
 
 ## [5.0.1] - 2022-03-03
 
