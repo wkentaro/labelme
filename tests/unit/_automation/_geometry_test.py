@@ -165,16 +165,16 @@ def test_compute_polygon_from_mask_returns_empty_for_empty_mask() -> None:
 
 def test_compute_polygon_from_mask_traces_rectangle_extent_in_xy_order() -> None:
     # Rows 1-3, cols 1-7 set. The result is xy-ordered, so the max extent is
-    # x=8.0, y=4.0 (a yx result would swap them, which the max assertion catches).
-    # The lower bound is the contour's half-pixel offset; the upper bound is
-    # clamped to mask size minus 1.
+    # x=7.5, y=3.5 (a yx result would swap them, which the max assertion catches).
+    # The coordinates are the region's half-pixel boundary in image space:
+    # x in [0.5, 7.5], y in [0.5, 3.5].
     mask = np.zeros((5, 9), dtype=bool)
     mask[1:4, 1:8] = True
 
     polygon = compute_polygon_from_mask(mask=mask)
 
-    assert polygon.min(axis=0) == pytest.approx([1.5, 1.5])
-    assert polygon.max(axis=0) == pytest.approx([8.0, 4.0])
+    assert polygon.min(axis=0) == pytest.approx([0.5, 0.5])
+    assert polygon.max(axis=0) == pytest.approx([7.5, 3.5])
 
 
 def test_compute_polygon_from_mask_picks_largest_contour() -> None:
@@ -188,8 +188,22 @@ def test_compute_polygon_from_mask_picks_largest_contour() -> None:
 
     polygon = compute_polygon_from_mask(mask=mask)
 
-    assert polygon.min(axis=0) == pytest.approx([1.5, 1.5])
-    assert polygon.max(axis=0) == pytest.approx([7.5, 5.5])
+    assert polygon.min(axis=0) == pytest.approx([0.5, 0.5])
+    assert polygon.max(axis=0) == pytest.approx([6.5, 4.5])
+
+
+def test_compute_polygon_from_mask_keeps_half_pixel_boundary_at_image_edge() -> None:
+    # A fully-set mask has no background border, so its contour is the outer
+    # half-pixel boundary: x in [-0.5, W-0.5], y in [-0.5, H-0.5]. The near side
+    # clips to 0, while the far side must clamp to mask size (W=9, H=5), not
+    # size-1, so it keeps its half-pixel offset (8.5, 4.5) instead of being
+    # pulled in by a pixel.
+    mask = np.ones((5, 9), dtype=bool)
+
+    polygon = compute_polygon_from_mask(mask=mask)
+
+    assert polygon.min(axis=0) == pytest.approx([0.0, 0.0])
+    assert polygon.max(axis=0) == pytest.approx([8.5, 4.5])
 
 
 def test_compute_oriented_rectangle_from_mask_l_shape_is_axis_aligned() -> None:
