@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Final
 from typing import NamedTuple
 
 import numpy as np
@@ -142,20 +143,27 @@ def _get_contour_length(contour: NDArray[np.float32]) -> float:
 
 
 def compute_polygon_from_mask(mask: NDArray[np.bool_]) -> NDArray[np.float32]:
+    # Pad so a region touching the image border still has a background ring to
+    # close its contour against; the resulting offset is removed below.
+    PAD: Final[int] = 1
     contours: NDArray[np.float32] = skimage.measure.find_contours(
-        np.pad(mask, pad_width=1)
+        np.pad(mask, pad_width=PAD)
     )
     if len(contours) == 0:
         logger.warning("No contour found, so returning empty polygon.")
         return np.empty((0, 2), dtype=np.float32)
 
     contour: NDArray[np.float32] = max(contours, key=_get_contour_length)
-    POLYGON_APPROX_TOLERANCE: float = 0.004
+    contour = contour - PAD  # undo the pad shift: back to image-space coords
+    POLYGON_APPROX_TOLERANCE: Final[float] = 0.004
     polygon: NDArray[np.float32] = skimage.measure.approximate_polygon(
         coords=contour,
         tolerance=np.ptp(contour, axis=0).max() * POLYGON_APPROX_TOLERANCE,
     )
-    polygon = np.clip(polygon, (0, 0), (mask.shape[0] - 1, mask.shape[1] - 1))
+    # np.clip is inclusive and a half-pixel boundary can reach shape - 0.5, so
+    # the ceiling is mask.shape (not mask.shape - 1) to keep edge-touching
+    # contours from being pulled inward by a pixel.
+    polygon = np.clip(polygon, (0, 0), (mask.shape[0], mask.shape[1]))
     polygon = polygon[:-1]  # drop last point that is duplicate of first point
 
     return polygon[:, ::-1]  # yx -> xy
