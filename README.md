@@ -114,6 +114,10 @@ pip install 'labelme<7'
 
 All previous releases remain installable from [PyPI](https://pypi.org/project/labelme/#history), so existing pins keep working.
 
+v7.0.0 also changes config parsing:
+
+- **Config booleans:** `~/.labelmerc` is now parsed with ruamel.yaml (YAML 1.2), so the boolean spellings `yes`/`no`/`on`/`off` (in any capitalization) are read as strings rather than booleans. If you set any boolean option this way, switch it to `true`/`false`.
+
 ## Usage
 
 Run `labelme --help` for detail.\
