@@ -245,7 +245,7 @@ class LabelDialog(QtWidgets.QDialog):
     ) -> tuple[str, dict[str, bool], int | None, str] | tuple[None, None, None, None]:
         if text is not None:
             self.edit.setText(text)
-            self.edit.selectAll()
+        self.edit.selectAll()
 
         self.edit_description.setPlainText(description or "")
 

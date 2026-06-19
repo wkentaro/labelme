@@ -470,6 +470,19 @@ def test_popup_text_none_preserves_existing_edit_text(qtbot: QtBot) -> None:
     assert seen["t"] == "preexisting"
 
 
+def test_popup_text_none_selects_existing_edit_text(qtbot: QtBot) -> None:
+    seen: dict[str, str] = {}
+    dialog = _make_dialog(qtbot)
+    dialog.edit.setText("preexisting")
+    _run_popup(
+        dialog,
+        accept=True,
+        text=None,
+        at_show=lambda d: seen.update(sel=d.edit.selectedText()),
+    )
+    assert seen["sel"] == "preexisting"
+
+
 def test_popup_highlights_matching_label_at_show(qtbot: QtBot) -> None:
     seen: dict[str, object] = {}
     dialog = _make_dialog(qtbot, labels=["cat", "dog"])
