@@ -198,6 +198,7 @@ class LabelDialog(QtWidgets.QDialog):
                 continue
             widget = item.widget()
             if widget is not None:
+                widget.setParent(None)
                 widget.deleteLater()
 
     def _update_flags(self, text: str) -> None:
@@ -262,6 +263,10 @@ class LabelDialog(QtWidgets.QDialog):
         )
         if matches:
             self.label_list.setCurrentItem(matches[0])
+
+        if flags_disabled:
+            for checkbox in self._flag_checkboxes():
+                checkbox.setEnabled(False)
 
         self._fit_label_list_to_content()
         self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)

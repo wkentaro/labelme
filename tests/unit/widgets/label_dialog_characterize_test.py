@@ -499,9 +499,7 @@ def test_popup_sets_description_at_show(qtbot: QtBot) -> None:
     assert seen["desc"] == "hello world"
 
 
-def test_popup_flags_disabled_checkboxes_remain_enabled(qtbot: QtBot) -> None:
-    # Documented latent behavior: flags_disabled=True does NOT actually disable
-    # the checkboxes, because setText() during dialog setup rebuilds them.
+def test_popup_flags_disabled_disables_checkboxes(qtbot: QtBot) -> None:
     seen: dict[str, list[bool]] = {}
     dialog = _make_dialog(qtbot, flags={"^cat": ["indoor", "outdoor"]})
     _run_popup(
@@ -510,6 +508,38 @@ def test_popup_flags_disabled_checkboxes_remain_enabled(qtbot: QtBot) -> None:
         text="cat",
         flags={"indoor": True},
         flags_disabled=True,
+        at_show=lambda d: seen.update(
+            enabled=[cb.isEnabled() for cb in _checkboxes(d)]
+        ),
+    )
+    assert seen["enabled"]
+    assert not any(seen["enabled"])
+
+
+def test_popup_flags_enabled_by_default(qtbot: QtBot) -> None:
+    seen: dict[str, list[bool]] = {}
+    dialog = _make_dialog(qtbot, flags={"^cat": ["indoor", "outdoor"]})
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: seen.update(
+            enabled=[cb.isEnabled() for cb in _checkboxes(d)]
+        ),
+    )
+    assert seen["enabled"]
+    assert all(seen["enabled"])
+
+
+def test_flags_disabled_resets_between_popups(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot, flags={"^cat": ["indoor"]})
+    _run_popup(dialog, accept=True, text="cat", flags_disabled=True)
+
+    seen: dict[str, list[bool]] = {}
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
         at_show=lambda d: seen.update(
             enabled=[cb.isEnabled() for cb in _checkboxes(d)]
         ),
