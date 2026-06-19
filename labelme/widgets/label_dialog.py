@@ -127,6 +127,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_container = QtWidgets.QWidget()
         self._flags_layout = QtWidgets.QVBoxLayout()
         self._flags_layout.setContentsMargins(0, 0, 0, 0)
+        self._flags_layout.setSpacing(0)
         self._flags_container.setLayout(self._flags_layout)
         main_layout.addWidget(self._flags_container)
 
