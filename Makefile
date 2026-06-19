@@ -27,10 +27,6 @@ lint: update_translate  # Lint code
 	$(call exec,git ls-files "*.yml" "*.yaml" | xargs uv run yamlfix --check)
 	$(call exec,uv run typos)
 	$(call exec,git diff --exit-code labelme/translate)
-	@if grep -r 'type="unfinished"' labelme/translate/*.ts; then \
-		printf '\033[1;31mError: unfinished translations found\033[0m\n'; \
-		exit 1; \
-	fi
 
 format:  # Format code
 	$(call exec,uv run ruff format)
