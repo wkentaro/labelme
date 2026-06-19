@@ -12,5 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
+      - run: make check_translate
       - run: uv build
       - uses: pypa/gh-action-pypi-publish@release/v1
