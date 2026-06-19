@@ -499,6 +499,22 @@ def test_popup_highlights_matching_label_at_show(qtbot: QtBot) -> None:
     assert seen["cur"] == "dog"
 
 
+def test_popup_highlights_matching_label_case_insensitively(qtbot: QtBot) -> None:
+    seen: dict[str, object] = {}
+    dialog = _make_dialog(qtbot, labels=["Cat", "Dog"])
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: seen.update(
+            cur=d.label_list.currentItem().text()
+            if d.label_list.currentItem()
+            else None
+        ),
+    )
+    assert seen["cur"] == "Cat"
+
+
 def test_popup_sets_description_at_show(qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _make_dialog(qtbot)

@@ -260,7 +260,7 @@ class LabelDialog(QtWidgets.QDialog):
             self._update_flags(self.edit.text())
 
         matches = self.label_list.findItems(
-            self.edit.text(), QtCore.Qt.MatchFlag.MatchExactly
+            self.edit.text(), QtCore.Qt.MatchFlag.MatchFixedString
         )
         if matches:
             self.label_list.setCurrentItem(matches[0])
