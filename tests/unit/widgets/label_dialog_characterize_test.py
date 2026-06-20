@@ -575,3 +575,22 @@ def test_flags_disabled_resets_between_popups(qtbot: QtBot) -> None:
     )
     assert seen["enabled"]
     assert all(seen["enabled"])
+
+
+def test_flags_disabled_survives_text_edit_rebuild(qtbot: QtBot) -> None:
+    seen: dict[str, list[bool]] = {}
+
+    def edit_then_inspect(d: LabelDialog) -> None:
+        d.edit.setText("cattle")
+        seen.update(enabled=[cb.isEnabled() for cb in _checkboxes(d)])
+
+    dialog = _make_dialog(qtbot, flags={"^cat": ["indoor", "outdoor"]})
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        flags_disabled=True,
+        at_show=edit_then_inspect,
+    )
+    assert seen["enabled"]
+    assert not any(seen["enabled"])

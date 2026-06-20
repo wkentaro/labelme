@@ -52,6 +52,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._sort_labels = sort_labels
         self._flags_spec: dict[str, list[str]] = flags or {}
         self._label_history: list[str] = []
+        self._flags_disabled = False
 
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
@@ -212,6 +213,7 @@ class LabelDialog(QtWidgets.QDialog):
                     checkbox = QtWidgets.QCheckBox(key)
                     if key in current_states:
                         checkbox.setChecked(current_states[key])
+                    checkbox.setEnabled(not self._flags_disabled)
                     self._flags_layout.addWidget(checkbox)
 
     def add_label_history(self, label: str) -> None:
@@ -254,6 +256,7 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self.edit_group_id.setText(str(group_id))
 
+        self._flags_disabled = flags_disabled
         if flags is not None:
             self._show_popup_flags(flags)
         else:
@@ -264,10 +267,6 @@ class LabelDialog(QtWidgets.QDialog):
         )
         if matches:
             self.label_list.setCurrentItem(matches[0])
-
-        if flags_disabled:
-            for checkbox in self._flag_checkboxes():
-                checkbox.setEnabled(False)
 
         self._fit_label_list_to_content()
         self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
@@ -293,6 +292,7 @@ class LabelDialog(QtWidgets.QDialog):
         for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
             checkbox.setChecked(checked)
+            checkbox.setEnabled(not self._flags_disabled)
             self._flags_layout.addWidget(checkbox)
 
     def _collect_flags(self) -> dict[str, bool]:
