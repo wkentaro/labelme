@@ -3,8 +3,8 @@
 ## Annotation
 
 ```bash
-labelme data_annotated --labels labels.txt --validatelabel exact --config '{shift_auto_shape_color: -2}'
-labelme data_annotated --labels labels.txt --labelflags '{.*: [occluded, truncated], person: [male]}'
+labelme data_annotated --labels labels.txt --validate-label exact --config '{shift_auto_shape_color: -2}'
+labelme data_annotated --labels labels.txt --label-flags '{.*: [occluded, truncated], person: [male]}'
 ```
 
 ![](.readme/annotation.jpg)

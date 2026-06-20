@@ -101,6 +101,31 @@ def _handle_exception(
     sys.exit(1)
 
 
+class _DeprecatedAlias(argparse.Action):
+    """Store the value, but FutureWarning when a deprecated alias spelling is used.
+
+    The canonical option string is the first one registered; any other spelling
+    argparse matched (including abbreviations) warns and points back to it.
+    """
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: object,
+        option_string: str | None = None,
+    ) -> None:
+        canonical = self.option_strings[0]
+        if option_string is not None and option_string != canonical:
+            warnings.warn(
+                f"{option_string} is deprecated and will be removed in a future "
+                f"version. Use {canonical} instead.",
+                FutureWarning,
+                stacklevel=1,
+            )
+        setattr(namespace, self.dest, self.const if self.nargs == 0 else values)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
@@ -129,13 +154,6 @@ def main() -> None:
     )
     # config for the gui
     parser.add_argument(
-        "--nodata",
-        dest="_deprecated_nodata",
-        action="store_true",
-        help=argparse.SUPPRESS,
-        default=argparse.SUPPRESS,
-    )
-    parser.add_argument(
         "--with-image-data",
         dest="with_image_data",
         action="store_true",
@@ -150,17 +168,12 @@ def main() -> None:
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
-        "--autosave",
-        dest="_deprecated_autosave",
-        action="store_true",
-        help=argparse.SUPPRESS,
-        default=argparse.SUPPRESS,
-    )
-    parser.add_argument(
         "--no-sort-labels",
         "--nosortlabels",  # deprecated
         dest="sort_labels",
-        action="store_false",
+        action=_DeprecatedAlias,
+        nargs=0,
+        const=False,
         help="stop sorting labels",
         default=argparse.SUPPRESS,
     )
@@ -173,6 +186,7 @@ def main() -> None:
         "--label-flags",
         "--labelflags",  # deprecated
         dest="label_flags",
+        action=_DeprecatedAlias,
         help=r"yaml string of label specific flags OR file containing json "
         r"string of label specific flags (ex. {person-\d+: [male, tall], "
         r"dog-\d+: [black, brown, white], .*: [occluded]})",  # NOQA
@@ -187,6 +201,7 @@ def main() -> None:
         "--validate-label",
         "--validatelabel",  # deprecated
         dest="validate_label",
+        action=_DeprecatedAlias,
         choices=["exact"],
         help="label validation types",
         default=argparse.SUPPRESS,
@@ -204,25 +219,6 @@ def main() -> None:
         default=argparse.SUPPRESS,
     )
     args = parser.parse_args()
-
-    if hasattr(args, "_deprecated_nodata"):
-        warnings.warn(
-            "--nodata is deprecated and will be removed in a future version. "
-            "Image data is no longer stored by default. "
-            "Use --with-image-data to store it.",
-            FutureWarning,
-            stacklevel=1,
-        )
-        del args._deprecated_nodata
-
-    if hasattr(args, "_deprecated_autosave"):
-        warnings.warn(
-            "--autosave is deprecated and will be removed in a future version. "
-            "Auto save is now enabled by default. Use --no-autosave to disable it.",
-            FutureWarning,
-            stacklevel=1,
-        )
-        del args._deprecated_autosave
 
     if args.version:
         print(f"{__appname__} {__version__}")
