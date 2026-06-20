@@ -42,6 +42,8 @@ jobs:
         run: |
           labelme --help
           labelme --version
+          # examples/ must stay self-contained: no labelme imports (#2231)
+          ! grep -rnE "import labelme|from labelme" examples/
           (cd examples/primitives && ../tutorial/export_json.py primitives.json && rm -rf primitives)
           (cd examples/tutorial && rm -rf apc2016_obj3_json && ./export_json.py apc2016_obj3.json && python load_label_png.py && git checkout -- .)
           (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
