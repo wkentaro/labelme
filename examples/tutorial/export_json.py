@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import sys
 from pathlib import Path
 
 import imgviz
@@ -9,8 +10,8 @@ import PIL.Image
 from loguru import logger
 from numpy.typing import NDArray
 
-from labelme import utils
-from labelme._label_file import LabelFile
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
 def main() -> None:
@@ -24,9 +25,8 @@ def main() -> None:
     out_dir = Path(json_file).with_suffix("") if args.out is None else Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    label_file: LabelFile = LabelFile(filename=json_file)
+    label_file = utils.load_label_file(json_file)
 
-    assert label_file.image_data is not None
     image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.image_data)
 
     label_name_to_value: dict[str, int] = {"_background_": 0}

@@ -7,14 +7,15 @@ from pathlib import Path
 
 import imgviz
 
-import labelme
-
 try:
     import lxml.builder  # type: ignore
     import lxml.etree  # type: ignore
 except ImportError:
     print("Please install lxml:\n\n    pip install lxml\n")
     sys.exit(1)
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
 def main() -> None:
@@ -60,7 +61,7 @@ def main() -> None:
     for path in sorted(Path(args.input_dir).glob("*.json")):
         print("Generating dataset from:", path)
 
-        label_file = labelme.LabelFile(filename=str(path))
+        label_file = utils.load_label_file(str(path))
 
         base = path.stem
         out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
@@ -68,8 +69,7 @@ def main() -> None:
         if not args.noviz:
             out_viz_file = output_dir / "AnnotationsVisualization" / f"{base}.jpg"
 
-        assert label_file.image_data is not None
-        img = labelme.utils.img_data_to_arr(label_file.image_data)
+        img = utils.img_data_to_arr(label_file.image_data)
         imgviz.io.imsave(out_img_file, img)
 
         maker = lxml.builder.ElementMaker()
