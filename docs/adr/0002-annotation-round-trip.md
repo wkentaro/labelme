@@ -60,3 +60,12 @@ headless consumers — they would import a numpy-only `Shape`. That collapse
 is retained for now so this refactor stayed scoped to making `Shape` Qt-free.
 Pushing `Shape` into `_label_file.py` remains inadvisable only for layering
 reasons, not Qt ones.
+
+## Amendment (2026-06): the `LabelFile` shim is removed
+
+The second rejected option above kept the public `LabelFile` class "untouched as
+a deprecated shim". It is now removed outright: nothing in the app or examples
+consumed it once `examples/` became self-contained, so the deprecated camelCase
+properties and the incoherent `save()` are gone. `read_label_file` /
+`write_label_file` and the `LabelFileError` hierarchy remain the only persistence
+entry points, which is the model that option already endorsed.

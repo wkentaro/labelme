@@ -10,7 +10,6 @@ import numpy as np
 import pytest
 
 from labelme._label_file import Annotation
-from labelme._label_file import LabelFile
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
 from labelme._label_file import ShapeDict
@@ -18,8 +17,8 @@ from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
 
 
-def test_LabelFile_load_windows_path(data_path: Path, tmp_path: Path) -> None:
-    """Test that LabelFile can load JSON with Windows-style backslash paths.
+def test_read_label_file_load_windows_path(data_path: Path, tmp_path: Path) -> None:
+    """Test that read_label_file loads JSON with Windows-style backslash paths.
 
     Regression test for https://github.com/wkentaro/labelme/issues/1725
     """
@@ -37,34 +36,9 @@ def test_LabelFile_load_windows_path(data_path: Path, tmp_path: Path) -> None:
     with open(json_file, "w") as f:
         json.dump(json_data, f)
 
-    label_file = LabelFile(str(json_file))
-    assert label_file.image_path == "../images/2011_000003.jpg"
-    assert label_file.image_data is not None
-
-
-@pytest.mark.parametrize(
-    ("snake_attr", "camel_attr", "initial", "updated"),
-    [
-        ("image_path", "imagePath", "foo.jpg", "bar.jpg"),
-        ("image_data", "imageData", b"foo", b"bar"),
-        ("other_data", "otherData", {"foo": 1}, {"bar": 2}),
-    ],
-)
-def test_LabelFile_camelCase_attribute_is_deprecated(
-    snake_attr: str,
-    camel_attr: str,
-    initial: object,
-    updated: object,
-) -> None:
-    label_file = LabelFile()
-    setattr(label_file, snake_attr, initial)
-
-    with pytest.warns(DeprecationWarning, match=snake_attr):
-        assert getattr(label_file, camel_attr) == initial
-
-    with pytest.warns(DeprecationWarning, match=snake_attr):
-        setattr(label_file, camel_attr, updated)
-    assert getattr(label_file, snake_attr) == updated
+    annotation = read_label_file(filename=str(json_file))
+    assert annotation.image_path == "../images/2011_000003.jpg"
+    assert annotation.image_data is not None
 
 
 @pytest.fixture()

@@ -7,7 +7,7 @@ import numpy as np
 import PIL.Image
 import tifffile
 
-from labelme._label_file import LabelFile
+from labelme._label_file import read_image_file
 
 
 def _make_image(
@@ -22,25 +22,25 @@ def _make_image(
 
 def test_tiff_without_alpha_encoded_as_jpeg(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.tiff")
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     assert data[:2] == b"\xff\xd8"
 
 
 def test_tiff_with_alpha_encoded_as_png(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.tiff", mode="RGBA")
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     assert data[:4] == b"\x89PNG"
 
 
 def test_jpeg_returns_raw_bytes(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.jpg")
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
 
 
 def test_png_returns_raw_bytes(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.png")
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
 
 
@@ -49,7 +49,7 @@ def test_multispectral_tiff_float32(tmp_path: Path) -> None:
     path = tmp_path / "multispectral.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     assert data[:2] == b"\xff\xd8"
 
     img = PIL.Image.open(io.BytesIO(data))
@@ -62,7 +62,7 @@ def test_grayscale_tiff_float32(tmp_path: Path) -> None:
     path = tmp_path / "grayscale.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     img = PIL.Image.open(io.BytesIO(data))
     assert img.size == (64, 64)
 
@@ -72,7 +72,7 @@ def test_constant_value_tiff_returns_black(tmp_path: Path) -> None:
     path = tmp_path / "constant.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     img = PIL.Image.open(io.BytesIO(data))
     assert img.size == (64, 64)
     assert np.array(img).max() == 0
@@ -83,6 +83,6 @@ def test_two_band_tiff_falls_back_to_first_band(tmp_path: Path) -> None:
     path = tmp_path / "twoband.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = LabelFile.load_image_file(str(path))
+    data = read_image_file(filename=str(path))
     img = PIL.Image.open(io.BytesIO(data))
     assert img.size == (64, 64)
