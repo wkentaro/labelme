@@ -28,6 +28,9 @@ from labelme._shape import POLYLINE_SHAPE_TYPES
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 
+from . import _canvas_interaction
+from ._canvas_interaction import CursorRole
+from ._canvas_interaction import HitKind
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
@@ -96,12 +99,6 @@ def _shape_to_draft(shape: Shape) -> _DraftShape:
     )
 
 
-CURSOR_DEFAULT = Qt.CursorShape.ArrowCursor
-CURSOR_POINT = Qt.CursorShape.PointingHandCursor
-CURSOR_DRAW = Qt.CursorShape.CrossCursor
-CURSOR_MOVE = Qt.CursorShape.ClosedHandCursor
-CURSOR_GRAB = Qt.CursorShape.OpenHandCursor
-
 MOVE_SPEED: float = 5.0
 
 _CreateMode = Literal[
@@ -155,7 +152,7 @@ class _CanvasMode(enum.Enum):
 class Canvas(QtWidgets.QWidget):
     pixmap: QtGui.QPixmap
     _pixmap_hash: int | None
-    _cursor: QtCore.Qt.CursorShape
+    _cursor: CursorRole
     shapes: list[Shape]
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
@@ -238,7 +235,7 @@ class Canvas(QtWidgets.QWidget):
         )
         super().__init__(*args, **kwargs)
 
-        self._cursor = CURSOR_DEFAULT
+        self._cursor = CursorRole.DEFAULT
         self.reset_state()
 
         # self._line represents:
@@ -264,10 +261,10 @@ class Canvas(QtWidgets.QWidget):
         self._point_type: Literal["square", "round"] = "round"
         self._draft_palette = _DEFAULT_PALETTE
         self._palette_cache = {}
-        # Menus:
-        # 0: right-click without selection and dragging of shapes
-        # 1: right-click with selection and dragging of shapes
-        self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
+        self.context_menus = _canvas_interaction.ContextMenuPair(
+            without_selection=QtWidgets.QMenu(),
+            with_selection=QtWidgets.QMenu(),
+        )
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
@@ -615,7 +612,7 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, shape_type=desired_line_shape_type
             )
-        self._apply_cursor(CURSOR_DRAW)
+        self._apply_cursor(CursorRole.DRAW)
         if self._current is None:
             self.update()
             self._update_status()
@@ -652,7 +649,7 @@ class Canvas(QtWidgets.QWidget):
             )
         if not self._cursor_should_snap_to_polygon_origin(pos=pos):
             return pos
-        self._apply_cursor(CURSOR_POINT)
+        self._apply_cursor(CursorRole.HANDLE)
         self._highlight_vertex(index=0, mode="near")
         return current.points[0]
 
@@ -664,7 +661,13 @@ class Canvas(QtWidgets.QWidget):
         current = self._current
         if current is None or len(current.points) <= 1:
             return False
-        return self._is_close_enough(pos, current.points[0])
+        origin = current.points[0]
+        return _canvas_interaction.is_within_pick_threshold(
+            a=np.array([pos.x(), pos.y()]),
+            b=np.array([origin.x(), origin.y()]),
+            scale=self.scale,
+            epsilon=self._epsilon,
+        )
 
     def _refresh_hover_state(self, pos: QPointF) -> None:
         status_messages: list[str] = []
@@ -725,7 +728,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _continue_right_button_drag(self, pos: QPointF) -> None:
         if self._selected_shapes_copy:
-            self._apply_cursor(CURSOR_MOVE)
+            self._apply_cursor(CursorRole.MOVE)
             self._drag_shapes(shapes=self._selected_shapes_copy, cursor=pos)
             self.update()
         elif self.selected_shapes:
@@ -791,83 +794,78 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = self.hovered_shape.points.copy()
 
     def _drag_selected_shapes(self, pos: QPointF) -> None:
-        self._apply_cursor(CURSOR_MOVE)
+        self._apply_cursor(CursorRole.MOVE)
         self._drag_shapes(shapes=self.selected_shapes, cursor=pos)
         self.update()
         self._is_moving_shape = True
 
     def _highlight_hover_shape(self, pos: QPointF, status_messages: list[str]) -> None:
-        ordered_shapes: list[Shape] = (
-            [self.hovered_shape] if self.hovered_shape else []
-        ) + [s for s in reversed(self.shapes) if s.visible and s != self.hovered_shape]
-        point = np.array([pos.x(), pos.y()])
+        target = _canvas_interaction.find_hover_target(
+            shapes=self.shapes,
+            point=np.array([pos.x(), pos.y()]),
+            scale=self.scale,
+            epsilon=self._epsilon,
+            point_size=self._point_size,
+            priority_shape=self.hovered_shape,
+        )
 
-        for shape in ordered_shapes:
-            index_vertex: int | None = _shape.nearest_vertex_index(
-                shape=shape, point=point, scale=self.scale, epsilon=self._epsilon
-            )
-            if index_vertex is None:
-                continue
-            self._set_highlight(
-                hovered_shape=shape,
+        if target is None:
+            self._release_cursor()
+            if self._set_highlight(
+                hovered_shape=None,
                 hovered_edge=None,
-                hovered_vertex=index_vertex,
+                hovered_vertex=None,
+                hovered_rotation=None,
+            ):
+                self.update()
+            return
+
+        if target.kind is HitKind.VERTEX:
+            assert target.index is not None
+            self._set_highlight(
+                hovered_shape=target.shape,
+                hovered_edge=None,
+                hovered_vertex=target.index,
                 hovered_rotation=None,
             )
-            self._highlight_vertex(index=index_vertex, mode="move")
-            self._apply_cursor(CURSOR_POINT)
+            self._highlight_vertex(index=target.index, mode="move")
+            self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to move point"))
-            if shape.can_remove_point():
+            if target.shape.can_remove_point():
                 status_messages.append(self.tr("ALT + SHIFT + Click to delete point"))
             self.update()
             return
 
-        for shape in ordered_shapes:
-            index_rotation: int | None = _shape.nearest_rotation_point_index(
-                shape=shape, point=point, scale=self.scale, epsilon=self._epsilon
-            )
-            if index_rotation is None:
-                continue
+        if target.kind is HitKind.ROTATION_HANDLE:
+            assert target.index is not None
             self._set_highlight(
-                hovered_shape=shape,
+                hovered_shape=target.shape,
                 hovered_edge=None,
                 hovered_vertex=None,
-                hovered_rotation=index_rotation,
+                hovered_rotation=target.index,
             )
-            self._highlight_rotation_point(index=index_rotation, mode="move")
-            self._apply_cursor(CURSOR_POINT)
+            self._highlight_rotation_point(index=target.index, mode="move")
+            self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to rotate the shape"))
             self.update()
             return
 
-        for shape in ordered_shapes:
-            index_edge: int | None = _shape.nearest_edge_index(
-                shape=shape, point=point, scale=self.scale, epsilon=self._epsilon
-            )
-            if index_edge is None or not shape.can_add_point():
-                continue
+        if target.kind is HitKind.EDGE:
+            assert target.index is not None
             self._set_highlight(
-                hovered_shape=shape,
-                hovered_edge=index_edge,
+                hovered_shape=target.shape,
+                hovered_edge=target.index,
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
-            self._apply_cursor(CURSOR_POINT)
+            self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("ALT + Click to create point on shape"))
             self.update()
             return
 
-        for shape in ordered_shapes:
-            if not is_hit_by_point(
-                shape=shape,
-                point=point,
-                scale=self.scale,
-                point_size=self._point_size,
-                epsilon=self._epsilon,
-            ):
-                continue
+        if target.kind is HitKind.BODY:
             self._set_highlight(
-                hovered_shape=shape,
+                hovered_shape=target.shape,
                 hovered_edge=None,
                 hovered_vertex=None,
                 hovered_rotation=None,
@@ -878,18 +876,11 @@ class Canvas(QtWidgets.QWidget):
                     self.tr("Right-click & drag to copy shape"),
                 ]
             )
-            self._apply_cursor(CURSOR_GRAB)
+            self._apply_cursor(CursorRole.GRAB)
             self.update()
             return
 
-        self._release_cursor()
-        if self._set_highlight(
-            hovered_shape=None,
-            hovered_edge=None,
-            hovered_vertex=None,
-            hovered_rotation=None,
-        ):
-            self.update()
+        typing.assert_never(target.kind)
 
     def add_point_to_edge(self) -> None:
         shape = self._last_hovered_shape
@@ -1110,7 +1101,7 @@ class Canvas(QtWidgets.QWidget):
         self._prev_point = pos
 
     def _begin_pan(self, event: QtGui.QMouseEvent) -> None:
-        self._apply_cursor(CURSOR_GRAB)
+        self._apply_cursor(CursorRole.GRAB)
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
@@ -1130,7 +1121,9 @@ class Canvas(QtWidgets.QWidget):
             self._finish_pan()
 
     def _release_right(self, event: QtGui.QMouseEvent) -> None:
-        menu = self.menus[len(self._selected_shapes_copy) > 0]
+        menu = self.context_menus.menu_for(
+            has_selection=len(self._selected_shapes_copy) > 0
+        )
         self._release_cursor()
         if menu.exec(self.mapToGlobal(event.position().toPoint())):  # type: ignore
             return
@@ -1621,13 +1614,6 @@ class Canvas(QtWidgets.QWidget):
         self.drawing_polygon.emit(False)
         self.update()
 
-    def _is_close_enough(self, p1: QPointF, p2: QPointF) -> bool:
-        # d = distance(p1 - p2)
-        # m = (p1-p2).manhattanLength()
-        # print "d %.2f, m %d, %.2f" % (d, m, d - m)
-        threshold = self._epsilon / self.scale
-        return labelme.utils.distance(p1 - p2) < threshold
-
     # Required by QScrollArea: it queries these to compute the
     # scrollable viewport whenever adjustSize() is called.
     def _compute_canvas_size(self) -> QtCore.QSize:
@@ -1811,20 +1797,21 @@ class Canvas(QtWidgets.QWidget):
         shape.visible = value
         self.update()
 
-    def _apply_cursor(self, cursor: QtCore.Qt.CursorShape) -> None:
-        if cursor == self._cursor:
+    def _apply_cursor(self, role: CursorRole) -> None:
+        if role == self._cursor:
             return
+        shape = _canvas_interaction.cursor_shape_for(role=role)
         # Push on first apply; swap the top of the stack we already own afterwards.
-        if self._cursor == CURSOR_DEFAULT:
-            QtWidgets.QApplication.setOverrideCursor(cursor)
+        if self._cursor == CursorRole.DEFAULT:
+            QtWidgets.QApplication.setOverrideCursor(shape)
         else:
-            QtWidgets.QApplication.changeOverrideCursor(cursor)
-        self._cursor = cursor
+            QtWidgets.QApplication.changeOverrideCursor(shape)
+        self._cursor = role
 
     def _release_cursor(self) -> None:
-        if self._cursor == CURSOR_DEFAULT:
+        if self._cursor == CursorRole.DEFAULT:
             return
-        self._cursor = CURSOR_DEFAULT
+        self._cursor = CursorRole.DEFAULT
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def reset_state(self) -> None:

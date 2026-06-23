@@ -299,11 +299,11 @@ def test_cursor_is_cross_when_far_from_polygon_origin(canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_menus_tuple_has_exactly_two_entries(canvas: Canvas) -> None:
-    # The public menus attribute is a 2-tuple: (no-selection menu, selection menu).
-    assert len(canvas.menus) == 2
-    assert isinstance(canvas.menus[0], QtWidgets.QMenu)
-    assert isinstance(canvas.menus[1], QtWidgets.QMenu)
+def test_context_menus_pair_holds_two_menus(canvas: Canvas) -> None:
+    # The public context_menus pair exposes a no-selection menu and a
+    # selection menu as named QMenu attributes.
+    assert isinstance(canvas.context_menus.without_selection, QtWidgets.QMenu)
+    assert isinstance(canvas.context_menus.with_selection, QtWidgets.QMenu)
 
 
 @pytest.mark.gui
@@ -316,8 +316,12 @@ def test_right_release_without_selection_copy_executes_menus_0(
     canvas.set_editing(value=True)
     canvas.scale = 1.0
     calls: list[int] = []
-    monkeypatch.setattr(canvas.menus[0], "exec", lambda pos=None: calls.append(0))
-    monkeypatch.setattr(canvas.menus[1], "exec", lambda pos=None: calls.append(1))
+    monkeypatch.setattr(
+        canvas.context_menus.without_selection, "exec", lambda pos=None: calls.append(0)
+    )
+    monkeypatch.setattr(
+        canvas.context_menus.with_selection, "exec", lambda pos=None: calls.append(1)
+    )
     pos = _image_to_widget(canvas=canvas, img_x=50, img_y=25)
 
     canvas.mousePressEvent(_make_press_event(pos=pos))
@@ -344,8 +348,12 @@ def test_right_release_with_selection_copy_executes_menus_1(
     canvas.selected_shapes = [shape]
     canvas._selected_shapes_copy = [shape.copy()]
     calls: list[int] = []
-    monkeypatch.setattr(canvas.menus[0], "exec", lambda pos=None: calls.append(0))
-    monkeypatch.setattr(canvas.menus[1], "exec", lambda pos=None: calls.append(1))
+    monkeypatch.setattr(
+        canvas.context_menus.without_selection, "exec", lambda pos=None: calls.append(0)
+    )
+    monkeypatch.setattr(
+        canvas.context_menus.with_selection, "exec", lambda pos=None: calls.append(1)
+    )
     pos = _image_to_widget(canvas=canvas, img_x=30, img_y=25)
 
     canvas.mousePressEvent(_make_press_event(pos=pos))

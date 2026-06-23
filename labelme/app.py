@@ -876,10 +876,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         utils.add_actions(
-            self._canvas_widgets.canvas.menus[0], self._actions.context_menu
+            self._canvas_widgets.canvas.context_menus.without_selection,
+            self._actions.context_menu,
         )
         utils.add_actions(
-            self._canvas_widgets.canvas.menus[1],
+            self._canvas_widgets.canvas.context_menus.with_selection,
             (
                 action("&Copy here", self.copy_shape),
                 action("&Move here", self.move_shape),
@@ -1227,9 +1228,10 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self._docks.label_list)
 
     def populate_mode_actions(self) -> None:
-        self._canvas_widgets.canvas.menus[0].clear()
+        self._canvas_widgets.canvas.context_menus.without_selection.clear()
         utils.add_actions(
-            self._canvas_widgets.canvas.menus[0], self._actions.context_menu
+            self._canvas_widgets.canvas.context_menus.without_selection,
+            self._actions.context_menu,
         )
         self._menus.edit.clear()
         actions = (
