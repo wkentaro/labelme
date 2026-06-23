@@ -302,6 +302,89 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
+def test_finalize_reports_inference_error_and_cancels(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+) -> None:
+    # A model error while committing an AI shape must not crash _finalize: it
+    # surfaces a non-fatal inference_failed signal, cancels the in-progress
+    # shape, and does not masquerade as an empty-inference result.
+    def _raise(**_: object) -> list[Shape]:
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(canvas, "_shapes_from_ai_points", _raise)
+    canvas.create_mode = create_mode
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+    failed: list[str] = []
+    no_shapes: list[None] = []
+    canvas.inference_failed.connect(failed.append)
+    canvas.inference_produced_no_shapes.connect(lambda: no_shapes.append(None))
+
+    canvas._finalize()
+
+    assert failed == ["RuntimeError: boom"]
+    assert no_shapes == []
+    assert canvas._current is None
+    assert canvas.shapes == []
+
+
+@pytest.mark.gui
+def test_points_preview_throttles_inference_errors_until_recovery(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The points preview re-runs inference on every repaint, so a persistently
+    # failing model must report once, not once per frame. A later success
+    # re-arms the report so a fresh failure surfaces again.
+    behavior = {"fail": True}
+
+    def _maybe_raise(**_: object) -> list[Shape]:
+        if behavior["fail"]:
+            raise RuntimeError("boom")
+        return []
+
+    monkeypatch.setattr(canvas, "_shapes_from_ai_points", _maybe_raise)
+    canvas.create_mode = "ai_points_to_shape"
+    canvas._line = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(5, 5)),
+        point_labels=(1, 1),
+    )
+    current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0),),
+        point_labels=(1,),
+    )
+    failed: list[str] = []
+    canvas.inference_failed.connect(failed.append)
+
+    canvas._build_ai_points_preview(current=current)
+    canvas._build_ai_points_preview(current=current)
+    assert failed == ["RuntimeError: boom"]
+
+    behavior["fail"] = False
+    canvas._build_ai_points_preview(current=current)
+    behavior["fail"] = True
+    canvas._build_ai_points_preview(current=current)
+    assert failed == ["RuntimeError: boom", "RuntimeError: boom"]
+
+
+@pytest.mark.gui
+def test_load_pixmap_rearms_inference_failure_report(canvas: Canvas) -> None:
+    # A new image is a fresh inference context: a previous image's latched
+    # failure must not mute the first failure report on the new image.
+    canvas._ai_inference_failed = True
+    canvas.load_pixmap(QtGui.QPixmap(_WIDTH, _HEIGHT))
+    assert canvas._ai_inference_failed is False
+
+
+@pytest.mark.gui
 def test_create_mode_switch_retypes_one_point_partial(canvas: Canvas) -> None:
     # Retype must update _current.shape_type and _line.shape_type, but must
     # NOT re-seed _line.points (which would alias both slots and break the

@@ -175,6 +175,7 @@ class Canvas(QtWidgets.QWidget):
     pan_request = QtCore.Signal(QPoint)
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
+    inference_failed = QtCore.Signal(str)
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
     shape_moved = QtCore.Signal()
@@ -255,6 +256,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = np.empty((0, 2))
         self.scale: float = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
+        self._ai_inference_failed = False
         self._snapping = True
         self._hovered_shape_is_selected: bool = False
         self._painter = QtGui.QPainter()
@@ -418,6 +420,11 @@ class Canvas(QtWidgets.QWidget):
             point_labels=np.array(point_labels),
             existing_shapes=self.shapes,
         )
+
+    def _report_inference_failure(self, error: Exception) -> None:
+        self._ai_inference_failed = True
+        logger.opt(exception=error).error("AI inference failed")
+        self.inference_failed.emit(f"{type(error).__name__}: {error}")
 
     def backup_shapes(self) -> None:
         self.shape_backups.append([s.copy() for s in self.shapes])
@@ -1549,10 +1556,19 @@ class Canvas(QtWidgets.QWidget):
             point=self._line.points[1],
             label=self._line.point_labels[1],
         )
-        ai_shapes = self._shapes_from_ai_points(
-            points=preview.points,
-            point_labels=preview.point_labels,
-        )
+        try:
+            ai_shapes = self._shapes_from_ai_points(
+                points=preview.points,
+                point_labels=preview.point_labels,
+            )
+        except Exception as e:
+            # This runs inside paintEvent on every repaint, so a persistently
+            # failing model would report on every frame. Report once; a later
+            # success re-arms the report.
+            if not self._ai_inference_failed:
+                self._report_inference_failure(error=e)
+            return _draft_to_shape(preview)
+        self._ai_inference_failed = False
         if ai_shapes:
             return ai_shapes[0]
         return _draft_to_shape(preview)
@@ -1580,7 +1596,13 @@ class Canvas(QtWidgets.QWidget):
     def _finalize(self) -> None:
         assert self._current is not None
         if self.create_mode in _AI_CREATE_MODES:
-            new_shapes = self._build_new_shapes_from_ai_inference()
+            try:
+                new_shapes = self._build_new_shapes_from_ai_inference()
+            except Exception as e:
+                self._report_inference_failure(error=e)
+                self._cancel_current_shape()
+                return
+            self._ai_inference_failed = False
             if not new_shapes:
                 self.inference_produced_no_shapes.emit()
                 self._cancel_current_shape()
@@ -1795,6 +1817,9 @@ class Canvas(QtWidgets.QWidget):
         pixmap_arr = labelme.utils.img_qt_to_arr(img_qt=pixmap.toImage())
         self.pixmap = pixmap
         self._pixmap_hash = hash(pixmap_arr.tobytes())
+        # A new image is a fresh inference context that should surface its own
+        # first failure rather than staying muted by the prior image's latch.
+        self._ai_inference_failed = False
         if clear_shapes:
             self.shapes = []
         self.update()

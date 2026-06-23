@@ -1073,6 +1073,13 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
+        # The preview path emits this from inside paintEvent (an active
+        # QPainter); a queued connection defers the status-bar update until
+        # after the paint cycle so it never mutates UI mid-paint.
+        canvas.inference_failed.connect(
+            self._on_inference_failed,
+            Qt.ConnectionType.QueuedConnection,
+        )
         canvas.degenerate_shape_rejected.connect(
             lambda: self.show_status_message(
                 self.tr("Shape had no area; nothing created."), 5000
@@ -1308,12 +1315,17 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._text_osam_session = _automation.OsamSession(model_name=model_name)
 
-        boxes, scores, labels, masks = _automation.get_bboxes_from_texts(
-            session=self._text_osam_session,
-            image=utils.img_qt_to_arr(self._image)[:, :, :3],
-            image_id=str(hash(self._image_path)),
-            texts=texts,
-        )
+        try:
+            boxes, scores, labels, masks = _automation.get_bboxes_from_texts(
+                session=self._text_osam_session,
+                image=utils.img_qt_to_arr(self._image)[:, :, :3],
+                image_id=str(hash(self._image_path)),
+                texts=texts,
+            )
+        except Exception as e:
+            logger.opt(exception=e).error("AI text inference failed")
+            self._on_inference_failed(message=f"{type(e).__name__}: {e}")
+            return
 
         if (
             masks is None
@@ -1858,6 +1870,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_status_message(
             self.tr("AI inference produced no new annotation."), 5000
         )
+
+    def _on_inference_failed(self, message: str) -> None:
+        self.show_status_message(self.tr("AI inference failed: %s") % message, 10000)
 
     def _on_scroll_request(self, delta: int, orientation: Qt.Orientation) -> None:
         units = -delta * 0.1  # natural scroll
