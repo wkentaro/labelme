@@ -4,7 +4,6 @@ import base64
 import io
 import json
 import time
-import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PureWindowsPath
@@ -317,121 +316,6 @@ def _write_label_json_file(
             json.dump(payload, f, ensure_ascii=False, indent=2)
     except (OSError, TypeError, ValueError) as e:
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
-
-
-class LabelFile:
-    shapes: list[ShapeDict]
-    suffix: Final[str] = LABEL_FILE_SUFFIX
-
-    def __init__(self, filename: str | None = None) -> None:
-        self.shapes = []
-        self.image_path: str | None = None
-        self.image_data: bytes | None = None
-        self.other_data: dict[str, Any] = {}
-        self.flags: dict[str, bool] = {}
-        self.filename: str | None = filename
-        if filename is not None:
-            self.load(filename=filename)
-
-    @property
-    def imagePath(self) -> str | None:
-        warnings.warn(
-            "LabelFile.imagePath is deprecated and will be removed in a future "
-            "release; use image_path",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.image_path
-
-    @imagePath.setter
-    def imagePath(self, value: str | None) -> None:
-        warnings.warn(
-            "LabelFile.imagePath is deprecated and will be removed in a future "
-            "release; use image_path",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        self.image_path = value
-
-    @property
-    def imageData(self) -> bytes | None:
-        warnings.warn(
-            "LabelFile.imageData is deprecated and will be removed in a future "
-            "release; use image_data",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.image_data
-
-    @imageData.setter
-    def imageData(self, value: bytes | None) -> None:
-        warnings.warn(
-            "LabelFile.imageData is deprecated and will be removed in a future "
-            "release; use image_data",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        self.image_data = value
-
-    @property
-    def otherData(self) -> dict[str, Any]:
-        warnings.warn(
-            "LabelFile.otherData is deprecated and will be removed in a future "
-            "release; use other_data",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return self.other_data
-
-    @otherData.setter
-    def otherData(self, value: dict[str, Any]) -> None:
-        warnings.warn(
-            "LabelFile.otherData is deprecated and will be removed in a future "
-            "release; use other_data",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        self.other_data = value
-
-    @staticmethod
-    def load_image_file(filename: str) -> bytes:
-        return read_image_file(filename=filename)
-
-    def load(self, filename: str) -> None:
-        loaded: Annotation = read_label_file(filename=filename)
-        self.flags = loaded.flags
-        self.shapes = loaded.shapes
-        self.image_path = loaded.image_path
-        self.image_data = loaded.image_data
-        self.other_data = loaded.other_data
-        self.filename = filename
-
-    def save(
-        self,
-        filename: str,
-        shapes: list[dict[str, Any]],
-        image_path: str,
-        image_height: int | None,
-        image_width: int | None,
-        image_data: bytes | None = None,
-        other_data: dict[str, Any] | None = None,
-        flags: dict[str, bool] | None = None,
-    ) -> None:
-        _write_label_json_file(
-            filename=filename,
-            shapes=shapes,
-            image_path=image_path,
-            image_height=image_height,
-            image_width=image_width,
-            image_data=image_data,
-            other_data=other_data,
-            flags=flags,
-        )
-        self.filename = filename
-
-    @staticmethod
-    def is_label_file(filename: str) -> bool:
-        return is_label_file_path(filename=filename)
 
 
 _DISPLAYABLE_MODES = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}

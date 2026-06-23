@@ -14,4 +14,3 @@ __version__ = importlib.metadata.version("labelme")
 import onnxruntime
 
 from labelme import utils
-from labelme._label_file import LabelFile
