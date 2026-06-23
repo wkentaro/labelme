@@ -208,13 +208,13 @@ def test_right_drag_copy_here_duplicates_shape(
 
     # The modal menu would block the test, so trigger "Copy here" directly
     # and return it truthy so the canvas treats the release as handled.
-    copy_here_action = canvas.menus[1].actions()[0]
+    copy_here_action = canvas.context_menus.with_selection.actions()[0]
 
     def trigger_copy_here(*args: object, **kwargs: object) -> object:
         copy_here_action.trigger()
         return copy_here_action
 
-    monkeypatch.setattr(canvas.menus[1], "exec", trigger_copy_here)
+    monkeypatch.setattr(canvas.context_menus.with_selection, "exec", trigger_copy_here)
 
     drag_canvas(
         qtbot=qtbot,

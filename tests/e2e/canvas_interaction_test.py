@@ -762,16 +762,17 @@ def test_right_click_on_shape_opens_context_menu(
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
     # No prior right-drag has populated `_selected_shapes_copy`, so the bare
-    # right-click should open menus[0] (the no-clipboard variant). Stubbing
-    # both exec_ methods catches a regression that would route to menus[1].
+    # right-click should open the no-selection menu (the no-clipboard variant).
+    # Stubbing both exec methods catches a regression that would route to the
+    # selection menu.
     menu_opened: list[int] = []
     monkeypatch.setattr(
-        canvas.menus[0],
+        canvas.context_menus.without_selection,
         "exec",
         lambda *args, **kwargs: menu_opened.append(0) or None,
     )
     monkeypatch.setattr(
-        canvas.menus[1],
+        canvas.context_menus.with_selection,
         "exec",
         lambda *args, **kwargs: menu_opened.append(1) or None,
     )
