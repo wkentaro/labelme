@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated predefined labels in the label dialog in place when changed via Settings, preserving labels typed during the current session ([#2164](https://github.com/wkentaro/labelme/pull/2164))
 - Changed point shapes to be selected by clicking the marker as a whole rather than grabbing its single vertex ([#2158](https://github.com/wkentaro/labelme/pull/2158))
 
+### Removed
+
+- **Breaking:** Removed the public `LabelFile` class (`labelme.LabelFile`); use the `read_label_file` / `write_label_file` functions and the `LabelFileError` hierarchy in `labelme._label_file` instead ([#2246](https://github.com/wkentaro/labelme/pull/2246))
+
 ### Fixed
 
 - Fixed `line` and two-point `linestrip` shapes being unselectable by click ([#2107](https://github.com/wkentaro/labelme/pull/2107))
