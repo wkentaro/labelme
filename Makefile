@@ -18,7 +18,7 @@ help:
 setup:  # Setup the development environment
 	$(call exec,uv sync)
 
-lint: update_translate  # Lint code
+lint:  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
 	$(call exec,uv run ty check --no-progress)
@@ -26,7 +26,6 @@ lint: update_translate  # Lint code
 	$(call exec,git ls-files "*.md" | xargs uv run mdformat --check)
 	$(call exec,git ls-files "*.yml" "*.yaml" | xargs uv run yamlfix --check)
 	$(call exec,uv run typos)
-	$(call exec,git diff --exit-code labelme/translate)
 
 format:  # Format code
 	$(call exec,uv run ruff format)
@@ -41,7 +40,7 @@ test:  # Run tests
 update_translate:
 	$(call exec,uv run tools/update_translate.py)
 
-check_translate:  # Fail if any translation is unfinished (release gate)
+check_translate: update_translate  # Fail if any translation is unfinished (release gate)
 	@if grep -rl 'type="unfinished"' labelme/translate/*.ts; then \
 		printf '\033[1;31mError: unfinished translations found; releases require complete translations\033[0m\n'; \
 		exit 1; \
