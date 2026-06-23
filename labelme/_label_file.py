@@ -266,49 +266,26 @@ def write_label_file(
     image_width: int | None,
     save_image_data: bool,
 ) -> None:
-    _write_label_json_file(
-        filename=filename,
-        shapes=[_dump_shape_to_json_obj(shape) for shape in annotation.shapes],
-        image_path=annotation.image_path,
-        image_height=image_height,
-        image_width=image_width,
-        image_data=annotation.image_data if save_image_data else None,
-        other_data=annotation.other_data,
-        flags=annotation.flags,
-    )
-
-
-def _write_label_json_file(
-    filename: str,
-    *,
-    shapes: list[dict[str, Any]],
-    image_path: str,
-    image_height: int | None,
-    image_width: int | None,
-    image_data: bytes | None = None,
-    other_data: dict[str, Any] | None = None,
-    flags: dict[str, bool] | None = None,
-) -> None:
     try:
         image_data_b64: str | None = None
-        if image_data is not None:
+        if save_image_data:
             _check_image_dimensions(
-                image_data=image_data,
+                image_data=annotation.image_data,
                 expected_height=image_height,
                 expected_width=image_width,
             )
-            image_data_b64 = base64.b64encode(image_data).decode("utf-8")
+            image_data_b64 = base64.b64encode(annotation.image_data).decode("utf-8")
         # JSON keys stay camelCase: changing them would break existing .json files.
         payload: dict[str, Any] = {
             "version": __version__,
-            "flags": dict(flags) if flags else {},
-            "shapes": list(shapes),
-            "imagePath": image_path,
+            "flags": dict(annotation.flags) if annotation.flags else {},
+            "shapes": [_dump_shape_to_json_obj(shape) for shape in annotation.shapes],
+            "imagePath": annotation.image_path,
             "imageData": image_data_b64,
             "imageHeight": image_height,
             "imageWidth": image_width,
         }
-        for key, value in (other_data or {}).items():
+        for key, value in annotation.other_data.items():
             if key in _RESERVED_TOP_LEVEL_KEYS:
                 raise ValueError(f"reserved key in other_data: {key!r}")
             payload[key] = value

@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - **Breaking:** Removed the public `LabelFile` class (`labelme.LabelFile`); use the `read_label_file` / `write_label_file` functions and the `LabelFileError` hierarchy in `labelme._label_file` instead ([#2246](https://github.com/wkentaro/labelme/pull/2246))
+- **Breaking:** Removed the deprecated `labelme.utils` compatibility shims: `labelme.utils.lblsave` (use `imgviz.io.lblsave`) and the camelCase aliases `addActions`, `distancetoline`, `fmtShortcut`, `labelValidator`, `newAction`, `newButton`, `newIcon` (use their snake_case names). The `from labelme import utils` top-level re-export is also dropped; import `labelme.utils` directly ([#2249](https://github.com/wkentaro/labelme/pull/2249))
 
 ### Fixed
 
