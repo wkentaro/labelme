@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
+import sys
+from pathlib import Path
 
 import imgviz
 import matplotlib.pyplot as plt
 
-from labelme import utils
-from labelme._label_file import LabelFile
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
 def main() -> None:
@@ -14,8 +16,7 @@ def main() -> None:
     parser.add_argument("json_file")
     args = parser.parse_args()
 
-    label_file = LabelFile(args.json_file)
-    assert label_file.image_data is not None
+    label_file = utils.load_label_file(args.json_file)
     img = utils.img_data_to_arr(label_file.image_data)
 
     label_name_to_value = {"_background_": 0}

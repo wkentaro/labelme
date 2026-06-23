@@ -14,13 +14,14 @@ from typing import Final
 import imgviz
 import numpy as np
 
-import labelme
-
 try:
     import pycocotools.mask  # type: ignore
 except ImportError:
     print("Please install pycocotools:\n\n    pip install pycocotools\n")
     sys.exit(1)
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
 def _circle_to_polygon_segmentation(
@@ -119,13 +120,12 @@ def main() -> None:
     for image_id, path in enumerate(label_files):
         print("Generating dataset from:", path)
 
-        label_file = labelme.LabelFile(filename=str(path))
+        label_file = utils.load_label_file(str(path))
 
         base = path.stem
         out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
 
-        assert label_file.image_data is not None
-        img = labelme.utils.img_data_to_arr(label_file.image_data)
+        img = utils.img_data_to_arr(label_file.image_data)
         if img.ndim == 3 and img.shape[2] == 4:
             img = imgviz.rgba2rgb(img)
         imgviz.io.imsave(out_img_file, img)
@@ -148,7 +148,7 @@ def main() -> None:
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
-            mask = labelme.utils.shape_to_mask(img.shape[:2], points, shape_type)
+            mask = utils.shape_to_mask(img.shape[:2], points, shape_type)
 
             if group_id is None:
                 group_id = uuid.uuid1()
