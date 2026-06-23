@@ -20,8 +20,8 @@ from labelme import __version__
 from labelme import _config
 from labelme import _locale
 from labelme import _yaml
-from labelme.app import MainWindow
-from labelme.utils import new_icon
+from labelme._app import MainWindow
+from labelme._utils import new_icon
 
 
 class _LoggerIO(io.StringIO):

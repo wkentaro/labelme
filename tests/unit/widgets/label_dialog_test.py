@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pytestqt.qtbot import QtBot
 
-from labelme.widgets.label_dialog import LabelDialog
+from labelme._widgets.label_dialog import LabelDialog
 
 
 def _labels(dialog: LabelDialog) -> set[str]:

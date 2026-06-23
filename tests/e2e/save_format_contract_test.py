@@ -10,8 +10,8 @@ import pytest
 from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
-from labelme import utils
-from labelme.app import MainWindow
+from labelme import _utils
+from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
@@ -56,7 +56,7 @@ def test_save_image_data_field_matches_config(
         data = json.load(f)
     if with_image_data:
         assert isinstance(data["imageData"], str) and data["imageData"]
-        decoded = utils.img_b64_to_arr(data["imageData"])
+        decoded = _utils.img_b64_to_arr(data["imageData"])
         assert decoded.shape[0] == data["imageHeight"]
         assert decoded.shape[1] == data["imageWidth"]
     else:
@@ -120,7 +120,7 @@ def test_round_trip_mask_shape_via_fixture(
 ) -> None:
     mask_arr = np.zeros((4, 4), dtype=np.uint8)
     mask_arr[1:3, 1:3] = 1
-    mask_b64 = utils.img_arr_to_b64(mask_arr)
+    mask_b64 = _utils.img_arr_to_b64(mask_arr)
 
     raw_image_path = data_path / _RAW_FILE_NAME
     fixture_json = tmp_path / "mask_fixture.json"

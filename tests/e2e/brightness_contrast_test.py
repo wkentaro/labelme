@@ -3,9 +3,9 @@ from __future__ import annotations
 import pytest
 from pytestqt.qtbot import QtBot
 
-import labelme.utils
-from labelme.app import MainWindow
-from labelme.widgets.brightness_contrast_dialog import BrightnessContrastDialog
+import labelme._utils
+from labelme._app import MainWindow
+from labelme._widgets.brightness_contrast_dialog import BrightnessContrastDialog
 
 from ..conftest import close_or_pause
 
@@ -21,7 +21,7 @@ def test_brightness_contrast_dialog(
 
     assert annotated_win._annotation is not None
     dialog = BrightnessContrastDialog(
-        img=labelme.utils.img_data_to_pil(annotated_win._annotation.image_data),
+        img=labelme._utils.img_data_to_pil(annotated_win._annotation.image_data),
         callback=annotated_win._on_brightness_contrast_changed,
         parent=annotated_win,
     )

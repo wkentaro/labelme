@@ -13,13 +13,13 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme import utils
+from labelme import _utils
+from labelme._app import MainWindow
 from labelme._shape import Shape
-from labelme.app import MainWindow
-from labelme.widgets._shape_render import bounds as _shape_bounds
-from labelme.widgets.canvas import Canvas
-from labelme.widgets.canvas import _CanvasMode
-from labelme.widgets.label_dialog import LabelDialog
+from labelme._widgets._shape_render import bounds as _shape_bounds
+from labelme._widgets.canvas import Canvas
+from labelme._widgets.canvas import _CanvasMode
+from labelme._widgets.label_dialog import LabelDialog
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
@@ -802,7 +802,7 @@ def test_select_mask_shape_by_click(
     # of `_shape.is_hit_by_point`.
     mask_arr = np.zeros((40, 40), dtype=np.uint8)
     mask_arr[10:30, 10:30] = 1
-    mask_b64 = utils.img_arr_to_b64(mask_arr)
+    mask_b64 = _utils.img_arr_to_b64(mask_arr)
 
     raw_image_path = data_path / "raw/2011_000003.jpg"
     img_b64 = base64.b64encode(raw_image_path.read_bytes()).decode("utf-8")

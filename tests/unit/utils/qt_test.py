@@ -8,17 +8,17 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
-from labelme.utils.qt import add_actions
-from labelme.utils.qt import direction_angle
-from labelme.utils.qt import distance
-from labelme.utils.qt import distance_to_line
-from labelme.utils.qt import format_shortcut
-from labelme.utils.qt import label_validator
-from labelme.utils.qt import new_action
-from labelme.utils.qt import new_button
-from labelme.utils.qt import new_icon
-from labelme.utils.qt import project_point_on_line
-from labelme.utils.qt import project_point_on_perpendicular_line
+from labelme._utils.qt import add_actions
+from labelme._utils.qt import direction_angle
+from labelme._utils.qt import distance
+from labelme._utils.qt import distance_to_line
+from labelme._utils.qt import format_shortcut
+from labelme._utils.qt import label_validator
+from labelme._utils.qt import new_action
+from labelme._utils.qt import new_button
+from labelme._utils.qt import new_icon
+from labelme._utils.qt import project_point_on_line
+from labelme._utils.qt import project_point_on_perpendicular_line
 
 
 def test_distance_to_line() -> None:

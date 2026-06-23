@@ -6,7 +6,7 @@ import pytest
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme.app import MainWindow
+from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory

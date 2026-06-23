@@ -10,7 +10,7 @@ import pytest
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-import labelme.utils
+import labelme._utils
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -73,7 +73,7 @@ def assert_labelfile_sanity(filename: str) -> None:
         assert img_file.exists()
         img = imgviz.io.imread(img_file)
     else:
-        img = labelme.utils.img_b64_to_arr(image_data)
+        img = labelme._utils.img_b64_to_arr(image_data)
 
     height, width = img.shape[:2]
     assert height == data["imageHeight"]

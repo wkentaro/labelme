@@ -5,9 +5,9 @@ import pytest
 from PySide6 import QtGui
 
 from labelme._shape import Shape
-from labelme.widgets._shape_render import Palette
-from labelme.widgets._shape_render import ShapeRenderContext
-from labelme.widgets._shape_render import render_shape
+from labelme._widgets._shape_render import Palette
+from labelme._widgets._shape_render import ShapeRenderContext
+from labelme._widgets._shape_render import render_shape
 
 _SIZE = 200
 

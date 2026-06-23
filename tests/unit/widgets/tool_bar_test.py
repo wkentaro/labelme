@@ -6,7 +6,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme.widgets.tool_bar import ToolBar
+from labelme._widgets.tool_bar import ToolBar
 
 # Qt automatically adds an internal extension/overflow button to every QToolBar.
 # Filter it out when counting user-added buttons.

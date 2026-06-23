@@ -12,7 +12,7 @@ from PySide6 import QtCore
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme.widgets.zoom_widget import ZoomWidget
+from labelme._widgets.zoom_widget import ZoomWidget
 
 
 @pytest.fixture()

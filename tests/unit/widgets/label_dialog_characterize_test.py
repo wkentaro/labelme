@@ -7,8 +7,8 @@ from PySide6 import QtCore
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme.widgets.label_dialog import LabelDialog
-from labelme.widgets.label_dialog import LabelQLineEdit
+from labelme._widgets.label_dialog import LabelDialog
+from labelme._widgets.label_dialog import LabelQLineEdit
 
 # Black-box characterization of LabelDialog: behavior is exercised only through
 # the public surface (popup(), public methods, public widgets edit/

@@ -18,7 +18,7 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from labelme import __version__
-from labelme import utils
+from labelme import _utils
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
@@ -103,7 +103,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
             raise TypeError(
                 f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
             )
-        mask = utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
+        mask = _utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
 
@@ -135,7 +135,7 @@ def _dump_shape_to_json_obj(shape: ShapeDict) -> dict[str, Any]:
         flags=shape["flags"],
         mask=None
         if shape["mask"] is None
-        else utils.img_arr_to_b64(shape["mask"].astype(np.uint8)),
+        else _utils.img_arr_to_b64(shape["mask"].astype(np.uint8)),
     )
     return json_obj
 
@@ -182,7 +182,7 @@ def read_image_file(filename: str) -> bytes:
     t_start = time.time()
     image_pil = _imread(filename=filename)
 
-    oriented: PIL.Image.Image = utils.apply_exif_orientation(image=image_pil)
+    oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
     ext = Path(filename).suffix.lower()
     if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
         with open(filename, "rb") as f:
@@ -208,7 +208,7 @@ def _check_image_dimensions(
 ) -> None:
     if expected_height is None and expected_width is None:
         return
-    actual_w, actual_h = utils.img_data_to_pil(img_data=image_data).size
+    actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
             f"imageHeight mismatch: declared={expected_height}, actual={actual_h}"

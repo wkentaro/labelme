@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
-from labelme.app import MainWindow
+from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory

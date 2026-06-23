@@ -7,13 +7,13 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QMenu
 
 from labelme._shape import Shape
-from labelme.widgets._canvas_interaction import ContextMenuPair
-from labelme.widgets._canvas_interaction import CursorRole
-from labelme.widgets._canvas_interaction import HitKind
-from labelme.widgets._canvas_interaction import HitTarget
-from labelme.widgets._canvas_interaction import cursor_shape_for
-from labelme.widgets._canvas_interaction import find_hover_target
-from labelme.widgets._canvas_interaction import is_within_pick_threshold
+from labelme._widgets._canvas_interaction import ContextMenuPair
+from labelme._widgets._canvas_interaction import CursorRole
+from labelme._widgets._canvas_interaction import HitKind
+from labelme._widgets._canvas_interaction import HitTarget
+from labelme._widgets._canvas_interaction import cursor_shape_for
+from labelme._widgets._canvas_interaction import find_hover_target
+from labelme._widgets._canvas_interaction import is_within_pick_threshold
 
 # Shared test constants
 _EPSILON: float = 10.0

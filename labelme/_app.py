@@ -44,23 +44,23 @@ from labelme._label_file import write_label_file
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._shape_clipboard import ShapeClipboard
-from labelme.widgets import AiAssistedAnnotationWidget
-from labelme.widgets import AiTextToAnnotationWidget
-from labelme.widgets import BrightnessContrastDialog
-from labelme.widgets import Canvas
-from labelme.widgets import LabelDialog
-from labelme.widgets import LabelListWidget
-from labelme.widgets import LabelListWidgetItem
-from labelme.widgets import Palette
-from labelme.widgets import SettingsDialog
-from labelme.widgets import StatusStats
-from labelme.widgets import ToolBar
-from labelme.widgets import UniqueLabelQListWidget
-from labelme.widgets import ZoomWidget
-from labelme.widgets import download_ai_model
-from labelme.widgets import format_shape_label
+from labelme._widgets import AiAssistedAnnotationWidget
+from labelme._widgets import AiTextToAnnotationWidget
+from labelme._widgets import BrightnessContrastDialog
+from labelme._widgets import Canvas
+from labelme._widgets import LabelDialog
+from labelme._widgets import LabelListWidget
+from labelme._widgets import LabelListWidgetItem
+from labelme._widgets import Palette
+from labelme._widgets import SettingsDialog
+from labelme._widgets import StatusStats
+from labelme._widgets import ToolBar
+from labelme._widgets import UniqueLabelQListWidget
+from labelme._widgets import ZoomWidget
+from labelme._widgets import download_ai_model
+from labelme._widgets import format_shape_label
 
-from . import utils
+from . import _utils
 
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
@@ -251,7 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.populate_mode_actions()
 
     def _setup_actions(self) -> _Actions:
-        action = functools.partial(utils.new_action, self)
+        action = functools.partial(_utils.new_action, self)
         shortcuts = self._config["shortcuts"]
 
         about = action(
@@ -651,10 +651,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     "{} and {} also work on the canvas."
                 )
             ).format(
-                utils.format_shortcut(
+                _utils.format_shortcut(
                     f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"
                 ),
-                utils.format_shortcut(self.tr("Ctrl+Wheel")),
+                _utils.format_shortcut(self.tr("Ctrl+Wheel")),
             )
         )
         self._canvas_widgets.zoom_widget.setEnabled(False)
@@ -781,7 +781,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _setup_menus(self) -> _Menus:
-        action = functools.partial(utils.new_action, self)
+        action = functools.partial(_utils.new_action, self)
         shortcuts = self._config["shortcuts"]
 
         quit_ = action(
@@ -817,7 +817,7 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu = self.menu(self.tr("&View"))
         help_menu = self.menu(self.tr("&Help"))
         label_menu = QtWidgets.QMenu()
-        utils.add_actions(label_menu, (self._actions.edit, self._actions.delete))
+        _utils.add_actions(label_menu, (self._actions.edit, self._actions.delete))
         self._docks.label_list.setContextMenuPolicy(
             Qt.ContextMenuPolicy.CustomContextMenu
         )
@@ -825,7 +825,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.show_label_list_menu
         )
 
-        utils.add_actions(
+        _utils.add_actions(
             file_menu,
             (
                 self._actions.open,
@@ -845,8 +845,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 quit_,
             ),
         )
-        utils.add_actions(help_menu, (help_, self._actions.about))
-        utils.add_actions(
+        _utils.add_actions(help_menu, (help_, self._actions.about))
+        _utils.add_actions(
             view_menu,
             (
                 self._docks.flag_dock.toggleViewAction(),
@@ -875,11 +875,11 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        utils.add_actions(
+        _utils.add_actions(
             self._canvas_widgets.canvas.context_menus.without_selection,
             self._actions.context_menu,
         )
-        utils.add_actions(
+        _utils.add_actions(
             self._canvas_widgets.canvas.context_menus.with_selection,
             (
                 action("&Copy here", self.copy_shape),
@@ -1226,7 +1226,7 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> QtWidgets.QMenu:
         menu = self.menuBar().addMenu(title)
         if actions:
-            utils.add_actions(menu, actions)
+            _utils.add_actions(menu, actions)
         return menu
 
     # Support Functions
@@ -1236,7 +1236,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def populate_mode_actions(self) -> None:
         self._canvas_widgets.canvas.context_menus.without_selection.clear()
-        utils.add_actions(
+        _utils.add_actions(
             self._canvas_widgets.canvas.context_menus.without_selection,
             self._actions.context_menu,
         )
@@ -1246,7 +1246,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._actions.edit_mode,
             *self._actions.edit_menu,
         )
-        utils.add_actions(self._menus.edit, actions)
+        _utils.add_actions(self._menus.edit, actions)
 
     def _get_window_title(self, *, dirty: bool) -> str:
         file_list = self._docks.file_list
@@ -1320,7 +1320,7 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             boxes, scores, labels, masks = _automation.get_bboxes_from_texts(
                 session=self._text_osam_session,
-                image=utils.img_qt_to_arr(self._image)[:, :, :3],
+                image=_utils.img_qt_to_arr(self._image)[:, :, :3],
                 image_id=str(hash(self._image_path)),
                 texts=texts,
             )
@@ -1988,7 +1988,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         assert self._annotation is not None
         dialog = BrightnessContrastDialog(
-            utils.img_data_to_pil(self._annotation.image_data),
+            _utils.img_data_to_pil(self._annotation.image_data),
             self._on_brightness_contrast_changed,
             parent=self,
         )

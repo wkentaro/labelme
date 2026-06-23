@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pytestqt.qtbot import QtBot
 
-from labelme.widgets.zoom_widget import ZoomWidget
+from labelme._widgets.zoom_widget import ZoomWidget
 
 
 @pytest.fixture
