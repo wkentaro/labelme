@@ -13,7 +13,8 @@ from labelme._shape import Shape
 from labelme._shape import nearest_edge_index
 from labelme._shape import nearest_rotation_point_index
 from labelme._shape import nearest_vertex_index
-from labelme._widgets._shape_render import is_hit_by_point
+
+from ._shape_render import is_hit_by_point
 
 
 class HitKind(enum.Enum):

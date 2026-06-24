@@ -18,7 +18,8 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from labelme import __version__
-from labelme import _utils
+
+from . import _utils
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 

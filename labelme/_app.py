@@ -44,23 +44,23 @@ from labelme._label_file import write_label_file
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._shape_clipboard import ShapeClipboard
-from labelme._widgets import AiAssistedAnnotationWidget
-from labelme._widgets import AiTextToAnnotationWidget
-from labelme._widgets import BrightnessContrastDialog
-from labelme._widgets import Canvas
-from labelme._widgets import LabelDialog
-from labelme._widgets import LabelListWidget
-from labelme._widgets import LabelListWidgetItem
-from labelme._widgets import Palette
-from labelme._widgets import SettingsDialog
-from labelme._widgets import StatusStats
-from labelme._widgets import ToolBar
-from labelme._widgets import UniqueLabelQListWidget
-from labelme._widgets import ZoomWidget
-from labelme._widgets import download_ai_model
-from labelme._widgets import format_shape_label
 
 from . import _utils
+from ._widgets import AiAssistedAnnotationWidget
+from ._widgets import AiTextToAnnotationWidget
+from ._widgets import BrightnessContrastDialog
+from ._widgets import Canvas
+from ._widgets import LabelDialog
+from ._widgets import LabelListWidget
+from ._widgets import LabelListWidgetItem
+from ._widgets import Palette
+from ._widgets import SettingsDialog
+from ._widgets import StatusStats
+from ._widgets import ToolBar
+from ._widgets import UniqueLabelQListWidget
+from ._widgets import ZoomWidget
+from ._widgets import download_ai_model
+from ._widgets import format_shape_label
 
 LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
