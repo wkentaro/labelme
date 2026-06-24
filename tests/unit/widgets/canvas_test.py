@@ -16,15 +16,15 @@ from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
 from labelme._shape import ShapeType
-from labelme.widgets.canvas import Canvas
-from labelme.widgets.canvas import _compute_intersection_edges_image
-from labelme.widgets.canvas import _compute_overscroll_slack
-from labelme.widgets.canvas import _DraftShape
-from labelme.widgets.canvas import _is_degenerate_draft
-from labelme.widgets.canvas import _normalize_bbox_points
-from labelme.widgets.canvas import _opposite_corner_in_parallelogram
-from labelme.widgets.canvas import _project_oriented_rectangle_corners
-from labelme.widgets.canvas import _reproject_oriented_rectangle_corners
+from labelme._widgets.canvas import Canvas
+from labelme._widgets.canvas import _compute_intersection_edges_image
+from labelme._widgets.canvas import _compute_overscroll_slack
+from labelme._widgets.canvas import _DraftShape
+from labelme._widgets.canvas import _is_degenerate_draft
+from labelme._widgets.canvas import _normalize_bbox_points
+from labelme._widgets.canvas import _opposite_corner_in_parallelogram
+from labelme._widgets.canvas import _project_oriented_rectangle_corners
+from labelme._widgets.canvas import _reproject_oriented_rectangle_corners
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50

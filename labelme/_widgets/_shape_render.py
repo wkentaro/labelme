@@ -11,11 +11,12 @@ import skimage.measure
 from PySide6 import QtCore
 from PySide6 import QtGui
 
-from labelme import utils
 from labelme._shape import Shape
 from labelme._shape import get_rotation_handle
 from labelme._shape import nearest_edge_index
 from labelme._shape import oriented_rectangle_arrow_points
+
+from .. import _utils
 
 PEN_WIDTH: Final[int] = 2
 
@@ -128,7 +129,7 @@ def _paint_shape_mask(
     fill = context.palette.select_fill if context.selected else context.palette.fill
     image_to_draw = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
     image_to_draw[shape.mask] = fill.getRgb()
-    qimage = QtGui.QImage.fromData(utils.img_arr_to_data(image_to_draw))
+    qimage = QtGui.QImage.fromData(_utils.img_arr_to_data(image_to_draw))
     origin = shape.points[0]
     target_top_left = origin * context.scale
     target_rect = QtCore.QRectF(

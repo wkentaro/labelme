@@ -8,10 +8,10 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._app import MainWindow
+from labelme._widgets import SettingsDialog
+from labelme._widgets.settings_dialog import _PlainTextEdit
 from labelme._yaml import safe_load
-from labelme.app import MainWindow
-from labelme.widgets import SettingsDialog
-from labelme.widgets.settings_dialog import _PlainTextEdit
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
@@ -275,7 +275,7 @@ def test_settings_dialog_is_deleted_when_opening_text_editor(
 
     deleted: list[bool] = []
     dialog.destroyed.connect(lambda: deleted.append(True))
-    monkeypatch.setattr("labelme.app.subprocess.Popen", lambda *args, **kwargs: None)
+    monkeypatch.setattr("labelme._app.subprocess.Popen", lambda *args, **kwargs: None)
 
     win._open_config_file()
 

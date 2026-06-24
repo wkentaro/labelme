@@ -13,7 +13,7 @@ from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
-from labelme.app import MainWindow
+from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory

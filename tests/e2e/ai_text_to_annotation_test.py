@@ -17,7 +17,7 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 if TYPE_CHECKING:
-    from labelme.app import MainWindow
+    from labelme._app import MainWindow
 
 _AI_TEXT_MODEL = "yoloworld:latest"
 

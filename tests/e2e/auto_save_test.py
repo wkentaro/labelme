@@ -8,8 +8,8 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme.app import MainWindow
-from labelme.widgets._shape_render import bounds as _shape_bounds
+from labelme._app import MainWindow
+from labelme._widgets._shape_render import bounds as _shape_bounds
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause

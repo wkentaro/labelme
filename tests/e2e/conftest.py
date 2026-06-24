@@ -17,11 +17,11 @@ from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
-import labelme.app
+import labelme._app
 from labelme.__main__ import main
-from labelme.app import MainWindow
-from labelme.widgets.canvas import Canvas
-from labelme.widgets.label_dialog import LabelDialog
+from labelme._app import MainWindow
+from labelme._widgets.canvas import Canvas
+from labelme._widgets.label_dialog import LabelDialog
 
 
 @pytest.fixture(scope="session")
@@ -41,7 +41,7 @@ def _isolated_qtsettings(
     settings_file = tmp_path / "qtsettings.ini"
     settings: QSettings = QSettings(str(settings_file), QSettings.Format.IniFormat)
     monkeypatch.setattr(
-        labelme.app.QtCore, "QSettings", lambda *args, **kwargs: settings
+        labelme._app.QtCore, "QSettings", lambda *args, **kwargs: settings
     )
     yield
 

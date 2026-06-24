@@ -6,8 +6,8 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._config import load_config
-from labelme.widgets.settings_dialog import SettingsDialog
-from labelme.widgets.settings_dialog import _PlainTextEdit
+from labelme._widgets.settings_dialog import SettingsDialog
+from labelme._widgets.settings_dialog import _PlainTextEdit
 
 Applied = list[tuple[tuple[str, ...], object]]
 

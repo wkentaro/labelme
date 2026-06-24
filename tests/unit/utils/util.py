@@ -7,8 +7,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from labelme.utils import image as image_module
-from labelme.utils import shape as shape_module
+from labelme._utils import image as image_module
+from labelme._utils import shape as shape_module
 
 here = Path(__file__).parent
 data_dir = here.parent.parent / "data"

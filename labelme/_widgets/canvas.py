@@ -21,13 +21,13 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRectF
 from PySide6.QtCore import Qt
 
-import labelme.utils
 from labelme import _automation
 from labelme import _shape
 from labelme._shape import POLYLINE_SHAPE_TYPES
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 
+from .. import _utils
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
@@ -409,7 +409,7 @@ class Canvas(QtWidgets.QWidget):
     def _shapes_from_ai_points(
         self, points: Sequence[QPointF], point_labels: Sequence[int]
     ) -> list[Shape]:
-        image: np.ndarray = labelme.utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
+        image: np.ndarray = _utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
         return self._ai_assist_session.propose_shapes(
             image=image[:, :, :3],
             image_id=str(self._pixmap_hash),
@@ -774,7 +774,7 @@ class Canvas(QtWidgets.QWidget):
         assert len(self._rotation_original_points) > 0, (
             "_capture_rotation_anchors must be called before dragging"
         )
-        current_angle = labelme.utils.direction_angle(
+        current_angle = _utils.direction_angle(
             start=self._rotation_center, end=(pos.x(), pos.y())
         )
         _shape.rotate(
@@ -795,7 +795,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_center = _shape.oriented_rectangle_center(
             shape=self.hovered_shape
         )
-        self._rotation_initial_angle = labelme.utils.direction_angle(
+        self._rotation_initial_angle = _utils.direction_angle(
             start=self._rotation_center, end=handle
         )
         self._rotation_original_points = self.hovered_shape.points.copy()
@@ -1800,7 +1800,7 @@ class Canvas(QtWidgets.QWidget):
         self._clear_highlight_state()
 
     def load_pixmap(self, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
-        pixmap_arr = labelme.utils.img_qt_to_arr(img_qt=pixmap.toImage())
+        pixmap_arr = _utils.img_qt_to_arr(img_qt=pixmap.toImage())
         self.pixmap = pixmap
         self._pixmap_hash = hash(pixmap_arr.tobytes())
         # A new image is a fresh inference context that should surface its own
@@ -1977,7 +1977,7 @@ def _opposite_corner_in_parallelogram(
 def _project_oriented_rectangle_corners(
     *, anchor: QPointF, edge_axis: QPointF, moving: QPointF
 ) -> tuple[QPointF, QPointF]:
-    perp = labelme.utils.project_point_on_perpendicular_line(
+    perp = _utils.project_point_on_perpendicular_line(
         point=moving, line_start=edge_axis, line_end=anchor
     )
     para = _opposite_corner_in_parallelogram(
@@ -2022,7 +2022,7 @@ def _reproject_oriented_rectangle_corners(
             edge_b = _compute_intersection_edges_image(
                 p1=adjacent_para, p2=moving, image_size=image_size
             )
-            moving = labelme.utils.project_point_on_line(
+            moving = _utils.project_point_on_line(
                 point=moving, line_start=edge_a, line_end=edge_b
             )
             adjacent_perp, adjacent_para = _project_oriented_rectangle_corners(

@@ -12,8 +12,8 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
-from labelme.widgets.canvas import Canvas
-from labelme.widgets.canvas import _DraftShape
+from labelme._widgets.canvas import Canvas
+from labelme._widgets.canvas import _DraftShape
 
 # Default epsilon in Canvas (screen-pixel hit radius).
 _EPSILON: float = 10.0

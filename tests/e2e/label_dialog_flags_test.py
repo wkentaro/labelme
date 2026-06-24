@@ -10,7 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QCheckBox
 from pytestqt.qtbot import QtBot
 
-from labelme.widgets.label_dialog import LabelDialog
+from labelme._widgets.label_dialog import LabelDialog
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory

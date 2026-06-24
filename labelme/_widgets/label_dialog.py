@@ -7,7 +7,7 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-from labelme.utils import label_validator
+from .._utils import label_validator
 
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
 _GROUP_ID_PLACEHOLDER: Final[str] = "Group ID"

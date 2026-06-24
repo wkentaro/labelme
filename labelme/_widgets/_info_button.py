@@ -4,7 +4,7 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-from labelme.utils.qt import new_icon
+from .._utils.qt import new_icon
 
 
 class InfoButton(QtWidgets.QToolButton):

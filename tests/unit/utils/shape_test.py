@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from labelme._label_file import ShapeDict
-from labelme.utils import shape as shape_module
+from labelme._utils import shape as shape_module
 
 from .util import get_img_and_data
 
