@@ -8,8 +8,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 from numpy.typing import NDArray
 
-from labelme._shape import Shape
-
+from .._shape import Shape
 from ._geometry import Circle
 from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask

@@ -11,7 +11,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.comments import CommentedSeq
 
-from labelme import _yaml
+from .. import _yaml
 
 here = Path(__file__).resolve().parent
 

@@ -12,7 +12,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QStyle
 
-from labelme._shape import Shape
+from .._shape import Shape
 
 
 def format_label_with_color_dot(text: str, color: tuple[int, int, int]) -> str:

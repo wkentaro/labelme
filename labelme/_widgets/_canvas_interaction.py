@@ -9,11 +9,10 @@ import numpy.typing as npt
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMenu
 
-from labelme._shape import Shape
-from labelme._shape import nearest_edge_index
-from labelme._shape import nearest_rotation_point_index
-from labelme._shape import nearest_vertex_index
-
+from .._shape import Shape
+from .._shape import nearest_edge_index
+from .._shape import nearest_rotation_point_index
+from .._shape import nearest_vertex_index
 from ._shape_render import is_hit_by_point
 
 

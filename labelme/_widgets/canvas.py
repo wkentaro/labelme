@@ -21,13 +21,12 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRectF
 from PySide6.QtCore import Qt
 
-from labelme import _automation
-from labelme import _shape
-from labelme._shape import POLYLINE_SHAPE_TYPES
-from labelme._shape import Shape
-from labelme._shape import ShapeType
-
+from .. import _automation
+from .. import _shape
 from .. import _utils
+from .._shape import POLYLINE_SHAPE_TYPES
+from .._shape import Shape
+from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind

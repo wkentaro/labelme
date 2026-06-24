@@ -11,12 +11,11 @@ import skimage.measure
 from PySide6 import QtCore
 from PySide6 import QtGui
 
-from labelme._shape import Shape
-from labelme._shape import get_rotation_handle
-from labelme._shape import nearest_edge_index
-from labelme._shape import oriented_rectangle_arrow_points
-
 from .. import _utils
+from .._shape import Shape
+from .._shape import get_rotation_handle
+from .._shape import nearest_edge_index
+from .._shape import oriented_rectangle_arrow_points
 
 PEN_WIDTH: Final[int] = 2
 

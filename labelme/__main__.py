@@ -17,10 +17,10 @@ from PySide6 import QtWidgets
 
 from labelme import __appname__
 from labelme import __version__
-from labelme import _config
-from labelme import _locale
-from labelme import _yaml
 
+from . import _config
+from . import _locale
+from . import _yaml
 from ._app import MainWindow
 from ._utils import new_icon
 

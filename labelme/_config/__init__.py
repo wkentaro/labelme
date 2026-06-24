@@ -8,8 +8,8 @@ from typing import cast
 
 from loguru import logger
 
-from labelme import _yaml
-from labelme._config._writer import set_override
+from .. import _yaml
+from ._writer import set_override
 
 here = Path(__file__).resolve().parent
 

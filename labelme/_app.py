@@ -31,21 +31,21 @@ from PySide6.QtWidgets import QMessageBox
 
 from labelme import __appname__
 from labelme import __version__
-from labelme import _automation
-from labelme import _config
-from labelme._label_file import LABEL_FILE_SUFFIX
-from labelme._label_file import Annotation
-from labelme._label_file import LabelFileError
-from labelme._label_file import ShapeDict
-from labelme._label_file import is_label_file_path
-from labelme._label_file import read_image_file
-from labelme._label_file import read_label_file
-from labelme._label_file import write_label_file
-from labelme._shape import Shape
-from labelme._shape import ShapeType
-from labelme._shape_clipboard import ShapeClipboard
 
+from . import _automation
+from . import _config
 from . import _utils
+from ._label_file import LABEL_FILE_SUFFIX
+from ._label_file import Annotation
+from ._label_file import LabelFileError
+from ._label_file import ShapeDict
+from ._label_file import is_label_file_path
+from ._label_file import read_image_file
+from ._label_file import read_label_file
+from ._label_file import write_label_file
+from ._shape import Shape
+from ._shape import ShapeType
+from ._shape_clipboard import ShapeClipboard
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import BrightnessContrastDialog

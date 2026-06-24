@@ -9,7 +9,7 @@ import skimage
 from loguru import logger
 from numpy.typing import NDArray
 
-from labelme._shape import Shape
+from .._shape import Shape
 
 
 class Circle(NamedTuple):
