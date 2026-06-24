@@ -8,8 +8,7 @@ import PIL.Image
 import PIL.ImageDraw
 from numpy.typing import NDArray
 
-from labelme._shape import Shape
-
+from .._shape import Shape
 from ._geometry import shape_to_xyxy_bbox
 from ._shape_builders import Detection
 

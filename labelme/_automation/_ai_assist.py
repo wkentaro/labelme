@@ -5,8 +5,7 @@ import osam
 from loguru import logger
 from numpy.typing import NDArray
 
-from labelme._shape import Shape
-
+from .._shape import Shape
 from ._osam_session import OsamSession
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections

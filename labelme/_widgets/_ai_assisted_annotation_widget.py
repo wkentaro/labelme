@@ -9,8 +9,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
-from labelme._automation import AiOutputFormat
-
+from .._automation import AiOutputFormat
 from ._info_button import InfoButton
 
 
