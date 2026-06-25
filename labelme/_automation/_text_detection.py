@@ -51,7 +51,8 @@ def get_bboxes_from_texts(
     if response.annotations and response.annotations[0].mask is not None:
         masks = []
         for annotation in response.annotations:
-            assert annotation.mask is not None
+            if annotation.mask is None:
+                raise ValueError("Mask is missing in the annotation.")
             masks.append(annotation.mask)
 
     return boxes, scores, labels, masks
