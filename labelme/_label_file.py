@@ -333,9 +333,13 @@ def _imread_tiff(filename: str) -> PIL.Image.Image:
 
 def _normalize_to_uint8(arr: NDArray) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
-    min_val = np.nanmin(arr)
-    max_val = np.nanmax(arr)
-    if np.isnan(min_val) or np.isnan(max_val) or max_val - min_val == 0:
+    finite = arr[np.isfinite(arr)]
+    if finite.size == 0:
+        return np.zeros(arr.shape, dtype=np.uint8)
+    min_val = finite.min()
+    max_val = finite.max()
+    if max_val - min_val == 0:
         return np.zeros(arr.shape, dtype=np.uint8)
     normalized = (arr - min_val) / (max_val - min_val) * 255
-    return np.clip(normalized, 0, 255).astype(np.uint8)
+    bounded = np.nan_to_num(np.clip(normalized, 0, 255), nan=0.0)
+    return bounded.astype(np.uint8)

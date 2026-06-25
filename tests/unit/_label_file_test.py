@@ -13,6 +13,7 @@ from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
 from labelme._label_file import ShapeDict
+from labelme._label_file import _normalize_to_uint8
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
 
@@ -258,3 +259,30 @@ def test_write_label_file_raises_write_error_on_io_failure(tmp_path: Path) -> No
             image_width=None,
             save_image_data=False,
         )
+
+
+def test_normalize_to_uint8_scales_finite_range() -> None:
+    result = _normalize_to_uint8(np.array([[0.0, 50.0, 100.0]]))
+    assert result.dtype == np.uint8
+    np.testing.assert_array_equal(result, [[0, 127, 255]])
+
+
+def test_normalize_to_uint8_constant_array_returns_zeros() -> None:
+    result = _normalize_to_uint8(np.full((2, 2), 42.0))
+    np.testing.assert_array_equal(result, np.zeros((2, 2), dtype=np.uint8))
+
+
+def test_normalize_to_uint8_all_non_finite_returns_zeros() -> None:
+    result = _normalize_to_uint8(np.full((2, 2), np.nan))
+    np.testing.assert_array_equal(result, np.zeros((2, 2), dtype=np.uint8))
+
+
+def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
+    """Regression: an inf pixel made the max inf, so finite/inf == 0 turned every
+    finite pixel black. Non-finite pixels must saturate instead: +inf -> 255,
+    -inf -> 0, nan -> 0, leaving finite pixels scaled over the finite range.
+    """
+    result = _normalize_to_uint8(
+        np.array([[0.0, 50.0, 100.0, np.inf, -np.inf, np.nan]])
+    )
+    np.testing.assert_array_equal(result, [[0, 127, 255, 255, 0, 0]])
