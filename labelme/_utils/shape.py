@@ -5,19 +5,23 @@ from __future__ import annotations
 
 import math
 import uuid
-from typing import TYPE_CHECKING
+from typing import TypedDict
 
 import numpy as np
 import PIL.Image
 import PIL.ImageDraw
 from numpy.typing import NDArray
 
-# FIXME: guarded to break a runtime import cycle (_label_file imports
-# labelme._utils, which imports this module). Safe because ShapeDict is only used
-# in annotations, which `from __future__ import annotations` keeps unevaluated.
-# Drop the guard once _label_file no longer imports the whole utils package.
-if TYPE_CHECKING:
-    from labelme._label_file import ShapeDict
+
+class ShapeDict(TypedDict):
+    label: str
+    points: list[list[float]]
+    shape_type: str
+    flags: dict[str, bool]
+    description: str
+    group_id: int | None
+    mask: NDArray[np.bool_] | None
+    other_data: dict
 
 
 def shape_to_mask(

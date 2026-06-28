@@ -9,7 +9,6 @@ from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import Final
-from typing import TypedDict
 
 import numpy as np
 import PIL.Image
@@ -20,19 +19,9 @@ from numpy.typing import NDArray
 from labelme import __version__
 
 from . import _utils
+from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
-
-
-class ShapeDict(TypedDict):
-    label: str
-    points: list[list[float]]
-    shape_type: str
-    flags: dict[str, bool]
-    description: str
-    group_id: int | None
-    mask: NDArray[np.bool_] | None
-    other_data: dict
 
 
 def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
