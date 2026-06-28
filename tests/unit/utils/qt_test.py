@@ -3,11 +3,13 @@ from __future__ import annotations
 import math
 
 import pytest
+from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
+from labelme._utils.qt import _TintedSvgIconEngine
 from labelme._utils.qt import add_actions
 from labelme._utils.qt import direction_angle
 from labelme._utils.qt import distance
@@ -174,6 +176,66 @@ def test_new_icon_with_explicit_png_suffix(qtbot: QtBot) -> None:
 def test_new_icon_with_path_that_includes_subdir(qtbot: QtBot) -> None:
     icon = new_icon("phosphor/info.svg")
     assert isinstance(icon, QtGui.QIcon)
+
+
+# ---------------------------------------------------------------------------
+# color-theme icon tinting
+# ---------------------------------------------------------------------------
+
+
+def _set_window_text(app: QtWidgets.QApplication, color: QtGui.QColor) -> None:
+    palette = app.palette()
+    palette.setColor(
+        QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.WindowText, color
+    )
+    app.setPalette(palette)
+
+
+def test_tinted_svg_engine_renders_window_text_color(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    original = qapp.palette()
+    try:
+        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        svg = (
+            b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
+            b'<rect width="4" height="4" fill="currentColor"/></svg>'
+        )
+        engine = _TintedSvgIconEngine(svg=svg)
+        pixmap = engine.pixmap(
+            QtCore.QSize(4, 4), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off
+        )
+        assert pixmap.toImage().pixelColor(2, 2).getRgb() == (255, 0, 0, 255)
+    finally:
+        qapp.setPalette(original)
+
+
+def test_new_icon_tints_monochrome_icon_to_palette(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    original = qapp.palette()
+    try:
+        icon = new_icon("phosphor/polygon.svg")  # authored with fill="currentColor"
+        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        red = icon.pixmap(QtCore.QSize(24, 24)).toImage()
+        _set_window_text(qapp, QtGui.QColor(0, 0, 255))
+        blue = icon.pixmap(QtCore.QSize(24, 24)).toImage()
+        assert red != blue
+    finally:
+        qapp.setPalette(original)
+
+
+def test_new_icon_keeps_accent_icon_fixed(qapp: QtWidgets.QApplication) -> None:
+    original = qapp.palette()
+    try:
+        icon = new_icon("phosphor/floppy-disk.svg")  # baked accent color, not tinted
+        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        a = icon.pixmap(QtCore.QSize(24, 24)).toImage()
+        _set_window_text(qapp, QtGui.QColor(0, 255, 0))
+        b = icon.pixmap(QtCore.QSize(24, 24)).toImage()
+        assert a == b
+    finally:
+        qapp.setPalette(original)
 
 
 # ---------------------------------------------------------------------------

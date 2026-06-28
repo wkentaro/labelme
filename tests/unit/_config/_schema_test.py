@@ -58,6 +58,13 @@ def test_enum_default_is_a_choice(setting: Setting, default_config: dict) -> Non
     assert default in setting.choices
 
 
+@pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(_ENUM_SETTINGS))
+def test_enum_choice_labels_match_choices(setting: Setting) -> None:
+    assert setting.choices is not None
+    if setting.choice_labels is not None:
+        assert len(setting.choice_labels) == len(setting.choices)
+
+
 @pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(_BOOL_SETTINGS))
 def test_bool_default_is_bool(setting: Setting, default_config: dict) -> None:
     default = _resolve(config=default_config, key_path=setting.key_path)

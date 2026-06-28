@@ -10,16 +10,104 @@ import numpy as np
 import numpy.typing as npt
 from PySide6 import QtCore
 from PySide6 import QtGui
+from PySide6 import QtSvg
 from PySide6 import QtWidgets
 
 _ICONS_DIR: Final = os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons")
 _DEFAULT_ICON_SUFFIX: Final = ".png"
 
 
+def apply_color_theme(theme: str) -> None:
+    scheme_by_theme: Final = {
+        "system": QtCore.Qt.ColorScheme.Unknown,
+        "light": QtCore.Qt.ColorScheme.Light,
+        "dark": QtCore.Qt.ColorScheme.Dark,
+    }
+    scheme = scheme_by_theme.get(theme, QtCore.Qt.ColorScheme.Unknown)
+    QtGui.QGuiApplication.styleHints().setColorScheme(scheme)
+
+
+class _TintedSvgIconEngine(QtGui.QIconEngine):
+    # Substitutes fill="currentColor" with the palette text color at paint time, so
+    # icons re-tint live on a theme change instead of baking a fixed color.
+    def __init__(self, *, svg: bytes) -> None:
+        super().__init__()
+        self._svg = svg
+        self._pixmaps: dict[tuple[int, int, str], QtGui.QPixmap] = {}
+
+    @staticmethod
+    def _tint_color(*, mode: QtGui.QIcon.Mode) -> QtGui.QColor:
+        palette = QtWidgets.QApplication.palette()
+        group = (
+            QtGui.QPalette.ColorGroup.Disabled
+            if mode == QtGui.QIcon.Mode.Disabled
+            else QtGui.QPalette.ColorGroup.Normal
+        )
+        return palette.color(group, QtGui.QPalette.ColorRole.WindowText)
+
+    def _tinted_pixmap(
+        self, *, size: QtCore.QSize, color: QtGui.QColor
+    ) -> QtGui.QPixmap:
+        key = (size.width(), size.height(), color.name())
+        cached = self._pixmaps.get(key)
+        if cached is not None:
+            return cached
+        svg = self._svg.replace(b"currentColor", color.name().encode())
+        renderer = QtSvg.QSvgRenderer(QtCore.QByteArray(svg))
+        image = QtGui.QImage(size, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
+        image.fill(QtCore.Qt.GlobalColor.transparent)
+        painter = QtGui.QPainter(image)
+        renderer.render(painter, QtCore.QRectF(0, 0, size.width(), size.height()))
+        painter.end()
+        pixmap = QtGui.QPixmap.fromImage(image)
+        self._pixmaps[key] = pixmap
+        return pixmap
+
+    def pixmap(
+        self, size: QtCore.QSize, mode: QtGui.QIcon.Mode, state: QtGui.QIcon.State
+    ) -> QtGui.QPixmap:
+        # Copy so neither callers nor Qt's scaledPixmap (which sets a device pixel
+        # ratio on the result) mutate the shared cached pixmap.
+        cached = self._tinted_pixmap(size=size, color=self._tint_color(mode=mode))
+        return QtGui.QPixmap(cached)
+
+    def paint(
+        self,
+        painter: QtGui.QPainter,
+        rect: QtCore.QRect,
+        mode: QtGui.QIcon.Mode,
+        state: QtGui.QIcon.State,
+    ) -> None:
+        # Render at device pixels so the icon stays crisp on HiDPI/Retina screens,
+        # where rect is in device-independent coordinates. Copy before stamping the
+        # ratio so the cached pixmap is not mutated.
+        dpr = painter.device().devicePixelRatioF()
+        cached = self._tinted_pixmap(
+            size=(QtCore.QSizeF(rect.size()) * dpr).toSize(),
+            color=self._tint_color(mode=mode),
+        )
+        pixmap = QtGui.QPixmap(cached)
+        pixmap.setDevicePixelRatio(dpr)
+        painter.drawPixmap(rect, pixmap)
+
+    def cacheKey(self) -> int:
+        return hash(
+            (self._svg, int(self._tint_color(mode=QtGui.QIcon.Mode.Normal).rgba()))
+        )
+
+    def clone(self) -> QtGui.QIconEngine:
+        return _TintedSvgIconEngine(svg=self._svg)
+
+
 def new_icon(name: str) -> QtGui.QIcon:
     if not os.path.splitext(name)[1]:
         name = name + _DEFAULT_ICON_SUFFIX
     path = os.path.join(_ICONS_DIR, name)
+    if path.endswith(".svg"):
+        with open(path, "rb") as f:
+            svg = f.read()
+        if b"currentColor" in svg:
+            return QtGui.QIcon(_TintedSvgIconEngine(svg=svg))
     return QtGui.QIcon(path)
 
 

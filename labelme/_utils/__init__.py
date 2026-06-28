@@ -8,6 +8,7 @@ from .image import img_data_to_png_data
 from .image import img_pil_to_data
 from .image import img_qt_to_arr
 from .qt import add_actions
+from .qt import apply_color_theme
 from .qt import direction_angle
 from .qt import distance
 from .qt import distance_to_line

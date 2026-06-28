@@ -22,6 +22,7 @@ from . import _config
 from . import _locale
 from . import _yaml
 from ._app import MainWindow
+from ._utils import apply_color_theme
 from ._utils import new_icon
 
 
@@ -286,16 +287,20 @@ def main() -> None:
             )
         output_dir = output
 
-    # Read the language before QApplication exists so the translator is installed
-    # before any widget is built. MainWindow re-reads the same config; both reads
-    # are pure (load_config never writes), so the duplicate parse is harmless.
+    # Read the language and color theme before QApplication exists so the
+    # translator and palette are set before any widget is built. MainWindow
+    # re-reads the same config; both reads are pure (load_config never writes), so
+    # the duplicate parse is harmless.
     try:
-        language = _config.load_config(
+        loaded_config = _config.load_config(
             config_file=config_file, config_overrides=config_overrides
-        ).get("language")
+        )
+        language = loaded_config.get("language")
+        color_theme = loaded_config.get("color_theme", "system")
     except Exception as e:
-        logger.debug("Could not read language from config: {}", e)
+        logger.debug("Could not read config: {}", e)
         language = None
+        color_theme = "system"
     # A stale or hand-edited language code with no bundled translation follows the
     # system locale, matching the Settings dialog.
     if not _locale.is_valid_language(language):
@@ -307,8 +312,7 @@ def main() -> None:
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
-    # Force light mode to avoid dark mode UI issues (e.g., invisible icons)
-    app.setPalette(QtWidgets.QStyleFactory.create("Fusion").standardPalette())
+    apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
     app.setWindowIcon(new_icon("icon"))
     app.installTranslator(translator)
