@@ -944,7 +944,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.24" },
     { name = "osam", specifier = ">=0.4.0" },
     { name = "pillow", specifier = ">=2.8" },
-    { name = "pyside6", specifier = ">=6.5" },
+    { name = "pyside6", specifier = ">=6.8" },
     { name = "ruamel-yaml", specifier = ">=0.18" },
     { name = "scikit-image", specifier = ">=0.21" },
     { name = "scipy", specifier = ">=1.8" },

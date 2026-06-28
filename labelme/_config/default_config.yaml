@@ -8,6 +8,8 @@ keep_prev_brightness_contrast: false
 logger_level: info
 # UI language as a locale code (e.g. ja_JP); null follows the system locale.
 language:
+# Color theme: 'system' follows the OS appearance, or force 'light' / 'dark'.
+color_theme: system
 flags:
 label_flags:
 labels:

@@ -234,6 +234,7 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self,
         )
         self._ai_annotation.setEnabled(False)
+        self._ai_buttons_highlighted = False
 
         self._ai_text = AiTextToAnnotationWidget(
             on_submit=self._submit_ai_prompt, parent=self
@@ -249,6 +250,35 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.zoom_widget.valueChanged.connect(self._paint_canvas)
 
         self.populate_mode_actions()
+
+        # colorSchemeChanged fires while setColorScheme is still running, before
+        # the new palette is applied, so connect queued: _retheme runs on the next
+        # event loop pass, against the live palette.
+        QtGui.QGuiApplication.styleHints().colorSchemeChanged.connect(
+            self._retheme, QtCore.Qt.ConnectionType.QueuedConnection
+        )
+
+    def _retheme(self) -> None:
+        # Two things do not follow Qt's palette swap: cached QIcon pixmaps (keyed
+        # by the old tint color) and stylesheet'd widgets (QStyleSheetStyle pins
+        # their palette at polish time, leaving a palette(...) toolbar on the old
+        # scheme).
+        QtGui.QPixmapCache.clear()
+        app = QtWidgets.QApplication.instance()
+        if not isinstance(app, QtWidgets.QApplication):
+            return
+        for widget in app.allWidgets():
+            sheet = widget.styleSheet()
+            # Only stylesheets with palette(...) references go stale on a scheme
+            # change; re-applying just those avoids re-polishing composite widgets
+            # (combo boxes, spin boxes) whose re-polish can invalidate siblings.
+            if sheet and "palette(" in sheet:
+                widget.setStyleSheet(sheet)  # re-resolve palette refs; also repaints
+            else:
+                widget.update()
+        # The AI-button highlight bakes palette colors into its stylesheet (no
+        # palette() ref), so recompute it against the new palette.
+        self._highlight_ai_buttons(self._ai_buttons_highlighted)
 
     def _setup_actions(self) -> _Actions:
         action = functools.partial(_utils.new_action, self)
@@ -1475,13 +1505,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.set_disabled_models(())
 
     def _highlight_ai_buttons(self, highlight: bool) -> None:
-        HIGHLIGHT_COLOR: Final = "#FFFFCC"
-        BORDER_COLOR: Final = "#E6E6A0"
-        bg = HIGHLIGHT_COLOR if highlight else "transparent"
-        border = BORDER_COLOR if highlight else "transparent"
+        self._ai_buttons_highlighted = highlight
+        BG_ALPHA: Final = 60
+        BORDER_ALPHA: Final = 120
+        # alpha 0 (not highlighted) reads as transparent; HexArgb gives "#AARRGGBB",
+        # which Qt stylesheets accept.
+        bg = self.palette().color(QtGui.QPalette.ColorRole.Highlight)
+        bg.setAlpha(BG_ALPHA if highlight else 0)
+        border = QtGui.QColor(bg)
+        border.setAlpha(BORDER_ALPHA if highlight else 0)
         style = (
             "QToolButton:!checked:!pressed {"
-            f" background-color: {bg}; border: 1px solid {border};"
+            f" background-color: {bg.name(QtGui.QColor.NameFormat.HexArgb)};"
+            f" border: 1px solid {border.name(QtGui.QColor.NameFormat.HexArgb)};"
             " }"
         )
         for mode, action in self._actions.draw:
@@ -2445,7 +2481,11 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def _apply_to_live_widgets(self, key_path: tuple[str, ...]) -> None:
-        if key_path == ("shape", "show_labels"):
+        if key_path == ("color_theme",):
+            # apply_color_theme -> setColorScheme emits colorSchemeChanged, which
+            # drives _retheme; no explicit refresh needed here.
+            _utils.apply_color_theme(theme=self._config["color_theme"])
+        elif key_path == ("shape", "show_labels"):
             canvas = self._canvas_widgets.canvas
             canvas.set_show_labels(self._config["shape"]["show_labels"])
             canvas.update()

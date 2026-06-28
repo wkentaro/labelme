@@ -164,13 +164,9 @@ class SettingsDialog(QtWidgets.QDialog):
         note = QtWidgets.QLabel(self.tr(setting.note))
         note.setWordWrap(True)
         # Secondary text color, kept enabled: a disabled label would be announced
-        # as a disabled control and carry the platform's washed-out gray.
-        palette = note.palette()
-        palette.setColor(
-            QtGui.QPalette.ColorRole.WindowText,
-            palette.color(QtGui.QPalette.ColorRole.PlaceholderText),
-        )
-        note.setPalette(palette)
+        # as a disabled control and carry the platform's washed-out gray. The
+        # foreground role (not an explicit palette) tracks live theme changes.
+        note.setForegroundRole(QtGui.QPalette.ColorRole.PlaceholderText)
         cell_layout.addWidget(note)
         return cell
 
@@ -185,12 +181,17 @@ class SettingsDialog(QtWidgets.QDialog):
             return check
         if setting.kind == "enum":
             assert setting.choices is not None
-            items = [
-                (self.tr("(none)") if choice is None else str(choice), choice)
-                for choice in setting.choices
-            ]
+            enum_items: list[tuple[str, object]] = []
+            for index, choice in enumerate(setting.choices):
+                if setting.choice_labels is not None:
+                    label = self.tr(setting.choice_labels[index])
+                elif choice is None:
+                    label = self.tr("(none)")
+                else:
+                    label = str(choice)
+                enum_items.append((label, choice))
             return self._create_combo(
-                setting=setting, value=value, items=items, min_width=140
+                setting=setting, value=value, items=enum_items, min_width=140
             )
         if setting.kind == "language":
             languages = sorted(

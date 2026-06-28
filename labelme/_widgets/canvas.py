@@ -1445,7 +1445,7 @@ class Canvas(QtWidgets.QWidget):
         if not self._should_draw_crosshair(cursor=cursor):
             return
         assert cursor is not None
-        painter.setPen(QtGui.QColor(0, 0, 0))
+        painter.setPen(self.palette().color(QtGui.QPalette.ColorRole.WindowText))
         cx = int(cursor.x() * self.scale)
         cy = int(cursor.y() * self.scale)
         if self._allow_out_of_bounds_points:

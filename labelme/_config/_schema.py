@@ -33,11 +33,25 @@ class Setting:
     # "unset/disabled"; it round-trips to YAML null and the dialog renders it
     # as an explicit "(none)" option, never as the string "None".
     choices: tuple[object, ...] | None = None
+    # Display labels paralleling choices; falls back to str(choice) when None.
+    choice_labels: tuple[str, ...] | None = None
     # Optional muted caption rendered beneath the control.
     note: str | None = None
 
 
 SETTINGS: Final[tuple[Setting, ...]] = (
+    Setting(
+        key_path=("color_theme",),
+        section="General",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Color theme")),
+        kind="enum",
+        choices=("system", "light", "dark"),
+        choice_labels=(
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "System default")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Light")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Dark")),
+        ),
+    ),
     Setting(
         key_path=("display_label_popup",),
         section="General",
