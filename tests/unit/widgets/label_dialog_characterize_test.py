@@ -77,6 +77,12 @@ def _checkboxes(dialog: LabelDialog) -> list[QtWidgets.QCheckBox]:
     return dialog.findChildren(QtWidgets.QCheckBox)
 
 
+def _checkbox(dialog: LabelDialog, name: str) -> QtWidgets.QCheckBox:
+    matches = [cb for cb in _checkboxes(dialog) if cb.text() == name]
+    assert matches, f"no checkbox named {name!r}"
+    return matches[0]
+
+
 def _ok_button(dialog: LabelDialog) -> QtWidgets.QPushButton:
     box = dialog.findChild(QtWidgets.QDialogButtonBox)
     assert box is not None
@@ -575,6 +581,41 @@ def test_flags_disabled_resets_between_popups(qtbot: QtBot) -> None:
     )
     assert seen["enabled"]
     assert all(seen["enabled"])
+
+
+def test_flag_checked_state_does_not_leak_into_next_new_shape_popup(
+    qtbot: QtBot,
+) -> None:
+    seen: dict[str, bool] = {}
+    dialog = _make_dialog(qtbot, flags={"^cat$": ["indoor"]})
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: _checkbox(d, "indoor").setChecked(True),
+    )
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: seen.update(checked=_checkbox(d, "indoor").isChecked()),
+    )
+    assert seen["checked"] is False
+
+
+def test_edited_shape_flags_do_not_leak_into_next_new_shape_popup(
+    qtbot: QtBot,
+) -> None:
+    seen: dict[str, bool] = {}
+    dialog = _make_dialog(qtbot, flags={"^cat$": ["indoor"]})
+    _run_popup(dialog, accept=True, text="cat", flags={"indoor": True})
+    _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: seen.update(checked=_checkbox(d, "indoor").isChecked()),
+    )
+    assert seen["checked"] is False
 
 
 def test_flags_disabled_survives_text_edit_rebuild(qtbot: QtBot) -> None:

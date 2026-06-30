@@ -260,6 +260,9 @@ class LabelDialog(QtWidgets.QDialog):
         if flags is not None:
             self._show_popup_flags(flags)
         else:
+            # _update_flags keeps the checked state of boxes that already exist
+            # (wanted while typing); clear them so a fresh popup starts unchecked.
+            self._clear_flags_layout()
             self._update_flags(self.edit.text())
 
         matches = self.label_list.findItems(
