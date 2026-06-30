@@ -216,6 +216,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_dialog = self._make_label_dialog()
 
         self._prev_opened_dir = None
+        self._label_list_menu_origin: QtCore.QPoint | None = None
         self._docks = self._setup_dock_widgets()
 
         self.setAcceptDrops(True)
@@ -1527,8 +1528,12 @@ class MainWindow(QtWidgets.QMainWindow):
                         widget.setStyleSheet(style)
 
     def show_label_list_menu(self, point: QtCore.QPoint) -> None:
-        # PySide6 type QMenu.exec() argument too narrowly
-        self._menus.label_list.exec(self._docks.label_list.mapToGlobal(point))  # ty: ignore[invalid-argument-type]
+        self._label_list_menu_origin = self._docks.label_list.mapToGlobal(point)
+        try:
+            # PySide6 type QMenu.exec() argument too narrowly
+            self._menus.label_list.exec(self._label_list_menu_origin)  # ty: ignore[invalid-argument-type]
+        finally:
+            self._label_list_menu_origin = None
 
     def validate_label(self, label: str) -> bool:
         policy = self._config["validate_label"]
@@ -1575,8 +1580,16 @@ class MainWindow(QtWidgets.QMainWindow):
         if not edit_description:
             self._label_dialog.edit_description.setDisabled(True)
 
+        canvas_menu_origin = self._canvas_widgets.canvas.context_menu_origin
+        menu_origin = (
+            canvas_menu_origin
+            if canvas_menu_origin is not None
+            else self._label_list_menu_origin
+        )
+
         text, flags, group_id, description = self._label_dialog.popup(
             text=first_shape.label if edit_text else "",
+            position=menu_origin,
             flags=first_shape.flags if edit_flags else None,
             group_id=first_shape.group_id if edit_group_id else None,
             description=first_shape.description if edit_description else None,

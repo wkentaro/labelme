@@ -240,6 +240,7 @@ class LabelDialog(QtWidgets.QDialog):
         self,
         text: str | None = None,
         move: bool = True,
+        position: QtCore.QPoint | None = None,
         flags: dict[str, bool] | None = None,
         group_id: int | None = None,
         description: str | None = None,
@@ -275,8 +276,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
 
         if move:
-            cursor_pos = QtGui.QCursor.pos()
-            self.move(cursor_pos)
+            self.move(position if position is not None else QtGui.QCursor.pos())
 
         result = self.exec()
 
