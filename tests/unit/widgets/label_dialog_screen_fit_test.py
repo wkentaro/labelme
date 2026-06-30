@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets.label_dialog import LabelDialog
@@ -50,3 +52,15 @@ def test_few_flags_shrink_below_cap(qtbot: QtBot) -> None:
 
     assert dialog._flags_scroll.height() < 150
     assert dialog._flags_scroll.verticalScrollBar().maximum() == 0
+
+
+@pytest.mark.parametrize("corner", ["topLeft", "topRight", "bottomLeft", "bottomRight"])
+def test_move_keeps_dialog_within_screen(qtbot: QtBot, corner: str) -> None:
+    dialog = _make_dialog(qtbot, flag_count=3)
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    available = QtGui.QGuiApplication.primaryScreen().availableGeometry()
+    dialog._move_within_screen(getattr(available, corner)())
+
+    assert available.contains(dialog.frameGeometry())
