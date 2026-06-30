@@ -266,6 +266,7 @@ class Canvas(QtWidgets.QWidget):
             without_selection=QtWidgets.QMenu(),
             with_selection=QtWidgets.QMenu(),
         )
+        self.context_menu_origin: QtCore.QPoint | None = None
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
@@ -1131,7 +1132,12 @@ class Canvas(QtWidgets.QWidget):
             has_selection=len(self._selected_shapes_copy) > 0
         )
         self._release_cursor()
-        if menu.exec(self.mapToGlobal(event.position().toPoint())):  # type: ignore
+        self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
+        try:
+            triggered = menu.exec(self.context_menu_origin)  # type: ignore
+        finally:
+            self.context_menu_origin = None
+        if triggered:
             return
         if not self._selected_shapes_copy:
             return
