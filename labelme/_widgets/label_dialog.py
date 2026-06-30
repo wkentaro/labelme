@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from typing import Final
 
 from PySide6 import QtCore
@@ -12,6 +13,9 @@ from .._utils import label_validator
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
 _GROUP_ID_PLACEHOLDER: Final[str] = "Group ID"
 _DESCRIPTION_PLACEHOLDER: Final[str] = "Description"
+
+_LABEL_LIST_HEIGHT: Final[int] = 150
+_FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
 
 
 class LabelQLineEdit(QtWidgets.QLineEdit):
@@ -74,7 +78,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit_description.setFixedHeight(50)
 
         self.label_list = QtWidgets.QListWidget()
-        self.label_list.setFixedHeight(150)
+        self.label_list.setFixedHeight(_LABEL_LIST_HEIGHT)
 
         # Configure label list
         if sort_labels:
@@ -130,7 +134,15 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_layout.setContentsMargins(0, 0, 0, 0)
         self._flags_layout.setSpacing(0)
         self._flags_container.setLayout(self._flags_layout)
-        main_layout.addWidget(self._flags_container)
+
+        self._flags_scroll = QtWidgets.QScrollArea()
+        self._flags_scroll.setWidgetResizable(True)
+        self._flags_scroll.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self._flags_scroll.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        self._flags_scroll.setWidget(self._flags_container)
+        main_layout.addWidget(self._flags_scroll)
 
         main_layout.addWidget(self.edit_description)
 
@@ -205,16 +217,13 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _update_flags(self, text: str) -> None:
         current_states = {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
-        self._clear_flags_layout()
-
+        flags: list[tuple[str, bool]] = []
         for pattern, flag_keys in self._flags_spec.items():
-            if re.match(pattern, text):
-                for key in flag_keys:
-                    checkbox = QtWidgets.QCheckBox(key)
-                    if key in current_states:
-                        checkbox.setChecked(current_states[key])
-                    checkbox.setEnabled(not self._flags_disabled)
-                    self._flags_layout.addWidget(checkbox)
+            if not re.match(pattern, text):
+                continue
+            for key in flag_keys:
+                flags.append((key, current_states.get(key, False)))
+        self._set_flag_checkboxes(flags=flags)
 
     def add_label_history(self, label: str) -> None:
         if label not in self._label_history:
@@ -259,7 +268,7 @@ class LabelDialog(QtWidgets.QDialog):
 
         self._flags_disabled = flags_disabled
         if flags is not None:
-            self._show_popup_flags(flags)
+            self._set_flag_checkboxes(flags=flags.items())
         else:
             # _update_flags keeps the checked state of boxes that already exist
             # (wanted while typing); clear them so a fresh popup starts unchecked.
@@ -276,7 +285,11 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
 
         if move:
-            self.move(position if position is not None else QtGui.QCursor.pos())
+            target = position if position is not None else QtGui.QCursor.pos()
+            self._move_within_screen(target)
+            # frameGeometry() lacks the window-manager decoration size until the
+            # dialog is mapped, so re-clamp once exec() has shown it.
+            QtCore.QTimer.singleShot(0, lambda: self._move_within_screen(target))
 
         result = self.exec()
 
@@ -290,13 +303,16 @@ class LabelDialog(QtWidgets.QDialog):
 
         return None, None, None, None
 
-    def _show_popup_flags(self, flags: dict[str, bool]) -> None:
+    def _set_flag_checkboxes(self, flags: Iterable[tuple[str, bool]]) -> None:
         self._clear_flags_layout()
-        for key, checked in flags.items():
+        for key, checked in flags:
             checkbox = QtWidgets.QCheckBox(key)
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)
             self._flags_layout.addWidget(checkbox)
+
+        content_height = self._flags_container.sizeHint().height()
+        self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))
 
     def _collect_flags(self) -> dict[str, bool]:
         return {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
@@ -308,3 +324,25 @@ class LabelDialog(QtWidgets.QDialog):
             )
         if self._fit_to_content["column"]:
             self.label_list.setMinimumWidth(self.label_list.sizeHintForColumn(0) + 2)
+
+    def _move_within_screen(self, target: QtCore.QPoint) -> None:
+        self.adjustSize()
+        screen = (
+            QtGui.QGuiApplication.screenAt(target)
+            or QtGui.QGuiApplication.primaryScreen()
+        )
+        if screen is None:
+            self.move(target)
+            return
+        available = screen.availableGeometry()
+
+        # move() positions the client area; nudge by the actual frame overflow so
+        # the window-manager decoration (title bar, borders) also stays on screen.
+        self.move(target)
+        frame = self.frameGeometry()
+        dx = min(0, available.right() - frame.right())
+        dx = max(dx, available.left() - frame.left())
+        dy = min(0, available.bottom() - frame.bottom())
+        dy = max(dy, available.top() - frame.top())
+        if dx or dy:
+            self.move(self.x() + dx, self.y() + dy)
