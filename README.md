@@ -92,11 +92,11 @@ On some Linux distributions, labelme is also packaged in the system's native rep
 
 |        | Supported (v7.x)               | Maintenance (v6.3.x) |
 | ------ | ------------------------------ | -------------------- |
-| Python | 3.11 - 3.14                    | 3.10 - 3.11          |
+| Python | 3.12 - 3.14                    | 3.10 - 3.11          |
 | Qt     | Qt6 (PySide6)                  | Qt5                  |
 | OS     | 64-bit macOS / Windows / Linux | older OSes           |
 
-labelme follows [SPEC 0](https://scientific-python.org/specs/spec-0000/) (the successor to [NEP 29](https://numpy.org/neps/nep-0029-deprecation_policy.html)) for dropping Python versions, in step with its core scientific dependencies (numpy, scipy, scikit-image). v6.3.x is the maintenance line for Qt5 and Python 3.10 stragglers.
+labelme follows [SPEC 0](https://scientific-python.org/specs/spec-0000/) (the successor to [NEP 29](https://numpy.org/neps/nep-0029-deprecation_policy.html)) for dropping Python versions, in step with its core scientific dependencies (numpy, scipy, scikit-image). v6.3.x is the maintenance line for Qt5 and Python 3.10 / 3.11 stragglers.
 
 v6.3.x receives critical fixes only, on a best-effort basis with no release cadence or SLA. "Critical" is limited to:
 
@@ -111,11 +111,11 @@ Feature backports and non-critical bugs are out of scope; all new development ha
 v7.0.0 raises the platform floor:
 
 - **Qt binding:** the GUI moved from PyQt5 (Qt5) to PySide6 (Qt6). `pip install labelme` now pulls PySide6 instead of PyQt5.
-- **Python:** the minimum is now Python 3.11 (3.10 is dropped).
+- **Python:** the minimum is now Python 3.12 (3.10 and 3.11 are dropped).
 - **OS:** Qt6 requires a 64-bit macOS, Windows, or Linux; older OSes that only Qt5 supported are no longer covered.
 - **No public Python API:** labelme is an application, not a library, and exposes no stable Python API. Its internal modules were privatized in v7 (renamed to underscore-prefixed names), so `import labelme.app`, `labelme.utils`, `labelme.widgets`, and similar imports no longer work. If you previously imported labelme internals, pin `labelme<7` and vendor the code you need; see [`examples/utils.py`](examples/utils.py) for copy-and-adapt reference code that reads the JSON annotation format without depending on labelme.
 
-If you need to stay on PyQt5/Qt5, Python 3.10, or an older OS, pin to the v6.3.x maintenance line:
+If you need to stay on PyQt5/Qt5, Python 3.10 or 3.11, or an older OS, pin to the v6.3.x maintenance line:
 
 ```bash
 pip install 'labelme<7'

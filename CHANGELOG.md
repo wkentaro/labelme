@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Breaking:** Migrated the GUI from PyQt5 (Qt5) to PySide6 (Qt6) ([#2158](https://github.com/wkentaro/labelme/pull/2158))
-- **Breaking:** Dropped Python 3.10 support; the minimum is now Python 3.11, following SPEC 0 in step with numpy/scipy/scikit-image. Users on 3.10 should stay on the v6.3.x maintenance line ([#2218](https://github.com/wkentaro/labelme/pull/2218))
+- **Breaking:** Dropped Python 3.10 and 3.11 support; the minimum is now Python 3.12, following SPEC 0 now that numpy and scipy require 3.12. Users on 3.10 or 3.11 should stay on the v6.3.x maintenance line ([#2218](https://github.com/wkentaro/labelme/pull/2218), [#2280](https://github.com/wkentaro/labelme/pull/2280))
 - **Breaking:** Privatized the Python import surface — `labelme.app`, `labelme.utils`, and `labelme.widgets` moved to `labelme._app`, `labelme._utils`, and `labelme._widgets`; labelme no longer exposes a supported Python API (use the CLI and the JSON label format) ([#2253](https://github.com/wkentaro/labelme/pull/2253))
 - Fixed `UnicodeEncodeError` on non-UTF-8 locales (e.g. Windows cp1252) when labels contain non-ASCII characters by always reading and writing the config file in UTF-8 encoding ([#2136](https://github.com/wkentaro/labelme/pull/2136))
 - **Breaking:** Switched config file parsing from PyYAML to ruamel.yaml; comments and formatting in `~/.labelmerc` are now preserved across Settings edits. Note: YAML 1.2 is now used, so boolean spellings `yes`/`no`/`on`/`off` are read as strings rather than booleans ([#2114](https://github.com/wkentaro/labelme/pull/2114))

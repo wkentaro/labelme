@@ -11,6 +11,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - run: make setup
       - run: make lint
