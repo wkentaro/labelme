@@ -8,6 +8,7 @@ import platform
 import re
 import subprocess
 import time
+import typing
 import webbrowser
 from pathlib import Path
 from typing import Final
@@ -15,7 +16,6 @@ from typing import Literal
 from typing import NamedTuple
 from typing import TypeAlias
 from typing import cast
-from typing import get_args
 
 import imgviz
 import natsort
@@ -1497,7 +1497,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_text.setEnabled(
             not edit
             and create_mode
-            in (*get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
+            in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
         if create_mode == "ai_points_to_shape":
@@ -2850,7 +2850,7 @@ def _resolve_text_annotation_shape_type(
 ) -> _automation.AiOutputFormat | None:
     if create_mode in _AI_CREATE_MODES:
         return ai_output_format
-    if create_mode in get_args(_TextToAnnotationCreateMode):
+    if create_mode in typing.get_args(_TextToAnnotationCreateMode):
         return cast(_TextToAnnotationCreateMode, create_mode)
     return None
 
