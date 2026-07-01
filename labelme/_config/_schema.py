@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
+import typing
 from typing import Final
 from typing import Literal
 from typing import cast
-from typing import get_args
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP
 
@@ -20,7 +20,7 @@ _TRANSLATABLE_SECTIONS: Final = (
     QT_TRANSLATE_NOOP("SettingsDialog", "General"),
     QT_TRANSLATE_NOOP("SettingsDialog", "Labels"),
 )
-assert set(_TRANSLATABLE_SECTIONS) == set(get_args(Section))
+assert set(_TRANSLATABLE_SECTIONS) == set(typing.get_args(Section))
 
 
 @dataclasses.dataclass(frozen=True)
