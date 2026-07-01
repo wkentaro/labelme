@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a schema-driven Settings dialog (replaces the "open YAML in editor" preference), with immediate live-apply and comment-preserving writes to ~/.labelmerc ([#2120](https://github.com/wkentaro/labelme/pull/2120))
 - Added a Language picker to the Settings dialog so the UI language can be changed without editing the config file ([#2140](https://github.com/wkentaro/labelme/pull/2140))
 - Added a `show_labels` toggle in Settings to draw each shape's label text on the canvas at its top-left anchor, live-applied without restart ([#2182](https://github.com/wkentaro/labelme/pull/2182))
+- Added a BETA badge in the Settings dialog beside preview features (Show shape labels on canvas, Allow points outside the image boundary) to signal they are shipped for early use and to invite issue reports ([#2275](https://github.com/wkentaro/labelme/pull/2275))
 - Added image flags to the Settings dialog with live dock refresh — newly added flags appear without reloading the image ([#2169](https://github.com/wkentaro/labelme/pull/2169))
 - Added inline display of enabled shape flags in the annotation list (e.g. `car [occluded, truncated]`) so the full annotation state is visible at a glance ([#2134](https://github.com/wkentaro/labelme/pull/2134))
 - Added Indonesian (id_ID) localization ([#2143](https://github.com/wkentaro/labelme/pull/2143))

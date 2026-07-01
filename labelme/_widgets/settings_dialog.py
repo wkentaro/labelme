@@ -154,13 +154,28 @@ class SettingsDialog(QtWidgets.QDialog):
     def _build_label_cell(self, setting: schema.Setting) -> QtWidgets.QWidget:
         label = QtWidgets.QLabel(self.tr(setting.label))
         label.setWordWrap(True)
+        title: QtWidgets.QWidget = label
+        if setting.beta:
+            # Keep the label on one line so the badge hugs it instead of floating
+            # past a wrap; the dialog auto-widens to fit the row.
+            label.setWordWrap(False)
+            title = QtWidgets.QWidget()
+            title_layout = QtWidgets.QHBoxLayout(title)
+            title_layout.setContentsMargins(0, 0, 0, 0)
+            title_layout.setSpacing(6)
+            title_layout.addWidget(label)
+            title_layout.addWidget(
+                _build_beta_badge(text=self.tr("BETA")),
+                alignment=QtCore.Qt.AlignmentFlag.AlignVCenter,
+            )
+            title_layout.addStretch(1)
         if not setting.note:
-            return label
+            return title
         cell = QtWidgets.QWidget()
         cell_layout = QtWidgets.QVBoxLayout(cell)
         cell_layout.setContentsMargins(0, 0, 0, 0)
         cell_layout.setSpacing(2)
-        cell_layout.addWidget(label)
+        cell_layout.addWidget(title)
         note = QtWidgets.QLabel(self.tr(setting.note))
         note.setWordWrap(True)
         # Secondary text color, kept enabled: a disabled label would be announced
@@ -304,6 +319,27 @@ class SettingsDialog(QtWidgets.QDialog):
         model.item(exact_index).setEnabled(allowed)
         if not allowed and validate_combo.currentData() == "exact":
             validate_combo.setCurrentIndex(validate_combo.findData(None))
+
+
+def _build_beta_badge(*, text: str) -> QtWidgets.QLabel:
+    badge = QtWidgets.QLabel(text)
+    badge.setSizePolicy(
+        QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+    )
+    # palette() refs (not literal hex) so the app's theme switch re-resolves them
+    # via _retheme; a muted outline reads as a status tag, not an accent-colored
+    # control, and text-on-window keeps the body-text contrast in both themes.
+    badge.setStyleSheet(
+        "QLabel {"
+        "  color: palette(text);"
+        "  border: 1px solid palette(mid);"
+        "  border-radius: 7px;"
+        "  padding: 0px 6px;"
+        "  font-size: 10px;"
+        "  font-weight: 600;"
+        "}"
+    )
+    return badge
 
 
 def _parse_str_list(*, edit: _PlainTextEdit) -> list[str] | None:

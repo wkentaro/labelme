@@ -5,6 +5,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
+from labelme._config import _schema as schema
 from labelme._config import load_config
 from labelme._widgets.settings_dialog import SettingsDialog
 from labelme._widgets.settings_dialog import _PlainTextEdit
@@ -42,6 +43,25 @@ def dialog(qtbot: QtBot, applied: Applied) -> SettingsDialog:
 
 def test_no_apply_on_construction(dialog: SettingsDialog, applied: Applied) -> None:
     assert applied == []
+
+
+def test_beta_settings_render_a_badge(dialog: SettingsDialog) -> None:
+    expected = {dialog.tr(setting.label) for setting in schema.SETTINGS if setting.beta}
+    assert expected, "no beta settings to verify"
+
+    badge_text = dialog.tr("BETA")
+    beta_labels: set[str] = set()
+    for badge in dialog.findChildren(QtWidgets.QLabel):
+        if badge.text() != badge_text:
+            continue
+        cell = badge.parentWidget()
+        assert cell is not None
+        beta_labels.update(
+            sibling.text()
+            for sibling in cell.findChildren(QtWidgets.QLabel)
+            if sibling is not badge
+        )
+    assert beta_labels == expected
 
 
 def test_accept_does_not_reapply_unchanged_str_list(

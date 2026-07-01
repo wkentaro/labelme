@@ -37,6 +37,9 @@ class Setting:
     choice_labels: tuple[str, ...] | None = None
     # Optional muted caption rendered beneath the control.
     note: str | None = None
+    # Marks a feature shipped for early use: renders a "BETA" badge beside the
+    # label so users expect rough edges and report issues. Drop when it stabilizes.
+    beta: bool = False
 
 
 SETTINGS: Final[tuple[Setting, ...]] = (
@@ -67,6 +70,7 @@ SETTINGS: Final[tuple[Setting, ...]] = (
             str, QT_TRANSLATE_NOOP("SettingsDialog", "Show shape labels on canvas")
         ),
         kind="bool",
+        beta=True,
     ),
     Setting(
         key_path=("canvas", "allow_out_of_bounds_points"),
@@ -86,6 +90,7 @@ SETTINGS: Final[tuple[Setting, ...]] = (
                 "visible objects.",
             ),
         ),
+        beta=True,
     ),
     Setting(
         key_path=("language",),
