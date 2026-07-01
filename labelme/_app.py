@@ -2455,7 +2455,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # Only the label file was deleted, not the image: clear the annotations
         # but keep the image on the canvas.
         self._docks.label_list.clear()
+        # Drop the pre-delete backups first so undo cannot resurrect the
+        # annotations of the file we just removed; load_shapes then re-seeds the
+        # stack with the empty state, keeping "top mirrors current" intact.
+        self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
+        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
         self.mark_clean()
 
     @property
