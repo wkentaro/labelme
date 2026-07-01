@@ -91,24 +91,34 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.setCurrentIndex(model_index)
         settings_layout.addWidget(model_combo, stretch=1)
 
-        score_label = QtWidgets.QLabel(self.tr("Score"))
-        score_label.setStyleSheet("color: gray; font-size: 10px;")
-        settings_layout.addWidget(score_label)
+        # Size and mute these via QFont and a palette role, never a stylesheet:
+        # a stylesheet switches the widget to QStyleSheetStyle, which pins its
+        # resolved colors at polish time and does not re-resolve them on a live
+        # color-scheme change, leaving the text faded after a mid-session theme
+        # switch.
+        small_font = self.font()
+        small_font.setPixelSize(10)
+
+        def make_threshold_label(text: str) -> QtWidgets.QLabel:
+            label = QtWidgets.QLabel(text)
+            label.setFont(small_font)
+            label.setForegroundRole(QtGui.QPalette.ColorRole.PlaceholderText)
+            return label
+
+        settings_layout.addWidget(make_threshold_label(self.tr("Score")))
         #
         self._score_spinbox = score_spinbox = QtWidgets.QDoubleSpinBox()
-        score_spinbox.setStyleSheet("font-size: 10px;")
+        score_spinbox.setFont(small_font)
         score_spinbox.setFixedWidth(50)
         score_spinbox.setRange(0, 1)
         score_spinbox.setSingleStep(0.05)
         score_spinbox.setValue(self._default_score_threshold)
         settings_layout.addWidget(score_spinbox)
 
-        iou_label = QtWidgets.QLabel(self.tr("IoU"))
-        iou_label.setStyleSheet("color: gray; font-size: 10px;")
-        settings_layout.addWidget(iou_label)
+        settings_layout.addWidget(make_threshold_label(self.tr("IoU")))
         #
         self._iou_spinbox = iou_spinbox = QtWidgets.QDoubleSpinBox()
-        iou_spinbox.setStyleSheet("font-size: 10px;")
+        iou_spinbox.setFont(small_font)
         iou_spinbox.setFixedWidth(50)
         iou_spinbox.setRange(0, 1)
         iou_spinbox.setSingleStep(0.05)
