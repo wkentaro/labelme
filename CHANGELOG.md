@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added a user-selectable color theme (System / Light / Dark) in the Settings dialog; System follows the OS appearance, and Dark mode is now supported where the app previously forced light mode ([#2260](https://github.com/wkentaro/labelme/pull/2260))
+- Added support for placing annotation points outside the image boundary ([#2223](https://github.com/wkentaro/labelme/pull/2223))
 - Added a schema-driven Settings dialog (replaces the "open YAML in editor" preference), with immediate live-apply and comment-preserving writes to ~/.labelmerc ([#2120](https://github.com/wkentaro/labelme/pull/2120))
 - Added a Language picker to the Settings dialog so the UI language can be changed without editing the config file ([#2140](https://github.com/wkentaro/labelme/pull/2140))
 - Added a `show_labels` toggle in Settings to draw each shape's label text on the canvas at its top-left anchor, live-applied without restart ([#2182](https://github.com/wkentaro/labelme/pull/2182))
@@ -21,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking:** Migrated the GUI from PyQt5 (Qt5) to PySide6 (Qt6) ([#2158](https://github.com/wkentaro/labelme/pull/2158))
 - **Breaking:** Dropped Python 3.10 support; the minimum is now Python 3.11, following SPEC 0 in step with numpy/scipy/scikit-image. Users on 3.10 should stay on the v6.3.x maintenance line ([#2218](https://github.com/wkentaro/labelme/pull/2218))
+- **Breaking:** Privatized the Python import surface — `labelme.app`, `labelme.utils`, and `labelme.widgets` moved to `labelme._app`, `labelme._utils`, and `labelme._widgets`; labelme no longer exposes a supported Python API (use the CLI and the JSON label format) ([#2253](https://github.com/wkentaro/labelme/pull/2253))
 - Fixed `UnicodeEncodeError` on non-UTF-8 locales (e.g. Windows cp1252) when labels contain non-ASCII characters by always reading and writing the config file in UTF-8 encoding ([#2136](https://github.com/wkentaro/labelme/pull/2136))
 - **Breaking:** Switched config file parsing from PyYAML to ruamel.yaml; comments and formatting in `~/.labelmerc` are now preserved across Settings edits. Note: YAML 1.2 is now used, so boolean spellings `yes`/`no`/`on`/`off` are read as strings rather than booleans ([#2114](https://github.com/wkentaro/labelme/pull/2114))
 - Changed the delete confirmation dialog to default to Cancel (not Delete) and use verb labels (Delete / Cancel) to reduce accidental data loss ([#2197](https://github.com/wkentaro/labelme/pull/2197))
@@ -31,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking:** Removed the public `LabelFile` class (`labelme.LabelFile`); use the `read_label_file` / `write_label_file` functions and the `LabelFileError` hierarchy in `labelme._label_file` instead ([#2246](https://github.com/wkentaro/labelme/pull/2246))
 - **Breaking:** Removed the deprecated `labelme.utils` compatibility shims: `labelme.utils.lblsave` (use `imgviz.io.lblsave`) and the camelCase aliases `addActions`, `distancetoline`, `fmtShortcut`, `labelValidator`, `newAction`, `newButton`, `newIcon` (use their snake_case names). The `from labelme import utils` top-level re-export is also dropped ([#2249](https://github.com/wkentaro/labelme/pull/2249))
+- **Breaking:** Removed the deprecated `--autosave` and `--nodata` CLI flags; use `--no-auto-save` and `--with-image-data` instead. The remaining legacy aliases `--nosortlabels`, `--labelflags`, and `--validatelabel` now emit a `FutureWarning` ([#2245](https://github.com/wkentaro/labelme/pull/2245))
 
 ### Fixed
 
@@ -42,6 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed grab-pan overscroll causing an image snap/jump at the zoom threshold by ramping the scroll slack continuously ([#2101](https://github.com/wkentaro/labelme/pull/2101))
 - Fixed a confusing bare `KeyError` when a shape label is absent from the provided labels mapping; now raises a descriptive `ValueError` naming all missing labels at once ([#2173](https://github.com/wkentaro/labelme/pull/2173))
 - Fixed AI Text-to-Annotation silently producing nothing when a detection-only model (e.g. YOLO-World) is paired with a mask output format; a warning now directs users to SAM or Rectangle output ([#2196](https://github.com/wkentaro/labelme/pull/2196))
+- Fixed AI Text-to-Annotation aborting with an assertion when a detection model returned no mask; it now raises a descriptive error ([#2256](https://github.com/wkentaro/labelme/pull/2256))
+- Fixed AI-assisted polygons being offset from their mask by aligning `compute_polygon_from_mask` with image coordinates ([#2239](https://github.com/wkentaro/labelme/pull/2239))
+- Fixed the app crashing when an AI model errored during inference; the error is now surfaced instead of aborting ([#2247](https://github.com/wkentaro/labelme/pull/2247))
+- Fixed TIFF images with non-finite (NaN/Inf) pixels rendering incorrectly by normalizing the display over finite pixels only ([#2255](https://github.com/wkentaro/labelme/pull/2255))
+- Fixed shape flag checkboxes re-enabling on label text change when they should stay disabled ([#2243](https://github.com/wkentaro/labelme/pull/2243))
+- Fixed the vertex remaining selected after removing a polygon point ([#2175](https://github.com/wkentaro/labelme/pull/2175))
+- Fixed the label dialog overflowing the screen when a label has many flags by making the flag list scrollable and keeping the popup on screen ([#2263](https://github.com/wkentaro/labelme/pull/2263))
+- Fixed the Edit Label dialog opening away from the cursor instead of at the context-menu origin ([#2264](https://github.com/wkentaro/labelme/pull/2264))
 
 ## [6.3.1] - 2026-05-27
 
