@@ -27,6 +27,7 @@ dependencies = [
   "matplotlib>=3.7",
   "natsort>=7.1.0",
   "numpy>=1.24",
+  "onnxruntime>=1.23.2",
   "osam>=0.4.0",
   "pillow>=2.8",
   "pyside6>=6.8",
