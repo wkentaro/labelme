@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed annotation label text being clipped or invisible in the label list on some desktop styles (e.g. GNOME/Adwaita) by widening the delegate's text clip rect to the rendered width ([#2273](https://github.com/wkentaro/labelme/pull/2273))
 - Fixed `line` and two-point `linestrip` shapes being unselectable by click ([#2107](https://github.com/wkentaro/labelme/pull/2107))
 - Fixed the canvas going blank after "Delete File" (Delete File now removes only the label JSON and keeps the image on screen) ([#2138](https://github.com/wkentaro/labelme/pull/2138))
 - Fixed notch artifacts at interior vertices of linestrip masks by using PIL's `joint="curve"` rasterization ([#2163](https://github.com/wkentaro/labelme/pull/2163))

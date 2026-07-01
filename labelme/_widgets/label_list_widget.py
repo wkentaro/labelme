@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import math
 from collections.abc import Iterator
 from typing import NamedTuple
 from typing import cast
@@ -69,6 +70,11 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         )
         if index.column() != 0:
             text_rect.adjust(5, 0, 0, 0)
+
+        # opt.text was emptied above, so some styles (e.g. Adwaita) return a
+        # text sub-rect too narrow for the rendered HTML and clip the label.
+        # Widen it to the document's ideal width so the text stays visible.
+        text_rect.setWidth(max(text_rect.width(), math.ceil(doc.idealWidth())))
 
         VERT_FUDGE = 4
         margin = (option.rect.height() - opt.fontMetrics.height()) // 2 - VERT_FUDGE
