@@ -89,7 +89,7 @@ def _build_candidates(
     priority_shape: Shape | None,
 ) -> list[Shape]:
     candidates: list[Shape] = []
-    if priority_shape is not None:
+    if priority_shape is not None and priority_shape.visible:
         candidates.append(priority_shape)
     for shape in reversed(shapes):
         if not shape.visible:

@@ -183,6 +183,44 @@ def test_cursor_is_open_hand_when_hovering_shape_body_in_edit_mode(
 
 
 # ---------------------------------------------------------------------------
+# Cursor shape -- edit mode, shape hidden while hovered (#2250)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.gui
+def test_shape_hidden_while_hovered_stops_being_hover_interactive(
+    canvas: Canvas,
+) -> None:
+    # Regression for #2250: hiding the hovered shape must make it inert to the
+    # pointer. The hit-test used to keep the previously-hovered shape as a
+    # priority candidate without checking visibility, so a hidden shape stayed
+    # hover-highlighted and draggable until the pointer moved off it.
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(10, 10), (40, 10), (40, 40), (10, 40)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+    canvas.scale = 1.0
+
+    canvas.mouseMoveEvent(
+        _make_move_event(pos=_image_to_widget(canvas=canvas, img_x=25, img_y=25))
+    )
+    assert canvas.hovered_shape is shape
+
+    canvas.set_shape_visible(shape=shape, value=False)
+
+    # Move slightly while still over the now-hidden shape body.
+    canvas.mouseMoveEvent(
+        _make_move_event(pos=_image_to_widget(canvas=canvas, img_x=26, img_y=26))
+    )
+
+    assert canvas.hovered_shape is None
+    assert QtWidgets.QApplication.overrideCursor() is None
+
+
+# ---------------------------------------------------------------------------
 # Cursor shape -- edit mode, vertex hover
 # ---------------------------------------------------------------------------
 
