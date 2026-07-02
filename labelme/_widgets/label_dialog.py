@@ -288,8 +288,10 @@ class LabelDialog(QtWidgets.QDialog):
             target = position if position is not None else QtGui.QCursor.pos()
             self._move_within_screen(target)
             # frameGeometry() lacks the window-manager decoration size until the
-            # dialog is mapped, so re-clamp once exec() has shown it.
-            QtCore.QTimer.singleShot(0, lambda: self._move_within_screen(target))
+            # dialog is mapped, so re-clamp once exec() has shown it. Clamp only
+            # (no re-anchor to target): a full re-move visibly jerks the already
+            # visible dialog, while the clamp is a no-op unless it overflows.
+            QtCore.QTimer.singleShot(0, lambda: self._clamp_within_screen(target))
 
         result = self.exec()
 
@@ -327,18 +329,23 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _move_within_screen(self, target: QtCore.QPoint) -> None:
         self.adjustSize()
+        # setGeometry() anchors the client area, unlike move() which anchors the
+        # window frame: the content corner lands at target, not the title bar's.
+        self.setGeometry(QtCore.QRect(target, self.size()))
+        self._clamp_within_screen(target)
+
+    def _clamp_within_screen(self, target: QtCore.QPoint) -> None:
         screen = (
             QtGui.QGuiApplication.screenAt(target)
             or QtGui.QGuiApplication.primaryScreen()
         )
         if screen is None:
-            self.move(target)
             return
         available = screen.availableGeometry()
 
-        # move() positions the client area; nudge by the actual frame overflow so
-        # the window-manager decoration (title bar, borders) also stays on screen.
-        self.move(target)
+        # Nudge by the actual frame overflow (frameGeometry() includes the
+        # window-manager decoration) so the title bar and borders stay on screen,
+        # not just the content rect.
         frame = self.frameGeometry()
         dx = min(0, available.right() - frame.right())
         dx = max(dx, available.left() - frame.left())
