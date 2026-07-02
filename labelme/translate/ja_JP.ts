@@ -773,6 +773,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>カラーテーマ</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>システム</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>ライト</translation>
     </message>

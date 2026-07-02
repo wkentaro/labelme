@@ -759,6 +759,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>색상 테마</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>시스템</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>라이트</translation>
     </message>

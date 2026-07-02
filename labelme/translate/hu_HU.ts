@@ -765,6 +765,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Színtéma</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Rendszer</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Világos</translation>
     </message>

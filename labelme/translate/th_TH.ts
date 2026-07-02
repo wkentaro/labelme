@@ -759,6 +759,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>ธีมสี</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>ระบบ</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>สว่าง</translation>
     </message>

@@ -759,6 +759,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>颜色主题</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>跟随系统</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>浅色</translation>
     </message>

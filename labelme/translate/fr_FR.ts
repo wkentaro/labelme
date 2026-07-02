@@ -765,6 +765,10 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <translation>Thème de couleur</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Système</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Clair</translation>
     </message>

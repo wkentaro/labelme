@@ -759,6 +759,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>تم رنگ</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>سیستم</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>روشن</translation>
     </message>

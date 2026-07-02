@@ -759,6 +759,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Kleurthema</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Systeem</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Licht</translation>
     </message>

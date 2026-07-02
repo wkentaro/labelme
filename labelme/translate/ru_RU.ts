@@ -762,6 +762,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Цветовая тема</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Системная</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Светлая</translation>
     </message>

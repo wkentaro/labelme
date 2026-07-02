@@ -765,6 +765,10 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <translation>Farbschema</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>System</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Hell</translation>
     </message>

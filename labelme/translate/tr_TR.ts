@@ -762,6 +762,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Renk teması</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Açık</translation>
     </message>

@@ -799,6 +799,10 @@ Shapes</source>
         <translation>Tema warna</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Terang</translation>
     </message>

@@ -759,6 +759,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Chủ đề màu</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Hệ thống</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Sáng</translation>
     </message>

@@ -759,6 +759,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Motyw kolorystyczny</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Systemowy</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Jasny</translation>
     </message>

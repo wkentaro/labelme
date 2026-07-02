@@ -761,6 +761,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Θέμα χρώματος</translation>
     </message>
     <message>
+        <source>System</source>
+        <translation>Σύστημα</translation>
+    </message>
+    <message>
         <source>Light</source>
         <translation>Φωτεινό</translation>
     </message>
