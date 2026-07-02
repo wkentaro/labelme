@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.0] - 2026-07-01
+
 ### Added
 
 - Added a user-selectable color theme (System / Light / Dark) in the Settings dialog; System follows the OS appearance, and Dark mode is now supported where the app previously forced light mode ([#2260](https://github.com/wkentaro/labelme/pull/2260))
@@ -659,4 +661,5 @@ See the [GitHub Releases](https://github.com/wkentaro/labelme/releases) page for
 [6.2.0]: https://github.com/wkentaro/labelme/compare/v6.1.3...v6.2.0
 [6.3.0]: https://github.com/wkentaro/labelme/compare/v6.2.0...v6.3.0
 [6.3.1]: https://github.com/wkentaro/labelme/compare/v6.3.0...v6.3.1
-[unreleased]: https://github.com/wkentaro/labelme/compare/v6.3.1...HEAD
+[7.0.0]: https://github.com/wkentaro/labelme/compare/v6.3.1...v7.0.0
+[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.0...HEAD
