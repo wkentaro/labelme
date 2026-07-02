@@ -501,6 +501,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Inferensi AI gagal: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Error membuka file</translation>
     </message>
@@ -759,6 +763,10 @@ Shapes</source>
         <translation>Tutup</translation>
     </message>
     <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
+    </message>
+    <message>
         <source>(none)</source>
         <translation>(tidak ada)</translation>
     </message>
@@ -785,6 +793,18 @@ Shapes</source>
     <message>
         <source>Labels</source>
         <translation>Label</translation>
+    </message>
+    <message>
+        <source>Color theme</source>
+        <translation>Tema warna</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Terang</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Gelap</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>

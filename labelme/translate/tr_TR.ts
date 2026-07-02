@@ -529,6 +529,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Yapay zeka çıkarımı başarısız oldu: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Dosya açılırken hata oluştu</translation>
     </message>
@@ -754,6 +758,18 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Etiketler</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Renk teması</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Koyu</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Yeni şekilde etiket penceresi göster</translation>
     </message>
@@ -792,6 +808,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Close</source>
         <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

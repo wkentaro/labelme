@@ -526,6 +526,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Suy luận AI thất bại: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Lỗi khi mở tệp</translation>
     </message>
@@ -751,6 +755,18 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Nhãn</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Chủ đề màu</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Sáng</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Tối</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Hiển thị cửa sổ nhãn khi tạo hình dạng mới</translation>
     </message>
@@ -789,6 +805,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Close</source>
         <translation>Đóng</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

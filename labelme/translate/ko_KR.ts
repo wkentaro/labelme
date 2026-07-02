@@ -526,6 +526,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI 추론 실패: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>파일 열기 오류</translation>
     </message>
@@ -751,6 +755,18 @@ Please select a different model or use AI-Box mode.</source>
         <translation>레이블</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>색상 테마</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>라이트</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>다크</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>새 도형에서 레이블 팝업 표시</translation>
     </message>
@@ -789,6 +805,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>닫기</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

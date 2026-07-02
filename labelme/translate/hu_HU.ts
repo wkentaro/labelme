@@ -540,6 +540,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Az MI-következtetés sikertelen volt: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Hiba a fájl megnyitásakor</translation>
     </message>
@@ -757,6 +761,18 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Címkék</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Színtéma</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Világos</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Sötét</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Címkefelugró ablak megjelenítése új alakzatnál</translation>
     </message>
@@ -795,6 +811,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Close</source>
         <translation>Bezárás</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

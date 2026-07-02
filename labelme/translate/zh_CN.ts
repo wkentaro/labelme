@@ -526,6 +526,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI 推理失败：%s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>打开文件时出错</translation>
     </message>
@@ -751,6 +755,18 @@ Please select a different model or use AI-Box mode.</source>
         <translation>标签</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>颜色主题</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>浅色</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>深色</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>新建形状时显示标签弹窗</translation>
     </message>
@@ -789,6 +805,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>关闭</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

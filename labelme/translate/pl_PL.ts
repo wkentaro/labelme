@@ -526,6 +526,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Wnioskowanie AI nie powiodło się: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Błąd otwarcia pliku</translation>
     </message>
@@ -751,6 +755,18 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Etykiety</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Motyw kolorystyczny</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Jasny</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Ciemny</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Pokaż okno etykiety przy nowym kształcie</translation>
     </message>
@@ -789,6 +805,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
     <message>
         <source>Close</source>
         <translation>Zamknij</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

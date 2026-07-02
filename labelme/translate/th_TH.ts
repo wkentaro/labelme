@@ -526,6 +526,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>การอนุมานของ AI ล้มเหลว: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
     </message>
@@ -751,6 +755,18 @@ Please select a different model or use AI-Box mode.</source>
         <translation>เลเบล</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>ธีมสี</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>สว่าง</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>มืด</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>แสดงป๊อปอัปเลเบลเมื่อสร้างรูปร่างใหม่</translation>
     </message>
@@ -789,6 +805,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>ปิด</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

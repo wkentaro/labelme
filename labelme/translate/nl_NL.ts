@@ -526,6 +526,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI-inferentie mislukt: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Fout bij openen van bestand</translation>
     </message>
@@ -751,6 +755,18 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Labels</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Kleurthema</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Licht</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Donker</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Labeldialoog tonen bij nieuwe vorm</translation>
     </message>
@@ -789,6 +805,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Close</source>
         <translation>Sluiten</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
