@@ -540,6 +540,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI推論に失敗しました: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>ファイルを開けませんでした</translation>
     </message>
@@ -765,6 +769,22 @@ Please select a different model or use AI-Box mode.</source>
         <translation>ラベル</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>カラーテーマ</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>システム</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>ライト</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>ダーク</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>新しい図形の作成時にラベルポップアップを表示</translation>
     </message>
@@ -803,6 +823,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

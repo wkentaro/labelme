@@ -511,6 +511,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Инференс ИИ не удался: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Ошибка при открытии файла</translation>
     </message>
@@ -754,6 +758,22 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Метки</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Цветовая тема</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Системная</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Светлая</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Тёмная</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Показывать всплывающее окно метки для новой фигуры</translation>
     </message>
@@ -792,6 +812,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>Закрыть</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

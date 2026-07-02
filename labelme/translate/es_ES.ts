@@ -526,6 +526,10 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>La inferencia de IA falló: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Error al abrir archivo</translation>
     </message>
@@ -751,6 +755,22 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
         <translation>Etiquetas</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Tema de color</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistema</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Claro</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Oscuro</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Mostrar ventana emergente de etiqueta al crear una forma</translation>
     </message>
@@ -789,6 +809,10 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
     <message>
         <source>Close</source>
         <translation>Cerrar</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

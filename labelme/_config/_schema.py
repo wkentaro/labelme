@@ -50,7 +50,7 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         kind="enum",
         choices=("system", "light", "dark"),
         choice_labels=(
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "System default")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "System")),
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Light")),
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Dark")),
         ),

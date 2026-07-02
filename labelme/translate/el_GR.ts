@@ -548,6 +548,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>
@@ -753,6 +757,22 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Ετικέτες</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>Θέμα χρώματος</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Σύστημα</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Φωτεινό</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Σκοτεινό</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>Εμφάνιση αναδυόμενου παραθύρου ετικέτας σε νέο σχήμα</translation>
     </message>
@@ -791,6 +811,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>Κλείσιμο</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>

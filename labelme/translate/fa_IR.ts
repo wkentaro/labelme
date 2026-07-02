@@ -526,6 +526,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>خطا در باز کردن فایل</translation>
     </message>
@@ -751,6 +755,22 @@ Please select a different model or use AI-Box mode.</source>
         <translation>برچسب‌ها</translation>
     </message>
     <message>
+        <source>Color theme</source>
+        <translation>تم رنگ</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>سیستم</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>روشن</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>تیره</translation>
+    </message>
+    <message>
         <source>Show label popup on new shape</source>
         <translation>نمایش پنجره برچسب هنگام رسم شکل جدید</translation>
     </message>
@@ -789,6 +809,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>بستن</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
