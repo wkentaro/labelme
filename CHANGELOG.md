@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Changed the label dialog popup to anchor its content corner at the cursor; previously the window frame was anchored there, leaving the content a title-bar height below the pointer ([#2286](https://github.com/wkentaro/labelme/pull/2286))
+
+### Fixed
+
+- Fixed the label dialog visibly jumping right after opening; the post-show screen-edge correction now only nudges the dialog when it actually overflows the screen ([#2286](https://github.com/wkentaro/labelme/pull/2286))
+
 ## [7.0.0] - 2026-07-03
 
 ### Added
