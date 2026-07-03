@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.1] - 2026-07-03
+
 ### Changed
 
 - Changed the label dialog popup to anchor its content corner at the cursor; previously the window frame was anchored there, leaving the content a title-bar height below the pointer ([#2286](https://github.com/wkentaro/labelme/pull/2286))
@@ -670,4 +672,5 @@ See the [GitHub Releases](https://github.com/wkentaro/labelme/releases) page for
 [6.3.0]: https://github.com/wkentaro/labelme/compare/v6.2.0...v6.3.0
 [6.3.1]: https://github.com/wkentaro/labelme/compare/v6.3.0...v6.3.1
 [7.0.0]: https://github.com/wkentaro/labelme/compare/v6.3.1...v7.0.0
-[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.0...HEAD
+[7.0.1]: https://github.com/wkentaro/labelme/compare/v7.0.0...v7.0.1
+[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.1...HEAD
