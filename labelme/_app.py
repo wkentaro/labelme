@@ -1451,7 +1451,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.restore_last_shape()
         self._docks.label_list.clear()
         self._load_shapes(self._canvas_widgets.canvas.shapes)
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
+        self.mark_dirty()
 
     def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA

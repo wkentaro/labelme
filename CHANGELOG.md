@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed Undo (Ctrl+Z) not triggering auto-save; undoing a shape edit now marks the file dirty, so with auto-save on the restored state is written to disk instead of leaving the previous edit saved ([#2288](https://github.com/wkentaro/labelme/pull/2288))
+
 ## [7.0.1] - 2026-07-03
 
 ### Changed
