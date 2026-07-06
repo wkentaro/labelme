@@ -10,6 +10,7 @@ import types
 import warnings
 from pathlib import Path
 from typing import AnyStr
+from typing import Final
 
 from loguru import logger
 from PySide6 import QtCore
@@ -75,6 +76,46 @@ def _setup_loguru(logger_level: str) -> None:
         backtrace=True,
         diagnose=True,
     )
+
+
+def _route_qt_logging_to_loguru() -> None:
+    # Qt logs through its own handler straight to the C stderr, bypassing loguru
+    # and the log file. Route it through loguru instead, dropping two harmless
+    # noise sources so genuine Qt warnings still surface. The macOS keymapper
+    # flood ("Mismatch between Cocoa and Carbon", one line per keypress) is
+    # dropped by category, since qt.qpa.keymapper carries only low-value keyboard
+    # diagnostics. The font-alias timing chatter is dropped by message text
+    # within its category, since qt.qpa.fonts also reports real font-loading
+    # failures worth keeping.
+    LEVELS: Final = {
+        QtCore.QtMsgType.QtDebugMsg: "DEBUG",
+        QtCore.QtMsgType.QtInfoMsg: "INFO",
+        QtCore.QtMsgType.QtWarningMsg: "WARNING",
+        QtCore.QtMsgType.QtCriticalMsg: "ERROR",
+        QtCore.QtMsgType.QtFatalMsg: "CRITICAL",
+    }
+
+    def handler(
+        mode: QtCore.QtMsgType, context: QtCore.QMessageLogContext, message: str
+    ) -> None:
+        if context.category == "qt.qpa.keymapper":
+            return
+        if (
+            context.category == "qt.qpa.fonts"
+            and "Populating font family alias" in message
+        ):
+            return
+        if context.category != "default":
+            # Keep the category prefix Qt's default handler would have printed.
+            message = f"{context.category}: {message}"
+        logger.log(LEVELS.get(mode, "INFO"), message)
+        if mode == QtCore.QtMsgType.QtFatalMsg:
+            # Qt calls abort() as soon as this handler returns, which skips the
+            # atexit drain of the enqueue=True file sink; flush it now so the
+            # line explaining the crash reaches the log file.
+            logger.complete()
+
+    QtCore.qInstallMessageHandler(handler)
 
 
 def _handle_exception(
@@ -227,6 +268,7 @@ def main() -> None:
         sys.exit(0)
 
     _setup_loguru(logger_level=args.logger_level.upper())
+    _route_qt_logging_to_loguru()
     logger.info("Starting {} {}", __appname__, __version__)
 
     sys.excepthook = _handle_exception
