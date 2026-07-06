@@ -6,6 +6,8 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
+from .._utils import add_actions
+
 _OBJECT_NAME_SUFFIX: Final = "ToolBar"
 _FONT_SCALE_FACTOR: Final = 0.8
 _VERTICAL_SEPARATOR_STYLE: Final = (
@@ -43,11 +45,7 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Orientation.Vertical:
             self.setStyleSheet(_VERTICAL_SEPARATOR_STYLE)
 
-        for action in actions:
-            if action is None:
-                self.addSeparator()
-            else:
-                self.addAction(action)
+        add_actions(self, actions)
 
         if orientation == Qt.Orientation.Vertical:
             self._equalize_button_widths()
