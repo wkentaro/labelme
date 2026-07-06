@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed noisy Qt log lines flooding the terminal (notably the macOS per-keypress `qt.qpa.keymapper: Mismatch between Cocoa and Carbon` warning); Qt logging is now routed through the app logger with these harmless lines filtered out while genuine Qt warnings still surface ([#2292](https://github.com/wkentaro/labelme/pull/2292))
+
 ## [7.0.2] - 2026-07-03
 
 ### Fixed
