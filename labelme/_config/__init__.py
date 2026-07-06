@@ -24,7 +24,12 @@ def _update_dict(
             validate_item(key, value)
         if key not in target_dict:
             raise ValueError(f"Unexpected key in config: {key}")
-        if isinstance(target_dict[key], dict) and isinstance(value, dict):
+        target_is_section = isinstance(target_dict[key], dict)
+        if target_is_section and value is None:
+            # An empty section (e.g. a bare `shortcuts:`) parses as None; keep the
+            # defaults instead of wiping the whole section.
+            continue
+        if target_is_section and isinstance(value, dict):
             _update_dict(
                 cast(dict[str, object], target_dict[key]),
                 cast(dict[str, object], value),
@@ -63,10 +68,11 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         logger.info("Migrating old config: store_data -> with_image_data")
         config_from_yaml["with_image_data"] = config_from_yaml.pop("store_data")
 
-    if config_from_yaml.get("shortcuts", {}).pop("add_point_to_edge", None):
+    shortcuts = config_from_yaml.get("shortcuts") or {}
+    if shortcuts.pop("add_point_to_edge", None):
         logger.info("Migrating old config: removing shortcuts.add_point_to_edge")
 
-    if (model_name := config_from_yaml.get("ai", {}).get("default")) and (
+    if (model_name := (config_from_yaml.get("ai") or {}).get("default")) and (
         m := re.match(r"^SegmentAnything \((.*)\)$", model_name)
     ):
         model_name_new: str = f"Sam ({m.group(1)})"
@@ -88,7 +94,6 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         "hide_all_polygons": "hide_all_shapes",
         "toggle_all_polygons": "toggle_all_shapes",
     }
-    shortcuts = config_from_yaml.get("shortcuts", {})
     for old_key, new_key in _POLYGON_TO_SHAPE_RENAMES.items():
         if old_key in shortcuts and new_key not in shortcuts:
             logger.info(
