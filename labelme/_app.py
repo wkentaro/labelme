@@ -2374,7 +2374,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_path = self.prompt_save_file_path()
 
         if not label_path:
-            logger.warning("label_path=%r is empty, so cannot save", label_path)
+            logger.warning("label_path={!r} is empty, so cannot save", label_path)
             return
 
         if self.save_labels(label_path=label_path):

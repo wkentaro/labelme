@@ -73,7 +73,7 @@ class Shape:
     def remove_point(self, i: int) -> None:
         if not self.can_remove_point():
             logger.warning(
-                "Cannot remove point from: shape_type=%r, len(points)=%d",
+                "Cannot remove point from: shape_type={!r}, len(points)={:d}",
                 self.shape_type,
                 len(self.points),
             )
