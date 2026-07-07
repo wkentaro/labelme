@@ -91,6 +91,15 @@ class Shape:
         return copy.deepcopy(self)
 
 
+def _nearest_index_within_epsilon(
+    *, distances: npt.NDArray[np.float64], epsilon: float
+) -> int | None:
+    nearest = int(np.argmin(distances))
+    if distances[nearest] > epsilon:
+        return None
+    return nearest
+
+
 def nearest_vertex_index(
     *,
     shape: Shape,
@@ -101,10 +110,7 @@ def nearest_vertex_index(
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
     distances = np.linalg.norm((shape.points - point) * scale, axis=1)
-    nearest = int(np.argmin(distances))
-    if distances[nearest] > epsilon:
-        return None
-    return nearest
+    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
 def nearest_edge_index(
@@ -129,10 +135,7 @@ def nearest_edge_index(
     )
     projections = starts + t[:, None] * segments
     distances = np.linalg.norm(scaled_point - projections, axis=1)
-    nearest = int(np.argmin(distances))
-    if distances[nearest] > epsilon:
-        return None
-    return nearest
+    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
 def nearest_rotation_point_index(
@@ -146,10 +149,7 @@ def nearest_rotation_point_index(
         return None
     handles = (shape.points + np.roll(shape.points, 1, axis=0)) / 2
     distances = np.linalg.norm((handles - point) * scale, axis=1)
-    nearest = int(np.argmin(distances))
-    if distances[nearest] > epsilon:
-        return None
-    return nearest
+    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
 def get_rotation_handle(*, shape: Shape, index: int) -> npt.NDArray[np.float64]:
