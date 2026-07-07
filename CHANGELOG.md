@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed AI Assist / AI Text Prompt in polygon output mode emitting a degenerate 2-point "polygon" for thin, near-collinear detections; such a shape is not a valid polygon and later crashed mask conversion (`shape_to_mask` asserts more than 2 points), so it is now dropped like other empty detections ([#2298](https://github.com/wkentaro/labelme/pull/2298))
 - Fixed two warning log messages rendering literal `%r`/`%d` placeholders instead of their values (the no-op point-removal warning and the empty save-path warning); loguru formats with brace-style placeholders, so the diagnostic values were silently dropped ([#2293](https://github.com/wkentaro/labelme/pull/2293))
 - Fixed noisy Qt log lines flooding the terminal (notably the macOS per-keypress `qt.qpa.keymapper: Mismatch between Cocoa and Carbon` warning); Qt logging is now routed through the app logger with these harmless lines filtered out while genuine Qt warnings still surface ([#2292](https://github.com/wkentaro/labelme/pull/2292))
 

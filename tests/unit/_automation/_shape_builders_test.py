@@ -151,6 +151,31 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
+def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=np.ones((20, 20), dtype=bool))],
+        shape_type="polygon",
+    )
+
+    assert shape.shape_type == "polygon"
+    assert len(shape.points) >= 3
+
+
+def test_shapes_from_detections_polygon_drops_degenerate_thin_mask() -> None:
+    # A near-collinear sliver mask collapses to fewer than 3 contour points,
+    # which is not a valid polygon; downstream consumers (e.g. shape_to_mask)
+    # assert len(points) > 2, so the builder must drop it rather than emit it.
+    mask = np.zeros((3, 400), dtype=bool)
+    mask[1, :] = True
+
+    shapes = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+    )
+
+    assert shapes == []
+
+
 def test_shapes_from_detections_mask_drops_empty_mask() -> None:
     # OSAM occasionally returns a bbox whose segmentation mask is all-False;
     # without this guard the shape would render as bbox-only (no visible mask).
