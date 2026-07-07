@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+from loguru import logger
 
 from labelme import _shape
 from labelme._shape import Shape
@@ -241,6 +242,26 @@ def test_remove_point_is_noop_for_non_polyline() -> None:
 
     assert len(shape.points) == 2
     assert len(shape.point_labels) == 2
+
+
+def test_remove_point_noop_logs_substituted_values() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+    messages: list[str] = []
+    sink_id = logger.add(
+        lambda m: messages.append(m.record["message"]), level="WARNING"
+    )
+
+    try:
+        shape.remove_point(i=0)
+    finally:
+        logger.remove(sink_id)
+
+    assert messages == [
+        "Cannot remove point from: shape_type='rectangle', len(points)=2"
+    ]
 
 
 def test_move_vertex_replaces_only_target_point() -> None:
