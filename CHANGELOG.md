@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed two warning log messages rendering literal `%r`/`%d` placeholders instead of their values (the no-op point-removal warning and the empty save-path warning); loguru formats with brace-style placeholders, so the diagnostic values were silently dropped ([#2293](https://github.com/wkentaro/labelme/pull/2293))
 - Fixed a startup crash when the config file contains an empty section such as a bare `shortcuts:` or `ai:`; empty sections now keep their defaults instead of raising an uncaught `AttributeError` ([#2295](https://github.com/wkentaro/labelme/pull/2295))
+- Fixed a startup crash when a config section is set to a non-mapping value such as `shortcuts: oops`; the malformed section now surfaces in the configuration-error dialog (with an Ignore-and-use-defaults option) instead of crashing ([#2300](https://github.com/wkentaro/labelme/pull/2300))
 - Fixed noisy Qt log lines flooding the terminal (notably the macOS per-keypress `qt.qpa.keymapper: Mismatch between Cocoa and Carbon` warning); Qt logging is now routed through the app logger with these harmless lines filtered out while genuine Qt warnings still surface ([#2292](https://github.com/wkentaro/labelme/pull/2292))
 
 ## [7.0.2] - 2026-07-03
