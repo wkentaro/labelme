@@ -89,6 +89,28 @@ def test_migrate_polygon_shortcuts_no_shortcuts_key() -> None:
     assert "shortcuts" not in config
 
 
+@pytest.mark.parametrize("section", ["shortcuts", "ai"])
+def test_migrate_tolerates_empty_section(section: str) -> None:
+    config = {section: None}
+    _config._migrate_config_from_file(config)
+    assert config[section] is None
+
+
+@pytest.mark.parametrize(
+    ("section", "probe"),
+    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "Sam2 (balanced)"))],
+    ids=["shortcuts", "ai"],
+)
+def test_load_config_empty_section_keeps_defaults(
+    tmp_path: Path, section: str, probe: tuple[str, str]
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"{section}:\n")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    key, value = probe
+    assert config[section][key] == value
+
+
 def test_migrate_polygon_shortcut_skips_when_new_key_exists() -> None:
     config = {"shortcuts": {"edit_polygon": "Ctrl+X", "edit_shape": "Ctrl+Y"}}
     _config._migrate_config_from_file(config)
