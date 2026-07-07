@@ -111,6 +111,23 @@ def test_load_config_empty_section_keeps_defaults(
     assert config[section][key] == value
 
 
+@pytest.mark.parametrize("section", ["shortcuts", "ai"])
+def test_migrate_leaves_malformed_section_for_merge_to_report(section: str) -> None:
+    config = {section: "oops"}
+    _config._migrate_config_from_file(config)
+    assert config[section] == "oops"
+
+
+@pytest.mark.parametrize("section", ["shortcuts", "ai"])
+def test_load_config_malformed_section_raises(tmp_path: Path, section: str) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"{section}: oops\n")
+    with pytest.raises(
+        ValueError, match=f"Config section {section!r} must be a mapping"
+    ):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
 def test_migrate_polygon_shortcut_skips_when_new_key_exists() -> None:
     config = {"shortcuts": {"edit_polygon": "Ctrl+X", "edit_shape": "Ctrl+Y"}}
     _config._migrate_config_from_file(config)

@@ -24,19 +24,28 @@ def _update_dict(
             validate_item(key, value)
         if key not in target_dict:
             raise ValueError(f"Unexpected key in config: {key}")
-        target_is_section = isinstance(target_dict[key], dict)
-        if target_is_section and value is None:
-            # An empty section (e.g. a bare `shortcuts:`) parses as None; keep the
-            # defaults instead of wiping the whole section.
-            continue
-        if target_is_section and isinstance(value, dict):
-            _update_dict(
-                cast(dict[str, object], target_dict[key]),
-                cast(dict[str, object], value),
-                validate_item=validate_item,
-            )
-        else:
+        if not isinstance(target_dict[key], dict):
             target_dict[key] = value
+            continue
+
+        # target_dict[key] is a section, so the override must be a mapping.
+        if value is None:
+            # An empty section (e.g. a bare `shortcuts:`) keeps its defaults
+            # instead of wiping the whole section.
+            continue
+        if not isinstance(value, dict):
+            # A non-mapping override (e.g. `shortcuts: oops`) would wipe the
+            # section with a scalar and crash the app downstream; surface it as
+            # a config error instead.
+            raise ValueError(
+                f"Config section {key!r} must be a mapping, "
+                f"but got {type(value).__name__}: {value!r}"
+            )
+        _update_dict(
+            cast(dict[str, object], target_dict[key]),
+            cast(dict[str, object], value),
+            validate_item=validate_item,
+        )
 
 
 def _validate_config_item(key: str, value: object) -> None:
@@ -68,12 +77,19 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         logger.info("Migrating old config: store_data -> with_image_data")
         config_from_yaml["with_image_data"] = config_from_yaml.pop("store_data")
 
-    shortcuts = config_from_yaml.get("shortcuts") or {}
+    # A malformed section (e.g. `shortcuts: oops`) is left untouched here so the
+    # merge in _update_dict reports it as a config error instead of crashing.
+    shortcuts = config_from_yaml.get("shortcuts")
+    if not isinstance(shortcuts, dict):
+        shortcuts = {}
     if shortcuts.pop("add_point_to_edge", None):
         logger.info("Migrating old config: removing shortcuts.add_point_to_edge")
 
-    if (model_name := (config_from_yaml.get("ai") or {}).get("default")) and (
-        m := re.match(r"^SegmentAnything \((.*)\)$", model_name)
+    ai = config_from_yaml.get("ai")
+    if (
+        isinstance(ai, dict)
+        and (model_name := ai.get("default"))
+        and (m := re.match(r"^SegmentAnything \((.*)\)$", model_name))
     ):
         model_name_new: str = f"Sam ({m.group(1)})"
         logger.info(
@@ -81,7 +97,7 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
             model_name,
             model_name_new,
         )
-        config_from_yaml["ai"]["default"] = model_name_new
+        ai["default"] = model_name_new
 
     # Migrate polygon shortcut keys to shape
     _POLYGON_TO_SHAPE_RENAMES = {
