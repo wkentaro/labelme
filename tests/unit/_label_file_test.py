@@ -93,6 +93,12 @@ def test_read_label_file_extracts_other_data(
         (lambda raw: raw.pop("shapes"), "shapes"),
         (lambda raw: raw.update({"imageHeight": 1}), "imageHeight mismatch"),
         (lambda raw: raw.update({"imageWidth": 1}), "imageWidth mismatch"),
+        (lambda raw: raw.update({"flags": "urgent"}), "flags must be dict:"),
+        (lambda raw: raw.update({"flags": False}), "flags must be dict:"),
+        (
+            lambda raw: raw.update({"flags": {"blurry": 1}}),
+            "flags must be dict of str to bool",
+        ),
     ],
     ids=[
         "missing_imagePath",
@@ -100,6 +106,9 @@ def test_read_label_file_extracts_other_data(
         "missing_shapes",
         "imageHeight_mismatch",
         "imageWidth_mismatch",
+        "flags_not_dict",
+        "flags_falsy_not_dict",
+        "flags_value_not_bool",
     ],
 )
 def test_read_label_file_raises_read_error_on_malformed(

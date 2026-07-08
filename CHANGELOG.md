@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed `read_label_file` silently accepting a non-dict image-level `flags` value in an annotation file; the top-level flags are now validated as a `dict[str, bool]` on load, exactly as per-shape flags already were, so a malformed file surfaces a clear read error instead of loading a bad value that crashes later ([#2305](https://github.com/wkentaro/labelme/pull/2305))
 - Fixed AI Assist / AI Text Prompt in polygon output mode emitting a degenerate 2-point "polygon" for thin, near-collinear detections; such a shape is not a valid polygon and later crashed mask conversion (`shape_to_mask` asserts more than 2 points), so it is now dropped like other empty detections ([#2298](https://github.com/wkentaro/labelme/pull/2298))
 - Fixed two warning log messages rendering literal `%r`/`%d` placeholders instead of their values (the no-op point-removal warning and the empty save-path warning); loguru formats with brace-style placeholders, so the diagnostic values were silently dropped ([#2293](https://github.com/wkentaro/labelme/pull/2293))
 - Fixed a startup crash when the config file contains an empty section such as a bare `shortcuts:` or `ai:`; empty sections now keep their defaults instead of raising an uncaught `AttributeError` ([#2295](https://github.com/wkentaro/labelme/pull/2295))

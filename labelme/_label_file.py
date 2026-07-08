@@ -9,6 +9,7 @@ from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import Final
+from typing import cast
 
 import numpy as np
 import PIL.Image
@@ -22,6 +23,16 @@ from . import _utils
 from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
+
+def _validate_flags(flags: object) -> dict[str, bool]:
+    if flags is None:
+        return {}
+    if not isinstance(flags, dict):
+        raise TypeError(f"flags must be dict: {flags}")
+    if not all(isinstance(k, str) and isinstance(v, bool) for k, v in flags.items()):
+        raise TypeError(f"flags must be dict of str to bool: {flags}")
+    return cast(dict[str, bool], flags)
 
 
 def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
@@ -62,18 +73,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         raise TypeError(f"shape_type must be str: {shape_json_obj['shape_type']}")
     shape_type: str = shape_json_obj["shape_type"]
 
-    flags: dict = {}
-    if shape_json_obj.get("flags") is not None:
-        if not isinstance(shape_json_obj["flags"], dict):
-            raise TypeError(f"flags must be dict: {shape_json_obj['flags']}")
-        if not all(
-            isinstance(k, str) and isinstance(v, bool)
-            for k, v in shape_json_obj["flags"].items()
-        ):
-            raise TypeError(
-                f"flags must be dict of str to bool: {shape_json_obj['flags']}"
-            )
-        flags = shape_json_obj["flags"]
+    flags = _validate_flags(flags=shape_json_obj.get("flags"))
 
     description: str = ""
     if shape_json_obj.get("description") is not None:
@@ -228,7 +228,7 @@ def read_label_file(filename: str) -> Annotation:
         shapes: list[ShapeDict] = [
             _load_shape_json_obj(shape_json_obj=s) for s in raw["shapes"]
         ]
-        flags = raw.get("flags") or {}
+        flags = _validate_flags(flags=raw.get("flags"))
     except (
         OSError,
         json.JSONDecodeError,
