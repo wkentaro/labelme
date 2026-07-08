@@ -13,7 +13,9 @@ from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
 from labelme._label_file import ShapeDict
+from labelme._label_file import _check_image_dimensions
 from labelme._label_file import _normalize_to_uint8
+from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
 
@@ -351,3 +353,67 @@ def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
         np.array([[0.0, 50.0, 100.0, np.inf, -np.inf, np.nan]])
     )
     np.testing.assert_array_equal(result, [[0, 127, 255, 255, 0, 0]])
+
+
+@pytest.mark.parametrize(
+    ("filename", "expected"),
+    [
+        ("foo.json", True),
+        ("FOO.JSON", True),
+        ("/a/b/c.Json", True),
+        ("foo.jpg", False),
+        ("foo", False),
+        ("dir.json/foo.png", False),
+    ],
+)
+def test_is_label_file_path(filename: str, expected: bool) -> None:
+    assert is_label_file_path(filename) is expected
+
+
+@pytest.fixture()
+def sample_image_data(data_path: Path) -> bytes:
+    return read_label_file(
+        filename=str(data_path / "annotated" / "2011_000003.json")
+    ).image_data
+
+
+def test_check_image_dimensions_both_none_is_noop(sample_image_data: bytes) -> None:
+    result = _check_image_dimensions(
+        image_data=sample_image_data,
+        expected_height=None,
+        expected_width=None,
+    )
+    assert result is None
+
+
+def test_check_image_dimensions_accepts_matching_dimensions(
+    sample_image_data: bytes,
+) -> None:
+    # The image embedded in 2011_000003.json is 500x338.
+    _check_image_dimensions(
+        image_data=sample_image_data,
+        expected_height=338,
+        expected_width=500,
+    )
+
+
+@pytest.mark.parametrize(
+    ("expected_height", "expected_width", "error_match"),
+    [
+        (1, None, "imageHeight mismatch"),
+        (None, 1, "imageWidth mismatch"),
+    ],
+    ids=["height_mismatch", "width_mismatch"],
+)
+def test_check_image_dimensions_raises_on_mismatch(
+    sample_image_data: bytes,
+    expected_height: int | None,
+    expected_width: int | None,
+    error_match: str,
+) -> None:
+    with pytest.raises(ValueError, match=error_match):
+        _check_image_dimensions(
+            image_data=sample_image_data,
+            expected_height=expected_height,
+            expected_width=expected_width,
+        )
