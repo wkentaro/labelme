@@ -111,19 +111,6 @@ def new_icon(name: str) -> QtGui.QIcon:
     return QtGui.QIcon(path)
 
 
-def new_button(
-    text: str,
-    icon: str | None = None,
-    slot: Callable[..., object] | None = None,
-) -> QtWidgets.QPushButton:
-    button = QtWidgets.QPushButton(text)
-    if icon is not None:
-        button.setIcon(new_icon(icon))
-    if slot is not None:
-        button.clicked.connect(slot)
-    return button
-
-
 def new_action(
     parent: QtWidgets.QWidget,
     text: str = "",
@@ -172,26 +159,6 @@ def label_validator() -> QtGui.QRegularExpressionValidator:
     # Accepts strings of 2+ chars not starting with space or tab.
     # Single non-whitespace char is Intermediate (handled by regex partial match).
     return QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[^ \t].+"))
-
-
-def distance(p: QtCore.QPointF) -> float:
-    return math.hypot(p.x(), p.y())
-
-
-def distance_to_line(
-    point: QtCore.QPointF,
-    line: tuple[QtCore.QPointF, QtCore.QPointF],
-) -> float:
-    start, end = line
-    dx = end.x() - start.x()
-    dy = end.y() - start.y()
-    length_sq = dx * dx + dy * dy
-    if length_sq == 0.0:
-        return distance(point - start)
-    t = ((point.x() - start.x()) * dx + (point.y() - start.y()) * dy) / length_sq
-    t = max(0.0, min(1.0, t))
-    nearest = QtCore.QPointF(start.x() + t * dx, start.y() + t * dy)
-    return distance(point - nearest)
 
 
 def format_shortcut(text: str) -> str:
