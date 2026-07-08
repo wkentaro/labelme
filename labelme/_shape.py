@@ -135,6 +135,11 @@ def nearest_edge_index(
     )
     projections = starts + t[:, None] * segments
     distances = np.linalg.norm(scaled_point - projections, axis=1)
+    if shape.shape_type == "linestrip":
+        # A linestrip is an open polyline: the wrap-around segment np.roll builds
+        # at index 0 (last point back to the first) is never rendered, so it must
+        # not be a hit target.
+        distances[0] = np.inf
     return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
