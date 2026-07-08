@@ -165,8 +165,19 @@ def test_migrate_keep_prev_brightness_contrast(
         ),
         ({"shape_color": "random"}, "Unexpected value for config key 'shape_color'"),
         ({"labels": ["cat", "cat"]}, "Duplicates are detected for config key 'labels'"),
+        ({"not_a_real_key": True}, "Unexpected key in config: not_a_real_key"),
+        (
+            {"shortcuts": {"not_a_real_shortcut": "Ctrl+Z"}},
+            "Unexpected key in config: not_a_real_shortcut",
+        ),
     ],
-    ids=["validate_label", "shape_color", "labels"],
+    ids=[
+        "validate_label",
+        "shape_color",
+        "labels",
+        "unknown_key",
+        "unknown_key_nested",
+    ],
 )
 def test_load_config_rejects_invalid_override(overrides: dict, message: str) -> None:
     with pytest.raises(ValueError, match=message):
