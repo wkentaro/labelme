@@ -4,12 +4,14 @@ import sys
 import types
 import warnings
 from collections.abc import Callable
+from pathlib import Path
 from typing import cast
 
 import pytest
 from loguru import logger
 from PySide6 import QtCore
 
+from labelme.__main__ import _parse_list_arg
 from labelme.__main__ import _route_qt_logging_to_loguru
 from labelme.__main__ import main
 
@@ -62,6 +64,28 @@ def test_canonical_flag_does_not_warn(
         with pytest.raises(SystemExit) as exc:
             main()
     assert exc.value.code == 0
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("cat,dog,person", ["cat", "dog", "person"]),
+        ("cat,,dog,", ["cat", "dog"]),
+        ("cat", ["cat"]),
+        ("", []),
+    ],
+)
+def test_parse_list_arg_splits_comma_separated_value(
+    value: str, expected: list[str]
+) -> None:
+    assert _parse_list_arg(value) == expected
+
+
+def test_parse_list_arg_reads_and_strips_file_lines(tmp_path: Path) -> None:
+    labels_file = tmp_path / "labels.txt"
+    labels_file.write_text("  cat  \n\ndog\n  \nperson\n", encoding="utf-8")
+
+    assert _parse_list_arg(str(labels_file)) == ["cat", "dog", "person"]
 
 
 def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
