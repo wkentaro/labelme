@@ -169,6 +169,13 @@ class _DeprecatedAlias(argparse.Action):
         setattr(namespace, self.dest, self.const if self.nargs == 0 else values)
 
 
+def _parse_list_arg(value: str) -> list[str]:
+    if Path(value).is_file():
+        with open(value, encoding="utf-8") as f:
+            return [line.strip() for line in f if line.strip()]
+    return [line for line in value.split(",") if line]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
@@ -274,18 +281,10 @@ def main() -> None:
     sys.excepthook = _handle_exception
 
     if hasattr(args, "flags"):
-        if Path(args.flags).is_file():
-            with open(args.flags, encoding="utf-8") as f:
-                args.flags = [line.strip() for line in f if line.strip()]
-        else:
-            args.flags = [line for line in args.flags.split(",") if line]
+        args.flags = _parse_list_arg(args.flags)
 
     if hasattr(args, "labels"):
-        if Path(args.labels).is_file():
-            with open(args.labels, encoding="utf-8") as f:
-                args.labels = [line.strip() for line in f if line.strip()]
-        else:
-            args.labels = [line for line in args.labels.split(",") if line]
+        args.labels = _parse_list_arg(args.labels)
 
     if hasattr(args, "label_flags"):
         if Path(args.label_flags).is_file():
