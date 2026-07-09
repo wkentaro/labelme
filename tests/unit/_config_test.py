@@ -135,6 +135,21 @@ def test_migrate_polygon_shortcut_skips_when_new_key_exists() -> None:
     assert "edit_polygon" in config["shortcuts"]
 
 
+def test_migrate_removes_add_point_to_edge_shortcut() -> None:
+    config = {"shortcuts": {"add_point_to_edge": "Ctrl+X"}}
+    _config._migrate_config_from_file(config)
+    assert "add_point_to_edge" not in config["shortcuts"]
+
+
+def test_load_config_tolerates_removed_add_point_to_edge_shortcut(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("shortcuts:\n  add_point_to_edge: Ctrl+X\n")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert "add_point_to_edge" not in config["shortcuts"]
+
+
 @pytest.mark.parametrize(
     ("old_config", "expected"),
     [
