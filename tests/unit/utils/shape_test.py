@@ -37,6 +37,73 @@ def test_shapes_to_label_raises_clear_error_for_unknown_label() -> None:
         shape_module.shapes_to_label((20, 20), [shape], {"road": 1})
 
 
+def test_shapes_to_label_places_mask_shape_at_its_bbox() -> None:
+    # A "mask" shape carries a local boolean patch plus a bbox (2 points, xy).
+    # The patch is composited into the full-image label maps at that bbox, with
+    # the bbox upper bound inclusive. mask is indexed [row=y, col=x].
+    patch = np.ones((3, 7), dtype=bool)
+    patch[0, 0] = False  # cleared cell proves the patch content drives the fill
+    shape = ShapeDict(
+        label="car",
+        points=[[2.0, 3.0], [8.0, 5.0]],  # x in [2, 8], y in [3, 5]
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=patch,
+        other_data={},
+    )
+    cls, ins = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    assert cls[3, 2] == 0  # patch[0, 0] is False, so the bbox corner stays empty
+    assert cls[3, 3] == 1
+    assert cls[5, 8] == 1  # bottom-right corner; a row/col swap would miss it
+    assert ins[5, 8] == 1
+    assert cls[6, 8] == 0  # one row past the inclusive y2 bound
+    assert cls[3, 9] == 0  # one col past the inclusive x2 bound
+
+
+def test_shapes_to_label_raises_when_mask_shape_has_no_ndarray() -> None:
+    shape = ShapeDict(
+        label="car",
+        points=[[0.0, 0.0], [3.0, 3.0]],
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=None,
+        other_data={},
+    )
+    with pytest.raises(ValueError, match=r"shape\['mask'\] must be numpy.ndarray"):
+        shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+
+
+def test_shapes_to_label_groups_instances_by_label_and_group_id() -> None:
+    def _rectangle(points: list[list[float]], group_id: int) -> ShapeDict:
+        return ShapeDict(
+            label="car",
+            points=points,
+            shape_type="rectangle",
+            flags={},
+            description="",
+            group_id=group_id,
+            mask=None,
+            other_data={},
+        )
+
+    shapes = [
+        _rectangle([[0.0, 0.0], [4.0, 4.0]], group_id=1),
+        _rectangle([[10.0, 10.0], [14.0, 14.0]], group_id=2),
+        _rectangle([[16.0, 16.0], [19.0, 19.0]], group_id=1),
+    ]
+    cls, ins = shape_module.shapes_to_label((20, 20), shapes, {"car": 1})
+    assert cls[2, 2] == 1
+    assert cls[12, 12] == 1
+    assert cls[17, 17] == 1
+    assert ins[2, 2] == 1  # first (label, group_id) pair
+    assert ins[12, 12] == 2  # different group_id -> distinct instance
+    assert ins[17, 17] == 1  # same (label, group_id) as the first -> same instance
+
+
 def test_shape_to_mask() -> None:
     img, data = get_img_and_data()
     for shape in data["shapes"]:
