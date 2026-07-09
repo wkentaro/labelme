@@ -49,10 +49,6 @@ def img_arr_to_data(img_arr: NDArray[np.uint8]) -> bytes:
     return img_data
 
 
-def img_data_to_png_data(img_data: bytes) -> bytes:
-    return img_pil_to_data(img_data_to_pil(img_data))
-
-
 def img_qt_to_arr(img_qt: QtGui.QImage) -> NDArray[np.uint8]:
     w, h, d = img_qt.size().width(), img_qt.size().height(), img_qt.depth()
     channels = d // 8

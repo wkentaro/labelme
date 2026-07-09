@@ -12,25 +12,12 @@ from pytestqt.qtbot import QtBot
 from labelme._utils.qt import _TintedSvgIconEngine
 from labelme._utils.qt import add_actions
 from labelme._utils.qt import direction_angle
-from labelme._utils.qt import distance
-from labelme._utils.qt import distance_to_line
 from labelme._utils.qt import format_shortcut
 from labelme._utils.qt import label_validator
 from labelme._utils.qt import new_action
-from labelme._utils.qt import new_button
 from labelme._utils.qt import new_icon
 from labelme._utils.qt import project_point_on_line
 from labelme._utils.qt import project_point_on_perpendicular_line
-
-
-def test_distance_to_line() -> None:
-    line = (QPointF(0, 0), QPointF(10, 0))
-
-    assert distance_to_line(QPointF(5, 0), line) == 0
-    assert distance_to_line(QPointF(5, 5), line) == 5
-    assert distance_to_line(QPointF(0, 0), line) == 0
-    assert distance_to_line(QPointF(-5, 0), line) == 5
-    assert distance_to_line(QPointF(15, 0), line) == 5
 
 
 @pytest.mark.parametrize(
@@ -75,25 +62,6 @@ def test_project_point_on_line(point: QPointF, expected: tuple[float, float]) ->
         point=point, line_start=QPointF(0.0, 0.0), line_end=QPointF(10.0, 0.0)
     )
     assert (projected.x(), projected.y()) == pytest.approx(expected)
-
-
-# ---------------------------------------------------------------------------
-# distance
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "x, y, expected",
-    [
-        (3.0, 4.0, 5.0),
-        (0.0, 0.0, 0.0),
-        (1.0, 0.0, 1.0),
-        (0.0, 1.0, 1.0),
-        (-3.0, -4.0, 5.0),
-    ],
-)
-def test_distance(x: float, y: float, expected: float) -> None:
-    assert distance(QPointF(x, y)) == pytest.approx(expected)
 
 
 # ---------------------------------------------------------------------------
@@ -236,51 +204,6 @@ def test_new_icon_keeps_accent_icon_fixed(qapp: QtWidgets.QApplication) -> None:
         assert a == b
     finally:
         qapp.setPalette(original)
-
-
-# ---------------------------------------------------------------------------
-# new_button
-# ---------------------------------------------------------------------------
-
-
-def test_new_button_returns_pushbutton(qtbot: QtBot) -> None:
-    button = new_button("Click me")
-    qtbot.addWidget(button)
-    assert isinstance(button, QtWidgets.QPushButton)
-
-
-def test_new_button_text(qtbot: QtBot) -> None:
-    button = new_button("Hello")
-    qtbot.addWidget(button)
-    assert button.text() == "Hello"
-
-
-def test_new_button_no_icon_by_default(qtbot: QtBot) -> None:
-    button = new_button("No icon")
-    qtbot.addWidget(button)
-    assert button.icon().isNull()
-
-
-def test_new_button_with_icon(qtbot: QtBot) -> None:
-    # Use an icon file that actually exists so Qt loads it as non-null.
-    button = new_button("With icon", icon="ai-box.svg")
-    qtbot.addWidget(button)
-    assert not button.icon().isNull()
-
-
-def test_new_button_with_slot(qtbot: QtBot) -> None:
-    calls: list[bool] = []
-    button = new_button("Slot", slot=lambda: calls.append(True))
-    qtbot.addWidget(button)
-    button.click()
-    assert calls == [True]
-
-
-def test_new_button_no_slot_does_not_raise(qtbot: QtBot) -> None:
-    button = new_button("No slot")
-    qtbot.addWidget(button)
-    # clicking a button with no slot should not raise
-    button.click()
 
 
 # ---------------------------------------------------------------------------
