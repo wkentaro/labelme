@@ -8,9 +8,12 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette
 from pytestqt.qtbot import QtBot
 
+from labelme._shape import Shape
 from labelme._widgets.label_list_widget import HTMLDelegate
 from labelme._widgets.label_list_widget import LabelListWidget
 from labelme._widgets.label_list_widget import LabelListWidgetItem
+from labelme._widgets.label_list_widget import format_label_with_color_dot
+from labelme._widgets.label_list_widget import format_shape_label
 
 
 def _has_ink_from(image: QtGui.QImage, start_x: int) -> bool:
@@ -151,3 +154,71 @@ def test_release_keeps_multi_selection_when_press_toggled_checkbox(
     )
 
     assert set(widget.selected_items()) == {item_a, item_b}
+
+
+@pytest.mark.parametrize(
+    ("text", "color", "expected"),
+    [
+        ("cat", (1, 2, 3), 'cat <font color="#010203">●</font>'),
+        ('<b>&"', (0, 0, 0), '&lt;b&gt;&amp;&quot; <font color="#000000">●</font>'),
+    ],
+    ids=["zero_pads_each_channel", "escapes_html_in_text"],
+)
+def test_format_label_with_color_dot(
+    text: str, color: tuple[int, int, int], expected: str
+) -> None:
+    assert format_label_with_color_dot(text=text, color=color) == expected
+
+
+@pytest.mark.parametrize(
+    ("shape", "fill_rgb", "expected"),
+    [
+        (Shape(label="cat"), (255, 0, 0), 'cat <font color="#ff0000">●</font>'),
+        (
+            Shape(label="cat", group_id=3),
+            (0, 0, 0),
+            'cat (3) <font color="#000000">●</font>',
+        ),
+        (
+            Shape(label="cat", group_id=0),
+            (0, 0, 0),
+            'cat (0) <font color="#000000">●</font>',
+        ),
+        (
+            Shape(
+                label="cat",
+                flags={"occluded": True, "truncated": False, "difficult": True},
+            ),
+            (0, 0, 0),
+            'cat [occluded, difficult] <font color="#000000">●</font>',
+        ),
+        (
+            Shape(label="cat", flags={"occluded": False}),
+            (0, 0, 0),
+            'cat <font color="#000000">●</font>',
+        ),
+        (
+            Shape(label="cat", group_id=3, flags={"occluded": True}),
+            (0, 0, 0),
+            'cat (3) [occluded] <font color="#000000">●</font>',
+        ),
+        (
+            Shape(label="<b>", group_id=1),
+            (0, 0, 0),
+            '&lt;b&gt; (1) <font color="#000000">●</font>',
+        ),
+    ],
+    ids=[
+        "bare_label_when_no_group_or_flags",
+        "appends_group_id",
+        "appends_group_id_zero",
+        "appends_only_enabled_flags_in_order",
+        "omits_brackets_when_no_flag_is_enabled",
+        "combines_group_id_before_flags",
+        "escapes_html_in_composed_text",
+    ],
+)
+def test_format_shape_label(
+    shape: Shape, fill_rgb: tuple[int, int, int], expected: str
+) -> None:
+    assert format_shape_label(shape=shape, fill_rgb=fill_rgb) == expected
