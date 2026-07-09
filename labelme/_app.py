@@ -2266,13 +2266,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._window_state.setValue("window/state", self.saveState())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
-        extensions = [
-            f".{fmt.toStdString().lower()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
+        extensions = _list_supported_image_extensions()
         if a0.mimeData().hasUrls():
             items = [i.toLocalFile() for i in a0.mimeData().urls()]
-            if any([i.lower().endswith(tuple(extensions)) for i in items]):
+            if any([i.lower().endswith(extensions) for i in items]):
                 a0.accept()
         else:
             a0.ignore()
@@ -2746,10 +2743,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return lst
 
     def import_dropped_image_files(self, image_files: list[str]) -> None:
-        extensions = tuple(
-            f".{fmt.toStdString().lower()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        )
+        extensions = _list_supported_image_extensions()
         already_loaded = set(self.image_list)
         new_files = [
             path
@@ -2934,16 +2928,20 @@ def _shape_to_dict(shape: Shape) -> ShapeDict:
     )
 
 
-def _scan_image_files(root_dir: str) -> list[str]:
-    extensions: list[str] = [
+def _list_supported_image_extensions() -> tuple[str, ...]:
+    return tuple(
         f".{fmt.toStdString().lower()}"
         for fmt in QtGui.QImageReader.supportedImageFormats()
-    ]
+    )
+
+
+def _scan_image_files(root_dir: str) -> list[str]:
+    extensions = _list_supported_image_extensions()
 
     images: list[str] = []
     for root, dirs, files in os.walk(root_dir):
         for file in files:
-            if file.lower().endswith(tuple(extensions)):
+            if file.lower().endswith(extensions):
                 relative_path = os.path.normpath(os.path.join(root, file))
                 images.append(relative_path)
 
