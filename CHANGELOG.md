@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the `--output` guard rejecting only lowercase `.json` paths; an upper- or mixed-case file path such as `--output notes.JSON` slipped past the "expects a directory" check and was treated as an output directory. The guard now reuses the canonical case-insensitive `is_label_file_path` helper ([#2317](https://github.com/wkentaro/labelme/pull/2317))
+
 ## [7.0.4] - 2026-07-12
 
 ### Fixed

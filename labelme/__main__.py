@@ -23,6 +23,7 @@ from . import _config
 from . import _locale
 from . import _yaml
 from ._app import MainWindow
+from ._label_file import is_label_file_path
 from ._utils import apply_color_theme
 from ._utils import new_icon
 
@@ -321,7 +322,7 @@ def main() -> None:
 
     output_dir = None
     if output is not None:
-        if output.endswith(".json"):
+        if is_label_file_path(filename=output):
             parser.error(
                 f"--output expects a directory path, but '{output}' looks like a file."
                 " Remove the .json extension or provide a directory path."
