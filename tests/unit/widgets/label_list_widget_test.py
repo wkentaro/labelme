@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -8,6 +9,8 @@ from PySide6.QtGui import QPalette
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets.label_list_widget import HTMLDelegate
+from labelme._widgets.label_list_widget import LabelListWidget
+from labelme._widgets.label_list_widget import LabelListWidgetItem
 
 
 def _has_ink_from(image: QtGui.QImage, start_x: int) -> bool:
@@ -44,3 +47,107 @@ def test_html_delegate_does_not_clip_label_when_text_subrect_collapses(
     # The collapsed sub-rect is only 6px wide; ink well past it (x >= 20) proves
     # the widened clip rect let the label render instead of clipping it away.
     assert _has_ink_from(image, start_x=20)
+
+
+@pytest.fixture()
+def widget(qtbot: QtBot) -> LabelListWidget:
+    widget = LabelListWidget()
+    qtbot.addWidget(widget)
+    widget.resize(200, 200)
+    widget.show()
+    return widget
+
+
+@pytest.fixture()
+def selected_pair(
+    widget: LabelListWidget,
+) -> tuple[LabelListWidgetItem, LabelListWidgetItem]:
+    item_a = LabelListWidgetItem(text="cat")
+    item_b = LabelListWidgetItem(text="dog")
+    widget.add_item(item_a)
+    widget.add_item(item_b)
+    widget.select_item(item_a)
+    widget.select_item(item_b)
+    return item_a, item_b
+
+
+def _item_center(widget: LabelListWidget, item: LabelListWidgetItem) -> QtCore.QPoint:
+    model = widget.model()
+    assert model is not None
+    return widget.visualRect(model.index(item.row(), 0)).center()
+
+
+def _press_on_item(
+    qtbot: QtBot, widget: LabelListWidget, item: LabelListWidgetItem
+) -> None:
+    qtbot.mousePress(
+        widget.viewport(),
+        Qt.MouseButton.LeftButton,
+        pos=_item_center(widget=widget, item=item),
+    )
+
+
+def test_selection_at_press_drops_items_removed_before_release(
+    qtbot: QtBot, widget: LabelListWidget
+) -> None:
+    # A context menu or drag can consume the mouse release, so the press
+    # snapshot legally outlives the items it references (e.g. right-click
+    # -> Delete on macOS, where the menu opens on press).
+    item = LabelListWidgetItem(text="cat")
+    widget.add_item(item)
+    widget.select_item(item)
+    _press_on_item(qtbot=qtbot, widget=widget, item=item)
+
+    widget.remove_item(item)
+    replacement = LabelListWidgetItem(text="cat")
+    widget.add_item(replacement)
+
+    selection_at_press = widget.selection_at_press()
+    assert replacement not in selection_at_press
+    assert selection_at_press == ()
+
+
+def test_mouse_release_after_item_removal_does_not_crash(
+    qtbot: QtBot,
+    widget: LabelListWidget,
+    selected_pair: tuple[LabelListWidgetItem, LabelListWidgetItem],
+) -> None:
+    item_a, _ = selected_pair
+    _press_on_item(qtbot=qtbot, widget=widget, item=item_a)
+
+    widget.remove_item(item_a)
+    release_pos = widget.viewport().rect().center()
+    qtbot.mouseRelease(widget.viewport(), Qt.MouseButton.LeftButton, pos=release_pos)
+
+    assert widget.selection_at_press() == ()
+
+
+def test_selection_at_press_returns_live_multi_selection(
+    qtbot: QtBot,
+    widget: LabelListWidget,
+    selected_pair: tuple[LabelListWidgetItem, LabelListWidgetItem],
+) -> None:
+    item_a, item_b = selected_pair
+    _press_on_item(qtbot=qtbot, widget=widget, item=item_a)
+
+    assert set(widget.selection_at_press()) == {item_a, item_b}
+
+
+def test_release_keeps_multi_selection_when_press_toggled_checkbox(
+    qtbot: QtBot,
+    widget: LabelListWidget,
+    selected_pair: tuple[LabelListWidgetItem, LabelListWidgetItem],
+) -> None:
+    item_a, item_b = selected_pair
+    _press_on_item(qtbot=qtbot, widget=widget, item=item_a)
+    # The view toggles the check state during the click when the press lands
+    # on the checkbox; emulate that toggle directly since the checkbox
+    # position depends on the platform style.
+    item_a.setCheckState(Qt.CheckState.Unchecked)
+    qtbot.mouseRelease(
+        widget.viewport(),
+        Qt.MouseButton.LeftButton,
+        pos=_item_center(widget=widget, item=item_a),
+    )
+
+    assert set(widget.selected_items()) == {item_a, item_b}
