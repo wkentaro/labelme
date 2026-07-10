@@ -61,7 +61,9 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     if not all(
         isinstance(point, list)
         and len(point) == 2
-        and all(isinstance(xy, int | float) for xy in point)
+        and all(
+            isinstance(xy, int | float) and not isinstance(xy, bool) for xy in point
+        )
         for point in shape_json_obj["points"]
     ):
         raise ValueError(f"points must be list of [x, y]: {shape_json_obj['points']}")
@@ -83,7 +85,9 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
     group_id: int | None = None
     if shape_json_obj.get("group_id") is not None:
-        if not isinstance(shape_json_obj["group_id"], int):
+        if isinstance(shape_json_obj["group_id"], bool) or not isinstance(
+            shape_json_obj["group_id"], int
+        ):
             raise TypeError(f"group_id must be int: {shape_json_obj['group_id']}")
         group_id = shape_json_obj["group_id"]
 
