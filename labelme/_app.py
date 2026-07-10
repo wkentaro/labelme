@@ -1339,7 +1339,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         model_name: str = self._ai_text.get_model_name()
         model_type = osam.apis.get_model_type_by_name(model_name)
-        if not (_is_already_downloaded := model_type.get_size() is not None):
+        if model_type.get_size() is None:
             if not download_ai_model(model_name=model_name, parent=self):
                 return
         if (
