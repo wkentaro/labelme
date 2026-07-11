@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed AI Assist / AI Box crashing with `ValueError: incorrect coordinate type` when suppressing detections that overlap an existing polygon or oriented-rectangle shape on Pillow older than 11.2.1; the overlap check rasterized the existing shape by passing a list-of-lists (`ndarray.tolist()`) to `PIL.ImageDraw.polygon`, which older Pillow rejects, so it now passes the documented list-of-tuples form as elsewhere in the codebase ([#2331](https://github.com/wkentaro/labelme/pull/2331))
+
 ## [7.0.3] - 2026-07-11
 
 ### Fixed
