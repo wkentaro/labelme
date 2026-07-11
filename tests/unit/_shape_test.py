@@ -96,6 +96,41 @@ def test_rotate_non_oriented_rectangle_raises() -> None:
         )
 
 
+def test_rotate_uses_source_points_snapshot_not_current_points() -> None:
+    # Given source_points, rotate() computes from it and ignores the shape's
+    # current points. This single-call precedence is what lets an interactive
+    # drag replay from a fixed snapshot; it is the only path production uses
+    # (canvas.py always passes source_points).
+    source_points = np.array(
+        [(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)], dtype=np.float64
+    )
+    shape = _make_oriented_rectangle([(1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0)])
+
+    _shape.rotate(
+        shape=shape,
+        center=np.array([0.0, 0.0]),
+        angle=math.pi / 2,
+        source_points=source_points,
+    )
+
+    expected = [(0.0, 0.0), (0.0, 10.0), (-4.0, 10.0), (-4.0, 0.0)]
+    for i, (x, y) in enumerate(expected):
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+
+
+def test_rotate_reports_source_points_length_in_error() -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+    source_points = np.array([(0.0, 0.0), (10.0, 0.0), (10.0, 4.0)], dtype=np.float64)
+
+    with pytest.raises(ValueError, match=r"len\(source_points\)=3"):
+        _shape.rotate(
+            shape=shape,
+            center=np.array([0.0, 0.0]),
+            angle=math.pi / 2,
+            source_points=source_points,
+        )
+
+
 def test_nearest_vertex_index_returns_none_for_mask() -> None:
     # Mask bbox is anchored to the bitmap; exposing draggable vertices would
     # desync the rectangle from the mask.
