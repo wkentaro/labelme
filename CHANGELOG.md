@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.3] - 2026-07-11
+
 ### Fixed
 
 - Fixed a crash when registering a shape after deleting one via the annotation-list context menu (`RuntimeError: Internal C++ object (LabelListWidgetItem) already deleted`); the list snapshots the selection on mouse press to support multi-selection checkbox toggles, and a context menu or drag can consume the matching release, so the snapshot outlived deleted items and is now tracked with persistent model indexes that drop removed rows ([#2318](https://github.com/wkentaro/labelme/pull/2318))
@@ -690,4 +692,5 @@ See the [GitHub Releases](https://github.com/wkentaro/labelme/releases) page for
 [7.0.0]: https://github.com/wkentaro/labelme/compare/v6.3.1...v7.0.0
 [7.0.1]: https://github.com/wkentaro/labelme/compare/v7.0.0...v7.0.1
 [7.0.2]: https://github.com/wkentaro/labelme/compare/v7.0.1...v7.0.2
-[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.2...HEAD
+[7.0.3]: https://github.com/wkentaro/labelme/compare/v7.0.2...v7.0.3
+[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.3...HEAD
