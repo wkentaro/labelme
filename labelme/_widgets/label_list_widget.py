@@ -176,7 +176,9 @@ class _ItemModel(QtGui.QStandardItemModel):
 
 
 class _ItemSnapshot(NamedTuple):
-    item: LabelListWidgetItem
+    # A persistent index, not the item itself: the model owns the item and
+    # deletes it on row removal, which would leave a dead wrapper here.
+    index: QtCore.QPersistentModelIndex
     check_state: Qt.CheckState
 
 
@@ -207,7 +209,10 @@ class LabelListWidget(QtWidgets.QListView):
 
     def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
         self._press_snapshot = tuple(
-            _ItemSnapshot(item=item, check_state=item.checkState())
+            _ItemSnapshot(
+                index=QtCore.QPersistentModelIndex(self._model.indexFromItem(item)),
+                check_state=item.checkState(),
+            )
             for item in self.selected_items()
         )
         super().mousePressEvent(e)
@@ -217,10 +222,14 @@ class LabelListWidget(QtWidgets.QListView):
 
         # Restore the multi-selection only when a checkbox toggle collapsed it.
         # A plain row click should narrow the selection to one row.
-        check_state_changed = any(
-            snap.item.checkState() != snap.check_state for snap in self._press_snapshot
-        )
-        items_at_press = tuple(snap.item for snap in self._press_snapshot)
+        check_state_changed = False
+        items_at_press: list[LabelListWidgetItem] = []
+        for snap in self._press_snapshot:
+            item = self._resolve_item(index=snap.index)
+            if item is None:
+                continue
+            items_at_press.append(item)
+            check_state_changed |= item.checkState() != snap.check_state
         if (
             check_state_changed
             and len(items_at_press) > 1
@@ -236,7 +245,18 @@ class LabelListWidget(QtWidgets.QListView):
         self._press_snapshot = ()
 
     def selection_at_press(self) -> tuple[LabelListWidgetItem, ...]:
-        return tuple(snap.item for snap in self._press_snapshot)
+        return tuple(
+            item
+            for snap in self._press_snapshot
+            if (item := self._resolve_item(index=snap.index)) is not None
+        )
+
+    def _resolve_item(
+        self, index: QtCore.QPersistentModelIndex
+    ) -> LabelListWidgetItem | None:
+        if not index.isValid():
+            return None
+        return cast(LabelListWidgetItem, self._model.itemFromIndex(index))
 
     def __len__(self) -> int:
         return self._model.rowCount()
