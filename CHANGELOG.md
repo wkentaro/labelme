@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.4] - 2026-07-12
+
 ### Fixed
 
 - Fixed AI Assist / AI Box crashing with `ValueError: incorrect coordinate type` when suppressing detections that overlap an existing polygon or oriented-rectangle shape on Pillow older than 11.2.1; the overlap check rasterized the existing shape by passing a list-of-lists (`ndarray.tolist()`) to `PIL.ImageDraw.polygon`, which older Pillow rejects, so it now passes the documented list-of-tuples form as elsewhere in the codebase ([#2331](https://github.com/wkentaro/labelme/pull/2331))
@@ -697,4 +699,5 @@ See the [GitHub Releases](https://github.com/wkentaro/labelme/releases) page for
 [7.0.1]: https://github.com/wkentaro/labelme/compare/v7.0.0...v7.0.1
 [7.0.2]: https://github.com/wkentaro/labelme/compare/v7.0.1...v7.0.2
 [7.0.3]: https://github.com/wkentaro/labelme/compare/v7.0.2...v7.0.3
-[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.3...HEAD
+[7.0.4]: https://github.com/wkentaro/labelme/compare/v7.0.3...v7.0.4
+[unreleased]: https://github.com/wkentaro/labelme/compare/v7.0.4...HEAD
