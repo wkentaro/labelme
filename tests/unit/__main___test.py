@@ -11,6 +11,7 @@ import pytest
 from loguru import logger
 from PySide6 import QtCore
 
+from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
 from labelme.__main__ import _route_qt_logging_to_loguru
 from labelme.__main__ import main
@@ -96,6 +97,31 @@ def test_parse_list_arg_reads_and_strips_file_lines(tmp_path: Path) -> None:
     labels_file.write_text("  cat  \n\ndog\n  \nperson\n", encoding="utf-8")
 
     assert _parse_list_arg(str(labels_file)) == ["cat", "dog", "person"]
+
+
+def test_logger_io_forwards_stripped_writes_to_debug() -> None:
+    forwarded: list[tuple[str, str]] = []
+    sink_id = logger.add(
+        lambda m: forwarded.append((m.record["level"].name, m.record["message"])),
+        level="DEBUG",
+    )
+    try:
+        stream = _LoggerIO()
+        assert stream.write("  qt noise  \n") == len("  qt noise  \n")
+        assert stream.write("   \n") == len("   \n")
+    finally:
+        logger.remove(sink_id)
+
+    assert forwarded == [("DEBUG", "qt noise")]
+
+
+def test_logger_io_is_a_write_only_non_seekable_sink() -> None:
+    stream = _LoggerIO()
+    assert stream.writable() is True
+    assert stream.readable() is False
+    assert stream.seekable() is False
+    assert stream.closed is False
+    assert stream.flush() is None
 
 
 def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
