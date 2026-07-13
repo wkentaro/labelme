@@ -152,18 +152,21 @@ def test_label_validator_rejects_single_char() -> None:
 
 
 def test_new_icon_returns_qicon(qtbot: QtBot) -> None:
-    icon = new_icon("icon")
+    icon = new_icon("icon-256")
     assert isinstance(icon, QtGui.QIcon)
+    assert not icon.isNull()
 
 
 def test_new_icon_with_explicit_png_suffix(qtbot: QtBot) -> None:
-    icon = new_icon("icon.png")
+    icon = new_icon("icon-256.png")
     assert isinstance(icon, QtGui.QIcon)
+    assert not icon.isNull()
 
 
 def test_new_icon_with_path_that_includes_subdir(qtbot: QtBot) -> None:
     icon = new_icon("phosphor/info.svg")
     assert isinstance(icon, QtGui.QIcon)
+    assert not icon.isNull()
 
 
 # ---------------------------------------------------------------------------
