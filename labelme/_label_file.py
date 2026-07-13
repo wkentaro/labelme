@@ -179,7 +179,14 @@ def read_image_file(filename: str) -> bytes:
             image_data = f.read()
     else:
         with io.BytesIO() as f:
-            fmt = "PNG" if "A" in oriented.mode else "JPEG"
+            has_transparency = "A" in oriented.mode or (
+                oriented.mode == "P" and "transparency" in oriented.info
+            )
+            fmt = "PNG" if has_transparency else "JPEG"
+            if fmt == "JPEG" and oriented.mode == "P":
+                oriented = oriented.convert("RGB")
+            elif fmt == "PNG" and oriented.mode == "PA":
+                oriented = oriented.convert("RGBA")
             oriented.save(fp=f, format=fmt, quality=95)
             f.seek(0)
             image_data = f.read()
