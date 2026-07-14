@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed clicking or hovering near a linestrip's unrendered "closing" line (the straight path from its last point back to its first) being treated as a hit on the shape; edge hover, add-point-to-edge, and body selection now ignore that phantom segment, since a linestrip is an open polyline and never draws it ([#2307](https://github.com/wkentaro/labelme/pull/2307))
 - Fixed the `--output` guard rejecting only lowercase `.json` paths; an upper- or mixed-case file path such as `--output notes.JSON` slipped past the "expects a directory" check and was treated as an output directory. The guard now reuses the canonical case-insensitive `is_label_file_path` helper ([#2317](https://github.com/wkentaro/labelme/pull/2317))
+- Fixed the config `labels` key silently accepting a scalar string such as `labels: cat` instead of a list; the value was truthy and passed the duplicate check, so `config["labels"]` became the string `"cat"` and was later iterated character by character (`c`, `a`, `t`). A non-list `labels` value now surfaces as a clear configuration error instead ([#2348](https://github.com/wkentaro/labelme/pull/2348))
 
 ## [7.0.4] - 2026-07-12
 
