@@ -3,6 +3,7 @@ from __future__ import annotations
 import html
 import math
 from collections.abc import Iterator
+from typing import Final
 from typing import NamedTuple
 from typing import cast
 
@@ -33,6 +34,8 @@ def format_shape_label(shape: Shape, fill_rgb: tuple[int, int, int]) -> str:
 
 
 class HTMLDelegate(QtWidgets.QStyledItemDelegate):
+    _VERT_FUDGE: Final = 4
+
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
 
@@ -76,8 +79,9 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         # Widen it to the document's ideal width so the text stays visible.
         text_rect.setWidth(max(text_rect.width(), math.ceil(doc.idealWidth())))
 
-        VERT_FUDGE = 4
-        margin = (option.rect.height() - opt.fontMetrics.height()) // 2 - VERT_FUDGE
+        margin = (
+            option.rect.height() - opt.fontMetrics.height()
+        ) // 2 - self._VERT_FUDGE
         text_rect.setTop(text_rect.top() + margin)
 
         painter.save()
@@ -91,18 +95,16 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         option: QtWidgets.QStyleOptionViewItem,
         index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
     ) -> QtCore.QSize:
-        VERT_FUDGE = 4
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
         doc = QtGui.QTextDocument()
         doc.setHtml(opt.text)
-        height = int(doc.size().height()) - VERT_FUDGE
+        height = int(doc.size().height()) - self._VERT_FUDGE
         return QtCore.QSize(int(doc.idealWidth()), height)
 
     def default_size_hint(self) -> QtCore.QSize:
-        VERT_FUDGE = 4
         doc = QtGui.QTextDocument()
-        height = int(doc.size().height()) - VERT_FUDGE
+        height = int(doc.size().height()) - self._VERT_FUDGE
         return QtCore.QSize(int(doc.idealWidth()), height)
 
 
