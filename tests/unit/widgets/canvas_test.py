@@ -24,9 +24,11 @@ from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
 from labelme._widgets.canvas import _normalize_bbox_points
 from labelme._widgets.canvas import _opposite_corner_in_parallelogram
+from labelme._widgets.canvas import _pick_pending_moved_shape
 from labelme._widgets.canvas import _project_oriented_rectangle_corners
 from labelme._widgets.canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets.canvas import _shape_to_draft
+from labelme._widgets.canvas import _should_reselect_on_right_press
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -968,6 +970,70 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
 )
 def test_compute_overscroll_slack(scaled: int, viewport: int, expected: int) -> None:
     assert _compute_overscroll_slack(scaled=scaled, viewport=viewport) == expected
+
+
+def test_should_reselect_on_right_press_with_empty_selection() -> None:
+    # Empty selection reselects even when hovering nothing; without the guard this
+    # input would fall through to `hovered_shape is None` and wrongly return False.
+    assert _should_reselect_on_right_press(selected_shapes=[], hovered_shape=None)
+
+
+def test_should_reselect_on_right_press_keeps_selection_when_hovering_nothing() -> None:
+    selected = [Shape()]
+    assert not _should_reselect_on_right_press(
+        selected_shapes=selected, hovered_shape=None
+    )
+
+
+def test_should_reselect_on_right_press_when_hovering_outside_selection() -> None:
+    assert _should_reselect_on_right_press(
+        selected_shapes=[Shape()], hovered_shape=Shape()
+    )
+
+
+def test_should_reselect_on_right_press_keeps_selection_hovering_selected() -> None:
+    hovered = Shape()
+    assert not _should_reselect_on_right_press(
+        selected_shapes=[Shape(), hovered], hovered_shape=hovered
+    )
+
+
+def test_pick_pending_moved_shape_none_when_not_moving() -> None:
+    hovered = Shape()
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=False, hovered_shape=hovered, shapes=[hovered]
+        )
+        is None
+    )
+
+
+def test_pick_pending_moved_shape_none_when_hovering_nothing() -> None:
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=True, hovered_shape=None, shapes=[Shape()]
+        )
+        is None
+    )
+
+
+def test_pick_pending_moved_shape_none_when_hovered_absent_from_shapes() -> None:
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=True, hovered_shape=Shape(), shapes=[Shape()]
+        )
+        is None
+    )
+
+
+def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
+    hovered = Shape()
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=True, hovered_shape=hovered, shapes=[Shape(), hovered]
+        )
+        is hovered
+    )
 
 
 def _make_polygon() -> Shape:
