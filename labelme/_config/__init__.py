@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import re
 from collections.abc import Callable
-from collections.abc import Sized
 from pathlib import Path
 from typing import cast
 
@@ -54,12 +53,16 @@ def _update_dict(
 def _validate_config_item(key: str, value: object) -> None:
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
-    if (
-        key == "labels"
-        and isinstance(value, Sized)
-        and len(value) != len(set(cast(list[object], value)))
-    ):
-        raise ValueError(f"Duplicates are detected for config key 'labels': {value}")
+    if key == "labels" and value is not None:
+        if not isinstance(value, list):
+            raise ValueError(
+                f"Config key 'labels' must be a list, "
+                f"but got {type(value).__name__}: {value!r}"
+            )
+        if len(value) != len(set(value)):
+            raise ValueError(
+                f"Duplicates are detected for config key 'labels': {value}"
+            )
 
 
 def _migrate_config_from_file(config_from_yaml: dict) -> None:

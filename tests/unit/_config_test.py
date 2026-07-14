@@ -284,6 +284,7 @@ def test_migrate_keep_prev_brightness_contrast(
         ),
         ({"shape_color": "random"}, "Unexpected value for config key 'shape_color'"),
         ({"labels": ["cat", "cat"]}, "Duplicates are detected for config key 'labels'"),
+        ({"labels": "cat"}, "Config key 'labels' must be a list, but got str"),
         ({"not_a_real_key": True}, "Unexpected key in config: not_a_real_key"),
         (
             {"shortcuts": {"not_a_real_shortcut": "Ctrl+Z"}},
@@ -294,6 +295,7 @@ def test_migrate_keep_prev_brightness_contrast(
         "validate_label",
         "shape_color",
         "labels",
+        "labels_not_a_list",
         "unknown_key",
         "unknown_key_nested",
     ],
