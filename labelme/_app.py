@@ -2816,6 +2816,15 @@ def _shapes_from_dicts(
     shape_dicts: list[ShapeDict],
     label_flags: dict[str, list[str]] | None,
 ) -> list[Shape]:
+    valid_label_flags: dict[str, list[str]] = {}
+    for pattern, keys in (label_flags or {}).items():
+        try:
+            re.compile(pattern)
+        except re.error:
+            logger.warning("Invalid label_flags pattern: {!r}", pattern)
+            continue
+        valid_label_flags[pattern] = keys
+
     shapes: list[Shape] = []
     for shape_dict in shape_dicts:
         shape = Shape(
@@ -2829,14 +2838,13 @@ def _shapes_from_dicts(
         )
 
         default_flags: dict[str, bool] = {}
-        if label_flags:
-            for pattern, keys in label_flags.items():
-                if not isinstance(shape.label, str):
-                    logger.warning("shape.label is not str: {}", shape.label)
-                    continue
-                if re.match(pattern, shape.label):
-                    for key in keys:
-                        default_flags[key] = False
+        for pattern, keys in valid_label_flags.items():
+            if not isinstance(shape.label, str):
+                logger.warning("shape.label is not str: {}", shape.label)
+                continue
+            if re.match(pattern, shape.label):
+                for key in keys:
+                    default_flags[key] = False
         shape.flags = default_flags
         shape.flags.update(shape_dict["flags"])
         shape.other_data = shape_dict["other_data"]

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a crash when a `label_flags` config entry contains an invalid regular expression (e.g. `person-(`); such a pattern raised an uncaught `re.error` when loading a labeled shape or typing in the label dialog, and is now skipped instead (the load path logs a warning naming the offending pattern) ([#2350](https://github.com/wkentaro/labelme/pull/2350))
+
 ## [7.0.4] - 2026-07-12
 
 ### Fixed

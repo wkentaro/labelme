@@ -61,3 +61,21 @@ def test_set_predefined_labels_empty_keeps_only_session_history(
     dialog.add_label_history("ad-hoc")
     dialog.set_predefined_labels([])
     assert _labels(dialog) == {"ad-hoc"}
+
+
+def test_update_flags_skips_an_invalid_pattern(qtbot: QtBot) -> None:
+    dialog = LabelDialog(labels=["cat"], flags={"cat(": ["occluded"]})
+    qtbot.addWidget(dialog)
+    dialog._update_flags("cat")
+    assert dialog._flag_checkboxes() == []
+
+
+def test_update_flags_applies_a_valid_pattern_despite_an_invalid_one(
+    qtbot: QtBot,
+) -> None:
+    dialog = LabelDialog(
+        labels=["cat"], flags={"cat(": ["broken"], "cat": ["occluded"]}
+    )
+    qtbot.addWidget(dialog)
+    dialog._update_flags("cat")
+    assert [cb.text() for cb in dialog._flag_checkboxes()] == ["occluded"]

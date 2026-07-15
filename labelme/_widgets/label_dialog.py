@@ -219,7 +219,11 @@ class LabelDialog(QtWidgets.QDialog):
         current_states = {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
         flags: list[tuple[str, bool]] = []
         for pattern, flag_keys in self._flags_spec.items():
-            if not re.match(pattern, text):
+            try:
+                matched = re.match(pattern, text)
+            except re.error:
+                continue
+            if not matched:
                 continue
             for key in flag_keys:
                 flags.append((key, current_states.get(key, False)))
