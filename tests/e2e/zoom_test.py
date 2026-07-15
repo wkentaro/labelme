@@ -178,3 +178,75 @@ def test_canvas_wheel_event_dispatches_signal(
         assert non_zero[0] == (angle_delta.y(), expected_orientation)
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "config_overrides, expected_zoom_shortcuts",
+    [
+        pytest.param(None, "<b>Ctrl</b>+<b>+</b>, <b>Ctrl</b>+<b>-</b>", id="default"),
+        pytest.param(
+            {"shortcuts": {"zoom_out": ["Ctrl+_", "Ctrl+-"]}},
+            "<b>Ctrl</b>+<b>+</b>, <b>Ctrl</b>+<b>_</b>",
+            id="zoom_out_as_list",
+        ),
+        pytest.param(
+            {"shortcuts": {"zoom_in": ["Z", "Ctrl+Z"]}},
+            "<b>Z</b>, <b>Ctrl</b>+<b>-</b>",
+            id="zoom_in_bare_key",
+        ),
+    ],
+)
+def test_zoom_widget_whats_this_renders_shortcuts_cleanly(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    pause: bool,
+    config_overrides: dict | None,
+    expected_zoom_shortcuts: str,
+) -> None:
+    win = main_win(config_overrides=config_overrides)
+
+    whats_this = win._canvas_widgets.zoom_widget.whatsThis()
+
+    assert expected_zoom_shortcuts in whats_this
+    assert "[" not in whats_this
+    assert "'" not in whats_this
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_zoom_widget_whats_this_omits_a_disabled_shortcut(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    pause: bool,
+) -> None:
+    win = main_win(config_overrides={"shortcuts": {"zoom_in": None}})
+
+    whats_this = win._canvas_widgets.zoom_widget.whatsThis()
+
+    assert "<b>Ctrl</b>+<b>-</b>" in whats_this
+    assert "<b>Ctrl</b>+<b>+</b>" not in whats_this
+    assert "[" not in whats_this
+    assert "'" not in whats_this
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_zoom_widget_whats_this_survives_both_shortcuts_disabled(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    pause: bool,
+) -> None:
+    win = main_win(config_overrides={"shortcuts": {"zoom_in": None, "zoom_out": None}})
+
+    whats_this = win._canvas_widgets.zoom_widget.whatsThis()
+
+    assert "<b>Ctrl</b>+<b>+</b>" not in whats_this
+    assert "<b>Ctrl</b>+<b>-</b>" not in whats_this
+    assert "None" not in whats_this
+    assert "[" not in whats_this
+    assert "'" not in whats_this
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
