@@ -12,6 +12,7 @@ from .qt import format_shortcut
 from .qt import label_validator
 from .qt import new_action
 from .qt import new_icon
+from .qt import primary_shortcut
 from .qt import project_point_on_line
 from .qt import project_point_on_perpendicular_line
 from .shape import shape_to_mask

@@ -163,11 +163,17 @@ def label_validator() -> QtGui.QRegularExpressionValidator:
 
 def format_shortcut(text: str) -> str:
     if "+" not in text:
-        raise ValueError(f"Not a modifier-plus-key shortcut: {text!r}")
+        return f"<b>{text}</b>"
     idx = text.index("+")
     modifier = text[:idx]
     key = text[idx + 1 :]
     return f"<b>{modifier}</b>+<b>{key}</b>"
+
+
+def primary_shortcut(shortcut: str | list[str] | None) -> str:
+    if isinstance(shortcut, list):
+        return shortcut[0] if shortcut else ""
+    return shortcut or ""
 
 
 def direction_angle(*, start: npt.ArrayLike, end: npt.ArrayLike) -> float:
