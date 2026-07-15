@@ -267,6 +267,13 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
         ),
         ("cat", {"occluded": True}, None, {"occluded": True}),
         ("cat", {"occluded": True}, {}, {"occluded": True}),
+        ("cat", {}, {"cat(": ["occluded"]}, {}),
+        (
+            "cat",
+            {},
+            {"cat(": ["broken"], "^cat$": ["occluded"]},
+            {"occluded": False},
+        ),
     ],
     ids=[
         "matched-keys-default-to-false",
@@ -277,6 +284,8 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
         "matching-patterns-union",
         "label-flags-none",
         "label-flags-empty",
+        "invalid-pattern-skipped",
+        "valid-pattern-applies-despite-an-invalid-one",
     ],
 )
 def test_shapes_from_dicts_merges_label_flags(

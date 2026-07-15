@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import Final
 
+from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -54,7 +55,14 @@ class LabelDialog(QtWidgets.QDialog):
         super().__init__(parent)
 
         self._sort_labels = sort_labels
-        self._flags_spec: dict[str, list[str]] = flags or {}
+        self._flags_spec: dict[str, list[str]] = {}
+        for pattern, keys in (flags or {}).items():
+            try:
+                re.compile(pattern)
+            except re.error:
+                logger.warning("Invalid label_flags pattern: {!r}", pattern)
+                continue
+            self._flags_spec[pattern] = keys
         self._label_history = label_history[:] if label_history is not None else []
         self._flags_disabled = False
         # The flags currently on show, keyed by flag name, so a flag named by
