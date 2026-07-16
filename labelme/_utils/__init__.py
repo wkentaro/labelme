@@ -4,7 +4,6 @@ from .image import img_arr_to_data
 from .image import img_b64_to_arr
 from .image import img_data_to_arr
 from .image import img_data_to_pil
-from .image import img_pil_to_data
 from .image import img_qt_to_arr
 from .qt import add_actions
 from .qt import apply_color_theme
