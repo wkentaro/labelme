@@ -177,6 +177,13 @@ def _make_square_polygon() -> Shape:
     )
 
 
+def _make_open_linestrip() -> Shape:
+    return Shape(
+        shape_type="linestrip",
+        points=np.array([(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+
+
 @pytest.mark.parametrize(
     # One row per ShapeType member; changing an existing type's membership in
     # POLYLINE_SHAPE_TYPES flips can_add_point and fails its row here.
@@ -381,6 +388,29 @@ def test_nearest_edge_index_returns_none_for_empty_shape() -> None:
     )
 
     assert index is None
+
+
+def test_nearest_edge_index_ignores_phantom_closing_edge_for_linestrip() -> None:
+    # A linestrip is open, so the segment from the last point back to the first
+    # is never rendered and must not register as a hit. (5, 5) lies exactly on
+    # that phantom diagonal but far from every drawn segment.
+    shape = _make_open_linestrip()
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([5.0, 5.0]), scale=1.0, epsilon=2.0
+    )
+
+    assert index is None
+
+
+def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
+    shape = _make_open_linestrip()
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=1.0
+    )
+
+    assert index == 1
 
 
 def test_nearest_vertex_index_returns_nearest_within_epsilon() -> None:
