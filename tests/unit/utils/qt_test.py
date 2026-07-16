@@ -50,6 +50,16 @@ def test_project_point_on_perpendicular_line(
     assert (projected.x(), projected.y()) == pytest.approx(expected)
 
 
+def test_project_point_on_perpendicular_line_zero_length_returns_point() -> None:
+    # A zero-length line has no direction, so the perpendicular is undefined and
+    # the point is returned unchanged instead of dividing by the zero length.
+    point = QPointF(4.0, 7.0)
+    projected = project_point_on_perpendicular_line(
+        point=point, line_start=QPointF(2.0, 2.0), line_end=QPointF(2.0, 2.0)
+    )
+    assert (projected.x(), projected.y()) == pytest.approx((4.0, 7.0))
+
+
 @pytest.mark.parametrize(
     "point, expected",
     [
@@ -62,6 +72,16 @@ def test_project_point_on_line(point: QPointF, expected: tuple[float, float]) ->
         point=point, line_start=QPointF(0.0, 0.0), line_end=QPointF(10.0, 0.0)
     )
     assert (projected.x(), projected.y()) == pytest.approx(expected)
+
+
+def test_project_point_on_line_zero_length_returns_point() -> None:
+    # A zero-length line has no direction to project onto, so the point is
+    # returned unchanged instead of dividing by the zero length.
+    point = QPointF(4.0, 7.0)
+    projected = project_point_on_line(
+        point=point, line_start=QPointF(2.0, 2.0), line_end=QPointF(2.0, 2.0)
+    )
+    assert (projected.x(), projected.y()) == pytest.approx((4.0, 7.0))
 
 
 # ---------------------------------------------------------------------------
