@@ -26,6 +26,16 @@ def test_removed_flag_errors_as_unknown(
     assert exc.value.code == 2
 
 
+@pytest.mark.parametrize("output", ["notes.json", "notes.JSON"])
+def test_output_rejects_json_file_path_case_insensitively(
+    output: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(sys, "argv", ["labelme", "--output", output])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == 2
+
+
 @pytest.mark.parametrize(
     ("argv", "canonical"),
     [
