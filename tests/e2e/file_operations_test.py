@@ -100,6 +100,69 @@ def test_delete_label_file_keeps_image(
 
 
 @pytest.mark.gui
+def test_delete_file_respects_output_dir(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    saved_path = tmp_path / "2011_000003.json"
+    image_adjacent_path = data_path / "raw/2011_000003.json"
+    assert not saved_path.exists()
+    assert not image_adjacent_path.exists()
+
+    # Before any save, no label file is tracked, so the prospective path must
+    # still resolve under the output dir rather than next to the image.
+    assert win.current_label_file_path() == str(saved_path)
+    assert not win.has_label_file()
+
+    win.save_labels(label_path=str(saved_path))
+    assert saved_path.exists()
+
+    assert win.current_label_file_path() == str(saved_path)
+    assert win.has_label_file()
+
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    win.delete_file()
+    qtbot.wait(50)
+
+    assert not saved_path.exists()
+    assert not image_adjacent_path.exists()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_current_label_file_path_prefers_opened_file(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    opened_path = data_path / "annotated/2011_000003.json"
+    win = main_win(
+        file_or_dir=str(opened_path),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    assert win.current_label_file_path() == str(opened_path)
+    assert win.has_label_file()
+    assert not (tmp_path / "2011_000003.json").exists()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_undo_after_delete_file_does_not_restore_shapes(
     main_win: MainWinFactory,
     qtbot: QtBot,
