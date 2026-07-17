@@ -116,6 +116,63 @@ def test_close_choose_save_writes_json_and_closes(
 
 
 @pytest.mark.gui
+def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    _raw_win_no_autosave: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
+
+    expected_json = tmp_path / _OUTPUT_JSON_NAME
+    assert _is_dirty(win=_raw_win_no_autosave)
+
+    _intercept_question(
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Save
+    )
+    monkeypatch.setattr(_raw_win_no_autosave, "prompt_save_file_path", lambda: "")
+
+    _raw_win_no_autosave.close()
+
+    assert _raw_win_no_autosave.isVisible()
+    assert _is_dirty(win=_raw_win_no_autosave)
+    assert not expected_json.exists()
+
+    close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
+
+
+@pytest.mark.gui
+def test_close_choose_save_but_write_fails_keeps_window_open(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    _raw_win_no_autosave: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
+
+    assert _is_dirty(win=_raw_win_no_autosave)
+
+    _intercept_question(
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Save
+    )
+    monkeypatch.setattr(
+        _raw_win_no_autosave,
+        "prompt_save_file_path",
+        lambda: str(tmp_path / _OUTPUT_JSON_NAME),
+    )
+    monkeypatch.setattr(_raw_win_no_autosave, "save_labels", lambda label_path: False)
+
+    _raw_win_no_autosave.close()
+
+    assert _raw_win_no_autosave.isVisible()
+    assert _is_dirty(win=_raw_win_no_autosave)
+
+    close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
+
+
+@pytest.mark.gui
 def test_close_choose_discard_no_json_window_closes(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
