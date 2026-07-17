@@ -88,7 +88,7 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
     ai = config_from_yaml.get("ai")
     if (
         isinstance(ai, dict)
-        and (model_name := ai.get("default"))
+        and isinstance(model_name := ai.get("default"), str)
         and (m := re.match(r"^SegmentAnything \((.*)\)$", model_name))
     ):
         model_name_new: str = f"Sam ({m.group(1)})"
