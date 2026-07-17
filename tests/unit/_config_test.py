@@ -66,6 +66,23 @@ def test_migrate_ai_model_name(input_name: str, expected_name: str) -> None:
     assert config["ai"]["default"] == expected_name
 
 
+@pytest.mark.parametrize("model_name", [True, 42, ["Sam"]])
+def test_migrate_tolerates_non_string_ai_default(model_name: object) -> None:
+    config: dict = {"ai": {"default": model_name}}
+    _config._migrate_config_from_file(config)
+    assert config["ai"]["default"] == model_name
+
+
+def test_load_config_keeps_other_keys_when_ai_default_is_not_a_string(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("labels:\n  - cat\n  - dog\nai:\n  default: true\n")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["ai"]["default"] is True
+    assert config["labels"] == ["cat", "dog"]
+
+
 _POLYGON_TO_SHAPE_RENAMES = {
     "edit_polygon": "edit_shape",
     "delete_polygon": "delete_shape",
