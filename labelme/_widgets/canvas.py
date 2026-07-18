@@ -1932,21 +1932,27 @@ def _compute_intersection_edges_image(
 
     # Liang-Barsky line clipping.
     boundary_pairs = (
-        (start_x, -delta_x),
-        (width - start_x, delta_x),
-        (start_y, -delta_y),
-        (height - start_y, delta_y),
+        ("x", start_x, -delta_x),
+        ("x", width - start_x, delta_x),
+        ("y", start_y, -delta_y),
+        ("y", height - start_y, delta_y),
     )
     t_exit = 1.0
-    for numerator, denominator in boundary_pairs:
+    exit_axis = "x"
+    for axis, numerator, denominator in boundary_pairs:
         if denominator > 0.0:
-            t_exit = min(t_exit, numerator / denominator)
+            t = numerator / denominator
+            if t < t_exit:
+                t_exit = t
+                exit_axis = axis
 
     if t_exit > 0.0:
         return QPointF(start_x + t_exit * delta_x, start_y + t_exit * delta_y)
 
-    # t_exit == 0: start is on a boundary, p2 is exterior — slide along the edge.
-    if start_x <= 0.0 or start_x >= width:
+    # t_exit == 0: start is on a boundary and p2 is exterior. Slide along the
+    # edge the segment actually exits through. At a corner start sits on both an
+    # x and a y boundary, so the exiting axis, not start's position, picks it.
+    if exit_axis == "x":
         return QPointF(start_x, np.clip(p2.y(), 0.0, height))
     return QPointF(np.clip(p2.x(), 0.0, width), start_y)
 
