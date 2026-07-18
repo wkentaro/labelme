@@ -113,16 +113,3 @@ def shapes_to_label(
         ins[mask] = ins_id
 
     return cls, ins
-
-
-def masks_to_bboxes(masks: NDArray[np.bool_]) -> NDArray[np.float32]:
-    if masks.ndim != 3:
-        raise ValueError(f"masks.ndim must be 3, but it is {masks.ndim}")
-    if masks.dtype != bool:
-        raise ValueError(f"masks.dtype must be bool type, but it is {masks.dtype}")
-    bboxes = []
-    for mask in masks:
-        where = np.argwhere(mask)
-        (y1, x1), (y2, x2) = where.min(0), where.max(0) + 1
-        bboxes.append((y1, x1, y2, x2))
-    return np.asarray(bboxes, dtype=np.float32)

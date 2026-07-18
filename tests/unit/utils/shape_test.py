@@ -225,36 +225,3 @@ def test_shape_to_mask_point_marks_pixels_around_center() -> None:
     assert mask[60, 43]  # 3px from center, inside point_size=5
     assert mask[62, 40]  # off the center row: a filled disk, not a horizontal line
     assert not mask[60, 46]  # 1px past the point_size=5 edge
-
-
-def test_masks_to_bboxes_returns_yxyx_bboxes() -> None:
-    masks = np.zeros((2, 10, 10), dtype=bool)
-    masks[0, 2:5, 3:7] = True
-    masks[1, 0:3, 0:4] = True
-    bboxes = shape_module.masks_to_bboxes(masks)
-    assert bboxes.shape == (2, 4)
-    assert bboxes.dtype == np.float32
-    # bboxes are returned in (y1, x1, y2, x2) order, not the more common xyxy.
-    assert np.array_equal(bboxes[0], [2, 3, 5, 7])
-    assert np.array_equal(bboxes[1], [0, 0, 3, 4])
-
-
-def test_masks_to_bboxes_raises_for_wrong_ndim() -> None:
-    masks = np.zeros((10, 10), dtype=bool)
-    with pytest.raises(ValueError, match=r"masks\.ndim must be 3"):
-        shape_module.masks_to_bboxes(masks)
-
-
-def test_masks_to_bboxes_raises_for_non_bool_dtype() -> None:
-    masks = np.zeros((1, 10, 10), dtype=np.uint8)
-    with pytest.raises(ValueError, match=r"masks\.dtype must be bool"):
-        shape_module.masks_to_bboxes(masks)
-
-
-def test_masks_to_bboxes_raises_for_all_false_mask() -> None:
-    # An all-False mask has no foreground pixels, so no bbox is defined: the
-    # implementation currently raises rather than returning a sentinel. Pin that
-    # behavior without depending on numpy's internal message.
-    masks = np.zeros((1, 10, 10), dtype=bool)
-    with pytest.raises(ValueError):
-        shape_module.masks_to_bboxes(masks)
