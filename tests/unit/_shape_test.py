@@ -223,6 +223,36 @@ def test_insert_point_records_label() -> None:
     assert int(shape.point_labels[0]) == 0
 
 
+def test_insert_point_is_noop_for_non_polyline() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+
+    shape.insert_point(i=1, point=(5.0, 5.0))
+
+    assert len(shape.points) == 2
+    assert len(shape.point_labels) == 2
+
+
+def test_insert_point_noop_logs_shape_state() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+    messages: list[str] = []
+    sink_id = logger.add(
+        lambda m: messages.append(m.record["message"]), level="WARNING"
+    )
+
+    try:
+        shape.insert_point(i=1, point=(5.0, 5.0))
+    finally:
+        logger.remove(sink_id)
+
+    assert messages == ["Cannot add point to: shape_type='rectangle', len(points)=2"]
+
+
 def test_can_remove_point_polygon_requires_more_than_three() -> None:
     shape = _make_square_polygon()
     assert shape.can_remove_point() is True

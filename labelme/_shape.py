@@ -57,6 +57,13 @@ class Shape:
         return self.shape_type in POLYLINE_SHAPE_TYPES
 
     def insert_point(self, i: int, point: npt.ArrayLike, label: int = 1) -> None:
+        if not self.can_add_point():
+            logger.warning(
+                "Cannot add point to: shape_type={!r}, len(points)={:d}",
+                self.shape_type,
+                len(self.points),
+            )
+            return
         point = np.asarray(point, dtype=np.float64).reshape(2)
         self.points = np.insert(self.points, i, point, axis=0)
         self.point_labels = np.insert(self.point_labels, i, label)
