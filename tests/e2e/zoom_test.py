@@ -178,3 +178,30 @@ def test_canvas_wheel_event_dispatches_signal(
         assert non_zero[0] == (angle_delta.y(), expected_orientation)
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "config_overrides",
+    [
+        None,
+        {"shortcuts": {"zoom_out": ["Ctrl+-", "Ctrl+_"]}},
+        {"shortcuts": {"zoom_in": None}},
+        {"shortcuts": {"zoom_in": ["Z", "Ctrl+Z"]}},
+    ],
+)
+def test_zoom_widget_whats_this_renders_shortcuts_cleanly(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    pause: bool,
+    config_overrides: dict | None,
+) -> None:
+    win = main_win(config_overrides=config_overrides)
+
+    whats_this = win._canvas_widgets.zoom_widget.whatsThis()
+
+    assert "also work on the canvas" in whats_this
+    assert "[" not in whats_this
+    assert "'" not in whats_this
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

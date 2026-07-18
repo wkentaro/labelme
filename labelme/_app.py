@@ -675,6 +675,11 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom_box_layout.addWidget(self._canvas_widgets.zoom_widget)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())
         zoom_widget_action.defaultWidget().setLayout(zoom_box_layout)
+        zoom_shortcut_hint = ", ".join(
+            _utils.format_shortcut(text)
+            for shortcut in [shortcuts["zoom_in"], shortcuts["zoom_out"]]
+            if (text := _utils.primary_shortcut(shortcut))
+        )
         self._canvas_widgets.zoom_widget.setWhatsThis(
             str(
                 self.tr(
@@ -682,9 +687,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     "{} and {} also work on the canvas."
                 )
             ).format(
-                _utils.format_shortcut(
-                    f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"
-                ),
+                zoom_shortcut_hint,
                 _utils.format_shortcut(self.tr("Ctrl+Wheel")),
             )
         )

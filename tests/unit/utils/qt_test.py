@@ -16,6 +16,7 @@ from labelme._utils.qt import format_shortcut
 from labelme._utils.qt import label_validator
 from labelme._utils.qt import new_action
 from labelme._utils.qt import new_icon
+from labelme._utils.qt import primary_shortcut
 from labelme._utils.qt import project_point_on_line
 from labelme._utils.qt import project_point_on_perpendicular_line
 
@@ -106,9 +107,28 @@ def test_format_shortcut(text: str, modifier: str, key: str) -> None:
     assert "+" in result or result.index(modifier) < result.index(key)
 
 
-def test_format_shortcut_raises_without_plus() -> None:
-    with pytest.raises(ValueError):
-        format_shortcut("CtrlS")
+def test_format_shortcut_of_single_key_bolds_whole_text() -> None:
+    assert format_shortcut("Delete") == "<b>Delete</b>"
+
+
+# ---------------------------------------------------------------------------
+# primary_shortcut
+# ---------------------------------------------------------------------------
+
+
+def test_primary_shortcut_returns_string_unchanged() -> None:
+    assert primary_shortcut("Ctrl+-") == "Ctrl+-"
+
+
+def test_primary_shortcut_picks_first_alias_of_list() -> None:
+    assert primary_shortcut(["Ctrl++", "Ctrl+="]) == "Ctrl++"
+
+
+@pytest.mark.parametrize("shortcut", [[], None, ""])
+def test_primary_shortcut_of_disabled_shortcut_is_empty(
+    shortcut: list[str] | None | str,
+) -> None:
+    assert primary_shortcut(shortcut) == ""
 
 
 # ---------------------------------------------------------------------------

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed clicking or hovering near a linestrip's unrendered "closing" line (the straight path from its last point back to its first) being treated as a hit on the shape; edge hover, add-point-to-edge, and body selection now ignore that phantom segment, since a linestrip is an open polyline and never draws it ([#2307](https://github.com/wkentaro/labelme/pull/2307))
 - Fixed the `--output` guard rejecting only lowercase `.json` paths; an upper- or mixed-case file path such as `--output notes.JSON` slipped past the "expects a directory" check and was treated as an output directory. The guard now reuses the canonical case-insensitive `is_label_file_path` helper ([#2317](https://github.com/wkentaro/labelme/pull/2317))
+- Fixed the zoom control's "What's This" help (Shift+F1 on the Zoom widget) rendering a raw Python list — `['Ctrl++', 'Ctrl+='],Ctrl+-` — instead of readable shortcuts; the `zoom_in` shortcut is configured as a list of key aliases, so its primary alias is now shown and each shortcut is formatted independently (a disabled or empty shortcut is skipped instead of crashing) ([#2349](https://github.com/wkentaro/labelme/pull/2349))
 
 ## [7.0.4] - 2026-07-12
 
