@@ -19,12 +19,14 @@ from labelme._shape import ShapeType
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _compute_intersection_edges_image
 from labelme._widgets.canvas import _compute_overscroll_slack
+from labelme._widgets.canvas import _draft_to_shape
 from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
 from labelme._widgets.canvas import _normalize_bbox_points
 from labelme._widgets.canvas import _opposite_corner_in_parallelogram
 from labelme._widgets.canvas import _project_oriented_rectangle_corners
 from labelme._widgets.canvas import _reproject_oriented_rectangle_corners
+from labelme._widgets.canvas import _shape_to_draft
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -652,6 +654,170 @@ def test_retype_draft_into_fresh_shape_type() -> None:
     assert rebuilt.shape_type == "rectangle"
     assert rebuilt.points == (QPointF(10, 10), QPointF(20, 20))
     assert rebuilt.point_labels == (1, 1)
+
+
+def test_add_point_appends_point_with_default_label() -> None:
+    draft = _DraftShape(shape_type="polygon").add_point(QPointF(1, 2))
+
+    assert draft.points == (QPointF(1, 2),)
+    assert draft.point_labels == (1,)
+    assert draft.closed is False
+
+
+def test_add_point_appends_with_explicit_label() -> None:
+    draft = _DraftShape(shape_type="points").add_point(QPointF(3, 4), label=0)
+
+    assert draft.points == (QPointF(3, 4),)
+    assert draft.point_labels == (0,)
+
+
+def test_add_point_autoclose_closes_when_new_point_matches_first() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0), QPointF(10, 10)),
+        point_labels=(1, 1, 1),
+    )
+
+    closed = start.add_point(QPointF(0, 0), autoclose=True)
+
+    assert closed.closed is True
+    assert closed.points == start.points  # first point is not re-appended
+    assert closed.point_labels == start.point_labels
+
+
+def test_add_point_autoclose_appends_when_new_point_differs_from_first() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 1),
+    )
+
+    grown = start.add_point(QPointF(10, 10), autoclose=True)
+
+    assert grown.closed is False
+    assert grown.points == (QPointF(0, 0), QPointF(10, 0), QPointF(10, 10))
+
+
+def test_add_point_autoclose_on_empty_draft_appends_seed_point() -> None:
+    # No first point to match against, so autoclose falls through to a normal append.
+    draft = _DraftShape(shape_type="polygon").add_point(QPointF(5, 5), autoclose=True)
+
+    assert draft.closed is False
+    assert draft.points == (QPointF(5, 5),)
+
+
+def test_add_point_without_autoclose_appends_even_when_matching_first() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 1),
+    )
+
+    grown = start.add_point(QPointF(0, 0))
+
+    assert grown.closed is False
+    assert grown.points == (QPointF(0, 0), QPointF(10, 0), QPointF(0, 0))
+
+
+def test_pop_point_removes_last_point_and_label() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 0),
+    )
+
+    popped = start.pop_point()
+
+    assert popped.points == (QPointF(0, 0),)
+    assert popped.point_labels == (1,)
+
+
+def test_pop_point_on_empty_draft_returns_same_instance() -> None:
+    draft = _DraftShape(shape_type="polygon")
+
+    assert draft.pop_point() is draft
+
+
+def test_close_and_open_toggle_closed_and_preserve_other_fields() -> None:
+    draft = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 1),
+    )
+
+    closed = draft.close()
+    reopened = closed.open()
+
+    assert closed.closed is True
+    assert reopened.closed is False
+    for toggled in (closed, reopened):
+        assert toggled.points == draft.points
+        assert toggled.point_labels == draft.point_labels
+        assert toggled.shape_type == draft.shape_type
+
+
+def test_draft_to_shape_carries_points_labels_and_closed() -> None:
+    draft = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0), QPointF(10, 10)),
+        point_labels=(1, 0, 1),
+        closed=True,
+    )
+
+    shape = _draft_to_shape(draft)
+
+    assert shape.shape_type == "polygon"
+    assert shape.closed is True
+    np.testing.assert_array_equal(
+        shape.points, np.array([[0, 0], [10, 0], [10, 10]], dtype=np.float64)
+    )
+    np.testing.assert_array_equal(
+        shape.point_labels, np.array([1, 0, 1], dtype=np.int_)
+    )
+
+
+def test_shape_to_draft_carries_points_labels_and_closed() -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([[0, 0], [10, 0], [10, 10]], dtype=np.float64),
+        point_labels=np.array([1, 0, 1], dtype=np.int_),
+        closed=True,
+    )
+
+    draft = _shape_to_draft(shape)
+
+    assert draft.shape_type == "polygon"
+    assert draft.closed is True
+    assert draft.points == (QPointF(0, 0), QPointF(10, 0), QPointF(10, 10))
+    assert draft.point_labels == (1, 0, 1)
+
+
+def test_draft_and_shape_round_trip_preserves_values() -> None:
+    draft = _DraftShape(
+        shape_type="points",
+        points=(QPointF(1, 2), QPointF(3, 4)),
+        point_labels=(1, 0),
+        closed=False,
+    )
+
+    assert _shape_to_draft(_draft_to_shape(draft)) == draft
+
+
+def test_converters_preserve_mismatched_points_and_labels_lengths() -> None:
+    # A finalized rectangle/circle/line carries 2 points but a single point_label;
+    # undo_last_line round-trips exactly such a Shape back through _shape_to_draft,
+    # so the converters must not zip or pad the two to equal length.
+    draft = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1,),
+    )
+
+    shape = _draft_to_shape(draft)
+
+    assert len(shape.points) == 2
+    assert len(shape.point_labels) == 1
+    assert _shape_to_draft(shape) == draft
 
 
 _IMAGE_SIZE: Final[QSize] = QSize(100, 50)
