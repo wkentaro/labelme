@@ -29,6 +29,7 @@ from labelme._widgets.canvas import _project_oriented_rectangle_corners
 from labelme._widgets.canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets.canvas import _shape_to_draft
 from labelme._widgets.canvas import _should_reselect_on_right_press
+from labelme._widgets.canvas import _snap_cursor_pos_for_square
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -1034,6 +1035,31 @@ def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
         )
         is hovered
     )
+
+
+@pytest.mark.parametrize(
+    ("pos", "opposite_vertex", "expected"),
+    [
+        pytest.param((10, 4), (0, 0), (4.0, 4.0), id="wider_than_tall_snaps_to_height"),
+        pytest.param((4, 10), (0, 0), (4.0, 4.0), id="taller_than_wide_snaps_to_width"),
+        pytest.param((-10, 4), (0, 0), (-4.0, 4.0), id="preserves_negative_x_sign"),
+        pytest.param((10, -4), (0, 0), (4.0, -4.0), id="preserves_negative_y_sign"),
+        pytest.param((-10, -4), (0, 0), (-4.0, -4.0), id="preserves_both_signs"),
+        pytest.param((5, 5), (2, 3), (4.0, 5.0), id="offsets_from_opposite_vertex"),
+        pytest.param((6, 6), (2, 2), (6.0, 6.0), id="already_square_is_unchanged"),
+        pytest.param((0, 5), (0, 0), (0.0, 0.0), id="collapses_when_one_axis_is_zero"),
+        pytest.param((0, 0), (0, 0), (0.0, 0.0), id="zero_delta_stays_put"),
+    ],
+)
+def test_snap_cursor_pos_for_square(
+    pos: tuple[float, float],
+    opposite_vertex: tuple[float, float],
+    expected: tuple[float, float],
+) -> None:
+    result = _snap_cursor_pos_for_square(
+        pos=QPointF(*pos), opposite_vertex=QPointF(*opposite_vertex)
+    )
+    assert (result.x(), result.y()) == pytest.approx(expected)
 
 
 def _make_polygon() -> Shape:
