@@ -100,6 +100,56 @@ def test_point_shape_label_is_drawn(qapp: QtGui.QGuiApplication) -> None:
     )
 
 
+def _mask_shape() -> Shape:
+    # A non-square True block at an asymmetric origin, so its x and y centers
+    # differ and the test pins the row/col-to-x/y axis mapping (a swap in either
+    # the origin offset or the point construction would move the outline off the
+    # expected center). The block stays clear of the bbox rect, which for a mask
+    # shape is the only other stroke drawn.
+    mask = np.zeros((40, 40), dtype=bool)
+    mask[12:20, 16:26] = True
+    return Shape(
+        label=None,
+        shape_type="mask",
+        points=np.array([[5, 8], [45, 48]], dtype=np.float64),
+        mask=mask,
+    )
+
+
+def _outline_center(image: QtGui.QImage) -> tuple[float, float]:
+    # Restrict to the central window so the bbox rect at the edges does not
+    # contaminate the mask block's outline; the opaque line color isolates the
+    # outline from the semi-transparent fill blended over the white canvas.
+    xs = []
+    ys = []
+    for y in range(15, 35):
+        for x in range(15, 35):
+            c = image.pixelColor(x, y)
+            if (c.red(), c.green(), c.blue()) == (255, 0, 0):
+                xs.append(x)
+                ys.append(y)
+    assert xs and ys
+    return (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+
+
+@pytest.mark.gui
+def test_mask_outline_aligns_with_fill(qapp: QtGui.QGuiApplication) -> None:
+    # The mask fill is rasterized at the correct position; the contour outline
+    # must be centered on that same block, not sit a pixel off from it.
+    shape = _mask_shape()
+    image = _render(shape, show_label=False)
+    outline = _outline_center(image)
+    assert shape.mask is not None
+    ys, xs = np.nonzero(shape.mask)
+    origin = shape.points[0]
+    expected = (
+        origin[0] + (xs.min() + xs.max()) / 2,
+        origin[1] + (ys.min() + ys.max()) / 2,
+    )
+    assert abs(outline[0] - expected[0]) <= 0.5
+    assert abs(outline[1] - expected[1]) <= 0.5
+
+
 @pytest.mark.gui
 def test_label_anchor_tracks_scale(qapp: QtGui.QGuiApplication) -> None:
     shape = _polygon(label="car")

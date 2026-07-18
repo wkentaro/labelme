@@ -140,9 +140,12 @@ def _paint_shape_mask(
     painter.drawImage(target_rect, qimage)
 
     path = QtGui.QPainterPath()
-    contours = skimage.measure.find_contours(np.pad(shape.mask, pad_width=1))
+    # Pad so a region touching the mask border still has a background ring to
+    # close its contour against; the resulting offset is removed below.
+    PAD: Final[int] = 1
+    contours = skimage.measure.find_contours(np.pad(shape.mask, pad_width=PAD))
     for contour in contours:
-        contour = contour + [origin[1], origin[0]]
+        contour = contour - PAD + [origin[1], origin[0]]
         path.moveTo(QtCore.QPointF(contour[0, 1], contour[0, 0]) * context.scale)
         for point in contour[1:]:
             path.lineTo(QtCore.QPointF(point[1], point[0]) * context.scale)
