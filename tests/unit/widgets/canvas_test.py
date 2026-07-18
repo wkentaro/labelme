@@ -883,6 +883,66 @@ _IMAGE_SIZE: Final[QSize] = QSize(100, 50)
             QPointF(100, 50),
             id="on_bottom_right_corner_pushed_diagonally_out_stays",
         ),
+        pytest.param(
+            QPointF(100, 0),
+            QPointF(50, -10),
+            QPointF(50, 0),
+            id="on_top_right_corner_dragged_left_slides_along_top_edge",
+        ),
+        pytest.param(
+            QPointF(0, 50),
+            QPointF(60, 55),
+            QPointF(60, 50),
+            id="on_bottom_left_corner_dragged_right_slides_along_bottom_edge",
+        ),
+        pytest.param(
+            QPointF(100, 0),
+            QPointF(120, 25),
+            QPointF(100, 25),
+            id="on_top_right_corner_dragged_right_slides_along_right_edge",
+        ),
+        pytest.param(
+            QPointF(0, 0),
+            QPointF(50, -10),
+            QPointF(50, 0),
+            id="on_top_left_corner_dragged_right_slides_along_top_edge",
+        ),
+        pytest.param(
+            QPointF(0, 0),
+            QPointF(-10, 25),
+            QPointF(0, 25),
+            id="on_top_left_corner_dragged_down_slides_along_left_edge",
+        ),
+        pytest.param(
+            QPointF(0, 50),
+            QPointF(-10, 25),
+            QPointF(0, 25),
+            id="on_bottom_left_corner_dragged_up_slides_along_left_edge",
+        ),
+        pytest.param(
+            QPointF(100, 50),
+            QPointF(50, 60),
+            QPointF(50, 50),
+            id="on_bottom_right_corner_dragged_left_slides_along_bottom_edge",
+        ),
+        pytest.param(
+            QPointF(100, 50),
+            QPointF(110, 25),
+            QPointF(100, 25),
+            id="on_bottom_right_corner_dragged_up_slides_along_right_edge",
+        ),
+        pytest.param(
+            QPointF(100, 0),
+            QPointF(110, -5),
+            QPointF(100, 0),
+            id="on_top_right_corner_pushed_diagonally_out_stays",
+        ),
+        pytest.param(
+            QPointF(0, 50),
+            QPointF(-5, 55),
+            QPointF(0, 50),
+            id="on_bottom_left_corner_pushed_diagonally_out_stays",
+        ),
     ],
 )
 def test_compute_intersection_edges_image(
