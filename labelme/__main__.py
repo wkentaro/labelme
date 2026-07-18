@@ -35,20 +35,10 @@ class _LoggerIO(io.StringIO):
             logger.debug(stripped_s)
         return len(s)
 
-    def flush(self) -> None:
-        pass
-
-    def writable(self) -> bool:
-        return True
-
     def readable(self) -> bool:
         return False
 
     def seekable(self) -> bool:
-        return False
-
-    @property
-    def closed(self) -> bool:
         return False
 
 
