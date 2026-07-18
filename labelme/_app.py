@@ -1805,9 +1805,9 @@ class MainWindow(QtWidgets.QMainWindow):
             items = self._docks.file_list.findItems(
                 self._image_path, Qt.MatchFlag.MatchExactly
             )
-            if len(items) > 0:
-                if len(items) != 1:
-                    raise RuntimeError("There are duplicate files.")
+            if len(items) > 1:
+                raise RuntimeError("There are duplicate files.")
+            if items:
                 items[0].setCheckState(Qt.CheckState.Checked)
             return True
         except LabelFileError as e:
