@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed clicking or hovering near a linestrip's unrendered "closing" line (the straight path from its last point back to its first) being treated as a hit on the shape; edge hover, add-point-to-edge, and body selection now ignore that phantom segment, since a linestrip is an open polyline and never draws it ([#2307](https://github.com/wkentaro/labelme/pull/2307))
 - Fixed the `--output` guard rejecting only lowercase `.json` paths; an upper- or mixed-case file path such as `--output notes.JSON` slipped past the "expects a directory" check and was treated as an output directory. The guard now reuses the canonical case-insensitive `is_label_file_path` helper ([#2317](https://github.com/wkentaro/labelme/pull/2317))
+- Fixed the AI-model download progress dialog formatting sizes incorrectly: multi-GB models (e.g. SAM ~1.7 GB) showed as thousands of MB, and byte counts just under a unit boundary rolled up to `1024 KB`/`1024.0 MB` instead of `1.0 MB`/`1.0 GB`; sizes now use a GB tier and rounding-safe unit boundaries ([#2324](https://github.com/wkentaro/labelme/pull/2324))
 
 ## [7.0.4] - 2026-07-12
 
