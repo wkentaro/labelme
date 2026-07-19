@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from labelme._label_file import ShapeDict
 from labelme._utils import shape as shape_module
@@ -102,6 +103,64 @@ def test_shapes_to_label_groups_instances_by_label_and_group_id() -> None:
     assert ins[2, 2] == 1  # first (label, group_id) pair
     assert ins[12, 12] == 2  # different group_id -> distinct instance
     assert ins[17, 17] == 1  # same (label, group_id) as the first -> same instance
+
+
+def _mask_shape(points: list[list[float]], mask: NDArray[np.bool_]) -> ShapeDict:
+    return ShapeDict(
+        label="car",
+        points=points,
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=mask,
+        other_data={},
+    )
+
+
+def test_shapes_to_label_mask_paints_bbox_pixels() -> None:
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=[[2.0, 1.0], [6.0, 3.0]], mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[1:4, 2:7] = True
+    assert np.array_equal(cls > 0, painted)
+
+
+def test_shapes_to_label_mask_clips_bbox_off_left_edge() -> None:
+    # bbox lies entirely off the left edge, so nothing should be painted; a raw
+    # negative slice would wrap the patch onto the opposite edge instead (ADR 0004).
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=[[-6.0, 1.0], [-2.0, 3.0]], mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    assert not (cls > 0).any()
+
+
+def test_shapes_to_label_mask_clips_bbox_over_right_edge() -> None:
+    # bbox overflows the right edge; the in-image part is painted and the rest is
+    # clipped rather than raising a broadcast error (ADR 0004).
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=[[17.0, 1.0], [21.0, 3.0]], mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[1:4, 17:20] = True
+    assert np.array_equal(cls > 0, painted)
+
+
+def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
+    # bbox straddles the top-left corner; only the on-canvas sub-block of the
+    # patch is painted, offset into the patch so its content stays aligned rather
+    # than wrapping or shifting (ADR 0004). The two asymmetric marks would catch a
+    # wrong source offset or an x/y swap that a uniform patch cannot.
+    patch = np.zeros((5, 5), dtype=bool)
+    patch[1, 2] = True  # -> canvas (0, 0)
+    patch[4, 4] = True  # -> canvas (3, 2)
+    shape = _mask_shape(points=[[-2.0, -1.0], [2.0, 3.0]], mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[0, 0] = True
+    painted[3, 2] = True
+    assert np.array_equal(cls > 0, painted)
 
 
 def test_shape_to_mask() -> None:
