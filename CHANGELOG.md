@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed the AI-Assisted Annotation model/output-format selection not being applied at startup when it resolves to the first list entry; the combo box only pushes a change on `currentIndexChanged`, which never fires for the already-selected index 0, so configuring `ai.default` to the first model (`EfficientSam (speed)`) or an unrecognized value (which falls back to the first entry) left the canvas silently running the hardcoded `sam2:latest` while the UI showed the chosen model. The initial selection is now pushed explicitly ([#2370](https://github.com/wkentaro/labelme/pull/2370))
 - Fixed clicking or hovering near a linestrip's unrendered "closing" line (the straight path from its last point back to its first) being treated as a hit on the shape; edge hover, add-point-to-edge, and body selection now ignore that phantom segment, since a linestrip is an open polyline and never draws it ([#2307](https://github.com/wkentaro/labelme/pull/2307))
 - Fixed the `--output` guard rejecting only lowercase `.json` paths; an upper- or mixed-case file path such as `--output notes.JSON` slipped past the "expects a directory" check and was treated as an output directory. The guard now reuses the canonical case-insensitive `is_label_file_path` helper ([#2317](https://github.com/wkentaro/labelme/pull/2317))
 

@@ -102,17 +102,19 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             logger.warning("Default AI model is not found: {!r}", default_model)
             model_index = 0
 
-        self._model_combo.currentIndexChanged.connect(
-            lambda index: on_model_changed(self._model_combo.itemData(index))
-        )
-        self._model_combo.setCurrentIndex(model_index)
+        def push_model(index: int) -> None:
+            on_model_changed(self._model_combo.itemData(index))
 
-        self._output_format_combo.currentIndexChanged.connect(
-            lambda index: on_output_format_changed(
-                self._output_format_combo.itemData(index)
-            )
-        )
+        self._model_combo.setCurrentIndex(model_index)
+        push_model(model_index)
+        self._model_combo.currentIndexChanged.connect(push_model)
+
+        def push_output_format(index: int) -> None:
+            on_output_format_changed(self._output_format_combo.itemData(index))
+
         self._output_format_combo.setCurrentIndex(0)
+        push_output_format(0)
+        self._output_format_combo.currentIndexChanged.connect(push_output_format)
 
         self.setMaximumWidth(200)
 
