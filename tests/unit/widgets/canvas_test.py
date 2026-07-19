@@ -22,6 +22,7 @@ from labelme._widgets.canvas import _compute_overscroll_slack
 from labelme._widgets.canvas import _draft_to_shape
 from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
+from labelme._widgets.canvas import _is_out_of_image
 from labelme._widgets.canvas import _normalize_bbox_points
 from labelme._widgets.canvas import _opposite_corner_in_parallelogram
 from labelme._widgets.canvas import _pick_pending_moved_shape
@@ -599,6 +600,25 @@ def test_is_degenerate_draft(
         point_labels=tuple(1 for _ in points),
     )
     assert _is_degenerate_draft(draft) is expected
+
+
+@pytest.mark.parametrize(
+    "point, expected",
+    [
+        pytest.param((0, 0), False, id="top_left_corner_inside"),
+        pytest.param((_WIDTH, _HEIGHT), False, id="bottom_right_corner_inside"),
+        pytest.param((_WIDTH / 2, _HEIGHT / 2), False, id="interior_inside"),
+        pytest.param((-0.1, _HEIGHT / 2), True, id="left_of_image"),
+        pytest.param((_WIDTH / 2, -0.1), True, id="above_image"),
+        pytest.param((_WIDTH + 0.1, _HEIGHT / 2), True, id="right_of_image"),
+        pytest.param((_WIDTH / 2, _HEIGHT + 0.1), True, id="below_image"),
+    ],
+)
+def test_is_out_of_image(point: tuple[float, float], expected: bool) -> None:
+    # The image rect is inclusive at both edges: a point exactly on the far
+    # width/height boundary counts as inside, since the clamping callers treat
+    # the pixmap size as a reachable coordinate rather than an exclusive extent.
+    assert _is_out_of_image(QPointF(*point), QSize(_WIDTH, _HEIGHT)) is expected
 
 
 @pytest.mark.gui
