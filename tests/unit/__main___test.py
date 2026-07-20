@@ -81,7 +81,9 @@ def test_canonical_flag_does_not_warn(
     ("value", "expected"),
     [
         ("cat,dog,person", ["cat", "dog", "person"]),
+        ("cat, dog, person", ["cat", "dog", "person"]),
         ("cat,,dog,", ["cat", "dog"]),
+        ("cat, , dog", ["cat", "dog"]),
         ("cat", ["cat"]),
         ("", []),
     ],

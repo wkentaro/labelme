@@ -164,7 +164,7 @@ def _parse_list_arg(value: str) -> list[str]:
     if os.path.isfile(value):
         with open(value, encoding="utf-8") as f:
             return [line.strip() for line in f if line.strip()]
-    return [line for line in value.split(",") if line]
+    return [line.strip() for line in value.split(",") if line.strip()]
 
 
 def main() -> None:
