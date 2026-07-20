@@ -198,6 +198,14 @@ def _check_image_dimensions(
 ) -> None:
     if expected_height is None and expected_width is None:
         return
+    if expected_height is not None and (
+        isinstance(expected_height, bool) or not isinstance(expected_height, int)
+    ):
+        raise TypeError(f"imageHeight must be int: {expected_height}")
+    if expected_width is not None and (
+        isinstance(expected_width, bool) or not isinstance(expected_width, int)
+    ):
+        raise TypeError(f"imageWidth must be int: {expected_width}")
     actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
