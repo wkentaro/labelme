@@ -3,6 +3,7 @@ from __future__ import annotations
 import struct
 import zlib
 from collections.abc import Callable
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -412,3 +413,35 @@ def test_shape_to_dict_requires_label() -> None:
 
     with pytest.raises(AssertionError):
         _app._shape_to_dict(shape)
+
+
+@pytest.mark.parametrize(
+    "image_or_label_path, output_dir, expected",
+    [
+        (str(Path("/data/img.png")), None, str(Path("/data/img.json"))),
+        (str(Path("/data/img.png")), Path("/out"), str(Path("/out/img.json"))),
+        (str(Path("/data/foo.json")), None, str(Path("/data/foo.json"))),
+        (str(Path("/data/foo.json")), Path("/out"), str(Path("/data/foo.json"))),
+        (str(Path("/data/a.b.png")), None, str(Path("/data/a.b.json"))),
+        (str(Path("/data/FOO.JSON")), None, str(Path("/data/FOO.JSON"))),
+    ],
+    ids=[
+        "image-sibling-json",
+        "image-honors-output-dir",
+        "label-path-passthrough",
+        "label-path-ignores-output-dir",
+        "multi-dot-stem",
+        "uppercase-suffix-passthrough",
+    ],
+)
+def test_resolve_label_path(
+    image_or_label_path: str,
+    output_dir: Path | None,
+    expected: str,
+) -> None:
+    assert (
+        _app._resolve_label_path(
+            image_or_label_path=image_or_label_path, output_dir=output_dir
+        )
+        == expected
+    )
