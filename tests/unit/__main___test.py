@@ -99,6 +99,13 @@ def test_parse_list_arg_reads_and_strips_file_lines(tmp_path: Path) -> None:
     assert _parse_list_arg(str(labels_file)) == ["cat", "dog", "person"]
 
 
+def test_parse_list_arg_splits_value_too_long_to_be_a_path() -> None:
+    labels = [f"label{i}" for i in range(60)]
+    value = ",".join(labels)
+
+    assert _parse_list_arg(value) == labels
+
+
 def test_logger_io_forwards_stripped_writes_to_debug() -> None:
     forwarded: list[tuple[str, str]] = []
     sink_id = logger.add(

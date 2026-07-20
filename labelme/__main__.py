@@ -161,7 +161,7 @@ class _DeprecatedAlias(argparse.Action):
 
 
 def _parse_list_arg(value: str) -> list[str]:
-    if Path(value).is_file():
+    if os.path.isfile(value):
         with open(value, encoding="utf-8") as f:
             return [line.strip() for line in f if line.strip()]
     return [line for line in value.split(",") if line]
@@ -278,7 +278,7 @@ def main() -> None:
         args.labels = _parse_list_arg(args.labels)
 
     if hasattr(args, "label_flags"):
-        if Path(args.label_flags).is_file():
+        if os.path.isfile(args.label_flags):
             with open(args.label_flags, encoding="utf-8") as f:
                 args.label_flags = _yaml.safe_load(f)
         else:
@@ -302,7 +302,7 @@ def main() -> None:
     else:
         config_overrides = {}
         config_file = Path(config_str)
-        if not config_file.is_file():
+        if not os.path.isfile(config_str):
             logger.error(
                 "Config file does not exist: {!r}", str(config_file.absolute())
             )
