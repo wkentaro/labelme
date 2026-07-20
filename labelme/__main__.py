@@ -346,7 +346,7 @@ def main() -> None:
     app.setStyle("Fusion")  # for consistent appearance across platforms
     apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(new_icon("icon"))
+    app.setWindowIcon(new_icon("icon-256.png"))
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,
