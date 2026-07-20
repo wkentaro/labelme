@@ -1227,7 +1227,8 @@ class MainWindow(QtWidgets.QMainWindow):
             config = _config.load_config(
                 config_file=config_file, config_overrides=config_overrides or {}
             )
-        except ValueError as e:
+        except Exception as e:
+            logger.warning("Failed to load config: {}", e)
             msg_box = QMessageBox(self)
             msg_box.setIcon(QMessageBox.Icon.Warning)
             msg_box.setWindowTitle(self.tr("Configuration Errors"))
