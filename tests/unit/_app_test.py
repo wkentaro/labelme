@@ -14,6 +14,7 @@ from labelme import __appname__
 from labelme import _app
 from labelme import _automation
 from labelme._label_file import ShapeDict
+from labelme._shape import Shape
 
 
 @pytest.mark.parametrize(
@@ -329,3 +330,73 @@ def test_shapes_from_dicts_carries_over_the_shape_fields() -> None:
     np.testing.assert_array_equal(shape.mask, mask)
     assert shape.points.dtype == np.float64
     assert shape.points.tolist() == [[1.0, 2.0], [3.0, 4.0]]
+
+
+def test_shape_to_dict_maps_all_fields() -> None:
+    shape = Shape(
+        label="cat",
+        group_id=3,
+        shape_type="rectangle",
+        flags={"occluded": True},
+        description="a cat",
+        points=np.array([[0.0, 1.0], [2.0, 3.0]], dtype=np.float64),
+        other_data={"source": "human"},
+    )
+
+    result = _app._shape_to_dict(shape)
+
+    assert result == {
+        "label": "cat",
+        "points": [[0.0, 1.0], [2.0, 3.0]],
+        "shape_type": "rectangle",
+        "flags": {"occluded": True},
+        "description": "a cat",
+        "group_id": 3,
+        "mask": None,
+        "other_data": {"source": "human"},
+    }
+    assert result["other_data"] is shape.other_data
+
+
+@pytest.mark.parametrize(
+    "flags, description, expected_flags, expected_description",
+    [
+        (None, None, {}, ""),
+        ({"occluded": True}, "note", {"occluded": True}, "note"),
+    ],
+    ids=[
+        "none-coalesced",
+        "values-preserved",
+    ],
+)
+def test_shape_to_dict_coalesces_optional_flags_and_description(
+    flags: dict[str, bool] | None,
+    description: str | None,
+    expected_flags: dict[str, bool],
+    expected_description: str,
+) -> None:
+    shape = Shape(label="cat", flags=flags, description=description)
+
+    result = _app._shape_to_dict(shape)
+
+    assert result["flags"] == expected_flags
+    assert result["description"] == expected_description
+
+
+def test_shape_to_dict_passes_mask_through_unchanged() -> None:
+    mask = np.zeros((2, 2), dtype=bool)
+    shape = Shape(
+        label="cat",
+        shape_type="mask",
+        mask=mask,
+        points=np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float64),
+    )
+
+    assert _app._shape_to_dict(shape)["mask"] is mask
+
+
+def test_shape_to_dict_requires_label() -> None:
+    shape = Shape(label=None)
+
+    with pytest.raises(AssertionError):
+        _app._shape_to_dict(shape)
