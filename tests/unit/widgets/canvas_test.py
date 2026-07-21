@@ -271,6 +271,46 @@ def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
     assert canvas.shapes[0].visible is False
 
 
+def _make_rectangle(label: str | None) -> Shape:
+    return Shape(
+        label=label,
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+
+
+@pytest.mark.gui
+def test_set_last_label_applies_only_to_trailing_unlabeled_run(
+    canvas: Canvas,
+) -> None:
+    # After the label dialog is accepted, _app labels the batch of just-drawn
+    # shapes via set_last_label. Those are the trailing run of still-unlabeled
+    # shapes; the backward scan must stop at the nearest labeled shape, leaving
+    # both it and any unlabeled shape before it untouched.
+    stale = _make_rectangle(label=None)
+    labeled = _make_rectangle(label="old")
+    fresh_a = _make_rectangle(label=None)
+    fresh_b = _make_rectangle(label=None)
+    canvas.load_shapes([stale, labeled, fresh_a, fresh_b])
+
+    updated = canvas.set_last_label("new", {"occluded": True})
+
+    assert updated == [fresh_a, fresh_b]
+    assert stale.label is None
+    assert labeled.label == "old"
+    assert fresh_a.label == "new"
+    assert fresh_b.label == "new"
+    assert fresh_a.flags == {"occluded": True}
+    assert fresh_b.flags == {"occluded": True}
+
+
+@pytest.mark.gui
+def test_set_last_label_rejects_empty_text(canvas: Canvas) -> None:
+    with pytest.raises(ValueError, match="text must not be empty"):
+        canvas.set_last_label("", {})
+
+
 @pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_with_empty_inference_resets_state_and_notifies(
