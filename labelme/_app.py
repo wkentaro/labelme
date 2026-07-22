@@ -2415,7 +2415,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def current_label_file_path(self) -> str:
         assert self._image_path is not None
-        return str(Path(self._image_path).with_suffix(".json"))
+        if self._label_file_path is not None:
+            return self._label_file_path
+        return _resolve_label_path(
+            image_or_label_path=self._image_path, output_dir=self._output_dir
+        )
 
     def _confirm_deletion(self, message: str) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
