@@ -7,6 +7,7 @@ import pytest
 from numpy.typing import NDArray
 
 from labelme._automation import MASK_REQUIRED_SHAPE_TYPES
+from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
 from labelme._automation import shapes_from_detections
 
@@ -149,6 +150,21 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
     expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+
+
+@pytest.mark.parametrize("shape_type", ["circle", "oriented_rectangle"])
+def test_shapes_from_detections_without_bbox_or_mask_is_dropped(
+    shape_type: AiOutputFormat,
+) -> None:
+    # circle and oriented_rectangle derive geometry from a mask, falling back to
+    # the bbox; with neither there is nothing to build, so the detection is
+    # dropped rather than emitting a degenerate shape.
+    shapes = shapes_from_detections(
+        detections=[Detection()],
+        shape_type=shape_type,
+    )
+
+    assert shapes == []
 
 
 def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
