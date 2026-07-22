@@ -151,6 +151,61 @@ def test_load_config_tolerates_removed_add_point_to_edge_shortcut(
 
 
 @pytest.mark.parametrize(
+    ("ai_polygon", "ai_mask", "expected"),
+    [
+        (True, False, True),
+        (False, True, True),
+        (True, True, True),
+        (False, False, False),
+    ],
+    ids=["polygon", "mask", "both", "neither"],
+)
+def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
+    ai_polygon: bool, ai_mask: bool, expected: bool
+) -> None:
+    config = {"canvas": {"crosshair": {"ai_polygon": ai_polygon, "ai_mask": ai_mask}}}
+    _config._migrate_config_from_file(config)
+    crosshair = config["canvas"]["crosshair"]
+    assert "ai_polygon" not in crosshair
+    assert "ai_mask" not in crosshair
+    assert crosshair["ai_points_to_shape"] is expected
+
+
+def test_migrate_ai_crosshair_keeps_explicit_ai_points_to_shape() -> None:
+    config = {
+        "canvas": {"crosshair": {"ai_polygon": True, "ai_points_to_shape": False}}
+    }
+    _config._migrate_config_from_file(config)
+    crosshair = config["canvas"]["crosshair"]
+    assert "ai_polygon" not in crosshair
+    assert crosshair["ai_points_to_shape"] is False
+
+
+def test_load_config_tolerates_legacy_ai_crosshair_keys(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        "canvas:\n  crosshair:\n    ai_polygon: true\n    ai_mask: false\n"
+    )
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["canvas"]["crosshair"]["ai_points_to_shape"] is True
+
+
+def test_migrate_leaves_malformed_crosshair_for_merge_to_report() -> None:
+    config = {"canvas": {"crosshair": "oops"}}
+    _config._migrate_config_from_file(config)
+    assert config["canvas"]["crosshair"] == "oops"
+
+
+def test_load_config_malformed_crosshair_raises(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("canvas:\n  crosshair: oops\n")
+    with pytest.raises(
+        ValueError, match="Config section 'crosshair' must be a mapping"
+    ):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+@pytest.mark.parametrize(
     ("old_config", "expected"),
     [
         ({"keep_prev_brightness": True}, {"keep_prev_brightness_contrast": True}),

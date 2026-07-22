@@ -119,6 +119,24 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
             )
             shortcuts[new_key] = shortcuts.pop(old_key)
 
+    # A malformed canvas/crosshair section is left untouched so the merge in
+    # _update_dict reports it as a config error instead of crashing.
+    canvas = config_from_yaml.get("canvas")
+    crosshair = canvas.get("crosshair") if isinstance(canvas, dict) else None
+    if not isinstance(crosshair, dict):
+        crosshair = {}
+    ai_polygon = crosshair.pop("ai_polygon", None)
+    ai_mask = crosshair.pop("ai_mask", None)
+    if ai_polygon is not None or ai_mask is not None:
+        logger.info(
+            "Migrating old config: canvas.crosshair.ai_polygon={} or "
+            "canvas.crosshair.ai_mask={} -> canvas.crosshair.ai_points_to_shape",
+            ai_polygon,
+            ai_mask,
+        )
+        if "ai_points_to_shape" not in crosshair:
+            crosshair["ai_points_to_shape"] = bool(ai_polygon) or bool(ai_mask)
+
 
 def get_user_config_file(create_if_missing: bool = True) -> str:
     user_config_path = Path("~/.labelmerc").expanduser()
