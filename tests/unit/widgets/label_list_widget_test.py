@@ -12,6 +12,7 @@ from labelme._shape import Shape
 from labelme._widgets.label_list_widget import HTMLDelegate
 from labelme._widgets.label_list_widget import LabelListWidget
 from labelme._widgets.label_list_widget import LabelListWidgetItem
+from labelme._widgets.label_list_widget import _ItemModel
 from labelme._widgets.label_list_widget import format_label_with_color_dot
 from labelme._widgets.label_list_widget import format_shape_label
 
@@ -222,3 +223,57 @@ def test_format_shape_label(
     shape: Shape, fill_rgb: tuple[int, int, int], expected: str
 ) -> None:
     assert format_shape_label(shape=shape, fill_rgb=fill_rgb) == expected
+
+
+def _model_texts(model: _ItemModel) -> list[str]:
+    return [model.item(row).text() for row in range(model.rowCount())]
+
+
+@pytest.fixture()
+def item_model(qapp: QtWidgets.QApplication) -> _ItemModel:
+    model = _ItemModel()
+    model.setItemPrototype(LabelListWidgetItem())
+    for text in ["a", "b", "c"]:
+        model.setItem(model.rowCount(), 0, LabelListWidgetItem(text=text))
+    return model
+
+
+def test_drop_on_item_inserts_after_it_without_overwriting(
+    item_model: _ItemModel,
+) -> None:
+    # Drop the dragged "c" (row 2) onto "a" (row 0) with row == -1, the way a
+    # view reports a drop landing on top of an item.
+    mime = item_model.mimeData([item_model.index(2, 0)])
+    dropped = item_model.dropMimeData(
+        mime, Qt.DropAction.MoveAction, -1, 0, item_model.index(0, 0)
+    )
+
+    assert dropped
+    # dropMimeData only inserts; the source row is removed separately by the
+    # view (via removeRows), so the dragged "c" still remains at the end here.
+    # The row/parent adjustment lands the inserted "c" right after "a" as a
+    # sibling; without it Qt would nest "c" as a hidden child of "a".
+    assert _model_texts(item_model) == ["a", "c", "b", "c"]
+
+
+def test_drop_in_empty_space_appends_to_end(item_model: _ItemModel) -> None:
+    # A drop below the last row reports row == -1 with an invalid parent.
+    mime = item_model.mimeData([item_model.index(0, 0)])
+    dropped = item_model.dropMimeData(
+        mime, Qt.DropAction.MoveAction, -1, 0, QtCore.QModelIndex()
+    )
+
+    assert dropped
+    # As above, the source row survives here (the view removes it separately);
+    # the dragged "a" is appended at the end.
+    assert _model_texts(item_model) == ["a", "b", "c", "a"]
+
+
+def test_remove_rows_emits_item_dropped(item_model: _ItemModel) -> None:
+    fired: list[None] = []
+    item_model.item_dropped.connect(lambda: fired.append(None))
+
+    item_model.removeRows(0, 1)
+
+    assert fired == [None]
+    assert _model_texts(item_model) == ["b", "c"]
