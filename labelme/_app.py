@@ -1811,7 +1811,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if items:
                 items[0].setCheckState(Qt.CheckState.Checked)
             return True
-        except LabelFileError as e:
+        except (LabelFileError, OSError, ValueError) as e:
             self.show_error_message(
                 self.tr("Error saving label data"), self.tr("<b>%s</b>") % e
             )
