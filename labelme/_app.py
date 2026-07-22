@@ -2614,7 +2614,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if user_choice == QtWidgets.QMessageBox.StandardButton.Save:
             self._save_label_file()
-            return True
+            return not self._is_changed
         return user_choice == QtWidgets.QMessageBox.StandardButton.Discard
 
     def show_error_message(self, title: str, message: str) -> int:
