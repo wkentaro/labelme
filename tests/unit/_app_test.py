@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from labelme import __appname__
@@ -138,6 +140,38 @@ def test_format_window_title(
             file_index=file_index,
             file_count=file_count,
             dirty=dirty,
+        )
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "image_or_label_path, output_dir, expected",
+    [
+        (str(Path("/data/img.png")), None, str(Path("/data/img.json"))),
+        (str(Path("/data/img.png")), Path("/out"), str(Path("/out/img.json"))),
+        (str(Path("/data/foo.json")), None, str(Path("/data/foo.json"))),
+        (str(Path("/data/foo.json")), Path("/out"), str(Path("/data/foo.json"))),
+        (str(Path("/data/a.b.png")), None, str(Path("/data/a.b.json"))),
+        (str(Path("/data/FOO.JSON")), None, str(Path("/data/FOO.JSON"))),
+    ],
+    ids=[
+        "image-sibling-json",
+        "image-honors-output-dir",
+        "label-path-passthrough",
+        "label-path-ignores-output-dir",
+        "multi-dot-stem",
+        "uppercase-suffix-passthrough",
+    ],
+)
+def test_resolve_label_path(
+    image_or_label_path: str,
+    output_dir: Path | None,
+    expected: str,
+) -> None:
+    assert (
+        _app._resolve_label_path(
+            image_or_label_path=image_or_label_path, output_dir=output_dir
         )
         == expected
     )
