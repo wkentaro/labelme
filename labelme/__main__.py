@@ -27,6 +27,8 @@ from ._label_file import is_label_file_path
 from ._utils import apply_color_theme
 from ._utils import new_icon
 
+_LOGGER_LEVELS: Final = ("debug", "info", "warning", "error", "critical")
+
 
 class _LoggerIO(io.StringIO):
     def write(self, s: AnyStr) -> int:
@@ -178,7 +180,7 @@ def main() -> None:
     parser.add_argument(
         "--logger-level",
         default="debug",
-        choices=["debug", "info", "warning", "fatal", "error"],
+        choices=_LOGGER_LEVELS,
         help="logger level",
     )
     parser.add_argument("path", nargs="?", help="image file, label file, or directory")

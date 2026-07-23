@@ -11,6 +11,7 @@ import pytest
 from loguru import logger
 from PySide6 import QtCore
 
+from labelme.__main__ import _LOGGER_LEVELS
 from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
 from labelme.__main__ import _route_qt_logging_to_loguru
@@ -22,6 +23,18 @@ def test_removed_flag_errors_as_unknown(
     flag: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(sys, "argv", ["labelme", flag])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("level", _LOGGER_LEVELS)
+def test_logger_level_choice_is_a_valid_loguru_level(level: str) -> None:
+    assert logger.level(level.upper()).name == level.upper()
+
+
+def test_logger_level_rejects_fatal(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, "argv", ["labelme", "--logger-level", "fatal"])
     with pytest.raises(SystemExit) as exc:
         main()
     assert exc.value.code == 2
