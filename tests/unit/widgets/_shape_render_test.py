@@ -5,8 +5,10 @@ import pytest
 from PySide6 import QtGui
 
 from labelme._shape import Shape
+from labelme._shape import ShapeType
 from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
+from labelme._widgets._shape_render import bounds
 from labelme._widgets._shape_render import render_shape
 
 _SIZE = 200
@@ -51,6 +53,59 @@ def _diff_rows(a: QtGui.QImage, b: QtGui.QImage, *, bottom: int) -> int:
             if a.pixelColor(x, y) != b.pixelColor(x, y):
                 count += 1
     return count
+
+
+def _shape(shape_type: ShapeType, points: list[list[float]]) -> Shape:
+    return Shape(
+        label="a",
+        shape_type=shape_type,
+        points=np.array(points, dtype=np.float64),
+    )
+
+
+@pytest.mark.parametrize(
+    ("shape_type", "points", "expected"),
+    [
+        ("rectangle", [[10, 10], [50, 30]], (10.0, 10.0, 40.0, 20.0)),
+        ("mask", [[10, 10], [50, 30]], (10.0, 10.0, 40.0, 20.0)),
+        # radius = ||(3, 4)|| = 5, so the box is the point (0, 0) inflated by 5.
+        ("circle", [[0, 0], [3, 4]], (-5.0, -5.0, 10.0, 10.0)),
+        (
+            "oriented_rectangle",
+            [[0, 0], [10, 0], [10, 5], [0, 5]],
+            (0.0, 0.0, 10.0, 5.0),
+        ),
+        ("polygon", [[0, 0], [10, 0], [10, 5], [0, 5]], (0.0, 0.0, 10.0, 5.0)),
+        # A single point bounds to a zero-size rect at its own location.
+        ("point", [[100, 100]], (100.0, 100.0, 0.0, 0.0)),
+    ],
+)
+def test_bounds_spans_the_shape(
+    shape_type: ShapeType,
+    points: list[list[float]],
+    expected: tuple[float, float, float, float],
+) -> None:
+    shape = _shape(shape_type=shape_type, points=points)
+    assert bounds(shape=shape).getRect() == expected
+
+
+@pytest.mark.parametrize(
+    # Each shape type guards on its own point count; before that guard is met
+    # (mid-draw), bounds must be the null rect rather than crash.
+    ("shape_type", "points"),
+    [
+        ("rectangle", [[5, 5]]),
+        ("mask", [[5, 5]]),
+        ("circle", [[5, 5]]),
+        ("oriented_rectangle", [[0, 0], [10, 0], [10, 5]]),
+        ("polygon", []),
+    ],
+)
+def test_bounds_is_empty_for_incomplete_shape(
+    shape_type: ShapeType, points: list[list[float]]
+) -> None:
+    shape = _shape(shape_type=shape_type, points=points)
+    assert bounds(shape=shape).getRect() == (0.0, 0.0, 0.0, 0.0)
 
 
 @pytest.mark.gui
