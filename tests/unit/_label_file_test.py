@@ -8,16 +8,20 @@ from typing import Any
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
 from labelme._label_file import ShapeDict
 from labelme._label_file import _check_image_dimensions
+from labelme._label_file import _dump_shape_to_json_obj
+from labelme._label_file import _load_shape_json_obj
 from labelme._label_file import _normalize_to_uint8
 from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
+from labelme._utils import img_arr_to_b64
 
 
 def test_read_label_file_load_windows_path(data_path: Path, tmp_path: Path) -> None:
@@ -182,6 +186,146 @@ def test_read_label_file_raises_on_malformed_shape_field(
 
     with pytest.raises(LabelFileReadError, match=error_match):
         read_label_file(filename=str(annotated_dst))
+
+
+@pytest.fixture()
+def sample_mask() -> NDArray[np.bool_]:
+    mask = np.zeros((3, 4), dtype=bool)
+    mask[1, 2] = True
+    return mask
+
+
+def test_load_shape_json_obj_parses_all_fields() -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "cat",
+            "points": [[1.0, 2.0], [3.0, 4.0]],
+            "shape_type": "rectangle",
+            "flags": {"occluded": True},
+            "description": "a note",
+            "group_id": 7,
+        }
+    )
+
+    assert loaded == {
+        "label": "cat",
+        "points": [[1.0, 2.0], [3.0, 4.0]],
+        "shape_type": "rectangle",
+        "flags": {"occluded": True},
+        "description": "a note",
+        "group_id": 7,
+        "mask": None,
+        "other_data": {},
+    }
+
+
+def test_load_shape_json_obj_defaults_absent_optional_fields() -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "cat",
+            "points": [[0.0, 0.0]],
+            "shape_type": "point",
+        }
+    )
+
+    assert loaded == {
+        "label": "cat",
+        "points": [[0.0, 0.0]],
+        "shape_type": "point",
+        "flags": {},
+        "description": "",
+        "group_id": None,
+        "mask": None,
+        "other_data": {},
+    }
+
+
+def test_load_shape_json_obj_keeps_falsy_group_id() -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "cat",
+            "points": [[0.0, 0.0]],
+            "shape_type": "point",
+            "group_id": 0,
+        }
+    )
+
+    assert loaded["group_id"] == 0
+
+
+def test_load_shape_json_obj_buckets_unknown_keys_into_other_data() -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "cat",
+            "points": [[0.0, 0.0]],
+            "shape_type": "point",
+            "score": 0.9,
+            "reviewer": "alice",
+        }
+    )
+
+    assert loaded["other_data"] == {"score": 0.9, "reviewer": "alice"}
+
+
+def test_load_shape_json_obj_decodes_mask_to_bool_array(
+    sample_mask: NDArray[np.bool_],
+) -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "thing",
+            "points": [[0.0, 0.0], [4.0, 3.0]],
+            "shape_type": "mask",
+            "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+        }
+    )
+
+    assert loaded["mask"] is not None
+    assert loaded["mask"].dtype == np.bool_
+    assert np.array_equal(loaded["mask"], sample_mask)
+
+
+def test_dump_shape_to_json_obj_without_mask() -> None:
+    shape = ShapeDict(
+        label="cat",
+        points=[[1.0, 2.0], [3.0, 4.0]],
+        shape_type="rectangle",
+        flags={"occluded": True},
+        description="a note",
+        group_id=7,
+        mask=None,
+        other_data={"score": 0.9},
+    )
+
+    json_obj = _dump_shape_to_json_obj(shape=shape)
+
+    assert json_obj == {
+        "label": "cat",
+        "points": [[1.0, 2.0], [3.0, 4.0]],
+        "shape_type": "rectangle",
+        "flags": {"occluded": True},
+        "description": "a note",
+        "group_id": 7,
+        "mask": None,
+        "score": 0.9,
+    }
+
+
+def test_shape_codec_round_trips_mask(sample_mask: NDArray[np.bool_]) -> None:
+    shape = ShapeDict(
+        label="thing",
+        points=[[0.0, 0.0], [4.0, 3.0]],
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=sample_mask,
+        other_data={},
+    )
+
+    reloaded = _load_shape_json_obj(shape_json_obj=_dump_shape_to_json_obj(shape=shape))
+
+    assert reloaded["mask"] is not None
+    assert np.array_equal(reloaded["mask"], sample_mask)
 
 
 def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
