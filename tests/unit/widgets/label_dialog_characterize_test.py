@@ -400,6 +400,12 @@ def test_flag_checked_state_preserved_across_text_change(qtbot: QtBot) -> None:
     assert box2.isChecked()
 
 
+def test_flag_shared_by_two_patterns_shown_once(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot, flags={"^cat": ["indoor", "tall"], ".*": ["indoor"]})
+    dialog.edit.setText("cat")
+    assert [cb.text() for cb in _checkboxes(dialog)] == ["indoor", "tall"]
+
+
 # ---------------------------------------------------------------------------
 # popup() round-trips (exec stubbed)
 # ---------------------------------------------------------------------------
@@ -601,6 +607,19 @@ def test_flag_checked_state_does_not_leak_into_next_new_shape_popup(
         at_show=lambda d: seen.update(checked=_checkbox(d, "indoor").isChecked()),
     )
     assert seen["checked"] is False
+
+
+def test_checking_a_flag_shared_by_two_patterns_is_returned_checked(
+    qtbot: QtBot,
+) -> None:
+    dialog = _make_dialog(qtbot, flags={"^cat": ["indoor", "tall"], ".*": ["indoor"]})
+    _, flags, _, _ = _run_popup(
+        dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: _checkbox(d, "indoor").setChecked(True),
+    )
+    assert flags == {"indoor": True, "tall": False}
 
 
 def test_edited_shape_flags_do_not_leak_into_next_new_shape_popup(

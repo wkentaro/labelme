@@ -217,13 +217,13 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _update_flags(self, text: str) -> None:
         current_states = {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
-        flags: list[tuple[str, bool]] = []
+        flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
             if not re.match(pattern, text):
                 continue
             for key in flag_keys:
-                flags.append((key, current_states.get(key, False)))
-        self._set_flag_checkboxes(flags=flags)
+                flags[key] = current_states.get(key, False)
+        self._set_flag_checkboxes(flags=flags.items())
 
     def add_label_history(self, label: str) -> None:
         if label not in self._label_history:
