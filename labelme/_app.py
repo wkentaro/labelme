@@ -606,7 +606,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("Zoom &In"),
             lambda _: self._add_zoom(increment=1.1),
             shortcuts["zoom_in"],
-            icon="phosphor/magnifying-glass-minus.svg",
+            icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Increase zoom level"),
             enabled=False,
         )
@@ -614,7 +614,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("&Zoom Out"),
             lambda _: self._add_zoom(increment=0.9),
             shortcuts["zoom_out"],
-            icon="phosphor/magnifying-glass-plus.svg",
+            icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Decrease zoom level"),
             enabled=False,
         )
