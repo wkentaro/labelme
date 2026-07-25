@@ -181,6 +181,32 @@ def _parse_list_arg(value: str) -> list[str]:
     return [line.strip() for line in value.split(",") if line.strip()]
 
 
+def _resolve_config_source(
+    config_arg: str | None, default_config_file: str
+) -> tuple[Path | None, dict]:
+    if config_arg is None:
+        # A missing file is fatal only when the user asked for that file: the
+        # default path may not exist because it could not be created, and
+        # labelme still runs on the built-in defaults.
+        if not os.path.isfile(default_config_file):
+            logger.warning(
+                "Config file does not exist: {!r}; using the default settings",
+                str(Path(default_config_file).absolute()),
+            )
+            return None, {}
+        return Path(default_config_file), {}
+
+    if isinstance(config_loaded := _yaml.safe_load(config_arg), dict):
+        return None, config_loaded
+
+    if not os.path.isfile(config_arg):
+        logger.error(
+            "Config file does not exist: {!r}", str(Path(config_arg).absolute())
+        )
+        sys.exit(1)
+    return Path(config_arg), {}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
@@ -205,7 +231,7 @@ def main() -> None:
         "--config",
         dest="config",
         help=f"config file or yaml-format string (default: {default_config_file})",
-        default=default_config_file,
+        default=None,
     )
     # config for the gui
     parser.add_argument(
@@ -307,21 +333,10 @@ def main() -> None:
     # Settings dialog enabled (any override disables it).
     config_from_args.pop("logger_level")
 
-    config_overrides: dict
-    config_file: Path | None
-    config_str: str = config_from_args.pop("config")
-    if isinstance(config_loaded := _yaml.safe_load(config_str), dict):
-        config_overrides = config_loaded
-        config_file = None
-    else:
-        config_overrides = {}
-        config_file = Path(config_str)
-        if not os.path.isfile(config_str):
-            logger.error(
-                "Config file does not exist: {!r}", str(config_file.absolute())
-            )
-            sys.exit(1)
-    del config_str
+    config_file, config_overrides = _resolve_config_source(
+        config_arg=config_from_args.pop("config"),
+        default_config_file=default_config_file,
+    )
     config_overrides.update(config_from_args)
 
     output_dir = None
