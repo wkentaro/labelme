@@ -115,13 +115,25 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         "toggle_all_polygons": "toggle_all_shapes",
     }
     for old_key, new_key in _POLYGON_TO_SHAPE_RENAMES.items():
-        if old_key in shortcuts and new_key not in shortcuts:
+        if old_key not in shortcuts:
+            continue
+        old_value = shortcuts.pop(old_key)
+        if new_key in shortcuts:
             logger.info(
-                "Migrating old config: shortcuts.{} -> shortcuts.{}",
+                "Migrating old config: dropping shortcuts.{}={!r} superseded by "
+                "shortcuts.{}={!r}",
                 old_key,
+                old_value,
                 new_key,
+                shortcuts[new_key],
             )
-            shortcuts[new_key] = shortcuts.pop(old_key)
+            continue
+        logger.info(
+            "Migrating old config: shortcuts.{} -> shortcuts.{}",
+            old_key,
+            new_key,
+        )
+        shortcuts[new_key] = old_value
 
     # A malformed canvas/crosshair section is left untouched so the merge in
     # _update_dict reports it as a config error instead of crashing.

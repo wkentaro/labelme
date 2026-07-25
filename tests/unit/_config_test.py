@@ -135,11 +135,35 @@ def test_load_config_malformed_section_raises(tmp_path: Path, section: str) -> N
         _config.load_config(config_file=config_file, config_overrides={})
 
 
-def test_migrate_polygon_shortcut_skips_when_new_key_exists() -> None:
-    config = {"shortcuts": {"edit_polygon": "Ctrl+X", "edit_shape": "Ctrl+Y"}}
+@pytest.mark.parametrize(
+    "old_key, new_key",
+    list(_POLYGON_TO_SHAPE_RENAMES.items()),
+    ids=list(_POLYGON_TO_SHAPE_RENAMES.keys()),
+)
+def test_migrate_polygon_shortcut_drops_old_key_when_new_key_exists(
+    old_key: str, new_key: str
+) -> None:
+    config = {"shortcuts": {old_key: "Ctrl+X", new_key: "Ctrl+Y"}}
     _config._migrate_config_from_file(config)
+    assert config["shortcuts"][new_key] == "Ctrl+Y"
+    assert old_key not in config["shortcuts"]
+
+
+def test_load_config_tolerates_both_polygon_and_shape_shortcuts(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        "shortcuts:\n"
+        "  edit_polygon: Ctrl+X\n"
+        "  edit_shape: Ctrl+Y\n"
+        "  delete_polygon: Ctrl+Z\n"
+    )
+    config = _config.load_config(config_file=config_file, config_overrides={})
     assert config["shortcuts"]["edit_shape"] == "Ctrl+Y"
-    assert "edit_polygon" in config["shortcuts"]
+    assert config["shortcuts"]["delete_shape"] == "Ctrl+Z"
+    assert "edit_polygon" not in config["shortcuts"]
+    assert "delete_polygon" not in config["shortcuts"]
 
 
 def test_migrate_removes_add_point_to_edge_shortcut() -> None:
