@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Helligkeit/Kontrast</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Helligkeit:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Kontrast:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

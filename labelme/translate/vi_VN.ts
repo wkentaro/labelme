@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Độ sáng/Độ tương phản</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Độ sáng:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Độ tương phản:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
