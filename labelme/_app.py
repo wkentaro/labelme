@@ -2136,11 +2136,13 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            formats = ", ".join(
-                f"*.{fmt.toStdString()}"
-                for fmt in QtGui.QImageReader.supportedImageFormats()
-            )
-            extra = self.tr("Allowed formats: {formats}").format(formats=formats)
+            extra = _image_too_large_message(image_data=self._annotation.image_data)
+            if extra is None:
+                formats = ", ".join(
+                    f"*.{fmt.toStdString()}"
+                    for fmt in QtGui.QImageReader.supportedImageFormats()
+                )
+                extra = self.tr("Allowed formats: {formats}").format(formats=formats)
             self._show_file_open_error(
                 path=image_or_label_path,
                 file_kind="image",
@@ -2902,6 +2904,40 @@ def _shape_to_dict(shape: Shape) -> ShapeDict:
         group_id=shape.group_id,
         mask=shape.mask,
         other_data=shape.other_data,
+    )
+
+
+def _image_too_large_message(*, image_data: bytes) -> str | None:
+    """Explain a null QImage caused by Qt's decode allocation limit.
+
+    Returns None when the image data is not readable at all, so that the
+    caller can fall back to the generic unsupported-format message.
+    """
+    buffer = QtCore.QBuffer()
+    buffer.setData(QtCore.QByteArray(image_data))
+    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
+    size = QtGui.QImageReader(buffer).size()
+    if not size.isValid():
+        return None
+
+    limit_mb: int = QtGui.QImageReader.allocationLimit()
+    if limit_mb <= 0:
+        return None
+
+    required_mb: float = size.width() * size.height() * 4 / 1024 / 1024
+    if required_mb <= limit_mb:
+        return None
+
+    return QtCore.QCoreApplication.translate(
+        "MainWindow",
+        "The image is too large to open: {width}x{height} pixels needs about "
+        "{required} MB, but the decode limit is {limit} MB. Open a smaller copy "
+        "or split the image into tiles.",
+    ).format(
+        width=size.width(),
+        height=size.height(),
+        required=round(required_mb),
+        limit=limit_mb,
     )
 
 

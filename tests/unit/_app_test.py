@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import pytest
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 from labelme import __appname__
 from labelme import _app
@@ -98,4 +101,44 @@ def test_format_window_title(
             dirty=dirty,
         )
         == expected
+    )
+
+
+def _png_bytes(*, width: int, height: int) -> bytes:
+    image = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
+    image.fill(0)
+    buffer = QtCore.QBuffer()
+    buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly)
+    image.save(buffer, "PNG")
+    return bytes(buffer.data())
+
+
+def test_image_too_large_message_explains_allocation_limit(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    image_data = _png_bytes(width=800, height=600)
+    original_limit = QtGui.QImageReader.allocationLimit()
+    try:
+        QtGui.QImageReader.setAllocationLimit(1)
+        assert QtGui.QImage.fromData(image_data).isNull()
+        message = _app._image_too_large_message(image_data=image_data)
+    finally:
+        QtGui.QImageReader.setAllocationLimit(original_limit)
+
+    assert message is not None
+    assert "800x600" in message
+    assert "1 MB" in message
+
+
+def test_image_too_large_message_is_none_for_undecodable_data(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    assert _app._image_too_large_message(image_data=b"not an image") is None
+
+
+def test_image_too_large_message_is_none_within_allocation_limit(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    assert (
+        _app._image_too_large_message(image_data=_png_bytes(width=8, height=8)) is None
     )
