@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
 from typing import Final
 
 from PySide6 import QtCore
@@ -222,12 +221,12 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _update_flags(self, text: str) -> None:
         self._flag_states.update(self._collect_flags())
-        flags: list[tuple[str, bool]] = []
+        flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
             if not re.match(pattern, text):
                 continue
             for key in flag_keys:
-                flags.append((key, self._flag_states.get(key, False)))
+                flags[key] = self._flag_states.get(key, False)
         self._set_flag_checkboxes(flags=flags)
 
     def add_label_history(self, label: str) -> None:
@@ -280,7 +279,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.edit_group_id.setText(str(group_id))
 
         if flags is not None:
-            self._set_flag_checkboxes(flags=flags.items())
+            self._set_flag_checkboxes(flags=flags)
         else:
             self._update_flags(self.edit.text())
 
@@ -314,9 +313,9 @@ class LabelDialog(QtWidgets.QDialog):
 
         return None, None, None, None
 
-    def _set_flag_checkboxes(self, flags: Iterable[tuple[str, bool]]) -> None:
+    def _set_flag_checkboxes(self, flags: dict[str, bool]) -> None:
         self._clear_flags_layout()
-        for key, checked in flags:
+        for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)

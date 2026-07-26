@@ -11,7 +11,7 @@ def _make_dialog(qtbot: QtBot, flag_count: int) -> LabelDialog:
     flags = {f"flag_{i:02d}": False for i in range(flag_count)}
     dialog = LabelDialog(labels=["cat"], flags={".*": list(flags)})
     qtbot.addWidget(dialog)
-    dialog._set_flag_checkboxes(flags=flags.items())
+    dialog._set_flag_checkboxes(flags=flags)
     return dialog
 
 
