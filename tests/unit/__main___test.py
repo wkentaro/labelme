@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 import types
 import warnings
@@ -14,6 +15,7 @@ from PySide6 import QtCore
 from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
 from labelme.__main__ import _route_qt_logging_to_loguru
+from labelme.__main__ import _setup_loguru
 from labelme.__main__ import main
 
 
@@ -131,6 +133,38 @@ def test_logger_io_is_a_write_only_non_seekable_sink() -> None:
     assert stream.seekable() is False
     assert stream.closed is False
     assert stream.flush() is None
+
+
+def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def raise_permission_error(*args: object, **kwargs: object) -> None:
+        raise PermissionError(13, "Permission denied")
+
+    monkeypatch.setattr(Path, "mkdir", raise_permission_error)
+
+    _setup_loguru("INFO")
+
+
+def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    cache_dir = tmp_path / ".cache" / "labelme"
+    cache_dir.mkdir(parents=True)
+    (cache_dir / "labelme.log").mkdir()
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
+
+    _setup_loguru("INFO")
+
+
+def test_setup_loguru_degrades_to_stderr_without_localappdata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(os, "name", "nt")
+    monkeypatch.delenv("LOCALAPPDATA", raising=False)
+
+    _setup_loguru("INFO")
 
 
 def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
