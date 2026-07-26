@@ -74,10 +74,9 @@ def _atomic_write(config_file: Path, content: str) -> None:
         raise
 
 
-def set_override(config_file: Path, key_path: Sequence[str], value: object) -> None:
-    if not key_path:
-        raise ValueError("key_path must not be empty")
-
+def set_overrides(
+    config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
+) -> None:
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -89,10 +88,15 @@ def set_override(config_file: Path, key_path: Sequence[str], value: object) -> N
     if not isinstance(doc, CommentedMap):
         doc = CommentedMap()
 
-    if value == _default_value(key_path=key_path):
-        _prune(doc=doc, key_path=key_path)
-    else:
-        _assign(doc=doc, key_path=key_path, value=value)
+    # All overrides mutate the in-memory doc before the single write below, so a
+    # bad key anywhere in the batch leaves the file untouched (all-or-nothing).
+    for key_path, value in overrides:
+        if not key_path:
+            raise ValueError("key_path must not be empty")
+        if value == _default_value(key_path=key_path):
+            _prune(doc=doc, key_path=key_path)
+        else:
+            _assign(doc=doc, key_path=key_path, value=value)
 
     content = ""
     if doc:
