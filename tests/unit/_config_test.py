@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -291,4 +292,204 @@ def test_load_config_requires_labels_when_validate_label_enabled() -> None:
     ):
         _config.load_config(
             config_file=None, config_overrides={"validate_label": "exact"}
+        )
+
+
+@pytest.mark.parametrize(
+    ("legacy", "expected"),
+    [
+        (
+            {"shape_color": "auto", "shift_auto_shape_color": -2},
+            {
+                "mode": "auto",
+                "auto": {"shift": -2},
+                "uniform": {"color": [0, 255, 0]},
+                "by_label": {"colors": None, "fallback": [0, 255, 0]},
+            },
+        ),
+        (
+            {
+                "shape_color": None,
+                "default_shape_color": [215, 60, 233],
+            },
+            {
+                "mode": "uniform",
+                "auto": {"shift": 0},
+                "uniform": {"color": [215, 60, 233]},
+                "by_label": {"colors": None, "fallback": [215, 60, 233]},
+            },
+        ),
+        (
+            {
+                "shape_color": "manual",
+                "default_shape_color": [215, 60, 233],
+                "label_colors": {"cat": [255, 0, 0]},
+            },
+            {
+                "mode": "by_label",
+                "auto": {"shift": 0},
+                "uniform": {"color": [215, 60, 233]},
+                "by_label": {
+                    "colors": {"cat": [255, 0, 0]},
+                    "fallback": [215, 60, 233],
+                },
+            },
+        ),
+    ],
+    ids=["auto", "uniform", "by-label"],
+)
+def test_load_config_migrates_legacy_shape_color_from_file(
+    tmp_path: Path, legacy: dict, expected: dict
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(json.dumps(legacy))
+
+    config = _config.load_config(config_file=config_file, config_overrides={})
+
+    assert config["shape_color"] == expected
+    assert "default_shape_color" not in config
+    assert "shift_auto_shape_color" not in config
+    assert "label_colors" not in config
+
+
+def test_load_config_migrates_legacy_shape_color_from_overrides() -> None:
+    config = _config.load_config(
+        config_file=None,
+        config_overrides={
+            "shape_color": "manual",
+            "default_shape_color": [215, 60, 233],
+            "label_colors": {"cat": [255, 0, 0]},
+        },
+    )
+
+    assert config["shape_color"]["mode"] == "by_label"
+    assert config["shape_color"]["by_label"] == {
+        "colors": {"cat": [255, 0, 0]},
+        "fallback": [215, 60, 233],
+    }
+
+
+def test_load_config_migrates_legacy_shape_color_sibling_without_mode() -> None:
+    config = _config.load_config(
+        config_file=None,
+        config_overrides={"default_shape_color": [215, 60, 233]},
+    )
+
+    assert config["shape_color"]["mode"] == "auto"
+    assert config["shape_color"]["uniform"]["color"] == [215, 60, 233]
+
+
+def test_load_config_rejects_invalid_migrated_legacy_shape_color(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        json.dumps(
+            {
+                "shape_color": "manual",
+                "shift_auto_shape_color": "invalid",
+            }
+        )
+    )
+
+    with pytest.raises(ValueError, match="shape_color.auto.shift"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+def test_load_config_rejects_falsey_invalid_legacy_default_shape_color(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("shape_color: null\ndefault_shape_color: []\n")
+
+    with pytest.raises(ValueError, match="shape_color.uniform.color"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+def test_load_config_native_empty_shape_color_section_keeps_defaults() -> None:
+    config = _config.load_config(
+        config_file=None,
+        config_overrides={"shape_color": {"auto": None}},
+    )
+
+    assert config["shape_color"]["auto"] == {"shift": 0}
+
+
+def test_load_config_validates_native_shape_color_over_legacy_file(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("shape_color: manual\n")
+
+    with pytest.raises(ValueError, match="shape_color.auto.shift"):
+        _config.load_config(
+            config_file=config_file,
+            config_overrides={"shape_color": {"auto": {"shift": "invalid"}}},
+        )
+
+
+def test_legacy_shape_color_override_preserves_config_file_values(
+    tmp_path: Path,
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        """
+shape_color:
+  mode: uniform
+  uniform:
+    color: [1, 2, 3]
+  by_label:
+    colors:
+      cat: [4, 5, 6]
+    fallback: [7, 8, 9]
+"""
+    )
+
+    config = _config.load_config(
+        config_file=config_file,
+        config_overrides={"shift_auto_shape_color": -2},
+    )
+
+    assert config["shape_color"] == {
+        "mode": "uniform",
+        "auto": {"shift": -2},
+        "uniform": {"color": [1, 2, 3]},
+        "by_label": {
+            "colors": {"cat": [4, 5, 6]},
+            "fallback": [7, 8, 9],
+        },
+    }
+
+
+def test_load_config_rejects_mixed_new_and_legacy_shape_color() -> None:
+    with pytest.raises(ValueError, match="cannot be combined"):
+        _config.load_config(
+            config_file=None,
+            config_overrides={
+                "shape_color": {"mode": "uniform"},
+                "default_shape_color": [215, 60, 233],
+            },
+        )
+
+
+@pytest.mark.parametrize(
+    ("shape_color", "message"),
+    [
+        ({"mode": "random"}, "shape_color.mode"),
+        ({"auto": {"shift": True}}, "shape_color.auto.shift"),
+        ({"uniform": {"color": [256, 0, 0]}}, "shape_color.uniform.color"),
+        (
+            {"by_label": {"colors": {"cat": [0, 0]}}},
+            "shape_color.by_label.colors.cat",
+        ),
+    ],
+    ids=["mode", "shift", "uniform-rgb", "label-rgb"],
+)
+def test_load_config_rejects_invalid_shape_color(
+    shape_color: dict, message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        _config.load_config(
+            config_file=None,
+            config_overrides={"shape_color": shape_color},
         )

@@ -17,12 +17,10 @@ from typing import NamedTuple
 from typing import TypeAlias
 from typing import cast
 
-import imgviz
 import natsort
 import numpy as np
 import osam
 from loguru import logger
-from numpy.typing import NDArray
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -46,6 +44,7 @@ from ._label_file import write_label_file
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape_clipboard import ShapeClipboard
+from ._shape_color import resolve_shape_color
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import BrightnessContrastDialog
@@ -61,8 +60,6 @@ from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import download_ai_model
 from ._widgets import format_shape_label
-
-LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
 
 
 class _ZoomMode(enum.Enum):
@@ -1717,28 +1714,17 @@ class MainWindow(QtWidgets.QMainWindow):
         label: str,
         unique_label_list: UniqueLabelQListWidget,
     ) -> tuple[int, int, int]:
-        if self._config["shape_color"] == "auto":
-            item = unique_label_list.find_label_item(label)
-            item_index: int = (
-                unique_label_list.indexFromItem(item).row()
-                if item
-                else unique_label_list.count()
-            )
-            label_id: int = (
-                1  # skip black color by default
-                + item_index
-                + self._config["shift_auto_shape_color"]
-            )
-            return _rgb_from_colormap_id(label_id=label_id)
-        if self._config["shape_color"] == "manual":
-            rgb = _rgb_from_label_colors(
-                label=label, label_colors=self._config["label_colors"]
-            )
-            if rgb is not None:
-                return rgb
-        if self._config["default_shape_color"]:
-            return self._config["default_shape_color"]
-        return (0, 255, 0)
+        item = unique_label_list.find_label_item(label)
+        label_index: int = (
+            unique_label_list.indexFromItem(item).row()
+            if item
+            else unique_label_list.count()
+        )
+        return resolve_shape_color(
+            config=self._config["shape_color"],
+            label=label,
+            label_index=label_index,
+        )
 
     def remove_labels(self, shapes: list[Shape]) -> None:
         self._docks.label_list.item_dropped.disconnect(self._on_label_order_changed)
@@ -2854,23 +2840,6 @@ def _resolve_text_annotation_shape_type(
     if create_mode in typing.get_args(_TextToAnnotationCreateMode):
         return cast(_TextToAnnotationCreateMode, create_mode)
     return None
-
-
-def _rgb_from_colormap_id(*, label_id: int) -> tuple[int, int, int]:
-    r, g, b = LABEL_COLORMAP[label_id % len(LABEL_COLORMAP)].tolist()
-    return r, g, b
-
-
-def _rgb_from_label_colors(
-    *, label: str, label_colors: dict[str, list[int]] | None
-) -> tuple[int, int, int] | None:
-    if not label_colors or label not in label_colors:
-        return None
-    rgb = label_colors[label]
-    if len(rgb) != 3 or not all(0 <= c <= 255 for c in rgb):
-        raise ValueError(f"Color for label must be 0-255 RGB tuple, but got: {rgb}")
-    r, g, b = rgb
-    return r, g, b
 
 
 def _is_valid_label(

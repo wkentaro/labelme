@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import re
 from collections.abc import Callable
 from collections.abc import Sized
@@ -9,6 +10,8 @@ from typing import cast
 from loguru import logger
 
 from .. import _yaml
+from ._shape_color import migrate_shape_color
+from ._shape_color import validate_shape_color
 from ._writer import set_overrides
 
 here = Path(__file__).resolve().parent
@@ -51,8 +54,6 @@ def _update_dict(
 def _validate_config_item(key: str, value: object) -> None:
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
-    if key == "shape_color" and value not in [None, "auto", "manual"]:
-        raise ValueError(f"Unexpected value for config key 'shape_color': {value}")
     if (
         key == "labels"
         and isinstance(value, Sized)
@@ -62,6 +63,7 @@ def _validate_config_item(key: str, value: object) -> None:
 
 
 def _migrate_config_from_file(config_from_yaml: dict) -> None:
+    migrate_shape_color(config=config_from_yaml)
     keep_prev_brightness: bool = config_from_yaml.pop("keep_prev_brightness", False)
     keep_prev_contrast: bool = config_from_yaml.pop("keep_prev_contrast", False)
     if keep_prev_brightness or keep_prev_contrast:
@@ -174,11 +176,18 @@ def load_config(config_file: Path | None, config_overrides: dict) -> dict:
             config_from_yaml = _yaml.safe_load(f)
         if isinstance(config_from_yaml, dict):
             _migrate_config_from_file(config_from_yaml=config_from_yaml)
+            if "shape_color" in config_from_yaml:
+                validate_shape_color(config=config_from_yaml["shape_color"])
             _update_dict(config, config_from_yaml, validate_item=_validate_config_item)
 
+    config_overrides = copy.deepcopy(config_overrides)
+    migrate_shape_color(config=config_overrides)
+    if "shape_color" in config_overrides:
+        validate_shape_color(config=config_overrides["shape_color"])
     _update_dict(config, config_overrides, validate_item=_validate_config_item)
 
     if not config["labels"] and config["validate_label"]:
         raise ValueError("labels must be specified when validate_label is enabled")
+    validate_shape_color(config=config["shape_color"])
 
     return config

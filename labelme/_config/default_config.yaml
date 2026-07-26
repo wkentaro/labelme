@@ -15,10 +15,15 @@ labels:
 file_search:
 sort_labels: true
 validate_label:
-default_shape_color: [0, 255, 0]
-shape_color: auto  # null, 'auto', 'manual'
-shift_auto_shape_color: 0
-label_colors:
+shape_color:
+  mode: auto  # auto, uniform, by_label
+  auto:
+    shift: 0
+  uniform:
+    color: [0, 255, 0]
+  by_label:
+    colors:
+    fallback: [0, 255, 0]
 shape:
   # drawing
   line_color: [0, 255, 0, 128]

@@ -3,7 +3,7 @@
 ## Annotation
 
 ```bash
-labelme data_annotated --labels labels.txt --keep-prev --config '{shift_auto_shape_color: -2}'
+labelme data_annotated --labels labels.txt --keep-prev --config '{shape_color: {mode: auto, auto: {shift: -2}}}'
 ```
 
 <img src=".readme/00000100.jpg" width="49%" /> <img src=".readme/00000101.jpg" width="49%" />

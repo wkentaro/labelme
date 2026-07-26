@@ -12,6 +12,8 @@ from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.comments import CommentedSeq
 
 from .. import _yaml
+from ._shape_color import migrate_shape_color
+from ._shape_color import validate_shape_color
 
 here = Path(__file__).resolve().parent
 
@@ -87,6 +89,11 @@ def set_overrides(
     )
     if not isinstance(doc, CommentedMap):
         doc = CommentedMap()
+    writes_shape_color = any(
+        key_path and key_path[0] == "shape_color" for key_path, _value in overrides
+    )
+    if writes_shape_color:
+        migrate_shape_color(config=doc)
 
     # All overrides mutate the in-memory doc before the single write below, so a
     # bad key anywhere in the batch leaves the file untouched (all-or-nothing).
@@ -97,6 +104,9 @@ def set_overrides(
             _prune(doc=doc, key_path=key_path)
         else:
             _assign(doc=doc, key_path=key_path, value=value)
+
+    if writes_shape_color and "shape_color" in doc:
+        validate_shape_color(config=doc["shape_color"])
 
     content = ""
     if doc:
