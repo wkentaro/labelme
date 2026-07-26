@@ -2476,17 +2476,23 @@ class MainWindow(QtWidgets.QMainWindow):
             flags=self._config["label_flags"],
         )
 
+    def _try_set_overrides(
+        self, overrides: list[tuple[tuple[str, ...], object]]
+    ) -> bool:
+        assert self._config_file is not None
+        try:
+            _config.set_overrides(config_file=self._config_file, overrides=overrides)
+        except (OSError, ValueError) as e:
+            QtWidgets.QMessageBox.warning(self, self.tr("Configuration Error"), str(e))
+            return False
+        return True
+
     def _on_setting_changed(self, key_path: tuple[str, ...], value: object) -> bool:
         # The dialog only opens with an editable config file (see _open_settings),
         # so there is always a file to persist to.
         if self._config_file is None:
             return False
-        try:
-            _config.set_override(
-                config_file=self._config_file, key_path=key_path, value=value
-            )
-        except (OSError, ValueError) as e:
-            QtWidgets.QMessageBox.warning(self, self.tr("Configuration Error"), str(e))
+        if not self._try_set_overrides(overrides=[(key_path, value)]):
             return False
 
         node: dict = self._config

@@ -9,7 +9,7 @@ from typing import cast
 from loguru import logger
 
 from .. import _yaml
-from ._writer import set_override
+from ._writer import set_overrides
 
 here = Path(__file__).resolve().parent
 
