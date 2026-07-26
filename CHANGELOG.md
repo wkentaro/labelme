@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Grouped Shape coloring under one `shape_color` setting with explicit `auto`, `uniform`, and `by_label` modes, replacing the loosely coupled `default_shape_color`, `shift_auto_shape_color`, and `label_colors` keys. Existing Config Files and inline `--config` values are migrated in memory, preserving their behavior and override precedence ([#2426](https://github.com/wkentaro/labelme/pull/2426))
+
 ### Removed
 
 - Removed the `logger_level` config key, which had no effect: log verbosity has always been controlled solely by the `--logger-level` CLI flag. A `logger_level` entry remaining in an existing `~/.labelmerc` is dropped on load, so old config files keep working unchanged ([#2402](https://github.com/wkentaro/labelme/pull/2402))

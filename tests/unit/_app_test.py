@@ -38,48 +38,6 @@ def test_resolve_text_annotation_shape_type(
 
 
 @pytest.mark.parametrize(
-    "label, label_colors, expected",
-    [
-        ("cat", None, None),
-        ("cat", {}, None),
-        ("cat", {"dog": [1, 2, 3]}, None),
-        ("cat", {"cat": [255, 0, 128]}, (255, 0, 128)),
-        ("cat", {"cat": [0, 0, 0]}, (0, 0, 0)),
-    ],
-    ids=[
-        "colors-none",
-        "colors-empty",
-        "label-not-in-colors",
-        "valid-rgb",
-        "valid-rgb-zero-bound",
-    ],
-)
-def test_rgb_from_label_colors_returns_rgb_or_none(
-    label: str,
-    label_colors: dict[str, list[int]] | None,
-    expected: tuple[int, int, int] | None,
-) -> None:
-    assert (
-        _app._rgb_from_label_colors(label=label, label_colors=label_colors) == expected
-    )
-
-
-@pytest.mark.parametrize(
-    "rgb",
-    [[256, 0, 0], [-1, 0, 0], [0, 0], [0, 0, 0, 0]],
-    ids=[
-        "channel-too-high",
-        "channel-too-low",
-        "too-few-channels",
-        "too-many-channels",
-    ],
-)
-def test_rgb_from_label_colors_rejects_invalid_rgb(rgb: list[int]) -> None:
-    with pytest.raises(ValueError, match="0-255 RGB tuple"):
-        _app._rgb_from_label_colors(label="cat", label_colors={"cat": rgb})
-
-
-@pytest.mark.parametrize(
     "label, existing_labels, policy, expected",
     [
         ("cat", [], None, True),

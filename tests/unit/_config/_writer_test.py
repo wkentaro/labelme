@@ -104,10 +104,85 @@ def test_writes_list_in_flow_style(tmp_path: Path) -> None:
 
     _config.set_overrides(
         config_file=config_file,
-        overrides=[(["default_shape_color"], [255, 0, 0])],
+        overrides=[(["shape_color", "uniform", "color"], [255, 0, 0])],
     )
 
-    assert "default_shape_color: [255, 0, 0]" in config_file.read_text(encoding="utf-8")
+    assert "color: [255, 0, 0]" in config_file.read_text(encoding="utf-8")
+
+
+def test_nested_shape_color_write_migrates_legacy_scalar_config(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text(
+        "shape_color: manual\nlabel_colors:\n  cat: [1, 2, 3]\n",
+        encoding="utf-8",
+    )
+
+    _config.set_overrides(
+        config_file=config_file,
+        overrides=[(["shape_color", "by_label", "fallback"], [4, 5, 6])],
+    )
+
+    assert _parse(config_file) == {
+        "shape_color": {
+            "mode": "by_label",
+            "by_label": {
+                "colors": {"cat": [1, 2, 3]},
+                "fallback": [4, 5, 6],
+            },
+        }
+    }
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["shape_color"]["by_label"]["fallback"] == [4, 5, 6]
+
+
+def test_nested_shape_color_write_removes_legacy_sibling_keys(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text(
+        "default_shape_color: [1, 2, 3]\n",
+        encoding="utf-8",
+    )
+
+    _config.set_overrides(
+        config_file=config_file,
+        overrides=[(["shape_color", "auto", "shift"], 2)],
+    )
+
+    assert _parse(config_file) == {
+        "shape_color": {
+            "auto": {"shift": 2},
+            "uniform": {"color": [1, 2, 3]},
+            "by_label": {"fallback": [1, 2, 3]},
+        }
+    }
+    _config.load_config(config_file=config_file, config_overrides={})
+
+
+def test_shape_color_write_rejects_invalid_legacy_values(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    original = "shape_color: manual\nshift_auto_shape_color: invalid\n"
+    config_file.write_text(original, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="shape_color.auto.shift"):
+        _config.set_overrides(
+            config_file=config_file,
+            overrides=[(["shape_color", "by_label", "fallback"], [4, 5, 6])],
+        )
+
+    assert config_file.read_text(encoding="utf-8") == original
+
+
+def test_shape_color_write_rejects_invalid_new_value(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    original = "shape_color: manual\n"
+    config_file.write_text(original, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="shape_color.by_label.fallback"):
+        _config.set_overrides(
+            config_file=config_file,
+            overrides=[(["shape_color", "by_label", "fallback"], [999, 0, 0])],
+        )
+
+    assert config_file.read_text(encoding="utf-8") == original
 
 
 def test_set_overrides_applies_batch_in_one_write(tmp_path: Path) -> None:
