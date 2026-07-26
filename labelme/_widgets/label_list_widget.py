@@ -36,9 +36,6 @@ def format_shape_label(shape: Shape, fill_rgb: tuple[int, int, int]) -> str:
 class HTMLDelegate(QtWidgets.QStyledItemDelegate):
     _VERT_FUDGE: Final = 4
 
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
-        super().__init__(parent)
-
     def paint(
         self,
         painter: QtGui.QPainter,
