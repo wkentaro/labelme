@@ -98,3 +98,19 @@ def test_download_ai_model_returns_false_when_pull_fails(
     qtbot.addWidget(parent)
 
     assert download_ai_model(model_name=_MODEL_NAME, parent=parent) is False
+
+
+@pytest.mark.gui
+@pytest.mark.network
+def test_download_ai_model_from_network(
+    qtbot: QtBot,
+    isolated_model_type: type[osam.types.Model],
+    close_failed_download_dialog: None,
+) -> None:
+    expected_paths = [Path(blob.path) for blob in isolated_model_type._blobs.values()]
+
+    parent = QWidget()
+    qtbot.addWidget(parent)
+
+    assert download_ai_model(model_name=_MODEL_NAME, parent=parent) is True
+    assert all(path.is_file() for path in expected_paths)

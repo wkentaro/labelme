@@ -95,6 +95,7 @@ _AI_MODEL = "efficientsam:10m"
             None,
             "polygon",
             id="ai_points-polygon",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -104,6 +105,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "mask",
             id="ai_points-mask",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -113,6 +115,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "rectangle",
             id="ai_points-rectangle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -122,6 +125,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "circle",
             id="ai_points-circle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -131,6 +135,7 @@ _AI_MODEL = "efficientsam:10m"
             4,
             "oriented_rectangle",
             id="ai_points-oriented_rectangle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -140,6 +145,7 @@ _AI_MODEL = "efficientsam:10m"
             None,
             "polygon",
             id="ai_box-polygon",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -149,6 +155,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "mask",
             id="ai_box-mask",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -158,6 +165,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "rectangle",
             id="ai_box-rectangle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -167,6 +175,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "circle",
             id="ai_box-circle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -176,12 +185,14 @@ _AI_MODEL = "efficientsam:10m"
             4,
             "oriented_rectangle",
             id="ai_box-oriented_rectangle",
+            marks=pytest.mark.network,
         ),
     ],
 )
 def test_annotate_shape_types(
     main_win: MainWinFactory,
     qtbot: QtBot,
+    close_failed_download_dialog: None,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
