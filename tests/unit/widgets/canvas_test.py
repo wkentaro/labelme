@@ -307,6 +307,57 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "create_mode", ["point", "ai_box_to_shape", "ai_points_to_shape"]
+)
+def test_finalize_paints_new_shape_before_notifying(
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+) -> None:
+    # new_shape's handler blocks on the modal label dialog, so the committed
+    # shape must already be on screen when it fires. Point and AI-Box can
+    # finalize without first painting a matching preview.
+    inferred = Shape(
+        shape_type="polygon",
+        points=np.array([(1, 1), (9, 1), (9, 9)], dtype=np.float64),
+        closed=True,
+    )
+    monkeypatch.setattr(canvas, "_shapes_from_ai_points", lambda **_: [inferred])
+    with qtbot.waitExposed(canvas):
+        canvas.show()
+
+    painted_shape_counts: list[int] = []
+    render_canvas = canvas._render_canvas
+
+    def record_then_render() -> None:
+        painted_shape_counts.append(len(canvas.shapes))
+        render_canvas()
+
+    monkeypatch.setattr(canvas, "_render_canvas", record_then_render)
+    counts_when_notified: list[int] = []
+    canvas.new_shape.connect(lambda: counts_when_notified.extend(painted_shape_counts))
+
+    canvas.create_mode = create_mode
+    if create_mode == "point":
+        canvas._current = _DraftShape(
+            shape_type="point",
+            points=(QPointF(5, 5),),
+            point_labels=(1,),
+        )
+    else:
+        canvas._current = _DraftShape(
+            shape_type="rectangle",
+            points=(QPointF(0, 0), QPointF(10, 10)),
+            point_labels=(1, 1),
+        )
+    canvas._finalize()
+
+    assert counts_when_notified == [1]
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_reports_inference_error_and_cancels(
     canvas: Canvas,
