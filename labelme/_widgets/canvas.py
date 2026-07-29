@@ -1633,6 +1633,10 @@ class Canvas(QtWidgets.QWidget):
 
     def _reset_after_shape_creation(self) -> None:
         self._current = None
+        # new_shape's handler blocks on the modal label dialog, so paint the
+        # committed shape synchronously first. Some modes, including point and
+        # AI-Box, can finalize without a matching preview on screen.
+        self.repaint()
         self.new_shape.emit()
         self.update()
 
