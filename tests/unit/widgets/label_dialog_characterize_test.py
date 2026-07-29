@@ -400,6 +400,27 @@ def test_flag_checked_state_preserved_across_text_change(qtbot: QtBot) -> None:
     assert box2.isChecked()
 
 
+def test_flag_checked_state_preserved_across_non_matching_text(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot=qtbot, flags={"^cat": ["indoor"]})
+    dialog.edit.setText("cat")
+    _checkbox(dialog=dialog, name="indoor").setChecked(True)
+    dialog.edit.setText("c")  # typing over a selected label dips through "c"
+    assert _checkboxes(dialog) == []
+    dialog.edit.setText("cat")
+    assert _checkbox(dialog=dialog, name="indoor").isChecked()
+
+
+def test_flag_checked_state_shared_across_labels(qtbot: QtBot) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        flags={"^cat$": ["indoor"], "^dog$": ["indoor"]},
+    )
+    dialog.edit.setText("cat")
+    _checkbox(dialog=dialog, name="indoor").setChecked(True)
+    dialog.edit.setText("dog")
+    assert _checkbox(dialog=dialog, name="indoor").isChecked()
+
+
 # ---------------------------------------------------------------------------
 # popup() round-trips (exec stubbed)
 # ---------------------------------------------------------------------------
