@@ -321,6 +321,11 @@ class LabelDialog(QtWidgets.QDialog):
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)
             self._flags_layout.addWidget(checkbox)
+            # A widget added to a visible layout stays hidden until the event
+            # loop activates the layout, and the layout counts hidden widgets as
+            # empty, so the container hint below would be momentarily 0 and
+            # would pin the scroll area shut for the rest of the popup.
+            checkbox.show()
 
         content_height = self._flags_container.sizeHint().height()
         self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))
