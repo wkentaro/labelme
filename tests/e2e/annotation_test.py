@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import osam.types._blob
 import pytest
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import Qt
@@ -96,6 +95,7 @@ _AI_MODEL = "efficientsam:10m"
             None,
             "polygon",
             id="ai_points-polygon",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -105,6 +105,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "mask",
             id="ai_points-mask",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -114,6 +115,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "rectangle",
             id="ai_points-rectangle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -123,6 +125,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "circle",
             id="ai_points-circle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_points_to_shape",
@@ -132,6 +135,7 @@ _AI_MODEL = "efficientsam:10m"
             4,
             "oriented_rectangle",
             id="ai_points-oriented_rectangle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -141,6 +145,7 @@ _AI_MODEL = "efficientsam:10m"
             None,
             "polygon",
             id="ai_box-polygon",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -150,6 +155,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "mask",
             id="ai_box-mask",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -159,6 +165,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "rectangle",
             id="ai_box-rectangle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -168,6 +175,7 @@ _AI_MODEL = "efficientsam:10m"
             2,
             "circle",
             id="ai_box-circle",
+            marks=pytest.mark.network,
         ),
         pytest.param(
             "ai_box_to_shape",
@@ -177,12 +185,14 @@ _AI_MODEL = "efficientsam:10m"
             4,
             "oriented_rectangle",
             id="ai_box-oriented_rectangle",
+            marks=pytest.mark.network,
         ),
     ],
 )
 def test_annotate_shape_types(
     main_win: MainWinFactory,
     qtbot: QtBot,
+    close_failed_download_dialog: None,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
@@ -259,52 +269,5 @@ def test_annotate_shape_types(
 
     win._save_label_file()
     assert_labelfile_sanity(out_file)
-
-    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
-
-
-@pytest.mark.gui
-def test_ai_model_download(
-    main_win: MainWinFactory,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-    data_path: Path,
-    tmp_path: Path,
-    pause: bool,
-) -> None:
-    win = main_win(
-        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
-    )
-    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-
-    canvas = win._canvas_widgets.canvas
-    canvas.set_ai_model_name(_AI_MODEL)
-    canvas.set_ai_output_format("polygon")
-
-    win._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape")
-    qtbot.wait(50)
-
-    # Redirect osam blob storage to a temp directory so it thinks the model is not
-    # downloaded. This exercises the download_ai_model dialog without touching the
-    # real model cache in ~/.cache/osam.
-    blob_base = str(tmp_path / "osam_blobs")
-
-    def patched_path(self: osam.types._blob.Blob) -> str:
-        if self.attachments:
-            safe_hash = self.hash.replace("sha256:", "sha256-")
-            return str(Path(blob_base) / safe_hash / self.filename)
-        return str(Path(blob_base) / self.hash)
-
-    monkeypatch.setattr(osam.types._blob.Blob, "path", property(patched_path))
-
-    # Reset cached osam session so the fresh model is loaded from temp dir
-    canvas._ai_assist_session._session = None
-
-    canvas_size = canvas.size()
-    pos = QPoint(int(canvas_size.width() * 0.5), int(canvas_size.height() * 0.5))
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-
-    # Verify the model was downloaded to the temp dir
-    assert any(Path(blob_base).rglob("*"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

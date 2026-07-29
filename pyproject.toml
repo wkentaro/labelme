@@ -71,8 +71,12 @@ dev = [
 labelme = "labelme.__main__:main"
 
 [tool.pytest.ini_options]
+addopts = "-m 'not network'"
 qt_api = "pyside6"
-markers = ["gui: mark a test as a GUI test."]
+markers = [
+  "gui: mark a test as a GUI test.",
+  "network: mark a test that accesses an external network service.",
+]
 
 [tool.ruff.lint]
 select = [

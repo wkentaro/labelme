@@ -3,10 +3,14 @@ from __future__ import annotations
 import json
 import os
 import shutil
+from collections.abc import Generator
 from pathlib import Path
 
 import imgviz
 import pytest
+from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QProgressDialog
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
@@ -41,6 +45,27 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 def pytest_configure(config: pytest.Config) -> None:
     if not config.getoption("--headed"):
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
+
+
+@pytest.fixture()
+def close_failed_download_dialog(
+    qapp: QApplication,
+) -> Generator[None, None, None]:
+    timer = QTimer()
+
+    def close_error_dialog() -> None:
+        for widget in qapp.topLevelWidgets():
+            if not isinstance(widget, QProgressDialog):
+                continue
+            if not widget.isVisible():
+                continue
+            if widget.labelText().startswith("Failed to download"):
+                widget.close()
+
+    timer.timeout.connect(close_error_dialog)
+    timer.start(10)
+    yield
+    timer.stop()
 
 
 @pytest.fixture()
