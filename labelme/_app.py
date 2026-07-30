@@ -2907,10 +2907,13 @@ def _shape_to_dict(shape: Shape) -> ShapeDict:
     )
 
 
-def _image_too_large_message(*, image_data: bytes) -> str | None:
-    """Explain a null QImage caused by Qt's decode allocation limit.
+# Qt's raster paint engine cannot handle an image whose width or height exceeds
+# this, regardless of how high QImageReader.allocationLimit() is raised.
+_RASTER_MAX_SIDE = 32767
 
-    Returns None when the image data is not readable at all, so that the
+
+def _image_too_large_message(*, image_data: bytes) -> str | None:
+    """Returns None when the image data is not readable at all, so that the
     caller can fall back to the generic unsupported-format message.
     """
     buffer = QtCore.QBuffer()
@@ -2920,19 +2923,32 @@ def _image_too_large_message(*, image_data: bytes) -> str | None:
     if not size.isValid():
         return None
 
-    limit_mb: int = QtGui.QImageReader.allocationLimit()
+    if max(size.width(), size.height()) > _RASTER_MAX_SIDE:
+        return QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "The image is too large to open: {width}x{height} pixels exceeds the "
+            "{max_side} pixel per-side limit of the raster engine. Raising the "
+            "decode limit will not help. Split the image into tiles (for example "
+            "with gdal_retile.py) or open a smaller copy.",
+        ).format(
+            width=size.width(),
+            height=size.height(),
+            max_side=_RASTER_MAX_SIDE,
+        )
+
+    limit_mb = QtGui.QImageReader.allocationLimit()
     if limit_mb <= 0:
         return None
 
-    required_mb: float = size.width() * size.height() * 4 / 1024 / 1024
+    required_mb = size.width() * size.height() * 4 / 1024 / 1024
     if required_mb <= limit_mb:
         return None
 
     return QtCore.QCoreApplication.translate(
         "MainWindow",
         "The image is too large to open: {width}x{height} pixels needs about "
-        "{required} MB, but the decode limit is {limit} MB. Open a smaller copy "
-        "or split the image into tiles.",
+        "{required} MB, but the decode limit is {limit} MB. Split the image into "
+        "tiles (for example with gdal_retile.py) or open a smaller copy.",
     ).format(
         width=size.width(),
         height=size.height(),

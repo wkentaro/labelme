@@ -128,6 +128,40 @@ def test_image_too_large_message_explains_allocation_limit(
     assert message is not None
     assert "800x600" in message
     assert "1 MB" in message
+    assert "gdal_retile.py" in message
+
+
+def test_image_too_large_message_reports_per_side_limit(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    class _Size:
+        def isValid(self) -> bool:
+            return True
+
+        def width(self) -> int:
+            return 37296
+
+        def height(self) -> int:
+            return 49319
+
+    class _Reader:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            pass
+
+        def size(self) -> _Size:
+            return _Size()
+
+    original_reader = _app.QtGui.QImageReader
+    try:
+        _app.QtGui.QImageReader = _Reader  # type: ignore[misc]
+        message = _app._image_too_large_message(image_data=b"")
+    finally:
+        _app.QtGui.QImageReader = original_reader  # type: ignore[misc]
+
+    assert message is not None
+    assert "37296x49319" in message
+    assert "32767" in message
+    assert "gdal_retile.py" in message
 
 
 def test_image_too_large_message_is_none_for_undecodable_data(
