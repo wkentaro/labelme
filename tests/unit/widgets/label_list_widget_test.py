@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from typing import Final
+
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QStyle
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
@@ -53,6 +56,78 @@ def test_html_delegate_does_not_clip_label_when_text_subrect_collapses(
     # The collapsed sub-rect is only 6px wide; ink well past it (x >= 20) proves
     # the widened clip rect let the label render instead of clipping it away.
     assert _has_ink_from(image, start_x=20)
+
+
+@pytest.mark.parametrize(
+    ("state", "expected"),
+    [
+        (
+            QStyle.StateFlag.State_Enabled | QStyle.StateFlag.State_Selected,
+            (QPalette.ColorGroup.Inactive, QPalette.ColorRole.HighlightedText),
+        ),
+        (
+            QStyle.StateFlag.State_Enabled
+            | QStyle.StateFlag.State_Selected
+            | QStyle.StateFlag.State_Active,
+            (QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText),
+        ),
+        (
+            QStyle.StateFlag.State_Selected,
+            (QPalette.ColorGroup.Disabled, QPalette.ColorRole.HighlightedText),
+        ),
+        (
+            QStyle.StateFlag.State_Enabled,
+            (QPalette.ColorGroup.Inactive, QPalette.ColorRole.Text),
+        ),
+        (
+            QStyle.StateFlag.State_Enabled | QStyle.StateFlag.State_Active,
+            (QPalette.ColorGroup.Active, QPalette.ColorRole.Text),
+        ),
+        (
+            QStyle.StateFlag.State_None,
+            (QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text),
+        ),
+    ],
+    ids=[
+        "selected_unfocused_view",
+        "selected_focused_view",
+        "selected_disabled_row",
+        "unselected_unfocused_view",
+        "unselected_focused_view",
+        "unselected_disabled_row",
+    ],
+)
+def test_html_delegate_takes_text_color_from_the_state_color_group(
+    qtbot: QtBot,
+    state: QStyle.StateFlag,
+    expected: tuple[QPalette.ColorGroup, QPalette.ColorRole],
+) -> None:
+    # A view that does not hold focus loses State_Active, so the style fills the
+    # row from the Inactive group; the text has to come from that same group or
+    # it lands as white-on-pale-gray.
+    INK: Final = {
+        (QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText): "#ff0000",
+        (QPalette.ColorGroup.Inactive, QPalette.ColorRole.HighlightedText): "#0000ff",
+        (QPalette.ColorGroup.Disabled, QPalette.ColorRole.HighlightedText): "#00ff00",
+        (QPalette.ColorGroup.Active, QPalette.ColorRole.Text): "#ff00ff",
+        (QPalette.ColorGroup.Inactive, QPalette.ColorRole.Text): "#00ffff",
+        (QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text): "#ffff00",
+    }
+
+    option = QtWidgets.QStyleOptionViewItem()
+    option.rect = QtCore.QRect(0, 0, 200, 24)
+    option.state = state
+    for (group, role), color in INK.items():
+        option.palette.setColor(group, role, QtGui.QColor(color))
+    image = _paint_label(option=option, text="bottle", width=200)
+
+    inks = {
+        image.pixelColor(x, y).name()
+        for x in range(image.width())
+        for y in range(image.height())
+    }
+    assert INK[expected] in inks
+    assert inks.isdisjoint(set(INK.values()) - {INK[expected]})
 
 
 @pytest.fixture()

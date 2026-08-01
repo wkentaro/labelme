@@ -53,15 +53,26 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         )
         widget_style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter)
 
-        doc = QtGui.QTextDocument()
-        if opt.state & QStyle.StateFlag.State_Selected:
-            text_color = opt.palette.color(
-                QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText
-            )
+        # Derive the color group exactly as Qt does in QItemDelegate::drawDisplay,
+        # so the text matches the group the style just used for the background: a
+        # view without focus loses State_Active and its selection is filled from
+        # Inactive/Highlight. Hardcoding Active here would paint
+        # Active/HighlightedText (white) onto that pale fill.
+        if not (opt.state & QStyle.StateFlag.State_Enabled):
+            color_group = QPalette.ColorGroup.Disabled
+        elif not (opt.state & QStyle.StateFlag.State_Active):
+            color_group = QPalette.ColorGroup.Inactive
         else:
-            text_color = opt.palette.color(
-                QPalette.ColorGroup.Active, QPalette.ColorRole.Text
-            )
+            color_group = QPalette.ColorGroup.Active
+
+        color_role = (
+            QPalette.ColorRole.HighlightedText
+            if opt.state & QStyle.StateFlag.State_Selected
+            else QPalette.ColorRole.Text
+        )
+
+        doc = QtGui.QTextDocument()
+        text_color = opt.palette.color(color_group, color_role)
         doc.setDefaultStyleSheet(f"body {{ color: {text_color.name()}; }}")
         doc.setHtml(f"<body>{html}</body>")
 
