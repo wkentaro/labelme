@@ -57,6 +57,11 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_spec: dict[str, list[str]] = flags or {}
         self._label_history: list[str] = []
         self._flags_disabled = False
+        # Checked state per flag key, remembered for the lifetime of one popup.
+        # The checkboxes themselves cannot hold it: editing the label rebuilds
+        # them, and an intermediate keystroke that matches no pattern destroys
+        # them entirely.
+        self._flag_states: dict[str, bool] = {}
 
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
@@ -216,13 +221,13 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.deleteLater()
 
     def _update_flags(self, text: str) -> None:
-        current_states = {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
+        self._flag_states.update(self._collect_flags())
         flags: list[tuple[str, bool]] = []
         for pattern, flag_keys in self._flags_spec.items():
             if not re.match(pattern, text):
                 continue
             for key in flag_keys:
-                flags.append((key, current_states.get(key, False)))
+                flags.append((key, self._flag_states.get(key, False)))
         self._set_flag_checkboxes(flags=flags)
 
     def add_label_history(self, label: str) -> None:
@@ -255,6 +260,14 @@ class LabelDialog(QtWidgets.QDialog):
         description: str | None = None,
         flags_disabled: bool = False,
     ) -> tuple[str, dict[str, bool], int | None, str] | tuple[None, None, None, None]:
+        # Drop the previous popup's checkboxes and their remembered states so a
+        # fresh popup starts unchecked. This has to precede setText() below,
+        # whose textChanged signal would otherwise re-seed the states from the
+        # previous popup's checkboxes; the flags block below rebuilds them.
+        self._flag_states.clear()
+        self._clear_flags_layout()
+        self._flags_disabled = flags_disabled
+
         if text is not None:
             self.edit.setText(text)
         self.edit.selectAll()
@@ -266,13 +279,9 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self.edit_group_id.setText(str(group_id))
 
-        self._flags_disabled = flags_disabled
         if flags is not None:
             self._set_flag_checkboxes(flags=flags.items())
         else:
-            # _update_flags keeps the checked state of boxes that already exist
-            # (wanted while typing); clear them so a fresh popup starts unchecked.
-            self._clear_flags_layout()
             self._update_flags(self.edit.text())
 
         matches = self.label_list.findItems(
@@ -312,6 +321,11 @@ class LabelDialog(QtWidgets.QDialog):
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)
             self._flags_layout.addWidget(checkbox)
+            # A widget added to a visible layout stays hidden until the event
+            # loop activates the layout, and the layout counts hidden widgets as
+            # empty, so the container hint below would be momentarily 0 and
+            # would pin the scroll area shut for the rest of the popup.
+            checkbox.show()
 
         content_height = self._flags_container.sizeHint().height()
         self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))

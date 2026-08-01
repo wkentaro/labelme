@@ -400,6 +400,39 @@ def test_flag_checked_state_preserved_across_text_change(qtbot: QtBot) -> None:
     assert box2.isChecked()
 
 
+def test_flag_checked_state_preserved_across_non_matching_text(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot=qtbot, flags={"^cat": ["indoor"]})
+    dialog.edit.setText("cat")
+    _checkbox(dialog=dialog, name="indoor").setChecked(True)
+    dialog.edit.setText("c")  # typing over a selected label dips through "c"
+    assert _checkboxes(dialog) == []
+    dialog.edit.setText("cat")
+    assert _checkbox(dialog=dialog, name="indoor").isChecked()
+
+
+def test_flag_checked_state_shared_across_labels(qtbot: QtBot) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        flags={"^cat$": ["indoor"], "^dog$": ["indoor"]},
+    )
+    dialog.edit.setText("cat")
+    _checkbox(dialog=dialog, name="indoor").setChecked(True)
+    dialog.edit.setText("dog")
+    assert _checkbox(dialog=dialog, name="indoor").isChecked()
+
+
+def test_flag_checkboxes_stay_visible_when_rebuilt_while_shown(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot=qtbot, flags={".*": ["occluded"]})
+    dialog.edit.setText("cat")
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    dialog.edit.setText("dog")  # rebuilds the checkboxes while the dialog is shown
+    qtbot.waitUntil(
+        lambda: not _checkbox(dialog=dialog, name="occluded").visibleRegion().isEmpty(),
+        timeout=1000,
+    )
+
+
 # ---------------------------------------------------------------------------
 # popup() round-trips (exec stubbed)
 # ---------------------------------------------------------------------------
