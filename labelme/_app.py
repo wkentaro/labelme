@@ -2186,7 +2186,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.open_brightness_contrast_dialog(value=False, is_initial_load=True)
         self._paint_canvas()
         self.update_action_states(True)
-        self._canvas_widgets.canvas.setFocus()
+        # A load never pulls the keyboard out of the File List, whatever drove
+        # it; otherwise an arrow-key walk of the list ends after one keypress.
+        if not self._docks.file_list.hasFocus():
+            self._canvas_widgets.canvas.setFocus()
         self.show_status_message(self.tr("Loaded %s") % Path(image_or_label_path).name)
         logger.info(
             "Loaded file: {!r} in {:.0f}ms",
