@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import pytest
+from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme._widgets.label_list_widget import format_label_with_color_dot
 from labelme._widgets.unique_label_qlist_widget import UniqueLabelQListWidget
 
 
@@ -32,7 +32,13 @@ def test_add_label_item_is_findable_and_rendered(
 
     item = widget.find_label_item(label="cat")
     assert item is not None
-    assert item.text() == format_label_with_color_dot(text="cat", color=(255, 0, 0))
+    assert item.text() == "cat"
+    image = widget.viewport().grab().toImage()
+    assert any(
+        image.pixelColor(x, y) == QtGui.QColor(255, 0, 0)
+        for x in range(image.width())
+        for y in range(image.height())
+    )
 
 
 def test_add_label_item_rejects_duplicate_label(

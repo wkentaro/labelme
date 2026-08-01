@@ -6,50 +6,37 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QStyle
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
-from labelme._widgets.label_list_widget import HTMLDelegate
 from labelme._widgets.label_list_widget import LabelListWidget
 from labelme._widgets.label_list_widget import LabelListWidgetItem
-from labelme._widgets.label_list_widget import format_label_with_color_dot
 from labelme._widgets.label_list_widget import format_shape_label
 
 
-def _has_ink_from(image: QtGui.QImage, start_x: int) -> bool:
-    for x in range(start_x, image.width()):
-        for y in range(image.height()):
-            if image.pixelColor(x, y) != QtGui.QColor(Qt.GlobalColor.white):
-                return True
-    return False
-
-
-def test_html_delegate_does_not_clip_label_when_text_subrect_collapses(
-    qtbot: QtBot,
-) -> None:
+def _paint_item(
+    delegate: QtWidgets.QAbstractItemDelegate,
+    item: LabelListWidgetItem,
+    option: QtWidgets.QStyleOptionViewItem,
+) -> QtGui.QImage:
     model = QtGui.QStandardItemModel()
-    model.appendRow(QtGui.QStandardItem("LabelText " * 8))
-    index = model.index(0, 0)
-
-    delegate = HTMLDelegate()
-
-    image = QtGui.QImage(400, 24, QtGui.QImage.Format.Format_ARGB32)
+    model.appendRow(item)
+    image = QtGui.QImage(200, 24, QtGui.QImage.Format.Format_ARGB32)
     image.fill(Qt.GlobalColor.white)
     painter = QtGui.QPainter(image)
-
-    option = QtWidgets.QStyleOptionViewItem()
-    # A narrow item rect emulates the styles (e.g. Adwaita) whose text sub-rect
-    # collapses because the delegate empties opt.text before measuring it.
-    option.rect = QtCore.QRect(0, 0, 6, 24)
-    option.palette.setColor(
-        QPalette.ColorGroup.Active, QPalette.ColorRole.Text, QtGui.QColor("black")
-    )
-    delegate.paint(painter, option, index)
+    delegate.paint(painter, option, model.index(0, 0))
     painter.end()
+    return image
 
-    # The collapsed sub-rect is only 6px wide; ink well past it (x >= 20) proves
-    # the widened clip rect let the label render instead of clipping it away.
-    assert _has_ink_from(image, start_x=20)
+
+def _pixels_with_color(image: QtGui.QImage, color: QtGui.QColor) -> list[QtCore.QPoint]:
+    return [
+        QtCore.QPoint(x, y)
+        for x in range(image.width())
+        for y in range(image.height())
+        if image.pixelColor(x, y) == color
+    ]
 
 
 @pytest.fixture()
@@ -59,6 +46,90 @@ def widget(qtbot: QtBot) -> LabelListWidget:
     widget.resize(200, 200)
     widget.show()
     return widget
+
+
+def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
+    widget: LabelListWidget,
+) -> None:
+    option = QtWidgets.QStyleOptionViewItem()
+    option.rect = QtCore.QRect(0, 0, 200, 24)
+    option.state = QStyle.StateFlag.State_Enabled | QStyle.StateFlag.State_Selected
+    option.palette.setColor(
+        QPalette.ColorGroup.Active,
+        QPalette.ColorRole.HighlightedText,
+        QtGui.QColor("red"),
+    )
+    option.palette.setColor(
+        QPalette.ColorGroup.Inactive,
+        QPalette.ColorRole.HighlightedText,
+        QtGui.QColor("blue"),
+    )
+
+    item = LabelListWidgetItem(shape=Shape(label="bottle"))
+    item.set_label(text="bottle", color=(0, 255, 0))
+    actual = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
+    expected = _paint_item(
+        delegate=QtWidgets.QStyledItemDelegate(),
+        item=LabelListWidgetItem(text="bottle", shape=Shape(label="bottle")),
+        option=option,
+    )
+
+    label_pixels = _pixels_with_color(image=expected, color=QtGui.QColor("blue"))
+    dot_pixels = _pixels_with_color(image=actual, color=QtGui.QColor(0, 255, 0))
+    assert label_pixels
+    assert dot_pixels
+    label_right = max(point.x() for point in label_pixels)
+    assert label_right < min(point.x() for point in dot_pixels)
+    prefix = QtCore.QRect(0, 0, label_right + 1, actual.height())
+    assert actual.copy(prefix) == expected.copy(prefix)
+
+
+def test_color_dot_is_painted_without_a_text_colored_fringe(
+    widget: LabelListWidget,
+) -> None:
+    option = QtWidgets.QStyleOptionViewItem()
+    option.rect = QtCore.QRect(0, 0, 200, 24)
+    option.state = QStyle.StateFlag.State_Enabled | QStyle.StateFlag.State_Selected
+    for group in (QPalette.ColorGroup.Active, QPalette.ColorGroup.Inactive):
+        option.palette.setColor(
+            group, QPalette.ColorRole.Highlight, QtGui.QColor("blue")
+        )
+        option.palette.setColor(
+            group, QPalette.ColorRole.HighlightedText, QtGui.QColor("white")
+        )
+
+    item = LabelListWidgetItem(shape=Shape(label="bottle"))
+    item.set_label(text="bottle", color=(255, 0, 0))
+    image = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
+
+    dot_pixels = _pixels_with_color(image=image, color=QtGui.QColor(255, 0, 0))
+    assert dot_pixels
+    # Only the dot blended into the highlight belongs around the dot, and
+    # neither carries a green channel. Any green there is the white glyph Qt
+    # paints for a dot left in the item text, showing out from underneath.
+    xs = [point.x() for point in dot_pixels]
+    ys = [point.y() for point in dot_pixels]
+    assert not [
+        (x, y)
+        for x in range(min(xs) - 1, max(xs) + 2)
+        for y in range(min(ys) - 1, max(ys) + 2)
+        if image.pixelColor(x, y).green() != 0
+    ]
+
+
+def test_label_list_item_clone_preserves_color_dot(widget: LabelListWidget) -> None:
+    item = LabelListWidgetItem(shape=Shape(label="cat"))
+    item.set_label(text="cat", color=(0, 255, 0))
+    option = QtWidgets.QStyleOptionViewItem()
+    option.rect = QtCore.QRect(0, 0, 200, 24)
+
+    image = _paint_item(
+        delegate=widget.itemDelegate(),
+        item=item.clone(),
+        option=option,
+    )
+
+    assert _pixels_with_color(image=image, color=QtGui.QColor(0, 255, 0))
 
 
 @pytest.fixture()
@@ -157,56 +228,24 @@ def test_release_keeps_multi_selection_when_press_toggled_checkbox(
 
 
 @pytest.mark.parametrize(
-    ("text", "color", "expected"),
+    ("shape", "expected"),
     [
-        ("cat", (1, 2, 3), 'cat <font color="#010203">●</font>'),
-        ('<b>&"', (0, 0, 0), '&lt;b&gt;&amp;&quot; <font color="#000000">●</font>'),
-    ],
-    ids=["zero_pads_each_channel", "escapes_html_in_text"],
-)
-def test_format_label_with_color_dot(
-    text: str, color: tuple[int, int, int], expected: str
-) -> None:
-    assert format_label_with_color_dot(text=text, color=color) == expected
-
-
-@pytest.mark.parametrize(
-    ("shape", "fill_rgb", "expected"),
-    [
-        (Shape(label="cat"), (255, 0, 0), 'cat <font color="#ff0000">●</font>'),
-        (
-            Shape(label="cat", group_id=3),
-            (0, 0, 0),
-            'cat (3) <font color="#000000">●</font>',
-        ),
-        (
-            Shape(label="cat", group_id=0),
-            (0, 0, 0),
-            'cat (0) <font color="#000000">●</font>',
-        ),
+        (Shape(label="cat"), "cat"),
+        (Shape(label="cat", group_id=3), "cat (3)"),
+        (Shape(label="cat", group_id=0), "cat (0)"),
         (
             Shape(
                 label="cat",
                 flags={"occluded": True, "truncated": False, "difficult": True},
             ),
-            (0, 0, 0),
-            'cat [occluded, difficult] <font color="#000000">●</font>',
+            "cat [occluded, difficult]",
         ),
-        (
-            Shape(label="cat", flags={"occluded": False}),
-            (0, 0, 0),
-            'cat <font color="#000000">●</font>',
-        ),
+        (Shape(label="cat", flags={"occluded": False}), "cat"),
         (
             Shape(label="cat", group_id=3, flags={"occluded": True}),
-            (0, 0, 0),
-            'cat (3) [occluded] <font color="#000000">●</font>',
+            "cat (3) [occluded]",
         ),
-        (
-            Shape(label="<b>", group_id=1),
-            (0, 0, 0),
-            '&lt;b&gt; (1) <font color="#000000">●</font>',
-        ),
+        (Shape(label="<b>", group_id=1), "<b> (1)"),
     ],
     ids=[
         "bare_label_when_no_group_or_flags",
@@ -215,10 +254,8 @@ def test_format_label_with_color_dot(
         "appends_only_enabled_flags_in_order",
         "omits_brackets_when_no_flag_is_enabled",
         "combines_group_id_before_flags",
-        "escapes_html_in_composed_text",
+        "keeps_markup_literal",
     ],
 )
-def test_format_shape_label(
-    shape: Shape, fill_rgb: tuple[int, int, int], expected: str
-) -> None:
-    assert format_shape_label(shape=shape, fill_rgb=fill_rgb) == expected
+def test_format_shape_label(shape: Shape, expected: str) -> None:
+    assert format_shape_label(shape=shape) == expected
