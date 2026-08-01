@@ -1632,14 +1632,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape.description = description
 
             assert shape.label is not None
-            item.setText(
-                format_shape_label(
-                    shape,
-                    fill_rgb=self._get_rgb_by_label(
-                        label=shape.label,
-                        unique_label_list=self._docks.unique_label_list,
-                    ),
-                )
+            fill_rgb = self._get_rgb_by_label(
+                label=shape.label,
+                unique_label_list=self._docks.unique_label_list,
+            )
+            item.set_label(
+                text=format_shape_label(shape),
+                color=fill_rgb,
             )
             self.mark_dirty()
             if self._docks.unique_label_list.find_label_item(shape.label) is None:
@@ -1699,14 +1698,13 @@ class MainWindow(QtWidgets.QMainWindow):
         for action in self._actions.on_shapes_present:
             action.setEnabled(True)
 
-        label_list_item.setText(
-            format_shape_label(
-                shape,
-                fill_rgb=self._get_rgb_by_label(
-                    label=shape.label,
-                    unique_label_list=self._docks.unique_label_list,
-                ),
-            )
+        fill_rgb = self._get_rgb_by_label(
+            label=shape.label,
+            unique_label_list=self._docks.unique_label_list,
+        )
+        label_list_item.set_label(
+            text=format_shape_label(shape),
+            color=fill_rgb,
         )
 
     def _get_rgb_by_label(

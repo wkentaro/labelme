@@ -4,8 +4,8 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
-from .label_list_widget import HTMLDelegate
-from .label_list_widget import format_label_with_color_dot
+from .label_list_widget import LABEL_COLOR_ROLE
+from .label_list_widget import TrailingColorDotDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
@@ -18,7 +18,7 @@ class _EscapableQListWidget(QtWidgets.QListWidget):
 class UniqueLabelQListWidget(_EscapableQListWidget):
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent=parent)
-        self.setItemDelegate(HTMLDelegate(parent=self))
+        self.setItemDelegate(TrailingColorDotDelegate(parent=self))
 
     def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:
         super().mousePressEvent(mouseEvent)
@@ -38,5 +38,6 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
 
         item = QtWidgets.QListWidgetItem()
         item.setData(Qt.ItemDataRole.UserRole, label)  # for find_label_item
-        item.setText(format_label_with_color_dot(text=label, color=color))
+        item.setData(LABEL_COLOR_ROLE, QtGui.QColor(*color))
+        item.setText(label)
         self.addItem(item)
