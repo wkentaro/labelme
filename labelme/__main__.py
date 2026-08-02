@@ -72,7 +72,7 @@ def _setup_loguru(logger_level: str) -> None:
             diagnose=True,
         )
     except (KeyError, OSError) as e:
-        logger.warning(f"Failed to set up the log file, logging to stderr only: {e}")
+        logger.warning("Failed to set up the log file, logging to stderr only: {!r}", e)
 
 
 def _route_qt_logging_to_loguru() -> None:

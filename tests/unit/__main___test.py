@@ -136,7 +136,7 @@ def test_logger_io_is_a_write_only_non_seekable_sink() -> None:
 
 
 def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     def raise_permission_error(*args: object, **kwargs: object) -> None:
         raise PermissionError(13, "Permission denied")
@@ -145,9 +145,11 @@ def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
 
     _setup_loguru("INFO")
 
+    assert "Failed to set up the log file" in capsys.readouterr().err
+
 
 def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     cache_dir = tmp_path / ".cache" / "labelme"
     cache_dir.mkdir(parents=True)
@@ -157,14 +159,18 @@ def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
 
     _setup_loguru("INFO")
 
+    assert "Failed to set up the log file" in capsys.readouterr().err
+
 
 def test_setup_loguru_degrades_to_stderr_without_localappdata(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     monkeypatch.setattr(os, "name", "nt")
     monkeypatch.delenv("LOCALAPPDATA", raising=False)
 
     _setup_loguru("INFO")
+
+    assert "Failed to set up the log file" in capsys.readouterr().err
 
 
 def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
