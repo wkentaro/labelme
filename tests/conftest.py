@@ -3,12 +3,15 @@ from __future__ import annotations
 import json
 import os
 import shutil
+from collections.abc import Callable
 from collections.abc import Generator
+from collections.abc import Iterator
 from pathlib import Path
 
 import imgviz
 import pytest
 from PySide6.QtCore import QTimer
+from PySide6.QtGui import QImageReader
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QProgressDialog
 from PySide6.QtWidgets import QWidget
@@ -82,6 +85,13 @@ def update_snapshots(request: pytest.FixtureRequest) -> bool:
 def snapshot_dir() -> Path:
     # ``--update-snapshots`` must write back to the real repo tree, not a tmp copy.
     return Path(__file__).parent / "data" / "snapshots"
+
+
+@pytest.fixture()
+def set_allocation_limit(qapp: QApplication) -> Iterator[Callable[[int], None]]:
+    original_limit = QImageReader.allocationLimit()
+    yield QImageReader.setAllocationLimit
+    QImageReader.setAllocationLimit(original_limit)
 
 
 def assert_labelfile_sanity(filename: str) -> None:

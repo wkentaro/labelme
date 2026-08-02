@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import struct
+import zlib
+from collections.abc import Callable
+
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -104,8 +108,13 @@ def test_format_window_title(
     )
 
 
-def _png_bytes(*, width: int, height: int) -> bytes:
-    image = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
+def _make_png_bytes(
+    *,
+    width: int,
+    height: int,
+    image_format: QtGui.QImage.Format = QtGui.QImage.Format.Format_RGB32,
+) -> bytes:
+    image = QtGui.QImage(width, height, image_format)
     image.fill(0)
     buffer = QtCore.QBuffer()
     buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly)
@@ -113,17 +122,14 @@ def _png_bytes(*, width: int, height: int) -> bytes:
     return bytes(buffer.data())  # ty: ignore[invalid-argument-type]
 
 
-def test_image_too_large_message_explains_allocation_limit(
-    qapp: QtWidgets.QApplication,
+def test_make_image_too_large_message_explains_allocation_limit(
+    set_allocation_limit: Callable[[int], None],
 ) -> None:
-    image_data = _png_bytes(width=800, height=600)
-    original_limit = QtGui.QImageReader.allocationLimit()
-    try:
-        QtGui.QImageReader.setAllocationLimit(1)
-        assert QtGui.QImage.fromData(image_data).isNull()
-        message = _app._image_too_large_message(image_data=image_data)
-    finally:
-        QtGui.QImageReader.setAllocationLimit(original_limit)
+    image_data = _make_png_bytes(width=800, height=600)
+    set_allocation_limit(1)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
 
     assert message is not None
     assert "800x600" in message
@@ -131,32 +137,49 @@ def test_image_too_large_message_explains_allocation_limit(
     assert "gdal_retile.py" in message
 
 
-def test_image_too_large_message_reports_per_side_limit(
+def test_make_image_too_large_message_accounts_for_bit_depth(
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    # 800x600 at 16 bits per channel decodes to 8 bytes/pixel (~3.7 MB), so a
+    # 2 MB limit rejects it even though a flat 4-bytes/pixel estimate
+    # (~1.8 MB) would wrongly conclude it fits.
+    image_data = _make_png_bytes(
+        width=800, height=600, image_format=QtGui.QImage.Format.Format_RGBA64
+    )
+    set_allocation_limit(2)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "800x600" in message
+    assert "4 MB" in message
+    assert "2 MB" in message
+
+
+def test_make_image_too_large_message_reports_per_side_limit(
     qapp: QtWidgets.QApplication,
 ) -> None:
-    class _Size:
-        def isValid(self) -> bool:
-            return True
+    # A hand-built PNG whose header claims the dimensions from #2388 but
+    # carries no pixel data: QImageReader reads the size from the header
+    # alone, so the real decode path runs without a multi-GB allocation.
+    def make_chunk(tag: bytes, payload: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(payload))
+            + tag
+            + payload
+            + struct.pack(">I", zlib.crc32(tag + payload))
+        )
 
-        def width(self) -> int:
-            return 37296
+    ihdr = struct.pack(">IIBBBBB", 37296, 49319, 8, 2, 0, 0, 0)
+    image_data = (
+        b"\x89PNG\r\n\x1a\n"
+        + make_chunk(b"IHDR", ihdr)
+        + make_chunk(b"IDAT", b"")
+        + make_chunk(b"IEND", b"")
+    )
 
-        def height(self) -> int:
-            return 49319
-
-    class _Reader:
-        def __init__(self, *args: object, **kwargs: object) -> None:
-            pass
-
-        def size(self) -> _Size:
-            return _Size()
-
-    original_reader = _app.QtGui.QImageReader
-    try:
-        _app.QtGui.QImageReader = _Reader  # ty: ignore[invalid-assignment]
-        message = _app._image_too_large_message(image_data=b"")
-    finally:
-        _app.QtGui.QImageReader = original_reader
+    message = _app._make_image_too_large_message(image_data=image_data)
 
     assert message is not None
     assert "37296x49319" in message
@@ -164,15 +187,35 @@ def test_image_too_large_message_reports_per_side_limit(
     assert "gdal_retile.py" in message
 
 
-def test_image_too_large_message_is_none_for_undecodable_data(
+def test_make_image_too_large_message_rounds_the_need_up(
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    # 800x680 at 4 bytes/pixel needs ~2.1 MB: over a 2 MB limit, but plain
+    # round() would render the contradictory "needs about 2 MB, but the
+    # decode limit is 2 MB".
+    image_data = _make_png_bytes(width=800, height=680)
+    set_allocation_limit(2)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "3 MB" in message
+    assert "2 MB" in message
+
+
+def test_make_image_too_large_message_is_none_for_undecodable_data(
     qapp: QtWidgets.QApplication,
 ) -> None:
-    assert _app._image_too_large_message(image_data=b"not an image") is None
+    assert _app._make_image_too_large_message(image_data=b"not an image") is None
 
 
-def test_image_too_large_message_is_none_within_allocation_limit(
+def test_make_image_too_large_message_is_none_within_allocation_limit(
     qapp: QtWidgets.QApplication,
 ) -> None:
     assert (
-        _app._image_too_large_message(image_data=_png_bytes(width=8, height=8)) is None
+        _app._make_image_too_large_message(
+            image_data=_make_png_bytes(width=8, height=8)
+        )
+        is None
     )
