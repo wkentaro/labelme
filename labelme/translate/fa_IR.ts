@@ -598,6 +598,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - باز کردن پوشه</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>تصویر برای باز شدن بیش از حد بزرگ است: {width}x{height} پیکسل از محدودیت {max_side} پیکسل در هر ضلع موتور راستر فراتر می‌رود. افزایش محدودیت رمزگشایی کمکی نمی‌کند. تصویر را به کاشی‌ها تقسیم کنید (برای مثال با gdal_retile.py) یا نسخه کوچک‌تری را باز کنید.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>تصویر برای باز شدن بیش از حد بزرگ است: {width}x{height} پیکسل به حدود {required} مگابایت نیاز دارد، اما محدودیت رمزگشایی {limit} مگابایت است. تصویر را به کاشی‌ها تقسیم کنید (برای مثال با gdal_retile.py) یا نسخه کوچک‌تری را باز کنید.</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>تغییر وضعیت حالت &quot;نگه داشتن حاشیه‌نویسی قبلی&quot;</translation>
     </message>

@@ -598,6 +598,14 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>%s - 폴더 열기</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>이미지가 너무 커서 열 수 없습니다: {width}x{height} 픽셀은 래스터 엔진의 한 변당 {max_side} 픽셀 제한을 초과합니다. 디코드 제한을 늘려도 해결되지 않습니다. 이미지를 타일로 분할하거나(예: gdal_retile.py) 더 작은 사본을 여세요.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>이미지가 너무 커서 열 수 없습니다: {width}x{height} 픽셀에는 약 {required} MB가 필요하지만 디코드 제한은 {limit} MB입니다. 이미지를 타일로 분할하거나(예: gdal_retile.py) 더 작은 사본을 여세요.</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>&quot;이전 주석 유지&quot; 모드 토글</translation>
     </message>

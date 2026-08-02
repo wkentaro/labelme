@@ -601,6 +601,14 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>%s - Klasörü Aç</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Görüntü açılamayacak kadar büyük: {width}x{height} piksel, raster motorunun kenar başına {max_side} piksel sınırını aşıyor. Kod çözme sınırını yükseltmek yardımcı olmaz. Görüntüyü karolara bölün (örneğin gdal_retile.py ile) veya daha küçük bir kopyasını açın.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Görüntü açılamayacak kadar büyük: {width}x{height} piksel yaklaşık {required} MB gerektiriyor, ancak kod çözme sınırı {limit} MB. Görüntüyü karolara bölün (örneğin gdal_retile.py ile) veya daha küçük bir kopyasını açın.</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>&quot;önceki açıklamayı koru&quot; modunu aç/kapat</translation>
     </message>
