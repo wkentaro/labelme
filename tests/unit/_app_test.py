@@ -109,8 +109,8 @@ def _png_bytes(*, width: int, height: int) -> bytes:
     image.fill(0)
     buffer = QtCore.QBuffer()
     buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly)
-    image.save(buffer, "PNG")
-    return bytes(buffer.data())
+    image.save(buffer, "PNG")  # ty: ignore[no-matching-overload]
+    return bytes(buffer.data())  # ty: ignore[invalid-argument-type]
 
 
 def test_image_too_large_message_explains_allocation_limit(
@@ -153,10 +153,10 @@ def test_image_too_large_message_reports_per_side_limit(
 
     original_reader = _app.QtGui.QImageReader
     try:
-        _app.QtGui.QImageReader = _Reader  # type: ignore[misc]
+        _app.QtGui.QImageReader = _Reader  # ty: ignore[invalid-assignment]
         message = _app._image_too_large_message(image_data=b"")
     finally:
-        _app.QtGui.QImageReader = original_reader  # type: ignore[misc]
+        _app.QtGui.QImageReader = original_reader
 
     assert message is not None
     assert "37296x49319" in message

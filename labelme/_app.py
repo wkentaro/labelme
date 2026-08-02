@@ -2907,15 +2907,14 @@ def _shape_to_dict(shape: Shape) -> ShapeDict:
     )
 
 
-# Qt's raster paint engine cannot handle an image whose width or height exceeds
-# this, regardless of how high QImageReader.allocationLimit() is raised.
-_RASTER_MAX_SIDE = 32767
-
-
 def _image_too_large_message(*, image_data: bytes) -> str | None:
     """Returns None when the image data is not readable at all, so that the
     caller can fall back to the generic unsupported-format message.
     """
+    # Qt's raster paint engine cannot handle an image whose width or height
+    # exceeds this, regardless of how high allocationLimit() is raised.
+    RASTER_MAX_SIDE: Final = 32767
+
     buffer = QtCore.QBuffer()
     buffer.setData(QtCore.QByteArray(image_data))
     buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
@@ -2923,7 +2922,7 @@ def _image_too_large_message(*, image_data: bytes) -> str | None:
     if not size.isValid():
         return None
 
-    if max(size.width(), size.height()) > _RASTER_MAX_SIDE:
+    if max(size.width(), size.height()) > RASTER_MAX_SIDE:
         return QtCore.QCoreApplication.translate(
             "MainWindow",
             "The image is too large to open: {width}x{height} pixels exceeds the "
@@ -2933,7 +2932,7 @@ def _image_too_large_message(*, image_data: bytes) -> str | None:
         ).format(
             width=size.width(),
             height=size.height(),
-            max_side=_RASTER_MAX_SIDE,
+            max_side=RASTER_MAX_SIDE,
         )
 
     limit_mb = QtGui.QImageReader.allocationLimit()
