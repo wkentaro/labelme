@@ -34,12 +34,23 @@ def install_fake_osam_session(
     return _install
 
 
-def _propose(session: AiAssistSession) -> list[Shape]:
+def _propose(
+    session: AiAssistSession,
+    *,
+    prompt_kind: _ai_assist.AiPromptKind = "points",
+) -> list[Shape]:
+    if prompt_kind == "box":
+        points = np.zeros((2, 2))
+        point_labels = np.array([2, 3])
+    else:
+        points = np.zeros((1, 2))
+        point_labels = np.array([1])
     return session.propose_shapes(
         image=np.zeros((1, 1, 3), dtype=np.uint8),
         image_id="img",
-        points=np.zeros((1, 2)),
-        point_labels=np.array([1]),
+        prompt_kind=prompt_kind,
+        points=points,
+        point_labels=point_labels,
         existing_shapes=[],
     )
 
@@ -88,6 +99,32 @@ def test_default_model_name_and_output_format() -> None:
     session.output_format = "mask"
     assert session.model_name == "efficientsam:latest"
     assert session.output_format == "mask"
+
+
+def test_sam3_point_prompt_is_rejected_before_session_creation(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    response = osam.types.GenerateResponse(model="stub", annotations=[])
+    created_model_names = install_fake_osam_session(response)
+    session = AiAssistSession(model_name="sam3:latest")
+
+    with pytest.raises(ValueError, match="does not support point prompts"):
+        _propose(session)
+
+    assert created_model_names == []
+
+
+def test_sam3_box_prompt_reaches_session(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    response = osam.types.GenerateResponse(model="stub", annotations=[])
+    created_model_names = install_fake_osam_session(response)
+    session = AiAssistSession(model_name="sam3:latest")
+
+    shapes = _propose(session, prompt_kind="box")
+
+    assert shapes == []
+    assert created_model_names == ["sam3:latest"]
 
 
 def _annotation(

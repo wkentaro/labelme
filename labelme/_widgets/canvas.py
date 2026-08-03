@@ -406,13 +406,18 @@ class Canvas(QtWidgets.QWidget):
     def set_ai_output_format(self, output_format: _automation.AiOutputFormat) -> None:
         self._ai_assist_session.output_format = output_format
 
-    def _shapes_from_ai_points(
-        self, points: Sequence[QPointF], point_labels: Sequence[int]
+    def _propose_ai_shapes(
+        self,
+        *,
+        prompt_kind: _automation.AiPromptKind,
+        points: Sequence[QPointF],
+        point_labels: Sequence[int],
     ) -> list[Shape]:
         image: np.ndarray = _utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
         return self._ai_assist_session.propose_shapes(
             image=image[:, :, :3],
             image_id=str(self._pixmap_hash),
+            prompt_kind=prompt_kind,
             points=np.array([[p.x(), p.y()] for p in points]),
             point_labels=np.array(point_labels),
             existing_shapes=self.shapes,
@@ -1549,13 +1554,14 @@ class Canvas(QtWidgets.QWidget):
             preview = preview.add_point(point=self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
-    def _build_ai_points_preview(self, current: _DraftShape) -> Shape:
+    def _build_ai_points_preview(self, current: _DraftShape) -> Shape | None:
         preview = current.add_point(
             point=self._line.points[1],
             label=self._line.point_labels[1],
         )
         try:
-            ai_shapes = self._shapes_from_ai_points(
+            ai_shapes = self._propose_ai_shapes(
+                prompt_kind="points",
                 points=preview.points,
                 point_labels=preview.point_labels,
             )
@@ -1565,11 +1571,11 @@ class Canvas(QtWidgets.QWidget):
             # success re-arms the report.
             if not self._ai_inference_failed:
                 self._report_inference_failure(error=e)
-            return _draft_to_shape(preview)
+            return None
         self._ai_inference_failed = False
         if ai_shapes:
             return ai_shapes[0]
-        return _draft_to_shape(preview)
+        return None
 
     def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
         origin = self._compute_image_origin_offset()
@@ -1619,13 +1625,15 @@ class Canvas(QtWidgets.QWidget):
     def _build_new_shapes_from_ai_inference(self) -> list[Shape]:
         assert self._current is not None
         if self.create_mode == "ai_points_to_shape":
-            return self._shapes_from_ai_points(
+            return self._propose_ai_shapes(
+                prompt_kind="points",
                 points=self._current.points,
                 point_labels=self._current.point_labels,
             )
         if self.create_mode == "ai_box_to_shape":
             # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
-            return self._shapes_from_ai_points(
+            return self._propose_ai_shapes(
+                prompt_kind="box",
                 points=_normalize_bbox_points(bbox_points=self._current.points),
                 point_labels=[2, 3],
             )
