@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
 from typing import Final
 
 from PySide6 import QtCore
@@ -57,6 +56,9 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_spec: dict[str, list[str]] = flags or {}
         self._label_history: list[str] = []
         self._flags_disabled = False
+        # The flags currently on show, keyed by flag name, so a flag named by
+        # two matching label_flags patterns gets exactly one checkbox.
+        self._flag_checkboxes: dict[str, QtWidgets.QCheckBox] = {}
         # Checked state per flag key, remembered for the lifetime of one popup.
         # The checkboxes themselves cannot hold it: editing the label rebuilds
         # them, and an intermediate keystroke that matches no pattern destroys
@@ -201,16 +203,8 @@ class LabelDialog(QtWidgets.QDialog):
         if not self.edit.isEnabled() or self.edit.text().strip():
             self.accept()
 
-    def _flag_checkboxes(self) -> list[QtWidgets.QCheckBox]:
-        checkboxes: list[QtWidgets.QCheckBox] = []
-        for i in range(self._flags_layout.count()):
-            item = self._flags_layout.itemAt(i)
-            widget = item.widget() if item is not None else None
-            if isinstance(widget, QtWidgets.QCheckBox):
-                checkboxes.append(widget)
-        return checkboxes
-
-    def _clear_flags_layout(self) -> None:
+    def _clear_flag_checkboxes(self) -> None:
+        self._flag_checkboxes.clear()
         while self._flags_layout.count():
             item = self._flags_layout.takeAt(0)
             if item is None:
@@ -222,12 +216,12 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _update_flags(self, text: str) -> None:
         self._flag_states.update(self._collect_flags())
-        flags: list[tuple[str, bool]] = []
+        flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
             if not re.match(pattern, text):
                 continue
             for key in flag_keys:
-                flags.append((key, self._flag_states.get(key, False)))
+                flags[key] = self._flag_states.get(key, False)
         self._set_flag_checkboxes(flags=flags)
 
     def add_label_history(self, label: str) -> None:
@@ -265,7 +259,7 @@ class LabelDialog(QtWidgets.QDialog):
         # whose textChanged signal would otherwise re-seed the states from the
         # previous popup's checkboxes; the flags block below rebuilds them.
         self._flag_states.clear()
-        self._clear_flags_layout()
+        self._clear_flag_checkboxes()
         self._flags_disabled = flags_disabled
 
         if text is not None:
@@ -280,7 +274,7 @@ class LabelDialog(QtWidgets.QDialog):
             self.edit_group_id.setText(str(group_id))
 
         if flags is not None:
-            self._set_flag_checkboxes(flags=flags.items())
+            self._set_flag_checkboxes(flags=flags)
         else:
             self._update_flags(self.edit.text())
 
@@ -314,12 +308,13 @@ class LabelDialog(QtWidgets.QDialog):
 
         return None, None, None, None
 
-    def _set_flag_checkboxes(self, flags: Iterable[tuple[str, bool]]) -> None:
-        self._clear_flags_layout()
-        for key, checked in flags:
+    def _set_flag_checkboxes(self, flags: dict[str, bool]) -> None:
+        self._clear_flag_checkboxes()
+        for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)
+            self._flag_checkboxes[key] = checkbox
             self._flags_layout.addWidget(checkbox)
             # A widget added to a visible layout stays hidden until the event
             # loop activates the layout, and the layout counts hidden widgets as
@@ -331,7 +326,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))
 
     def _collect_flags(self) -> dict[str, bool]:
-        return {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
+        return {key: cb.isChecked() for key, cb in self._flag_checkboxes.items()}
 
     def _fit_label_list_to_content(self) -> None:
         if self._fit_to_content["row"]:

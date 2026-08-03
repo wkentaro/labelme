@@ -433,6 +433,32 @@ def test_flag_checkboxes_stay_visible_when_rebuilt_while_shown(qtbot: QtBot) -> 
     )
 
 
+def test_flag_named_by_two_matching_patterns_shown_once(qtbot: QtBot) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        flags={".*": ["occluded"], "^cat$": ["occluded", "urgent"]},
+    )
+    dialog.edit.setText("cat")
+    assert [cb.text() for cb in _checkboxes(dialog)] == ["occluded", "urgent"]
+
+
+def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
+    qtbot: QtBot,
+) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        flags={".*": ["occluded"], "^cat$": ["occluded", "urgent"]},
+    )
+
+    _, flags, _, _ = _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: _checkbox(dialog=d, name="occluded").setChecked(True),
+    )
+    assert flags == {"occluded": True, "urgent": False}
+
+
 # ---------------------------------------------------------------------------
 # popup() round-trips (exec stubbed)
 # ---------------------------------------------------------------------------
