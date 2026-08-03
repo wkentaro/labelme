@@ -56,6 +56,9 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_spec: dict[str, list[str]] = flags or {}
         self._label_history: list[str] = []
         self._flags_disabled = False
+        # The flags currently on show, keyed by flag name, so a flag named by
+        # two matching label_flags patterns gets exactly one checkbox.
+        self._flag_checkboxes: dict[str, QtWidgets.QCheckBox] = {}
         # Checked state per flag key, remembered for the lifetime of one popup.
         # The checkboxes themselves cannot hold it: editing the label rebuilds
         # them, and an intermediate keystroke that matches no pattern destroys
@@ -200,16 +203,8 @@ class LabelDialog(QtWidgets.QDialog):
         if not self.edit.isEnabled() or self.edit.text().strip():
             self.accept()
 
-    def _flag_checkboxes(self) -> list[QtWidgets.QCheckBox]:
-        checkboxes: list[QtWidgets.QCheckBox] = []
-        for i in range(self._flags_layout.count()):
-            item = self._flags_layout.itemAt(i)
-            widget = item.widget() if item is not None else None
-            if isinstance(widget, QtWidgets.QCheckBox):
-                checkboxes.append(widget)
-        return checkboxes
-
-    def _clear_flags_layout(self) -> None:
+    def _clear_flag_checkboxes(self) -> None:
+        self._flag_checkboxes.clear()
         while self._flags_layout.count():
             item = self._flags_layout.takeAt(0)
             if item is None:
@@ -264,7 +259,7 @@ class LabelDialog(QtWidgets.QDialog):
         # whose textChanged signal would otherwise re-seed the states from the
         # previous popup's checkboxes; the flags block below rebuilds them.
         self._flag_states.clear()
-        self._clear_flags_layout()
+        self._clear_flag_checkboxes()
         self._flags_disabled = flags_disabled
 
         if text is not None:
@@ -314,11 +309,12 @@ class LabelDialog(QtWidgets.QDialog):
         return None, None, None, None
 
     def _set_flag_checkboxes(self, flags: dict[str, bool]) -> None:
-        self._clear_flags_layout()
+        self._clear_flag_checkboxes()
         for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)
+            self._flag_checkboxes[key] = checkbox
             self._flags_layout.addWidget(checkbox)
             # A widget added to a visible layout stays hidden until the event
             # loop activates the layout, and the layout counts hidden widgets as
@@ -330,7 +326,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))
 
     def _collect_flags(self) -> dict[str, bool]:
-        return {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
+        return {key: cb.isChecked() for key, cb in self._flag_checkboxes.items()}
 
     def _fit_label_list_to_content(self) -> None:
         if self._fit_to_content["row"]:

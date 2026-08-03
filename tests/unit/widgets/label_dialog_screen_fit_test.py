@@ -16,7 +16,7 @@ def _make_dialog(qtbot: QtBot, flag_count: int) -> LabelDialog:
 
 
 def _checkbox_gaps(dialog: LabelDialog) -> list[int]:
-    tops = [checkbox.y() for checkbox in dialog._flag_checkboxes()]
+    tops = [checkbox.y() for checkbox in dialog._flag_checkboxes.values()]
     return [bottom - top for top, bottom in zip(tops, tops[1:])]
 
 
