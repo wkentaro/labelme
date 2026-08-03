@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed AI-Points mode allowing SAM3 to start unsupported point-prompt inference, which wasted time extracting image features before failing and displayed the prompt draft as a prediction ([#2437](https://github.com/wkentaro/labelme/pull/2437))
 - Fixed opening an image too large for Qt to decode reporting the misleading "Allowed formats" unsupported-format message; the dialog now states that the image is too large, shows its pixel dimensions and the ceiling that was actually hit (the decode allocation limit, or the raster engine's ~32767 pixel per-side limit, which no amount of raising the allocation limit can lift), and suggests tiling with `gdal_retile.py` or opening a smaller copy ([#2417](https://github.com/wkentaro/labelme/pull/2417))
 - Fixed clicking or hovering near a linestrip's unrendered "closing" line (the straight path from its last point back to its first) being treated as a hit on the shape; edge hover, add-point-to-edge, and body selection now ignore that phantom segment, since a linestrip is an open polyline and never draws it ([#2307](https://github.com/wkentaro/labelme/pull/2307))
 - Fixed the `--output` guard rejecting only lowercase `.json` paths; an upper- or mixed-case file path such as `--output notes.JSON` slipped past the "expects a directory" check and was treated as an output directory. The guard now reuses the canonical case-insensitive `is_label_file_path` helper ([#2317](https://github.com/wkentaro/labelme/pull/2317))

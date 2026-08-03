@@ -50,6 +50,10 @@ _Avoid_: AI annotation (too vague), text-to-annotation (verbose), auto-detect.
 A loaded ML model that backs AI Assist or AI Text Prompt. One Model Session serves many proposals across the lifetime of the app. The legacy code directory `_automation/` hosts this layer.
 _Avoid_: automation (legacy code-only term), backend, engine.
 
+**Prompt Compatibility**:
+The prompt kinds a Model Session can answer. A model can support point, box, or text prompts independently; selecting a model does not imply compatibility with every AI Assist mode.
+_Avoid_: treating an unsupported prompt kind as an inference failure.
+
 **Mask Shape**:
 A Shape whose `shape_type` is `mask` — hybrid representation combining a rectangular bounding box (2 points) with a Mask (the raster pixels) that fills the bbox. The only `shape_type` that carries dense pixel data.
 _Avoid_: raster shape, pixel polygon; do not say "mask" when you mean the whole Shape.

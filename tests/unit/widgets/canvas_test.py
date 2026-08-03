@@ -282,7 +282,7 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     # an overlapping detection). The empty branch of _finalize must reset the
     # in-progress drawing state so the edit-mode button becomes usable again
     # and notify the user that inference produced nothing.
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", lambda **_: [])
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", lambda **_: [])
     canvas.create_mode = create_mode
     # ai_box_to_shape normalizes the two bbox corners before delegating to the
     # (monkeypatched) inference call, so the in-progress shape needs 2 points.
@@ -324,7 +324,7 @@ def test_finalize_paints_new_shape_before_notifying(
         points=np.array([(1, 1), (9, 1), (9, 9)], dtype=np.float64),
         closed=True,
     )
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", lambda **_: [inferred])
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", lambda **_: [inferred])
     with qtbot.waitExposed(canvas):
         canvas.show()
 
@@ -370,7 +370,7 @@ def test_finalize_reports_inference_error_and_cancels(
     def _raise(**_: object) -> list[Shape]:
         raise RuntimeError("boom")
 
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", _raise)
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", _raise)
     canvas.create_mode = create_mode
     canvas._current = _DraftShape(
         shape_type="rectangle",
@@ -391,7 +391,7 @@ def test_finalize_reports_inference_error_and_cancels(
 
 
 @pytest.mark.gui
-def test_points_preview_throttles_inference_errors_until_recovery(
+def test_points_preview_hides_failed_and_empty_predictions(
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -405,7 +405,7 @@ def test_points_preview_throttles_inference_errors_until_recovery(
             raise RuntimeError("boom")
         return []
 
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", _maybe_raise)
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", _maybe_raise)
     canvas.create_mode = "ai_points_to_shape"
     canvas._line = _DraftShape(
         shape_type="rectangle",
@@ -420,14 +420,14 @@ def test_points_preview_throttles_inference_errors_until_recovery(
     failed: list[str] = []
     canvas.inference_failed.connect(failed.append)
 
-    canvas._build_ai_points_preview(current=current)
-    canvas._build_ai_points_preview(current=current)
+    assert canvas._build_ai_points_preview(current=current) is None
+    assert canvas._build_ai_points_preview(current=current) is None
     assert failed == ["RuntimeError: boom"]
 
     behavior["fail"] = False
-    canvas._build_ai_points_preview(current=current)
+    assert canvas._build_ai_points_preview(current=current) is None
     behavior["fail"] = True
-    canvas._build_ai_points_preview(current=current)
+    assert canvas._build_ai_points_preview(current=current) is None
     assert failed == ["RuntimeError: boom", "RuntimeError: boom"]
 
 

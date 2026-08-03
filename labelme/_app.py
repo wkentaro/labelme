@@ -74,7 +74,6 @@ _AI_CREATE_MODES: tuple[str, ...] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
 )
-_AI_MODELS_WITHOUT_POINT_SUPPORT: tuple[str, ...] = ("sam3:latest",)
 
 
 class _StatusBarWidgets(NamedTuple):
@@ -1468,7 +1467,7 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> None:
         if create_mode == "ai_points_to_shape":
             model_name = self._canvas_widgets.canvas.get_ai_model_name()
-            if model_name in _AI_MODELS_WITHOUT_POINT_SUPPORT:
+            if not _automation.supports_point_prompts(model_name=model_name):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr("AI-Points Unavailable"),
@@ -1499,10 +1498,9 @@ class MainWindow(QtWidgets.QMainWindow):
             in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
-        if create_mode == "ai_points_to_shape":
-            self._ai_annotation.set_disabled_models(_AI_MODELS_WITHOUT_POINT_SUPPORT)
-        else:
-            self._ai_annotation.set_disabled_models(())
+        self._ai_annotation.set_point_prompt_mode(
+            enabled=create_mode == "ai_points_to_shape"
+        )
 
     def _highlight_ai_buttons(self, highlight: bool) -> None:
         self._ai_buttons_highlighted = highlight

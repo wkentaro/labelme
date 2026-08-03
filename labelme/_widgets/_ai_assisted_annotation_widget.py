@@ -1,32 +1,19 @@
 from __future__ import annotations
 
-import typing
 from collections.abc import Callable
+from typing import cast
 
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
 
-from .._automation import AiOutputFormat
+from .. import _automation
 from ._info_button import InfoButton
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     hover_highlight_requested = QtCore.Signal(bool)
-
-    _available_models: list[tuple[str, str]] = [
-        ("efficientsam:10m", "EfficientSam (speed)"),
-        ("efficientsam:latest", "EfficientSam (accuracy)"),
-        ("sam:100m", "Sam (speed)"),
-        ("sam:300m", "Sam (balanced)"),
-        ("sam:latest", "Sam (accuracy)"),
-        ("sam2:small", "Sam2 (speed)"),
-        ("sam2:latest", "Sam2 (balanced)"),
-        ("sam2:large", "Sam2 (accuracy)"),
-        ("sam3:latest", "Sam3"),
-    ]
 
     _model_combo: QtWidgets.QComboBox
     _output_format_combo: QtWidgets.QComboBox
@@ -36,7 +23,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self,
         default_model: str,
         on_model_changed: Callable[[str], None],
-        on_output_format_changed: Callable[[AiOutputFormat], None],
+        on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
@@ -47,14 +34,14 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         )
 
     @property
-    def output_format(self) -> AiOutputFormat:
+    def output_format(self) -> _automation.AiOutputFormat:
         return self._output_format_combo.currentData()
 
     def _init_ui(
         self,
         default_model: str,
         on_model_changed: Callable[[str], None],
-        on_output_format_changed: Callable[[AiOutputFormat], None],
+        on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
     ) -> None:
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(4, 4, 4, 4)
@@ -81,8 +68,8 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body.setLayout(body_layout)
 
         self._model_combo = QtWidgets.QComboBox()
-        for model_id, model_display in self._available_models:
-            self._model_combo.addItem(model_display, model_id)
+        for option in _automation.AI_ASSIST_MODEL_OPTIONS:
+            self._model_combo.addItem(option.display_name, option.model_name)
         body_layout.addWidget(self._model_combo)
 
         self._output_format_combo = QtWidgets.QComboBox()
@@ -95,7 +82,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         layout.addWidget(body)
 
-        model_ui_names = [model_display for _, model_display in self._available_models]
+        model_ui_names = [
+            option.display_name for option in _automation.AI_ASSIST_MODEL_OPTIONS
+        ]
         if default_model in model_ui_names:
             model_index = model_ui_names.index(default_model)
         else:
@@ -116,16 +105,12 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         self.setMaximumWidth(200)
 
-    def set_disabled_models(self, disabled_models: tuple[str, ...]) -> None:
-        model = typing.cast(QtGui.QStandardItemModel, self._model_combo.model())
-        for i in range(self._model_combo.count()):
-            model_id = self._model_combo.itemData(i)
-            item = model.item(i)
+    def set_point_prompt_mode(self, enabled: bool) -> None:
+        model = cast(QtGui.QStandardItemModel, self._model_combo.model())
+        for index, option in enumerate(_automation.AI_ASSIST_MODEL_OPTIONS):
+            item = model.item(index)
             assert item is not None
-            if model_id in disabled_models:
-                item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEnabled)
-            else:
-                item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEnabled)
+            item.setEnabled(not enabled or option.supports_point_prompts)
 
     def setEnabled(self, a0: bool) -> None:
         self._body.setEnabled(a0)
