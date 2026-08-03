@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Expanded the Settings dialog with a scrollable page of workflow-oriented groups, an icon-labeled section index for quick navigation, and explanatory descriptions, so that auto-save, saving image data, keep-previous annotation/zoom/brightness-contrast, fill-drawing, label sorting/completion/text-field behavior, and the default AI model can all be changed in-app with immediate apply, instead of requiring hand-editing the config file ([#2403](https://github.com/wkentaro/labelme/pull/2403))
+
 ### Changed
 
+- Changed the Settings dialog to keep a stable, resizable window size, with scrolling when the available height cannot fit its content ([#2403](https://github.com/wkentaro/labelme/pull/2403))
 - Grouped Shape coloring under one `shape_color` setting with explicit `auto`, `uniform`, and `by_label` modes, replacing the loosely coupled `default_shape_color`, `shift_auto_shape_color`, and `label_colors` keys. Existing Config Files and inline `--config` values are migrated in memory, preserving their behavior and override precedence ([#2426](https://github.com/wkentaro/labelme/pull/2426))
 
 ### Removed
