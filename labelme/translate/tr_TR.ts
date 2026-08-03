@@ -589,6 +589,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>İptal</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Bu model nokta istemlerini desteklemediği için AI-Points modunda kullanılamaz.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Kapatmadan önce açıklamalar &quot;{}&quot; konumuna kaydedilsin mi?</translation>
     </message>
@@ -758,14 +762,6 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Genel</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Etiketler</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Renk teması</translation>
     </message>
@@ -794,6 +790,62 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Görüntü sınırının dışındaki noktalara izin ver</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Görünüm ve dil</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Dosyalar ve kaydetme</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Çizim ve tuval</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Görüntüler arasında devam et</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Etiket kaynakları</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Etiket davranışı</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Yapay zeka yardımı</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Otomatik olarak kaydet</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Görüntü verisini etiket dosyasına kaydet</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Görüntüyü etiket JSON dosyasına gömer.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Önceki açıklamayı koru</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Önceki yakınlaştırmayı koru</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Önceki parlaklık/kontrastı koru</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Çizim sırasında çokgeni doldur</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Şekil noktalarının görüntünün dışına taşmasına izin verir, örn. kısmen görünen nesneler için.</translation>
     </message>
@@ -804,6 +856,70 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Label validation</source>
         <translation>Etiket doğrulama</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Etiketleri sırala</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Sağlanan sırayı korumak yerine etiket listesini alfabetik olarak sıralar.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Etiket metin alanını göster</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Etiket tamamlama</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Şununla başlar</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>İçerir</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Varsayılan model</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (hız)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (doğruluk)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (hız)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (dengeli)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (doğruluk)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (hız)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (dengeli)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (doğruluk)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -856,6 +972,13 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Önceden tanımlı görüntü bayrakları</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Ayar bölümleri</translation>
     </message>
 </context>
 </TS>

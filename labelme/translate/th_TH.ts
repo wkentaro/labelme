@@ -586,6 +586,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ยกเลิก</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>ไม่สามารถใช้ในโหมด AI-Points ได้ เนื่องจากโมเดลนี้ไม่รองรับพรอมต์แบบจุด</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>บันทึกแอนโนเทชันไปที่ &quot;{}&quot; ก่อนปิดหรือไม่?</translation>
     </message>
@@ -755,14 +759,6 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>ทั่วไป</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>เลเบล</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>ธีมสี</translation>
     </message>
@@ -791,6 +787,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>อนุญาตให้มีจุดอยู่นอกขอบเขตของภาพ</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>ลักษณะที่ปรากฏและภาษา</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>ไฟล์และการบันทึก</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>การวาดและผืนผ้าใบ</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>การทำงานต่อเนื่องระหว่างภาพ</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>แหล่งที่มาของเลเบล</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>ลักษณะการทำงานของเลเบล</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>ความช่วยเหลือจาก AI</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>บันทึกอัตโนมัติ</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>บันทึกข้อมูลรูปในไฟล์เลเบล</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>ฝังรูปภาพไว้ในไฟล์ JSON ของเลเบล</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>คงแอนโนเทชันก่อนหน้าไว้</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>คงการซูมก่อนหน้าไว้</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>คงความสว่าง/คอนทราสต์ก่อนหน้าไว้</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>เติมสีหลายเหลี่ยมขณะวาด</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>อนุญาตให้จุดของรูปร่างขยายออกไปนอกภาพ เช่น สำหรับวัตถุที่มองเห็นได้บางส่วน</translation>
     </message>
@@ -801,6 +853,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>การตรวจสอบเลเบล</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>เรียงลำดับเลเบล</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>เรียงลำดับรายการเลเบลตามตัวอักษรแทนการคงลำดับที่กำหนดไว้</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>แสดงช่องข้อความเลเบล</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>การเติมเลเบลอัตโนมัติ</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>ขึ้นต้นด้วย</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>มี</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>โมเดลเริ่มต้น</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (ความเร็ว)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (ความแม่นยำ)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (ความเร็ว)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (สมดุล)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (ความแม่นยำ)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (ความเร็ว)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (สมดุล)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (ความแม่นยำ)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -853,6 +969,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>แฟล็กรูปภาพที่กำหนดไว้ล่วงหน้า</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>ส่วนต่างๆ ของการตั้งค่า</translation>
     </message>
 </context>
 </TS>

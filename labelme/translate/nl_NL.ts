@@ -586,6 +586,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Annuleren</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Niet beschikbaar in de modus AI-Points, omdat dit model geen puntprompts ondersteunt.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Annotaties opslaan naar &quot;{}&quot; voordat u sluit?</translation>
     </message>
@@ -755,14 +759,6 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Algemeen</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Labels</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Kleurthema</translation>
     </message>
@@ -791,6 +787,62 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Punten buiten de afbeeldingsgrens toestaan</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Uiterlijk en taal</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Bestanden en opslaan</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Tekenen en canvas</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Doorgaan tussen afbeeldingen</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Labelbronnen</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Labelgedrag</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>AI-assistent</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Automatisch opslaan</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Afbeeldingsgegevens opslaan in labelbestand</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Sluit de afbeelding in het JSON-labelbestand in.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Vorige annotatie behouden</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Vorige zoom behouden</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Vorige helderheid/contrast behouden</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Polygoon vullen tijdens tekenen</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Laat vormpunten buiten de afbeelding vallen, bijv. voor gedeeltelijk zichtbare objecten.</translation>
     </message>
@@ -801,6 +853,70 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Label validation</source>
         <translation>Labelvalidatie</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Labels sorteren</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Sorteert de labellijst alfabetisch in plaats van de opgegeven volgorde te behouden.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Labeltekstveld tonen</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Labelaanvulling</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Begint met</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Bevat</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Standaardmodel</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (snelheid)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (nauwkeurigheid)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (snelheid)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (gebalanceerd)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (nauwkeurigheid)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (snelheid)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (gebalanceerd)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (nauwkeurigheid)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -853,6 +969,13 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Voorgedefinieerde afbeeldingsvlaggen</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Instellingssecties</translation>
     </message>
 </context>
 </TS>

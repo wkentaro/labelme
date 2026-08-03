@@ -561,6 +561,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Batal</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Simpan anotasi ke &quot;{}&quot; sebelum menutup?</translation>
     </message>
@@ -795,14 +799,6 @@ Shapes</source>
         <translation>Label yang telah ditentukan tidak boleh kosong saat validasi label diatur ke &apos;eksak&apos;. Nonaktifkan validasi eksak terlebih dahulu.</translation>
     </message>
     <message>
-        <source>General</source>
-        <translation>Umum</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Label</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Tema warna</translation>
     </message>
@@ -839,8 +835,64 @@ Shapes</source>
         <translation>Bahasa</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Tampilan dan bahasa</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>File dan penyimpanan</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Menggambar dan kanvas</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Melanjutkan antar gambar</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Sumber label</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Perilaku label</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Bantuan AI</translation>
+    </message>
+    <message>
         <source>Takes effect after restart.</source>
         <translation>Berlaku setelah restart.</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Simpan otomatis</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Simpan data gambar dalam file label</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Menyematkan gambar dalam file JSON label.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Pertahankan anotasi sebelumnya</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Pertahankan zoom sebelumnya</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Pertahankan kecerahan/kontras sebelumnya</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Isi poligon saat menggambar</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -851,8 +903,79 @@ Shapes</source>
         <translation>Validasi label</translation>
     </message>
     <message>
+        <source>Sort labels</source>
+        <translation>Urutkan label</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Urutkan daftar label secara alfabetis alih-alih mempertahankan urutan yang diberikan.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Tampilkan kolom teks label</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Pelengkapan label</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Dimulai dengan</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Berisi</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Model default</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (kecepatan)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (akurasi)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (kecepatan)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (seimbang)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (akurasi)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (kecepatan)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (seimbang)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (akurasi)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
+    </message>
+    <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Bagian pengaturan</translation>
     </message>
 </context>
 </TS>

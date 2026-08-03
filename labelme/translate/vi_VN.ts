@@ -586,6 +586,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Hủy</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Không khả dụng trong chế độ AI-Points vì mô hình này không hỗ trợ lời nhắc điểm.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Lưu chú thích vào &quot;{}&quot; trước khi đóng?</translation>
     </message>
@@ -755,14 +759,6 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Chung</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Nhãn</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Chủ đề màu</translation>
     </message>
@@ -791,6 +787,62 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Cho phép các điểm nằm ngoài ranh giới ảnh</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Giao diện và ngôn ngữ</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Tệp và lưu</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Vẽ và canvas</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Tiếp tục giữa các ảnh</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Nguồn nhãn</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Hành vi nhãn</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Hỗ trợ AI</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Tự động lưu</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Lưu dữ liệu hình ảnh trong tệp nhãn</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Nhúng hình ảnh vào tệp JSON nhãn.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Giữ chú thích trước đó</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Giữ mức thu phóng trước đó</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Giữ độ sáng/độ tương phản trước đó</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Tô đa giác khi vẽ</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Cho phép các điểm của hình vượt ra ngoài ảnh, ví dụ cho các đối tượng hiển thị một phần.</translation>
     </message>
@@ -801,6 +853,70 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Label validation</source>
         <translation>Kiểm tra nhãn</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Sắp xếp nhãn</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Sắp xếp danh sách nhãn theo thứ tự bảng chữ cái thay vì giữ nguyên thứ tự đã cung cấp.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Hiển thị trường văn bản nhãn</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Tự động hoàn thành nhãn</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Bắt đầu bằng</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Chứa</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Mô hình mặc định</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (tốc độ)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (độ chính xác)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (tốc độ)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (cân bằng)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (độ chính xác)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (tốc độ)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (cân bằng)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (độ chính xác)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -853,6 +969,13 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Predefined image flags</source>
         <translation>Cờ hình ảnh định sẵn</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Các phần cài đặt</translation>
     </message>
 </context>
 </TS>
