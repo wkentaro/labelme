@@ -571,6 +571,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Отмена</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Недоступно в режиме AI-Points, так как эта модель не поддерживает точечные запросы.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Сохранить аннотации в &quot;{}&quot; перед закрытием?</translation>
     </message>
@@ -758,14 +762,6 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Основные</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Метки</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Цветовая тема</translation>
     </message>
@@ -794,6 +790,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Разрешить точки за пределами границ изображения</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Внешний вид и язык</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Файлы и сохранение</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Рисование и холст</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Продолжение работы между изображениями</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Источники меток</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Поведение меток</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Помощь ИИ</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Автоматически сохранять</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Сохранять данные изображения в файле меток</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Встраивает изображение в JSON-файл меток.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Сохранять предыдущую разметку</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Сохранять предыдущий масштаб</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Сохранять яркость/контраст предыдущего изображения</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Заполнять многоугольник при рисовании</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Позволяет точкам фигур выходить за пределы изображения, например для частично видимых объектов.</translation>
     </message>
@@ -804,6 +856,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>Проверка меток</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Сортировать метки</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Сортирует список меток по алфавиту вместо сохранения заданного порядка.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Показывать текстовое поле метки</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Автодополнение меток</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Начинается с</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Содержит</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Модель по умолчанию</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (скорость)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (точность)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (скорость)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (сбалансированный)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (точность)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (скорость)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (сбалансированный)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (точность)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -856,6 +972,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Предустановленные флаги изображения</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Разделы настроек</translation>
     </message>
 </context>
 </TS>

@@ -201,6 +201,31 @@ def test_tinted_svg_engine_renders_window_text_color(
         qapp.setPalette(original)
 
 
+def test_tinted_svg_engine_renders_highlighted_text_color_when_selected(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    original = qapp.palette()
+    try:
+        palette = qapp.palette()
+        palette.setColor(
+            QtGui.QPalette.ColorGroup.Normal,
+            QtGui.QPalette.ColorRole.HighlightedText,
+            QtGui.QColor(0, 255, 0),
+        )
+        qapp.setPalette(palette)
+        svg = (
+            b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
+            b'<rect width="4" height="4" fill="currentColor"/></svg>'
+        )
+        engine = _TintedSvgIconEngine(svg=svg)
+        pixmap = engine.pixmap(
+            QtCore.QSize(4, 4), QtGui.QIcon.Mode.Selected, QtGui.QIcon.State.Off
+        )
+        assert pixmap.toImage().pixelColor(2, 2).getRgb() == (0, 255, 0, 255)
+    finally:
+        qapp.setPalette(original)
+
+
 def test_new_icon_tints_monochrome_icon_to_palette(
     qapp: QtWidgets.QApplication,
 ) -> None:

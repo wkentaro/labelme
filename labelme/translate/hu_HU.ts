@@ -600,6 +600,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Mégse</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Nem érhető el AI-Points módban, mert ez a modell nem támogatja a pont alapú promptokat.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Mentse az annotációkat a &quot;{}&quot; fájlba bezárás előtt?</translation>
     </message>
@@ -761,14 +765,6 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Általános</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Címkék</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Színtéma</translation>
     </message>
@@ -797,6 +793,62 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Pontok engedélyezése a kép határain kívül</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Megjelenés és nyelv</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Fájlok és mentés</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Rajzolás és vászon</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Folytatás képek között</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Címkeforrások</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Címkeviselkedés</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>AI-segítség</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Automatikus mentés</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Képadatok mentése a címkefájlba</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Beágyazza a képet a címke JSON-fájljába.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Előző annotáció megtartása</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Előző nagyítás megtartása</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Előző fényerő/kontraszt megtartása</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Sokszög kitöltése rajzolás közben</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Lehetővé teszi, hogy az alakzatpontok túlnyúljanak a képen, pl. részben látható objektumokhoz.</translation>
     </message>
@@ -807,6 +859,70 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Label validation</source>
         <translation>Címkeellenőrzés</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Címkék rendezése</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>A címkelistát ábécérendbe rendezi a megadott sorrend megtartása helyett.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Címke szövegmezőjének megjelenítése</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Címkekiegészítés</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Ezzel kezdődik</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Tartalmazza</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Alapértelmezett modell</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (sebesség)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (pontosság)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (sebesség)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (kiegyensúlyozott)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (pontosság)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (sebesség)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (kiegyensúlyozott)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (pontosság)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -859,6 +975,13 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Predefined image flags</source>
         <translation>Előre definiált képjelzők</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Beállítások szakaszai</translation>
     </message>
 </context>
 </TS>

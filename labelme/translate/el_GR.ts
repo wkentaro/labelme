@@ -608,6 +608,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Άκυρο</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Να αποθηκευτούν οι σχολιασμοί στο &quot;{}&quot; πριν το κλείσιμο;</translation>
     </message>
@@ -757,14 +761,6 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Γενικά</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>Ετικέτες</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>Θέμα χρώματος</translation>
     </message>
@@ -793,6 +789,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Να επιτρέπονται σημεία εκτός των ορίων της εικόνας</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Εμφάνιση και γλώσσα</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Αρχεία και αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Σχεδίαση και καμβάς</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Συνέχεια μεταξύ εικόνων</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Πηγές ετικετών</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Συμπεριφορά ετικετών</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Βοήθεια AI</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Αυτόματη αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Αποθήκευση δεδομένων εικόνας σε αρχείο ετικέτας</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Ενσωματώνει την εικόνα στο αρχείο JSON της ετικέτας.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Διατήρηση προηγούμενου σχολιασμού</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Διατήρηση προηγούμενου ζουμ</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Διατήρηση προηγούμενης φωτεινότητας/αντίθεσης</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Γεμίστε πολύγωνο ενώ σχεδιάζετε</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Επιτρέπει στα σημεία των σχημάτων να εκτείνονται πέρα από την εικόνα, π.χ. για μερικώς ορατά αντικείμενα.</translation>
     </message>
@@ -803,6 +855,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>Επικύρωση ετικέτας</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Ταξινόμηση ετικετών</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Ταξινομεί τη λίστα ετικετών αλφαβητικά αντί να διατηρεί την παρεχόμενη σειρά.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Εμφάνιση πεδίου κειμένου ετικέτας</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Αυτόματη συμπλήρωση ετικετών</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Αρχίζει με</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Περιέχει</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Προεπιλεγμένο μοντέλο</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (ταχύτητα)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (ακρίβεια)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (ταχύτητα)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (ισορροπημένο)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (ακρίβεια)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (ταχύτητα)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (ισορροπημένο)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (ακρίβεια)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -855,6 +971,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Ενότητες ρυθμίσεων</translation>
     </message>
 </context>
 </TS>

@@ -586,6 +586,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>취소</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>이 모델은 포인트 프롬프트를 지원하지 않으므로 AI-Points 모드에서는 사용할 수 없습니다.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>닫기 전에 주석을 &quot;{}&quot;에 저장하시겠습니까?</translation>
     </message>
@@ -755,14 +759,6 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>일반</translation>
-    </message>
-    <message>
-        <source>Labels</source>
-        <translation>레이블</translation>
-    </message>
-    <message>
         <source>Color theme</source>
         <translation>색상 테마</translation>
     </message>
@@ -791,6 +787,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>이미지 경계 밖의 점 허용</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>모양 및 언어</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>파일 및 저장</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>그리기 및 캔버스</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>이미지 간 이어서 작업</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>레이블 소스</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>레이블 동작</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>AI 지원</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>자동 저장</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>레이블 파일에 이미지 데이터 저장</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>이미지를 레이블 JSON 파일에 포함합니다.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>이전 주석 유지</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>이전 확대/축소 유지</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>이전 밝기/대비 유지</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>그리는 동안 다각형 채우기</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>도형의 점이 이미지 밖으로 확장되도록 허용합니다. 예: 부분적으로 보이는 객체.</translation>
     </message>
@@ -801,6 +853,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>레이블 검증</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>레이블 정렬</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>제공된 순서를 유지하는 대신 레이블 목록을 알파벳순으로 정렬합니다.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>레이블 텍스트 필드 표시</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>레이블 자동 완성</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>다음으로 시작</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>포함</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>기본 모델</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (속도)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (정확도)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (속도)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (균형)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (정확도)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (속도)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (균형)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (정확도)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -853,6 +969,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>사전 정의된 이미지 플래그</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>설정 섹션</translation>
     </message>
 </context>
 </TS>

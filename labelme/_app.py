@@ -31,6 +31,7 @@ from PySide6.QtWidgets import QMessageBox
 from labelme import __appname__
 from labelme import __version__
 
+from . import _ai_models
 from . import _automation
 from . import _config
 from . import _utils
@@ -176,6 +177,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _status_bar: _StatusBarWidgets
     _docks: _DockWidgets
     _actions: _Actions
+    _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
     _menus: _Menus
     _label_dialog: LabelDialog
     _settings_dialog: SettingsDialog | None = None
@@ -220,6 +222,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._persistent_actions = {
+            ("auto_save",): self._actions.save_auto,
+            ("with_image_data",): self._actions.save_with_image_data,
+            ("keep_prev",): self._actions.toggle_keep_prev_mode,
+            ("keep_prev_scale",): self._actions.keep_prev_zoom,
+            (
+                "keep_prev_brightness_contrast",
+            ): self._actions.toggle_keep_prev_brightness_contrast,
+            ("canvas", "fill_drawing"): self._actions.fill_drawing,
+        }
+        self._connect_persistent_actions()
         self._shape_clipboard.availability_changed.connect(
             self._actions.paste.setEnabled
         )
@@ -227,9 +240,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._ai_annotation = AiAssistedAnnotationWidget(
             default_model=self._config["ai"]["default"],
-            on_model_changed=self._canvas_widgets.canvas.set_ai_model_name,
+            on_model_changed=self._on_ai_model_changed,
             on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
             parent=self,
+        )
+        self._canvas_widgets.canvas.set_ai_model_name(
+            self._ai_annotation.current_model_id
         )
         self._ai_annotation.setEnabled(False)
         self._ai_buttons_highlighted = False
@@ -330,7 +346,6 @@ class MainWindow(QtWidgets.QMainWindow):
         save_auto.setChecked(self._config["auto_save"])
         save_with_image_data = action(
             text=self.tr("Save With Image Data"),
-            slot=self.set_save_image_with_data,
             tip=self.tr("Save image data in label file"),
             checkable=True,
             checked=self._config["with_image_data"],
@@ -373,9 +388,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         keep_prev_action = action(
             text=self.tr("Keep Previous Annotation"),
-            slot=lambda: self._config.__setitem__(
-                "keep_prev", not self._config["keep_prev"]
-            ),
             shortcut=shortcuts["toggle_keep_prev_mode"],
             tip=self.tr('Toggle "keep previous annotation" mode'),
             checkable=True,
@@ -383,10 +395,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         toggle_keep_prev_brightness_contrast = action(
             text=self.tr("Keep Previous Brightness/Contrast"),
-            slot=lambda: self._config.__setitem__(
-                "keep_prev_brightness_contrast",
-                not self._config["keep_prev_brightness_contrast"],
-            ),
             checkable=True,
             checked=self._config["keep_prev_brightness_contrast"],
         )
@@ -566,10 +574,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         keep_prev_zoom = action(
             text=self.tr("&Keep Previous Zoom"),
-            slot=lambda: self._config.__setitem__(
-                "keep_prev_scale",
-                not self._config["keep_prev_scale"],
-            ),
             checkable=True,
             checked=self._config["keep_prev_scale"],
         )
@@ -629,16 +633,16 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/layout-duotone.svg",
         )
         fill_drawing = action(
-            self.tr("Fill Drawing Polygon"),
-            self._canvas_widgets.canvas.set_fill_drawing,
-            None,
+            text=self.tr("Fill Drawing Polygon"),
             icon="phosphor/paint-bucket.svg",
             tip=self.tr("Fill polygon while drawing"),
             checkable=True,
             enabled=True,
+            checked=self._config["canvas"]["fill_drawing"],
         )
-        if self._config["canvas"]["fill_drawing"]:
-            fill_drawing.trigger()
+        self._canvas_widgets.canvas.set_fill_drawing(
+            self._config["canvas"]["fill_drawing"]
+        )
         hide_all = action(
             self.tr("&Hide\nShapes"),
             functools.partial(self.toggle_shape_visibility, False),
@@ -1467,7 +1471,7 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> None:
         if create_mode == "ai_points_to_shape":
             model_name = self._canvas_widgets.canvas.get_ai_model_name()
-            if not _automation.supports_point_prompts(model_name=model_name):
+            if not _ai_models.supports_point_prompts(model_name=model_name):
                 QtWidgets.QMessageBox.warning(
                     self,
                     self.tr("AI-Points Unavailable"),
@@ -1498,9 +1502,7 @@ class MainWindow(QtWidgets.QMainWindow):
             in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
-        self._ai_annotation.set_point_prompt_mode(
-            enabled=create_mode == "ai_points_to_shape"
-        )
+        self._set_point_prompt_mode(enabled=create_mode == "ai_points_to_shape")
 
     def _highlight_ai_buttons(self, highlight: bool) -> None:
         self._ai_buttons_highlighted = highlight
@@ -2241,10 +2243,6 @@ class MainWindow(QtWidgets.QMainWindow):
         available_w = self.centralWidget().width() - FIT_WIDTH_SCROLLBAR_MARGIN
         return available_w / self._canvas_widgets.canvas.pixmap.width()
 
-    def set_save_image_with_data(self, enabled: bool) -> None:
-        self._config["with_image_data"] = enabled
-        self._actions.save_with_image_data.setChecked(enabled)
-
     def _reset_layout(self) -> None:
         self._window_state.remove("window/state")
         self.restoreState(self._default_state)
@@ -2455,7 +2453,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _is_settings_editable(self) -> bool:
         return self._config_file is not None and not self._config_overrides
 
-    def _make_label_dialog(self) -> LabelDialog:
+    def _make_label_dialog(self, label_history: list[str] | None = None) -> LabelDialog:
         return LabelDialog(
             parent=self,
             labels=self._config["labels"],
@@ -2464,7 +2462,65 @@ class MainWindow(QtWidgets.QMainWindow):
             completion=self._config["label_completion"],
             fit_to_content=self._config["fit_to_content"],
             flags=self._config["label_flags"],
+            label_history=label_history,
         )
+
+    def _connect_persistent_actions(self) -> None:
+        for key_path, action in self._persistent_actions.items():
+            action.toggled.connect(
+                lambda checked, path=key_path: self._apply_setting_change(
+                    key_path=path, value=checked
+                )
+            )
+
+    def _on_ai_model_changed(self, model_id: str) -> None:
+        self._canvas_widgets.canvas.set_ai_model_name(model_id)
+        option = _ai_models.find_ai_assist_model_option(model_name=model_id)
+        assert option is not None
+        model_display = option.display_name
+        if self._config["ai"]["default"] == model_display:
+            return
+        self._apply_setting_change(key_path=("ai", "default"), value=model_display)
+
+    def _set_point_prompt_mode(self, enabled: bool) -> None:
+        self._ai_annotation.set_point_prompt_mode(enabled=enabled)
+        if self._settings_dialog is None:
+            return
+        disabled_reason = self.tr(
+            "Unavailable in AI-Points mode because this model does not support "
+            "point prompts."
+        )
+        for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
+            self._settings_dialog.set_choice_enabled(
+                key_path=("ai", "default"),
+                value=option.display_name,
+                enabled=not enabled or option.supports_point_prompts,
+                disabled_reason=disabled_reason,
+            )
+
+    def _set_setting_value(self, key_path: tuple[str, ...], value: object) -> None:
+        node: dict = self._config
+        for key in key_path[:-1]:
+            node = node[key]
+        node[key_path[-1]] = value
+
+    def _read_setting_value(self, key_path: tuple[str, ...]) -> object:
+        node: object = self._config
+        for key in key_path:
+            assert isinstance(node, dict)
+            node = node[key]
+        return node
+
+    def _apply_setting_change(self, key_path: tuple[str, ...], value: object) -> bool:
+        if self._is_settings_editable and not self._try_set_overrides(
+            overrides=[(key_path, value)]
+        ):
+            self._sync_setting_controls(key_path=key_path)
+            return False
+
+        self._set_setting_value(key_path=key_path, value=value)
+        self._sync_setting_controls(key_path=key_path)
+        return True
 
     def _try_set_overrides(
         self, overrides: list[tuple[tuple[str, ...], object]]
@@ -2477,26 +2533,27 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         return True
 
-    def _on_setting_changed(self, key_path: tuple[str, ...], value: object) -> bool:
-        # The dialog only opens with an editable config file (see _open_settings),
-        # so there is always a file to persist to.
-        if self._config_file is None:
-            return False
-        if not self._try_set_overrides(overrides=[(key_path, value)]):
-            return False
-
-        node: dict = self._config
-        for key in key_path[:-1]:
-            node = node[key]
-        node[key_path[-1]] = value
+    def _sync_setting_controls(self, key_path: tuple[str, ...]) -> None:
+        if self._settings_dialog is not None:
+            self._settings_dialog.set_value(
+                key_path=key_path,
+                value=self._read_setting_value(key_path=key_path),
+            )
         self._apply_to_live_widgets(key_path=key_path)
-        return True
 
     def _apply_to_live_widgets(self, key_path: tuple[str, ...]) -> None:
         if key_path == ("color_theme",):
             # apply_color_theme -> setColorScheme emits colorSchemeChanged, which
             # drives _retheme; no explicit refresh needed here.
             _utils.apply_color_theme(theme=self._config["color_theme"])
+        elif key_path in self._persistent_actions:
+            action = self._persistent_actions[key_path]
+            value = self._read_setting_value(key_path=key_path)
+            assert isinstance(value, bool)
+            with QtCore.QSignalBlocker(action):
+                action.setChecked(value)
+            if key_path == ("canvas", "fill_drawing"):
+                self._canvas_widgets.canvas.set_fill_drawing(value)
         elif key_path == ("shape", "show_labels"):
             canvas = self._canvas_widgets.canvas
             canvas.set_show_labels(self._config["shape"]["show_labels"])
@@ -2539,6 +2596,21 @@ class MainWindow(QtWidgets.QMainWindow):
             flags = {key: False for key in self._config["flags"] or []}
             flags.update(current)
             self._load_flags(flags=flags, widget=self._docks.flag_list)
+        elif key_path in (
+            ("sort_labels",),
+            ("show_label_text_field",),
+            ("label_completion",),
+        ):
+            # LabelDialog reads these values only during construction.
+            old_label_dialog = self._label_dialog
+            self._label_dialog = self._make_label_dialog(
+                label_history=old_label_dialog.label_history
+            )
+            old_label_dialog.deleteLater()
+        elif key_path == ("ai", "default"):
+            self._ai_annotation.set_current_model(
+                model_display=self._config["ai"]["default"]
+            )
 
     def _read_flag_dock_states(self) -> dict[str, bool]:
         flags: dict[str, bool] = {}
@@ -2556,10 +2628,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._settings_dialog is None:
             self._settings_dialog = SettingsDialog(
                 config=self._config,
-                apply_setting=self._on_setting_changed,
+                apply_setting=self._apply_setting_change,
                 open_as_text=self._open_config_file,
                 parent=self,
             )
+        self._set_point_prompt_mode(enabled=self._ai_annotation.is_point_prompt_mode)
         self._settings_dialog.show()
         self._settings_dialog.raise_()
         self._settings_dialog.activateWindow()

@@ -41,9 +41,19 @@ def _intercept_question(
 
 
 @pytest.fixture()
-def _raw_win_no_autosave(raw_win: MainWindow) -> MainWindow:
-    raw_win._actions.save_auto.setChecked(False)
-    return raw_win
+def _raw_win_no_autosave(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"auto_save": False},
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
 
 
 @pytest.fixture()
@@ -55,10 +65,10 @@ def _dir_win_no_autosave(
 ) -> MainWindow:
     win = main_win(
         file_or_dir=str(data_path / "raw"),
+        config_overrides={"auto_save": False},
         output_dir=str(tmp_path),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    win._actions.save_auto.setChecked(False)
     return win
 
 

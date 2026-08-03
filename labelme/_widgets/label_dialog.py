@@ -49,12 +49,13 @@ class LabelDialog(QtWidgets.QDialog):
         completion: str = "startswith",
         fit_to_content: dict[str, bool] | None = None,
         flags: dict[str, list[str]] | None = None,
+        label_history: list[str] | None = None,
     ) -> None:
         super().__init__(parent)
 
         self._sort_labels = sort_labels
         self._flags_spec: dict[str, list[str]] = flags or {}
-        self._label_history: list[str] = []
+        self._label_history = label_history[:] if label_history is not None else []
         self._flags_disabled = False
         # The flags currently on show, keyed by flag name, so a flag named by
         # two matching label_flags patterns gets exactly one checkbox.
@@ -160,11 +161,14 @@ class LabelDialog(QtWidgets.QDialog):
         self.label_list.itemDoubleClicked.connect(self._on_item_double_clicked)
 
         # Populate initial labels
-        if labels is not None:
-            for label in labels:
-                self.label_list.addItem(label)
-            if sort_labels:
-                self.label_list.sortItems()
+        for label in dict.fromkeys([*(labels or []), *self._label_history]):
+            self.label_list.addItem(label)
+        if sort_labels:
+            self.label_list.sortItems()
+
+    @property
+    def label_history(self) -> list[str]:
+        return self._label_history[:]
 
     def _make_completer(self, completion: str) -> QtWidgets.QCompleter:
         if completion == "startswith":

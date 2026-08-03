@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import typing
+from pathlib import Path
+
 import pytest
+from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
@@ -43,6 +47,12 @@ def dialog(qtbot: QtBot, applied: Applied) -> SettingsDialog:
 
 def test_no_apply_on_construction(dialog: SettingsDialog, applied: Applied) -> None:
     assert applied == []
+
+
+def test_editors_have_accessible_names(dialog: SettingsDialog) -> None:
+    for setting in schema.SETTINGS:
+        editor = dialog._editors[setting.key_path]
+        assert editor.accessibleName() == dialog.tr(setting.label)
 
 
 def test_beta_settings_render_a_badge(dialog: SettingsDialog) -> None:
@@ -188,3 +198,190 @@ def test_failed_apply_reverts_labels_editor(qtbot: QtBot, applied: Applied) -> N
     applied.clear()
     edit.commit()  # nothing pending: the revert reset the committed text
     assert applied == []
+
+
+def test_groups_and_navigation_follow_schema_order(dialog: SettingsDialog) -> None:
+    expected = list(typing.get_args(schema.Group))
+    assert [group.title() for group in dialog._page._groups] == expected
+    assert [
+        dialog._page._navigation.item(index).text()
+        for index in range(dialog._page._navigation.count())
+    ] == expected
+    assert all(
+        not dialog._page._navigation.item(index).icon().isNull()
+        for index in range(dialog._page._navigation.count())
+    )
+    assert all(group.isFlat() for group in dialog._page._groups)
+
+
+def test_navigation_uses_readable_typography_and_spacing(
+    dialog: SettingsDialog,
+) -> None:
+    navigation = dialog._page._navigation
+    assert navigation.font().pointSizeF() == dialog.font().pointSizeF() + 1
+    assert navigation.iconSize() == QtCore.QSize(18, 18)
+    expected_row_height = navigation.fontMetrics().height() + 12
+    assert all(
+        navigation.sizeHintForRow(index) == expected_row_height
+        for index in range(navigation.count())
+    )
+
+
+def test_navigation_elides_long_localized_names_without_squeezing_content(
+    qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied
+) -> None:
+    translator = QtCore.QTranslator()
+    translation_path = Path(__file__).parents[3] / "labelme" / "translate" / "ru_RU.qm"
+    assert translator.load(str(translation_path))
+    qapp.installTranslator(translator)
+    try:
+        dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={})
+        navigation = dialog._page._navigation
+        long_title = "Продолжение работы между изображениями"
+
+        assert navigation.item(3).text() == long_title
+        assert navigation.item(3).toolTip() == long_title
+        assert navigation.textElideMode() == QtCore.Qt.TextElideMode.ElideRight
+        assert navigation.width() == 240
+
+        dialog.show()
+        qtbot.waitExposed(dialog)
+        if dialog.width() >= dialog.sizeHint().width():
+            assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
+    finally:
+        qapp.removeTranslator(translator)
+
+
+def test_default_size_scrolls_vertically_only(
+    qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    scroll_area = dialog._page._scroll_area
+    assert (dialog.width(), dialog.height()) == (760, 590)
+    assert scroll_area.horizontalScrollBar().maximum() == 0
+    assert scroll_area.verticalScrollBar().maximum() > 0
+
+
+def test_dialog_is_resizable(dialog: SettingsDialog) -> None:
+    target_width = dialog.width() + 40
+    target_height = dialog.height() + 40
+    dialog.resize(target_width, target_height)
+
+    assert (dialog.width(), dialog.height()) == (target_width, target_height)
+
+
+def test_dialog_prevents_narrow_content_overflow(
+    qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+    minimum_width = dialog.width()
+
+    dialog.resize(minimum_width - 200, dialog.height())
+
+    assert dialog.width() == minimum_width
+    assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
+
+
+@pytest.mark.parametrize("target", range(len(typing.get_args(schema.Group))))
+def test_navigation_jumps_to_group(
+    qtbot: QtBot, dialog: SettingsDialog, target: int
+) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    navigation = dialog._page._navigation
+    item = navigation.item(target)
+    assert item is not None
+    qtbot.mouseClick(
+        navigation.viewport(),
+        QtCore.Qt.MouseButton.LeftButton,
+        pos=navigation.visualItemRect(item).center(),
+    )
+
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    group_top = (
+        dialog._page._groups[target].mapTo(dialog._page._content, QtCore.QPoint()).y()
+    )
+    assert scroll_bar.value() == min(group_top, scroll_bar.maximum())
+    assert navigation.currentRow() == target
+
+
+def test_scrolling_updates_navigation(qtbot: QtBot, dialog: SettingsDialog) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    scroll_bar.setValue(scroll_bar.maximum() - 1)
+    assert dialog._page._navigation.currentRow() == len(dialog._page._groups) - 2
+
+    scroll_bar.setValue(scroll_bar.maximum())
+    assert dialog._page._navigation.currentRow() == len(dialog._page._groups) - 1
+
+
+def test_navigation_returns_to_first_group_when_resize_removes_scrollbar(
+    qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    scroll_bar.setValue(scroll_bar.maximum())
+    assert dialog._page._navigation.currentRow() == len(dialog._page._groups) - 1
+
+    content_height = dialog._page._content.sizeHint().height()
+    dialog.resize(dialog.width(), content_height + 200)
+    qtbot.waitUntil(lambda: scroll_bar.maximum() == 0)
+
+    assert dialog._page._navigation.currentRow() == 0
+
+
+def test_reopening_preserves_scroll_position(
+    qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    scroll_bar.setValue(scroll_bar.maximum() // 2)
+    expected = scroll_bar.value()
+
+    dialog.close()
+    dialog.show()
+
+    assert scroll_bar.value() == expected
+
+
+def test_short_dialog_scrolls_page(qtbot: QtBot, dialog: SettingsDialog) -> None:
+    dialog.resize(dialog.width(), 160)
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
+
+
+def test_large_font_uses_default_size_with_scrolling(
+    qtbot: QtBot, applied: Applied
+) -> None:
+    original_font = QtWidgets.QApplication.font()
+    large_font = QtGui.QFont(original_font)
+    large_font.setPointSize(24)
+    QtWidgets.QApplication.setFont(large_font)
+    try:
+        dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={})
+        dialog.show()
+        qtbot.waitExposed(dialog)
+
+        available_size = dialog.screen().availableGeometry().size()
+        scroll_bar_width = dialog.style().pixelMetric(
+            QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
+        )
+        assert dialog.width() == min(
+            max(760, dialog.sizeHint().width() + scroll_bar_width),
+            available_size.width(),
+        )
+        assert dialog.height() == min(590, available_size.height())
+        assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
+    finally:
+        QtWidgets.QApplication.setFont(original_font)

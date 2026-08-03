@@ -43,7 +43,12 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
             if mode == QtGui.QIcon.Mode.Disabled
             else QtGui.QPalette.ColorGroup.Normal
         )
-        return palette.color(group, QtGui.QPalette.ColorRole.WindowText)
+        role = (
+            QtGui.QPalette.ColorRole.HighlightedText
+            if mode == QtGui.QIcon.Mode.Selected
+            else QtGui.QPalette.ColorRole.WindowText
+        )
+        return palette.color(group, role)
 
     def _tinted_pixmap(
         self, *, size: QtCore.QSize, color: QtGui.QColor
@@ -92,7 +97,12 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
 
     def cacheKey(self) -> int:
         return hash(
-            (self._svg, int(self._tint_color(mode=QtGui.QIcon.Mode.Normal).rgba()))
+            (
+                self._svg,
+                int(self._tint_color(mode=QtGui.QIcon.Mode.Normal).rgba()),
+                int(self._tint_color(mode=QtGui.QIcon.Mode.Disabled).rgba()),
+                int(self._tint_color(mode=QtGui.QIcon.Mode.Selected).rgba()),
+            )
         )
 
     def clone(self) -> QtGui.QIconEngine:

@@ -8,6 +8,7 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
+from .. import _ai_models
 from .. import _automation
 from ._info_button import InfoButton
 
@@ -27,11 +28,20 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
+        self._is_point_prompt_mode = False
         self._init_ui(
             default_model=default_model,
             on_model_changed=on_model_changed,
             on_output_format_changed=on_output_format_changed,
         )
+
+    @property
+    def current_model_id(self) -> str:
+        return self._model_combo.currentData()
+
+    @property
+    def is_point_prompt_mode(self) -> bool:
+        return self._is_point_prompt_mode
 
     @property
     def output_format(self) -> _automation.AiOutputFormat:
@@ -68,7 +78,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body.setLayout(body_layout)
 
         self._model_combo = QtWidgets.QComboBox()
-        for option in _automation.AI_ASSIST_MODEL_OPTIONS:
+        for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
             self._model_combo.addItem(option.display_name, option.model_name)
         body_layout.addWidget(self._model_combo)
 
@@ -83,7 +93,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         layout.addWidget(body)
 
         model_ui_names = [
-            option.display_name for option in _automation.AI_ASSIST_MODEL_OPTIONS
+            option.display_name for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
         ]
         if default_model in model_ui_names:
             model_index = model_ui_names.index(default_model)
@@ -91,10 +101,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             logger.warning("Default AI model is not found: {!r}", default_model)
             model_index = 0
 
+        self._model_combo.setCurrentIndex(model_index)
         self._model_combo.currentIndexChanged.connect(
             lambda index: on_model_changed(self._model_combo.itemData(index))
         )
-        self._model_combo.setCurrentIndex(model_index)
 
         self._output_format_combo.currentIndexChanged.connect(
             lambda index: on_output_format_changed(
@@ -105,9 +115,16 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         self.setMaximumWidth(200)
 
+    def set_current_model(self, model_display: str) -> None:
+        index = self._model_combo.findText(model_display)
+        if index < 0 or self._model_combo.currentIndex() == index:
+            return
+        self._model_combo.setCurrentIndex(index)
+
     def set_point_prompt_mode(self, enabled: bool) -> None:
+        self._is_point_prompt_mode = enabled
         model = cast(QtGui.QStandardItemModel, self._model_combo.model())
-        for index, option in enumerate(_automation.AI_ASSIST_MODEL_OPTIONS):
+        for index, option in enumerate(_ai_models.AI_ASSIST_MODEL_OPTIONS):
             item = model.item(index)
             assert item is not None
             item.setEnabled(not enabled or option.supports_point_prompts)
