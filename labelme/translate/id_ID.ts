@@ -573,6 +573,14 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>%s - Buka Direktori</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Gambar terlalu besar untuk dibuka: {width}x{height} piksel melebihi batas {max_side} piksel per sisi dari mesin raster. Menaikkan batas dekode tidak akan membantu. Pecah gambar menjadi ubin (misalnya dengan gdal_retile.py) atau buka salinan yang lebih kecil.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Gambar terlalu besar untuk dibuka: {width}x{height} piksel membutuhkan sekitar {required} MB, tetapi batas dekode adalah {limit} MB. Pecah gambar menjadi ubin (misalnya dengan gdal_retile.py) atau buka salinan yang lebih kecil.</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>Aktifkan/nonaktifkan mode &quot;simpan anotasi sebelumnya&quot;</translation>
     </message>

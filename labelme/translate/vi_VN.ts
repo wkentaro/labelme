@@ -598,6 +598,14 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>%s - Mở Thư mục</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Hình ảnh quá lớn để mở: {width}x{height} pixel vượt quá giới hạn {max_side} pixel mỗi cạnh của công cụ raster. Tăng giới hạn giải mã sẽ không giúp ích. Hãy chia hình ảnh thành các ô (ví dụ với gdal_retile.py) hoặc mở một bản sao nhỏ hơn.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Hình ảnh quá lớn để mở: {width}x{height} pixel cần khoảng {required} MB, nhưng giới hạn giải mã là {limit} MB. Hãy chia hình ảnh thành các ô (ví dụ với gdal_retile.py) hoặc mở một bản sao nhỏ hơn.</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>Bật/tắt chế độ &quot;giữ chú thích trước đó&quot;</translation>
     </message>

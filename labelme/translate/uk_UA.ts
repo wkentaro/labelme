@@ -621,6 +621,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - Відкрити каталог</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Зображення завелике, щоб його відкрити: {width}x{height} пікселів перевищує обмеження растрового рушія у {max_side} пікселів на сторону. Збільшення ліміту декодування не допоможе. Розбийте зображення на плитки (наприклад, за допомогою gdal_retile.py) або відкрийте меншу копію.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Зображення завелике, щоб його відкрити: {width}x{height} пікселів потребує близько {required} МБ, але ліміт декодування становить {limit} МБ. Розбийте зображення на плитки (наприклад, за допомогою gdal_retile.py) або відкрийте меншу копію.</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
     </message>

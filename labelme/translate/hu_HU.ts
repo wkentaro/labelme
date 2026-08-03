@@ -612,6 +612,14 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>%s - Könyvtár megnyitása</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>A kép túl nagy a megnyitáshoz: {width}x{height} pixel meghaladja a raszteres motor oldalankénti {max_side} pixeles korlátját. A dekódolási korlát növelése nem segít. Ossza fel a képet csempékre (például a gdal_retile.py segítségével), vagy nyisson meg egy kisebb másolatot.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>A kép túl nagy a megnyitáshoz: {width}x{height} pixelhez körülbelül {required} MB szükséges, de a dekódolási korlát {limit} MB. Ossza fel a képet csempékre (például a gdal_retile.py segítségével), vagy nyisson meg egy kisebb másolatot.</translation>
+    </message>
+    <message>
         <source>Configuration Errors</source>
         <translation>Konfigurációs Hibák</translation>
     </message>

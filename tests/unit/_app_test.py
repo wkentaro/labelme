@@ -1,6 +1,13 @@
 from __future__ import annotations
 
+import struct
+import zlib
+from collections.abc import Callable
+
 import pytest
+from PySide6 import QtCore
+from PySide6 import QtGui
+from PySide6 import QtWidgets
 
 from labelme import __appname__
 from labelme import _app
@@ -98,4 +105,117 @@ def test_format_window_title(
             dirty=dirty,
         )
         == expected
+    )
+
+
+def _make_png_bytes(
+    *,
+    width: int,
+    height: int,
+    image_format: QtGui.QImage.Format = QtGui.QImage.Format.Format_RGB32,
+) -> bytes:
+    image = QtGui.QImage(width, height, image_format)
+    image.fill(0)
+    buffer = QtCore.QBuffer()
+    buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly)
+    image.save(buffer, "PNG")  # ty: ignore[no-matching-overload]
+    return bytes(buffer.data())  # ty: ignore[invalid-argument-type]
+
+
+def test_make_image_too_large_message_explains_allocation_limit(
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    image_data = _make_png_bytes(width=800, height=600)
+    set_allocation_limit(1)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "800x600" in message
+    assert "1 MB" in message
+    assert "gdal_retile.py" in message
+
+
+def test_make_image_too_large_message_accounts_for_bit_depth(
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    # 800x600 at 16 bits per channel decodes to 8 bytes/pixel (~3.7 MB), so a
+    # 2 MB limit rejects it even though a flat 4-bytes/pixel estimate
+    # (~1.8 MB) would wrongly conclude it fits.
+    image_data = _make_png_bytes(
+        width=800, height=600, image_format=QtGui.QImage.Format.Format_RGBA64
+    )
+    set_allocation_limit(2)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "800x600" in message
+    assert "4 MB" in message
+    assert "2 MB" in message
+
+
+def test_make_image_too_large_message_reports_per_side_limit(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    # A hand-built PNG whose header claims the dimensions from #2388 but
+    # carries no pixel data: QImageReader reads the size from the header
+    # alone, so the real decode path runs without a multi-GB allocation.
+    def make_chunk(tag: bytes, payload: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(payload))
+            + tag
+            + payload
+            + struct.pack(">I", zlib.crc32(tag + payload))
+        )
+
+    ihdr = struct.pack(">IIBBBBB", 37296, 49319, 8, 2, 0, 0, 0)
+    image_data = (
+        b"\x89PNG\r\n\x1a\n"
+        + make_chunk(b"IHDR", ihdr)
+        + make_chunk(b"IDAT", b"")
+        + make_chunk(b"IEND", b"")
+    )
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "37296x49319" in message
+    assert "32767" in message
+    assert "gdal_retile.py" in message
+
+
+def test_make_image_too_large_message_rounds_the_need_up(
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    # 800x680 at 4 bytes/pixel needs ~2.1 MB: over a 2 MB limit, but plain
+    # round() would render the contradictory "needs about 2 MB, but the
+    # decode limit is 2 MB".
+    image_data = _make_png_bytes(width=800, height=680)
+    set_allocation_limit(2)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "3 MB" in message
+    assert "2 MB" in message
+
+
+def test_make_image_too_large_message_is_none_for_undecodable_data(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    assert _app._make_image_too_large_message(image_data=b"not an image") is None
+
+
+def test_make_image_too_large_message_is_none_within_allocation_limit(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    assert (
+        _app._make_image_too_large_message(
+            image_data=_make_png_bytes(width=8, height=8)
+        )
+        is None
     )

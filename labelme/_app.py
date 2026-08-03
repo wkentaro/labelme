@@ -3,6 +3,7 @@ from __future__ import annotations
 import enum
 import functools
 import json
+import math
 import os
 import platform
 import re
@@ -2136,11 +2137,15 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            formats = ", ".join(
-                f"*.{fmt.toStdString()}"
-                for fmt in QtGui.QImageReader.supportedImageFormats()
+            extra = _make_image_too_large_message(
+                image_data=self._annotation.image_data
             )
-            extra = self.tr("Allowed formats: {formats}").format(formats=formats)
+            if extra is None:
+                formats = ", ".join(
+                    f"*.{fmt.toStdString()}"
+                    for fmt in QtGui.QImageReader.supportedImageFormats()
+                )
+                extra = self.tr("Allowed formats: {formats}").format(formats=formats)
             self._show_file_open_error(
                 path=image_or_label_path,
                 file_kind="image",
@@ -2902,6 +2907,66 @@ def _shape_to_dict(shape: Shape) -> ShapeDict:
         group_id=shape.group_id,
         mask=shape.mask,
         other_data=shape.other_data,
+    )
+
+
+def _make_image_too_large_message(*, image_data: bytes) -> str | None:
+    # None means the failure is not explained by image size, so the caller
+    # falls back to the generic unsupported-format message.
+
+    # Qt's raster paint engine cannot handle an image whose width or height
+    # exceeds this, regardless of how high allocationLimit() is raised.
+    RASTER_MAX_SIDE: Final = 32767
+
+    buffer = QtCore.QBuffer()
+    buffer.setData(image_data)
+    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
+    reader = QtGui.QImageReader(buffer)
+    size = reader.size()
+    if not size.isValid():
+        return None
+    width = size.width()
+    height = size.height()
+
+    if max(width, height) > RASTER_MAX_SIDE:
+        return QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "The image is too large to open: {width}x{height} pixels exceeds the "
+            "{max_side} pixel per-side limit of the raster engine. Raising the "
+            "decode limit will not help. Split the image into tiles (for example "
+            "with gdal_retile.py) or open a smaller copy.",
+        ).format(
+            width=width,
+            height=height,
+            max_side=RASTER_MAX_SIDE,
+        )
+
+    limit_mb = QtGui.QImageReader.allocationLimit()
+    if limit_mb <= 0:  # 0 disables the limit
+        return None
+
+    bits_per_pixel = QtGui.QImage.toPixelFormat(
+        reader.imageFormat()  # ty: ignore[no-matching-overload]
+    ).bitsPerPixel()
+    if bits_per_pixel <= 0:  # unknown decode format: cannot estimate the need
+        return None
+
+    required_mb = width * height * bits_per_pixel / 8 / 1024 / 1024
+    if required_mb <= limit_mb:
+        return None
+
+    # ceil never renders "needs about N MB" with N equal to the limit, which
+    # round could when the overage is fractional.
+    return QtCore.QCoreApplication.translate(
+        "MainWindow",
+        "The image is too large to open: {width}x{height} pixels needs about "
+        "{required} MB, but the decode limit is {limit} MB. Split the image into "
+        "tiles (for example with gdal_retile.py) or open a smaller copy.",
+    ).format(
+        width=width,
+        height=height,
+        required=math.ceil(required_mb),
+        limit=limit_mb,
     )
 
 

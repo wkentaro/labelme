@@ -620,6 +620,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - Άνοιγμα καταλόγου</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Η εικόνα είναι πολύ μεγάλη για να ανοίξει: {width}x{height} pixel υπερβαίνουν το όριο των {max_side} pixel ανά πλευρά της μηχανής raster. Η αύξηση του ορίου αποκωδικοποίησης δεν θα βοηθήσει. Χωρίστε την εικόνα σε πλακίδια (για παράδειγμα με το gdal_retile.py) ή ανοίξτε ένα μικρότερο αντίγραφο.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Η εικόνα είναι πολύ μεγάλη για να ανοίξει: {width}x{height} pixel χρειάζονται περίπου {required} MB, αλλά το όριο αποκωδικοποίησης είναι {limit} MB. Χωρίστε την εικόνα σε πλακίδια (για παράδειγμα με το gdal_retile.py) ή ανοίξτε ένα μικρότερο αντίγραφο.</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
     </message>

@@ -598,6 +598,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - เปิดโฟลเดอร์</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>รูปภาพมีขนาดใหญ่เกินกว่าจะเปิดได้: {width}x{height} พิกเซลเกินขีดจำกัด {max_side} พิกเซลต่อด้านของเอนจินแรสเตอร์ การเพิ่มขีดจำกัดการถอดรหัสจะไม่ช่วย โปรดแบ่งรูปภาพเป็นไทล์ (เช่น ด้วย gdal_retile.py) หรือเปิดสำเนาที่เล็กลง</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>รูปภาพมีขนาดใหญ่เกินกว่าจะเปิดได้: {width}x{height} พิกเซลต้องใช้ประมาณ {required} MB แต่ขีดจำกัดการถอดรหัสคือ {limit} MB โปรดแบ่งรูปภาพเป็นไทล์ (เช่น ด้วย gdal_retile.py) หรือเปิดสำเนาที่เล็กลง</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>สลับโหมด &quot;คงแอนโนเทชันก่อนหน้า&quot;</translation>
     </message>

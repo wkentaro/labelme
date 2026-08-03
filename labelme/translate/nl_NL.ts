@@ -598,6 +598,14 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>%s - Map Openen</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>De afbeelding is te groot om te openen: {width}x{height} pixels overschrijdt de limiet van {max_side} pixels per zijde van de raster-engine. Het verhogen van de decodeerlimiet helpt niet. Splits de afbeelding in tegels (bijvoorbeeld met gdal_retile.py) of open een kleinere kopie.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>De afbeelding is te groot om te openen: {width}x{height} pixels heeft ongeveer {required} MB nodig, maar de decodeerlimiet is {limit} MB. Splits de afbeelding in tegels (bijvoorbeeld met gdal_retile.py) of open een kleinere kopie.</translation>
+    </message>
+    <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
         <translation>Modus &quot;vorige annotatie behouden&quot; omschakelen</translation>
     </message>

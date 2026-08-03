@@ -612,6 +612,14 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>%s - Verzeichnis öffnen</translation>
     </message>
     <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Das Bild ist zu groß zum Öffnen: {width}x{height} Pixel überschreiten das Limit von {max_side} Pixeln pro Seite der Raster-Engine. Das Erhöhen des Dekodierlimits hilft nicht. Teilen Sie das Bild in Kacheln auf (zum Beispiel mit gdal_retile.py) oder öffnen Sie eine kleinere Kopie.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Das Bild ist zu groß zum Öffnen: {width}x{height} Pixel benötigen etwa {required} MB, aber das Dekodierlimit beträgt {limit} MB. Teilen Sie das Bild in Kacheln auf (zum Beispiel mit gdal_retile.py) oder öffnen Sie eine kleinere Kopie.</translation>
+    </message>
+    <message>
         <source>Configuration Errors</source>
         <translation>Konfigurationsfehler</translation>
     </message>
