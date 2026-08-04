@@ -43,6 +43,7 @@ from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_file import write_label_file
+from ._label_flags import compile_label_flags
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape_clipboard import ShapeClipboard
@@ -2887,6 +2888,8 @@ def _shapes_from_dicts(
     shape_dicts: list[ShapeDict],
     label_flags: dict[str, list[str]] | None,
 ) -> list[Shape]:
+    compiled_label_flags = compile_label_flags(label_flags=label_flags)
+
     shapes: list[Shape] = []
     for shape_dict in shape_dicts:
         shape = Shape(
@@ -2900,14 +2903,13 @@ def _shapes_from_dicts(
         )
 
         default_flags: dict[str, bool] = {}
-        if label_flags:
-            for pattern, keys in label_flags.items():
-                if not isinstance(shape.label, str):
-                    logger.warning("shape.label is not str: {}", shape.label)
-                    continue
-                if re.match(pattern, shape.label):
-                    for key in keys:
-                        default_flags[key] = False
+        for pattern, keys in compiled_label_flags.items():
+            if not isinstance(shape.label, str):
+                logger.warning("shape.label is not str: {}", shape.label)
+                continue
+            if pattern.match(shape.label):
+                for key in keys:
+                    default_flags[key] = False
         shape.flags = default_flags
         shape.flags.update(shape_dict["flags"])
         shape.other_data = shape_dict["other_data"]
