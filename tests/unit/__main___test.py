@@ -188,8 +188,14 @@ def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
     cache_dir = tmp_path / ".cache" / "labelme"
     cache_dir.mkdir(parents=True)
     (cache_dir / "labelme.log").mkdir()
+
+    def expand_to_tmp_cache_dir(self: Path) -> Path:
+        return cache_dir
+
     monkeypatch.setattr(os, "name", "posix")
-    monkeypatch.setenv("HOME", str(tmp_path))
+    # Patched instead of steering HOME because ntpath.expanduser ignores HOME,
+    # so on Windows the test would resolve the real profile.
+    monkeypatch.setattr(Path, "expanduser", expand_to_tmp_cache_dir)
 
     _setup_loguru(logger_level="INFO")
 
