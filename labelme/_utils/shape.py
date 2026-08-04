@@ -105,7 +105,13 @@ def shapes_to_label(
                 raise ValueError("shape['mask'] must be numpy.ndarray")
             mask = np.zeros(img_shape[:2], dtype=bool)
             (x1, y1), (x2, y2) = np.asarray(points).astype(int)
-            mask[y1 : y2 + 1, x1 : x2 + 1] = shape["mask"]
+            height, width = img_shape[:2]
+            y_start, y_stop = max(y1, 0), min(y2 + 1, height)
+            x_start, x_stop = max(x1, 0), min(x2 + 1, width)
+            if y_start < y_stop and x_start < x_stop:
+                mask[y_start:y_stop, x_start:x_stop] = shape["mask"][
+                    y_start - y1 : y_stop - y1, x_start - x1 : x_stop - x1
+                ]
         else:
             mask = shape_to_mask(img_shape[:2], points, shape_type)
 
