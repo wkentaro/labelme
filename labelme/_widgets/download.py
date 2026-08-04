@@ -66,13 +66,17 @@ class _DownloadThread(QThread):
 
 
 def _format_bytes(n: int) -> str:
-    KB: Final = 1024
-    MB: Final = 1024 * 1024
-    if n < KB:
-        return f"{n} B"
-    if n < MB:
-        return f"{n / KB:.0f} KB"
-    return f"{n / MB:.1f} MB"
+    UNIT: Final = 1024
+    value = float(n)
+    # Advance a tier when the value rounds up to a full UNIT, so the display
+    # never reads "1024 KB" / "1024.0 MB". The boundary rounds to a whole unit
+    # (round(value)), independent of each tier's display precision. TB is the
+    # terminal unit.
+    for suffix, decimals in (("B", 0), ("KB", 0), ("MB", 1), ("GB", 1)):
+        if round(value) < UNIT:
+            return f"{value:.{decimals}f} {suffix}"
+        value /= UNIT
+    return f"{value:.1f} TB"
 
 
 def download_ai_model(model_name: str, parent: QWidget) -> bool:
