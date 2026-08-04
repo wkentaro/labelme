@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Fényerő/Kontraszt</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Fényerő:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Kontraszt:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

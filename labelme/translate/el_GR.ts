@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Φωτεινότητα/Αντίθεση</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Φωτεινότητα:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Αντίθεση:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

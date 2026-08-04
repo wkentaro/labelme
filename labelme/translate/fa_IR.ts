@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>روشنایی/کنتراست</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>روشنایی:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>کنتراست:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
