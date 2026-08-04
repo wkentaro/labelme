@@ -418,10 +418,6 @@ Shapes</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Rueda</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Acercar</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Rellenar polígono mientras se dibuja</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Rueda hace zoom en el lienzo</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>¿Eliminar permanentemente {} formas? Esta acción no se puede deshacer.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Acercar o alejar la imagen. Los atajos {} y {} también funcionan sobre el lienzo.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -424,10 +424,6 @@ forme</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Rotella</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;avanti</translation>
     </message>
@@ -490,6 +486,10 @@ forme</translation>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Riempire il poligono durante il disegno</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Rotella ingrandisce la tela</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -716,10 +716,6 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Eliminare definitivamente {} forme? Questa azione non può essere annullata.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Ingrandisci o riduci l&apos;immagine. I tasti di scelta rapida {} e {} funzionano anche sulla tela.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

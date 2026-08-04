@@ -424,10 +424,6 @@ les formes</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Molette</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;avant</translation>
     </message>
@@ -490,6 +486,10 @@ les formes</translation>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Remplir le polygone pendant le dessin</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Molette zoome le canevas</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -716,10 +716,6 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Supprimer définitivement {} formes ? Cette action est irréversible.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Zoomer ou dézoomer l&apos;image. Les raccourcis {} et {} fonctionnent également sur le canevas.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

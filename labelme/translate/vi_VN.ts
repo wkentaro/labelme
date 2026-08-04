@@ -418,10 +418,6 @@ Shapes</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Bánh xe</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Phóng to(&amp;I)</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Tô đa giác khi vẽ</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Xóa vĩnh viễn {} hình dạng? Hành động này không thể hoàn tác.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Phóng to hoặc thu nhỏ hình ảnh. Các phím tắt {} và {} cũng hoạt động trên canvas.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -418,10 +418,6 @@ Shapes</source>
         <translation>ซูม</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+ล้อเลื่อน</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>ซูมเข้า (&amp;I)</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>เติมสีหลายเหลี่ยมขณะวาด</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+ล้อเลื่อน เพื่อซูมแคนวาส</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>ลบรูปร่าง {} รายการอย่างถาวร? การกระทำนี้ไม่สามารถยกเลิกได้</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>ซูมเข้า-ออกของรูป ใช้ทางลัด {} และ {} ที่แคนวาสได้เช่นกัน</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

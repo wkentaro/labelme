@@ -418,10 +418,6 @@ Shapes</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+滾輪</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>放大(&amp;I)</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>繪製時填充多邊形</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+滾輪縮放畫布</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>永久刪除{}個圖形？此操作無法復原。</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>縮放圖像。快捷鍵{}和{}亦可在畫布上使用。</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

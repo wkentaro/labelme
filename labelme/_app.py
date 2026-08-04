@@ -680,18 +680,8 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom_box_layout.addWidget(self._canvas_widgets.zoom_widget)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())
         zoom_widget_action.defaultWidget().setLayout(zoom_box_layout)
-        self._canvas_widgets.zoom_widget.setWhatsThis(
-            str(
-                self.tr(
-                    "Zoom the image in or out. The shortcuts "
-                    "{} and {} also work on the canvas."
-                )
-            ).format(
-                _utils.format_shortcut(
-                    f"{shortcuts['zoom_in']},{shortcuts['zoom_out']}"
-                ),
-                _utils.format_shortcut(self.tr("Ctrl+Wheel")),
-            )
+        self._canvas_widgets.zoom_widget.setToolTip(
+            self.tr("Ctrl+Wheel zooms the canvas")
         )
         self._canvas_widgets.zoom_widget.setEnabled(False)
 

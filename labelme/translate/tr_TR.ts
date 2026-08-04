@@ -421,10 +421,6 @@ Shapes</source>
         <translation>Yakınlaştırma</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Tekerlek</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Yakınlaştır</translation>
     </message>
@@ -487,6 +483,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Çizim sırasında çokgeni doldur</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Tekerlek tuvali yakınlaştırır</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -713,10 +713,6 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>{} şekil kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Görüntüyü yakınlaştırın veya uzaklaştırın. {} ve {} kısayolları tuvalde de çalışır.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -418,10 +418,6 @@ Shapes</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Wiel</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Inzoomen</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Polygoon vullen tijdens tekenen</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Wiel zoomt op het canvas</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>{} vormen permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>In- of uitzoomen op de afbeelding. De sneltoetsen {} en {} werken ook op het canvas.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -12,7 +12,6 @@ from pytestqt.qtbot import QtBot
 from labelme._utils.qt import _TintedSvgIconEngine
 from labelme._utils.qt import add_actions
 from labelme._utils.qt import direction_angle
-from labelme._utils.qt import format_shortcut
 from labelme._utils.qt import label_validator
 from labelme._utils.qt import new_action
 from labelme._utils.qt import new_icon
@@ -82,33 +81,6 @@ def test_project_point_on_line_zero_length_returns_point() -> None:
         point=point, line_start=QPointF(2.0, 2.0), line_end=QPointF(2.0, 2.0)
     )
     assert (projected.x(), projected.y()) == pytest.approx((4.0, 7.0))
-
-
-# ---------------------------------------------------------------------------
-# format_shortcut
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "text, modifier, key",
-    [
-        ("Ctrl+S", "Ctrl", "S"),
-        ("Alt+F4", "Alt", "F4"),
-        ("Shift+Z", "Shift", "Z"),
-    ],
-)
-def test_format_shortcut(text: str, modifier: str, key: str) -> None:
-    result = format_shortcut(text)
-    assert result  # non-empty
-    assert modifier in result
-    assert key in result
-    # result must contain some kind of separator between modifier and key
-    assert "+" in result or result.index(modifier) < result.index(key)
-
-
-def test_format_shortcut_raises_without_plus() -> None:
-    with pytest.raises(ValueError):
-        format_shortcut("CtrlS")
 
 
 # ---------------------------------------------------------------------------

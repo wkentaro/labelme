@@ -418,10 +418,6 @@ Shapes</source>
         <translation>확대/축소</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+휠</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>확대(&amp;I)</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>그리는 동안 다각형 채우기</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+휠로 캔버스를 확대/축소합니다</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>{}개의 도형을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>이미지 확대 또는 축소. 캔버스에서 {} 및 {}로도 사용 가능합니다.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
