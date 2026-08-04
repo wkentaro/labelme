@@ -403,10 +403,6 @@ Shapes</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Колесо</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Увеличить (&amp;I)</translation>
     </message>
@@ -469,6 +465,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Заполнять полигон во время рисования</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Колесо масштабирует холст</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -713,10 +713,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Безвозвратно удалить {} фигур? Это действие нельзя отменить.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Увеличить или уменьшить изображение. Также доступно с {} и {} на холсте.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

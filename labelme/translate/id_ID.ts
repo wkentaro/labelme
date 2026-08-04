@@ -393,10 +393,6 @@
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Scroll</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Perbesar (&amp;I)</translation>
     </message>
@@ -459,6 +455,10 @@
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Isi poligon saat menggambar</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -685,10 +685,6 @@ Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Hapus permanen {} bentuk? Tindakan ini tidak dapat dibatalkan.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Lakukan zoom in atau zoom out pada gambar. Pintasan {} dan {} juga berfungsi di kanvas.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

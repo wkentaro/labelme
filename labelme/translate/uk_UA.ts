@@ -457,10 +457,6 @@ Shapes</source>
         <translation>Збільшити</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+колесо</translation>
-    </message>
-    <message>
         <source>&amp;Quit</source>
         <translation>&amp;Вийти</translation>
     </message>
@@ -681,6 +677,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Намалюйте обмежувальну рамку для сегментації об&apos;єкта.</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+колесо масштабує полотно</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points недоступний</translation>
     </message>
@@ -713,10 +713,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Остаточно видалити {} фігур? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Збільшення або зменшення зображення. Також доступно за допомогою {} і {} на полотні.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

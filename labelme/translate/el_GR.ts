@@ -456,10 +456,6 @@ Shapes</source>
         <translation>Εστίαση</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Wheel</translation>
-    </message>
-    <message>
         <source>&amp;Quit</source>
         <translation>Τερματισμός</translation>
     </message>
@@ -680,6 +676,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points μη διαθέσιμο</translation>
     </message>
@@ -712,10 +712,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Οριστική διαγραφή {} σχημάτων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Μεγέθυνση ή σμίκρυνση της εικόνας. Τα πλήκτρα {} και {} λειτουργούν επίσης πάνω στον καμβά.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

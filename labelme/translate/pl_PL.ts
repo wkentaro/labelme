@@ -418,10 +418,6 @@ Shapes</source>
         <translation>Powiększenie</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+kółko</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Powiększ (&amp;I)</translation>
     </message>
@@ -484,6 +480,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Wypełniaj wielokąt podczas rysowania</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+kółko powiększa płótno</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -710,10 +710,6 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Trwale usunąć {} kształtów? Tej operacji nie można cofnąć.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Powiększ lub pomniejsz obraz. Skróty {} i {} działają także na płótnie.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

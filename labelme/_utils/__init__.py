@@ -7,7 +7,6 @@ from .image import img_qt_to_arr
 from .qt import add_actions
 from .qt import apply_color_theme
 from .qt import direction_angle
-from .qt import format_shortcut
 from .qt import label_validator
 from .qt import new_action
 from .qt import new_icon

@@ -430,10 +430,6 @@ Shapes</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+ホイール</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>拡大(&amp;I)</translation>
     </message>
@@ -498,6 +494,10 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>描画中にポリゴンを塗りつぶす</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -724,10 +724,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>{} 個の図形を完全に削除しますか？この操作は元に戻せません。</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>画像を拡大・縮小します。キャンバス上で {} と {} も使用できます。</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

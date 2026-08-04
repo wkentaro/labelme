@@ -428,10 +428,6 @@ Shapes</source>
         <translation>Nagyítás</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Görgő</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Nagyítás</translation>
     </message>
@@ -498,6 +494,10 @@ Shapes</source>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -716,10 +716,6 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Véglegesen törli a {} alakzatot? Ez a művelet nem vonható vissza.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Kép nagyítása vagy kicsinyítése. A {} és {} billentyűparancsok a vásznon is működnek.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

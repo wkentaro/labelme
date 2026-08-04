@@ -428,10 +428,6 @@ Formen</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Strg+Mausrad</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Vergrößern</translation>
     </message>
@@ -498,6 +494,10 @@ Formen</translation>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Strg+Mausrad zoomt die Leinwand</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -716,10 +716,6 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>{} Formen endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Bild vergrößern oder verkleinern. Die Tastenkürzel {} und {} funktionieren auch auf der Leinwand.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
