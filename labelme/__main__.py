@@ -48,25 +48,39 @@ def _setup_loguru(logger_level: str) -> None:
     if sys.stderr:
         logger.add(sys.stderr, level=logger_level)
 
-    if os.name == "nt":
-        cache_dir = Path(os.environ["LOCALAPPDATA"]) / "labelme"
-    else:
-        cache_dir = Path("~/.cache/labelme").expanduser()
+    # The log file is best-effort: a read-only or otherwise restricted home must
+    # not stop labelme from starting, since the stderr sink above already keeps
+    # logging functional.
+    try:
+        if os.name == "nt":
+            cache_dir = Path(os.environ["LOCALAPPDATA"]) / "labelme"
+        else:
+            cache_dir = Path("~/.cache/labelme").expanduser()
 
-    cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_dir.mkdir(parents=True, exist_ok=True)
 
-    log_file = cache_dir / "labelme.log"
-    logger.add(
-        log_file,
-        colorize=True,
-        level="DEBUG",
-        rotation="10 MB",
-        retention="30 days",
-        compression="gz",
-        enqueue=True,
-        backtrace=True,
-        diagnose=True,
-    )
+        log_file = cache_dir / "labelme.log"
+        logger.add(
+            log_file,
+            colorize=True,
+            level="DEBUG",
+            rotation="10 MB",
+            retention="30 days",
+            compression="gz",
+            enqueue=True,
+            backtrace=True,
+            diagnose=True,
+        )
+    except Exception as e:
+        # Broad like _config.get_user_config_file: Path.expanduser alone raises
+        # RuntimeError rather than OSError when the home cannot be determined.
+        # str() keeps the path an OSError names, while the type name keeps a bare
+        # KeyError('LOCALAPPDATA') readable.
+        logger.warning(
+            "Failed to set up the log file, logging to stderr only: {}: {}",
+            type(e).__name__,
+            e,
+        )
 
 
 def _route_qt_logging_to_loguru() -> None:
