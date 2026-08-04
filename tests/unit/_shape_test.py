@@ -348,6 +348,28 @@ def test_move_vertex_replaces_only_target_point() -> None:
     assert shape.points[3] == pytest.approx((0.0, 10.0))
 
 
+def test_move_vertex_does_not_mutate_the_array_given_to_the_constructor() -> None:
+    points = np.array([(0.0, 0.0), (10.0, 0.0)], dtype=np.float64)
+    shape = Shape(shape_type="line", points=points)
+
+    shape.move_vertex(i=0, pos=(999.0, 999.0))
+
+    assert points[0] == pytest.approx((0.0, 0.0))
+
+
+def test_constructor_copies_the_given_point_labels() -> None:
+    point_labels = np.array([1, 1], dtype=np.int_)
+    shape = Shape(
+        shape_type="line",
+        points=np.array([(0.0, 0.0), (10.0, 0.0)], dtype=np.float64),
+        point_labels=point_labels,
+    )
+
+    point_labels[1] = 0
+
+    assert int(shape.point_labels[1]) == 1
+
+
 def test_translate_shifts_all_points_by_offset() -> None:
     shape = _make_square_polygon()
 

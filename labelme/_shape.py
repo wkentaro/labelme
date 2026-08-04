@@ -48,8 +48,8 @@ class Shape:
     def __post_init__(self) -> None:
         if self.shape_type not in typing.get_args(ShapeType):
             raise ValueError(f"Unexpected shape_type: {self.shape_type}")
-        self.points = np.asarray(self.points, dtype=np.float64).reshape(-1, 2)
-        self.point_labels = np.asarray(self.point_labels, dtype=np.int_).reshape(-1)
+        self.points = np.array(self.points, dtype=np.float64).reshape(-1, 2)
+        self.point_labels = np.array(self.point_labels, dtype=np.int_).reshape(-1)
         if len(self.point_labels) == 0 and len(self.points) > 0:
             self.point_labels = np.ones(len(self.points), dtype=np.int_)
 
