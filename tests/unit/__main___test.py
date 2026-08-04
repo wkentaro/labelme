@@ -15,6 +15,7 @@ from PySide6 import QtCore
 
 from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
+from labelme.__main__ import _resolve_config_source
 from labelme.__main__ import _route_qt_logging_to_loguru
 from labelme.__main__ import _setup_loguru
 from labelme.__main__ import main
@@ -109,6 +110,74 @@ def test_parse_list_arg_splits_value_too_long_to_be_a_path() -> None:
     value = ",".join(labels)
 
     assert _parse_list_arg(value) == labels
+
+
+def test_resolve_config_source_falls_back_to_defaults_on_missing_default_file(
+    tmp_path: Path,
+) -> None:
+    missing_default = tmp_path / "unwritable" / ".labelmerc"
+    warnings_logged: list[str] = []
+    sink_id = logger.add(
+        lambda m: warnings_logged.append(m.record["message"]), level="WARNING"
+    )
+    try:
+        resolved = _resolve_config_source(
+            config_arg=None, default_config_file=str(missing_default)
+        )
+    finally:
+        logger.remove(sink_id)
+
+    assert resolved == (None, {})
+    assert len(warnings_logged) == 1
+    assert str(missing_default) in warnings_logged[0]
+
+
+def test_resolve_config_source_reads_an_existing_default_file(tmp_path: Path) -> None:
+    default_config_file = tmp_path / ".labelmerc"
+    default_config_file.touch()
+
+    assert _resolve_config_source(
+        config_arg=None, default_config_file=str(default_config_file)
+    ) == (default_config_file, {})
+
+
+def test_resolve_config_source_exits_on_an_explicit_missing_file(
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(SystemExit) as exc:
+        _resolve_config_source(
+            config_arg=str(tmp_path / "typo.yaml"),
+            default_config_file=str(tmp_path / ".labelmerc"),
+        )
+
+    assert exc.value.code == 1
+
+
+def test_resolve_config_source_exits_on_a_value_too_long_to_be_a_path(
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(SystemExit) as exc:
+        _resolve_config_source(
+            config_arg="x" * 300, default_config_file=str(tmp_path / ".labelmerc")
+        )
+
+    assert exc.value.code == 1
+
+
+def test_resolve_config_source_reads_an_explicit_file(tmp_path: Path) -> None:
+    config_file = tmp_path / "custom.yaml"
+    config_file.write_text("auto_save: true\n", encoding="utf-8")
+
+    assert _resolve_config_source(
+        config_arg=str(config_file), default_config_file=str(tmp_path / ".labelmerc")
+    ) == (config_file, {})
+
+
+def test_resolve_config_source_takes_a_yaml_string_as_overrides(tmp_path: Path) -> None:
+    assert _resolve_config_source(
+        config_arg="{auto_save: true}",
+        default_config_file=str(tmp_path / ".labelmerc"),
+    ) == (None, {"auto_save": True})
 
 
 def test_logger_io_forwards_stripped_writes_to_debug() -> None:
