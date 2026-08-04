@@ -274,6 +274,8 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
             {"cat(": ["broken"], "^cat$": ["occluded"]},
             {"occluded": False},
         ),
+        # An unquoted numeric key in ~/.labelmerc reaches us as an int.
+        ("2024", {}, {2024: ["occluded"]}, {}),
     ],
     ids=[
         "matched-keys-default-to-false",
@@ -286,6 +288,7 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
         "label-flags-empty",
         "invalid-pattern-skipped",
         "valid-pattern-applies-despite-an-invalid-one",
+        "non-str-pattern-skipped",
     ],
 )
 def test_shapes_from_dicts_merges_label_flags(

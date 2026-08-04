@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import re
 from typing import Final
 
-from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
+from .._label_flags import compile_label_flags
 from .._utils import label_validator
 
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
@@ -55,14 +54,7 @@ class LabelDialog(QtWidgets.QDialog):
         super().__init__(parent)
 
         self._sort_labels = sort_labels
-        self._flags_spec: dict[str, list[str]] = {}
-        for pattern, keys in (flags or {}).items():
-            try:
-                re.compile(pattern)
-            except re.error:
-                logger.warning("Invalid label_flags pattern: {!r}", pattern)
-                continue
-            self._flags_spec[pattern] = keys
+        self._flags_spec = compile_label_flags(label_flags=flags)
         self._label_history = label_history[:] if label_history is not None else []
         self._flags_disabled = False
         # The flags currently on show, keyed by flag name, so a flag named by
@@ -230,7 +222,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._flag_states.update(self._collect_flags())
         flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
-            if not re.match(pattern, text):
+            if not pattern.match(text):
                 continue
             for key in flag_keys:
                 flags[key] = self._flag_states.get(key, False)
