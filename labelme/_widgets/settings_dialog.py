@@ -103,6 +103,7 @@ class _SettingsPage(QtWidgets.QWidget):
         self._scroll_area = scroll_area
         self._content = content
         self._groups = [group_box for _title, _icon, group_box in groups]
+        self._scrolling_to_group = False
 
         navigation.currentRowChanged.connect(self._scroll_to_group)
         navigation.itemClicked.connect(
@@ -118,13 +119,18 @@ class _SettingsPage(QtWidgets.QWidget):
             return
         group = self._groups[index]
         group_top = group.mapTo(self._content, QtCore.QPoint()).y()
-        scroll_bar = self._scroll_area.verticalScrollBar()
-        with QtCore.QSignalBlocker(scroll_bar):
-            scroll_bar.setValue(group_top)
+        # Blocking the scroll bar would also cut the scroll area's own
+        # valueChanged connection, moving the handle while the content stays put,
+        # so gate the navigation sync instead of silencing the scroll bar.
+        self._scrolling_to_group = True
+        self._scroll_area.verticalScrollBar().setValue(group_top)
+        self._scrolling_to_group = False
         with QtCore.QSignalBlocker(self._navigation):
             self._navigation.setCurrentRow(index)
 
     def _sync_navigation_to_scroll(self, value: int) -> None:
+        if self._scrolling_to_group:
+            return
         viewport = self._scroll_area.viewport()
         # Move the reading point toward the viewport center as the user leaves
         # the top, so short groups near the bottom can become active too.
