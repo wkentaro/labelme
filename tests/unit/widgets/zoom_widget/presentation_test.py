@@ -1,6 +1,6 @@
 """Additional characterization tests for ZoomWidget.
 
-The core value/range/decimal tests are already in zoom_widget_test.py.
+The core value/range/decimal tests are already in value_test.py.
 This file covers the remaining observable contract: class constants, suffix,
 alignment, button symbols, tooltip/status-tip, and minimum width.
 """
