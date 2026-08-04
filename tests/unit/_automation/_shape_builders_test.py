@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import math
+import typing
 
 import numpy as np
 import pytest
 from numpy.typing import NDArray
 
 from labelme._automation import MASK_REQUIRED_SHAPE_TYPES
+from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
 from labelme._automation import shapes_from_detections
 
@@ -215,6 +217,20 @@ def test_shapes_from_detections_mask_drops_empty_mask() -> None:
         ],
         shape_type="mask",
     )
+    assert shapes == []
+
+
+@pytest.mark.parametrize("shape_type", typing.get_args(AiOutputFormat))
+def test_shapes_from_detections_without_bbox_or_mask_is_dropped(
+    shape_type: AiOutputFormat,
+) -> None:
+    # Every shape type needs a bbox, a mask, or both; with neither there is
+    # nothing to derive geometry from, so the detection is dropped.
+    shapes = shapes_from_detections(
+        detections=[Detection()],
+        shape_type=shape_type,
+    )
+
     assert shapes == []
 
 
