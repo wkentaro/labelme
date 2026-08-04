@@ -92,12 +92,8 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         layout.addWidget(body)
 
-        model_ui_names = [
-            option.display_name for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
-        ]
-        if default_model in model_ui_names:
-            model_index = model_ui_names.index(default_model)
-        else:
+        model_index = self._model_combo.findText(default_model)
+        if model_index < 0:
             logger.warning("Default AI model is not found: {!r}", default_model)
             model_index = 0
 
