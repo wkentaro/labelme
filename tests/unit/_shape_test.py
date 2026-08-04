@@ -204,6 +204,11 @@ def test_can_add_point(shape_type: ShapeType, expected: bool) -> None:
     assert Shape(shape_type=shape_type).can_add_point() is expected
 
 
+def test_constructor_rejects_unknown_shape_type() -> None:
+    with pytest.raises(ValueError, match="Unexpected shape_type: bogus"):
+        Shape(shape_type="bogus")  # ty: ignore[invalid-argument-type]
+
+
 def test_insert_point_keeps_points_and_labels_in_sync() -> None:
     shape = _make_square_polygon()
 
