@@ -247,6 +247,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.set_ai_model_name(
             self._ai_annotation.current_model_id
         )
+        self._canvas_widgets.canvas.set_ai_output_format(
+            self._ai_annotation.output_format
+        )
         self._ai_annotation.setEnabled(False)
         self._ai_buttons_highlighted = False
 
