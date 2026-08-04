@@ -71,8 +71,16 @@ def _setup_loguru(logger_level: str) -> None:
             backtrace=True,
             diagnose=True,
         )
-    except (KeyError, OSError) as e:
-        logger.warning("Failed to set up the log file, logging to stderr only: {!r}", e)
+    except Exception as e:
+        # Broad like _config.get_user_config_file: Path.expanduser alone raises
+        # RuntimeError rather than OSError when the home cannot be determined.
+        # str() keeps the path an OSError names, while the type name keeps a bare
+        # KeyError('LOCALAPPDATA') readable.
+        logger.warning(
+            "Failed to set up the log file, logging to stderr only: {}: {}",
+            type(e).__name__,
+            e,
+        )
 
 
 def _route_qt_logging_to_loguru() -> None:

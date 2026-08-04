@@ -5,6 +5,7 @@ import sys
 import types
 import warnings
 from collections.abc import Callable
+from collections.abc import Iterator
 from pathlib import Path
 from typing import cast
 
@@ -135,42 +136,81 @@ def test_logger_io_is_a_write_only_non_seekable_sink() -> None:
     assert stream.flush() is None
 
 
+@pytest.fixture()
+def remove_loguru_sinks() -> Iterator[None]:
+    yield
+    # _setup_loguru registers the captured stderr as a sink, so leaving it behind
+    # would make every later log call write to a stream pytest has closed.
+    logger.remove()
+
+
 def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    remove_loguru_sinks: None,
 ) -> None:
     def raise_permission_error(*args: object, **kwargs: object) -> None:
         raise PermissionError(13, "Permission denied")
 
     monkeypatch.setattr(Path, "mkdir", raise_permission_error)
 
-    _setup_loguru("INFO")
+    _setup_loguru(logger_level="INFO")
 
-    assert "Failed to set up the log file" in capsys.readouterr().err
+    err = capsys.readouterr().err
+    assert "Failed to set up the log file" in err
+    assert "PermissionError" in err
+
+
+def test_setup_loguru_degrades_to_stderr_when_the_home_directory_is_unknown(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    remove_loguru_sinks: None,
+) -> None:
+    def raise_runtime_error(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("Could not determine home directory.")
+
+    monkeypatch.setattr(os, "name", "posix")
+    monkeypatch.setattr(Path, "expanduser", raise_runtime_error)
+
+    _setup_loguru(logger_level="INFO")
+
+    err = capsys.readouterr().err
+    assert "Failed to set up the log file" in err
+    assert "RuntimeError: Could not determine home directory." in err
 
 
 def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    remove_loguru_sinks: None,
 ) -> None:
     cache_dir = tmp_path / ".cache" / "labelme"
     cache_dir.mkdir(parents=True)
     (cache_dir / "labelme.log").mkdir()
+    monkeypatch.setattr(os, "name", "posix")
     monkeypatch.setenv("HOME", str(tmp_path))
-    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path))
 
-    _setup_loguru("INFO")
+    _setup_loguru(logger_level="INFO")
 
-    assert "Failed to set up the log file" in capsys.readouterr().err
+    err = capsys.readouterr().err
+    assert "Failed to set up the log file" in err
+    assert str(cache_dir / "labelme.log") in err
 
 
 def test_setup_loguru_degrades_to_stderr_without_localappdata(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    remove_loguru_sinks: None,
 ) -> None:
     monkeypatch.setattr(os, "name", "nt")
     monkeypatch.delenv("LOCALAPPDATA", raising=False)
 
-    _setup_loguru("INFO")
+    _setup_loguru(logger_level="INFO")
 
-    assert "Failed to set up the log file" in capsys.readouterr().err
+    err = capsys.readouterr().err
+    assert "Failed to set up the log file" in err
+    assert "KeyError: 'LOCALAPPDATA'" in err
 
 
 def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
