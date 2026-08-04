@@ -292,6 +292,11 @@ def test_navigation_jumps_to_group(
     dialog.show()
     qtbot.waitExposed(dialog)
 
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    # Start scrolled: from the top, a broken jump that moves the scroll bar but not
+    # the content can still leave the content where the assertions expect it.
+    scroll_bar.setValue(scroll_bar.maximum() // 2)
+
     navigation = dialog._page._navigation
     item = navigation.item(target)
     assert item is not None
@@ -301,11 +306,13 @@ def test_navigation_jumps_to_group(
         pos=navigation.visualItemRect(item).center(),
     )
 
-    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
     group_top = (
         dialog._page._groups[target].mapTo(dialog._page._content, QtCore.QPoint()).y()
     )
-    assert scroll_bar.value() == min(group_top, scroll_bar.maximum())
+    expected = min(group_top, scroll_bar.maximum())
+    assert scroll_bar.value() == expected
+    viewport = dialog._page._scroll_area.viewport()
+    assert -dialog._page._content.mapTo(viewport, QtCore.QPoint()).y() == expected
     assert navigation.currentRow() == target
 
 
@@ -319,6 +326,26 @@ def test_scrolling_updates_navigation(qtbot: QtBot, dialog: SettingsDialog) -> N
 
     scroll_bar.setValue(scroll_bar.maximum())
     assert dialog._page._navigation.currentRow() == len(dialog._page._groups) - 1
+
+
+def test_scrolling_updates_navigation_after_a_jump(
+    qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    navigation = dialog._page._navigation
+    item = navigation.item(1)
+    assert item is not None
+    qtbot.mouseClick(
+        navigation.viewport(),
+        QtCore.Qt.MouseButton.LeftButton,
+        pos=navigation.visualItemRect(item).center(),
+    )
+
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    scroll_bar.setValue(scroll_bar.maximum())
+    assert navigation.currentRow() == len(dialog._page._groups) - 1
 
 
 def test_navigation_returns_to_first_group_when_resize_removes_scrollbar(
