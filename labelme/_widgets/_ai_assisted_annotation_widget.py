@@ -106,12 +106,12 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             lambda index: on_model_changed(self._model_combo.itemData(index))
         )
 
+        self._output_format_combo.setCurrentIndex(0)
         self._output_format_combo.currentIndexChanged.connect(
             lambda index: on_output_format_changed(
                 self._output_format_combo.itemData(index)
             )
         )
-        self._output_format_combo.setCurrentIndex(0)
 
         self.setMaximumWidth(200)
 
