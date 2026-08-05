@@ -49,6 +49,14 @@ def test_no_apply_on_construction(dialog: SettingsDialog, applied: Applied) -> N
     assert applied == []
 
 
+def test_existing_shape_suppression_is_disabled_by_default(
+    dialog: SettingsDialog,
+) -> None:
+    checkbox = dialog._editors[("ai", "suppress_existing_shape_matches")]
+    assert isinstance(checkbox, QtWidgets.QCheckBox)
+    assert checkbox.isChecked() is False
+
+
 def test_editors_have_accessible_names(dialog: SettingsDialog) -> None:
     for setting in schema.SETTINGS:
         editor = dialog._editors[setting.key_path]
