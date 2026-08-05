@@ -11,6 +11,7 @@ from PySide6.QtGui import QImage
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
     _base_value = 50
+    _initial_width_padding = 300
 
     img: PIL.Image.Image
 
@@ -35,6 +36,11 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             grid=grid, row=1, title=self.tr("Contrast:")
         )
         self.setLayout(grid)
+        initial_size = self.sizeHint()
+        self.resize(
+            initial_size.width() + self._initial_width_padding,
+            initial_size.height(),
+        )
 
         self._alpha = None
         if "A" in img.getbands():
