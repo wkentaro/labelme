@@ -432,7 +432,57 @@ def test_finalize_reports_inference_error_and_cancels(
 
 
 @pytest.mark.gui
-def test_points_preview_hides_failed_and_empty_predictions(
+def test_ai_set_last_label_keeps_overlap_with_different_label(
+    canvas: Canvas,
+) -> None:
+    arena = Shape(
+        label="arena",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+    pig = Shape(
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.create_mode = "ai_points_to_shape"
+    canvas.shapes = [arena, pig]
+    canvas.backup_shapes()
+
+    labeled = canvas.set_last_label("pig", {})
+
+    assert labeled == [pig]
+    assert canvas.shapes == [arena, pig]
+    assert pig.label == "pig"
+
+
+@pytest.mark.gui
+def test_ai_set_last_label_drops_overlap_with_same_label(canvas: Canvas) -> None:
+    existing = Shape(
+        label="pig",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+    duplicate = Shape(
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.create_mode = "ai_points_to_shape"
+    canvas.shapes = [existing, duplicate]
+    canvas.backup_shapes()
+
+    labeled = canvas.set_last_label("pig", {})
+
+    assert labeled == []
+    assert canvas.shapes == [existing]
+    assert canvas.shape_backups[-1][0].label == "pig"
+
+
+@pytest.mark.gui
+def test_points_preview_throttles_inference_errors_until_recovery(
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

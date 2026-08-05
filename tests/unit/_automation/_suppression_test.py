@@ -10,6 +10,7 @@ from labelme._automation._suppression import suppress_detections_greedy
 from labelme._automation._suppression import (
     suppress_detections_overlapping_existing_shapes,
 )
+from labelme._automation._suppression import suppress_shapes_overlapping_existing_shapes
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 
@@ -216,6 +217,78 @@ def test_overlapping_keeps_when_iou_below_threshold() -> None:
     )
 
     assert kept == [detection]
+
+
+def test_overlapping_keeps_detection_overlapping_different_label() -> None:
+    existing = Shape(
+        label="arena",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+    detection = Detection(label="pig", bbox=(0.0, 0.0, 10.0, 10.0))
+
+    kept = suppress_detections_overlapping_existing_shapes(
+        detections=[detection],
+        existing_shapes=[existing],
+    )
+
+    assert kept == [detection]
+
+
+def test_overlapping_drops_detection_overlapping_same_label() -> None:
+    existing = Shape(
+        label="pig",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+    detection = Detection(label="pig", bbox=(0.0, 0.0, 10.0, 10.0))
+
+    kept = suppress_detections_overlapping_existing_shapes(
+        detections=[detection],
+        existing_shapes=[existing],
+    )
+
+    assert kept == []
+
+
+def test_overlapping_shapes_compare_only_same_label() -> None:
+    arena = Shape(
+        label="arena",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+    pig = Shape(
+        label="pig",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+
+    kept = suppress_shapes_overlapping_existing_shapes(
+        shapes=[pig],
+        existing_shapes=[arena],
+    )
+
+    assert kept == [pig]
+
+
+def test_overlapping_shapes_drop_same_label() -> None:
+    existing = Shape(
+        label="pig",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+    duplicate = Shape(
+        label="pig",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+
+    kept = suppress_shapes_overlapping_existing_shapes(
+        shapes=[duplicate],
+        existing_shapes=[existing],
+    )
+
+    assert kept == []
 
 
 def test_overlapping_uses_mask_iou_not_bbox_iou() -> None:

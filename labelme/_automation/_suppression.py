@@ -73,17 +73,12 @@ def suppress_detections_overlapping_existing_shapes(
     detections: list[Detection],
     existing_shapes: list[Shape],
 ) -> list[Detection]:
+    """Drop detections that overlap existing shapes with the same label."""
     OVERLAP_IOU_THRESHOLD: Final[float] = 0.5
     if not detections:
         return []
-    existing_masks = [
-        local_mask
-        for local_mask in (
-            _local_mask_from_shape(shape=shape) for shape in existing_shapes
-        )
-        if local_mask is not None
-    ]
-    if not existing_masks:
+    existing_masks_by_label = _local_masks_by_label(shapes=existing_shapes)
+    if not existing_masks_by_label:
         return list(detections)
 
     kept: list[Detection] = []
@@ -92,17 +87,61 @@ def suppress_detections_overlapping_existing_shapes(
             kept.append(detection)
             continue
         new_local = _local_mask_from_detection(detection=detection)
+        peers = existing_masks_by_label.get(detection.label, [])
         if any(
             _is_redundant_pair(
                 new=new_local,
                 peer=existing,
                 iou_threshold=OVERLAP_IOU_THRESHOLD,
             )
-            for existing in existing_masks
+            for existing in peers
         ):
             continue
         kept.append(detection)
     return kept
+
+
+def suppress_shapes_overlapping_existing_shapes(
+    *,
+    shapes: list[Shape],
+    existing_shapes: list[Shape],
+) -> list[Shape]:
+    """Drop new shapes that overlap existing shapes with the same label."""
+    OVERLAP_IOU_THRESHOLD: Final[float] = 0.5
+    if not shapes:
+        return []
+    existing_masks_by_label = _local_masks_by_label(shapes=existing_shapes)
+    if not existing_masks_by_label:
+        return list(shapes)
+
+    kept: list[Shape] = []
+    for shape in shapes:
+        new_local = _local_mask_from_shape(shape=shape)
+        if new_local is None:
+            kept.append(shape)
+            continue
+        peers = existing_masks_by_label.get(shape.label, [])
+        if any(
+            _is_redundant_pair(
+                new=new_local,
+                peer=existing,
+                iou_threshold=OVERLAP_IOU_THRESHOLD,
+            )
+            for existing in peers
+        ):
+            continue
+        kept.append(shape)
+    return kept
+
+
+def _local_masks_by_label(*, shapes: list[Shape]) -> dict[str | None, list[_LocalMask]]:
+    masks_by_label: dict[str | None, list[_LocalMask]] = {}
+    for shape in shapes:
+        local_mask = _local_mask_from_shape(shape=shape)
+        if local_mask is None:
+            continue
+        masks_by_label.setdefault(shape.label, []).append(local_mask)
+    return masks_by_label
 
 
 def _is_redundant_pair(

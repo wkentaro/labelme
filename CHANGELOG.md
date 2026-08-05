@@ -127,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed AI-assisted overlap suppression treating different classes as duplicates; overlapping shapes are now suppressed only when they share a label, so annotations such as `pig` can overlap an `arena` while duplicate `pig` annotations remain suppressed (follow-up to [#2087](https://github.com/wkentaro/labelme/pull/2087))
 - Fixed a hidden shape staying hover-interactive (highlight, cursor, click-to-select) when it was the hovered shape at the moment it was hidden ([#2276](https://github.com/wkentaro/labelme/pull/2276))
 - Fixed the standalone-executable build instructions forcing `numpy<2.0` (a stale PyQt5-era PyInstaller workaround), which broke builds on Python 3.12+ where numpy 2.x is the default ([#2279](https://github.com/wkentaro/labelme/pull/2279))
 - Fixed annotation label text being clipped or invisible in the label list on some desktop styles (e.g. GNOME/Adwaita) by widening the delegate's text clip rect to the rendered width ([#2273](https://github.com/wkentaro/labelme/pull/2273))

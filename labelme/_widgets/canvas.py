@@ -1889,18 +1889,25 @@ class Canvas(QtWidgets.QWidget):
     def set_last_label(self, text: str, flags: dict[str, bool]) -> list[Shape]:
         if not text:
             raise ValueError("text must not be empty")
-        shapes = []
+        new_shapes = []
         for shape in reversed(self.shapes):
             if shape.label is not None:
                 break
-            shapes.append(shape)
-        shapes.reverse()
-        for shape in shapes:
+            new_shapes.append(shape)
+        new_shapes.reverse()
+        for shape in new_shapes:
             shape.label = text
             shape.flags = flags
+        if self.create_mode in _AI_CREATE_MODES and new_shapes:
+            existing_shapes = self.shapes[: -len(new_shapes)]
+            new_shapes = _automation.suppress_shapes_overlapping_existing_shapes(
+                shapes=new_shapes,
+                existing_shapes=existing_shapes,
+            )
+            self.shapes = [*existing_shapes, *new_shapes]
         self.shape_backups.pop()
         self.backup_shapes()
-        return shapes
+        return new_shapes
 
     def undo_last_line(self) -> None:
         assert self.shapes

@@ -2232,6 +2232,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self._docks.label_list.clearSelection()
             assert isinstance(flags, dict)
             shapes = self._canvas_widgets.canvas.set_last_label(text, flags)
+            if not shapes:
+                self._on_inference_produced_no_shapes()
+                self._actions.edit_mode.setEnabled(True)
+                self._actions.undo_last_point.setEnabled(False)
+                self._actions.undo.setEnabled(
+                    self._canvas_widgets.canvas.can_restore_shape
+                )
+                return
             for shape in shapes:
                 shape.group_id = group_id
                 shape.description = description

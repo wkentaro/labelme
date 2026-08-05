@@ -197,3 +197,34 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
+
+
+def test_propose_keeps_unlabeled_preview_over_labeled_existing_shape(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[
+            osam.types.Annotation(
+                bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=10, ymax=10),
+            )
+        ],
+    )
+    install_fake_osam_session(response)
+    session = AiAssistSession(model_name="stub", output_format="rectangle")
+    existing = Shape(
+        label="arena",
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+    )
+
+    shapes = session.propose_shapes(
+        image=np.zeros((1, 1, 3), dtype=np.uint8),
+        image_id="img",
+        prompt_kind="points",
+        points=np.zeros((1, 2)),
+        point_labels=np.array([1]),
+        existing_shapes=[existing],
+    )
+
+    assert len(shapes) == 1
