@@ -41,9 +41,19 @@ def _intercept_question(
 
 
 @pytest.fixture()
-def _raw_win_no_autosave(raw_win: MainWindow) -> MainWindow:
-    raw_win._actions.save_auto.setChecked(False)
-    return raw_win
+def _raw_win_no_autosave(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"auto_save": False},
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
 
 
 @pytest.fixture()
@@ -55,10 +65,10 @@ def _dir_win_no_autosave(
 ) -> MainWindow:
     win = main_win(
         file_or_dir=str(data_path / "raw"),
+        config_overrides={"auto_save": False},
         output_dir=str(tmp_path),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    win._actions.save_auto.setChecked(False)
     return win
 
 
@@ -113,6 +123,63 @@ def test_close_choose_save_writes_json_and_closes(
     assert expected_json.exists()
     saved = json.loads(expected_json.read_text())
     assert [shape["label"] for shape in saved["shapes"]] == ["cat"]
+
+
+@pytest.mark.gui
+def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    _raw_win_no_autosave: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
+
+    expected_json = tmp_path / _OUTPUT_JSON_NAME
+    assert _is_dirty(win=_raw_win_no_autosave)
+
+    _intercept_question(
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Save
+    )
+    monkeypatch.setattr(_raw_win_no_autosave, "prompt_save_file_path", lambda: "")
+
+    _raw_win_no_autosave.close()
+
+    assert _raw_win_no_autosave.isVisible()
+    assert _is_dirty(win=_raw_win_no_autosave)
+    assert not expected_json.exists()
+
+    close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
+
+
+@pytest.mark.gui
+def test_close_choose_save_but_write_fails_keeps_window_open(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    _raw_win_no_autosave: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
+
+    assert _is_dirty(win=_raw_win_no_autosave)
+
+    _intercept_question(
+        monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Save
+    )
+    monkeypatch.setattr(
+        _raw_win_no_autosave,
+        "prompt_save_file_path",
+        lambda: str(tmp_path / _OUTPUT_JSON_NAME),
+    )
+    monkeypatch.setattr(_raw_win_no_autosave, "save_labels", lambda label_path: False)
+
+    _raw_win_no_autosave.close()
+
+    assert _raw_win_no_autosave.isVisible()
+    assert _is_dirty(win=_raw_win_no_autosave)
+
+    close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
 
 
 @pytest.mark.gui

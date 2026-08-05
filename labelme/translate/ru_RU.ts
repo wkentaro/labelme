@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Яркость/Контраст</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Яркость:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Контраст:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -395,10 +403,6 @@ Shapes</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Колесо</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Увеличить (&amp;I)</translation>
     </message>
@@ -463,6 +467,10 @@ Shapes</source>
         <translation>Заполнять полигон во время рисования</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Колесо масштабирует холст</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
@@ -509,6 +517,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>Инференс ИИ не удался: %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -567,6 +579,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Отмена</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Недоступно в режиме AI-Points, так как эта модель не поддерживает точечные запросы.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Сохранить аннотации в &quot;{}&quot; перед закрытием?</translation>
     </message>
@@ -577,6 +593,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Directory</source>
         <translation>%s — открыть папку</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Изображение слишком велико для открытия: {width}x{height} пикселей превышает ограничение растрового движка в {max_side} пикселей на сторону. Увеличение лимита декодирования не поможет. Разбейте изображение на плитки (например, с помощью gdal_retile.py) или откройте уменьшенную копию.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Изображение слишком велико для открытия: {width}x{height} пикселей требует около {required} МБ, но лимит декодирования составляет {limit} МБ. Разбейте изображение на плитки (например, с помощью gdal_retile.py) или откройте уменьшенную копию.</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -691,10 +715,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Безвозвратно удалить {} фигур? Это действие нельзя отменить.</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Увеличить или уменьшить изображение. Также доступно с {} и {} на холсте.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Допустимые форматы: {formats}</translation>
     </message>
@@ -746,12 +766,20 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Основные</translation>
+        <source>Color theme</source>
+        <translation>Цветовая тема</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>Метки</translation>
+        <source>System</source>
+        <translation>Системная</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Светлая</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Тёмная</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -766,6 +794,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Разрешить точки за пределами границ изображения</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Внешний вид и язык</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Файлы и сохранение</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Рисование и холст</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Продолжение работы между изображениями</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Источники меток</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Поведение меток</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Помощь ИИ</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Автоматически сохранять</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Сохранять данные изображения в файле меток</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Встраивает изображение в JSON-файл меток.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Сохранять предыдущую разметку</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Сохранять предыдущий масштаб</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Сохранять яркость/контраст предыдущего изображения</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Заполнять многоугольник при рисовании</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Позволяет точкам фигур выходить за пределы изображения, например для частично видимых объектов.</translation>
     </message>
@@ -776,6 +860,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>Проверка меток</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Сортировать метки</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Сортирует список меток по алфавиту вместо сохранения заданного порядка.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Показывать текстовое поле метки</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Автодополнение меток</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Начинается с</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Содержит</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Модель по умолчанию</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (скорость)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (точность)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (скорость)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (сбалансированный)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (точность)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (скорость)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (сбалансированный)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (точность)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -792,6 +940,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>Закрыть</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -824,6 +976,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Предустановленные флаги изображения</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Разделы настроек</translation>
     </message>
 </context>
 </TS>

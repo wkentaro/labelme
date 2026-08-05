@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import math
+import typing
 
 import numpy as np
 import pytest
 from numpy.typing import NDArray
 
 from labelme._automation import MASK_REQUIRED_SHAPE_TYPES
+from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
 from labelme._automation import shapes_from_detections
 
@@ -151,6 +153,61 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
+def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=np.ones((20, 20), dtype=bool))],
+        shape_type="polygon",
+    )
+
+    assert shape.shape_type == "polygon"
+    assert len(shape.points) >= 3
+
+
+def test_shapes_from_detections_polygon_drops_degenerate_thin_mask() -> None:
+    # A near-collinear sliver mask collapses to fewer than 3 contour points,
+    # which is not a valid polygon; downstream consumers (e.g. shape_to_mask)
+    # assert len(points) > 2, so the builder must drop it rather than emit it.
+    mask = np.zeros((3, 400), dtype=bool)
+    mask[1, :] = True
+
+    shapes = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+    )
+
+    assert shapes == []
+
+
+def test_shapes_from_detections_polygon_with_bbox_offsets_contour() -> None:
+    # The mask traces a contour in mask-local coordinates; a bbox origin shifts
+    # every contour point by (bbox[0], bbox[1]) into image coordinates.
+    mask = np.ones((20, 20), dtype=bool)
+    [local, offset] = shapes_from_detections(
+        detections=[
+            Detection(mask=mask),
+            Detection(bbox=(10, 20, 30, 40), mask=mask),
+        ],
+        shape_type="polygon",
+    )
+
+    assert offset.shape_type == "polygon"
+    np.testing.assert_allclose(offset.points, local.points + [10, 20])
+
+
+def test_shapes_from_detections_mask_uses_truncated_bbox_corners() -> None:
+    mask = np.ones((31, 21), dtype=bool)
+    [shape] = shapes_from_detections(
+        detections=[Detection(bbox=(10.4, 20.6, 30.9, 50.1), mask=mask)],
+        shape_type="mask",
+    )
+
+    assert shape.shape_type == "mask"
+    assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((10, 20))
+    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((30, 50))
+    assert shape.mask is not None
+    assert np.array_equal(shape.mask, mask)
+
+
 def test_shapes_from_detections_mask_drops_empty_mask() -> None:
     # OSAM occasionally returns a bbox whose segmentation mask is all-False;
     # without this guard the shape would render as bbox-only (no visible mask).
@@ -160,6 +217,20 @@ def test_shapes_from_detections_mask_drops_empty_mask() -> None:
         ],
         shape_type="mask",
     )
+    assert shapes == []
+
+
+@pytest.mark.parametrize("shape_type", typing.get_args(AiOutputFormat))
+def test_shapes_from_detections_without_bbox_or_mask_is_dropped(
+    shape_type: AiOutputFormat,
+) -> None:
+    # Every shape type needs a bbox, a mask, or both; with neither there is
+    # nothing to derive geometry from, so the detection is dropped.
+    shapes = shapes_from_detections(
+        detections=[Detection()],
+        shape_type=shape_type,
+    )
+
     assert shapes == []
 
 

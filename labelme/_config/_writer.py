@@ -12,6 +12,8 @@ from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.comments import CommentedSeq
 
 from .. import _yaml
+from ._shape_color import migrate_shape_color
+from ._shape_color import validate_shape_color
 
 here = Path(__file__).resolve().parent
 
@@ -74,19 +76,9 @@ def _atomic_write(config_file: Path, content: str) -> None:
         raise
 
 
-def set_override(config_file: Path, key_path: Sequence[str], value: object) -> None:
-    set_overrides(config_file=config_file, values=((key_path, value),))
-
-
 def set_overrides(
-    config_file: Path,
-    values: Sequence[tuple[Sequence[str], object]],
+    config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
 ) -> None:
-    for key_path, _ in values:
-        if not key_path:
-            raise ValueError("key_path must not be empty")
-        _default_value(key_path=key_path)
-
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -97,12 +89,24 @@ def set_overrides(
     )
     if not isinstance(doc, CommentedMap):
         doc = CommentedMap()
+    writes_shape_color = any(
+        key_path and key_path[0] == "shape_color" for key_path, _value in overrides
+    )
+    if writes_shape_color:
+        migrate_shape_color(config=doc)
 
-    for key_path, value in values:
+    # All overrides mutate the in-memory doc before the single write below, so a
+    # bad key anywhere in the batch leaves the file untouched (all-or-nothing).
+    for key_path, value in overrides:
+        if not key_path:
+            raise ValueError("key_path must not be empty")
         if value == _default_value(key_path=key_path):
             _prune(doc=doc, key_path=key_path)
         else:
             _assign(doc=doc, key_path=key_path, value=value)
+
+    if writes_shape_color and "shape_color" in doc:
+        validate_shape_color(config=doc["shape_color"])
 
     content = ""
     if doc:

@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Luminosité/Contraste</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Luminosité :</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Contraste :</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -416,10 +424,6 @@ les formes</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Molette</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;avant</translation>
     </message>
@@ -484,6 +488,10 @@ les formes</translation>
         <translation>Remplir le polygone pendant le dessin</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Molette zoome le canevas</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -530,6 +538,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>Échec de l&apos;inférence IA : %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -588,6 +600,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Annuler</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Indisponible en mode AI-Points, car ce modèle ne prend pas en charge les prompts de points.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Enregistrer les annotations dans &quot;{}&quot; avant de fermer ?</translation>
     </message>
@@ -598,6 +614,14 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - Ouvrir le répertoire</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>L&apos;image est trop grande pour être ouverte : {width}x{height} pixels dépasse la limite de {max_side} pixels par côté du moteur raster. Augmenter la limite de décodage n&apos;y changera rien. Découpez l&apos;image en tuiles (par exemple avec gdal_retile.py) ou ouvrez une copie plus petite.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>L&apos;image est trop grande pour être ouverte : {width}x{height} pixels nécessite environ {required} Mo, mais la limite de décodage est de {limit} Mo. Découpez l&apos;image en tuiles (par exemple avec gdal_retile.py) ou ouvrez une copie plus petite.</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -694,10 +718,6 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <translation>Supprimer définitivement {} formes ? Cette action est irréversible.</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Zoomer ou dézoomer l&apos;image. Les raccourcis {} et {} fonctionnent également sur le canevas.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formats autorisés : {formats}</translation>
     </message>
@@ -749,12 +769,20 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Général</translation>
+        <source>Color theme</source>
+        <translation>Thème de couleur</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>Étiquettes</translation>
+        <source>System</source>
+        <translation>Système</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Clair</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Sombre</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -769,6 +797,62 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
         <translation>Autoriser les points en dehors des limites de l&apos;image</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Apparence et langue</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Fichiers et enregistrement</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Dessin et canevas</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Continuer d’une image à l’autre</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Sources d’étiquettes</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Comportement des étiquettes</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Assistance par IA</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Enregistrer automatiquement</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Enregistrer les données d&apos;image dans le fichier d&apos;étiquettes</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Intègre l’image dans le fichier JSON d’étiquettes.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Conserver l’annotation précédente</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Conserver le zoom précédent</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Conserver la luminosité/le contraste précédents</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Remplir le polygone pendant le dessin</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Permet aux points des formes de dépasser l&apos;image, par exemple pour les objets partiellement visibles.</translation>
     </message>
@@ -779,6 +863,70 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <source>Label validation</source>
         <translation>Validation des étiquettes</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Trier les étiquettes</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Trie la liste des étiquettes par ordre alphabétique au lieu de conserver l’ordre fourni.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Afficher le champ de texte de l’étiquette</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Autocomplétion des étiquettes</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Commence par</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Contient</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Modèle par défaut</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (vitesse)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (précision)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (vitesse)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (équilibré)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (précision)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (vitesse)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (équilibré)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (précision)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -795,6 +943,10 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <source>Close</source>
         <translation>Fermer</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -827,6 +979,13 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <source>Predefined image flags</source>
         <translation>Indicateurs d&apos;image prédéfinis</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Sections des réglages</translation>
     </message>
 </context>
 </TS>

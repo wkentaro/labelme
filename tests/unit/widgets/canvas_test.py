@@ -19,12 +19,18 @@ from labelme._shape import ShapeType
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _compute_intersection_edges_image
 from labelme._widgets.canvas import _compute_overscroll_slack
+from labelme._widgets.canvas import _draft_to_shape
 from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
+from labelme._widgets.canvas import _is_out_of_image
 from labelme._widgets.canvas import _normalize_bbox_points
 from labelme._widgets.canvas import _opposite_corner_in_parallelogram
+from labelme._widgets.canvas import _pick_pending_moved_shape
 from labelme._widgets.canvas import _project_oriented_rectangle_corners
 from labelme._widgets.canvas import _reproject_oriented_rectangle_corners
+from labelme._widgets.canvas import _shape_to_draft
+from labelme._widgets.canvas import _should_reselect_on_right_press
+from labelme._widgets.canvas import _snap_cursor_pos_for_square
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -266,6 +272,46 @@ def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
     assert canvas.shapes[0].visible is False
 
 
+def _make_rectangle(label: str | None) -> Shape:
+    return Shape(
+        label=label,
+        shape_type="rectangle",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        closed=True,
+    )
+
+
+@pytest.mark.gui
+def test_set_last_label_applies_only_to_trailing_unlabeled_run(
+    canvas: Canvas,
+) -> None:
+    # After the label dialog is accepted, _app labels the batch of just-drawn
+    # shapes via set_last_label. Those are the trailing run of still-unlabeled
+    # shapes; the backward scan must stop at the nearest labeled shape, leaving
+    # both it and any unlabeled shape before it untouched.
+    stale = _make_rectangle(label=None)
+    labeled = _make_rectangle(label="old")
+    fresh_a = _make_rectangle(label=None)
+    fresh_b = _make_rectangle(label=None)
+    canvas.load_shapes([stale, labeled, fresh_a, fresh_b])
+
+    updated = canvas.set_last_label("new", {"occluded": True})
+
+    assert updated == [fresh_a, fresh_b]
+    assert stale.label is None
+    assert labeled.label == "old"
+    assert fresh_a.label == "new"
+    assert fresh_b.label == "new"
+    assert fresh_a.flags == {"occluded": True}
+    assert fresh_b.flags == {"occluded": True}
+
+
+@pytest.mark.gui
+def test_set_last_label_rejects_empty_text(canvas: Canvas) -> None:
+    with pytest.raises(ValueError, match="text must not be empty"):
+        canvas.set_last_label("", {})
+
+
 @pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_with_empty_inference_resets_state_and_notifies(
@@ -277,7 +323,7 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     # an overlapping detection). The empty branch of _finalize must reset the
     # in-progress drawing state so the edit-mode button becomes usable again
     # and notify the user that inference produced nothing.
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", lambda **_: [])
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", lambda **_: [])
     canvas.create_mode = create_mode
     # ai_box_to_shape normalizes the two bbox corners before delegating to the
     # (monkeypatched) inference call, so the in-progress shape needs 2 points.
@@ -302,6 +348,57 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "create_mode", ["point", "ai_box_to_shape", "ai_points_to_shape"]
+)
+def test_finalize_paints_new_shape_before_notifying(
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+) -> None:
+    # new_shape's handler blocks on the modal label dialog, so the committed
+    # shape must already be on screen when it fires. Point and AI-Box can
+    # finalize without first painting a matching preview.
+    inferred = Shape(
+        shape_type="polygon",
+        points=np.array([(1, 1), (9, 1), (9, 9)], dtype=np.float64),
+        closed=True,
+    )
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", lambda **_: [inferred])
+    with qtbot.waitExposed(canvas):
+        canvas.show()
+
+    painted_shape_counts: list[int] = []
+    render_canvas = canvas._render_canvas
+
+    def record_then_render() -> None:
+        painted_shape_counts.append(len(canvas.shapes))
+        render_canvas()
+
+    monkeypatch.setattr(canvas, "_render_canvas", record_then_render)
+    counts_when_notified: list[int] = []
+    canvas.new_shape.connect(lambda: counts_when_notified.extend(painted_shape_counts))
+
+    canvas.create_mode = create_mode
+    if create_mode == "point":
+        canvas._current = _DraftShape(
+            shape_type="point",
+            points=(QPointF(5, 5),),
+            point_labels=(1,),
+        )
+    else:
+        canvas._current = _DraftShape(
+            shape_type="rectangle",
+            points=(QPointF(0, 0), QPointF(10, 10)),
+            point_labels=(1, 1),
+        )
+    canvas._finalize()
+
+    assert counts_when_notified == [1]
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_reports_inference_error_and_cancels(
     canvas: Canvas,
@@ -314,7 +411,7 @@ def test_finalize_reports_inference_error_and_cancels(
     def _raise(**_: object) -> list[Shape]:
         raise RuntimeError("boom")
 
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", _raise)
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", _raise)
     canvas.create_mode = create_mode
     canvas._current = _DraftShape(
         shape_type="rectangle",
@@ -335,7 +432,7 @@ def test_finalize_reports_inference_error_and_cancels(
 
 
 @pytest.mark.gui
-def test_points_preview_throttles_inference_errors_until_recovery(
+def test_points_preview_hides_failed_and_empty_predictions(
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -349,7 +446,7 @@ def test_points_preview_throttles_inference_errors_until_recovery(
             raise RuntimeError("boom")
         return []
 
-    monkeypatch.setattr(canvas, "_shapes_from_ai_points", _maybe_raise)
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", _maybe_raise)
     canvas.create_mode = "ai_points_to_shape"
     canvas._line = _DraftShape(
         shape_type="rectangle",
@@ -364,14 +461,14 @@ def test_points_preview_throttles_inference_errors_until_recovery(
     failed: list[str] = []
     canvas.inference_failed.connect(failed.append)
 
-    canvas._build_ai_points_preview(current=current)
-    canvas._build_ai_points_preview(current=current)
+    assert canvas._build_ai_points_preview(current=current) is None
+    assert canvas._build_ai_points_preview(current=current) is None
     assert failed == ["RuntimeError: boom"]
 
     behavior["fail"] = False
-    canvas._build_ai_points_preview(current=current)
+    assert canvas._build_ai_points_preview(current=current) is None
     behavior["fail"] = True
-    canvas._build_ai_points_preview(current=current)
+    assert canvas._build_ai_points_preview(current=current) is None
     assert failed == ["RuntimeError: boom", "RuntimeError: boom"]
 
 
@@ -596,6 +693,25 @@ def test_is_degenerate_draft(
     assert _is_degenerate_draft(draft) is expected
 
 
+@pytest.mark.parametrize(
+    "point, expected",
+    [
+        pytest.param((0, 0), False, id="top_left_corner_inside"),
+        pytest.param((_WIDTH, _HEIGHT), False, id="bottom_right_corner_inside"),
+        pytest.param((_WIDTH / 2, _HEIGHT / 2), False, id="interior_inside"),
+        pytest.param((-0.1, _HEIGHT / 2), True, id="left_of_image"),
+        pytest.param((_WIDTH / 2, -0.1), True, id="above_image"),
+        pytest.param((_WIDTH + 0.1, _HEIGHT / 2), True, id="right_of_image"),
+        pytest.param((_WIDTH / 2, _HEIGHT + 0.1), True, id="below_image"),
+    ],
+)
+def test_is_out_of_image(point: tuple[float, float], expected: bool) -> None:
+    # The image rect is inclusive at both edges: a point exactly on the far
+    # width/height boundary counts as inside, since the clamping callers treat
+    # the pixmap size as a reachable coordinate rather than an exclusive extent.
+    assert _is_out_of_image(QPointF(*point), QSize(_WIDTH, _HEIGHT)) is expected
+
+
 @pytest.mark.gui
 @pytest.mark.parametrize("shape_type", ["rectangle", "circle", "line"])
 def test_finalize_rejects_degenerate_shape(
@@ -652,6 +768,170 @@ def test_retype_draft_into_fresh_shape_type() -> None:
     assert rebuilt.shape_type == "rectangle"
     assert rebuilt.points == (QPointF(10, 10), QPointF(20, 20))
     assert rebuilt.point_labels == (1, 1)
+
+
+def test_add_point_appends_point_with_default_label() -> None:
+    draft = _DraftShape(shape_type="polygon").add_point(QPointF(1, 2))
+
+    assert draft.points == (QPointF(1, 2),)
+    assert draft.point_labels == (1,)
+    assert draft.closed is False
+
+
+def test_add_point_appends_with_explicit_label() -> None:
+    draft = _DraftShape(shape_type="points").add_point(QPointF(3, 4), label=0)
+
+    assert draft.points == (QPointF(3, 4),)
+    assert draft.point_labels == (0,)
+
+
+def test_add_point_autoclose_closes_when_new_point_matches_first() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0), QPointF(10, 10)),
+        point_labels=(1, 1, 1),
+    )
+
+    closed = start.add_point(QPointF(0, 0), autoclose=True)
+
+    assert closed.closed is True
+    assert closed.points == start.points  # first point is not re-appended
+    assert closed.point_labels == start.point_labels
+
+
+def test_add_point_autoclose_appends_when_new_point_differs_from_first() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 1),
+    )
+
+    grown = start.add_point(QPointF(10, 10), autoclose=True)
+
+    assert grown.closed is False
+    assert grown.points == (QPointF(0, 0), QPointF(10, 0), QPointF(10, 10))
+
+
+def test_add_point_autoclose_on_empty_draft_appends_seed_point() -> None:
+    # No first point to match against, so autoclose falls through to a normal append.
+    draft = _DraftShape(shape_type="polygon").add_point(QPointF(5, 5), autoclose=True)
+
+    assert draft.closed is False
+    assert draft.points == (QPointF(5, 5),)
+
+
+def test_add_point_without_autoclose_appends_even_when_matching_first() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 1),
+    )
+
+    grown = start.add_point(QPointF(0, 0))
+
+    assert grown.closed is False
+    assert grown.points == (QPointF(0, 0), QPointF(10, 0), QPointF(0, 0))
+
+
+def test_pop_point_removes_last_point_and_label() -> None:
+    start = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 0),
+    )
+
+    popped = start.pop_point()
+
+    assert popped.points == (QPointF(0, 0),)
+    assert popped.point_labels == (1,)
+
+
+def test_pop_point_on_empty_draft_returns_same_instance() -> None:
+    draft = _DraftShape(shape_type="polygon")
+
+    assert draft.pop_point() is draft
+
+
+def test_close_and_open_toggle_closed_and_preserve_other_fields() -> None:
+    draft = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0)),
+        point_labels=(1, 1),
+    )
+
+    closed = draft.close()
+    reopened = closed.open()
+
+    assert closed.closed is True
+    assert reopened.closed is False
+    for toggled in (closed, reopened):
+        assert toggled.points == draft.points
+        assert toggled.point_labels == draft.point_labels
+        assert toggled.shape_type == draft.shape_type
+
+
+def test_draft_to_shape_carries_points_labels_and_closed() -> None:
+    draft = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(0, 0), QPointF(10, 0), QPointF(10, 10)),
+        point_labels=(1, 0, 1),
+        closed=True,
+    )
+
+    shape = _draft_to_shape(draft)
+
+    assert shape.shape_type == "polygon"
+    assert shape.closed is True
+    np.testing.assert_array_equal(
+        shape.points, np.array([[0, 0], [10, 0], [10, 10]], dtype=np.float64)
+    )
+    np.testing.assert_array_equal(
+        shape.point_labels, np.array([1, 0, 1], dtype=np.int_)
+    )
+
+
+def test_shape_to_draft_carries_points_labels_and_closed() -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([[0, 0], [10, 0], [10, 10]], dtype=np.float64),
+        point_labels=np.array([1, 0, 1], dtype=np.int_),
+        closed=True,
+    )
+
+    draft = _shape_to_draft(shape)
+
+    assert draft.shape_type == "polygon"
+    assert draft.closed is True
+    assert draft.points == (QPointF(0, 0), QPointF(10, 0), QPointF(10, 10))
+    assert draft.point_labels == (1, 0, 1)
+
+
+def test_draft_and_shape_round_trip_preserves_values() -> None:
+    draft = _DraftShape(
+        shape_type="points",
+        points=(QPointF(1, 2), QPointF(3, 4)),
+        point_labels=(1, 0),
+        closed=False,
+    )
+
+    assert _shape_to_draft(_draft_to_shape(draft)) == draft
+
+
+def test_converters_preserve_mismatched_points_and_labels_lengths() -> None:
+    # A finalized rectangle/circle/line carries 2 points but a single point_label;
+    # undo_last_line round-trips exactly such a Shape back through _shape_to_draft,
+    # so the converters must not zip or pad the two to equal length.
+    draft = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1,),
+    )
+
+    shape = _draft_to_shape(draft)
+
+    assert len(shape.points) == 2
+    assert len(shape.point_labels) == 1
+    assert _shape_to_draft(shape) == draft
 
 
 _IMAGE_SIZE: Final[QSize] = QSize(100, 50)
@@ -713,6 +993,66 @@ _IMAGE_SIZE: Final[QSize] = QSize(100, 50)
             QPointF(105, 55),
             QPointF(100, 50),
             id="on_bottom_right_corner_pushed_diagonally_out_stays",
+        ),
+        pytest.param(
+            QPointF(100, 0),
+            QPointF(50, -10),
+            QPointF(50, 0),
+            id="on_top_right_corner_dragged_left_slides_along_top_edge",
+        ),
+        pytest.param(
+            QPointF(0, 50),
+            QPointF(60, 55),
+            QPointF(60, 50),
+            id="on_bottom_left_corner_dragged_right_slides_along_bottom_edge",
+        ),
+        pytest.param(
+            QPointF(100, 0),
+            QPointF(120, 25),
+            QPointF(100, 25),
+            id="on_top_right_corner_dragged_right_slides_along_right_edge",
+        ),
+        pytest.param(
+            QPointF(0, 0),
+            QPointF(50, -10),
+            QPointF(50, 0),
+            id="on_top_left_corner_dragged_right_slides_along_top_edge",
+        ),
+        pytest.param(
+            QPointF(0, 0),
+            QPointF(-10, 25),
+            QPointF(0, 25),
+            id="on_top_left_corner_dragged_down_slides_along_left_edge",
+        ),
+        pytest.param(
+            QPointF(0, 50),
+            QPointF(-10, 25),
+            QPointF(0, 25),
+            id="on_bottom_left_corner_dragged_up_slides_along_left_edge",
+        ),
+        pytest.param(
+            QPointF(100, 50),
+            QPointF(50, 60),
+            QPointF(50, 50),
+            id="on_bottom_right_corner_dragged_left_slides_along_bottom_edge",
+        ),
+        pytest.param(
+            QPointF(100, 50),
+            QPointF(110, 25),
+            QPointF(100, 25),
+            id="on_bottom_right_corner_dragged_up_slides_along_right_edge",
+        ),
+        pytest.param(
+            QPointF(100, 0),
+            QPointF(110, -5),
+            QPointF(100, 0),
+            id="on_top_right_corner_pushed_diagonally_out_stays",
+        ),
+        pytest.param(
+            QPointF(0, 50),
+            QPointF(-5, 55),
+            QPointF(0, 50),
+            id="on_bottom_left_corner_pushed_diagonally_out_stays",
         ),
     ],
 )
@@ -802,6 +1142,95 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
 )
 def test_compute_overscroll_slack(scaled: int, viewport: int, expected: int) -> None:
     assert _compute_overscroll_slack(scaled=scaled, viewport=viewport) == expected
+
+
+def test_should_reselect_on_right_press_with_empty_selection() -> None:
+    # Empty selection reselects even when hovering nothing; without the guard this
+    # input would fall through to `hovered_shape is None` and wrongly return False.
+    assert _should_reselect_on_right_press(selected_shapes=[], hovered_shape=None)
+
+
+def test_should_reselect_on_right_press_keeps_selection_when_hovering_nothing() -> None:
+    selected = [Shape()]
+    assert not _should_reselect_on_right_press(
+        selected_shapes=selected, hovered_shape=None
+    )
+
+
+def test_should_reselect_on_right_press_when_hovering_outside_selection() -> None:
+    assert _should_reselect_on_right_press(
+        selected_shapes=[Shape()], hovered_shape=Shape()
+    )
+
+
+def test_should_reselect_on_right_press_keeps_selection_hovering_selected() -> None:
+    hovered = Shape()
+    assert not _should_reselect_on_right_press(
+        selected_shapes=[Shape(), hovered], hovered_shape=hovered
+    )
+
+
+def test_pick_pending_moved_shape_none_when_not_moving() -> None:
+    hovered = Shape()
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=False, hovered_shape=hovered, shapes=[hovered]
+        )
+        is None
+    )
+
+
+def test_pick_pending_moved_shape_none_when_hovering_nothing() -> None:
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=True, hovered_shape=None, shapes=[Shape()]
+        )
+        is None
+    )
+
+
+def test_pick_pending_moved_shape_none_when_hovered_absent_from_shapes() -> None:
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=True, hovered_shape=Shape(), shapes=[Shape()]
+        )
+        is None
+    )
+
+
+def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
+    hovered = Shape()
+    assert (
+        _pick_pending_moved_shape(
+            is_moving_shape=True, hovered_shape=hovered, shapes=[Shape(), hovered]
+        )
+        is hovered
+    )
+
+
+@pytest.mark.parametrize(
+    ("pos", "opposite_vertex", "expected"),
+    [
+        pytest.param((10, 4), (0, 0), (4.0, 4.0), id="wider_than_tall_snaps_to_height"),
+        pytest.param((4, 10), (0, 0), (4.0, 4.0), id="taller_than_wide_snaps_to_width"),
+        pytest.param((-10, 4), (0, 0), (-4.0, 4.0), id="preserves_negative_x_sign"),
+        pytest.param((10, -4), (0, 0), (4.0, -4.0), id="preserves_negative_y_sign"),
+        pytest.param((-10, -4), (0, 0), (-4.0, -4.0), id="preserves_both_signs"),
+        pytest.param((5, 5), (2, 3), (4.0, 5.0), id="offsets_from_opposite_vertex"),
+        pytest.param((6, 6), (2, 2), (6.0, 6.0), id="already_square_is_unchanged"),
+        pytest.param((0, 5), (0, 0), (0.0, 0.0), id="collapses_when_one_axis_is_zero"),
+        pytest.param((0, 0), (0, 0), (0.0, 0.0), id="zero_delta_stays_put"),
+    ],
+)
+def test_snap_cursor_pos_for_square(
+    pos: tuple[float, float],
+    opposite_vertex: tuple[float, float],
+    expected: tuple[float, float],
+) -> None:
+    result = _snap_cursor_pos_for_square(
+        pos=QPointF(*pos), opposite_vertex=QPointF(*opposite_vertex)
+    )
+    assert (result.x(), result.y()) == pytest.approx(expected)
 
 
 def _make_polygon() -> Shape:

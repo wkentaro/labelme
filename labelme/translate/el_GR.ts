@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Φωτεινότητα/Αντίθεση</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Φωτεινότητα:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Αντίθεση:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -448,10 +456,6 @@ Shapes</source>
         <translation>Εστίαση</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Wheel</translation>
-    </message>
-    <message>
         <source>&amp;Quit</source>
         <translation>Τερματισμός</translation>
     </message>
@@ -548,6 +552,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>
@@ -604,6 +612,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Άκυρο</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Να αποθηκευτούν οι σχολιασμοί στο &quot;{}&quot; πριν το κλείσιμο;</translation>
     </message>
@@ -614,6 +626,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - Άνοιγμα καταλόγου</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Η εικόνα είναι πολύ μεγάλη για να ανοίξει: {width}x{height} pixel υπερβαίνουν το όριο των {max_side} pixel ανά πλευρά της μηχανής raster. Η αύξηση του ορίου αποκωδικοποίησης δεν θα βοηθήσει. Χωρίστε την εικόνα σε πλακίδια (για παράδειγμα με το gdal_retile.py) ή ανοίξτε ένα μικρότερο αντίγραφο.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Η εικόνα είναι πολύ μεγάλη για να ανοίξει: {width}x{height} pixel χρειάζονται περίπου {required} MB, αλλά το όριο αποκωδικοποίησης είναι {limit} MB. Χωρίστε την εικόνα σε πλακίδια (για παράδειγμα με το gdal_retile.py) ή ανοίξτε ένα μικρότερο αντίγραφο.</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -656,6 +676,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points μη διαθέσιμο</translation>
     </message>
@@ -688,10 +712,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Οριστική διαγραφή {} σχημάτων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Μεγέθυνση ή σμίκρυνση της εικόνας. Τα πλήκτρα {} και {} λειτουργούν επίσης πάνω στον καμβά.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
@@ -745,12 +765,20 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Γενικά</translation>
+        <source>Color theme</source>
+        <translation>Θέμα χρώματος</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>Ετικέτες</translation>
+        <source>System</source>
+        <translation>Σύστημα</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Φωτεινό</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Σκοτεινό</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -765,6 +793,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Να επιτρέπονται σημεία εκτός των ορίων της εικόνας</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Εμφάνιση και γλώσσα</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Αρχεία και αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Σχεδίαση και καμβάς</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Συνέχεια μεταξύ εικόνων</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Πηγές ετικετών</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Συμπεριφορά ετικετών</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Βοήθεια AI</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Αυτόματη αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Αποθήκευση δεδομένων εικόνας σε αρχείο ετικέτας</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Ενσωματώνει την εικόνα στο αρχείο JSON της ετικέτας.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Διατήρηση προηγούμενου σχολιασμού</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Διατήρηση προηγούμενου ζουμ</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Διατήρηση προηγούμενης φωτεινότητας/αντίθεσης</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Γεμίστε πολύγωνο ενώ σχεδιάζετε</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Επιτρέπει στα σημεία των σχημάτων να εκτείνονται πέρα από την εικόνα, π.χ. για μερικώς ορατά αντικείμενα.</translation>
     </message>
@@ -775,6 +859,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>Επικύρωση ετικέτας</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Ταξινόμηση ετικετών</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Ταξινομεί τη λίστα ετικετών αλφαβητικά αντί να διατηρεί την παρεχόμενη σειρά.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Εμφάνιση πεδίου κειμένου ετικέτας</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Αυτόματη συμπλήρωση ετικετών</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Αρχίζει με</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Περιέχει</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Προεπιλεγμένο μοντέλο</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (ταχύτητα)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (ακρίβεια)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (ταχύτητα)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (ισορροπημένο)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (ακρίβεια)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (ταχύτητα)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (ισορροπημένο)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (ακρίβεια)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -791,6 +939,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>Κλείσιμο</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -823,6 +975,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Ενότητες ρυθμίσεων</translation>
     </message>
 </context>
 </TS>

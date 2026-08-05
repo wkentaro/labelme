@@ -48,8 +48,8 @@ class Shape:
     def __post_init__(self) -> None:
         if self.shape_type not in typing.get_args(ShapeType):
             raise ValueError(f"Unexpected shape_type: {self.shape_type}")
-        self.points = np.asarray(self.points, dtype=np.float64).reshape(-1, 2)
-        self.point_labels = np.asarray(self.point_labels, dtype=np.int_).reshape(-1)
+        self.points = np.array(self.points, dtype=np.float64).reshape(-1, 2)
+        self.point_labels = np.array(self.point_labels, dtype=np.int_).reshape(-1)
         if len(self.point_labels) == 0 and len(self.points) > 0:
             self.point_labels = np.ones(len(self.points), dtype=np.int_)
 
@@ -57,6 +57,13 @@ class Shape:
         return self.shape_type in POLYLINE_SHAPE_TYPES
 
     def insert_point(self, i: int, point: npt.ArrayLike, label: int = 1) -> None:
+        if not self.can_add_point():
+            logger.warning(
+                "Cannot add point to: shape_type={!r}, len(points)={:d}",
+                self.shape_type,
+                len(self.points),
+            )
+            return
         point = np.asarray(point, dtype=np.float64).reshape(2)
         self.points = np.insert(self.points, i, point, axis=0)
         self.point_labels = np.insert(self.point_labels, i, label)
@@ -73,7 +80,7 @@ class Shape:
     def remove_point(self, i: int) -> None:
         if not self.can_remove_point():
             logger.warning(
-                "Cannot remove point from: shape_type=%r, len(points)=%d",
+                "Cannot remove point from: shape_type={!r}, len(points)={:d}",
                 self.shape_type,
                 len(self.points),
             )
@@ -91,6 +98,15 @@ class Shape:
         return copy.deepcopy(self)
 
 
+def _nearest_index_within_epsilon(
+    *, distances: npt.NDArray[np.float64], epsilon: float
+) -> int | None:
+    nearest = int(np.argmin(distances))
+    if distances[nearest] > epsilon:
+        return None
+    return nearest
+
+
 def nearest_vertex_index(
     *,
     shape: Shape,
@@ -101,10 +117,7 @@ def nearest_vertex_index(
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
     distances = np.linalg.norm((shape.points - point) * scale, axis=1)
-    nearest = int(np.argmin(distances))
-    if distances[nearest] > epsilon:
-        return None
-    return nearest
+    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
 def nearest_edge_index(
@@ -129,10 +142,12 @@ def nearest_edge_index(
     )
     projections = starts + t[:, None] * segments
     distances = np.linalg.norm(scaled_point - projections, axis=1)
-    nearest = int(np.argmin(distances))
-    if distances[nearest] > epsilon:
-        return None
-    return nearest
+    if shape.shape_type == "linestrip":
+        # A linestrip is an open polyline: the wrap-around segment np.roll builds
+        # at index 0 (last point back to the first) is never rendered, so it must
+        # not be a hit target.
+        distances[0] = np.inf
+    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
 def nearest_rotation_point_index(
@@ -146,10 +161,7 @@ def nearest_rotation_point_index(
         return None
     handles = (shape.points + np.roll(shape.points, 1, axis=0)) / 2
     distances = np.linalg.norm((handles - point) * scale, axis=1)
-    nearest = int(np.argmin(distances))
-    if distances[nearest] > epsilon:
-        return None
-    return nearest
+    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
 
 
 def get_rotation_handle(*, shape: Shape, index: int) -> npt.NDArray[np.float64]:

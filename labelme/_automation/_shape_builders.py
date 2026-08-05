@@ -64,7 +64,7 @@ def _shape_from_detection(
             polygon = polygon + np.array(
                 [detection.bbox[0], detection.bbox[1]], dtype=np.float32
             )
-        if len(polygon) < 2:
+        if len(polygon) < 3:
             return None
         return _build_shape(
             shape_type="polygon",

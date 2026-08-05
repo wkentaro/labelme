@@ -11,12 +11,12 @@ def _make_dialog(qtbot: QtBot, flag_count: int) -> LabelDialog:
     flags = {f"flag_{i:02d}": False for i in range(flag_count)}
     dialog = LabelDialog(labels=["cat"], flags={".*": list(flags)})
     qtbot.addWidget(dialog)
-    dialog._set_flag_checkboxes(flags=flags.items())
+    dialog._set_flag_checkboxes(flags=flags)
     return dialog
 
 
 def _checkbox_gaps(dialog: LabelDialog) -> list[int]:
-    tops = [checkbox.y() for checkbox in dialog._flag_checkboxes()]
+    tops = [checkbox.y() for checkbox in dialog._flag_checkboxes.values()]
     return [bottom - top for top, bottom in zip(tops, tops[1:])]
 
 
@@ -64,3 +64,29 @@ def test_move_keeps_dialog_within_screen(qtbot: QtBot, corner: str) -> None:
     dialog._move_within_screen(getattr(available, corner)())
 
     assert available.contains(dialog.frameGeometry())
+
+
+def test_move_anchors_content_corner_at_target(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot, flag_count=3)
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    target = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
+    dialog._move_within_screen(target)
+
+    assert dialog.geometry().topLeft() == target
+
+
+def test_clamp_does_not_move_dialog_already_on_screen(qtbot: QtBot) -> None:
+    dialog = _make_dialog(qtbot, flag_count=3)
+    dialog.show()
+    qtbot.waitExposed(dialog)
+
+    available = QtGui.QGuiApplication.primaryScreen().availableGeometry()
+    target = available.center()
+    dialog._move_within_screen(target)
+    assert available.contains(dialog.frameGeometry())
+
+    pos_before = dialog.pos()
+    dialog._clamp_within_screen(target)
+    assert dialog.pos() == pos_before

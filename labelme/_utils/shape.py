@@ -108,7 +108,13 @@ def shapes_to_label(
                 raise ValueError("shape['mask'] must be numpy.ndarray")
             mask = np.zeros(img_shape[:2], dtype=bool)
             (x1, y1), (x2, y2) = np.asarray(points).astype(int)
-            mask[y1 : y2 + 1, x1 : x2 + 1] = shape["mask"]
+            height, width = img_shape[:2]
+            y_start, y_stop = max(y1, 0), min(y2 + 1, height)
+            x_start, x_stop = max(x1, 0), min(x2 + 1, width)
+            if y_start < y_stop and x_start < x_stop:
+                mask[y_start:y_stop, x_start:x_stop] = shape["mask"][
+                    y_start - y1 : y_stop - y1, x_start - x1 : x_stop - x1
+                ]
         else:
             mask = shape_to_mask(img_shape[:2], points, shape_type)
 
@@ -116,16 +122,3 @@ def shapes_to_label(
         ins[mask] = ins_id
 
     return cls, ins
-
-
-def masks_to_bboxes(masks: NDArray[np.bool_]) -> NDArray[np.float32]:
-    if masks.ndim != 3:
-        raise ValueError(f"masks.ndim must be 3, but it is {masks.ndim}")
-    if masks.dtype != bool:
-        raise ValueError(f"masks.dtype must be bool type, but it is {masks.dtype}")
-    bboxes = []
-    for mask in masks:
-        where = np.argwhere(mask)
-        (y1, x1), (y2, x2) = where.min(0), where.max(0) + 1
-        bboxes.append((y1, x1, y2, x2))
-    return np.asarray(bboxes, dtype=np.float32)

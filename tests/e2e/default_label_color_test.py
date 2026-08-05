@@ -56,7 +56,10 @@ def test_view_menu_changes_and_persists_default_label_color(
         unique_label_list=win._docks.unique_label_list,
     ) == (12, 34, 56)
     assert safe_load(config_file.read_text(encoding="utf-8")) == {
-        "default_shape_color": [12, 34, 56],
+        "shape_color": {
+            "uniform": {"color": [12, 34, 56]},
+            "by_label": {"fallback": [12, 34, 56]},
+        },
         "shape": {
             "line_color": [12, 34, 56, 128],
             "vertex_fill_color": [12, 34, 56, 255],

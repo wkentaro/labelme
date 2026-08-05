@@ -8,7 +8,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 from labelme._utils import image as image_module
-from labelme._utils import shape as shape_module
 
 here = Path(__file__).parent
 data_dir = here.parent.parent / "data"
@@ -21,23 +20,3 @@ def get_img_and_data() -> tuple[NDArray[np.uint8], dict[str, Any]]:
     img_b64 = data["imageData"]
     img = image_module.img_b64_to_arr(img_b64)
     return img, data
-
-
-def get_img_and_lbl() -> tuple[NDArray[np.uint8], NDArray[np.int32], list[str | None]]:
-    img, data = get_img_and_data()
-
-    label_name_to_value = {"__background__": 0}
-    for shape in data["shapes"]:
-        label_name = shape["label"]
-        label_value = len(label_name_to_value)
-        label_name_to_value[label_name] = label_value
-
-    n_labels = max(label_name_to_value.values()) + 1
-    label_names = [None] * n_labels
-    for label_name, label_value in label_name_to_value.items():
-        label_names[label_value] = label_name
-
-    lbl, _ = shape_module.shapes_to_label(
-        img.shape, data["shapes"], label_name_to_value
-    )
-    return img, lbl, label_names

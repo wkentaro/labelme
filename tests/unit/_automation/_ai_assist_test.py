@@ -5,9 +5,11 @@ from collections.abc import Callable
 import numpy as np
 import osam
 import pytest
+from numpy.typing import NDArray
 
 from labelme._automation import _ai_assist
 from labelme._automation._ai_assist import AiAssistSession
+from labelme._automation._ai_assist import _detections_from_annotations
 from labelme._shape import Shape
 
 
@@ -32,12 +34,23 @@ def install_fake_osam_session(
     return _install
 
 
-def _propose(session: AiAssistSession) -> list[Shape]:
+def _propose(
+    session: AiAssistSession,
+    *,
+    prompt_kind: _ai_assist.AiPromptKind = "points",
+) -> list[Shape]:
+    if prompt_kind == "box":
+        points = np.zeros((2, 2))
+        point_labels = np.array([2, 3])
+    else:
+        points = np.zeros((1, 2))
+        point_labels = np.array([1])
     return session.propose_shapes(
         image=np.zeros((1, 1, 3), dtype=np.uint8),
         image_id="img",
-        points=np.zeros((1, 2)),
-        point_labels=np.array([1]),
+        prompt_kind=prompt_kind,
+        points=points,
+        point_labels=point_labels,
         existing_shapes=[],
     )
 
@@ -86,3 +99,101 @@ def test_default_model_name_and_output_format() -> None:
     session.output_format = "mask"
     assert session.model_name == "efficientsam:latest"
     assert session.output_format == "mask"
+
+
+def test_sam3_point_prompt_is_rejected_before_session_creation(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    response = osam.types.GenerateResponse(model="stub", annotations=[])
+    created_model_names = install_fake_osam_session(response)
+    session = AiAssistSession(model_name="sam3:latest")
+
+    with pytest.raises(ValueError, match="does not support point prompts"):
+        _propose(session)
+
+    assert created_model_names == []
+
+
+def test_sam3_box_prompt_reaches_session(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    response = osam.types.GenerateResponse(model="stub", annotations=[])
+    created_model_names = install_fake_osam_session(response)
+    session = AiAssistSession(model_name="sam3:latest")
+
+    shapes = _propose(session, prompt_kind="box")
+
+    assert shapes == []
+    assert created_model_names == ["sam3:latest"]
+
+
+def _annotation(
+    score: float | None,
+    *,
+    bbox: tuple[int, int, int, int] | None = None,
+    mask: NDArray[np.bool_] | None = None,
+) -> osam.types.Annotation:
+    bounding_box = (
+        osam.types.BoundingBox(xmin=bbox[0], ymin=bbox[1], xmax=bbox[2], ymax=bbox[3])
+        if bbox is not None
+        else None
+    )
+    return osam.types.Annotation(score=score, bounding_box=bounding_box, mask=mask)
+
+
+def test_detections_from_annotations_empty_returns_empty() -> None:
+    assert _detections_from_annotations([]) == []
+
+
+def test_detections_from_annotations_sorts_by_score_descending() -> None:
+    detections = _detections_from_annotations(
+        [
+            _annotation(0.2, bbox=(0, 0, 1, 1)),
+            _annotation(0.9, bbox=(2, 2, 3, 3)),
+            _annotation(0.5, bbox=(4, 4, 5, 5)),
+        ]
+    )
+
+    assert [detection.bbox for detection in detections] == [
+        (2, 2, 3, 3),
+        (4, 4, 5, 5),
+        (0, 0, 1, 1),
+    ]
+
+
+def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
+    detections = _detections_from_annotations(
+        [
+            _annotation(None, bbox=(0, 0, 1, 1)),
+            _annotation(0.5, bbox=(2, 2, 3, 3)),
+        ]
+    )
+
+    assert [detection.bbox for detection in detections] == [
+        (2, 2, 3, 3),
+        (0, 0, 1, 1),
+    ]
+
+
+def test_detections_from_annotations_flattens_bounding_box() -> None:
+    (detection,) = _detections_from_annotations([_annotation(0.5, bbox=(1, 2, 3, 4))])
+
+    assert detection.bbox == (1, 2, 3, 4)
+
+
+def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> None:
+    (detection,) = _detections_from_annotations([_annotation(0.5)])
+
+    assert detection.bbox is None
+    assert detection.mask is None
+
+
+def test_detections_from_annotations_passes_mask_through() -> None:
+    mask = np.zeros((2, 2), dtype=bool)
+    mask[0, 0] = True
+
+    (detection,) = _detections_from_annotations(
+        [_annotation(0.5, bbox=(0, 0, 1, 1), mask=mask)]
+    )
+
+    np.testing.assert_array_equal(detection.mask, mask)

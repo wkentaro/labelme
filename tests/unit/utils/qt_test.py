@@ -12,25 +12,11 @@ from pytestqt.qtbot import QtBot
 from labelme._utils.qt import _TintedSvgIconEngine
 from labelme._utils.qt import add_actions
 from labelme._utils.qt import direction_angle
-from labelme._utils.qt import distance
-from labelme._utils.qt import distance_to_line
-from labelme._utils.qt import format_shortcut
 from labelme._utils.qt import label_validator
 from labelme._utils.qt import new_action
-from labelme._utils.qt import new_button
 from labelme._utils.qt import new_icon
 from labelme._utils.qt import project_point_on_line
 from labelme._utils.qt import project_point_on_perpendicular_line
-
-
-def test_distance_to_line() -> None:
-    line = (QPointF(0, 0), QPointF(10, 0))
-
-    assert distance_to_line(QPointF(5, 0), line) == 0
-    assert distance_to_line(QPointF(5, 5), line) == 5
-    assert distance_to_line(QPointF(0, 0), line) == 0
-    assert distance_to_line(QPointF(-5, 0), line) == 5
-    assert distance_to_line(QPointF(15, 0), line) == 5
 
 
 @pytest.mark.parametrize(
@@ -63,6 +49,16 @@ def test_project_point_on_perpendicular_line(
     assert (projected.x(), projected.y()) == pytest.approx(expected)
 
 
+def test_project_point_on_perpendicular_line_zero_length_returns_point() -> None:
+    # A zero-length line has no direction, so the perpendicular is undefined and
+    # the point is returned unchanged instead of dividing by the zero length.
+    point = QPointF(4.0, 7.0)
+    projected = project_point_on_perpendicular_line(
+        point=point, line_start=QPointF(2.0, 2.0), line_end=QPointF(2.0, 2.0)
+    )
+    assert (projected.x(), projected.y()) == pytest.approx((4.0, 7.0))
+
+
 @pytest.mark.parametrize(
     "point, expected",
     [
@@ -77,50 +73,14 @@ def test_project_point_on_line(point: QPointF, expected: tuple[float, float]) ->
     assert (projected.x(), projected.y()) == pytest.approx(expected)
 
 
-# ---------------------------------------------------------------------------
-# distance
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "x, y, expected",
-    [
-        (3.0, 4.0, 5.0),
-        (0.0, 0.0, 0.0),
-        (1.0, 0.0, 1.0),
-        (0.0, 1.0, 1.0),
-        (-3.0, -4.0, 5.0),
-    ],
-)
-def test_distance(x: float, y: float, expected: float) -> None:
-    assert distance(QPointF(x, y)) == pytest.approx(expected)
-
-
-# ---------------------------------------------------------------------------
-# format_shortcut
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "text, modifier, key",
-    [
-        ("Ctrl+S", "Ctrl", "S"),
-        ("Alt+F4", "Alt", "F4"),
-        ("Shift+Z", "Shift", "Z"),
-    ],
-)
-def test_format_shortcut(text: str, modifier: str, key: str) -> None:
-    result = format_shortcut(text)
-    assert result  # non-empty
-    assert modifier in result
-    assert key in result
-    # result must contain some kind of separator between modifier and key
-    assert "+" in result or result.index(modifier) < result.index(key)
-
-
-def test_format_shortcut_raises_without_plus() -> None:
-    with pytest.raises(ValueError):
-        format_shortcut("CtrlS")
+def test_project_point_on_line_zero_length_returns_point() -> None:
+    # A zero-length line has no direction to project onto, so the point is
+    # returned unchanged instead of dividing by the zero length.
+    point = QPointF(4.0, 7.0)
+    projected = project_point_on_line(
+        point=point, line_start=QPointF(2.0, 2.0), line_end=QPointF(2.0, 2.0)
+    )
+    assert (projected.x(), projected.y()) == pytest.approx((4.0, 7.0))
 
 
 # ---------------------------------------------------------------------------
@@ -164,18 +124,21 @@ def test_label_validator_rejects_single_char() -> None:
 
 
 def test_new_icon_returns_qicon(qtbot: QtBot) -> None:
-    icon = new_icon("icon")
+    icon = new_icon("icon-256")
     assert isinstance(icon, QtGui.QIcon)
+    assert not icon.isNull()
 
 
 def test_new_icon_with_explicit_png_suffix(qtbot: QtBot) -> None:
-    icon = new_icon("icon.png")
+    icon = new_icon("icon-256.png")
     assert isinstance(icon, QtGui.QIcon)
+    assert not icon.isNull()
 
 
 def test_new_icon_with_path_that_includes_subdir(qtbot: QtBot) -> None:
     icon = new_icon("phosphor/info.svg")
     assert isinstance(icon, QtGui.QIcon)
+    assert not icon.isNull()
 
 
 # ---------------------------------------------------------------------------
@@ -210,6 +173,31 @@ def test_tinted_svg_engine_renders_window_text_color(
         qapp.setPalette(original)
 
 
+def test_tinted_svg_engine_renders_highlighted_text_color_when_selected(
+    qapp: QtWidgets.QApplication,
+) -> None:
+    original = qapp.palette()
+    try:
+        palette = qapp.palette()
+        palette.setColor(
+            QtGui.QPalette.ColorGroup.Normal,
+            QtGui.QPalette.ColorRole.HighlightedText,
+            QtGui.QColor(0, 255, 0),
+        )
+        qapp.setPalette(palette)
+        svg = (
+            b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
+            b'<rect width="4" height="4" fill="currentColor"/></svg>'
+        )
+        engine = _TintedSvgIconEngine(svg=svg)
+        pixmap = engine.pixmap(
+            QtCore.QSize(4, 4), QtGui.QIcon.Mode.Selected, QtGui.QIcon.State.Off
+        )
+        assert pixmap.toImage().pixelColor(2, 2).getRgb() == (0, 255, 0, 255)
+    finally:
+        qapp.setPalette(original)
+
+
 def test_new_icon_tints_monochrome_icon_to_palette(
     qapp: QtWidgets.QApplication,
 ) -> None:
@@ -236,51 +224,6 @@ def test_new_icon_keeps_accent_icon_fixed(qapp: QtWidgets.QApplication) -> None:
         assert a == b
     finally:
         qapp.setPalette(original)
-
-
-# ---------------------------------------------------------------------------
-# new_button
-# ---------------------------------------------------------------------------
-
-
-def test_new_button_returns_pushbutton(qtbot: QtBot) -> None:
-    button = new_button("Click me")
-    qtbot.addWidget(button)
-    assert isinstance(button, QtWidgets.QPushButton)
-
-
-def test_new_button_text(qtbot: QtBot) -> None:
-    button = new_button("Hello")
-    qtbot.addWidget(button)
-    assert button.text() == "Hello"
-
-
-def test_new_button_no_icon_by_default(qtbot: QtBot) -> None:
-    button = new_button("No icon")
-    qtbot.addWidget(button)
-    assert button.icon().isNull()
-
-
-def test_new_button_with_icon(qtbot: QtBot) -> None:
-    # Use an icon file that actually exists so Qt loads it as non-null.
-    button = new_button("With icon", icon="ai-box.svg")
-    qtbot.addWidget(button)
-    assert not button.icon().isNull()
-
-
-def test_new_button_with_slot(qtbot: QtBot) -> None:
-    calls: list[bool] = []
-    button = new_button("Slot", slot=lambda: calls.append(True))
-    qtbot.addWidget(button)
-    button.click()
-    assert calls == [True]
-
-
-def test_new_button_no_slot_does_not_raise(qtbot: QtBot) -> None:
-    button = new_button("No slot")
-    qtbot.addWidget(button)
-    # clicking a button with no slot should not raise
-    button.click()
 
 
 # ---------------------------------------------------------------------------

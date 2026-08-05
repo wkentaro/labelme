@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+from loguru import logger
 
 from labelme import _shape
 from labelme._shape import Shape
@@ -95,6 +96,41 @@ def test_rotate_non_oriented_rectangle_raises() -> None:
         )
 
 
+def test_rotate_uses_source_points_snapshot_not_current_points() -> None:
+    # Given source_points, rotate() computes from it and ignores the shape's
+    # current points. This single-call precedence is what lets an interactive
+    # drag replay from a fixed snapshot; it is the only path production uses
+    # (canvas.py always passes source_points).
+    source_points = np.array(
+        [(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)], dtype=np.float64
+    )
+    shape = _make_oriented_rectangle([(1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0)])
+
+    _shape.rotate(
+        shape=shape,
+        center=np.array([0.0, 0.0]),
+        angle=math.pi / 2,
+        source_points=source_points,
+    )
+
+    expected = [(0.0, 0.0), (0.0, 10.0), (-4.0, 10.0), (-4.0, 0.0)]
+    for i, (x, y) in enumerate(expected):
+        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+
+
+def test_rotate_reports_source_points_length_in_error() -> None:
+    shape = _make_axis_aligned_oriented_rectangle()
+    source_points = np.array([(0.0, 0.0), (10.0, 0.0), (10.0, 4.0)], dtype=np.float64)
+
+    with pytest.raises(ValueError, match=r"len\(source_points\)=3"):
+        _shape.rotate(
+            shape=shape,
+            center=np.array([0.0, 0.0]),
+            angle=math.pi / 2,
+            source_points=source_points,
+        )
+
+
 def test_nearest_vertex_index_returns_none_for_mask() -> None:
     # Mask bbox is anchored to the bitmap; exposing draggable vertices would
     # desync the rectangle from the mask.
@@ -141,6 +177,13 @@ def _make_square_polygon() -> Shape:
     )
 
 
+def _make_open_linestrip() -> Shape:
+    return Shape(
+        shape_type="linestrip",
+        points=np.array([(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+
+
 @pytest.mark.parametrize(
     # One row per ShapeType member; changing an existing type's membership in
     # POLYLINE_SHAPE_TYPES flips can_add_point and fails its row here.
@@ -161,6 +204,11 @@ def test_can_add_point(shape_type: ShapeType, expected: bool) -> None:
     assert Shape(shape_type=shape_type).can_add_point() is expected
 
 
+def test_constructor_rejects_unknown_shape_type() -> None:
+    with pytest.raises(ValueError, match="Unexpected shape_type: bogus"):
+        Shape(shape_type="bogus")  # ty: ignore[invalid-argument-type]
+
+
 def test_insert_point_keeps_points_and_labels_in_sync() -> None:
     shape = _make_square_polygon()
 
@@ -178,6 +226,36 @@ def test_insert_point_records_label() -> None:
     shape.insert_point(i=0, point=(1.0, 1.0), label=0)
 
     assert int(shape.point_labels[0]) == 0
+
+
+def test_insert_point_is_noop_for_non_polyline() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+
+    shape.insert_point(i=1, point=(5.0, 5.0))
+
+    assert len(shape.points) == 2
+    assert len(shape.point_labels) == 2
+
+
+def test_insert_point_noop_logs_shape_state() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+    messages: list[str] = []
+    sink_id = logger.add(
+        lambda m: messages.append(m.record["message"]), level="WARNING"
+    )
+
+    try:
+        shape.insert_point(i=1, point=(5.0, 5.0))
+    finally:
+        logger.remove(sink_id)
+
+    assert messages == ["Cannot add point to: shape_type='rectangle', len(points)=2"]
 
 
 def test_can_remove_point_polygon_requires_more_than_three() -> None:
@@ -243,6 +321,26 @@ def test_remove_point_is_noop_for_non_polyline() -> None:
     assert len(shape.point_labels) == 2
 
 
+def test_remove_point_noop_logs_substituted_values() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
+    )
+    messages: list[str] = []
+    sink_id = logger.add(
+        lambda m: messages.append(m.record["message"]), level="WARNING"
+    )
+
+    try:
+        shape.remove_point(i=0)
+    finally:
+        logger.remove(sink_id)
+
+    assert messages == [
+        "Cannot remove point from: shape_type='rectangle', len(points)=2"
+    ]
+
+
 def test_move_vertex_replaces_only_target_point() -> None:
     shape = _make_square_polygon()
 
@@ -253,6 +351,28 @@ def test_move_vertex_replaces_only_target_point() -> None:
     assert shape.points[0] == pytest.approx((0.0, 0.0))
     assert shape.points[2] == pytest.approx((10.0, 10.0))
     assert shape.points[3] == pytest.approx((0.0, 10.0))
+
+
+def test_move_vertex_does_not_mutate_the_array_given_to_the_constructor() -> None:
+    points = np.array([(0.0, 0.0), (10.0, 0.0)], dtype=np.float64)
+    shape = Shape(shape_type="line", points=points)
+
+    shape.move_vertex(i=0, pos=(999.0, 999.0))
+
+    assert points[0] == pytest.approx((0.0, 0.0))
+
+
+def test_constructor_copies_the_given_point_labels() -> None:
+    point_labels = np.array([1, 1], dtype=np.int_)
+    shape = Shape(
+        shape_type="line",
+        points=np.array([(0.0, 0.0), (10.0, 0.0)], dtype=np.float64),
+        point_labels=point_labels,
+    )
+
+    point_labels[1] = 0
+
+    assert int(shape.point_labels[1]) == 1
 
 
 def test_translate_shifts_all_points_by_offset() -> None:
@@ -325,6 +445,29 @@ def test_nearest_edge_index_returns_none_for_empty_shape() -> None:
     )
 
     assert index is None
+
+
+def test_nearest_edge_index_ignores_phantom_closing_edge_for_linestrip() -> None:
+    # A linestrip is open, so the segment from the last point back to the first
+    # is never rendered and must not register as a hit. (5, 5) lies exactly on
+    # that phantom diagonal but far from every drawn segment.
+    shape = _make_open_linestrip()
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([5.0, 5.0]), scale=1.0, epsilon=2.0
+    )
+
+    assert index is None
+
+
+def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
+    shape = _make_open_linestrip()
+
+    index = _shape.nearest_edge_index(
+        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=1.0
+    )
+
+    assert index == 1
 
 
 def test_nearest_vertex_index_returns_nearest_within_epsilon() -> None:

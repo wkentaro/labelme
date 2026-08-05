@@ -26,43 +26,15 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
 
         self._on_image_changed = callback
 
-        sliders = {}
-        layouts = {}
-        for title in ["Brightness:", "Contrast:"]:
-            layout = QtWidgets.QHBoxLayout()
-            title_label = QtWidgets.QLabel(self.tr(title))
-            title_label.setFixedWidth(75)
-            layout.addWidget(title_label)
-            #
-            slider = QtWidgets.QSlider(Qt.Orientation.Horizontal)
-            slider.setRange(0, 3 * self._base_value)
-            slider.setValue(self._base_value)
-            layout.addWidget(slider)
-            #
-            value_label = QtWidgets.QLabel(f"{slider.value() / self._base_value:.2f}")
-            value_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-            layout.addWidget(value_label)
-            #
-            slider.valueChanged.connect(lambda _: self.apply())
-            slider.valueChanged.connect(
-                lambda _,
-                value_label_=value_label,
-                slider_=slider: value_label_.setText(
-                    f"{slider_.value() / self._base_value:.2f}"
-                )
-            )
-            layouts[title] = layout
-            sliders[title] = slider
-
-        self.slider_brightness = sliders["Brightness:"]
-        self.slider_contrast = sliders["Contrast:"]
-        del sliders
-
-        v_layout = QtWidgets.QVBoxLayout()
-        v_layout.addLayout(layouts["Brightness:"])
-        v_layout.addLayout(layouts["Contrast:"])
-        del layouts
-        self.setLayout(v_layout)
+        grid = QtWidgets.QGridLayout()
+        grid.setColumnStretch(1, 1)
+        self.slider_brightness = self._add_slider_row(
+            grid=grid, row=0, title=self.tr("Brightness:")
+        )
+        self.slider_contrast = self._add_slider_row(
+            grid=grid, row=1, title=self.tr("Contrast:")
+        )
+        self.setLayout(grid)
 
         self._alpha = None
         if "A" in img.getbands():
@@ -70,6 +42,29 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         if img.mode != "RGB":
             img = img.convert("RGB")
         self.img = img
+
+    def _add_slider_row(
+        self, grid: QtWidgets.QGridLayout, row: int, title: str
+    ) -> QtWidgets.QSlider:
+        slider = QtWidgets.QSlider(Qt.Orientation.Horizontal)
+        slider.setRange(0, 3 * self._base_value)
+        slider.setValue(self._base_value)
+
+        value_label = QtWidgets.QLabel(self._format_factor(slider.value()))
+        value_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        slider.valueChanged.connect(lambda _: self.apply())
+        slider.valueChanged.connect(
+            lambda value: value_label.setText(self._format_factor(value))
+        )
+
+        grid.addWidget(QtWidgets.QLabel(title), row, 0)
+        grid.addWidget(slider, row, 1)
+        grid.addWidget(value_label, row, 2)
+        return slider
+
+    def _format_factor(self, value: int) -> str:
+        return f"{value / self._base_value:.2f}"
 
     def apply(self) -> None:
         img: PIL.Image.Image = self.img

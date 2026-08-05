@@ -43,7 +43,12 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
             if mode == QtGui.QIcon.Mode.Disabled
             else QtGui.QPalette.ColorGroup.Normal
         )
-        return palette.color(group, QtGui.QPalette.ColorRole.WindowText)
+        role = (
+            QtGui.QPalette.ColorRole.HighlightedText
+            if mode == QtGui.QIcon.Mode.Selected
+            else QtGui.QPalette.ColorRole.WindowText
+        )
+        return palette.color(group, role)
 
     def _tinted_pixmap(
         self, *, size: QtCore.QSize, color: QtGui.QColor
@@ -92,7 +97,12 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
 
     def cacheKey(self) -> int:
         return hash(
-            (self._svg, int(self._tint_color(mode=QtGui.QIcon.Mode.Normal).rgba()))
+            (
+                self._svg,
+                int(self._tint_color(mode=QtGui.QIcon.Mode.Normal).rgba()),
+                int(self._tint_color(mode=QtGui.QIcon.Mode.Disabled).rgba()),
+                int(self._tint_color(mode=QtGui.QIcon.Mode.Selected).rgba()),
+            )
         )
 
     def clone(self) -> QtGui.QIconEngine:
@@ -109,19 +119,6 @@ def new_icon(name: str) -> QtGui.QIcon:
         if b"currentColor" in svg:
             return QtGui.QIcon(_TintedSvgIconEngine(svg=svg))
     return QtGui.QIcon(path)
-
-
-def new_button(
-    text: str,
-    icon: str | None = None,
-    slot: Callable[..., object] | None = None,
-) -> QtWidgets.QPushButton:
-    button = QtWidgets.QPushButton(text)
-    if icon is not None:
-        button.setIcon(new_icon(icon))
-    if slot is not None:
-        button.clicked.connect(slot)
-    return button
 
 
 def new_action(
@@ -172,35 +169,6 @@ def label_validator() -> QtGui.QRegularExpressionValidator:
     # Accepts strings of 2+ chars not starting with space or tab.
     # Single non-whitespace char is Intermediate (handled by regex partial match).
     return QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[^ \t].+"))
-
-
-def distance(p: QtCore.QPointF) -> float:
-    return math.hypot(p.x(), p.y())
-
-
-def distance_to_line(
-    point: QtCore.QPointF,
-    line: tuple[QtCore.QPointF, QtCore.QPointF],
-) -> float:
-    start, end = line
-    dx = end.x() - start.x()
-    dy = end.y() - start.y()
-    length_sq = dx * dx + dy * dy
-    if length_sq == 0.0:
-        return distance(point - start)
-    t = ((point.x() - start.x()) * dx + (point.y() - start.y()) * dy) / length_sq
-    t = max(0.0, min(1.0, t))
-    nearest = QtCore.QPointF(start.x() + t * dx, start.y() + t * dy)
-    return distance(point - nearest)
-
-
-def format_shortcut(text: str) -> str:
-    if "+" not in text:
-        raise ValueError(f"Not a modifier-plus-key shortcut: {text!r}")
-    idx = text.index("+")
-    modifier = text[:idx]
-    key = text[idx + 1 :]
-    return f"<b>{modifier}</b>+<b>{key}</b>"
 
 
 def direction_angle(*, start: npt.ArrayLike, end: npt.ArrayLike) -> float:

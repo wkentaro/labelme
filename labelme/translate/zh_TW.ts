@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>亮度/對比度</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>亮度:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>對比度:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -410,10 +418,6 @@ Shapes</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+滾輪</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>放大(&amp;I)</translation>
     </message>
@@ -478,6 +482,10 @@ Shapes</source>
         <translation>繪製時填充多邊形</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+滾輪縮放畫布</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>文件(&amp;F)</translation>
     </message>
@@ -524,6 +532,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI 推理失敗: %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -582,6 +594,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>取消</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>此模型不支援點提示，因此無法在 AI-Points 模式中使用。</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>關閉前保存批註到&quot;{}&quot;嗎?</translation>
     </message>
@@ -592,6 +608,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - 打開目錄</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>影像過大,無法開啟: {width}x{height} 像素超出光柵引擎每邊 {max_side} 像素的上限。提高解碼上限也無濟於事。請將影像切分為圖塊(例如使用 gdal_retile.py),或開啟較小的副本。</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>影像過大,無法開啟: {width}x{height} 像素約需 {required} MB,但解碼上限為 {limit} MB。請將影像切分為圖塊(例如使用 gdal_retile.py),或開啟較小的副本。</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -688,10 +712,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>永久刪除{}個圖形？此操作無法復原。</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>縮放圖像。快捷鍵{}和{}亦可在畫布上使用。</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>支援的格式: {formats}</translation>
     </message>
@@ -743,12 +763,20 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>一般</translation>
+        <source>Color theme</source>
+        <translation>顏色主題</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>標籤</translation>
+        <source>System</source>
+        <translation>跟隨系統</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>淺色</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>深色</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -763,6 +791,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>允許點超出影像邊界</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>外觀與語言</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>文件與儲存</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>繪製與畫布</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>在圖像間延續</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>標籤來源</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>標籤行為</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>AI 輔助</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>自動保存</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>將圖像數據保存到標籤文件中</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>將圖像嵌入標籤 JSON 文件中。</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>保留之前的標註</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>保留之前的縮放</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>保留之前的亮度/對比度</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>繪製時填充多邊形</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>允許形狀的點延伸到影像之外，例如用於部分可見的物件。</translation>
     </message>
@@ -773,6 +857,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>標籤驗證</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>標籤排序</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>按字母順序排序標籤列表，而非保留提供的順序。</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>顯示標籤文字欄位</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>標籤自動完成</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>開頭為</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>包含</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>預設模型</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (速度)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (準確度)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (速度)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (平衡)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (準確度)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (速度)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (平衡)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (準確度)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -789,6 +937,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>關閉</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -821,6 +973,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>預定義影像標記</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>設定區段</translation>
     </message>
 </context>
 </TS>

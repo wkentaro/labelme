@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import re
-from collections.abc import Iterable
 from typing import Final
 
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
+from .._label_flags import compile_label_flags
 from .._utils import label_validator
 
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
@@ -50,13 +49,22 @@ class LabelDialog(QtWidgets.QDialog):
         completion: str = "startswith",
         fit_to_content: dict[str, bool] | None = None,
         flags: dict[str, list[str]] | None = None,
+        label_history: list[str] | None = None,
     ) -> None:
         super().__init__(parent)
 
         self._sort_labels = sort_labels
-        self._flags_spec: dict[str, list[str]] = flags or {}
-        self._label_history: list[str] = []
+        self._flags_spec = compile_label_flags(label_flags=flags)
+        self._label_history = label_history[:] if label_history is not None else []
         self._flags_disabled = False
+        # The flags currently on show, keyed by flag name, so a flag named by
+        # two matching label_flags patterns gets exactly one checkbox.
+        self._flag_checkboxes: dict[str, QtWidgets.QCheckBox] = {}
+        # Checked state per flag key, remembered for the lifetime of one popup.
+        # The checkboxes themselves cannot hold it: editing the label rebuilds
+        # them, and an intermediate keystroke that matches no pattern destroys
+        # them entirely.
+        self._flag_states: dict[str, bool] = {}
 
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
@@ -153,11 +161,14 @@ class LabelDialog(QtWidgets.QDialog):
         self.label_list.itemDoubleClicked.connect(self._on_item_double_clicked)
 
         # Populate initial labels
-        if labels is not None:
-            for label in labels:
-                self.label_list.addItem(label)
-            if sort_labels:
-                self.label_list.sortItems()
+        for label in dict.fromkeys([*(labels or []), *self._label_history]):
+            self.label_list.addItem(label)
+        if sort_labels:
+            self.label_list.sortItems()
+
+    @property
+    def label_history(self) -> list[str]:
+        return self._label_history[:]
 
     def _make_completer(self, completion: str) -> QtWidgets.QCompleter:
         if completion == "startswith":
@@ -196,16 +207,8 @@ class LabelDialog(QtWidgets.QDialog):
         if not self.edit.isEnabled() or self.edit.text().strip():
             self.accept()
 
-    def _flag_checkboxes(self) -> list[QtWidgets.QCheckBox]:
-        checkboxes: list[QtWidgets.QCheckBox] = []
-        for i in range(self._flags_layout.count()):
-            item = self._flags_layout.itemAt(i)
-            widget = item.widget() if item is not None else None
-            if isinstance(widget, QtWidgets.QCheckBox):
-                checkboxes.append(widget)
-        return checkboxes
-
-    def _clear_flags_layout(self) -> None:
+    def _clear_flag_checkboxes(self) -> None:
+        self._flag_checkboxes.clear()
         while self._flags_layout.count():
             item = self._flags_layout.takeAt(0)
             if item is None:
@@ -216,13 +219,13 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.deleteLater()
 
     def _update_flags(self, text: str) -> None:
-        current_states = {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
-        flags: list[tuple[str, bool]] = []
+        self._flag_states.update(self._collect_flags())
+        flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
-            if not re.match(pattern, text):
+            if not pattern.match(text):
                 continue
             for key in flag_keys:
-                flags.append((key, current_states.get(key, False)))
+                flags[key] = self._flag_states.get(key, False)
         self._set_flag_checkboxes(flags=flags)
 
     def add_label_history(self, label: str) -> None:
@@ -255,6 +258,14 @@ class LabelDialog(QtWidgets.QDialog):
         description: str | None = None,
         flags_disabled: bool = False,
     ) -> tuple[str, dict[str, bool], int | None, str] | tuple[None, None, None, None]:
+        # Drop the previous popup's checkboxes and their remembered states so a
+        # fresh popup starts unchecked. This has to precede setText() below,
+        # whose textChanged signal would otherwise re-seed the states from the
+        # previous popup's checkboxes; the flags block below rebuilds them.
+        self._flag_states.clear()
+        self._clear_flag_checkboxes()
+        self._flags_disabled = flags_disabled
+
         if text is not None:
             self.edit.setText(text)
         self.edit.selectAll()
@@ -266,13 +277,9 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self.edit_group_id.setText(str(group_id))
 
-        self._flags_disabled = flags_disabled
         if flags is not None:
-            self._set_flag_checkboxes(flags=flags.items())
+            self._set_flag_checkboxes(flags=flags)
         else:
-            # _update_flags keeps the checked state of boxes that already exist
-            # (wanted while typing); clear them so a fresh popup starts unchecked.
-            self._clear_flags_layout()
             self._update_flags(self.edit.text())
 
         matches = self.label_list.findItems(
@@ -288,8 +295,10 @@ class LabelDialog(QtWidgets.QDialog):
             target = position if position is not None else QtGui.QCursor.pos()
             self._move_within_screen(target)
             # frameGeometry() lacks the window-manager decoration size until the
-            # dialog is mapped, so re-clamp once exec() has shown it.
-            QtCore.QTimer.singleShot(0, lambda: self._move_within_screen(target))
+            # dialog is mapped, so re-clamp once exec() has shown it. Clamp only
+            # (no re-anchor to target): a full re-move visibly jerks the already
+            # visible dialog, while the clamp is a no-op unless it overflows.
+            QtCore.QTimer.singleShot(0, lambda: self._clamp_within_screen(target))
 
         result = self.exec()
 
@@ -303,19 +312,25 @@ class LabelDialog(QtWidgets.QDialog):
 
         return None, None, None, None
 
-    def _set_flag_checkboxes(self, flags: Iterable[tuple[str, bool]]) -> None:
-        self._clear_flags_layout()
-        for key, checked in flags:
+    def _set_flag_checkboxes(self, flags: dict[str, bool]) -> None:
+        self._clear_flag_checkboxes()
+        for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
             checkbox.setChecked(checked)
             checkbox.setEnabled(not self._flags_disabled)
+            self._flag_checkboxes[key] = checkbox
             self._flags_layout.addWidget(checkbox)
+            # A widget added to a visible layout stays hidden until the event
+            # loop activates the layout, and the layout counts hidden widgets as
+            # empty, so the container hint below would be momentarily 0 and
+            # would pin the scroll area shut for the rest of the popup.
+            checkbox.show()
 
         content_height = self._flags_container.sizeHint().height()
         self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))
 
     def _collect_flags(self) -> dict[str, bool]:
-        return {cb.text(): cb.isChecked() for cb in self._flag_checkboxes()}
+        return {key: cb.isChecked() for key, cb in self._flag_checkboxes.items()}
 
     def _fit_label_list_to_content(self) -> None:
         if self._fit_to_content["row"]:
@@ -327,18 +342,23 @@ class LabelDialog(QtWidgets.QDialog):
 
     def _move_within_screen(self, target: QtCore.QPoint) -> None:
         self.adjustSize()
+        # setGeometry() anchors the client area, unlike move() which anchors the
+        # window frame: the content corner lands at target, not the title bar's.
+        self.setGeometry(QtCore.QRect(target, self.size()))
+        self._clamp_within_screen(target)
+
+    def _clamp_within_screen(self, target: QtCore.QPoint) -> None:
         screen = (
             QtGui.QGuiApplication.screenAt(target)
             or QtGui.QGuiApplication.primaryScreen()
         )
         if screen is None:
-            self.move(target)
             return
         available = screen.availableGeometry()
 
-        # move() positions the client area; nudge by the actual frame overflow so
-        # the window-manager decoration (title bar, borders) also stays on screen.
-        self.move(target)
+        # Nudge by the actual frame overflow (frameGeometry() includes the
+        # window-manager decoration) so the title bar and borders stay on screen,
+        # not just the content rect.
         frame = self.frameGeometry()
         dx = min(0, available.right() - frame.right())
         dx = max(dx, available.left() - frame.left())

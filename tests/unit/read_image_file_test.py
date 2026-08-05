@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import PIL.Image
+import pytest
 import tifffile
 
 from labelme._label_file import read_image_file
@@ -42,6 +43,50 @@ def test_png_returns_raw_bytes(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.png")
     data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
+
+
+@pytest.mark.parametrize("ext", ["gif", "bmp"])
+def test_palette_image_without_alpha_encoded_as_jpeg(tmp_path: Path, ext: str) -> None:
+    arr = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+    path = tmp_path / f"test.{ext}"
+    PIL.Image.fromarray(arr, mode="RGB").convert("P").save(str(path))
+    assert PIL.Image.open(str(path)).mode == "P"
+
+    data = read_image_file(filename=str(path))
+    assert data[:2] == b"\xff\xd8"
+
+
+def test_transparent_palette_gif_encoded_as_png(tmp_path: Path) -> None:
+    arr = np.random.randint(0, 255, (100, 100, 4), dtype=np.uint8)
+    arr[:20, :20, 3] = 0
+    path = tmp_path / "test.gif"
+    PIL.Image.fromarray(arr, mode="RGBA").save(str(path), transparency=0)
+    reopened = PIL.Image.open(str(path))
+    assert reopened.mode == "P"
+    assert "transparency" in reopened.info
+
+    data = read_image_file(filename=str(path))
+    assert data[:4] == b"\x89PNG"
+    assert "transparency" in PIL.Image.open(io.BytesIO(data)).info
+
+
+def test_palette_with_alpha_tiff_encoded_as_png(tmp_path: Path) -> None:
+    path = tmp_path / "test.tiff"
+    PIL.Image.new("PA", (100, 100)).save(str(path))
+    assert PIL.Image.open(str(path)).mode == "PA"
+
+    data = read_image_file(filename=str(path))
+    assert data[:4] == b"\x89PNG"
+
+
+def test_bilevel_image_encoded_as_jpeg_without_widening(tmp_path: Path) -> None:
+    path = tmp_path / "test.bmp"
+    PIL.Image.new("1", (100, 100)).save(str(path))
+    assert PIL.Image.open(str(path)).mode == "1"
+
+    data = read_image_file(filename=str(path))
+    assert data[:2] == b"\xff\xd8"
+    assert PIL.Image.open(io.BytesIO(data)).mode == "L"
 
 
 def test_multispectral_tiff_float32(tmp_path: Path) -> None:

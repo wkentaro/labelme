@@ -19,7 +19,7 @@ def _parse(config_file: Path) -> dict | None:
 def test_creates_file_when_missing(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(config_file=config_file, key_path=["auto_save"], value=False)
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
 
     assert _parse(config_file) == {"auto_save": False}
 
@@ -28,8 +28,8 @@ def test_preserves_comment_on_untouched_key(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
     config_file.write_text("# my custom note\nauto_save: false\n", encoding="utf-8")
 
-    _config.set_override(
-        config_file=config_file, key_path=["with_image_data"], value=True
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["with_image_data"], True)]
     )
 
     content = config_file.read_text(encoding="utf-8")
@@ -44,7 +44,7 @@ def test_prunes_key_when_value_equals_default(tmp_path: Path) -> None:
     )
 
     # auto_save default is true, so setting it back to true removes the override
-    _config.set_override(config_file=config_file, key_path=["auto_save"], value=True)
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], True)])
 
     assert _parse(config_file) == {"with_image_data": True}
 
@@ -52,8 +52,8 @@ def test_prunes_key_when_value_equals_default(tmp_path: Path) -> None:
 def test_writes_nested_key(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(
-        config_file=config_file, key_path=["shape", "point_size"], value=12
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["shape", "point_size"], 12)]
     )
 
     content = config_file.read_text(encoding="utf-8")
@@ -66,8 +66,8 @@ def test_prunes_nested_key_and_empty_parent(tmp_path: Path) -> None:
     config_file.write_text("shape:\n  point_size: 12\n", encoding="utf-8")
 
     # point_size default is 8; reverting empties shape, which should be pruned too
-    _config.set_override(
-        config_file=config_file, key_path=["shape", "point_size"], value=8
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["shape", "point_size"], 8)]
     )
 
     assert _parse(config_file) is None
@@ -79,8 +79,8 @@ def test_keeps_sibling_when_pruning_nested_key(tmp_path: Path) -> None:
         "shape:\n  point_size: 12\n  line_color: [1, 2, 3, 4]\n", encoding="utf-8"
     )
 
-    _config.set_override(
-        config_file=config_file, key_path=["shape", "point_size"], value=8
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["shape", "point_size"], 8)]
     )
 
     assert _parse(config_file) == {"shape": {"line_color": [1, 2, 3, 4]}}
@@ -89,11 +89,11 @@ def test_keeps_sibling_when_pruning_nested_key(tmp_path: Path) -> None:
 def test_toggle_then_revert_is_idempotent(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(
-        config_file=config_file, key_path=["shape", "point_size"], value=12
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["shape", "point_size"], 12)]
     )
-    _config.set_override(
-        config_file=config_file, key_path=["shape", "point_size"], value=8
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["shape", "point_size"], 8)]
     )
 
     assert _parse(config_file) is None
@@ -102,13 +102,115 @@ def test_toggle_then_revert_is_idempotent(tmp_path: Path) -> None:
 def test_writes_list_in_flow_style(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(
+    _config.set_overrides(
         config_file=config_file,
-        key_path=["default_shape_color"],
-        value=[255, 0, 0],
+        overrides=[(["shape_color", "uniform", "color"], [255, 0, 0])],
     )
 
-    assert "default_shape_color: [255, 0, 0]" in config_file.read_text(encoding="utf-8")
+    assert "color: [255, 0, 0]" in config_file.read_text(encoding="utf-8")
+
+
+def test_nested_shape_color_write_migrates_legacy_scalar_config(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text(
+        "shape_color: manual\nlabel_colors:\n  cat: [1, 2, 3]\n",
+        encoding="utf-8",
+    )
+
+    _config.set_overrides(
+        config_file=config_file,
+        overrides=[(["shape_color", "by_label", "fallback"], [4, 5, 6])],
+    )
+
+    assert _parse(config_file) == {
+        "shape_color": {
+            "mode": "by_label",
+            "by_label": {
+                "colors": {"cat": [1, 2, 3]},
+                "fallback": [4, 5, 6],
+            },
+        }
+    }
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["shape_color"]["by_label"]["fallback"] == [4, 5, 6]
+
+
+def test_nested_shape_color_write_removes_legacy_sibling_keys(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text(
+        "default_shape_color: [1, 2, 3]\n",
+        encoding="utf-8",
+    )
+
+    _config.set_overrides(
+        config_file=config_file,
+        overrides=[(["shape_color", "auto", "shift"], 2)],
+    )
+
+    assert _parse(config_file) == {
+        "shape_color": {
+            "auto": {"shift": 2},
+            "uniform": {"color": [1, 2, 3]},
+            "by_label": {"fallback": [1, 2, 3]},
+        }
+    }
+    _config.load_config(config_file=config_file, config_overrides={})
+
+
+def test_shape_color_write_rejects_invalid_legacy_values(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    original = "shape_color: manual\nshift_auto_shape_color: invalid\n"
+    config_file.write_text(original, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="shape_color.auto.shift"):
+        _config.set_overrides(
+            config_file=config_file,
+            overrides=[(["shape_color", "by_label", "fallback"], [4, 5, 6])],
+        )
+
+    assert config_file.read_text(encoding="utf-8") == original
+
+
+def test_shape_color_write_rejects_invalid_new_value(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    original = "shape_color: manual\n"
+    config_file.write_text(original, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="shape_color.by_label.fallback"):
+        _config.set_overrides(
+            config_file=config_file,
+            overrides=[(["shape_color", "by_label", "fallback"], [999, 0, 0])],
+        )
+
+    assert config_file.read_text(encoding="utf-8") == original
+
+
+def test_set_overrides_applies_batch_in_one_write(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("auto_save: false\n", encoding="utf-8")
+
+    # auto_save reverts to its default (pruned) while point_size becomes an
+    # override, in a single write
+    _config.set_overrides(
+        config_file=config_file,
+        overrides=[(["auto_save"], True), (["shape", "point_size"], 12)],
+    )
+
+    assert _parse(config_file) == {"shape": {"point_size": 12}}
+
+
+def test_set_overrides_bad_key_leaves_file_untouched(tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("auto_save: false\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Unknown config key"):
+        _config.set_overrides(
+            config_file=config_file,
+            overrides=[(["with_image_data"], True), (["nope"], 1)],
+        )
+
+    # the batch is all-or-nothing: the valid first item must not be persisted
+    assert _parse(config_file) == {"auto_save": False}
 
 
 def test_writes_multiple_overrides_atomically(tmp_path: Path) -> None:
@@ -116,8 +218,10 @@ def test_writes_multiple_overrides_atomically(tmp_path: Path) -> None:
 
     _config.set_overrides(
         config_file=config_file,
-        values=(
-            (("default_shape_color",), [255, 0, 0]),
+        overrides=(
+            (("shape_color", "mode"), "uniform"),
+            (("shape_color", "uniform", "color"), [255, 0, 0]),
+            (("shape_color", "by_label", "fallback"), [255, 0, 0]),
             (("shape", "line_color"), [255, 0, 0, 128]),
             (("shape", "vertex_fill_color"), [255, 0, 0, 255]),
             (("shape", "select_line_color"), [255, 0, 0, 255]),
@@ -126,7 +230,10 @@ def test_writes_multiple_overrides_atomically(tmp_path: Path) -> None:
     )
 
     assert _parse(config_file) == {
-        "default_shape_color": [255, 0, 0],
+        "shape_color": {
+            "uniform": {"color": [255, 0, 0]},
+            "by_label": {"fallback": [255, 0, 0]},
+        },
         "shape": {
             "line_color": [255, 0, 0, 128],
             "vertex_fill_color": [255, 0, 0, 255],
@@ -139,8 +246,8 @@ def test_writes_multiple_overrides_atomically(tmp_path: Path) -> None:
 def test_label_named_like_a_boolean_survives_round_trip(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(
-        config_file=config_file, key_path=["labels"], value=["yes", "no"]
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["labels"], ["yes", "no"])]
     )
 
     config = _config.load_config(config_file=config_file, config_overrides={})
@@ -151,14 +258,14 @@ def test_empty_key_path_raises(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
     with pytest.raises(ValueError, match="key_path must not be empty"):
-        _config.set_override(config_file=config_file, key_path=[], value=1)
+        _config.set_overrides(config_file=config_file, overrides=[([], 1)])
 
 
 def test_unknown_key_raises(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
     with pytest.raises(ValueError, match="Unknown config key"):
-        _config.set_override(config_file=config_file, key_path=["nope"], value=1)
+        _config.set_overrides(config_file=config_file, overrides=[(["nope"], 1)])
 
 
 def test_raises_when_parent_key_is_not_a_mapping(tmp_path: Path) -> None:
@@ -166,8 +273,8 @@ def test_raises_when_parent_key_is_not_a_mapping(tmp_path: Path) -> None:
     config_file.write_text("shape: 42\n", encoding="utf-8")
 
     with pytest.raises(ValueError, match="non-mapping"):
-        _config.set_override(
-            config_file=config_file, key_path=["shape", "point_size"], value=12
+        _config.set_overrides(
+            config_file=config_file, overrides=[(["shape", "point_size"], 12)]
         )
 
 
@@ -175,7 +282,7 @@ def test_overwrites_when_top_level_is_not_a_mapping(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
     config_file.write_text("- one\n- two\n", encoding="utf-8")
 
-    _config.set_override(config_file=config_file, key_path=["auto_save"], value=False)
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
 
     assert _parse(config_file) == {"auto_save": False}
 
@@ -185,7 +292,7 @@ def test_empties_file_when_last_override_pruned(tmp_path: Path) -> None:
     config_file.write_text("auto_save: false\n", encoding="utf-8")
 
     # reverting the only override to its default leaves nothing to persist
-    _config.set_override(config_file=config_file, key_path=["auto_save"], value=True)
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], True)])
 
     assert config_file.read_text(encoding="utf-8") == ""
 
@@ -193,9 +300,9 @@ def test_empties_file_when_last_override_pruned(tmp_path: Path) -> None:
 def test_written_file_reloads_via_load_config(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(config_file=config_file, key_path=["auto_save"], value=False)
-    _config.set_override(
-        config_file=config_file, key_path=["shape", "point_size"], value=12
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["shape", "point_size"], 12)]
     )
 
     config = _config.load_config(config_file=config_file, config_overrides={})
@@ -209,8 +316,8 @@ def test_written_file_reloads_via_load_config(tmp_path: Path) -> None:
 def test_non_ascii_label_round_trips(tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    _config.set_override(
-        config_file=config_file, key_path=["labels"], value=["ラベル", "café"]
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["labels"], ["ラベル", "café"])]
     )
 
     config = _config.load_config(config_file=config_file, config_overrides={})
@@ -231,8 +338,8 @@ def test_non_ascii_label_round_trips_under_non_utf8_locale(tmp_path: Path) -> No
         from labelme import _config
 
         config_file = Path({str(config_file)!r})
-        _config.set_override(
-            config_file=config_file, key_path=["labels"], value=["ラベル"]
+        _config.set_overrides(
+            config_file=config_file, overrides=[(["labels"], ["ラベル"])]
         )
         config = _config.load_config(config_file=config_file, config_overrides={{}})
         assert config["labels"] == ["ラベル"], config["labels"]
@@ -272,8 +379,8 @@ def test_write_failure_leaves_no_temp_file(
     monkeypatch.setattr("labelme._config._writer.os.replace", _fail)
 
     with pytest.raises(OSError, match="disk full"):
-        _config.set_override(
-            config_file=config_file, key_path=["auto_save"], value=False
+        _config.set_overrides(
+            config_file=config_file, overrides=[(["auto_save"], False)]
         )
 
     assert not config_file.exists()

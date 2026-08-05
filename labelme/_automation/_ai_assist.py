@@ -5,6 +5,7 @@ import osam
 from loguru import logger
 from numpy.typing import NDArray
 
+from .._ai_models import supports_point_prompts
 from .._shape import Shape
 from ._osam_session import OsamSession
 from ._shape_builders import Detection
@@ -12,6 +13,7 @@ from ._shape_builders import shapes_from_detections
 from ._suppression import suppress_detections_greedy
 from ._suppression import suppress_detections_overlapping_existing_shapes
 from ._types import AiOutputFormat
+from ._types import AiPromptKind
 
 
 class AiAssistSession:
@@ -38,10 +40,15 @@ class AiAssistSession:
         *,
         image: NDArray[np.uint8],
         image_id: str,
+        prompt_kind: AiPromptKind,
         points: NDArray[np.floating],
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
     ) -> list[Shape]:
+        if prompt_kind == "points" and not supports_point_prompts(
+            model_name=self.model_name
+        ):
+            raise ValueError(f"{self.model_name} does not support point prompts")
         response: osam.types.GenerateResponse = self._get_session().run(
             image=image,
             image_id=image_id,

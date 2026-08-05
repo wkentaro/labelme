@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Kecerahan/Kontras</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Kecerahan:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Kontras:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -385,10 +393,6 @@
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Scroll</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>Perbesar (&amp;I)</translation>
     </message>
@@ -453,6 +457,10 @@
         <translation>Isi poligon saat menggambar</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>Berkas (&amp;F)</translation>
     </message>
@@ -499,6 +507,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>Inferensi AI gagal: %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -557,6 +569,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Batal</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Simpan anotasi ke &quot;{}&quot; sebelum menutup?</translation>
     </message>
@@ -567,6 +583,14 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - Buka Direktori</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Gambar terlalu besar untuk dibuka: {width}x{height} piksel melebihi batas {max_side} piksel per sisi dari mesin raster. Menaikkan batas dekode tidak akan membantu. Pecah gambar menjadi ubin (misalnya dengan gdal_retile.py) atau buka salinan yang lebih kecil.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Gambar terlalu besar untuk dibuka: {width}x{height} piksel membutuhkan sekitar {required} MB, tetapi batas dekode adalah {limit} MB. Pecah gambar menjadi ubin (misalnya dengan gdal_retile.py) atau buka salinan yang lebih kecil.</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -663,10 +687,6 @@ Silakan pilih model lain atau gunakan mode AI-Box.</translation>
         <translation>Hapus permanen {} bentuk? Tindakan ini tidak dapat dibatalkan.</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Lakukan zoom in atau zoom out pada gambar. Pintasan {} dan {} juga berfungsi di kanvas.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Format yang didukung: {formats}</translation>
     </message>
@@ -759,6 +779,10 @@ Shapes</source>
         <translation>Tutup</translation>
     </message>
     <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
+    </message>
+    <message>
         <source>(none)</source>
         <translation>(tidak ada)</translation>
     </message>
@@ -779,12 +803,20 @@ Shapes</source>
         <translation>Label yang telah ditentukan tidak boleh kosong saat validasi label diatur ke &apos;eksak&apos;. Nonaktifkan validasi eksak terlebih dahulu.</translation>
     </message>
     <message>
-        <source>General</source>
-        <translation>Umum</translation>
+        <source>Color theme</source>
+        <translation>Tema warna</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>Label</translation>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Terang</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Gelap</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -807,8 +839,64 @@ Shapes</source>
         <translation>Bahasa</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Tampilan dan bahasa</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>File dan penyimpanan</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Menggambar dan kanvas</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Melanjutkan antar gambar</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Sumber label</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Perilaku label</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Bantuan AI</translation>
+    </message>
+    <message>
         <source>Takes effect after restart.</source>
         <translation>Berlaku setelah restart.</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Simpan otomatis</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Simpan data gambar dalam file label</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Menyematkan gambar dalam file JSON label.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Pertahankan anotasi sebelumnya</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Pertahankan zoom sebelumnya</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Pertahankan kecerahan/kontras sebelumnya</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Isi poligon saat menggambar</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -819,8 +907,79 @@ Shapes</source>
         <translation>Validasi label</translation>
     </message>
     <message>
+        <source>Sort labels</source>
+        <translation>Urutkan label</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Urutkan daftar label secara alfabetis alih-alih mempertahankan urutan yang diberikan.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Tampilkan kolom teks label</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Pelengkapan label</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Dimulai dengan</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Berisi</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Model default</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (kecepatan)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (akurasi)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (kecepatan)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (seimbang)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (akurasi)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (kecepatan)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (seimbang)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (akurasi)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
+    </message>
+    <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Bagian pengaturan</translation>
     </message>
 </context>
 </TS>

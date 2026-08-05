@@ -9,6 +9,7 @@ from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import Final
+from typing import cast
 
 import numpy as np
 import PIL.Image
@@ -22,6 +23,16 @@ from . import _utils
 from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
+
+def _validate_flags(flags: object) -> dict[str, bool]:
+    if flags is None:
+        return {}
+    if not isinstance(flags, dict):
+        raise TypeError(f"flags must be dict: {flags}")
+    if not all(isinstance(k, str) and isinstance(v, bool) for k, v in flags.items()):
+        raise TypeError(f"flags must be dict of str to bool: {flags}")
+    return cast(dict[str, bool], flags)
 
 
 def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
@@ -50,7 +61,9 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     if not all(
         isinstance(point, list)
         and len(point) == 2
-        and all(isinstance(xy, int | float) for xy in point)
+        and all(
+            isinstance(xy, int | float) and not isinstance(xy, bool) for xy in point
+        )
         for point in shape_json_obj["points"]
     ):
         raise ValueError(f"points must be list of [x, y]: {shape_json_obj['points']}")
@@ -66,18 +79,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         # upstream standardized the name.
         shape_type = "oriented_rectangle"
 
-    flags: dict = {}
-    if shape_json_obj.get("flags") is not None:
-        if not isinstance(shape_json_obj["flags"], dict):
-            raise TypeError(f"flags must be dict: {shape_json_obj['flags']}")
-        if not all(
-            isinstance(k, str) and isinstance(v, bool)
-            for k, v in shape_json_obj["flags"].items()
-        ):
-            raise TypeError(
-                f"flags must be dict of str to bool: {shape_json_obj['flags']}"
-            )
-        flags = shape_json_obj["flags"]
+    flags = _validate_flags(flags=shape_json_obj.get("flags"))
 
     description: str = ""
     if shape_json_obj.get("description") is not None:
@@ -87,7 +89,9 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
 
     group_id: int | None = None
     if shape_json_obj.get("group_id") is not None:
-        if not isinstance(shape_json_obj["group_id"], int):
+        if isinstance(shape_json_obj["group_id"], bool) or not isinstance(
+            shape_json_obj["group_id"], int
+        ):
             raise TypeError(f"group_id must be int: {shape_json_obj['group_id']}")
         group_id = shape_json_obj["group_id"]
 
@@ -183,7 +187,14 @@ def read_image_file(filename: str) -> bytes:
             image_data = f.read()
     else:
         with io.BytesIO() as f:
-            fmt = "PNG" if "A" in oriented.mode else "JPEG"
+            has_transparency = "A" in oriented.mode or (
+                oriented.mode == "P" and "transparency" in oriented.info
+            )
+            fmt = "PNG" if has_transparency else "JPEG"
+            if fmt == "JPEG" and oriented.mode == "P":
+                oriented = oriented.convert("RGB")
+            elif fmt == "PNG" and oriented.mode == "PA":
+                oriented = oriented.convert("RGBA")
             oriented.save(fp=f, format=fmt, quality=95)
             f.seek(0)
             image_data = f.read()
@@ -202,6 +213,14 @@ def _check_image_dimensions(
 ) -> None:
     if expected_height is None and expected_width is None:
         return
+    if expected_height is not None and (
+        isinstance(expected_height, bool) or not isinstance(expected_height, int)
+    ):
+        raise TypeError(f"imageHeight must be int: {expected_height}")
+    if expected_width is not None and (
+        isinstance(expected_width, bool) or not isinstance(expected_width, int)
+    ):
+        raise TypeError(f"imageWidth must be int: {expected_width}")
     actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
@@ -232,7 +251,7 @@ def read_label_file(filename: str) -> Annotation:
         shapes: list[ShapeDict] = [
             _load_shape_json_obj(shape_json_obj=s) for s in raw["shapes"]
         ]
-        flags = raw.get("flags") or {}
+        flags = _validate_flags(flags=raw.get("flags"))
     except (
         OSError,
         json.JSONDecodeError,

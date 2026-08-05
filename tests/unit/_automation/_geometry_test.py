@@ -150,6 +150,63 @@ def test_shape_to_xyxy_bbox_returns_none_when_circle_has_only_center() -> None:
     assert shape_to_xyxy_bbox(shape=shape) is None
 
 
+def test_shape_to_xyxy_bbox_rectangle() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 4), (1, 12)], dtype=np.float64),
+    )
+
+    bbox = shape_to_xyxy_bbox(shape=shape)
+
+    assert bbox is not None
+    assert bbox.tolist() == pytest.approx([1, 4, 10, 12])
+
+
+def test_shape_to_xyxy_bbox_mask() -> None:
+    shape = Shape(
+        shape_type="mask",
+        points=np.array([(20, 5), (3, 8)], dtype=np.float64),
+    )
+
+    bbox = shape_to_xyxy_bbox(shape=shape)
+
+    assert bbox is not None
+    assert bbox.tolist() == pytest.approx([3, 5, 20, 8])
+
+
+def test_shape_to_xyxy_bbox_oriented_rectangle() -> None:
+    shape = Shape(
+        shape_type="oriented_rectangle",
+        points=np.array([(1, 1), (5, 0), (6, 4), (2, 5)], dtype=np.float64),
+    )
+
+    bbox = shape_to_xyxy_bbox(shape=shape)
+
+    assert bbox is not None
+    assert bbox.tolist() == pytest.approx([1, 0, 6, 5])
+
+
+def test_shape_to_xyxy_bbox_returns_none_when_rectangle_has_too_few_points() -> None:
+    shape = Shape(shape_type="rectangle", points=np.array([(5, 5)], dtype=np.float64))
+
+    assert shape_to_xyxy_bbox(shape=shape) is None
+
+
+def test_shape_to_xyxy_bbox_returns_none_when_mask_has_too_few_points() -> None:
+    shape = Shape(shape_type="mask", points=np.array([(5, 5)], dtype=np.float64))
+
+    assert shape_to_xyxy_bbox(shape=shape) is None
+
+
+def test_shape_to_xyxy_bbox_none_when_oriented_rectangle_has_too_few_points() -> None:
+    shape = Shape(
+        shape_type="oriented_rectangle",
+        points=np.array([(0, 0), (5, 0), (5, 5)], dtype=np.float64),
+    )
+
+    assert shape_to_xyxy_bbox(shape=shape) is None
+
+
 def test_shape_to_xyxy_bbox_raises_on_unsupported_shape_type() -> None:
     shape = Shape(shape_type="point", points=np.array([(1, 2)], dtype=np.float64))
 

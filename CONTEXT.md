@@ -35,8 +35,12 @@ A set of Shapes sharing a common `group_id`, marking them as belonging together.
 _Avoid_: instance (it is only one application of grouping), cluster.
 
 **AI Assist**:
-Interactive, click-driven Shape proposal: the user places positive / negative points on the Image and a vision model (SAM, EfficientSAM) returns a proposed Shape. One user action produces one candidate Shape.
+Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt is answered by exactly one candidate Shape — the direct answer to the click. A SAM3 box prompt is a Sweep.
 _Avoid_: AI annotation (too vague — covers AI Text Prompt too), auto-annotation, automation.
+
+**Sweep**:
+An AI Assist box prompt whose model (SAM3) detects every matching object in and around the boxed region, proposing many candidate Shapes from one user action. Sweep proposals that match already-annotated regions are dropped as duplicates rather than re-proposed; a point prompt's direct answer is never treated as a duplicate.
+_Avoid_: propagation (model-internal term), batch detection.
 
 **AI Text Prompt**:
 Bulk, text-driven Shape proposal: the user types a class name and an open-vocabulary detector (YOLO-world, SAM3) returns Shapes for every matching instance in the Image. One user action produces many candidate Shapes.
@@ -45,6 +49,10 @@ _Avoid_: AI annotation (too vague), text-to-annotation (verbose), auto-detect.
 **Model Session**:
 A loaded ML model that backs AI Assist or AI Text Prompt. One Model Session serves many proposals across the lifetime of the app. The legacy code directory `_automation/` hosts this layer.
 _Avoid_: automation (legacy code-only term), backend, engine.
+
+**Prompt Compatibility**:
+The prompt kinds a Model Session can answer. A model can support point, box, or text prompts independently; selecting a model does not imply compatibility with every AI Assist mode.
+_Avoid_: treating an unsupported prompt kind as an inference failure.
 
 **Mask Shape**:
 A Shape whose `shape_type` is `mask` — hybrid representation combining a rectangular bounding box (2 points) with a Mask (the raster pixels) that fills the bbox. The only `shape_type` that carries dense pixel data.

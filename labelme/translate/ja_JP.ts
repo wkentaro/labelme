@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>明るさ/コントラスト</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>明るさ:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>コントラスト:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -422,10 +430,6 @@ Shapes</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+ホイール</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>拡大(&amp;I)</translation>
     </message>
@@ -492,6 +496,10 @@ Shapes</source>
         <translation>描画中にポリゴンを塗りつぶす</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
@@ -538,6 +546,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>AI推論に失敗しました: %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -596,6 +608,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>キャンセル</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>このモデルはポイントプロンプトに対応していないため、AI-Points モードでは利用できません。</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>閉じる前にアノテーションを &quot;{}&quot; に保存しますか？</translation>
     </message>
@@ -606,6 +622,14 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - ディレクトリを開く</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>画像が大きすぎて開けません: {width}x{height} ピクセルはラスターエンジンの1辺あたり {max_side} ピクセルの上限を超えています。デコード上限を上げても解決しません。画像をタイルに分割する(例: gdal_retile.py)か、より小さいコピーを開いてください。</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>画像が大きすぎて開けません: {width}x{height} ピクセルには約 {required} MB が必要ですが、デコード上限は {limit} MB です。画像をタイルに分割する(例: gdal_retile.py)か、より小さいコピーを開いてください。</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -702,10 +726,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>{} 個の図形を完全に削除しますか？この操作は元に戻せません。</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>画像を拡大・縮小します。キャンバス上で {} と {} も使用できます。</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>対応形式: {formats}</translation>
     </message>
@@ -757,12 +777,20 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>一般</translation>
+        <source>Color theme</source>
+        <translation>カラーテーマ</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>ラベル</translation>
+        <source>System</source>
+        <translation>システム</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>ライト</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>ダーク</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -777,6 +805,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>画像の境界外への点の配置を許可する</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>外観と言語</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>ファイルと保存</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>描画とキャンバス</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>画像間で引き継ぐ</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>ラベルのソース</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>ラベルの動作</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>AI アシスト</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>自動で保存</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>ラベルファイルに画像データを含める</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>画像をラベル JSON ファイルに埋め込みます。</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>前回のアノテーションを維持</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>前回のズームを維持</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>前回の明るさ/コントラストを維持</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>描画中にポリゴンを塗りつぶす</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>図形の点が画像の外まで広がることを許可します（例: 部分的にしか見えない物体）。</translation>
     </message>
@@ -787,6 +871,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>ラベルの検証</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>ラベルを並べ替える</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>指定された順序を維持する代わりに、ラベル一覧をアルファベット順に並べ替えます。</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>ラベルのテキスト入力欄を表示</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>ラベル補完</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>先頭一致</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>含む</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>デフォルトモデル</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (高速)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (高精度)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (高速)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (バランス)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (高精度)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (高速)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (バランス)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (高精度)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -803,6 +951,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -835,6 +987,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>定義済み画像フラグ</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>設定セクション</translation>
     </message>
 </context>
 </TS>

@@ -319,6 +319,26 @@ def test_overlapping_uses_existing_mask_shape_geometry() -> None:
     assert kept == [upper_right]
 
 
+def test_overlapping_rasterizes_existing_circle_as_a_disk() -> None:
+    # A circle shape is rasterized as its inscribed disk, not its bounding
+    # square: a detection at the disk center is suppressed, but one in a bbox
+    # corner (outside the disk) survives, where a rectangle bbox would drop it.
+    existing = Shape(
+        shape_type="circle",
+        points=np.array([(10, 10), (20, 10)], dtype=np.float64),  # radius 10
+    )
+
+    center = Detection(bbox=(8.0, 8.0, 12.0, 12.0), mask=np.ones((5, 5), dtype=bool))
+    corner = Detection(bbox=(0.0, 0.0, 2.0, 2.0), mask=np.ones((3, 3), dtype=bool))
+
+    kept = suppress_detections_overlapping_existing_shapes(
+        detections=[center, corner],
+        existing_shapes=[existing],
+    )
+
+    assert kept == [corner]
+
+
 @pytest.mark.parametrize(
     ("shape_type", "extra_points"),
     [

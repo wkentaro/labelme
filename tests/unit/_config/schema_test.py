@@ -4,9 +4,10 @@ import typing
 
 import pytest
 
+from labelme._ai_models import AI_ASSIST_MODEL_OPTIONS
 from labelme._config import load_config
 from labelme._config._schema import SETTINGS
-from labelme._config._schema import Section
+from labelme._config._schema import Group
 from labelme._config._schema import Setting
 
 
@@ -45,9 +46,9 @@ def test_no_duplicate_key_paths() -> None:
     assert len(set(key_paths)) == len(key_paths)
 
 
-def test_every_section_is_used() -> None:
-    used = {setting.section for setting in SETTINGS}
-    assert used == set(typing.get_args(Section))
+def test_every_group_is_used() -> None:
+    used = {setting.group for setting in SETTINGS}
+    assert used == set(typing.get_args(Group))
 
 
 @pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(_ENUM_SETTINGS))
@@ -63,6 +64,15 @@ def test_enum_choice_labels_match_choices(setting: Setting) -> None:
     assert setting.choices is not None
     if setting.choice_labels is not None:
         assert len(setting.choice_labels) == len(setting.choices)
+
+
+def test_ai_choice_labels_match_shared_model_names() -> None:
+    setting = next(
+        setting for setting in SETTINGS if setting.key_path == ("ai", "default")
+    )
+    model_names = tuple(option.display_name for option in AI_ASSIST_MODEL_OPTIONS)
+    assert setting.choices == model_names
+    assert setting.choice_labels == model_names
 
 
 @pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(_BOOL_SETTINGS))

@@ -209,7 +209,7 @@ def _rasterize_shape(
     if shape.shape_type in ("polygon", "oriented_rectangle"):
         image = PIL.Image.new("L", (width, height), 0)
         draw = PIL.ImageDraw.Draw(image)
-        points_local = (shape.points - [xmin, ymin]).tolist()
+        points_local = [tuple(point) for point in (shape.points - [xmin, ymin])]
         draw.polygon(points_local, fill=1)
         return np.asarray(image, dtype=np.bool_)
     raise ValueError(f"Unsupported shape_type: {shape.shape_type!r}")

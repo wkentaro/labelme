@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>روشنایی/کنتراست</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>روشنایی:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>کنتراست:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -410,10 +418,6 @@ Shapes</source>
         <translation>زوم</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+چرخ</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>بزرگ‌نمایی(&amp;I)</translation>
     </message>
@@ -478,6 +482,10 @@ Shapes</source>
         <translation>پر کردن چندضلعی هنگام رسم</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>فایل(&amp;F)</translation>
     </message>
@@ -524,6 +532,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -582,6 +594,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>لغو</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>در حالت AI-Points در دسترس نیست، زیرا این مدل از دستورات نقطه‌ای پشتیبانی نمی‌کند.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>قبل از بستن، حاشیه‌نویسی‌ها را در &quot;{}&quot; ذخیره کنید؟</translation>
     </message>
@@ -592,6 +608,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - باز کردن پوشه</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>تصویر برای باز شدن بیش از حد بزرگ است: {width}x{height} پیکسل از محدودیت {max_side} پیکسل در هر ضلع موتور راستر فراتر می‌رود. افزایش محدودیت رمزگشایی کمکی نمی‌کند. تصویر را به کاشی‌ها تقسیم کنید (برای مثال با gdal_retile.py) یا نسخه کوچک‌تری را باز کنید.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>تصویر برای باز شدن بیش از حد بزرگ است: {width}x{height} پیکسل به حدود {required} مگابایت نیاز دارد، اما محدودیت رمزگشایی {limit} مگابایت است. تصویر را به کاشی‌ها تقسیم کنید (برای مثال با gdal_retile.py) یا نسخه کوچک‌تری را باز کنید.</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -688,10 +712,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>حذف دائمی {} شکل؟ این عمل قابل بازگشت نیست.</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>بزرگ‌نمایی یا کوچک‌نمایی تصویر. میانبرهای {} و {} نیز روی بوم کار می‌کنند.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>قالب‌های مجاز: {formats}</translation>
     </message>
@@ -743,12 +763,20 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>عمومی</translation>
+        <source>Color theme</source>
+        <translation>تم رنگ</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>برچسب‌ها</translation>
+        <source>System</source>
+        <translation>سیستم</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>روشن</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>تیره</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -763,6 +791,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>اجازه دادن به نقاط خارج از مرز تصویر</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>ظاهر و زبان</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>فایل‌ها و ذخیره‌سازی</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>رسم و بوم</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>ادامه بین تصاویر</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>منابع برچسب</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>رفتار برچسب</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>دستیار هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>ذخیره خودکار</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>ذخیره داده تصویر در فایل برچسب</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>تصویر را در فایل JSON برچسب جاسازی می‌کند.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>نگه داشتن حاشیه‌نویسی قبلی</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>نگه داشتن بزرگ‌نمایی قبلی</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>نگه داشتن روشنایی/کنتراست قبلی</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>پر کردن چندضلعی هنگام رسم</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>به نقاط شکل اجازه می‌دهد فراتر از تصویر امتداد یابند، مثلاً برای اشیای تا حدی قابل مشاهده.</translation>
     </message>
@@ -773,6 +857,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>اعتبارسنجی برچسب</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>مرتب‌سازی برچسب‌ها</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>فهرست برچسب‌ها را به‌جای حفظ ترتیب ارائه‌شده، به‌صورت الفبایی مرتب می‌کند.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>نمایش فیلد متنی برچسب</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>تکمیل خودکار برچسب</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>شروع می‌شود با</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>شامل</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>مدل پیش‌فرض</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (سرعت)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (دقت)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (سرعت)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (متعادل)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (دقت)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (سرعت)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (متعادل)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (دقت)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -789,6 +937,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>بستن</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -821,6 +973,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>پرچم‌های تصویر از پیش تعریف‌شده</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>بخش‌های تنظیمات</translation>
     </message>
 </context>
 </TS>

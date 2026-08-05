@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Яскравість/Контраст</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Яскравість:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Контраст:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -449,10 +457,6 @@ Shapes</source>
         <translation>Збільшити</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+колесо</translation>
-    </message>
-    <message>
         <source>&amp;Quit</source>
         <translation>&amp;Вийти</translation>
     </message>
@@ -549,6 +553,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI inference failed: %s</source>
+        <translation>Інференс ШІ не вдався: %s</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Помилка відкриття файлу</translation>
     </message>
@@ -605,6 +613,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Скасувати</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Недоступно в режимі AI-Points, оскільки ця модель не підтримує точкові запити.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Зберегти анотації до &quot;{}&quot; перед закриттям?</translation>
     </message>
@@ -615,6 +627,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - Відкрити каталог</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Зображення завелике, щоб його відкрити: {width}x{height} пікселів перевищує обмеження растрового рушія у {max_side} пікселів на сторону. Збільшення ліміту декодування не допоможе. Розбийте зображення на плитки (наприклад, за допомогою gdal_retile.py) або відкрийте меншу копію.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>Зображення завелике, щоб його відкрити: {width}x{height} пікселів потребує близько {required} МБ, але ліміт декодування становить {limit} МБ. Розбийте зображення на плитки (наприклад, за допомогою gdal_retile.py) або відкрийте меншу копію.</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -657,6 +677,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Намалюйте обмежувальну рамку для сегментації об&apos;єкта.</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+колесо масштабує полотно</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points недоступний</translation>
     </message>
@@ -689,10 +713,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete {} shapes? This action cannot be undone.</source>
         <translation>Остаточно видалити {} фігур? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Збільшення або зменшення зображення. Також доступно за допомогою {} і {} на полотні.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
@@ -746,12 +766,20 @@ Please select a different model or use AI-Box mode.</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Загальні</translation>
+        <source>Color theme</source>
+        <translation>Кольорова тема</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>Мітки</translation>
+        <source>System</source>
+        <translation>Системна</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Світла</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Темна</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -766,6 +794,62 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Дозволити точки за межами зображення</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Вигляд і мова</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Файли та збереження</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Малювання та полотно</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Продовження роботи між зображеннями</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Джерела міток</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Поведінка міток</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Допомога ШІ</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Зберігати автоматично</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Зберігати дані зображення у файлі мітки</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Вбудовує зображення у JSON-файл мітки.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Зберегти попередню анотацію</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Зберегти попередній масштаб</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Зберегти попередню яскравість/контраст</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Заповнювати багатокутник під час малювання</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Дозволяє точкам фігур виходити за межі зображення, напр. для частково видимих об&apos;єктів.</translation>
     </message>
@@ -776,6 +860,70 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Label validation</source>
         <translation>Перевірка мітки</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Сортувати мітки</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Сортує список міток за алфавітом замість збереження заданого порядку.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Показувати текстове поле мітки</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Автодоповнення міток</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Починається з</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Містить</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Модель за замовчуванням</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (швидкість)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (точність)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (швидкість)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (збалансований)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (точність)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (швидкість)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (збалансований)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (точність)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -792,6 +940,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Close</source>
         <translation>Закрити</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -824,6 +976,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Попередньо визначені прапорці зображення</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Розділи налаштувань</translation>
     </message>
 </context>
 </TS>

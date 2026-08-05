@@ -53,6 +53,14 @@
         <source>Brightness/Contrast</source>
         <translation>Brilho/Contraste</translation>
     </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Brilho:</translation>
+    </message>
+    <message>
+        <source>Contrast:</source>
+        <translation>Contraste:</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>
@@ -410,10 +418,6 @@ Shapes</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel</source>
-        <translation>Ctrl+Roda</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Aproximar</translation>
     </message>
@@ -478,6 +482,10 @@ Shapes</source>
         <translation>Preencher polígono enquanto desenha</translation>
     </message>
     <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Roda amplia a tela</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Arquivo</translation>
     </message>
@@ -524,6 +532,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>AI inference failed: %s</source>
+        <translation>Falha na inferência de IA: %s</translation>
     </message>
     <message>
         <source>Error opening file</source>
@@ -582,6 +594,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>Cancelar</translation>
     </message>
     <message>
+        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
+        <translation>Indisponível no modo AI-Points porque este modelo não oferece suporte a prompts de pontos.</translation>
+    </message>
+    <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
         <translation>Salvar anotações em &quot;{}&quot; antes de fechar?</translation>
     </message>
@@ -592,6 +608,14 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>%s - Open Directory</source>
         <translation>%s - Abrir Diretório</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>A imagem é grande demais para ser aberta: {width}x{height} pixels excede o limite de {max_side} pixels por lado do mecanismo raster. Aumentar o limite de decodificação não vai ajudar. Divida a imagem em blocos (por exemplo com gdal_retile.py) ou abra uma cópia menor.</translation>
+    </message>
+    <message>
+        <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
+        <translation>A imagem é grande demais para ser aberta: {width}x{height} pixels precisa de cerca de {required} MB, mas o limite de decodificação é {limit} MB. Divida a imagem em blocos (por exemplo com gdal_retile.py) ou abra uma cópia menor.</translation>
     </message>
     <message>
         <source>Toggle &quot;keep previous annotation&quot; mode</source>
@@ -688,10 +712,6 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <translation>Excluir permanentemente {} formas? Esta ação não pode ser desfeita.</translation>
     </message>
     <message>
-        <source>Zoom the image in or out. The shortcuts {} and {} also work on the canvas.</source>
-        <translation>Aproximar ou afastar a imagem. Os atalhos {} e {} também funcionam sobre a tela.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formatos permitidos: {formats}</translation>
     </message>
@@ -743,12 +763,20 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <source>General</source>
-        <translation>Geral</translation>
+        <source>Color theme</source>
+        <translation>Tema de cores</translation>
     </message>
     <message>
-        <source>Labels</source>
-        <translation>Rótulos</translation>
+        <source>System</source>
+        <translation>Sistema</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Claro</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Escuro</translation>
     </message>
     <message>
         <source>Show label popup on new shape</source>
@@ -763,6 +791,62 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <translation>Permitir pontos fora dos limites da imagem</translation>
     </message>
     <message>
+        <source>Appearance and language</source>
+        <translation>Aparência e idioma</translation>
+    </message>
+    <message>
+        <source>Files and saving</source>
+        <translation>Arquivos e salvamento</translation>
+    </message>
+    <message>
+        <source>Drawing and canvas</source>
+        <translation>Desenho e tela</translation>
+    </message>
+    <message>
+        <source>Continue between images</source>
+        <translation>Continuar entre imagens</translation>
+    </message>
+    <message>
+        <source>Label sources</source>
+        <translation>Fontes de rótulos</translation>
+    </message>
+    <message>
+        <source>Label behavior</source>
+        <translation>Comportamento dos rótulos</translation>
+    </message>
+    <message>
+        <source>AI assist</source>
+        <translation>Assistência de IA</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Salvar automaticamente</translation>
+    </message>
+    <message>
+        <source>Save image data in label file</source>
+        <translation>Salvar dados da imagem no arquivo de rótulo</translation>
+    </message>
+    <message>
+        <source>Embeds the image in the label JSON file.</source>
+        <translation>Incorpora a imagem no arquivo JSON de rótulos.</translation>
+    </message>
+    <message>
+        <source>Keep previous annotation</source>
+        <translation>Manter anotação anterior</translation>
+    </message>
+    <message>
+        <source>Keep previous zoom</source>
+        <translation>Manter zoom anterior</translation>
+    </message>
+    <message>
+        <source>Keep previous brightness/contrast</source>
+        <translation>Manter brilho/contraste anteriores</translation>
+    </message>
+    <message>
+        <source>Fill polygon while drawing</source>
+        <translation>Preencher polígono enquanto desenha</translation>
+    </message>
+    <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Permite que os pontos das formas se estendam além da imagem, por ex. para objetos parcialmente visíveis.</translation>
     </message>
@@ -773,6 +857,70 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Label validation</source>
         <translation>Validação de rótulo</translation>
+    </message>
+    <message>
+        <source>Sort labels</source>
+        <translation>Ordenar rótulos</translation>
+    </message>
+    <message>
+        <source>Sort the label list alphabetically instead of keeping the provided order.</source>
+        <translation>Ordena a lista de rótulos alfabeticamente em vez de manter a ordem fornecida.</translation>
+    </message>
+    <message>
+        <source>Show label text field</source>
+        <translation>Mostrar campo de texto do rótulo</translation>
+    </message>
+    <message>
+        <source>Label completion</source>
+        <translation>Autocompletar rótulos</translation>
+    </message>
+    <message>
+        <source>Starts with</source>
+        <translation>Começa com</translation>
+    </message>
+    <message>
+        <source>Contains</source>
+        <translation>Contém</translation>
+    </message>
+    <message>
+        <source>Default model</source>
+        <translation>Modelo padrão</translation>
+    </message>
+    <message>
+        <source>EfficientSam (speed)</source>
+        <translation>EfficientSam (velocidade)</translation>
+    </message>
+    <message>
+        <source>EfficientSam (accuracy)</source>
+        <translation>EfficientSam (precisão)</translation>
+    </message>
+    <message>
+        <source>Sam (speed)</source>
+        <translation>Sam (velocidade)</translation>
+    </message>
+    <message>
+        <source>Sam (balanced)</source>
+        <translation>Sam (equilibrado)</translation>
+    </message>
+    <message>
+        <source>Sam (accuracy)</source>
+        <translation>Sam (precisão)</translation>
+    </message>
+    <message>
+        <source>Sam2 (speed)</source>
+        <translation>Sam2 (velocidade)</translation>
+    </message>
+    <message>
+        <source>Sam2 (balanced)</source>
+        <translation>Sam2 (equilibrado)</translation>
+    </message>
+    <message>
+        <source>Sam2 (accuracy)</source>
+        <translation>Sam2 (precisão)</translation>
+    </message>
+    <message>
+        <source>Sam3</source>
+        <translation>Sam3</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -789,6 +937,10 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Close</source>
         <translation>Fechar</translation>
+    </message>
+    <message>
+        <source>BETA</source>
+        <translation>BETA</translation>
     </message>
     <message>
         <source>(none)</source>
@@ -821,6 +973,13 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Sinalizadores de imagem predefinidos</translation>
+    </message>
+</context>
+<context>
+    <name>_SettingsPage</name>
+    <message>
+        <source>Settings sections</source>
+        <translation>Seções de configurações</translation>
     </message>
 </context>
 </TS>

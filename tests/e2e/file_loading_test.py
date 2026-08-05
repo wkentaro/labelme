@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
 
 import pytest
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
+
+from labelme._app import MainWindow
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
@@ -98,3 +102,39 @@ def test_MainWindow_open_dir(
         assert item.checkState() == expected_check_state
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    set_allocation_limit: Callable[[int], None],
+    pause: bool,
+) -> None:
+    image_path = tmp_path / "too_large.png"
+    image = QtGui.QImage(800, 600, QtGui.QImage.Format.Format_RGB32)
+    image.fill(0)
+    assert image.save(str(image_path))
+
+    messages: list[str] = []
+
+    def fake_critical(
+        parent: QtWidgets.QWidget, title: str, text: str
+    ) -> QtWidgets.QMessageBox.StandardButton:
+        messages.append(text)
+        return QtWidgets.QMessageBox.StandardButton.Ok
+
+    monkeypatch.setattr(QtWidgets.QMessageBox, "critical", fake_critical)
+    set_allocation_limit(1)
+
+    raw_win._load_file(str(image_path))
+
+    assert len(messages) == 1
+    assert "800x600" in messages[0]
+    assert "1 MB" in messages[0]
+    assert "gdal_retile.py" in messages[0]
+    assert "Allowed formats" not in messages[0]
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

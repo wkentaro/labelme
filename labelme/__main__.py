@@ -10,6 +10,7 @@ import types
 import warnings
 from pathlib import Path
 from typing import AnyStr
+from typing import Final
 
 from loguru import logger
 from PySide6 import QtCore
@@ -22,8 +23,11 @@ from . import _config
 from . import _locale
 from . import _yaml
 from ._app import MainWindow
+from ._label_file import is_label_file_path
 from ._utils import apply_color_theme
 from ._utils import new_icon
+
+_LOGGER_LEVELS: Final = ("debug", "info", "warning", "error", "critical")
 
 
 class _LoggerIO(io.StringIO):
@@ -33,20 +37,10 @@ class _LoggerIO(io.StringIO):
             logger.debug(stripped_s)
         return len(s)
 
-    def flush(self) -> None:
-        pass
-
-    def writable(self) -> bool:
-        return True
-
     def readable(self) -> bool:
         return False
 
     def seekable(self) -> bool:
-        return False
-
-    @property
-    def closed(self) -> bool:
         return False
 
 
@@ -56,25 +50,79 @@ def _setup_loguru(logger_level: str) -> None:
     if sys.stderr:
         logger.add(sys.stderr, level=logger_level)
 
-    if os.name == "nt":
-        cache_dir = Path(os.environ["LOCALAPPDATA"]) / "labelme"
-    else:
-        cache_dir = Path("~/.cache/labelme").expanduser()
+    # The log file is best-effort: a read-only or otherwise restricted home must
+    # not stop labelme from starting, since the stderr sink above already keeps
+    # logging functional.
+    try:
+        if os.name == "nt":
+            cache_dir = Path(os.environ["LOCALAPPDATA"]) / "labelme"
+        else:
+            cache_dir = Path("~/.cache/labelme").expanduser()
 
-    cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_dir.mkdir(parents=True, exist_ok=True)
 
-    log_file = cache_dir / "labelme.log"
-    logger.add(
-        log_file,
-        colorize=True,
-        level="DEBUG",
-        rotation="10 MB",
-        retention="30 days",
-        compression="gz",
-        enqueue=True,
-        backtrace=True,
-        diagnose=True,
-    )
+        log_file = cache_dir / "labelme.log"
+        logger.add(
+            log_file,
+            colorize=True,
+            level="DEBUG",
+            rotation="10 MB",
+            retention="30 days",
+            compression="gz",
+            enqueue=True,
+            backtrace=True,
+            diagnose=True,
+        )
+    except Exception as e:
+        # Broad like _config.get_user_config_file: Path.expanduser alone raises
+        # RuntimeError rather than OSError when the home cannot be determined.
+        # str() keeps the path an OSError names, while the type name keeps a bare
+        # KeyError('LOCALAPPDATA') readable.
+        logger.warning(
+            "Failed to set up the log file, logging to stderr only: {}: {}",
+            type(e).__name__,
+            e,
+        )
+
+
+def _route_qt_logging_to_loguru() -> None:
+    # Qt logs through its own handler straight to the C stderr, bypassing loguru
+    # and the log file. Route it through loguru instead, dropping two harmless
+    # noise sources so genuine Qt warnings still surface. The macOS keymapper
+    # flood ("Mismatch between Cocoa and Carbon", one line per keypress) is
+    # dropped by category, since qt.qpa.keymapper carries only low-value keyboard
+    # diagnostics. The font-alias timing chatter is dropped by message text
+    # within its category, since qt.qpa.fonts also reports real font-loading
+    # failures worth keeping.
+    LEVELS: Final = {
+        QtCore.QtMsgType.QtDebugMsg: "DEBUG",
+        QtCore.QtMsgType.QtInfoMsg: "INFO",
+        QtCore.QtMsgType.QtWarningMsg: "WARNING",
+        QtCore.QtMsgType.QtCriticalMsg: "ERROR",
+        QtCore.QtMsgType.QtFatalMsg: "CRITICAL",
+    }
+
+    def handler(
+        mode: QtCore.QtMsgType, context: QtCore.QMessageLogContext, message: str
+    ) -> None:
+        if context.category == "qt.qpa.keymapper":
+            return
+        if (
+            context.category == "qt.qpa.fonts"
+            and "Populating font family alias" in message
+        ):
+            return
+        if context.category != "default":
+            # Keep the category prefix Qt's default handler would have printed.
+            message = f"{context.category}: {message}"
+        logger.log(LEVELS.get(mode, "INFO"), message)
+        if mode == QtCore.QtMsgType.QtFatalMsg:
+            # Qt calls abort() as soon as this handler returns, which skips the
+            # atexit drain of the enqueue=True file sink; flush it now so the
+            # line explaining the crash reaches the log file.
+            logger.complete()
+
+    QtCore.qInstallMessageHandler(handler)
 
 
 def _handle_exception(
@@ -128,6 +176,39 @@ class _DeprecatedAlias(argparse.Action):
         setattr(namespace, self.dest, self.const if self.nargs == 0 else values)
 
 
+def _parse_list_arg(value: str) -> list[str]:
+    if os.path.isfile(value):
+        with open(value, encoding="utf-8") as f:
+            return [line.strip() for line in f if line.strip()]
+    return [line.strip() for line in value.split(",") if line.strip()]
+
+
+def _resolve_config_source(
+    config_arg: str | None, default_config_file: str
+) -> tuple[Path | None, dict]:
+    if config_arg is None:
+        # A missing file is fatal only when the user asked for that file: the
+        # default path may not exist because it could not be created, and
+        # labelme still runs on the built-in defaults.
+        if not os.path.isfile(default_config_file):
+            logger.warning(
+                "Config file does not exist: {!r}; using the default settings",
+                str(Path(default_config_file).absolute()),
+            )
+            return None, {}
+        return Path(default_config_file), {}
+
+    if isinstance(config_loaded := _yaml.safe_load(config_arg), dict):
+        return None, config_loaded
+
+    if not os.path.isfile(config_arg):
+        logger.error(
+            "Config file does not exist: {!r}", str(Path(config_arg).absolute())
+        )
+        sys.exit(1)
+    return Path(config_arg), {}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", "-V", action="store_true", help="show version")
@@ -139,7 +220,7 @@ def main() -> None:
     parser.add_argument(
         "--logger-level",
         default="debug",
-        choices=["debug", "info", "warning", "fatal", "error"],
+        choices=_LOGGER_LEVELS,
         help="logger level",
     )
     parser.add_argument("path", nargs="?", help="image file, label file, or directory")
@@ -152,7 +233,7 @@ def main() -> None:
         "--config",
         dest="config",
         help=f"config file or yaml-format string (default: {default_config_file})",
-        default=default_config_file,
+        default=None,
     )
     # config for the gui
     parser.add_argument(
@@ -227,26 +308,19 @@ def main() -> None:
         sys.exit(0)
 
     _setup_loguru(logger_level=args.logger_level.upper())
+    _route_qt_logging_to_loguru()
     logger.info("Starting {} {}", __appname__, __version__)
 
     sys.excepthook = _handle_exception
 
     if hasattr(args, "flags"):
-        if Path(args.flags).is_file():
-            with open(args.flags, encoding="utf-8") as f:
-                args.flags = [line.strip() for line in f if line.strip()]
-        else:
-            args.flags = [line for line in args.flags.split(",") if line]
+        args.flags = _parse_list_arg(args.flags)
 
     if hasattr(args, "labels"):
-        if Path(args.labels).is_file():
-            with open(args.labels, encoding="utf-8") as f:
-                args.labels = [line.strip() for line in f if line.strip()]
-        else:
-            args.labels = [line for line in args.labels.split(",") if line]
+        args.labels = _parse_list_arg(args.labels)
 
     if hasattr(args, "label_flags"):
-        if Path(args.label_flags).is_file():
+        if os.path.isfile(args.label_flags):
             with open(args.label_flags, encoding="utf-8") as f:
                 args.label_flags = _yaml.safe_load(f)
         else:
@@ -261,26 +335,15 @@ def main() -> None:
     # Settings dialog enabled (any override disables it).
     config_from_args.pop("logger_level")
 
-    config_overrides: dict
-    config_file: Path | None
-    config_str: str = config_from_args.pop("config")
-    if isinstance(config_loaded := _yaml.safe_load(config_str), dict):
-        config_overrides = config_loaded
-        config_file = None
-    else:
-        config_overrides = {}
-        config_file = Path(config_str)
-        if not config_file.is_file():
-            logger.error(
-                "Config file does not exist: {!r}", str(config_file.absolute())
-            )
-            sys.exit(1)
-    del config_str
+    config_file, config_overrides = _resolve_config_source(
+        config_arg=config_from_args.pop("config"),
+        default_config_file=default_config_file,
+    )
     config_overrides.update(config_from_args)
 
     output_dir = None
     if output is not None:
-        if output.endswith(".json"):
+        if is_label_file_path(filename=output):
             parser.error(
                 f"--output expects a directory path, but '{output}' looks like a file."
                 " Remove the .json extension or provide a directory path."
@@ -314,7 +377,7 @@ def main() -> None:
     app.setStyle("Fusion")  # for consistent appearance across platforms
     apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(new_icon("icon"))
+    app.setWindowIcon(new_icon("icon-256.png"))
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,

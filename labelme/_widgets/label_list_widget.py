@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import html
-import math
 from collections.abc import Iterator
+from typing import Final
 from typing import NamedTuple
 from typing import cast
 
@@ -10,18 +9,14 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QStyle
 
 from .._shape import Shape
 
-
-def format_label_with_color_dot(text: str, color: tuple[int, int, int]) -> str:
-    r, g, b = color
-    return f'{html.escape(text)} <font color="#{r:02x}{g:02x}{b:02x}">●</font>'
+LABEL_COLOR_ROLE: Final = Qt.ItemDataRole.UserRole.value + 1
 
 
-def format_shape_label(shape: Shape, fill_rgb: tuple[int, int, int]) -> str:
+def format_shape_label(shape: Shape) -> str:
     assert shape.label is not None
     text = shape.label
     if shape.group_id is not None:
@@ -29,12 +24,23 @@ def format_shape_label(shape: Shape, fill_rgb: tuple[int, int, int]) -> str:
     enabled_flags = [key for key, value in (shape.flags or {}).items() if value]
     if enabled_flags:
         text += f" [{', '.join(enabled_flags)}]"
-    return format_label_with_color_dot(text=text, color=fill_rgb)
+    return text
 
 
-class HTMLDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
-        super().__init__(parent)
+class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
+    _DOT: Final = " ●"
+
+    def sizeHint(
+        self,
+        option: QtWidgets.QStyleOptionViewItem,
+        index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
+    ) -> QtCore.QSize:
+        size = super().sizeHint(option, index)
+        if isinstance(index.data(LABEL_COLOR_ROLE), QtGui.QColor):
+            size.setWidth(
+                size.width() + option.fontMetrics.horizontalAdvance(self._DOT)
+            )
+        return size
 
     def paint(
         self,
@@ -42,68 +48,49 @@ class HTMLDelegate(QtWidgets.QStyledItemDelegate):
         option: QtWidgets.QStyleOptionViewItem,
         index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
     ) -> None:
+        color = index.data(LABEL_COLOR_ROLE)
+        if not isinstance(color, QtGui.QColor):
+            super().paint(painter, option, index)
+            return
+
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-
-        html = opt.text
-        opt.text = ""
-
         widget_style = (
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
-        widget_style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter)
-
-        doc = QtGui.QTextDocument()
-        if opt.state & QStyle.StateFlag.State_Selected:
-            text_color = opt.palette.color(
-                QPalette.ColorGroup.Active, QPalette.ColorRole.HighlightedText
-            )
-        else:
-            text_color = opt.palette.color(
-                QPalette.ColorGroup.Active, QPalette.ColorRole.Text
-            )
-        doc.setDefaultStyleSheet(f"body {{ color: {text_color.name()}; }}")
-        doc.setHtml(f"<body>{html}</body>")
-
         text_rect = widget_style.subElementRect(
             QStyle.SubElement.SE_ItemViewItemText, opt
         )
-        if index.column() != 0:
-            text_rect.adjust(5, 0, 0, 0)
+        text_margin = (
+            widget_style.pixelMetric(
+                QStyle.PixelMetric.PM_FocusFrameHMargin, None, opt.widget
+            )
+            + 1
+        )
+        dot_width = opt.fontMetrics.horizontalAdvance(self._DOT)
+        available_width = max(0, text_rect.width() - 2 * text_margin - dot_width)
 
-        # opt.text was emptied above, so some styles (e.g. Adwaita) return a
-        # text sub-rect too narrow for the rendered HTML and clip the label.
-        # Widen it to the document's ideal width so the text stays visible.
-        text_rect.setWidth(max(text_rect.width(), math.ceil(doc.idealWidth())))
+        # The dot is painted here rather than appended to opt.text, so that Qt
+        # never draws the glyph in the text color underneath it: the two draws
+        # land a subpixel apart and the one below shows as a fringe.
+        opt.text = opt.fontMetrics.elidedText(
+            opt.text, opt.textElideMode, available_width
+        )
+        widget_style.drawControl(
+            QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget
+        )
 
-        VERT_FUDGE = 4
-        margin = (option.rect.height() - opt.fontMetrics.height()) // 2 - VERT_FUDGE
-        text_rect.setTop(text_rect.top() + margin)
+        dot_rect = QtCore.QRect(text_rect)
+        dot_rect.setLeft(
+            text_rect.left() + text_margin + opt.fontMetrics.horizontalAdvance(opt.text)
+        )
+        dot_rect.setWidth(dot_width)
 
         painter.save()
-        painter.translate(text_rect.topLeft())
-        painter.setClipRect(text_rect.translated(-text_rect.topLeft()))
-        doc.drawContents(painter)
+        painter.setFont(opt.font)
+        painter.setPen(color)
+        painter.drawText(dot_rect, opt.displayAlignment, self._DOT)
         painter.restore()
-
-    def sizeHint(
-        self,
-        option: QtWidgets.QStyleOptionViewItem,
-        index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
-    ) -> QtCore.QSize:
-        VERT_FUDGE = 4
-        opt = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(opt, index)
-        doc = QtGui.QTextDocument()
-        doc.setHtml(opt.text)
-        height = int(doc.size().height()) - VERT_FUDGE
-        return QtCore.QSize(int(doc.idealWidth()), height)
-
-    def default_size_hint(self) -> QtCore.QSize:
-        VERT_FUDGE = 4
-        doc = QtGui.QTextDocument()
-        height = int(doc.size().height()) - VERT_FUDGE
-        return QtCore.QSize(int(doc.idealWidth()), height)
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
@@ -119,13 +106,18 @@ class LabelListWidgetItem(QtGui.QStandardItem):
             else Qt.CheckState.Unchecked
         )
         self.setEditable(False)
-        self.setTextAlignment(Qt.AlignmentFlag.AlignBottom)
 
     def clone(self) -> LabelListWidgetItem:
-        return LabelListWidgetItem(self.text(), self.shape())
+        item = LabelListWidgetItem(text=self.text(), shape=self.shape())
+        item.setData(self.data(LABEL_COLOR_ROLE), LABEL_COLOR_ROLE)
+        return item
 
     def set_shape(self, shape: Shape | None) -> None:
         self.setData(shape, Qt.ItemDataRole.UserRole)
+
+    def set_label(self, text: str, color: tuple[int, int, int]) -> None:
+        self.setText(text)
+        self.setData(QtGui.QColor(*color), LABEL_COLOR_ROLE)
 
     def shape(self) -> Shape | None:
         return self.data(Qt.ItemDataRole.UserRole)
@@ -176,7 +168,9 @@ class _ItemModel(QtGui.QStandardItemModel):
 
 
 class _ItemSnapshot(NamedTuple):
-    item: LabelListWidgetItem
+    # A persistent index, not the item itself: the model owns the item and
+    # deletes it on row removal, which would leave a dead wrapper here.
+    index: QtCore.QPersistentModelIndex
     check_state: Qt.CheckState
 
 
@@ -193,7 +187,7 @@ class LabelListWidget(QtWidgets.QListView):
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
-        self.setItemDelegate(HTMLDelegate())
+        self.setItemDelegate(TrailingColorDotDelegate())
         self.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
@@ -207,7 +201,10 @@ class LabelListWidget(QtWidgets.QListView):
 
     def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
         self._press_snapshot = tuple(
-            _ItemSnapshot(item=item, check_state=item.checkState())
+            _ItemSnapshot(
+                index=QtCore.QPersistentModelIndex(self._model.indexFromItem(item)),
+                check_state=item.checkState(),
+            )
             for item in self.selected_items()
         )
         super().mousePressEvent(e)
@@ -217,10 +214,14 @@ class LabelListWidget(QtWidgets.QListView):
 
         # Restore the multi-selection only when a checkbox toggle collapsed it.
         # A plain row click should narrow the selection to one row.
-        check_state_changed = any(
-            snap.item.checkState() != snap.check_state for snap in self._press_snapshot
-        )
-        items_at_press = tuple(snap.item for snap in self._press_snapshot)
+        check_state_changed = False
+        items_at_press: list[LabelListWidgetItem] = []
+        for snap in self._press_snapshot:
+            item = self._resolve_item(index=snap.index)
+            if item is None:
+                continue
+            items_at_press.append(item)
+            check_state_changed |= item.checkState() != snap.check_state
         if (
             check_state_changed
             and len(items_at_press) > 1
@@ -236,7 +237,18 @@ class LabelListWidget(QtWidgets.QListView):
         self._press_snapshot = ()
 
     def selection_at_press(self) -> tuple[LabelListWidgetItem, ...]:
-        return tuple(snap.item for snap in self._press_snapshot)
+        return tuple(
+            item
+            for snap in self._press_snapshot
+            if (item := self._resolve_item(index=snap.index)) is not None
+        )
+
+    def _resolve_item(
+        self, index: QtCore.QPersistentModelIndex
+    ) -> LabelListWidgetItem | None:
+        if not index.isValid():
+            return None
+        return cast(LabelListWidgetItem, self._model.itemFromIndex(index))
 
     def __len__(self) -> int:
         return self._model.rowCount()
@@ -281,8 +293,6 @@ class LabelListWidget(QtWidgets.QListView):
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
         self._model.setItem(self._model.rowCount(), 0, item)
-        delegate = cast(HTMLDelegate, self.itemDelegate())
-        item.setSizeHint(delegate.default_size_hint())
 
     def remove_item(self, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)

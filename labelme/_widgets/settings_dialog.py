@@ -10,6 +10,7 @@ from PySide6 import QtWidgets
 
 from .. import _locale
 from .._config import _schema as schema
+from .._utils.qt import new_icon
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]
 
@@ -35,6 +36,118 @@ class _PlainTextEdit(QtWidgets.QPlainTextEdit):
         self.commit()
 
 
+class _SettingsPage(QtWidgets.QWidget):
+    def __init__(
+        self,
+        groups: Sequence[tuple[str, QtGui.QIcon, QtWidgets.QGroupBox]],
+    ) -> None:
+        super().__init__()
+
+        navigation = QtWidgets.QListWidget()
+        navigation.setAccessibleName(self.tr("Settings sections"))
+        navigation.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        navigation.setTextElideMode(QtCore.Qt.TextElideMode.ElideRight)
+        NAVIGATION_FONT_SIZE_INCREMENT: typing.Final = 1.0
+        NAVIGATION_ICON_SIZE: typing.Final = QtCore.QSize(18, 18)
+        NAVIGATION_TEXT_INSET: typing.Final = 8
+        NAVIGATION_VERTICAL_PADDING: typing.Final = 12
+        navigation_font = QtGui.QFont(navigation.font())
+        navigation_font.setPointSizeF(
+            navigation_font.pointSizeF() + NAVIGATION_FONT_SIZE_INCREMENT
+        )
+        navigation.setFont(navigation_font)
+        navigation.setIconSize(NAVIGATION_ICON_SIZE)
+        navigation.setStyleSheet(
+            f"QListWidget::item {{ padding-left: {NAVIGATION_TEXT_INSET}px; }}"
+        )
+        for title, icon, _group_box in groups:
+            item = QtWidgets.QListWidgetItem(icon, title)
+            item.setToolTip(title)
+            navigation.addItem(item)
+            item_size = navigation.sizeHintForIndex(navigation.indexFromItem(item))
+            item_size.setHeight(
+                navigation.fontMetrics().height() + NAVIGATION_VERTICAL_PADDING
+            )
+            item.setSizeHint(item_size)
+        MINIMUM_NAVIGATION_WIDTH: typing.Final = 160
+        MAXIMUM_NAVIGATION_WIDTH: typing.Final = 240
+        NAVIGATION_PADDING: typing.Final = 8
+        navigation_width = max(
+            MINIMUM_NAVIGATION_WIDTH,
+            min(
+                MAXIMUM_NAVIGATION_WIDTH,
+                navigation.sizeHintForColumn(0) + NAVIGATION_PADDING,
+            ),
+        )
+        navigation.setFixedWidth(navigation_width)
+
+        content = QtWidgets.QWidget()
+        content_layout = QtWidgets.QVBoxLayout(content)
+        for _title, _icon, group_box in groups:
+            content_layout.addWidget(group_box)
+        content_layout.addStretch(1)
+
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(content)
+
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(navigation)
+        layout.addWidget(scroll_area, stretch=1)
+
+        self._navigation = navigation
+        self._scroll_area = scroll_area
+        self._content = content
+        self._groups = [group_box for _title, _icon, group_box in groups]
+        self._scrolling_to_group = False
+
+        navigation.currentRowChanged.connect(self._scroll_to_group)
+        navigation.itemClicked.connect(
+            lambda item: self._scroll_to_group(navigation.row(item))
+        )
+        scroll_area.verticalScrollBar().valueChanged.connect(
+            self._sync_navigation_to_scroll
+        )
+        navigation.setCurrentRow(0)
+
+    def _scroll_to_group(self, index: int) -> None:
+        if not 0 <= index < len(self._groups):
+            return
+        group = self._groups[index]
+        group_top = group.mapTo(self._content, QtCore.QPoint()).y()
+        # Blocking the scroll bar would also cut the scroll area's own
+        # valueChanged connection, moving the handle while the content stays put,
+        # so gate the navigation sync instead of silencing the scroll bar.
+        self._scrolling_to_group = True
+        self._scroll_area.verticalScrollBar().setValue(group_top)
+        self._scrolling_to_group = False
+        with QtCore.QSignalBlocker(self._navigation):
+            self._navigation.setCurrentRow(index)
+
+    def _sync_navigation_to_scroll(self, value: int) -> None:
+        if self._scrolling_to_group:
+            return
+        viewport = self._scroll_area.viewport()
+        # Move the reading point toward the viewport center as the user leaves
+        # the top, so short groups near the bottom can become active too.
+        reading_position = value + min(value, viewport.height() // 2)
+        active = 0
+        for index, group in enumerate(self._groups):
+            group_top = group.mapTo(self._content, QtCore.QPoint()).y()
+            if group_top > reading_position:
+                break
+            active = index
+        scroll_bar = self._scroll_area.verticalScrollBar()
+        if scroll_bar.maximum() > 0 and value == scroll_bar.maximum():
+            active = len(self._groups) - 1
+        with QtCore.QSignalBlocker(self._navigation):
+            self._navigation.setCurrentRow(active)
+
+
 class SettingsDialog(QtWidgets.QDialog):
     def __init__(
         self,
@@ -50,14 +163,31 @@ class SettingsDialog(QtWidgets.QDialog):
         self._apply_setting = apply_setting
         self._editors: dict[tuple[str, ...], QtWidgets.QWidget] = {}
 
-        tabs = QtWidgets.QTabWidget()
-        for section in typing.get_args(schema.Section):
-            settings = [s for s in schema.SETTINGS if s.section == section]
+        GROUP_ICONS: typing.Final[dict[schema.Group, str]] = {
+            "Appearance and language": "phosphor/palette.svg",
+            "Files and saving": "phosphor/floppy-disk-duotone.svg",
+            "Drawing and canvas": "phosphor/polygon.svg",
+            "Continue between images": "phosphor/images.svg",
+            "Label sources": "phosphor/tag.svg",
+            "Label behavior": "phosphor/sliders-horizontal.svg",
+            "AI assist": "phosphor/sparkle.svg",
+        }
+        groups: list[tuple[str, QtGui.QIcon, QtWidgets.QGroupBox]] = []
+        for group in typing.get_args(schema.Group):
+            settings = [
+                setting for setting in schema.SETTINGS if setting.group == group
+            ]
             if not settings:
                 continue
-            tabs.addTab(self._build_page(settings=settings), self.tr(section))
-        self._tabs = tabs
-        tabs.currentChanged.connect(lambda _index: self._fit_height_to_active_tab())
+            groups.append(
+                (
+                    self.tr(group),
+                    new_icon(GROUP_ICONS[group]),
+                    self._build_group(title=self.tr(group), settings=settings),
+                )
+            )
+        page = _SettingsPage(groups=groups)
+        self._page = page
 
         open_button = QtWidgets.QPushButton(self.tr("Open config file as text…"))
         open_button.setToolTip(
@@ -74,10 +204,25 @@ class SettingsDialog(QtWidgets.QDialog):
         button_layout.addWidget(close_button)
 
         layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(tabs, stretch=1)
+        layout.addWidget(page, stretch=1)
         layout.addLayout(button_layout)
         self.setLayout(layout)
-        self._fit_height_to_active_tab()
+        DEFAULT_DIALOG_SIZE: typing.Final = QtCore.QSize(760, 590)
+        scroll_bar_width = self.style().pixelMetric(
+            QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
+        )
+        preferred_dialog_size = QtCore.QSize(
+            max(
+                DEFAULT_DIALOG_SIZE.width(),
+                self.sizeHint().width() + scroll_bar_width,
+            ),
+            DEFAULT_DIALOG_SIZE.height(),
+        )
+        initial_dialog_size = preferred_dialog_size.boundedTo(
+            self.screen().availableGeometry().size()
+        )
+        self.setMinimumWidth(initial_dialog_size.width())
+        self.resize(initial_dialog_size)
 
         self._sync_validate_label_gate()
 
@@ -95,30 +240,28 @@ class SettingsDialog(QtWidgets.QDialog):
         # nothing, so treat them like Close and flush pending edits.
         self.accept()
 
-    def _fit_height_to_active_tab(self) -> None:
-        # A tab dialog otherwise stays sized to its tallest tab, leaving a void on
-        # shorter tabs; size to the active tab instead, like a macOS settings pane.
-        # The pane is non-resizable: height tracks the active tab and width holds at
-        # 640 unless a tab needs more, so its content is never clipped.
-        active = self._tabs.currentIndex()
-        for index in range(self._tabs.count()):
-            page = self._tabs.widget(index)
-            assert page is not None
-            policy = page.sizePolicy()
-            policy.setVerticalPolicy(
-                QtWidgets.QSizePolicy.Policy.Preferred
-                if index == active
-                else QtWidgets.QSizePolicy.Policy.Ignored
-            )
-            page.setSizePolicy(policy)
-        # Release the previous fixed size (setFixedSize pinned both min and max) so
-        # adjustSize can shrink or grow to the active tab before we re-pin it.
-        # PySide6 does not export QWIDGETSIZE_MAX; 16777215 (0xFFFFFF) is its value.
-        QWIDGETSIZE_MAX: typing.Final = 16777215
-        self.setMinimumSize(0, 0)
-        self.setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX)
-        self.adjustSize()
-        self.setFixedSize(max(640, self.width()), self.height())
+    def set_value(self, key_path: tuple[str, ...], value: object) -> None:
+        editor = self._editors[key_path]
+        with QtCore.QSignalBlocker(editor):
+            self._set_editor_value(editor=editor, value=value)
+
+    def set_choice_enabled(
+        self,
+        key_path: tuple[str, ...],
+        value: object,
+        enabled: bool,
+        disabled_reason: str,
+    ) -> None:
+        editor = self._editors[key_path]
+        assert isinstance(editor, QtWidgets.QComboBox)
+        index = editor.findData(value)
+        assert index >= 0
+        model = editor.model()
+        assert isinstance(model, QtGui.QStandardItemModel)
+        item = model.item(index)
+        assert item is not None
+        item.setEnabled(enabled)
+        item.setToolTip("" if enabled else disabled_reason)
 
     def _read_value(self, key_path: tuple[str, ...]) -> object:
         node: object = self._config
@@ -128,11 +271,15 @@ class SettingsDialog(QtWidgets.QDialog):
             node = node[key]
         return node
 
-    def _build_page(self, settings: list[schema.Setting]) -> QtWidgets.QWidget:
-        page = QtWidgets.QWidget()
-        layout = QtWidgets.QVBoxLayout(page)
+    def _build_group(
+        self, title: str, settings: list[schema.Setting]
+    ) -> QtWidgets.QGroupBox:
+        group_box = QtWidgets.QGroupBox(title)
+        group_box.setFlat(True)
+        layout = QtWidgets.QVBoxLayout(group_box)
         for setting in settings:
             editor = self._create_editor(setting=setting)
+            editor.setAccessibleName(self.tr(setting.label))
             self._editors[setting.key_path] = editor
 
             label_cell = self._build_label_cell(setting=setting)
@@ -148,8 +295,7 @@ class SettingsDialog(QtWidgets.QDialog):
                 # rather than centering against the label+note block.
                 row_layout.addWidget(editor, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
             layout.addWidget(row)
-        layout.addStretch(1)
-        return page
+        return group_box
 
     def _build_label_cell(self, setting: schema.Setting) -> QtWidgets.QWidget:
         label = QtWidgets.QLabel(self.tr(setting.label))
@@ -267,6 +413,15 @@ class SettingsDialog(QtWidgets.QDialog):
             editor.mark_committed()
 
     def _apply(self, key_path: tuple[str, ...], value: object) -> bool:
+        editor = self._editors[key_path]
+        if isinstance(editor, QtWidgets.QComboBox):
+            model = editor.model()
+            assert isinstance(model, QtGui.QStandardItemModel)
+            item = model.item(editor.findData(value))
+            assert item is not None
+            if not item.isEnabled():
+                self._revert_editor(key_path=key_path)
+                return False
         if self._apply_setting(key_path, value):
             return True
         # The write failed and the in-memory config was left unchanged, so reset
@@ -276,11 +431,7 @@ class SettingsDialog(QtWidgets.QDialog):
         return False
 
     def _revert_editor(self, key_path: tuple[str, ...]) -> None:
-        # blockSignals stops the reset from re-triggering apply.
-        editor = self._editors[key_path]
-        editor.blockSignals(True)
-        self._set_editor_value(editor=editor, value=self._read_value(key_path))
-        editor.blockSignals(False)
+        self.set_value(key_path=key_path, value=self._read_value(key_path))
 
     def _on_labels_edited(self, edit: _PlainTextEdit) -> None:
         labels = _parse_str_list(edit=edit)

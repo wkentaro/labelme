@@ -5,7 +5,6 @@ with_image_data: false
 keep_prev: false
 keep_prev_scale: false
 keep_prev_brightness_contrast: false
-logger_level: info
 # UI language as a locale code (e.g. ja_JP); null follows the system locale.
 language:
 # Color theme: 'system' follows the OS appearance, or force 'light' / 'dark'.
@@ -16,10 +15,15 @@ labels:
 file_search:
 sort_labels: true
 validate_label:
-default_shape_color: [255, 255, 0]
-shape_color:  # null, 'auto', 'manual'
-shift_auto_shape_color: 0
-label_colors:
+shape_color:
+  mode: uniform  # auto, uniform, by_label
+  auto:
+    shift: 0
+  uniform:
+    color: [255, 255, 0]
+  by_label:
+    colors:
+    fallback: [255, 255, 0]
 shape:
   # drawing
   line_color: [255, 255, 0, 128]
