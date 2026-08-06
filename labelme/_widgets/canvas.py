@@ -172,6 +172,7 @@ class Canvas(QtWidgets.QWidget):
     pan_request = QtCore.Signal(QPoint)
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
+    ai_proposals_all_matched_existing_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
     point_prompt_rejected = QtCore.Signal(str)
     degenerate_shape_rejected = QtCore.Signal()
@@ -1677,7 +1678,16 @@ class Canvas(QtWidgets.QWidget):
             self._ai_inference_failed = False
             new_shapes = proposal.new_shapes
             if not new_shapes:
-                if not proposal.matching_existing_shapes:
+                is_sweep = (
+                    self.create_mode == "ai_box_to_shape"
+                    and self.get_ai_model_name() == "sam3:latest"
+                )
+                if (
+                    is_sweep
+                    and proposal.is_every_candidate_detection_matched_to_existing_shape
+                ):
+                    self.ai_proposals_all_matched_existing_shapes.emit()
+                elif proposal.existing_shape_match_detection_count == 0:
                     self.inference_produced_no_shapes.emit()
                 self._cancel_current_shape()
                 self._set_ai_existing_shape_highlights(

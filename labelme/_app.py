@@ -1103,6 +1103,9 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
+        canvas.ai_proposals_all_matched_existing_shapes.connect(
+            self._on_ai_proposals_all_matched_existing_shapes
+        )
         # The preview path emits this from inside paintEvent (an active
         # QPainter); a queued connection defers the status-bar update until
         # after the paint cycle so it never mutates UI mid-paint.
@@ -1891,6 +1894,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_inference_produced_no_shapes(self) -> None:
         self.show_status_message(
             self.tr("AI inference produced no new annotation."), 5000
+        )
+
+    def _on_ai_proposals_all_matched_existing_shapes(self) -> None:
+        self.show_status_message(
+            self.tr("AI proposals all matched existing annotations."), 5000
         )
 
     def _on_inference_failed(self, message: str) -> None:

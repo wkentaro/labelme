@@ -128,6 +128,9 @@ def test_sam3_box_prompt_reaches_session(
 
     assert proposal.new_shapes == []
     assert proposal.matching_existing_shapes == []
+    assert proposal.candidate_detection_count == 0
+    assert proposal.existing_shape_match_detection_count == 0
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is False
     assert created_model_names == ["sam3:latest"]
 
 
@@ -246,6 +249,8 @@ def test_point_prompt_reports_best_matching_existing_shape(
     assert proposal.new_shapes == []
     assert len(proposal.matching_existing_shapes) == 1
     assert proposal.matching_existing_shapes[0] is exact
+    assert proposal.existing_shape_match_detection_count == 1
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is True
 
 
 @pytest.mark.parametrize(
@@ -306,6 +311,9 @@ def test_sweep_suppresses_only_proposals_matching_existing_shapes(
     )
     assert len(proposal.matching_existing_shapes) == 1
     assert proposal.matching_existing_shapes[0] is existing_rectangle
+    assert proposal.candidate_detection_count == 2
+    assert proposal.existing_shape_match_detection_count == 1
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is False
 
 
 def test_single_result_sweep_reports_matching_existing_shape(
@@ -328,6 +336,67 @@ def test_single_result_sweep_reports_matching_existing_shape(
     assert proposal.new_shapes == []
     assert len(proposal.matching_existing_shapes) == 1
     assert proposal.matching_existing_shapes[0] is existing_rectangle
+    assert proposal.candidate_detection_count == 1
+    assert proposal.existing_shape_match_detection_count == 1
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is True
+
+
+def test_sweep_counts_each_proposal_matching_the_same_existing_shape(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[
+            _annotation(score=0.9, bbox=(0, 0, 10, 10)),
+            _annotation(score=0.8, bbox=(20, 0, 30, 10)),
+        ],
+    )
+    install_fake_osam_session(response)
+    existing = Shape(
+        shape_type="rectangle",
+        points=np.array([[-5, -5], [35, 15]], dtype=np.float64),
+    )
+    session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
+
+    proposal = _propose(
+        session,
+        prompt_kind="box",
+        existing_shapes=[existing],
+    )
+
+    assert proposal.new_shapes == []
+    assert len(proposal.matching_existing_shapes) == 1
+    assert proposal.matching_existing_shapes[0] is existing
+    assert proposal.candidate_detection_count == 2
+    assert proposal.existing_shape_match_detection_count == 2
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is True
+
+
+def test_sweep_does_not_mark_invalid_unmatched_detection_as_matched(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+    existing_rectangle: Shape,
+) -> None:
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[
+            _annotation(score=0.9, bbox=(0, 0, 10, 10)),
+            _annotation(score=0.8),
+        ],
+    )
+    install_fake_osam_session(response)
+    session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
+
+    proposal = _propose(
+        session,
+        prompt_kind="box",
+        existing_shapes=[existing_rectangle],
+    )
+
+    assert proposal.new_shapes == []
+    assert len(proposal.matching_existing_shapes) == 1
+    assert proposal.candidate_detection_count == 2
+    assert proposal.existing_shape_match_detection_count == 1
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is False
 
 
 @pytest.fixture(name="duplicate_sweep_session")
@@ -358,6 +427,8 @@ def test_sweep_matches_existing_shape_after_greedy_suppression(
     assert proposal.new_shapes == []
     assert len(proposal.matching_existing_shapes) == 1
     assert proposal.matching_existing_shapes[0] is existing_rectangle
+    assert proposal.existing_shape_match_detection_count == 1
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is True
 
 
 def test_sweep_still_applies_greedy_suppression_among_new_detections(
@@ -371,3 +442,5 @@ def test_sweep_still_applies_greedy_suppression_among_new_detections(
         [[0, 0], [10, 10]],
     )
     assert proposal.matching_existing_shapes == []
+    assert proposal.existing_shape_match_detection_count == 0
+    assert proposal.is_every_candidate_detection_matched_to_existing_shape is False

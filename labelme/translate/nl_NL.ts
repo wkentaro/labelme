@@ -534,6 +534,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI proposals all matched existing annotations.</source>
+        <translation>AI proposals all matched existing annotations.</translation>
+    </message>
+    <message>
         <source>AI inference failed: %s</source>
         <translation>AI-inferentie mislukt: %s</translation>
     </message>

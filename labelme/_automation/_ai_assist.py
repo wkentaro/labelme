@@ -22,6 +22,16 @@ from ._types import AiPromptKind
 class AiAssistProposal:
     new_shapes: list[Shape]
     matching_existing_shapes: list[Shape]
+    candidate_detection_count: int
+    existing_shape_match_detection_count: int
+
+    @property
+    def is_every_candidate_detection_matched_to_existing_shape(self) -> bool:
+        return (
+            self.candidate_detection_count > 0
+            and self.existing_shape_match_detection_count
+            == self.candidate_detection_count
+        )
 
 
 class AiAssistSession:
@@ -89,12 +99,17 @@ class AiAssistSession:
             detections=detections,
             existing_shapes=existing_shapes,
         )
+        existing_shape_match_detection_count = len(detections) - len(
+            matches.new_detections
+        )
         return AiAssistProposal(
             new_shapes=shapes_from_detections(
                 detections=matches.new_detections,
                 shape_type=self.output_format,
             ),
             matching_existing_shapes=matches.matching_shapes,
+            candidate_detection_count=len(detections),
+            existing_shape_match_detection_count=existing_shape_match_detection_count,
         )
 
 

@@ -327,6 +327,8 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
         lambda **_: AiAssistProposal(
             new_shapes=[],
             matching_existing_shapes=[],
+            candidate_detection_count=0,
+            existing_shape_match_detection_count=0,
         ),
     )
     canvas.create_mode = create_mode
@@ -339,15 +341,20 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     )
     drawing_polygon_emissions: list[bool] = []
     inference_no_shapes_emissions: list[None] = []
+    all_matched_emissions: list[None] = []
     canvas.drawing_polygon.connect(drawing_polygon_emissions.append)
     canvas.inference_produced_no_shapes.connect(
         lambda: inference_no_shapes_emissions.append(None)
+    )
+    canvas.ai_proposals_all_matched_existing_shapes.connect(
+        lambda: all_matched_emissions.append(None)
     )
 
     canvas._finalize()
 
     assert drawing_polygon_emissions == [False]
     assert len(inference_no_shapes_emissions) == 1
+    assert all_matched_emissions == []
     assert canvas._current is None
     assert canvas.shapes == []
 
@@ -372,10 +379,14 @@ def test_existing_shape_suppression_is_disabled_by_default(
             return AiAssistProposal(
                 new_shapes=[],
                 matching_existing_shapes=[existing],
+                candidate_detection_count=1,
+                existing_shape_match_detection_count=1,
             )
         return AiAssistProposal(
             new_shapes=[inferred],
             matching_existing_shapes=[],
+            candidate_detection_count=1,
+            existing_shape_match_detection_count=0,
         )
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
@@ -450,6 +461,7 @@ class _AiExistingShapeHighlightHarness:
     existing: Shape
     new_shape_emissions: list[None]
     no_shapes_emissions: list[None]
+    all_matched_emissions: list[None]
 
 
 @pytest.fixture()
@@ -475,9 +487,13 @@ def ai_existing_shape_highlight_harness(
     )
     new_shape_emissions: list[None] = []
     no_shapes_emissions: list[None] = []
+    all_matched_emissions: list[None] = []
     canvas.new_shape.connect(lambda: new_shape_emissions.append(None))
     canvas.inference_produced_no_shapes.connect(
         lambda: no_shapes_emissions.append(None)
+    )
+    canvas.ai_proposals_all_matched_existing_shapes.connect(
+        lambda: all_matched_emissions.append(None)
     )
     canvas.resize(_WIDTH, _HEIGHT)
     with qtbot.waitExposed(canvas):
@@ -487,6 +503,7 @@ def ai_existing_shape_highlight_harness(
         existing=existing,
         new_shape_emissions=new_shape_emissions,
         no_shapes_emissions=no_shapes_emissions,
+        all_matched_emissions=all_matched_emissions,
     )
 
 
@@ -500,6 +517,9 @@ def test_finalize_existing_only_inference_highlights_hidden_shape(
 ) -> None:
     harness = ai_existing_shape_highlight_harness
     canvas = harness.canvas
+    canvas.set_ai_model_name("sam3:latest")
+    drawing_polygon_emissions: list[bool] = []
+    canvas.drawing_polygon.connect(drawing_polygon_emissions.append)
 
     def propose_shapes(
         *, existing_shapes: list[Shape], **_: object
@@ -508,6 +528,8 @@ def test_finalize_existing_only_inference_highlights_hidden_shape(
         return AiAssistProposal(
             new_shapes=[],
             matching_existing_shapes=[harness.existing],
+            candidate_detection_count=1,
+            existing_shape_match_detection_count=1,
         )
 
     monkeypatch.setattr(
@@ -522,6 +544,8 @@ def test_finalize_existing_only_inference_highlights_hidden_shape(
     assert canvas._current is None
     assert harness.new_shape_emissions == []
     assert harness.no_shapes_emissions == []
+    assert harness.all_matched_emissions == [None]
+    assert drawing_polygon_emissions == [False]
     highlight = canvas.grab().toImage().pixelColor(30, 20)
     assert highlight.red() > highlight.green() > highlight.blue()
 
@@ -554,6 +578,47 @@ def test_finalize_existing_only_inference_highlights_hidden_shape(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "create_mode",
+    ["ai_points_to_shape", "ai_box_to_shape"],
+    ids=["point-prompt", "non-sweep-box"],
+)
+def test_finalize_existing_only_non_sweep_does_not_emit_sweep_status(
+    ai_existing_shape_highlight_harness: _AiExistingShapeHighlightHarness,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+) -> None:
+    harness = ai_existing_shape_highlight_harness
+    canvas = harness.canvas
+    canvas.set_ai_model_name("sam2:latest")
+    canvas.create_mode = create_mode
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+    drawing_polygon_emissions: list[bool] = []
+    canvas.drawing_polygon.connect(drawing_polygon_emissions.append)
+    monkeypatch.setattr(
+        canvas,
+        "_propose_ai_shapes",
+        lambda **_: AiAssistProposal(
+            new_shapes=[],
+            matching_existing_shapes=[harness.existing],
+            candidate_detection_count=1,
+            existing_shape_match_detection_count=1,
+        ),
+    )
+
+    canvas._finalize()
+
+    assert canvas._current is None
+    assert harness.no_shapes_emissions == []
+    assert harness.all_matched_emissions == []
+    assert drawing_polygon_emissions == [False]
+
+
+@pytest.mark.gui
 def test_finalize_mixed_inference_adds_new_and_highlights_existing(
     ai_existing_shape_highlight_harness: _AiExistingShapeHighlightHarness,
     monkeypatch: pytest.MonkeyPatch,
@@ -570,6 +635,8 @@ def test_finalize_mixed_inference_adds_new_and_highlights_existing(
         lambda **_: AiAssistProposal(
             new_shapes=[inferred],
             matching_existing_shapes=[harness.existing],
+            candidate_detection_count=2,
+            existing_shape_match_detection_count=1,
         ),
     )
 
@@ -578,6 +645,7 @@ def test_finalize_mixed_inference_adds_new_and_highlights_existing(
     assert canvas.shapes == [harness.existing, inferred]
     assert harness.new_shape_emissions == [None]
     assert harness.no_shapes_emissions == []
+    assert harness.all_matched_emissions == []
     highlight = canvas.grab().toImage().pixelColor(30, 20)
     assert highlight.red() > highlight.green() > highlight.blue()
 
@@ -606,6 +674,8 @@ def test_finalize_paints_new_shape_before_notifying(
         lambda **_: AiAssistProposal(
             new_shapes=[inferred],
             matching_existing_shapes=[],
+            candidate_detection_count=1,
+            existing_shape_match_detection_count=0,
         ),
     )
     with qtbot.waitExposed(canvas):
@@ -815,7 +885,12 @@ def test_points_preview_hides_failed_and_empty_predictions(
     def _maybe_raise(**_: object) -> AiAssistProposal:
         if behavior["fail"]:
             raise RuntimeError("boom")
-        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+        return AiAssistProposal(
+            new_shapes=[],
+            matching_existing_shapes=[],
+            candidate_detection_count=0,
+            existing_shape_match_detection_count=0,
+        )
 
     monkeypatch.setattr(canvas, "_propose_ai_shapes", _maybe_raise)
     canvas.create_mode = "ai_points_to_shape"

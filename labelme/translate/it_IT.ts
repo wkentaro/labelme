@@ -540,6 +540,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI proposals all matched existing annotations.</source>
+        <translation>AI proposals all matched existing annotations.</translation>
+    </message>
+    <message>
         <source>AI inference failed: %s</source>
         <translation>Inferenza IA non riuscita: %s</translation>
     </message>

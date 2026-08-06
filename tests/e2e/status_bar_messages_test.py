@@ -111,3 +111,23 @@ def test_status_bar_shows_error_message_on_corrupt_file(
     assert any("Failed to load" in m and str(corrupt_json) in m for m in captured)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_status_bar_distinguishes_all_matched_ai_proposals(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    pause: bool,
+) -> None:
+    win = main_win()
+    win.show()
+
+    win._canvas_widgets.canvas.ai_proposals_all_matched_existing_shapes.emit()
+
+    captured = _wait_for_status_message_containing(
+        qtbot=qtbot,
+        win=win,
+        substring="AI proposals all matched existing annotations.",
+    )
+    assert "AI proposals all matched existing annotations." in captured
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

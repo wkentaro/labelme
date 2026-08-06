@@ -537,6 +537,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
+        <source>AI proposals all matched existing annotations.</source>
+        <translation>AI proposals all matched existing annotations.</translation>
+    </message>
+    <message>
         <source>AI inference failed: %s</source>
         <translation>Yapay zeka çıkarımı başarısız oldu: %s</translation>
     </message>
