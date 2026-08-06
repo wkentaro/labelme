@@ -37,14 +37,11 @@ format:  # Format code
 test:  # Run tests
 	$(call exec,uv run pytest -v tests/ $(PYTEST_ARGS))
 
-update_translate:
+update_translate:  # Regenerate the translation catalogs
 	$(call exec,uv run tools/update_translate.py)
 
-check_translate: update_translate  # Fail if any translation is unfinished (release gate)
-	@if grep -rl 'type="unfinished"' labelme/translate/*.ts; then \
-		printf '\033[1;31mError: unfinished translations found; releases require complete translations\033[0m\n'; \
-		exit 1; \
-	fi
+check_translate:  # Fail if the translation catalogs are stale or incomplete (CI and release gate)
+	$(call exec,uv run tools/update_translate.py --check)
 
 coverage:  # Run tests with coverage
 	$(MAKE) test PYTEST_ARGS="--cov=labelme --cov-report=term-missing"

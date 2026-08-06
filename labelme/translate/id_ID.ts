@@ -971,6 +971,14 @@ Shapes</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Abaikan kecocokan dengan bentuk yang ada</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Ketika kandidat Bantuan AI cocok dengan bentuk yang ada, bentuk tersebut disorot alih-alih membuat bentuk baru.</translation>
+    </message>
+    <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
     </message>

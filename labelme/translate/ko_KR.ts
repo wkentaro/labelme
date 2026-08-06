@@ -923,6 +923,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>기존 도형과 일치하는 항목 억제</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>AI 지원 후보가 기존 도형과 일치하면 새 도형을 만드는 대신 해당 도형을 강조 표시합니다.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>설정</translation>
     </message>

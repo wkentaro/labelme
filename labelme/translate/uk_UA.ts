@@ -926,6 +926,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Придушувати збіги з наявними фігурами</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Якщо кандидат Допомоги ШІ збігається з наявною фігурою, ця фігура виділяється замість створення нової фігури.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Параметри</translation>
     </message>

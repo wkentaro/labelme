@@ -929,6 +929,14 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Sopprimi le corrispondenze con forme esistenti</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Quando un candidato dell&apos;Assistenza IA corrisponde a una forma esistente, tale forma viene evidenziata invece di creare una nuova forma.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Impostazioni</translation>
     </message>
