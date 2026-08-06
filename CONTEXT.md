@@ -84,6 +84,10 @@ _Avoid_: preferences (only the historical menu label), config (that is the file,
 A UI element bound to a Setting that displays and edits its value: a checkable menu/toolbar action, an inline dock control, or a widget in the Settings dialog. Inline controls are reserved for Settings toggled frequently or meaningful only in context; the Settings dialog is the comprehensive home that exposes every Setting. Multiple Setting Controls for one Setting stay in sync through a single apply path.
 _Avoid_: toggle (only one kind), widget, knob.
 
+**Preview Setting**:
+A shipped Setting offered for early use while its interaction contract or presentation may still change. It meets normal data-safety and stability requirements and graduates after one stable release cycle with no known contract defects.
+_Avoid_: beta feature, experimental option, beta setting.
+
 **Config File**:
 The on-disk YAML where Settings are persisted as sparse Overrides on top of the Default Config. Defaults to `~/.labelmerc`, but can be relocated, e.g. a `labelmerc` file beside the executable in standalone builds, or any path passed to `--config`. The file is called "config"; the values it carries are Settings.
 _Avoid_: settings file, rc file, labelmerc.
