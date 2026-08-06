@@ -17,3 +17,7 @@ Five canonical triage roles map 1:1 to label strings of the same name (`needs-tr
 ### Domain docs
 
 Single-context layout: `CONTEXT.md` and `docs/adr/` at the repo root (created lazily by `/grill-with-docs`). See `docs/agents/domain.md`.
+
+### AI Assist
+
+Treat AI Assist Setting Controls as proactive guidance. Enforce Prompt Compatibility at runtime before model download or inference, and reject an incompatible prompt without changing the model Setting.

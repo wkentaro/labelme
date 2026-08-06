@@ -1107,6 +1107,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_failed,
             Qt.ConnectionType.QueuedConnection,
         )
+        canvas.point_prompt_rejected.connect(self._on_point_prompt_rejected)
         canvas.degenerate_shape_rejected.connect(
             lambda: self.show_status_message(
                 self.tr("Shape had no area; nothing created."), 5000
@@ -1463,19 +1464,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _switch_canvas_mode(
         self, edit: bool = True, create_mode: str | None = None
     ) -> None:
-        if create_mode == "ai_points_to_shape":
-            model_name = self._canvas_widgets.canvas.get_ai_model_name()
-            if not _ai_models.supports_point_prompts(model_name=model_name):
-                QtWidgets.QMessageBox.warning(
-                    self,
-                    self.tr("AI-Points Unavailable"),
-                    self.tr(
-                        "%s does not support point prompts.\n"
-                        "Please select a different model or use AI-Box mode."
-                    )
-                    % model_name,
-                )
-                return
         self._canvas_widgets.canvas.set_editing(edit)
         if create_mode is not None:
             self._canvas_widgets.canvas.create_mode = create_mode
@@ -1904,6 +1892,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_inference_failed(self, message: str) -> None:
         self.show_status_message(self.tr("AI inference failed: %s") % message, 10000)
+
+    def _on_point_prompt_rejected(self, model_name: str) -> None:
+        option = _ai_models.find_ai_assist_model_option(model_name=model_name)
+        assert option is not None
+        QtWidgets.QMessageBox.warning(
+            self,
+            self.tr("AI-Points Unavailable"),
+            self.tr(
+                "%s does not support point prompts.\n"
+                "Please select a different model or use AI-Box mode."
+            )
+            % option.display_name,
+        )
 
     def _on_scroll_request(self, delta: int, orientation: Qt.Orientation) -> None:
         units = -delta * 0.1  # natural scroll
