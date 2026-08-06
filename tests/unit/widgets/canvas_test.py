@@ -398,6 +398,135 @@ def test_finalize_paints_new_shape_before_notifying(
     assert counts_when_notified == [1]
 
 
+@dataclasses.dataclass
+class _AiPointsTestHarness:
+    canvas: Canvas
+    downloads: list[str]
+    rejected_models: list[str]
+
+
+@pytest.fixture()
+def ai_points_harness(
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+) -> _AiPointsTestHarness:
+    downloads: list[str] = []
+    rejected_models: list[str] = []
+
+    def _download_ai_model(*, model_name: str, parent: Canvas) -> bool:
+        del parent
+        downloads.append(model_name)
+        return True
+
+    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", _download_ai_model)
+    canvas.point_prompt_rejected.connect(rejected_models.append)
+    canvas.resize(_WIDTH, _HEIGHT)
+    canvas.set_editing(False)
+    canvas.create_mode = "ai_points_to_shape"
+    with qtbot.waitExposed(canvas):
+        canvas.show()
+    return _AiPointsTestHarness(
+        canvas=canvas,
+        downloads=downloads,
+        rejected_models=rejected_models,
+    )
+
+
+@pytest.mark.gui
+def test_ai_points_rejects_incompatible_model_before_download(
+    ai_points_harness: _AiPointsTestHarness,
+    qtbot: QtBot,
+) -> None:
+    canvas = ai_points_harness.canvas
+    canvas.set_ai_model_name("sam3:latest")
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+
+    assert ai_points_harness.rejected_models == ["sam3:latest"]
+    assert ai_points_harness.downloads == []
+    assert canvas._current is None
+
+
+@pytest.mark.gui
+def test_ai_points_rejects_incompatible_model_after_draft_started(
+    ai_points_harness: _AiPointsTestHarness,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canvas = ai_points_harness.canvas
+    proposal_model_names: list[str] = []
+
+    def _propose_ai_shapes(**_: object) -> list[Shape]:
+        proposal_model_names.append(canvas.get_ai_model_name())
+        return []
+
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", _propose_ai_shapes)
+    canvas.point_prompt_rejected.connect(lambda _: canvas.repaint())
+    canvas.set_ai_model_name("sam2:latest")
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    draft_before_rejection = canvas._current
+    assert draft_before_rejection is not None
+    canvas.set_ai_model_name("sam3:latest")
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+
+    assert ai_points_harness.rejected_models == ["sam3:latest"]
+    assert ai_points_harness.downloads == ["sam2:latest"]
+    assert "sam3:latest" not in proposal_model_names
+    assert canvas._current == draft_before_rejection
+
+
+@pytest.mark.gui
+def test_ai_points_rejects_incompatible_model_on_finalize(
+    ai_points_harness: _AiPointsTestHarness,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canvas = ai_points_harness.canvas
+    proposal_model_names: list[str] = []
+    inference_failures: list[str] = []
+
+    def _propose_ai_shapes(**_: object) -> list[Shape]:
+        proposal_model_names.append(canvas.get_ai_model_name())
+        return []
+
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", _propose_ai_shapes)
+    canvas.point_prompt_rejected.connect(lambda _: canvas.repaint())
+    canvas.inference_failed.connect(inference_failures.append)
+    canvas.set_ai_model_name("sam2:latest")
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    draft_before_rejection = canvas._current
+    assert draft_before_rejection is not None
+    canvas.set_ai_model_name("sam3:latest")
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Return)
+
+    assert ai_points_harness.rejected_models == ["sam3:latest"]
+    assert ai_points_harness.downloads == ["sam2:latest"]
+    assert "sam3:latest" not in proposal_model_names
+    assert inference_failures == []
+    assert canvas._current == draft_before_rejection
+
+
+@pytest.mark.gui
+def test_ai_points_ignores_incompatible_first_click_outside_image(
+    ai_points_harness: _AiPointsTestHarness,
+    qtbot: QtBot,
+) -> None:
+    canvas = ai_points_harness.canvas
+    canvas.resize(_WIDTH * 2, _HEIGHT * 2)
+    canvas.set_ai_model_name("sam3:latest")
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(1, 1))
+
+    assert ai_points_harness.rejected_models == []
+    assert ai_points_harness.downloads == []
+    assert canvas._current is None
+
+
 @pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_reports_inference_error_and_cancels(
