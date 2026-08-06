@@ -35,12 +35,16 @@ A set of Shapes sharing a common `group_id`, marking them as belonging together.
 _Avoid_: instance (it is only one application of grouping), cluster.
 
 **AI Assist**:
-Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt is answered by exactly one candidate Shape — the direct answer to the click. A SAM3 box prompt is a Sweep.
+Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A SAM3 box prompt is a Sweep. Candidates become new Shapes unless Existing Shape Suppression is enabled.
 _Avoid_: AI annotation (too vague — covers AI Text Prompt too), auto-annotation, automation.
 
 **Sweep**:
-An AI Assist box prompt whose model (SAM3) detects every matching object in and around the boxed region, proposing many candidate Shapes from one user action. Sweep proposals that match already-annotated regions are dropped as duplicates rather than re-proposed; a point prompt's direct answer is never treated as a duplicate.
+An AI Assist box prompt whose model (SAM3) detects every matching object in and around the boxed region, proposing many candidate Shapes from one user action. Each candidate becomes a new Shape unless Existing Shape Suppression is enabled.
 _Avoid_: propagation (model-internal term), batch detection.
+
+**Existing Shape Suppression**:
+An optional AI Assist Setting for both point prompts and Sweeps. A candidate that matches an existing Shape highlights that Shape instead of creating a new Shape; unmatched candidates remain new Shapes. The Setting is disabled by default.
+_Avoid_: duplicate suppression, overlap suppression.
 
 **AI Text Prompt**:
 Bulk, text-driven Shape proposal: the user types a class name and an open-vocabulary detector (YOLO-world, SAM3) returns Shapes for every matching instance in the Image. One user action produces many candidate Shapes.

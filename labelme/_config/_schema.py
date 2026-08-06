@@ -243,4 +243,21 @@ SETTINGS: Final[tuple[Setting, ...]] = (
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam3")),
         ),
     ),
+    Setting(
+        key_path=("ai", "suppress_existing_shape_matches"),
+        group="AI assist",
+        label=cast(
+            str,
+            QT_TRANSLATE_NOOP("SettingsDialog", "Suppress existing Shape matches"),
+        ),
+        kind="bool",
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "When an AI Assist candidate matches an existing Shape, highlight "
+                "that Shape instead of creating a new Shape.",
+            ),
+        ),
+    ),
 )

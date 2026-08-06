@@ -6,10 +6,8 @@ import numpy as np
 import pytest
 
 from labelme._automation import Detection
+from labelme._automation._suppression import match_detections_to_existing_shapes
 from labelme._automation._suppression import suppress_detections_greedy
-from labelme._automation._suppression import (
-    suppress_detections_overlapping_existing_shapes,
-)
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 
@@ -195,12 +193,13 @@ def test_overlapping_drops_polygon_detection_overlapping_existing_polygon() -> N
     detection_mask = np.ones((11, 11), dtype=bool)
     detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=detection_mask)
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[detection],
         existing_shapes=[existing],
     )
 
-    assert kept == []
+    assert result.new_detections == []
+    assert result.matching_shapes == [existing]
 
 
 def test_overlapping_keeps_when_iou_below_threshold() -> None:
@@ -210,12 +209,13 @@ def test_overlapping_keeps_when_iou_below_threshold() -> None:
 
     detection = Detection(bbox=(8.0, 8.0, 18.0, 18.0))
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[detection],
         existing_shapes=[existing],
     )
 
-    assert kept == [detection]
+    assert result.new_detections == [detection]
+    assert result.matching_shapes == []
 
 
 def test_overlapping_uses_mask_iou_not_bbox_iou() -> None:
@@ -230,12 +230,13 @@ def test_overlapping_uses_mask_iou_not_bbox_iou() -> None:
     detection_mask = rows + cols > 10
     detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=detection_mask)
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[detection],
         existing_shapes=[existing],
     )
 
-    assert kept == [detection]
+    assert result.new_detections == [detection]
+    assert result.matching_shapes == []
 
 
 def test_overlapping_empty_detections() -> None:
@@ -243,23 +244,25 @@ def test_overlapping_empty_detections() -> None:
         shape_type="rectangle", points=np.array([(0, 0), (10, 10)], dtype=np.float64)
     )
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[],
         existing_shapes=[existing],
     )
 
-    assert kept == []
+    assert result.new_detections == []
+    assert result.matching_shapes == []
 
 
 def test_overlapping_no_existing_shapes_passes_through() -> None:
     detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0))
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[detection],
         existing_shapes=[],
     )
 
-    assert kept == [detection]
+    assert result.new_detections == [detection]
+    assert result.matching_shapes == []
 
 
 def test_overlapping_passes_through_detection_without_bbox() -> None:
@@ -268,12 +271,13 @@ def test_overlapping_passes_through_detection_without_bbox() -> None:
     )
     no_bbox = Detection(mask=np.ones((11, 11), dtype=bool))
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[no_bbox],
         existing_shapes=[existing],
     )
 
-    assert kept == [no_bbox]
+    assert result.new_detections == [no_bbox]
+    assert result.matching_shapes == []
 
 
 def test_overlapping_drops_detection_engulfing_smaller_existing_shape() -> None:
@@ -289,12 +293,13 @@ def test_overlapping_drops_detection_engulfing_smaller_existing_shape() -> None:
         mask=np.ones((21, 21), dtype=bool),
     )
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[detection],
         existing_shapes=[existing],
     )
 
-    assert kept == []
+    assert result.new_detections == []
+    assert result.matching_shapes == [existing]
 
 
 def test_overlapping_uses_existing_mask_shape_geometry() -> None:
@@ -311,12 +316,13 @@ def test_overlapping_uses_existing_mask_shape_geometry() -> None:
     lower_left = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=(rows + cols <= 10).copy())
     upper_right = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=rows + cols > 10)
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[lower_left, upper_right],
         existing_shapes=[existing],
     )
 
-    assert kept == [upper_right]
+    assert result.new_detections == [upper_right]
+    assert result.matching_shapes == [existing]
 
 
 def test_overlapping_rasterizes_existing_circle_as_a_disk() -> None:
@@ -331,12 +337,13 @@ def test_overlapping_rasterizes_existing_circle_as_a_disk() -> None:
     center = Detection(bbox=(8.0, 8.0, 12.0, 12.0), mask=np.ones((5, 5), dtype=bool))
     corner = Detection(bbox=(0.0, 0.0, 2.0, 2.0), mask=np.ones((3, 3), dtype=bool))
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[center, corner],
         existing_shapes=[existing],
     )
 
-    assert kept == [corner]
+    assert result.new_detections == [corner]
+    assert result.matching_shapes == [existing]
 
 
 @pytest.mark.parametrize(
@@ -361,9 +368,10 @@ def test_overlapping_skips_existing_shape_without_bbox_interpretation(
         bbox=(0.0, 0.0, 10.0, 10.0), mask=np.ones((11, 11), dtype=bool)
     )
 
-    kept = suppress_detections_overlapping_existing_shapes(
+    result = match_detections_to_existing_shapes(
         detections=[detection],
         existing_shapes=[existing],
     )
 
-    assert kept == [detection]
+    assert result.new_detections == [detection]
+    assert result.matching_shapes == []

@@ -75,6 +75,24 @@ def test_startup_syncs_first_ai_model_without_rewriting_config(
 
 
 @pytest.mark.gui
+def test_startup_applies_existing_shape_suppression_override(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
+) -> None:
+    original_config = "ai:\n  suppress_existing_shape_matches: true\n"
+    editable_config_file.write_text(original_config)
+
+    win = main_win(config_file=editable_config_file)
+
+    assert win._canvas_widgets.canvas._ai_suppress_existing_shape_matches is True
+    assert editable_config_file.read_text() == original_config
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_settings_dialog_opens_when_editable(
     main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -137,6 +155,34 @@ def test_show_labels_toggle_applies_to_canvas(
     assert win._config["shape"]["show_labels"] is True
     assert canvas._show_labels is True
     assert safe_load(editable_config_file.read_text())["shape"]["show_labels"] is True
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_existing_shape_suppression_toggle_applies_to_canvas(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    canvas = win._canvas_widgets.canvas
+    assert canvas._ai_suppress_existing_shape_matches is False
+
+    dialog = _open_settings_dialog(win=win)
+    checkbox = dialog._editors[("ai", "suppress_existing_shape_matches")]
+    assert isinstance(checkbox, QtWidgets.QCheckBox)
+    checkbox.setChecked(True)
+
+    assert win._config["ai"]["suppress_existing_shape_matches"] is True
+    assert canvas._ai_suppress_existing_shape_matches is True
+    assert (
+        safe_load(editable_config_file.read_text())["ai"][
+            "suppress_existing_shape_matches"
+        ]
+        is True
+    )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

@@ -76,6 +76,7 @@ class ShapeRenderContext:
     highlight: VertexHighlight | None
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
+    line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
 
 
 def render_shape(
@@ -88,6 +89,7 @@ def render_shape(
     color = palette.select_line if context.selected else palette.line
     pen = QtGui.QPen(color)
     pen.setWidth(PEN_WIDTH)
+    pen.setStyle(context.line_style)
     painter.setPen(pen)
 
     if shape.shape_type == "mask" and shape.mask is not None:

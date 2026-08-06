@@ -1065,6 +1065,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         canvas.set_point_size(self._config["shape"]["point_size"])
         canvas.set_show_labels(self._config["shape"]["show_labels"])
+        canvas.set_ai_existing_shape_suppression(
+            enabled=self._config["ai"]["suppress_existing_shape_matches"]
+        )
         canvas.set_draft_palette(
             Palette(
                 line=QtGui.QColor(*self._config["shape"]["line_color"]),
@@ -2609,6 +2612,10 @@ class MainWindow(QtWidgets.QMainWindow):
         elif key_path == ("ai", "default"):
             self._ai_annotation.set_current_model(
                 model_display=self._config["ai"]["default"]
+            )
+        elif key_path == ("ai", "suppress_existing_shape_matches"):
+            self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
+                enabled=self._config["ai"]["suppress_existing_shape_matches"]
             )
 
     def _read_flag_dock_states(self) -> dict[str, bool]:

@@ -22,6 +22,18 @@ class _LocalMask:
     area: int
 
 
+@dataclass(frozen=True)
+class ExistingShapeMatchResult:
+    new_detections: list[Detection]
+    matching_shapes: list[Shape]
+
+
+@dataclass(frozen=True)
+class _MaskOverlap:
+    iou: float
+    containment: float
+
+
 def suppress_detections_greedy(
     *,
     detections: list[Detection],
@@ -55,9 +67,8 @@ def suppress_detections_greedy(
         new_local = _local_mask_from_detection(detection=detection)
         peers = kept_masks_by_label.setdefault(detection.label, [])
         if any(
-            _is_redundant_pair(
-                new=new_local,
-                peer=peer,
+            _is_redundant_overlap(
+                overlap=_compute_mask_overlap(a=new_local, b=peer),
                 iou_threshold=iou_threshold,
             )
             for peer in peers
@@ -68,61 +79,70 @@ def suppress_detections_greedy(
     return kept
 
 
-def suppress_detections_overlapping_existing_shapes(
+def match_detections_to_existing_shapes(
     *,
     detections: list[Detection],
     existing_shapes: list[Shape],
-) -> list[Detection]:
+) -> ExistingShapeMatchResult:
     OVERLAP_IOU_THRESHOLD: Final[float] = 0.5
     if not detections:
-        return []
-    existing_masks = [
-        local_mask
-        for local_mask in (
-            _local_mask_from_shape(shape=shape) for shape in existing_shapes
-        )
-        if local_mask is not None
+        return ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
+    existing_shape_masks = [
+        (shape, local_mask)
+        for shape in existing_shapes
+        if (local_mask := _local_mask_from_shape(shape=shape)) is not None
     ]
-    if not existing_masks:
-        return list(detections)
+    if not existing_shape_masks:
+        return ExistingShapeMatchResult(
+            new_detections=detections[:],
+            matching_shapes=[],
+        )
 
     kept: list[Detection] = []
+    matching_shapes: list[Shape] = []
     for detection in detections:
         if detection.bbox is None:
             kept.append(detection)
             continue
         new_local = _local_mask_from_detection(detection=detection)
-        if any(
-            _is_redundant_pair(
-                new=new_local,
-                peer=existing,
+        matches: list[tuple[Shape, _MaskOverlap]] = []
+        for shape, existing_mask in existing_shape_masks:
+            overlap = _compute_mask_overlap(a=new_local, b=existing_mask)
+            if _is_redundant_overlap(
+                overlap=overlap,
                 iou_threshold=OVERLAP_IOU_THRESHOLD,
-            )
-            for existing in existing_masks
-        ):
+            ):
+                matches.append((shape, overlap))
+        if not matches:
+            kept.append(detection)
             continue
-        kept.append(detection)
-    return kept
+        matching_shape, _ = max(matches, key=lambda match: match[1].iou)
+        if all(shape is not matching_shape for shape in matching_shapes):
+            matching_shapes.append(matching_shape)
+    return ExistingShapeMatchResult(
+        new_detections=kept,
+        matching_shapes=matching_shapes,
+    )
 
 
-def _is_redundant_pair(
+def _is_redundant_overlap(
     *,
-    new: _LocalMask,
-    peer: _LocalMask,
+    overlap: _MaskOverlap,
     iou_threshold: float,
 ) -> bool:
     # Containment (intersection-over-smaller) catches nested masks whose IoU
     # is too low for the IoU check (e.g. tree-cluster swallowing a single tree).
     CONTAINMENT_THRESHOLD: Final[float] = 0.85
+    return overlap.iou >= iou_threshold or overlap.containment >= CONTAINMENT_THRESHOLD
 
-    intersection = _compute_mask_intersection_area(a=new, b=peer)
+
+def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
+    intersection = _compute_mask_intersection_area(a=a, b=b)
     if intersection == 0:
-        return False
-    iou = intersection / (new.area + peer.area - intersection)
-    if iou >= iou_threshold:
-        return True
-    containment = intersection / min(new.area, peer.area)
-    return containment >= CONTAINMENT_THRESHOLD
+        return _MaskOverlap(iou=0.0, containment=0.0)
+    iou = intersection / (a.area + b.area - intersection)
+    containment = intersection / min(a.area, b.area)
+    return _MaskOverlap(iou=iou, containment=containment)
 
 
 def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:

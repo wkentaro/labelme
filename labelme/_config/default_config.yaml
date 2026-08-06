@@ -37,6 +37,7 @@ shape:
   show_labels: false
 ai:
   default: Sam2 (balanced)
+  suppress_existing_shape_matches: false
 # main
 flag_dock:
   show: true

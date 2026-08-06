@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import math
+from collections.abc import Callable
 from typing import Final
 from unittest.mock import Mock
 
@@ -14,6 +15,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets.canvas import Canvas
@@ -319,11 +321,14 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
     monkeypatch: pytest.MonkeyPatch,
     create_mode: str,
 ) -> None:
-    # AI-Box / AI-Points inference can return no shapes (e.g. dedup suppresses
-    # an overlapping detection). The empty branch of _finalize must reset the
-    # in-progress drawing state so the edit-mode button becomes usable again
-    # and notify the user that inference produced nothing.
-    monkeypatch.setattr(canvas, "_propose_ai_shapes", lambda **_: [])
+    monkeypatch.setattr(
+        canvas,
+        "_propose_ai_shapes",
+        lambda **_: AiAssistProposal(
+            new_shapes=[],
+            matching_existing_shapes=[],
+        ),
+    )
     canvas.create_mode = create_mode
     # ai_box_to_shape normalizes the two bbox corners before delegating to the
     # (monkeypatched) inference call, so the in-progress shape needs 2 points.
@@ -348,6 +353,236 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
 
 
 @pytest.mark.gui
+def test_existing_shape_suppression_is_disabled_by_default(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    existing = _make_rectangle(label="existing")
+    inferred = Shape(
+        shape_type="rectangle",
+        points=np.array([(20, 20), (30, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes([existing])
+
+    def propose_shapes(
+        *, existing_shapes: list[Shape], **_: object
+    ) -> AiAssistProposal:
+        if existing_shapes:
+            return AiAssistProposal(
+                new_shapes=[],
+                matching_existing_shapes=[existing],
+            )
+        return AiAssistProposal(
+            new_shapes=[inferred],
+            matching_existing_shapes=[],
+        )
+
+    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
+    canvas.create_mode = "ai_box_to_shape"
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+
+    canvas._finalize()
+
+    assert canvas.shapes == [existing, inferred]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "change_setting",
+    [
+        pytest.param(
+            lambda canvas: canvas.set_ai_model_name("efficientsam:10m"),
+            id="model",
+        ),
+        pytest.param(
+            lambda canvas: canvas.set_ai_output_format("rectangle"),
+            id="output-format",
+        ),
+        pytest.param(
+            lambda canvas: canvas.set_ai_existing_shape_suppression(enabled=True),
+            id="existing-shape-suppression",
+        ),
+    ],
+)
+def test_changing_ai_assist_setting_clears_highlights(
+    canvas: Canvas,
+    change_setting: Callable[[Canvas], None],
+) -> None:
+    existing = _make_rectangle(label="existing")
+    canvas._set_ai_existing_shape_highlights(shapes=[existing])
+
+    change_setting(canvas)
+
+    assert canvas._ai_existing_shape_highlights == []
+
+
+@pytest.mark.gui
+def test_delete_shape_clears_highlights(canvas: Canvas) -> None:
+    existing = _make_rectangle(label="existing")
+    canvas.load_shapes([existing])
+    canvas._set_ai_existing_shape_highlights(shapes=[existing])
+
+    canvas.delete_shape(existing)
+
+    assert canvas._ai_existing_shape_highlights == []
+
+
+@pytest.mark.gui
+def test_delete_selected_clears_highlights(canvas: Canvas) -> None:
+    existing = _make_rectangle(label="existing")
+    canvas.load_shapes([existing])
+    canvas.selected_shapes.append(existing)
+    canvas._set_ai_existing_shape_highlights(shapes=[existing])
+
+    canvas.delete_selected()
+
+    assert canvas._ai_existing_shape_highlights == []
+
+
+@dataclasses.dataclass
+class _AiExistingShapeHighlightHarness:
+    canvas: Canvas
+    existing: Shape
+    new_shape_emissions: list[None]
+    no_shapes_emissions: list[None]
+
+
+@pytest.fixture()
+def ai_existing_shape_highlight_harness(
+    canvas: Canvas,
+    qtbot: QtBot,
+) -> _AiExistingShapeHighlightHarness:
+    canvas.pixmap.fill(Qt.GlobalColor.black)
+    existing = Shape(
+        label="existing",
+        shape_type="rectangle",
+        points=np.array([[20, 10], [60, 40]], dtype=np.float64),
+        visible=False,
+    )
+    canvas.load_shapes([existing])
+    canvas.set_ai_existing_shape_suppression(enabled=True)
+    canvas.create_mode = "ai_box_to_shape"
+    canvas.set_editing(False)
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+    new_shape_emissions: list[None] = []
+    no_shapes_emissions: list[None] = []
+    canvas.new_shape.connect(lambda: new_shape_emissions.append(None))
+    canvas.inference_produced_no_shapes.connect(
+        lambda: no_shapes_emissions.append(None)
+    )
+    canvas.resize(_WIDTH, _HEIGHT)
+    with qtbot.waitExposed(canvas):
+        canvas.show()
+    return _AiExistingShapeHighlightHarness(
+        canvas=canvas,
+        existing=existing,
+        new_shape_emissions=new_shape_emissions,
+        no_shapes_emissions=no_shapes_emissions,
+    )
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("clear_action", ["edit", "pointer", "wheel", "key"])
+def test_finalize_existing_only_inference_highlights_hidden_shape(
+    ai_existing_shape_highlight_harness: _AiExistingShapeHighlightHarness,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    clear_action: str,
+) -> None:
+    harness = ai_existing_shape_highlight_harness
+    canvas = harness.canvas
+
+    def propose_shapes(
+        *, existing_shapes: list[Shape], **_: object
+    ) -> AiAssistProposal:
+        assert existing_shapes == [harness.existing]
+        return AiAssistProposal(
+            new_shapes=[],
+            matching_existing_shapes=[harness.existing],
+        )
+
+    monkeypatch.setattr(
+        canvas._ai_assist_session,
+        "propose_shapes",
+        propose_shapes,
+    )
+
+    canvas._finalize()
+
+    assert canvas.shapes == [harness.existing]
+    assert canvas._current is None
+    assert harness.new_shape_emissions == []
+    assert harness.no_shapes_emissions == []
+    highlight = canvas.grab().toImage().pixelColor(30, 20)
+    assert highlight.red() > highlight.green() > highlight.blue()
+
+    if clear_action == "edit":
+        canvas.set_editing()
+    elif clear_action == "pointer":
+        qtbot.mouseClick(
+            canvas,
+            Qt.MouseButton.RightButton,
+            pos=QtCore.QPoint(80, 20),
+        )
+    elif clear_action == "key":
+        qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    else:
+        canvas.wheelEvent(
+            QtGui.QWheelEvent(
+                QPointF(80, 20),
+                QPointF(80, 20),
+                QtCore.QPoint(),
+                QtCore.QPoint(0, 120),
+                Qt.MouseButton.NoButton,
+                Qt.KeyboardModifier.NoModifier,
+                Qt.ScrollPhase.NoScrollPhase,
+                False,
+            )
+        )
+
+    cleared = canvas.grab().toImage().pixelColor(30, 20)
+    assert cleared == QtGui.QColor(Qt.GlobalColor.black)
+
+
+@pytest.mark.gui
+def test_finalize_mixed_inference_adds_new_and_highlights_existing(
+    ai_existing_shape_highlight_harness: _AiExistingShapeHighlightHarness,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    harness = ai_existing_shape_highlight_harness
+    canvas = harness.canvas
+    inferred = Shape(
+        shape_type="rectangle",
+        points=np.array([[70, 20], [80, 30]], dtype=np.float64),
+    )
+    monkeypatch.setattr(
+        canvas,
+        "_propose_ai_shapes",
+        lambda **_: AiAssistProposal(
+            new_shapes=[inferred],
+            matching_existing_shapes=[harness.existing],
+        ),
+    )
+
+    canvas._finalize()
+
+    assert canvas.shapes == [harness.existing, inferred]
+    assert harness.new_shape_emissions == [None]
+    assert harness.no_shapes_emissions == []
+    highlight = canvas.grab().toImage().pixelColor(30, 20)
+    assert highlight.red() > highlight.green() > highlight.blue()
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize(
     "create_mode", ["point", "ai_box_to_shape", "ai_points_to_shape"]
 )
@@ -365,7 +600,14 @@ def test_finalize_paints_new_shape_before_notifying(
         points=np.array([(1, 1), (9, 1), (9, 9)], dtype=np.float64),
         closed=True,
     )
-    monkeypatch.setattr(canvas, "_propose_ai_shapes", lambda **_: [inferred])
+    monkeypatch.setattr(
+        canvas,
+        "_propose_ai_shapes",
+        lambda **_: AiAssistProposal(
+            new_shapes=[inferred],
+            matching_existing_shapes=[],
+        ),
+    )
     with qtbot.waitExposed(canvas):
         canvas.show()
 
@@ -570,10 +812,10 @@ def test_points_preview_hides_failed_and_empty_predictions(
     # re-arms the report so a fresh failure surfaces again.
     behavior = {"fail": True}
 
-    def _maybe_raise(**_: object) -> list[Shape]:
+    def _maybe_raise(**_: object) -> AiAssistProposal:
         if behavior["fail"]:
             raise RuntimeError("boom")
-        return []
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
 
     monkeypatch.setattr(canvas, "_propose_ai_shapes", _maybe_raise)
     canvas.create_mode = "ai_points_to_shape"

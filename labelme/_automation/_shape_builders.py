@@ -22,6 +22,7 @@ class Detection:
     mask: NDArray[np.bool_] | None = None
     label: str | None = None
     description: str | None = None
+    score: float = 0.0
 
 
 def _build_shape(

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import dataclasses
+
 import numpy as np
 import osam
 from loguru import logger
@@ -10,10 +12,16 @@ from .._shape import Shape
 from ._osam_session import OsamSession
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
+from ._suppression import match_detections_to_existing_shapes
 from ._suppression import suppress_detections_greedy
-from ._suppression import suppress_detections_overlapping_existing_shapes
 from ._types import AiOutputFormat
 from ._types import AiPromptKind
+
+
+@dataclasses.dataclass(frozen=True)
+class AiAssistProposal:
+    new_shapes: list[Shape]
+    matching_existing_shapes: list[Shape]
 
 
 class AiAssistSession:
@@ -44,7 +52,7 @@ class AiAssistSession:
         points: NDArray[np.floating],
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
-    ) -> list[Shape]:
+    ) -> AiAssistProposal:
         if prompt_kind == "points" and not supports_point_prompts(
             model_name=self.model_name
         ):
@@ -58,18 +66,65 @@ class AiAssistSession:
         # iou_threshold is hardcoded because the AI Assist flow has no
         # user-facing IoU control (unlike the AI Text Prompt flow); 0.5 matches
         # the AI Text Prompt widget default.
+        detections = _detections_from_annotations(response.annotations)
+        if prompt_kind == "points" and detections:
+            detections = [
+                max(
+                    detections,
+                    key=lambda detection: (
+                        _count_satisfied_prompt_points(
+                            detection=detection,
+                            points=points,
+                            point_labels=point_labels,
+                        ),
+                        detection.score,
+                    ),
+                )
+            ]
         detections = suppress_detections_greedy(
-            detections=_detections_from_annotations(response.annotations),
+            detections=detections,
             iou_threshold=0.5,
         )
-        detections = suppress_detections_overlapping_existing_shapes(
+        matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
         )
-        return shapes_from_detections(
-            detections=detections,
-            shape_type=self.output_format,
+        return AiAssistProposal(
+            new_shapes=shapes_from_detections(
+                detections=matches.new_detections,
+                shape_type=self.output_format,
+            ),
+            matching_existing_shapes=matches.matching_shapes,
         )
+
+
+def _count_satisfied_prompt_points(
+    *,
+    detection: Detection,
+    points: NDArray[np.floating],
+    point_labels: NDArray[np.intp],
+) -> int:
+    return sum(
+        _is_point_inside_detection(detection=detection, point=point)
+        == (point_label == 1)
+        for point, point_label in zip(points, point_labels, strict=True)
+    )
+
+
+def _is_point_inside_detection(
+    *,
+    detection: Detection,
+    point: NDArray[np.floating],
+) -> bool:
+    if detection.bbox is None:
+        return False
+    xmin, ymin, xmax, ymax = (int(round(coordinate)) for coordinate in detection.bbox)
+    x, y = (int(round(coordinate)) for coordinate in point)
+    if not (xmin <= x <= xmax and ymin <= y <= ymax):
+        return False
+    if detection.mask is None:
+        return True
+    return bool(detection.mask[y - ymin, x - xmin])
 
 
 def _detections_from_annotations(
@@ -89,5 +144,11 @@ def _detections_from_annotations(
         if annotation.bounding_box is not None:
             bb = annotation.bounding_box
             bbox = (bb.xmin, bb.ymin, bb.xmax, bb.ymax)
-        detections.append(Detection(bbox=bbox, mask=annotation.mask))
+        detections.append(
+            Detection(
+                bbox=bbox,
+                mask=annotation.mask,
+                score=annotation.score if annotation.score is not None else 0.0,
+            )
+        )
     return detections
