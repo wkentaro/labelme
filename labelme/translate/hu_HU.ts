@@ -929,6 +929,14 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Meglévő alakzatokkal való egyezések elnyomása</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Ha az AI-segítség egyik jelöltje megegyezik egy meglévő alakzattal, a program új alakzat létrehozása helyett kiemeli azt az alakzatot.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Beállítások</translation>
     </message>

@@ -923,6 +923,14 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Chặn các kết quả trùng với hình dạng hiện có</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Khi một kết quả của Hỗ trợ AI trùng với hình dạng hiện có, hình dạng đó sẽ được làm nổi bật thay vì tạo hình dạng mới.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Cài đặt</translation>
     </message>

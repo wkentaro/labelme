@@ -926,6 +926,14 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Mevcut şekillerle eşleşenleri bastır</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Yapay zeka yardımı adayı mevcut bir şekille eşleştiğinde, yeni bir şekil oluşturmak yerine o şekil vurgulanır.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>

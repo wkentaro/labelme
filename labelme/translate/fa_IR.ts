@@ -923,6 +923,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>نادیده گرفتن موارد منطبق با شکل‌های موجود</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>هنگامی که یک پیشنهاد دستیار هوش مصنوعی با یک شکل موجود منطبق باشد، به جای ایجاد شکل جدید همان شکل برجسته می‌شود.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>تنظیمات</translation>
     </message>

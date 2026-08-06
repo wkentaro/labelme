@@ -925,6 +925,14 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Καταστολή αντιστοιχιών με υπάρχοντα σχήματα</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Όταν ένα υποψήφιο αποτέλεσμα της Βοήθειας AI αντιστοιχεί σε υπάρχον σχήμα, επισημαίνεται εκείνο το σχήμα αντί να δημιουργηθεί νέο σχήμα.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
     </message>

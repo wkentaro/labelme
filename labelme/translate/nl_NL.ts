@@ -923,6 +923,14 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Suppress existing Shape matches</source>
+        <translation>Overeenkomsten met bestaande vormen onderdrukken</translation>
+    </message>
+    <message>
+        <source>When an AI Assist candidate matches an existing Shape, highlight that Shape instead of creating a new Shape.</source>
+        <translation>Wanneer een kandidaat van de AI-assistent overeenkomt met een bestaande vorm, wordt die vorm gemarkeerd in plaats van een nieuwe vorm te maken.</translation>
+    </message>
+    <message>
         <source>Settings</source>
         <translation>Instellingen</translation>
     </message>
