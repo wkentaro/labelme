@@ -23,7 +23,7 @@ class _LocalMask:
 
 
 @dataclass(frozen=True)
-class ExistingShapeMatchResult:
+class _ExistingShapeMatchResult:
     new_detections: list[Detection]
     matching_shapes: list[Shape]
 
@@ -83,17 +83,17 @@ def match_detections_to_existing_shapes(
     *,
     detections: list[Detection],
     existing_shapes: list[Shape],
-) -> ExistingShapeMatchResult:
+) -> _ExistingShapeMatchResult:
     OVERLAP_IOU_THRESHOLD: Final[float] = 0.5
     if not detections:
-        return ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
+        return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
     existing_shape_masks = [
         (shape, local_mask)
         for shape in existing_shapes
         if (local_mask := _local_mask_from_shape(shape=shape)) is not None
     ]
     if not existing_shape_masks:
-        return ExistingShapeMatchResult(
+        return _ExistingShapeMatchResult(
             new_detections=detections[:],
             matching_shapes=[],
         )
@@ -119,7 +119,7 @@ def match_detections_to_existing_shapes(
         matching_shape, _ = max(matches, key=lambda match: match[1].iou)
         if all(shape is not matching_shape for shape in matching_shapes):
             matching_shapes.append(matching_shape)
-    return ExistingShapeMatchResult(
+    return _ExistingShapeMatchResult(
         new_detections=kept,
         matching_shapes=matching_shapes,
     )
