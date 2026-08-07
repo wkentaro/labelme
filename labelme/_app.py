@@ -77,6 +77,11 @@ _AI_CREATE_MODES: tuple[str, ...] = (
     "ai_box_to_shape",
 )
 
+# Keys of the Window State store, shared by the restore, reset, and close paths.
+WINDOW_SIZE_KEY: Final[str] = "window/size"
+WINDOW_POSITION_KEY: Final[str] = "window/position"
+WINDOW_LAYOUT_KEY: Final[str] = "window/state"
+
 
 class _StatusBarWidgets(NamedTuple):
     message: QtWidgets.QLabel
@@ -1018,19 +1023,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(
             cast(
                 QtCore.QSize,
-                self._window_state.value("window/size", QtCore.QSize(900, 500)),
+                self._window_state.value(WINDOW_SIZE_KEY, QtCore.QSize(900, 500)),
             )
         )
         self.move(
             cast(
                 QtCore.QPoint,
-                self._window_state.value("window/position", QtCore.QPoint(0, 0)),
+                self._window_state.value(WINDOW_POSITION_KEY, QtCore.QPoint(0, 0)),
             )
         )
         self.restoreState(
             cast(
                 QtCore.QByteArray,
-                self._window_state.value("window/state", QtCore.QByteArray()),
+                self._window_state.value(WINDOW_LAYOUT_KEY, QtCore.QByteArray()),
             )
         )
         # Recover window position when the saved screen is no longer connected.
@@ -2242,15 +2247,16 @@ class MainWindow(QtWidgets.QMainWindow):
         return available_w / self._canvas_widgets.canvas.pixmap.width()
 
     def _reset_layout(self) -> None:
-        self._window_state.remove("window/state")
+        self._window_state.remove(WINDOW_LAYOUT_KEY)
         self.restoreState(self._default_state)
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         if not self._can_continue():
             a0.ignore()
-        self._window_state.setValue("window/size", self.size())
-        self._window_state.setValue("window/position", self.pos())
-        self._window_state.setValue("window/state", self.saveState())
+            return
+        self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
+        self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
+        self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent) -> None:
         extensions = _list_supported_image_extensions()
