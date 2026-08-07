@@ -9,6 +9,7 @@ from numpy.typing import NDArray
 
 from .._ai_models import supports_point_prompts
 from .._shape import Shape
+from ._geometry import _round_bbox_to_int
 from ._osam_session import OsamSession
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
@@ -118,7 +119,7 @@ def _is_point_inside_detection(
 ) -> bool:
     if detection.bbox is None:
         return False
-    xmin, ymin, xmax, ymax = (int(round(coordinate)) for coordinate in detection.bbox)
+    xmin, ymin, xmax, ymax = _round_bbox_to_int(bbox=detection.bbox)
     x, y = (int(round(coordinate)) for coordinate in point)
     if not (xmin <= x <= xmax and ymin <= y <= ymax):
         return False

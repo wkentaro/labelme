@@ -18,6 +18,19 @@ class Circle(NamedTuple):
     radius: float
 
 
+def _round_bbox_to_int(
+    *,
+    bbox: tuple[float, float, float, float] | NDArray[np.floating],
+) -> tuple[int, int, int, int]:
+    xmin, ymin, xmax, ymax = bbox
+    return (
+        int(round(float(xmin))),
+        int(round(float(ymin))),
+        int(round(float(xmax))),
+        int(round(float(ymax))),
+    )
+
+
 def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
     """Returns None only when a supported shape is mid-draw (too few points);
     raises ValueError for shape types that have no bbox interpretation.

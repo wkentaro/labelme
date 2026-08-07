@@ -7,10 +7,12 @@ import osam
 import pytest
 from numpy.typing import NDArray
 
+from labelme._automation import Detection
 from labelme._automation import _ai_assist
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
 from labelme._automation._ai_assist import _detections_from_annotations
+from labelme._automation._ai_assist import _is_point_inside_detection
 from labelme._shape import Shape
 
 
@@ -211,6 +213,19 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
+
+
+def test_point_inside_detection_uses_rounded_mask_origin() -> None:
+    mask = np.zeros((30, 22), dtype=bool)
+    mask[0, 0] = True
+    detection = Detection(bbox=(10.4, 20.6, 30.9, 50.1), mask=mask)
+
+    is_inside = _is_point_inside_detection(
+        detection=detection,
+        point=np.array([10.0, 21.0]),
+    )
+
+    assert is_inside is True
 
 
 def test_point_prompt_reports_best_matching_existing_shape(

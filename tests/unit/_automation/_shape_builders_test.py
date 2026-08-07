@@ -194,16 +194,16 @@ def test_shapes_from_detections_polygon_with_bbox_offsets_contour() -> None:
     np.testing.assert_allclose(offset.points, local.points + [10, 20])
 
 
-def test_shapes_from_detections_mask_uses_truncated_bbox_corners() -> None:
-    mask = np.ones((31, 21), dtype=bool)
+def test_shapes_from_detections_mask_uses_rounded_bbox_corners() -> None:
+    mask = np.ones((30, 22), dtype=bool)
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(10.4, 20.6, 30.9, 50.1), mask=mask)],
         shape_type="mask",
     )
 
     assert shape.shape_type == "mask"
-    assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((10, 20))
-    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((30, 50))
+    assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((10, 21))
+    assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((31, 50))
     assert shape.mask is not None
     assert np.array_equal(shape.mask, mask)
 
