@@ -4,6 +4,8 @@ import base64
 import io
 import json
 import math
+import os
+import tempfile
 import time
 import typing
 from dataclasses import dataclass
@@ -362,8 +364,24 @@ def write_label_file(
             if key in _RESERVED_TOP_LEVEL_KEYS:
                 raise ValueError(f"reserved key in other_data: {key!r}")
             payload[key] = value
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=2)
+
+        target = Path(filename)
+        temporary_filename: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="w",
+                encoding="utf-8",
+                dir=target.parent,
+                prefix=f"{target.name}.",
+                suffix=".tmp",
+                delete=False,
+            ) as f:
+                temporary_filename = f.name
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+            os.replace(temporary_filename, filename)
+        finally:
+            if temporary_filename is not None:
+                Path(temporary_filename).unlink(missing_ok=True)
     except (OSError, TypeError, ValueError) as e:
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
 
