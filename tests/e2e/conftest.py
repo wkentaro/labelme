@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 from PySide6 import QtGui
+from PySide6 import QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QSettings
@@ -320,3 +321,17 @@ def raw_win(
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win
+
+
+@pytest.fixture()
+def critical_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    messages: list[str] = []
+
+    def capture_critical(
+        parent: QtWidgets.QWidget, title: str, text: str
+    ) -> QtWidgets.QMessageBox.StandardButton:
+        messages.append(text)
+        return QtWidgets.QMessageBox.StandardButton.Ok
+
+    monkeypatch.setattr(QtWidgets.QMessageBox, "critical", capture_critical)
+    return messages
