@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
-import tempfile
+import stat
 from collections.abc import Callable
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -23,6 +23,7 @@ from labelme._label_file import _check_image_dimensions
 from labelme._label_file import _dump_shape_to_json_obj
 from labelme._label_file import _load_shape_json_obj
 from labelme._label_file import _normalize_to_uint8
+from labelme._label_file import _open_temporary_label_file
 from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
@@ -664,6 +665,65 @@ def test_write_label_file_atomically_replaces_existing_file(
     assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_write_label_file_preserves_existing_file_mode(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+) -> None:
+    existing_label_file.chmod(0o640)
+
+    write_label_file(
+        filename=str(existing_label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert stat.S_IMODE(existing_label_file.stat().st_mode) == 0o640
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_write_label_file_uses_default_mode_for_new_file(
+    annotation_to_write: Annotation,
+    tmp_path: Path,
+) -> None:
+    reference_file = tmp_path / "reference.json"
+    reference_file.write_text("", encoding="utf-8")
+    label_file = tmp_path / "annotation.json"
+
+    write_label_file(
+        filename=str(label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert stat.S_IMODE(label_file.stat().st_mode) == stat.S_IMODE(
+        reference_file.stat().st_mode
+    )
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX filename limits")
+def test_write_label_file_supports_long_filename(
+    annotation_to_write: Annotation,
+    tmp_path: Path,
+) -> None:
+    label_file = tmp_path / f"{'a' * 245}.json"
+
+    write_label_file(
+        filename=str(label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert label_file.exists()
+    assert list(tmp_path.iterdir()) == [label_file]
+
+
 def test_write_label_file_serialization_failure_preserves_existing_file(
     annotation_to_write: Annotation,
     existing_label_file: Path,
@@ -718,31 +778,14 @@ def test_write_label_file_close_failure_preserves_existing_file(
     existing_label_file: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    real_named_temporary_file = tempfile.NamedTemporaryFile
-
     @contextmanager
-    def _fail_during_close(
-        *,
-        mode: str,
-        encoding: str,
-        dir: Path,
-        prefix: str,
-        suffix: str,
-        delete: bool,
-    ) -> Iterator[Any]:
-        with real_named_temporary_file(
-            mode=mode,
-            encoding=encoding,
-            dir=dir,
-            prefix=prefix,
-            suffix=suffix,
-            delete=delete,
-        ) as file:
+    def _fail_during_close(*, target: Path) -> Iterator[Any]:
+        with _open_temporary_label_file(target=target) as file:
             yield file
         raise OSError("close failed")
 
     monkeypatch.setattr(
-        "labelme._label_file.tempfile.NamedTemporaryFile", _fail_during_close
+        "labelme._label_file._open_temporary_label_file", _fail_during_close
     )
 
     with pytest.raises(LabelFileWriteError, match="close failed"):
