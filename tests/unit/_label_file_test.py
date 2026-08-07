@@ -207,6 +207,203 @@ def sample_mask() -> NDArray[np.bool_]:
     return mask
 
 
+@pytest.mark.parametrize(
+    ("shape_type", "points"),
+    [
+        ("polygon", [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0]]),
+        ("rectangle", [[2.0, 3.0], [-1.0, -2.0]]),
+        (
+            "oriented_rectangle",
+            [[0.0, 0.0], [2.0, 0.0], [2.0, 1.0], [0.0, 1.0]],
+        ),
+        ("point", [[0.0, 0.0]]),
+        ("line", [[0.0, 0.0], [1.0, 1.0]]),
+        ("circle", [[0.0, 0.0], [1.0, 0.0]]),
+        ("linestrip", [[0.0, 0.0], [1.0, 1.0]]),
+        ("points", [[0.0, 0.0]]),
+        # Degenerate but saveable by the editor: v5.x ai_polygon wrote 2-point
+        # polygons, and vertex edits can collapse rectangles and coincide
+        # points; such files must stay loadable.
+        ("polygon", [[0.0, 0.0], [1.0, 1.0]]),
+        ("rectangle", [[0.0, 0.0], [0.0, 1.0]]),
+        ("line", [[1.0, 1.0], [1.0, 1.0]]),
+        ("linestrip", [[0.0, 0.0]]),
+    ],
+)
+def test_load_shape_json_obj_accepts_supported_geometry(
+    shape_type: str, points: list[list[float]]
+) -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "shape",
+            "points": points,
+            "shape_type": shape_type,
+        }
+    )
+
+    assert loaded["shape_type"] == shape_type
+    assert loaded["points"] == points
+
+
+def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
+    sample_mask: NDArray[np.bool_],
+) -> None:
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "mask",
+            "points": [[-2.25, -3.25], [0.75, -1.25]],
+            "shape_type": "mask",
+            "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+        }
+    )
+
+    assert loaded["mask"] is not None
+    assert np.array_equal(loaded["mask"], sample_mask)
+
+
+@pytest.mark.parametrize(
+    ("shape_type", "points"),
+    [
+        ("rectangle", [[0.0, 0.0]]),
+        (
+            "oriented_rectangle",
+            [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0]],
+        ),
+        ("point", [[0.0, 0.0], [1.0, 1.0]]),
+        ("line", [[0.0, 0.0]]),
+        ("circle", [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]]),
+        ("mask", [[0.0, 0.0]]),
+    ],
+)
+def test_load_shape_json_obj_rejects_wrong_point_count(
+    shape_type: str, points: list[list[float]]
+) -> None:
+    shape_json_obj: dict[str, Any] = {
+        "label": "shape",
+        "points": points,
+        "shape_type": shape_type,
+    }
+    if shape_type == "mask":
+        shape_json_obj["mask"] = img_arr_to_b64(np.ones((1, 1), dtype=np.uint8))
+
+    with pytest.raises(ValueError, match="points"):
+        _load_shape_json_obj(shape_json_obj=shape_json_obj)
+
+
+def test_load_shape_json_obj_rejects_unknown_shape_type() -> None:
+    with pytest.raises(ValueError, match="shape_type"):
+        _load_shape_json_obj(
+            shape_json_obj={
+                "label": "shape",
+                "points": [[0.0, 0.0]],
+                "shape_type": "triangle",
+            }
+        )
+
+
+def test_load_shape_json_obj_rejects_non_finite_points() -> None:
+    with pytest.raises(ValueError, match="points"):
+        _load_shape_json_obj(
+            shape_json_obj={
+                "label": "shape",
+                "points": [[float("inf"), 0.0]],
+                "shape_type": "point",
+            }
+        )
+
+
+def test_load_shape_json_obj_requires_mask_for_mask_shape() -> None:
+    with pytest.raises(ValueError, match="mask"):
+        _load_shape_json_obj(
+            shape_json_obj={
+                "label": "mask",
+                "points": [[0.0, 0.0], [1.0, 1.0]],
+                "shape_type": "mask",
+            }
+        )
+
+
+def test_load_shape_json_obj_rejects_mask_for_non_mask_shape(
+    sample_mask: NDArray[np.bool_],
+) -> None:
+    with pytest.raises(ValueError, match="mask"):
+        _load_shape_json_obj(
+            shape_json_obj={
+                "label": "rectangle",
+                "points": [[0.0, 0.0], [3.0, 2.0]],
+                "shape_type": "rectangle",
+                "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+            }
+        )
+
+
+def test_load_shape_json_obj_rejects_multichannel_mask() -> None:
+    with pytest.raises(ValueError, match="mask"):
+        _load_shape_json_obj(
+            shape_json_obj={
+                "label": "mask",
+                "points": [[0.0, 0.0], [3.0, 2.0]],
+                "shape_type": "mask",
+                "mask": img_arr_to_b64(np.ones((3, 4, 3), dtype=np.uint8)),
+            }
+        )
+
+
+def test_load_shape_json_obj_accepts_mask_extent_mismatch(
+    sample_mask: NDArray[np.bool_],
+) -> None:
+    # Fractional whole-shape drags shift points without resampling the mask,
+    # so the saved bbox extent can drift from the mask dimensions.
+    loaded = _load_shape_json_obj(
+        shape_json_obj={
+            "label": "mask",
+            "points": [[0.5, 0.5], [4.5, 2.5]],
+            "shape_type": "mask",
+            "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+        }
+    )
+
+    assert loaded["mask"] is not None
+    assert np.array_equal(loaded["mask"], sample_mask)
+
+
+def test_read_label_file_reports_shape_index_field_and_filename(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_raw["shapes"] = [
+        {"label": "valid", "points": [[0.0, 0.0]], "shape_type": "point"},
+        {"label": "bad", "points": [[0.0, 0.0]], "shape_type": "triangle"},
+    ]
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    with pytest.raises(LabelFileReadError) as exc_info:
+        read_label_file(filename=str(annotated_dst))
+
+    assert str(annotated_dst) in str(exc_info.value)
+    assert "shapes[1]: shape_type" in str(exc_info.value)
+
+
+def test_read_label_file_wraps_coordinate_overflow(
+    annotated_raw: dict[str, Any],
+    annotated_dst: Path,
+) -> None:
+    annotated_raw["shapes"] = [
+        {
+            "label": "bad",
+            "points": [[10**400, 0.0]],
+            "shape_type": "point",
+        }
+    ]
+    _dump_json(path=annotated_dst, raw=annotated_raw)
+
+    with pytest.raises(LabelFileReadError) as exc_info:
+        read_label_file(filename=str(annotated_dst))
+
+    assert str(annotated_dst) in str(exc_info.value)
+    assert "shapes[0]: points" in str(exc_info.value)
+
+
 def test_load_shape_json_obj_parses_all_fields() -> None:
     loaded = _load_shape_json_obj(
         shape_json_obj={

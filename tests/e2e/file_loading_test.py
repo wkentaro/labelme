@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+import json
 from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
@@ -109,7 +111,7 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
     raw_win: MainWindow,
     qtbot: QtBot,
     tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
+    critical_messages: list[str],
     set_allocation_limit: Callable[[int], None],
     pause: bool,
 ) -> None:
@@ -118,23 +120,83 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
     image.fill(0)
     assert image.save(str(image_path))
 
-    messages: list[str] = []
-
-    def fake_critical(
-        parent: QtWidgets.QWidget, title: str, text: str
-    ) -> QtWidgets.QMessageBox.StandardButton:
-        messages.append(text)
-        return QtWidgets.QMessageBox.StandardButton.Ok
-
-    monkeypatch.setattr(QtWidgets.QMessageBox, "critical", fake_critical)
     set_allocation_limit(1)
 
     raw_win._load_file(str(image_path))
 
-    assert len(messages) == 1
-    assert "800x600" in messages[0]
-    assert "1 MB" in messages[0]
-    assert "gdal_retile.py" in messages[0]
-    assert "Allowed formats" not in messages[0]
+    assert len(critical_messages) == 1
+    assert "800x600" in critical_messages[0]
+    assert "1 MB" in critical_messages[0]
+    assert "gdal_retile.py" in critical_messages[0]
+    assert "Allowed formats" not in critical_messages[0]
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("invalid_shape", "error_field"),
+    [
+        (
+            {
+                "label": "unknown",
+                "points": [[0.0, 0.0]],
+                "shape_type": "triangle",
+            },
+            "shape_type",
+        ),
+        (
+            {
+                "label": "rectangle",
+                "points": [[0.0, 0.0]],
+                "shape_type": "rectangle",
+            },
+            "points",
+        ),
+        (
+            {
+                "label": "mask",
+                "points": [[0.0, 0.0], [1.0, 1.0]],
+                "shape_type": "mask",
+            },
+            "mask",
+        ),
+    ],
+    ids=["unknown-shape-type", "invalid-point-count", "missing-mask"],
+)
+def test_MainWindow_rejects_malformed_shapes_before_installing_any(
+    raw_win: MainWindow,
+    critical_messages: list[str],
+    data_path: Path,
+    tmp_path: Path,
+    invalid_shape: dict[str, object],
+    error_field: str,
+) -> None:
+    image_path = data_path / "raw/2011_000003.jpg"
+    label_path = tmp_path / "malformed.json"
+    label_path.write_text(
+        json.dumps(
+            {
+                "version": "7.0.0",
+                "flags": {},
+                "shapes": [
+                    {
+                        "label": "valid",
+                        "points": [[0.0, 0.0]],
+                        "shape_type": "point",
+                    },
+                    invalid_shape,
+                ],
+                "imagePath": image_path.name,
+                "imageData": base64.b64encode(image_path.read_bytes()).decode(),
+            }
+        )
+    )
+    raw_win._load_file(str(label_path))
+
+    assert len(critical_messages) == 1
+    assert str(label_path) in critical_messages[0]
+    assert "shapes[1]" in critical_messages[0]
+    assert error_field in critical_messages[0]
+    assert raw_win._canvas_widgets.canvas.shapes == []
+    assert len(raw_win._docks.label_list) == 0
