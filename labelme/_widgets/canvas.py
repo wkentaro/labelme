@@ -432,9 +432,13 @@ class Canvas(QtWidgets.QWidget):
         points: Sequence[QPointF],
         point_labels: Sequence[int],
     ) -> _automation.AiAssistProposal:
-        image: np.ndarray = _utils.img_qt_to_arr(img_qt=self.pixmap.toImage())
+        image: np.ndarray = _utils.img_qt_to_arr(
+            img_qt=self.pixmap.toImage().convertToFormat(
+                QtGui.QImage.Format.Format_RGB888
+            )
+        )
         return self._ai_assist_session.propose_shapes(
-            image=image[:, :, :3],
+            image=image,
             image_id=str(self._pixmap_hash),
             prompt_kind=prompt_kind,
             points=np.array([[p.x(), p.y()] for p in points]),

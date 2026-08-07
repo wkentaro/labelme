@@ -1361,7 +1361,11 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             boxes, scores, labels, masks = _automation.get_bboxes_from_texts(
                 session=self._text_osam_session,
-                image=_utils.img_qt_to_arr(self._image)[:, :, :3],
+                image=_utils.img_qt_to_arr(
+                    img_qt=self._image.convertToFormat(
+                        QtGui.QImage.Format.Format_RGB888
+                    )
+                ),
                 image_id=str(hash(self._image_path)),
                 texts=texts,
             )
