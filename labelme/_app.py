@@ -194,6 +194,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _image: QtGui.QImage
     _annotation: Annotation | None
     _label_file_path: str | None
+    _last_failed_auto_save_path: str | None
     _image_path: str | None
     _prev_image_path: str | None
     _zoom_values: dict[str, tuple[_ZoomMode, float]]
@@ -994,6 +995,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image = QtGui.QImage()
         self._annotation = None
         self._label_file_path = None
+        self._last_failed_auto_save_path = None
         self._image_path = None
         self._prev_image_path = None
         self._zoom_values = {}
@@ -1300,13 +1302,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
-            self.save_labels(
-                label_path=_resolve_label_path(
-                    image_or_label_path=self._image_path,
-                    output_dir=self._output_dir,
-                )
+            label_path = _resolve_label_path(
+                image_or_label_path=self._image_path,
+                output_dir=self._output_dir,
             )
-            return
+            if self.save_labels(
+                label_path=label_path,
+                show_error=self._last_failed_auto_save_path != label_path,
+            ):
+                return
+            self._last_failed_auto_save_path = label_path
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
@@ -1448,6 +1453,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._annotation = None
         self._image_path = None
         self._label_file_path = None
+        self._last_failed_auto_save_path = None
         self._canvas_widgets.canvas.reset_state()
 
     # Callbacks
@@ -1751,7 +1757,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             widget.addItem(item)
 
-    def save_labels(self, label_path: str) -> bool:
+    def save_labels(self, label_path: str, *, show_error: bool = True) -> bool:
         shapes = [
             _shape_to_dict(s)
             for item in self._docks.label_list
@@ -1785,11 +1791,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 raise RuntimeError("There are duplicate files.")
             if items:
                 items[0].setCheckState(Qt.CheckState.Checked)
+            self._last_failed_auto_save_path = None
             return True
         except (LabelFileError, OSError, ValueError) as e:
-            self.show_error_message(
-                self.tr("Error saving label data"), self.tr("<b>%s</b>") % e
-            )
+            if show_error:
+                self.show_error_message(
+                    self.tr("Error saving label data"), self.tr("<b>%s</b>") % e
+                )
             return False
 
     def _insert_shapes(self, shapes: list[Shape]) -> None:

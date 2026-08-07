@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed failed auto-saves leaving an edited Annotation marked clean. The dirty title, Save action, and unsaved-changes prompt now remain active, while repeated failures for the same target show only one error until a save succeeds or the target changes ([#2472](https://github.com/wkentaro/labelme/pull/2472))
 - Fixed a cancelled close still overwriting the Window State (window size, position, and dock layout); `closeEvent` ignored the close event but kept going, so cancelling the unsaved-changes prompt saved the current geometry anyway and the next session started from a layout the user never closed on. The Window State is now written only when the close goes through ([#2478](https://github.com/wkentaro/labelme/pull/2478))
 - Fixed Mask Shape construction for Model Session detections with fractional bounding boxes by using the same rounding for Shape points and Mask extents, preventing placement drift and Existing Shape Suppression errors ([#2464](https://github.com/wkentaro/labelme/pull/2464))
 - Fixed AI-Points Prompt Compatibility checks depending on mode navigation, which missed incompatible runtime states caused by startup, restored state, or Settings changes. AI-Points now keeps the selected model Setting and rejects an unsupported SAM3 point prompt before model download or inference ([#2448](https://github.com/wkentaro/labelme/pull/2448))

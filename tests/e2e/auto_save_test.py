@@ -7,18 +7,27 @@ from typing import Final
 import pytest
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
+import labelme._app
 from labelme._app import MainWindow
 from labelme._widgets._shape_render import bounds as _shape_bounds
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
+from .conftest import draw_and_commit_polygon
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
+_RAW_FILE_NAME: Final[str] = "raw/2011_000003.jpg"
+_VERTICES: Final[tuple[tuple[float, float], ...]] = (
+    (0.2, 0.2),
+    (0.6, 0.2),
+    (0.6, 0.6),
+)
 
 
 @pytest.fixture()
@@ -30,6 +39,22 @@ def _auto_save_win(
 ) -> MainWindow:
     win = main_win(
         file_or_dir=str(data_path / _TEST_FILE_NAME),
+        config_overrides=dict(auto_save=True),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
+
+
+@pytest.fixture()
+def _raw_auto_save_win(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / _RAW_FILE_NAME),
         config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )
@@ -99,3 +124,172 @@ def test_auto_save_on_undo(
     assert_labelfile_sanity(str(label_file))
 
     close_or_pause(qtbot=qtbot, widget=_auto_save_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    _raw_auto_save_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    label_file = tmp_path / f"{Path(_RAW_FILE_NAME).stem}.json"
+    assert not label_file.exists()
+    assert not _raw_auto_save_win.windowTitle().endswith("*")
+
+    errors_shown: list[tuple[str, str]] = []
+
+    def _record_critical(
+        _parent: object, title: str, message: str
+    ) -> QMessageBox.StandardButton:
+        errors_shown.append((title, message))
+        return QMessageBox.StandardButton.Ok
+
+    monkeypatch.setattr(QMessageBox, "critical", _record_critical)
+
+    original_write_label_file = labelme._app.write_label_file
+
+    def _raise_permission_error(*args: object, **kwargs: object) -> None:
+        raise PermissionError("read-only output directory")
+
+    monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
+
+    draw_and_commit_polygon(
+        qtbot=qtbot,
+        win=_raw_auto_save_win,
+        label="cat",
+        vertices=_VERTICES,
+    )
+
+    assert len(errors_shown) == 1
+    assert errors_shown[0][0] == _raw_auto_save_win.tr("Error saving label data")
+    assert "read-only output directory" in errors_shown[0][1]
+    assert _raw_auto_save_win.windowTitle().endswith("*")
+    assert _raw_auto_save_win._actions.save.isEnabled()
+    assert _raw_auto_save_win._actions.save_auto.isChecked()
+
+    canvas = _raw_auto_save_win._canvas_widgets.canvas
+    _raw_auto_save_win._switch_canvas_mode(edit=True)
+    qtbot.wait(50)
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+
+    assert len(errors_shown) == 1
+
+    close_prompts: list[bool] = []
+
+    def _cancel_close(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+        close_prompts.append(True)
+        return QMessageBox.StandardButton.Cancel
+
+    monkeypatch.setattr(QMessageBox, "question", _cancel_close)
+    _raw_auto_save_win.close()
+
+    assert close_prompts == [True]
+    assert _raw_auto_save_win.isVisible()
+
+    monkeypatch.setattr(labelme._app, "write_label_file", original_write_label_file)
+    monkeypatch.setattr(
+        _raw_auto_save_win, "prompt_save_file_path", lambda: str(label_file)
+    )
+    _raw_auto_save_win._actions.save.trigger()
+
+    qtbot.waitUntil(label_file.exists, timeout=3000)
+    assert_labelfile_sanity(str(label_file))
+    with open(label_file) as f:
+        saved_shapes = json.load(f)["shapes"]
+    assert len(saved_shapes) == 1
+    assert saved_shapes[0]["label"] == "cat"
+    assert saved_shapes[0]["points"] == canvas.shapes[0].points.tolist()
+    assert not _raw_auto_save_win.windowTitle().endswith("*")
+    assert not _raw_auto_save_win._actions.save.isEnabled()
+
+    monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+
+    assert len(errors_shown) == 2
+
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+    )
+    close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_failed_auto_save_shows_error_again_after_target_changes(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    _raw_auto_save_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    errors_shown: list[bool] = []
+
+    def _record_critical(*args: object, **kwargs: object) -> int:
+        errors_shown.append(True)
+        return QMessageBox.StandardButton.Ok
+
+    monkeypatch.setattr(QMessageBox, "critical", _record_critical)
+
+    def _raise_permission_error(*args: object, **kwargs: object) -> None:
+        raise PermissionError("read-only output directory")
+
+    monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
+
+    draw_and_commit_polygon(
+        qtbot=qtbot,
+        win=_raw_auto_save_win,
+        label="cat",
+        vertices=_VERTICES,
+    )
+
+    canvas = _raw_auto_save_win._canvas_widgets.canvas
+    _raw_auto_save_win._switch_canvas_mode(edit=True)
+    qtbot.wait(50)
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+    assert errors_shown == [True]
+
+    new_output_dir = tmp_path / "new-output"
+    new_output_dir.mkdir()
+    _raw_auto_save_win._output_dir = new_output_dir
+
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+    assert errors_shown == [True, True]
+
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+    assert errors_shown == [True, True]
+
+    image_path = _raw_auto_save_win._image_path
+    assert image_path is not None
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+    )
+    _raw_auto_save_win.close_file()
+    _raw_auto_save_win._load_file(image_or_label_path=image_path)
+
+    draw_and_commit_polygon(
+        qtbot=qtbot,
+        win=_raw_auto_save_win,
+        label="cat",
+        vertices=_VERTICES,
+    )
+    assert errors_shown == [True, True, True]
+
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+    )
+
+    close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
