@@ -81,6 +81,7 @@ def test_shapes_from_detections_oriented_rectangle_with_mask_uses_min_area_rect(
             )
         ],
         shape_type="oriented_rectangle",
+        image_size=(100, 100),
     )
 
     assert shape.shape_type == "oriented_rectangle"
@@ -151,6 +152,61 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
     expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+
+
+def test_shapes_from_detections_moves_overhanging_oriented_rectangle_inside_image(
+    overhanging_oriented_rectangle_mask: NDArray[np.bool_],
+) -> None:
+    [unbounded_shape] = shapes_from_detections(
+        detections=[Detection(mask=overhanging_oriented_rectangle_mask)],
+        shape_type="oriented_rectangle",
+    )
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=overhanging_oriented_rectangle_mask)],
+        shape_type="oriented_rectangle",
+        image_size=(7, 6),
+    )
+
+    assert (unbounded_shape.points[:, 0] > 7).any()
+    assert (shape.points >= 0).all()
+    assert (shape.points <= [7, 6]).all()
+    original_edges = (
+        np.roll(unbounded_shape.points, -1, axis=0) - unbounded_shape.points
+    )
+    moved_edges = np.roll(shape.points, -1, axis=0) - shape.points
+    np.testing.assert_allclose(moved_edges, original_edges)
+
+
+def test_shapes_from_detections_clips_oriented_rectangle_wider_than_image() -> None:
+    mask = np.array(
+        [
+            [0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 0, 0],
+            [0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 1, 1, 1],
+        ],
+        dtype=bool,
+    )
+    [unbounded_shape] = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="oriented_rectangle",
+    )
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="oriented_rectangle",
+        image_size=(6, 6),
+    )
+
+    assert np.ptp(unbounded_shape.points[:, 0]) > 6
+    np.testing.assert_allclose(
+        shape.points[:, 0],
+        np.clip(unbounded_shape.points[:, 0], 0, 6),
+    )
+    np.testing.assert_allclose(shape.points[:, 1], unbounded_shape.points[:, 1])
 
 
 def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:

@@ -4,6 +4,7 @@ import struct
 import zlib
 from collections.abc import Callable
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
@@ -16,6 +17,42 @@ from labelme import _app
 from labelme import _automation
 from labelme._label_file import ShapeDict
 from labelme._shape import Shape
+
+
+def test_submit_ai_prompt_passes_rgb_image_to_model(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    image = QtGui.QImage(4, 3, QtGui.QImage.Format.Format_RGB32)
+    image.fill(QtGui.QColor(10, 20, 30))
+    window = MagicMock()
+    window._image = image
+    window._image_path = Path("image.png")
+    window._ai_annotation.output_format = "rectangle"
+    window._ai_text.get_text_prompt.return_value = "cat"
+    window._ai_text.get_model_name.return_value = "yoloworld:latest"
+    window._ai_text.get_iou_threshold.return_value = 0.5
+    window._ai_text.get_score_threshold.return_value = 0.1
+    window._canvas_widgets.canvas.create_mode = "rectangle"
+    window._canvas_widgets.canvas.shapes = []
+    window._text_osam_session.model_name = "yoloworld:latest"
+
+    model_type = MagicMock()
+    model_type.get_size.return_value = 1
+    monkeypatch.setattr(_app.osam.apis, "get_model_type_by_name", lambda _: model_type)
+    get_bboxes_from_texts = MagicMock(
+        return_value=(
+            np.empty((0, 4)),
+            np.empty(0),
+            np.empty(0, dtype=np.intp),
+            None,
+        )
+    )
+    monkeypatch.setattr(_automation, "get_bboxes_from_texts", get_bboxes_from_texts)
+
+    _app.MainWindow._submit_ai_prompt(window, False)
+
+    captured_image = get_bboxes_from_texts.call_args.kwargs["image"]
+    np.testing.assert_array_equal(captured_image[0, 0], [10, 20, 30])
 
 
 @pytest.mark.parametrize(

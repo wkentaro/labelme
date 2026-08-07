@@ -23,3 +23,18 @@ def rotated_rectangle_mask(rotated_rectangle_angle: float) -> NDArray[np.bool_]:
     local_x = dx * cos_a + dy * sin_a
     local_y = -dx * sin_a + dy * cos_a
     return (np.abs(local_x) <= half_long) & (np.abs(local_y) <= half_short)
+
+
+@pytest.fixture
+def overhanging_oriented_rectangle_mask() -> NDArray[np.bool_]:
+    return np.array(
+        [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1],
+            [0, 1, 1, 1, 1, 1, 1],
+            [0, 0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 1, 1, 1],
+        ],
+        dtype=bool,
+    )

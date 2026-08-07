@@ -106,6 +106,42 @@ def test_default_model_name_and_output_format() -> None:
     assert session.output_format == "mask"
 
 
+def test_oriented_rectangle_proposal_is_inside_image(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+    overhanging_oriented_rectangle_mask: NDArray[np.bool_],
+) -> None:
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[
+            osam.types.Annotation(
+                score=0.9,
+                bounding_box=osam.types.BoundingBox(
+                    xmin=0,
+                    ymin=0,
+                    xmax=6,
+                    ymax=5,
+                ),
+                mask=overhanging_oriented_rectangle_mask,
+            )
+        ],
+    )
+    install_fake_osam_session(response)
+    session = AiAssistSession(output_format="oriented_rectangle")
+
+    proposal = session.propose_shapes(
+        image=np.zeros((6, 7, 3), dtype=np.uint8),
+        image_id="img",
+        prompt_kind="points",
+        points=np.array([[0, 3]], dtype=np.float64),
+        point_labels=np.array([1]),
+        existing_shapes=[],
+    )
+
+    [shape] = proposal.new_shapes
+    assert (shape.points >= 0).all()
+    assert (shape.points <= [7, 6]).all()
+
+
 def test_sam3_point_prompt_is_rejected_before_session_creation(
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:

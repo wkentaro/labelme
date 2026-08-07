@@ -94,6 +94,7 @@ class AiAssistSession:
             new_shapes=shapes_from_detections(
                 detections=matches.new_detections,
                 shape_type=self.output_format,
+                image_size=(image.shape[1], image.shape[0]),
             ),
             matching_existing_shapes=matches.matching_shapes,
         )
