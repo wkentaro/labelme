@@ -3,7 +3,9 @@ from __future__ import annotations
 import base64
 import io
 import json
+import math
 import time
+import typing
 from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PureWindowsPath
@@ -20,6 +22,7 @@ from numpy.typing import NDArray
 from labelme import __version__
 
 from . import _utils
+from ._shape import ShapeType
 from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
@@ -33,6 +36,56 @@ def _validate_flags(flags: object) -> dict[str, bool]:
     if not all(isinstance(k, str) and isinstance(v, bool) for k, v in flags.items()):
         raise TypeError(f"flags must be dict of str to bool: {flags}")
     return cast(dict[str, bool], flags)
+
+
+def _validate_shape_semantics(
+    *,
+    shape_type: str,
+    points: list[list[float]],
+    mask: NDArray[np.bool_] | None,
+) -> None:
+    # Only invariants the GUI needs before Shape construction are checked.
+    # Degenerate geometry (zero-extent rectangle, coincident points, 2-point
+    # polygons) and mask/bbox extent drift can be produced by vertex edits and
+    # fractional drags in released versions, so rejecting them would make
+    # legitimately saved files unopenable.
+    if shape_type not in typing.get_args(ShapeType):
+        raise ValueError(f"shape_type is unsupported: {shape_type!r}")
+    try:
+        coordinates_are_finite = all(
+            math.isfinite(coordinate) for point in points for coordinate in point
+        )
+    except OverflowError:
+        coordinates_are_finite = False
+    if not coordinates_are_finite:
+        raise ValueError(f"points must contain finite coordinates: {points}")
+
+    EXACT_POINT_COUNT_BY_SHAPE_TYPE: Final[dict[str, int]] = {
+        "point": 1,
+        "rectangle": 2,
+        "line": 2,
+        "circle": 2,
+        "mask": 2,
+        "oriented_rectangle": 4,
+    }
+    expected_point_count = EXACT_POINT_COUNT_BY_SHAPE_TYPE.get(shape_type)
+    if expected_point_count is not None and len(points) != expected_point_count:
+        noun = "point" if expected_point_count == 1 else "points"
+        raise ValueError(
+            f"points must contain exactly {expected_point_count} {noun} for "
+            f"shape_type={shape_type!r}: {points}"
+        )
+
+    if shape_type != "mask":
+        if mask is not None:
+            raise ValueError(
+                f"mask is only supported for shape_type='mask', got {shape_type!r}"
+            )
+        return
+    if mask is None:
+        raise ValueError("mask is required for shape_type='mask'")
+    if mask.ndim != 2:
+        raise ValueError(f"mask must decode to a 2D image, got shape {mask.shape}")
 
 
 def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
@@ -97,7 +150,12 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
             raise TypeError(
                 f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
             )
-        mask = _utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
+        try:
+            mask = _utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
+        except (OSError, ValueError) as e:
+            raise ValueError(f"mask must be base64-encoded PNG: {e}") from e
+
+    _validate_shape_semantics(shape_type=shape_type, points=points, mask=mask)
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
 
@@ -244,9 +302,15 @@ def read_label_file(filename: str) -> Annotation:
             expected_height=raw.get("imageHeight"),
             expected_width=raw.get("imageWidth"),
         )
-        shapes: list[ShapeDict] = [
-            _load_shape_json_obj(shape_json_obj=s) for s in raw["shapes"]
-        ]
+        shapes: list[ShapeDict] = []
+        for shape_index, shape_json_obj in enumerate(raw["shapes"]):
+            if not isinstance(shape_json_obj, dict):
+                raise TypeError(f"shapes[{shape_index}] must be dict: {shape_json_obj}")
+            try:
+                shape = _load_shape_json_obj(shape_json_obj=shape_json_obj)
+            except (TypeError, ValueError, RuntimeError) as e:
+                raise ValueError(f"shapes[{shape_index}]: {e}") from e
+            shapes.append(shape)
         flags = _validate_flags(flags=raw.get("flags"))
     except (
         OSError,
