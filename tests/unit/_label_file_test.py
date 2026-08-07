@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
+import stat
 from collections.abc import Callable
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
+from typing import TextIO
 
 import numpy as np
 import pytest
@@ -18,6 +23,7 @@ from labelme._label_file import _check_image_dimensions
 from labelme._label_file import _dump_shape_to_json_obj
 from labelme._label_file import _load_shape_json_obj
 from labelme._label_file import _normalize_to_uint8
+from labelme._label_file import _open_temporary_label_file
 from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
 from labelme._label_file import write_label_file
@@ -605,6 +611,217 @@ def test_write_label_file_round_trips_mask_shape(
     assert reloaded_shape["other_data"] == {"score": 0.5}
     assert reloaded_shape["mask"] is not None
     assert np.array_equal(reloaded_shape["mask"], mask)
+
+
+@pytest.fixture()
+def annotation_to_write() -> Annotation:
+    return Annotation(
+        image_path="new.jpg",
+        image_data=b"",
+        shapes=[],
+        flags={"reviewed": True},
+        other_data={},
+    )
+
+
+@pytest.fixture()
+def existing_label_file(tmp_path: Path) -> Path:
+    filename = tmp_path / "annotation.json"
+    filename.write_text("last good", encoding="utf-8")
+    return filename
+
+
+def test_write_label_file_atomically_replaces_existing_file(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_replace = os.replace
+    replacement_sources: list[Path] = []
+
+    def _replace(src: str, dst: str) -> None:
+        source = Path(src)
+        assert source.parent == existing_label_file.parent
+        assert Path(dst) == existing_label_file
+        assert existing_label_file.read_text(encoding="utf-8") == "last good"
+        assert json.loads(source.read_text(encoding="utf-8"))["imagePath"] == "new.jpg"
+        replacement_sources.append(source)
+        real_replace(src, dst)
+
+    monkeypatch.setattr("labelme._label_file.os.replace", _replace)
+
+    write_label_file(
+        filename=str(existing_label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert replacement_sources
+    assert json.loads(existing_label_file.read_text(encoding="utf-8"))["imagePath"] == (
+        "new.jpg"
+    )
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_write_label_file_preserves_existing_file_mode(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+) -> None:
+    existing_label_file.chmod(0o640)
+
+    write_label_file(
+        filename=str(existing_label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert stat.S_IMODE(existing_label_file.stat().st_mode) == 0o640
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_write_label_file_uses_default_mode_for_new_file(
+    annotation_to_write: Annotation,
+    tmp_path: Path,
+) -> None:
+    reference_file = tmp_path / "reference.json"
+    reference_file.write_text("", encoding="utf-8")
+    label_file = tmp_path / "annotation.json"
+
+    write_label_file(
+        filename=str(label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert stat.S_IMODE(label_file.stat().st_mode) == stat.S_IMODE(
+        reference_file.stat().st_mode
+    )
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX filename limits")
+def test_write_label_file_supports_long_filename(
+    annotation_to_write: Annotation,
+    tmp_path: Path,
+) -> None:
+    label_file = tmp_path / f"{'a' * 245}.json"
+
+    write_label_file(
+        filename=str(label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert label_file.exists()
+    assert list(tmp_path.iterdir()) == [label_file]
+
+
+def test_write_label_file_serialization_failure_preserves_existing_file(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+) -> None:
+    annotation = Annotation(
+        image_path=annotation_to_write.image_path,
+        image_data=annotation_to_write.image_data,
+        shapes=annotation_to_write.shapes,
+        flags=annotation_to_write.flags,
+        other_data={"not_serializable": object()},
+    )
+
+    with pytest.raises(LabelFileWriteError, match="not JSON serializable"):
+        write_label_file(
+            filename=str(existing_label_file),
+            annotation=annotation,
+            image_height=None,
+            image_width=None,
+            save_image_data=False,
+        )
+
+    assert existing_label_file.read_text(encoding="utf-8") == "last good"
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
+
+
+def test_write_label_file_write_failure_preserves_existing_file(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _fail_during_write(_obj: object, file: TextIO, **_kwargs: object) -> None:
+        file.write("{")
+        raise OSError("disk full")
+
+    monkeypatch.setattr("labelme._label_file.json.dump", _fail_during_write)
+
+    with pytest.raises(LabelFileWriteError, match="disk full"):
+        write_label_file(
+            filename=str(existing_label_file),
+            annotation=annotation_to_write,
+            image_height=None,
+            image_width=None,
+            save_image_data=False,
+        )
+
+    assert existing_label_file.read_text(encoding="utf-8") == "last good"
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
+
+
+def test_write_label_file_close_failure_preserves_existing_file(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    @contextmanager
+    def _fail_during_close(*, target: Path) -> Iterator[Any]:
+        with _open_temporary_label_file(target=target) as file:
+            yield file
+        raise OSError("close failed")
+
+    monkeypatch.setattr(
+        "labelme._label_file._open_temporary_label_file", _fail_during_close
+    )
+
+    with pytest.raises(LabelFileWriteError, match="close failed"):
+        write_label_file(
+            filename=str(existing_label_file),
+            annotation=annotation_to_write,
+            image_height=None,
+            image_width=None,
+            save_image_data=False,
+        )
+
+    assert existing_label_file.read_text(encoding="utf-8") == "last good"
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
+
+
+def test_write_label_file_replacement_failure_preserves_existing_file(
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _fail_replace(_src: str, _dst: str) -> None:
+        raise OSError("replace failed")
+
+    monkeypatch.setattr("labelme._label_file.os.replace", _fail_replace)
+
+    with pytest.raises(LabelFileWriteError, match="replace failed"):
+        write_label_file(
+            filename=str(existing_label_file),
+            annotation=annotation_to_write,
+            image_height=None,
+            image_width=None,
+            save_image_data=False,
+        )
+
+    assert existing_label_file.read_text(encoding="utf-8") == "last good"
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
 @pytest.mark.parametrize(

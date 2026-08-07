@@ -4,6 +4,9 @@ import base64
 import io
 import json
 import math
+import os
+import secrets
+import stat
 import time
 import typing
 from dataclasses import dataclass
@@ -11,6 +14,7 @@ from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import Final
+from typing import TextIO
 from typing import cast
 
 import numpy as np
@@ -331,6 +335,17 @@ def read_label_file(filename: str) -> Annotation:
     )
 
 
+def _open_temporary_label_file(*, target: Path) -> TextIO:
+    MAX_ATTEMPTS: Final[int] = 100
+    for _ in range(MAX_ATTEMPTS):
+        temporary_path = target.parent / f".labelme.{secrets.token_hex(8)}.tmp"
+        try:
+            return open(temporary_path, "x", encoding="utf-8")
+        except FileExistsError:
+            continue
+    raise FileExistsError(f"failed to create temporary file for {str(target)!r}")
+
+
 def write_label_file(
     filename: str,
     annotation: Annotation,
@@ -362,8 +377,26 @@ def write_label_file(
             if key in _RESERVED_TOP_LEVEL_KEYS:
                 raise ValueError(f"reserved key in other_data: {key!r}")
             payload[key] = value
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=2)
+
+        target = Path(filename)
+        if os.name == "nt":
+            existing_mode = None
+        else:
+            try:
+                existing_mode = stat.S_IMODE(target.stat().st_mode)
+            except FileNotFoundError:
+                existing_mode = None
+        temporary_filename: str | None = None
+        try:
+            with _open_temporary_label_file(target=target) as f:
+                temporary_filename = f.name
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+            if existing_mode is not None:
+                os.chmod(temporary_filename, existing_mode)
+            os.replace(temporary_filename, filename)
+        finally:
+            if temporary_filename is not None:
+                Path(temporary_filename).unlink(missing_ok=True)
     except (OSError, TypeError, ValueError) as e:
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
 
