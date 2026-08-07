@@ -2068,45 +2068,57 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _open_label_file_into_state(self, label_path: str) -> Annotation | None:
+    def _read_label_file(self, label_path: str) -> Annotation | None:
         try:
             annotation = read_label_file(filename=label_path)
         except LabelFileError as e:
             self._show_file_open_error(path=label_path, file_kind="label", exc=e)
             return None
-        self._label_file_path = label_path
-        self._annotation = annotation
-        self._image_path = str(Path(label_path).parent / annotation.image_path)
         return annotation
 
-    def _open_image_into_state(self, image_path: str) -> bool:
+    def _read_image(self, image_path: str) -> Annotation | None:
         try:
             image_data = read_image_file(filename=image_path)
         except OSError as e:
             self._show_file_open_error(path=image_path, file_kind="image", exc=e)
-            return False
-        self._annotation = Annotation(
+            return None
+        return Annotation(
             image_path=os.path.basename(image_path),
             image_data=image_data,
             shapes=[],
             flags={},
             other_data={},
         )
-        self._image_path = image_path
-        self._label_file_path = None
-        return True
 
-    def _load_file(self, image_or_label_path: str) -> None:
+    def _restore_file_list_selection(self) -> None:
+        if self._image_path is None:
+            return
+        current_image_path = os.path.normpath(self._image_path)
+        row = next(
+            (
+                i
+                for i, image_path in enumerate(self.image_list)
+                if os.path.normpath(image_path) == current_image_path
+            ),
+            None,
+        )
+        if row is None:
+            return
+        with QtCore.QSignalBlocker(self._docks.file_list):
+            self._docks.file_list.setCurrentRow(row)
+        self._docks.file_list.repaint()
+
+    def _load_file(self, image_or_label_path: str) -> bool:
         # changing fileListWidget loads file
         if image_or_label_path in self.image_list and (
             self._docks.file_list.currentRow()
             != self.image_list.index(image_or_label_path)
         ):
-            self._docks.file_list.setCurrentRow(
-                self.image_list.index(image_or_label_path)
-            )
+            with QtCore.QSignalBlocker(self._docks.file_list):
+                self._docks.file_list.setCurrentRow(
+                    self.image_list.index(image_or_label_path)
+                )
             self._docks.file_list.repaint()
-            return
 
         prev_shapes: list[Shape] = (
             self._canvas_widgets.canvas.shapes
@@ -2115,15 +2127,13 @@ class MainWindow(QtWidgets.QMainWindow):
             == (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier)
             else []
         )
-        self._prev_image_path = self._image_path
-        self.reset_state()
-        self._canvas_widgets.canvas.setEnabled(False)
         if not QtCore.QFile.exists(image_or_label_path):
             self.show_error_message(
                 self.tr("Error opening file"),
                 self.tr("No such file: <b>%s</b>") % image_or_label_path,
             )
-            return
+            self._restore_file_list_selection()
+            return False
         # assumes same name, but json extension
         self.show_status_message(
             self.tr("Loading %s...") % Path(image_or_label_path).name
@@ -2134,23 +2144,31 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path=image_or_label_path,
             output_dir=self._output_dir,
         )
-        annotation: Annotation | None = None
         if QtCore.QFile.exists(label_path):
-            annotation = self._open_label_file_into_state(label_path=label_path)
+            annotation = self._read_label_file(label_path=label_path)
             if annotation is None:
-                return
+                self._restore_file_list_selection()
+                return False
+            image_path = str(Path(label_path).parent / annotation.image_path)
+            label_file_path = label_path
+            shapes = _shapes_from_dicts(
+                shape_dicts=annotation.shapes,
+                label_flags=self._config["label_flags"],
+            )
         else:
-            if not self._open_image_into_state(image_path=image_or_label_path):
-                return
-        assert self._annotation is not None
+            annotation = self._read_image(image_path=image_or_label_path)
+            if annotation is None:
+                self._restore_file_list_selection()
+                return False
+            image_path = image_or_label_path
+            label_file_path = None
+            shapes = []
         t0 = time.time()
-        image = QtGui.QImage.fromData(self._annotation.image_data)
+        image = QtGui.QImage.fromData(annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            extra = _make_image_too_large_message(
-                image_data=self._annotation.image_data
-            )
+            extra = _make_image_too_large_message(image_data=annotation.image_data)
             if extra is None:
                 formats = ", ".join(
                     f"*.{fmt.toStdString()}"
@@ -2162,19 +2180,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 file_kind="image",
                 extra=extra,
             )
-            return
+            self._restore_file_list_selection()
+            return False
+
+        self._prev_image_path = self._image_path
+        self.reset_state()
+        self._canvas_widgets.canvas.setEnabled(False)
+        self._annotation = annotation
+        self._image_path = image_path
+        self._label_file_path = label_file_path
         self._image = image
         t0 = time.time()
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
-        if annotation is not None:
-            self._load_shapes(
-                shapes=_shapes_from_dicts(
-                    shape_dicts=annotation.shapes,
-                    label_flags=self._config["label_flags"],
-                )
-            )
+        if label_file_path is not None:
+            self._load_shapes(shapes=shapes)
             flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if prev_shapes and self.has_no_shapes():
@@ -2210,6 +2231,7 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path,
             (time.time() - t0_load_file) * 1000,
         )
+        return True
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         if (
@@ -2781,23 +2803,41 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
+            if not self._load_file(image_or_label_path=file_or_dir):
+                return
             self._docks.file_list.clear()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
                 self.tr("File list is disabled when a label file is opened")
             )
-            self._load_file(image_or_label_path=file_or_dir)
-        elif Path(file_or_dir).is_dir():
-            self._import_images_from_dir(
-                root_dir=file_or_dir, pattern=self._docks.file_search.text()
-            )
-            self._open_next_image()
+            self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
+            return
+
+        pattern = self._docks.file_search.text()
+        if Path(file_or_dir).is_dir():
+            root_dir = file_or_dir
+            image_paths = _scan_image_files(root_dir=root_dir, pattern=pattern)
+            if not image_paths:
+                self._import_images_from_dir(root_dir=root_dir, pattern=pattern)
+                return
+            image_path = image_paths[0]
         else:
-            self._import_images_from_dir(
-                root_dir=str(Path(file_or_dir).parent),
-                pattern=self._docks.file_search.text(),
-            )
-            self._load_file(image_or_label_path=file_or_dir)
+            root_dir = str(Path(file_or_dir).parent)
+            image_path = file_or_dir
+
+        if not self._load_file(image_or_label_path=image_path):
+            return
+
+        loaded_image_path = self._image_path
+        self._import_images_from_dir(
+            root_dir=root_dir, pattern=pattern, check_can_continue=False
+        )
+        self._image_path = loaded_image_path
+        if image_path in self.image_list:
+            with QtCore.QSignalBlocker(self._docks.file_list):
+                self._docks.file_list.setCurrentRow(self.image_list.index(image_path))
+            self._docks.file_list.repaint()
+        self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
@@ -2854,12 +2894,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._open_next_image()
 
     def _import_images_from_dir(
-        self, root_dir: str | None, pattern: str | None = None
+        self,
+        root_dir: str | None,
+        pattern: str | None = None,
+        check_can_continue: bool = True,
     ) -> None:
         self._actions.open_next_img.setEnabled(True)
         self._actions.open_prev_img.setEnabled(True)
 
-        if not self._can_continue() or not root_dir:
+        if (check_can_continue and not self._can_continue()) or not root_dir:
             return
 
         self._docks.file_dock.setEnabled(True)
@@ -2867,26 +2910,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._prev_opened_dir = root_dir
         self._image_path = None
-        self._docks.file_list.clear()
-
-        image_paths = _scan_image_files(root_dir=root_dir)
-        if pattern:
-            try:
-                image_paths = [x for x in image_paths if re.search(pattern, x)]
-            except re.error:
-                pass
-        for image_path in image_paths:
-            item = QtWidgets.QListWidgetItem(image_path)
-            item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-            if QtCore.QFile.exists(
-                _resolve_label_path(
-                    image_or_label_path=image_path, output_dir=self._output_dir
-                )
-            ):
-                item.setCheckState(Qt.CheckState.Checked)
-            else:
-                item.setCheckState(Qt.CheckState.Unchecked)
-            self._docks.file_list.addItem(item)
+        image_paths = _scan_image_files(root_dir=root_dir, pattern=pattern)
+        with QtCore.QSignalBlocker(self._docks.file_list):
+            self._docks.file_list.clear()
+            for image_path in image_paths:
+                item = QtWidgets.QListWidgetItem(image_path)
+                item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+                if QtCore.QFile.exists(
+                    _resolve_label_path(
+                        image_or_label_path=image_path, output_dir=self._output_dir
+                    )
+                ):
+                    item.setCheckState(Qt.CheckState.Checked)
+                else:
+                    item.setCheckState(Qt.CheckState.Unchecked)
+                self._docks.file_list.addItem(item)
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
@@ -3069,7 +3107,7 @@ def _list_supported_image_extensions() -> tuple[str, ...]:
     )
 
 
-def _scan_image_files(root_dir: str) -> list[str]:
+def _scan_image_files(root_dir: str, pattern: str | None = None) -> list[str]:
     extensions = _list_supported_image_extensions()
 
     images: list[str] = []
@@ -3081,10 +3119,16 @@ def _scan_image_files(root_dir: str) -> list[str]:
 
     logger.debug("found {:d} images in {!r}", len(images), root_dir)
     try:
-        return natsort.os_sorted(images)
+        images = natsort.os_sorted(images)
     except OSError:
         logger.warning(
             "natsort.os_sorted failed (known macOS strxfrm bug), "
             "falling back to locale-unaware natural sort"
         )
-        return natsort.natsorted(images)
+        images = natsort.natsorted(images)
+    if pattern:
+        try:
+            images = [image for image in images if re.search(pattern, image)]
+        except re.error:
+            pass
+    return images
