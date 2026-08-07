@@ -53,6 +53,7 @@ dev = [
   "ipython",
   "mdformat-frontmatter>=2.0.10",
   "mdformat>=0.7",
+  "packaging>=25.0",
   "pytest>=8.3.4",
   "pytest-cov>=7.1.0",
   "pytest-qt>=4.4.0",

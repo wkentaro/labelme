@@ -17,17 +17,9 @@ jobs:
       - uses: astral-sh/setup-uv@v7
       - run: make check_translate
       - name: Extract release notes from CHANGELOG.md
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          awk -v ver="$version" '
-            $0 ~ "^## \\[" ver "\\]" { capture = 1; next }
-            capture && /^## \[/ { exit }
-            capture { print }
-          ' CHANGELOG.md > release-notes.md
-          if [ ! -s release-notes.md ]; then
-            echo "No CHANGELOG.md section found for $version" >&2
-            exit 1
-          fi
+        id: release_notes
+        run: uv run tools/release_notes.py "$GITHUB_REF_NAME" CHANGELOG.md release-notes.md
+          >> "$GITHUB_OUTPUT"
       - run: uv build
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
@@ -35,5 +27,13 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file
-          release-notes.md
+        run: |-
+          args=(
+            "$GITHUB_REF_NAME"
+            --title "$GITHUB_REF_NAME"
+            --notes-file release-notes.md
+          )
+          if [[ "${{ steps.release_notes.outputs.prerelease }}" == "true" ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "${args[@]}"
