@@ -1310,18 +1310,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_path=label_path,
                 show_error=self._last_failed_auto_save_path != label_path,
             ):
+                self._clear_dirty_indicators()
                 return
             self._last_failed_auto_save_path = label_path
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
 
-    def mark_clean(self) -> None:
+    def _clear_dirty_indicators(self) -> None:
         self._is_changed = False
         self._actions.save.setEnabled(False)
+        self.setWindowTitle(self._get_window_title(dirty=False))
+
+    def mark_clean(self) -> None:
+        self._clear_dirty_indicators()
         for _, action in self._actions.draw:
             action.setEnabled(True)
-        self.setWindowTitle(self._get_window_title(dirty=False))
 
         if self.has_label_file():
             self._actions.delete_file.setEnabled(True)
