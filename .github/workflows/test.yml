@@ -10,6 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         python-version: ['3.12', '3.13', '3.14']
@@ -27,15 +28,18 @@ jobs:
         with:
           packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
           version: 1.0
+      # Pixel snapshots skip themselves off Linux (tests/e2e/conftest.py), so
+      # one plain invocation runs the right set everywhere.
       - name: Test
         shell: bash
-        if: matrix.os == 'ubuntu-latest'
         env:
           MPLBACKEND: agg
         run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          export DISPLAY=:99
-          make test
+          if [ "$RUNNER_OS" = Linux ]; then
+            xvfb-run -a make test
+          else
+            make test
+          fi
       - name: Run examples
         shell: bash
         if: matrix.os != 'windows-latest'
@@ -103,6 +107,4 @@ jobs:
         env:
           MPLBACKEND: agg
         run: |-
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          export DISPLAY=:99
-          make test PYTEST_ARGS="-m network --numprocesses=1"
+          xvfb-run -a make test PYTEST_ARGS="-m network --numprocesses=1"
