@@ -9,6 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         python-version: ['3.12', '3.13', '3.14']
@@ -26,15 +27,25 @@ jobs:
         with:
           packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
           version: 1.0
-      - name: Test
+      - name: Test behavior
+        shell: bash
+        env:
+          MPLBACKEND: agg
+          PYTEST_ADDOPTS: -m "not network and not snapshot"
+        run: |
+          if [ "${{ runner.os }}" = Linux ]; then
+            xvfb-run -a make test
+          else
+            make test
+          fi
+      - name: Test pixel snapshots
         shell: bash
         if: matrix.os == 'ubuntu-latest'
         env:
           MPLBACKEND: agg
+          PYTEST_ADDOPTS: -m "snapshot and not network"
         run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          export DISPLAY=:99
-          make test
+          xvfb-run -a make test
       - name: Run examples
         shell: bash
         if: matrix.os != 'windows-latest'

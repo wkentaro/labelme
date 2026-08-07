@@ -76,6 +76,7 @@ qt_api = "pyside6"
 markers = [
   "gui: mark a test as a GUI test.",
   "network: mark a test that accesses an external network service.",
+  "snapshot: mark a test that compares rendering against a pixel snapshot.",
 ]
 
 [tool.ruff.lint]
