@@ -197,7 +197,9 @@ def test_drag_shapes_blocked_off_image_by_default(canvas: Canvas) -> None:
     canvas._prev_point = QPointF(50, 25)
     canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
 
-    moved = canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80))
+    moved = canvas._drag_shapes(
+        shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True
+    )
 
     assert moved is False
     assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((40, 20))
@@ -215,11 +217,224 @@ def test_drag_shapes_keeps_out_of_bounds_when_enabled(canvas: Canvas) -> None:
     canvas._prev_point = QPointF(50, 25)
     canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
 
-    moved = canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80))
+    moved = canvas._drag_shapes(
+        shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True
+    )
 
     assert moved is True
     assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((140, 75))
     assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((160, 85))
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("offset", "expected"),
+    [
+        pytest.param(QPointF(-5, 0), [(35, 20), (55, 30)], id="left"),
+        pytest.param(QPointF(0, -5), [(40, 15), (60, 25)], id="up"),
+    ],
+)
+def test_move_by_keyboard_moves_clickless_selection(
+    canvas: Canvas, offset: QPointF, expected: list[tuple[float, float]]
+) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(40, 20), (60, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.shapes = [shape]
+    canvas.selected_shapes = [shape]
+
+    canvas._move_by_keyboard(offset=offset)
+
+    np.testing.assert_allclose(shape.points, expected)
+
+
+@pytest.mark.gui
+def test_move_by_keyboard_clamps_clickless_selection_to_image(canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(85, 20), (95, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.shapes = [shape]
+    canvas.selected_shapes = [shape]
+
+    for _ in range(3):
+        canvas._move_by_keyboard(offset=QPointF(5, 0))
+
+    np.testing.assert_allclose(shape.points, [(90, 20), (100, 30)])
+
+
+@pytest.mark.gui
+def test_move_by_keyboard_ignores_stale_mouse_position(canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(40, 20), (60, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_pixmap(QtGui.QPixmap(200, 100))
+    canvas._prev_point = QPointF(150, 80)
+    canvas.load_pixmap(QtGui.QPixmap(_WIDTH, _HEIGHT))
+    canvas.shapes = [shape]
+    canvas.selected_shapes = [shape]
+
+    canvas._move_by_keyboard(offset=QPointF(5, 0))
+
+    np.testing.assert_allclose(shape.points, [(45, 20), (65, 30)])
+
+
+@pytest.mark.gui
+def test_move_by_keyboard_rebuilds_mismatched_drag_anchor(canvas: Canvas) -> None:
+    old_shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(40, 20), (60, 30)], dtype=np.float64),
+        closed=True,
+    )
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(90, 20), (100, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas._prev_point = QPointF(50, 25)
+    canvas.selected_shapes = [old_shape]
+    canvas._record_drag_anchor(shapes=[old_shape], click=canvas._prev_point)
+    canvas.shapes = [shape]
+    canvas.selected_shapes = [shape]
+
+    canvas._move_by_keyboard(offset=QPointF(5, 0))
+
+    np.testing.assert_allclose(shape.points, [(90, 20), (100, 30)])
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("points", "click", "offset", "expected"),
+    [
+        pytest.param(
+            [(-30, 20), (130, 30)],
+            QPointF(50, 25),
+            QPointF(5, 0),
+            [(-25, 20), (135, 30)],
+            id="too_wide_dragged_right",
+        ),
+        pytest.param(
+            [(-30, 20), (130, 30)],
+            QPointF(50, 25),
+            QPointF(-5, 0),
+            [(-35, 20), (125, 30)],
+            id="too_wide_dragged_left",
+        ),
+        pytest.param(
+            [(40, -15), (60, 65)],
+            QPointF(50, 25),
+            QPointF(0, 5),
+            [(40, -10), (60, 70)],
+            id="too_tall_dragged_down",
+        ),
+        pytest.param(
+            [(40, -15), (60, 65)],
+            QPointF(50, 25),
+            QPointF(0, -5),
+            [(40, -20), (60, 60)],
+            id="too_tall_dragged_up",
+        ),
+        pytest.param(
+            [(10, 20), (170, 30)],
+            QPointF(50, 25),
+            QPointF(-5, 0),
+            [(5, 20), (165, 30)],
+            id="beyond_right_bound_dragged_left",
+        ),
+        pytest.param(
+            [(-70, 20), (90, 30)],
+            QPointF(50, 25),
+            QPointF(5, 0),
+            [(-65, 20), (95, 30)],
+            id="beyond_left_bound_dragged_right",
+        ),
+    ],
+)
+def test_drag_shapes_moves_oversized_shape_in_requested_direction(
+    canvas: Canvas,
+    points: list[tuple[float, float]],
+    click: QPointF,
+    offset: QPointF,
+    expected: list[tuple[float, float]],
+) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array(points, dtype=np.float64),
+        closed=True,
+    )
+    canvas.selected_shapes = [shape]
+    canvas._prev_point = click
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
+
+    moved = canvas._drag_shapes(
+        shapes=[shape], cursor=click + offset, constrain_cursor=True
+    )
+
+    assert moved is True
+    np.testing.assert_allclose(shape.points, expected)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("points", "offset"),
+    [
+        pytest.param([(-60, 20), (100, 30)], QPointF(-5, 0), id="left"),
+        pytest.param([(0, 20), (160, 30)], QPointF(5, 0), id="right"),
+        pytest.param([(40, -30), (60, 50)], QPointF(0, -5), id="top"),
+        pytest.param([(40, 0), (60, 80)], QPointF(0, 5), id="bottom"),
+        pytest.param([(10, 20), (170, 30)], QPointF(5, 0), id="beyond_right"),
+        pytest.param([(-70, 20), (90, 30)], QPointF(-5, 0), id="beyond_left"),
+    ],
+)
+def test_drag_shapes_stops_oversized_shape_at_symmetric_bound(
+    canvas: Canvas, points: list[tuple[float, float]], offset: QPointF
+) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array(points, dtype=np.float64),
+        closed=True,
+    )
+    original = shape.points.copy()
+    canvas.selected_shapes = [shape]
+    canvas._prev_point = QPointF(50, 25)
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
+
+    moved = canvas._drag_shapes(
+        shapes=[shape],
+        cursor=canvas._prev_point + offset,
+        constrain_cursor=True,
+    )
+
+    assert moved is False
+    np.testing.assert_allclose(shape.points, original)
+
+
+@pytest.mark.gui
+def test_drag_shapes_preserves_orthogonal_out_of_bounds_position(
+    canvas: Canvas,
+) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(40, 60), (60, 70)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.selected_shapes = [shape]
+    canvas._prev_point = QPointF(50, 65)
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
+
+    moved = canvas._drag_shapes(
+        shapes=[shape],
+        cursor=canvas._prev_point + QPointF(5, 0),
+        constrain_cursor=False,
+    )
+
+    assert moved is True
+    np.testing.assert_allclose(shape.points, [(45, 60), (65, 70)])
 
 
 @pytest.mark.gui
@@ -1497,6 +1712,24 @@ def test_project_oriented_rectangle_corners_with_cursor_off_locked_edge() -> Non
     )
     assert (perp.x(), perp.y()) == pytest.approx((0.0, 4.0))
     assert (para.x(), para.y()) == pytest.approx((15.0, 0.0))
+
+
+def test_reproject_oriented_rectangle_clips_degenerate_projection() -> None:
+    corners = tuple(
+        QPointF(*point) for point in [(20, 10), (30, 20), (20, 30), (10, 20)]
+    )
+
+    new_corners = _reproject_oriented_rectangle_corners(
+        corners=corners,
+        vertex_index=1,
+        pos=QPointF(-30, 0),
+        image_size=QSize(_WIDTH, _HEIGHT),
+        allow_out_of_bounds=False,
+    )
+
+    for corner in new_corners:
+        assert 0 <= corner.x() <= _WIDTH
+        assert 0 <= corner.y() <= _HEIGHT
 
 
 @pytest.mark.parametrize(
