@@ -1,0 +1,43 @@
+---
+name: Artifact install smoke
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  artifact-install-smoke:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          packages: libegl1 libxkbcommon0 libxcb-cursor0 libgl1
+          version: 1.0
+      - name: Build wheel and source distribution
+        run: uv build
+      - name: Smoke-test installed artifacts
+        shell: bash
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |-
+          source_root="$PWD"
+          smoke_script="$source_root/tools/artifact_install_smoke.py"
+          shopt -s nullglob
+          wheels=("$source_root"/dist/*.whl)
+          sdists=("$source_root"/dist/*.tar.gz)
+          if (( ${#wheels[@]} != 1 || ${#sdists[@]} != 1 )); then
+            echo "Expected one wheel and one source distribution" >&2
+            exit 1
+          fi
+          for artifact in "${wheels[@]}" "${sdists[@]}"; do
+            uv run --isolated --no-project --with "$artifact" \
+              python -I "$smoke_script" --source-root "$source_root"
+          done
