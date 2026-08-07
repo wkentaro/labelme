@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import shutil
 from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
@@ -51,6 +52,7 @@ def test_MainWindow_open_json(
 
         win = main_win(file_or_dir=json_file)
         show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+        assert "[" not in win.windowTitle()
 
         close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -81,6 +83,7 @@ def test_MainWindow_open_dir(
 
     assert win._image_path
     assert Path(win._image_path).name == first_image_name
+    assert "[1/3]" in win.windowTitle()
     win._open_prev_image()
     qtbot.wait(100)
     assert Path(win._image_path).name == first_image_name
@@ -200,3 +203,88 @@ def test_MainWindow_rejects_malformed_shapes_before_installing_any(
     assert error_field in critical_messages[0]
     assert raw_win._canvas_widgets.canvas.shapes == []
     assert len(raw_win._docks.label_list) == 0
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("failure", "navigation"),
+    [
+        ("missing_image", "next"),
+        ("unreadable_image", "next"),
+        ("corrupt_annotation", "next"),
+        ("corrupt_annotation", "open_file"),
+        ("semantically_invalid_annotation", "next"),
+    ],
+)
+def test_failed_navigation_preserves_current_session(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    critical_messages: list[str],
+    pause: bool,
+    failure: str,
+    navigation: str,
+) -> None:
+    source_image = data_path / "annotated/2011_000003.jpg"
+    source_annotation = data_path / "annotated/2011_000003.json"
+    session_dir = tmp_path / "session"
+    session_dir.mkdir()
+    current_image = session_dir / "01-current.jpg"
+    current_annotation = session_dir / "01-current.json"
+    next_image = session_dir / "02-next.jpg"
+    next_annotation = session_dir / "02-next.json"
+
+    shutil.copyfile(source_image, current_image)
+    current_annotation_data = json.loads(source_annotation.read_text())
+    current_annotation_data["imagePath"] = current_image.name
+    current_annotation.write_text(json.dumps(current_annotation_data))
+
+    if failure == "unreadable_image":
+        next_image.write_bytes(b"not an image")
+    else:
+        shutil.copyfile(source_image, next_image)
+    if failure == "corrupt_annotation":
+        next_annotation.write_text("{")
+    elif failure == "semantically_invalid_annotation":
+        invalid_annotation_data = dict(current_annotation_data)
+        invalid_annotation_data["imagePath"] = next_image.name
+        invalid_annotation_data["shapes"] = [
+            dict(current_annotation_data["shapes"][0], shape_type="unsupported")
+        ]
+        next_annotation.write_text(json.dumps(invalid_annotation_data))
+
+    win = main_win(file_or_dir=session_dir)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    if failure == "missing_image":
+        next_image.unlink()
+
+    canvas = win._canvas_widgets.canvas
+    annotation_before = win._annotation
+    image_cache_key_before = win._image.cacheKey()
+    pixmap_cache_key_before = canvas.pixmap.cacheKey()
+    shapes_before = canvas.shapes[:]
+    row_before = win._docks.file_list.currentRow()
+
+    if navigation == "open_file":
+        win._load_from_file_or_dir(file_or_dir=str(next_image))
+    else:
+        win._open_next_image()
+
+    qtbot.waitUntil(lambda: len(critical_messages) == 1)
+    assert win._image_path == str(current_image)
+    assert win._label_file_path == str(current_annotation)
+    assert win._annotation is annotation_before
+    assert win._image.cacheKey() == image_cache_key_before
+    assert canvas.pixmap.cacheKey() == pixmap_cache_key_before
+    assert len(canvas.shapes) == len(shapes_before)
+    assert all(
+        actual is expected for actual, expected in zip(canvas.shapes, shapes_before)
+    )
+    assert canvas.isEnabled()
+    assert win._docks.file_list.currentRow() == row_before
+    current_item = win._docks.file_list.currentItem()
+    assert current_item is not None
+    assert current_item.text() == str(current_image)
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
