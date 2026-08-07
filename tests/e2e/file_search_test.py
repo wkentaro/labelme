@@ -20,10 +20,10 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
-    tmp_path: Path,
     pause: bool,
 ) -> None:
-    raw_dir = data_path / "raw"
+    image_dir = data_path / "annotated_nested/images"
+    annotation_dir = data_path / "annotated_nested/annotations"
     scan_calls: list[str] = []
     scan_image_files = labelme._app._scan_image_files
 
@@ -34,15 +34,15 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     monkeypatch.setattr(labelme._app, "_scan_image_files", _track_scan_image_files)
 
     win = main_win(
-        file_or_dir=str(raw_dir),
+        file_or_dir=str(image_dir),
         config_overrides={"auto_save": False},
-        output_dir=str(tmp_path),
+        output_dir=str(annotation_dir),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     all_image_paths = win.image_list[:]
     assert len(all_image_paths) == 3
-    assert scan_calls == [str(raw_dir)]
+    assert scan_calls == [str(image_dir)]
 
     draw_and_commit_polygon(
         qtbot=qtbot,
@@ -60,6 +60,8 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     questions: list[bool] = []
     can_continue = win._can_continue
     load_file = win._load_file
+    file_exists = labelme._app.QtCore.QFile.exists
+    file_exists_calls: list[str] = []
 
     def _track_can_continue() -> bool:
         continue_checks.append(True)
@@ -73,9 +75,14 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
         questions.append(True)
         return QMessageBox.StandardButton.Discard
 
+    def _track_file_exists(filename: str) -> bool:
+        file_exists_calls.append(filename)
+        return file_exists(filename)
+
     monkeypatch.setattr(win, "_can_continue", _track_can_continue)
     monkeypatch.setattr(win, "_load_file", _track_load_file)
     monkeypatch.setattr(QMessageBox, "question", _track_question)
+    monkeypatch.setattr(labelme._app.QtCore.QFile, "exists", _track_file_exists)
 
     win._docks.file_search.setText(r"2011_00000[6]\.jpg$")
 
@@ -87,7 +94,8 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
         id(shape) for shape in win._canvas_widgets.canvas.shapes
     ] == active_shape_ids
     assert win.windowTitle().endswith("*")
-    assert scan_calls == [str(raw_dir)]
+    assert scan_calls == [str(image_dir)]
+    assert file_exists_calls == []
     assert continue_checks == []
     assert load_calls == []
     assert questions == []
@@ -97,7 +105,8 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     assert win.image_list == []
     assert win._image_path == active_image_path
     assert win._annotation is active_annotation
-    assert scan_calls == [str(raw_dir)]
+    assert scan_calls == [str(image_dir)]
+    assert file_exists_calls == []
     assert continue_checks == []
     assert load_calls == []
     assert questions == []
@@ -114,7 +123,8 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
         id(shape) for shape in win._canvas_widgets.canvas.shapes
     ] == active_shape_ids
     assert win.windowTitle().endswith("*")
-    assert scan_calls == [str(raw_dir)]
+    assert scan_calls == [str(image_dir)]
+    assert file_exists_calls == []
     assert continue_checks == []
     assert load_calls == []
     assert questions == []

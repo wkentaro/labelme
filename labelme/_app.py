@@ -197,6 +197,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _last_failed_auto_save_path: str | None
     _image_path: str | None
     _image_paths: list[str]
+    _has_label_by_image_path: dict[str, bool]
     _prev_image_path: str | None
     _zoom_values: dict[str, tuple[_ZoomMode, float]]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
@@ -999,6 +1000,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._last_failed_auto_save_path = None
         self._image_path = None
         self._image_paths = []
+        self._has_label_by_image_path = {}
         self._prev_image_path = None
         self._zoom_values = {}
         self._brightness_contrast_values = {}
@@ -1792,6 +1794,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if items:
                 items[0].setCheckState(Qt.CheckState.Checked)
             self._last_failed_auto_save_path = None
+            if self._image_path in self._has_label_by_image_path:
+                self._has_label_by_image_path[self._image_path] = True
             return True
         except (LabelFileError, OSError, ValueError) as e:
             if show_error:
@@ -2076,7 +2080,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return None
         self._label_file_path = label_path
         self._annotation = annotation
-        self._image_path = str(Path(label_path).parent / annotation.image_path)
+        self._image_path = os.path.normpath(
+            Path(label_path).parent / annotation.image_path
+        )
         return annotation
 
     def _open_image_into_state(self, image_path: str) -> bool:
@@ -2450,6 +2456,9 @@ class MainWindow(QtWidgets.QMainWindow):
         annotation_path.unlink()
         logger.info(f"Label file is removed: {annotation_path}")
 
+        if self._image_path in self._has_label_by_image_path:
+            self._has_label_by_image_path[self._image_path] = False
+
         item = self._docks.file_list.currentItem()
         if item:
             item.setCheckState(Qt.CheckState.Unchecked)
@@ -2781,6 +2790,8 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
+            self._image_paths = []
+            self._has_label_by_image_path = {}
             self._docks.file_list.clear()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
@@ -2843,9 +2854,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._image_path = None
         self._image_paths.extend(new_files)
-        for path in new_files:
+        for image_path in new_files:
+            label_path = _resolve_label_path(
+                image_or_label_path=image_path, output_dir=self._output_dir
+            )
+            has_label = QtCore.QFile.exists(label_path)
+            self._has_label_by_image_path[image_path] = has_label
             self._docks.file_list.addItem(
-                _make_image_list_item(image_path=path, output_dir=self._output_dir)
+                _make_image_list_item(
+                    image_path=image_path,
+                    has_label=has_label,
+                )
             )
 
         if len(self.image_list) > 1:
@@ -2869,6 +2888,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._prev_opened_dir = root_dir
         self._image_path = None
         self._image_paths = _scan_image_files(root_dir=root_dir)
+        self._has_label_by_image_path = {
+            image_path: QtCore.QFile.exists(
+                _resolve_label_path(
+                    image_or_label_path=image_path, output_dir=self._output_dir
+                )
+            )
+            for image_path in self._image_paths
+        }
         self._filter_file_list(pattern=pattern)
 
     def _filter_file_list(self, pattern: str | None = None) -> None:
@@ -2885,7 +2912,8 @@ class MainWindow(QtWidgets.QMainWindow):
             for image_path in image_paths:
                 file_list.addItem(
                     _make_image_list_item(
-                        image_path=image_path, output_dir=self._output_dir
+                        image_path=image_path,
+                        has_label=self._has_label_by_image_path[image_path],
                     )
                 )
             if self._image_path in image_paths:
@@ -2981,14 +3009,10 @@ def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) ->
 
 
 def _make_image_list_item(
-    *, image_path: str, output_dir: Path | None
+    *, image_path: str, has_label: bool
 ) -> QtWidgets.QListWidgetItem:
     item = QtWidgets.QListWidgetItem(image_path)
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-    label_path = _resolve_label_path(
-        image_or_label_path=image_path, output_dir=output_dir
-    )
-    has_label = QtCore.QFile.exists(label_path)
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
     return item
 
