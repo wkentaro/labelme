@@ -10,6 +10,7 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import Circle
+from ._geometry import _round_bbox_to_int
 from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygon_from_mask
@@ -78,10 +79,7 @@ def _shape_from_detection(
             return None
         if not detection.mask.any():
             return None
-        xmin = int(detection.bbox[0])
-        ymin = int(detection.bbox[1])
-        xmax = int(detection.bbox[2])
-        ymax = int(detection.bbox[3])
+        xmin, ymin, xmax, ymax = _round_bbox_to_int(bbox=detection.bbox)
         return _build_shape(
             shape_type="mask",
             points=[[xmin, ymin], [xmax, ymax]],

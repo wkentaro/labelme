@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from labelme._automation import Detection
+from labelme._automation import shapes_from_detections
 from labelme._automation._suppression import match_detections_to_existing_shapes
 from labelme._automation._suppression import suppress_detections_greedy
 from labelme._shape import Shape
@@ -322,6 +323,25 @@ def test_overlapping_uses_existing_mask_shape_geometry() -> None:
     )
 
     assert result.new_detections == [upper_right]
+    assert result.matching_shapes == [existing]
+
+
+def test_mask_shape_from_fractional_detection_can_be_an_existing_shape() -> None:
+    detection = Detection(
+        bbox=(10.4, 20.6, 30.9, 50.1),
+        mask=np.ones((30, 22), dtype=bool),
+    )
+    [existing] = shapes_from_detections(
+        detections=[detection],
+        shape_type="mask",
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection],
+        existing_shapes=[existing],
+    )
+
+    assert result.new_detections == []
     assert result.matching_shapes == [existing]
 
 
