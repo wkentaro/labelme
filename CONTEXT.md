@@ -93,7 +93,7 @@ The on-disk YAML where Settings are persisted as sparse Overrides on top of the 
 _Avoid_: settings file, rc file, labelmerc.
 
 **Default Config**:
-The baseline Settings shipped in `labelme/config/default_config.yaml`. Read-only, and the single source of both every default value and the set of allowed keys.
+The baseline Settings shipped in `labelme/_config/default_config.yaml`. Read-only, and the single source of both every default value and the set of allowed keys.
 _Avoid_: defaults file, base config, schema.
 
 **Override**:

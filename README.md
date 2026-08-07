@@ -182,6 +182,42 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 - [Instance Segmentation](examples/instance_segmentation)
 - [Video Annotation](examples/video_annotation)
 
+## Standalone artifact release handoff
+
+The **labelme.io release pipeline** owns the official standalone artifacts for
+Windows, macOS, and Linux. It builds and validates these artifacts. This
+repository does not build or launch-test official standalone artifacts. The
+instructions below are only for local builds.
+
+For each release candidate, the labelme.io release pipeline must:
+
+- Build or obtain the exact release candidate artifacts for Windows, macOS, and
+  Linux. Record the release candidate tag, source commit, and an unambiguous
+  identity for each artifact, such as a pipeline artifact ID or SHA-256 checksum.
+- Launch each recorded artifact on its target operating system and wait until the
+  main window is ready.
+- Start with a clean user profile and verify that the bundled Default Config at
+  `labelme/_config/default_config.yaml` loads.
+- Verify that the application icon and the visible interface icons load from the
+  bundled `labelme/icons/` directory.
+- Confirm that all expected bundled `labelme/translate/*.qm` catalogs are present
+  and readable. Then select one non-English translation and verify that the
+  interface uses it.
+- Verify that required bundled AI runtime data can be read from the artifact,
+  including
+  `osam/_models/yoloworld/clip/bpe_simple_vocab_16e6.txt.gz`. Model weights that
+  OSAM downloads at runtime are not bundled data.
+- Record all results before the final release is promoted.
+
+The standalone-artifact check in
+[#2461](https://github.com/wkentaro/labelme/issues/2461) can pass only after the
+issue links to one successful labelme.io release pipeline run. That run is the
+required signal. It must identify the release candidate tag and source commit,
+list the unambiguous identity of each tested artifact, and show that all checks
+above passed on Windows, macOS, and Linux. A replacement artifact has a different
+identity and requires a new complete run. Without this linked signal, the release
+must not be promoted.
+
 ## How to build standalone executable
 
 ```bash
