@@ -252,8 +252,8 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
         assert navigation.textElideMode() == QtCore.Qt.TextElideMode.ElideRight
         assert navigation.width() == 240
 
-        dialog.show()
-        qtbot.waitExposed(dialog)
+        with qtbot.waitExposed(dialog):
+            dialog.show()
         if dialog.width() >= dialog.sizeHint().width():
             assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
     finally:
@@ -263,8 +263,8 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
 def test_default_size_scrolls_vertically_only(
     qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
 
     scroll_area = dialog._page._scroll_area
     assert (dialog.width(), dialog.height()) == (760, 590)
@@ -283,8 +283,8 @@ def test_dialog_is_resizable(dialog: SettingsDialog) -> None:
 def test_dialog_prevents_narrow_content_overflow(
     qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
     minimum_width = dialog.width()
 
     dialog.resize(minimum_width - 200, dialog.height())
@@ -297,8 +297,8 @@ def test_dialog_prevents_narrow_content_overflow(
 def test_navigation_jumps_to_group(
     qtbot: QtBot, dialog: SettingsDialog, target: int
 ) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
 
     scroll_bar = dialog._page._scroll_area.verticalScrollBar()
     # Start scrolled: from the top, a broken jump that moves the scroll bar but not
@@ -325,8 +325,8 @@ def test_navigation_jumps_to_group(
 
 
 def test_scrolling_updates_navigation(qtbot: QtBot, dialog: SettingsDialog) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
 
     scroll_bar = dialog._page._scroll_area.verticalScrollBar()
     scroll_bar.setValue(scroll_bar.maximum() - 1)
@@ -339,8 +339,8 @@ def test_scrolling_updates_navigation(qtbot: QtBot, dialog: SettingsDialog) -> N
 def test_scrolling_updates_navigation_after_a_jump(
     qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
 
     navigation = dialog._page._navigation
     item = navigation.item(1)
@@ -359,8 +359,8 @@ def test_scrolling_updates_navigation_after_a_jump(
 def test_navigation_returns_to_first_group_when_resize_removes_scrollbar(
     qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
 
     scroll_bar = dialog._page._scroll_area.verticalScrollBar()
     scroll_bar.setValue(scroll_bar.maximum())
@@ -376,8 +376,8 @@ def test_navigation_returns_to_first_group_when_resize_removes_scrollbar(
 def test_reopening_preserves_scroll_position(
     qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
     scroll_bar = dialog._page._scroll_area.verticalScrollBar()
     scroll_bar.setValue(scroll_bar.maximum() // 2)
     expected = scroll_bar.value()
@@ -390,8 +390,8 @@ def test_reopening_preserves_scroll_position(
 
 def test_short_dialog_scrolls_page(qtbot: QtBot, dialog: SettingsDialog) -> None:
     dialog.resize(dialog.width(), 160)
-    dialog.show()
-    qtbot.waitExposed(dialog)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
 
     assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
 
@@ -405,8 +405,8 @@ def test_large_font_uses_default_size_with_scrolling(
     QtWidgets.QApplication.setFont(large_font)
     try:
         dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={})
-        dialog.show()
-        qtbot.waitExposed(dialog)
+        with qtbot.waitExposed(dialog):
+            dialog.show()
 
         available_size = dialog.screen().availableGeometry().size()
         scroll_bar_width = dialog.style().pixelMetric(
