@@ -765,7 +765,11 @@ class Canvas(QtWidgets.QWidget):
     def _continue_right_button_drag(self, pos: QPointF) -> None:
         if self._selected_shapes_copy:
             self._apply_cursor(CursorRole.MOVE)
-            self._drag_shapes(shapes=self._selected_shapes_copy, cursor=pos)
+            self._drag_shapes(
+                shapes=self._selected_shapes_copy,
+                cursor=pos,
+                constrain_cursor=True,
+            )
             self.update()
         elif self.selected_shapes:
             self._selected_shapes_copy = [s.copy() for s in self.selected_shapes]
@@ -831,7 +835,9 @@ class Canvas(QtWidgets.QWidget):
 
     def _drag_selected_shapes(self, pos: QPointF) -> None:
         self._apply_cursor(CursorRole.MOVE)
-        self._drag_shapes(shapes=self.selected_shapes, cursor=pos)
+        self._drag_shapes(
+            shapes=self.selected_shapes, cursor=pos, constrain_cursor=True
+        )
         self.update()
         self._is_moving_shape = True
 
@@ -1320,7 +1326,7 @@ class Canvas(QtWidgets.QWidget):
             )
             self.selection_changed.emit(new_selection)
             self._hovered_shape_is_selected = False
-        self._record_drag_anchor(click=point)
+        self._record_drag_anchor(shapes=self.selected_shapes, click=point)
 
     def _find_shape_at_point(self, point: QPointF) -> Shape | None:
         query = np.array([point.x(), point.y()])
@@ -1335,13 +1341,11 @@ class Canvas(QtWidgets.QWidget):
                 return shape
         return None
 
-    def _record_drag_anchor(self, click: QPointF) -> None:
-        if not self.selected_shapes:
+    def _record_drag_anchor(self, shapes: list[Shape], click: QPointF) -> None:
+        if not shapes:
             self._drag_anchor = (QPointF(), QRectF())
             return
-        bounds = _shape_bounds(shape=self.selected_shapes[0])
-        for s in self.selected_shapes[1:]:
-            bounds = bounds.united(_shape_bounds(shape=s))
+        bounds = _compute_shapes_bounds(shapes=shapes)
         self._drag_anchor = (bounds.topLeft() - click, bounds)
 
     def _bounded_move_vertex(
@@ -1392,19 +1396,32 @@ class Canvas(QtWidgets.QWidget):
         for i, corner in enumerate(new_corners):
             shape.move_vertex(i=i, pos=(corner.x(), corner.y()))
 
-    def _drag_shapes(self, shapes: list[Shape], cursor: QPointF) -> bool:
-        if self._should_constrain_to_pixmap(cursor):
+    def _drag_shapes(
+        self, shapes: list[Shape], cursor: QPointF, constrain_cursor: bool
+    ) -> bool:
+        if constrain_cursor and self._should_constrain_to_pixmap(cursor):
             return False
 
+        current_bounds = _compute_shapes_bounds(shapes=shapes)
         rel_tl, bounds = self._drag_anchor
+        expected_top_left = self._prev_point + rel_tl
+        if (
+            bounds.size() != current_bounds.size()
+            or expected_top_left != current_bounds.topLeft()
+        ):
+            self._record_drag_anchor(shapes=shapes, click=self._prev_point)
+            rel_tl, bounds = self._drag_anchor
+
         target = cursor + rel_tl
         if not self._allow_out_of_bounds_points:
             pw = float(self.pixmap.width())
             ph = float(self.pixmap.height())
-            target.setX(max(0.0, target.x()))
-            target.setY(max(0.0, target.y()))
-            target.setX(min(target.x(), pw - bounds.width()))
-            target.setY(min(target.y(), ph - bounds.height()))
+            min_x = min(0.0, pw - bounds.width(), current_bounds.left())
+            max_x = max(0.0, pw - bounds.width(), current_bounds.left())
+            min_y = min(0.0, ph - bounds.height(), current_bounds.top())
+            max_y = max(0.0, ph - bounds.height(), current_bounds.top())
+            target.setX(min(max(target.x(), min_x), max_x))
+            target.setY(min(max(target.y(), min_y), max_y))
 
         new_cursor = target - rel_tl
         delta = new_cursor - self._prev_point
@@ -1781,7 +1798,11 @@ class Canvas(QtWidgets.QWidget):
     def _move_by_keyboard(self, offset: QPointF) -> None:
         if not self.selected_shapes:
             return
-        self._drag_shapes(shapes=self.selected_shapes, cursor=self._prev_point + offset)
+        self._drag_shapes(
+            shapes=self.selected_shapes,
+            cursor=self._prev_point + offset,
+            constrain_cursor=False,
+        )
         self.update()
         self._is_moving_shape = True
 
@@ -2088,6 +2109,14 @@ def _opposite_corner_in_parallelogram(
     return neighbor1 + neighbor2 - opposite_to
 
 
+def _compute_shapes_bounds(*, shapes: list[Shape]) -> QRectF:
+    assert shapes
+    bounds = _shape_bounds(shape=shapes[0])
+    for shape in shapes[1:]:
+        bounds = bounds.united(_shape_bounds(shape=shape))
+    return bounds
+
+
 def _project_oriented_rectangle_corners(
     *, anchor: QPointF, edge_axis: QPointF, moving: QPointF
 ) -> tuple[QPointF, QPointF]:
@@ -2136,9 +2165,15 @@ def _reproject_oriented_rectangle_corners(
             edge_b = _compute_intersection_edges_image(
                 p1=adjacent_para, p2=moving, image_size=image_size
             )
-            moving = _utils.project_point_on_line(
-                point=moving, line_start=edge_a, line_end=edge_b
-            )
+            if edge_a == edge_b:
+                moving = QPointF(
+                    np.clip(moving.x(), 0.0, image_size.width()),
+                    np.clip(moving.y(), 0.0, image_size.height()),
+                )
+            else:
+                moving = _utils.project_point_on_line(
+                    point=moving, line_start=edge_a, line_end=edge_b
+                )
             adjacent_perp, adjacent_para = _project_oriented_rectangle_corners(
                 anchor=anchor, edge_axis=adjacent_para, moving=moving
             )
