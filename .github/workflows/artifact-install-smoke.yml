@@ -24,20 +24,4 @@ jobs:
       - name: Build wheel and source distribution
         run: uv build
       - name: Smoke-test installed artifacts
-        shell: bash
-        env:
-          QT_QPA_PLATFORM: offscreen
-        run: |-
-          source_root="$PWD"
-          smoke_script="$source_root/tools/artifact_install_smoke.py"
-          shopt -s nullglob
-          wheels=("$source_root"/dist/*.whl)
-          sdists=("$source_root"/dist/*.tar.gz)
-          if (( ${#wheels[@]} != 1 || ${#sdists[@]} != 1 )); then
-            echo "Expected one wheel and one source distribution" >&2
-            exit 1
-          fi
-          for artifact in "${wheels[@]}" "${sdists[@]}"; do
-            uv run --isolated --no-project --with "$artifact" \
-              python -I "$smoke_script" --source-root "$source_root"
-          done
+        uses: ./.github/actions/artifact-install-smoke

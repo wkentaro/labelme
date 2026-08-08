@@ -82,6 +82,8 @@ def _check_packaged_resources(*, source_root: Path) -> None:
     package_dir = Path(labelme.__file__).resolve().parent
     REQUIRED_RESOURCES: Final = (
         Path("_config/default_config.yaml"),
+        Path("icons/icon-256.png"),
+        Path("translate/ja_JP.qm"),
         *(
             path.relative_to(source_package_dir)
             for path in (source_package_dir / "icons").rglob("*")
@@ -118,6 +120,8 @@ def _start_application(*, working_dir: Path) -> None:
     package_dir = Path(labelme.__file__).resolve().parent
     icon_dir = package_dir / "icons"
     application_icon = new_icon("icon-256.png")
+    if application_icon.isNull():
+        raise RuntimeError("the application icon could not be loaded")
     for icon_path in icon_dir.rglob("*"):
         if icon_path.suffix not in {".ico", ".png", ".svg"}:
             continue

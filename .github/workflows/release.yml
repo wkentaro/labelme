@@ -15,6 +15,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v7
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libegl1 libxkbcommon0 libxcb-cursor0 libgl1
+          version: 1.0
       - run: make check_translate
       - name: Extract release notes from CHANGELOG.md
         run: |
@@ -28,7 +32,10 @@ jobs:
             echo "No CHANGELOG.md section found for $version" >&2
             exit 1
           fi
-      - run: uv build
+      - name: Build wheel and source distribution
+        run: uv build
+      - name: Validate release artifacts
+        uses: ./.github/actions/artifact-install-smoke
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
