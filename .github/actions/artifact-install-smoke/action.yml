@@ -1,0 +1,39 @@
+---
+name: Smoke-test Python distributions
+description: Validate and exercise the wheel and source distribution in dist/
+runs:
+  using: composite
+  steps:
+    - name: Locate distributions
+      id: distributions
+      shell: bash
+      run: |-
+        source_root="$PWD"
+        shopt -s nullglob
+        wheels=("$source_root"/dist/*.whl)
+        sdists=("$source_root"/dist/*.tar.gz)
+        if (( ${#wheels[@]} != 1 || ${#sdists[@]} != 1 )); then
+          echo "Expected one wheel and one source distribution" >&2
+          exit 1
+        fi
+        printf 'wheel=%s\n' "${wheels[0]}" >> "$GITHUB_OUTPUT"
+        printf 'sdist=%s\n' "${sdists[0]}" >> "$GITHUB_OUTPUT"
+    - name: Check distribution metadata
+      shell: bash
+      run: >-
+        uvx twine check
+        "${{ steps.distributions.outputs.wheel }}"
+        "${{ steps.distributions.outputs.sdist }}"
+    - name: Smoke-test installed distributions
+      shell: bash
+      env:
+        QT_QPA_PLATFORM: offscreen
+      run: |-
+        source_root="$PWD"
+        smoke_script="$source_root/tools/artifact_install_smoke.py"
+        for artifact in \
+          "${{ steps.distributions.outputs.wheel }}" \
+          "${{ steps.distributions.outputs.sdist }}"; do
+          uv run --isolated --no-project --with "$artifact" \
+            python -I "$smoke_script" --source-root "$source_root"
+        done
