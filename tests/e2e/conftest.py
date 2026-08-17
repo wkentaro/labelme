@@ -113,6 +113,9 @@ def main_win(
 
         monkeypatch.setattr(sys, "argv", argv)
         monkeypatch.setenv("HOME", str(session_home))
+        # ntpath.expanduser ignores HOME, so without this the app would read and
+        # write the real user profile on Windows.
+        monkeypatch.setenv("USERPROFILE", str(session_home))
 
         app = QApplication.instance()
         assert isinstance(app, QApplication)

@@ -8,10 +8,17 @@ import pytest
 from labelme import _config
 
 
+def _steer_home(monkeypatch: pytest.MonkeyPatch, home: Path) -> None:
+    monkeypatch.setenv("HOME", str(home))
+    # ntpath.expanduser ignores HOME, so without this the test would read and
+    # write the real user profile on Windows.
+    monkeypatch.setenv("USERPROFILE", str(home))
+
+
 def test_get_user_config_file_creates_empty(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setenv("HOME", str(tmp_path))
+    _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_file = _config.get_user_config_file()
     assert Path(config_file).read_text() == ""
 
@@ -19,7 +26,7 @@ def test_get_user_config_file_creates_empty(
 def test_get_user_config_file_does_not_overwrite(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setenv("HOME", str(tmp_path))
+    _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_path = tmp_path / ".labelmerc"
     config_path.write_text("auto_save: true\n")
     config_file = _config.get_user_config_file()
@@ -30,7 +37,7 @@ def test_get_user_config_file_does_not_overwrite(
 def test_get_user_config_file_skip_creation(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setenv("HOME", str(tmp_path))
+    _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_file = _config.get_user_config_file(create_if_missing=False)
     assert not Path(config_file).exists()
 
