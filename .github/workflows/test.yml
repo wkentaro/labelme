@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
-      matrix:
+      matrix: &os-python-matrix
         os: [windows-latest, macos-latest, ubuntu-latest]
         python-version: ['3.12', '3.13', '3.14']
     steps:
@@ -55,11 +55,21 @@ jobs:
           (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
           uv pip install cython && uv pip install pycocotools  # for instance_segmentation/labelme2coco.py
           (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
-      - name: Build wheel and install from it
-        shell: bash
-        run: |-
-          uv build
-          uv pip install dist/labelme-*.whl
+  artifact-install-smoke:
+    runs-on: ${{ matrix.os }}
+    # Each leg does a cold build plus two isolated installs (PySide6,
+    # onnxruntime, and friends), heavier than a plain dependency sync, so it
+    # gets more headroom against cold-cache runners.
+    timeout-minutes: 20
+    strategy:
+      matrix: *os-python-matrix
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Smoke-test installed artifacts
+        uses: ./.github/actions/artifact-install-smoke
   network-test:
     runs-on: ubuntu-latest
     timeout-minutes: 5

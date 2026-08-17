@@ -1,0 +1,48 @@
+---
+name: Smoke-test Python distributions
+description: Build, validate, and exercise the wheel and source distribution
+runs:
+  using: composite
+  steps:
+    - name: Install system Qt dependencies
+      if: runner.os == 'Linux'
+      uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: libegl1 libxkbcommon0 libxcb-cursor0 libgl1
+        version: 1.0
+    - name: Build wheel and source distribution
+      shell: bash
+      run: uv build
+    - name: Locate distributions
+      id: distributions
+      shell: bash
+      run: |-
+        shopt -s nullglob
+        wheels=(dist/*.whl)
+        sdists=(dist/*.tar.gz)
+        if (( ${#wheels[@]} != 1 || ${#sdists[@]} != 1 )); then
+          echo "Expected one wheel and one source distribution" >&2
+          exit 1
+        fi
+        printf 'wheel=%s\n' "${wheels[0]}" >> "$GITHUB_OUTPUT"
+        printf 'sdist=%s\n' "${sdists[0]}" >> "$GITHUB_OUTPUT"
+    - name: Check distribution metadata
+      shell: bash
+      env:
+        WHEEL: ${{ steps.distributions.outputs.wheel }}
+        SDIST: ${{ steps.distributions.outputs.sdist }}
+      run: uvx --from 'twine>=7.0.0' twine check --strict "$WHEEL" "$SDIST"
+    - name: Smoke-test installed distributions
+      shell: bash
+      env:
+        QT_QPA_PLATFORM: offscreen
+        WHEEL: ${{ steps.distributions.outputs.wheel }}
+        SDIST: ${{ steps.distributions.outputs.sdist }}
+      run: |-
+        for artifact in "$WHEEL" "$SDIST"; do
+          # -I keeps this checkout's own tools/ and labelme/ off sys.path, so
+          # the import inside the script can only resolve to the artifact
+          # just installed above, never to the source checkout.
+          uv run --isolated --no-project --with "$artifact" \
+            python -I tools/artifact_install_smoke.py
+        done
