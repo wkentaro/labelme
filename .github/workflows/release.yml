@@ -23,7 +23,8 @@ jobs:
         id: release_notes
         run: uv run tools/release_notes.py "$GITHUB_REF_NAME" CHANGELOG.md release-notes.md
           >> "$GITHUB_OUTPUT"
-      - run: uv build
+      - name: Validate release artifacts
+        uses: ./.github/actions/artifact-install-smoke
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
