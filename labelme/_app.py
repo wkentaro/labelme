@@ -2300,7 +2300,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             a0.ignore()
             return
-        items = [i.toLocalFile() for i in a0.mimeData().urls()]
+        # QUrl separates with forward slashes even on Windows, while the file
+        # list holds the separator of the platform, so an unnormalized drop
+        # would list an image the directory scan already listed a second time.
+        items = [os.path.normpath(i.toLocalFile()) for i in a0.mimeData().urls()]
         self.import_dropped_image_files(items)
 
     # User Dialogs #
