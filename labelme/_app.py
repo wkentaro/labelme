@@ -1319,14 +1319,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def mark_clean(self) -> None:
         self._is_changed = False
         self._actions.save.setEnabled(False)
-        for _, action in self._actions.draw:
-            action.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=False))
 
-        if self.has_label_file():
-            self._actions.delete_file.setEnabled(True)
-        else:
-            self._actions.delete_file.setEnabled(False)
+    def _reset_label_file_actions(self) -> None:
+        # The draw half is a reset, not a re-derivation: a label file
+        # transition returns the UI to the neutral edit-mode state, where every
+        # draw action is available. Narrowing them again is _switch_canvas_mode.
+        for _, action in self._actions.draw:
+            action.setEnabled(True)
+        self._actions.delete_file.setEnabled(self.has_label_file())
 
     def update_action_states(self, value: bool = True) -> None:
         for action in (*self._actions.zoom, *self._actions.on_load_active):
@@ -2182,6 +2183,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mark_dirty()
         else:
             self.mark_clean()
+            self._reset_label_file_actions()
         self._canvas_widgets.canvas.setEnabled(True)
         # set zoom values
         is_initial_load = not self._zoom_values
@@ -2377,6 +2379,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.save_labels(label_path=label_path):
             self.mark_clean()
+            self._reset_label_file_actions()
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
@@ -2408,6 +2411,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.reset_state()
         self.mark_clean()
+        self._reset_label_file_actions()
         self.update_action_states(False)
         self._canvas_widgets.canvas.setEnabled(False)
         self._docks.file_list.setFocus()
@@ -2464,6 +2468,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
         self.mark_clean()
+        self._reset_label_file_actions()
 
     @property
     def _is_settings_editable(self) -> bool:
