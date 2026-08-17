@@ -103,7 +103,7 @@ def test_release_workflow_builds_and_publishes_before_prerelease_creation() -> N
         Path(__file__).parents[3] / ".github" / "workflows" / "release.yml"
     ).read_text(encoding="utf-8")
 
-    build = workflow.index("uv build")
+    build = workflow.index("artifact-install-smoke")
     publish = workflow.index("pypa/gh-action-pypi-publish")
     create = workflow.index('gh release create "${args[@]}"')
     assert build < publish < create
