@@ -1943,6 +1943,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._image_path is not None:
             self._scroll_values[orientation][self._image_path] = value
 
+    def _remember_current_viewport(self) -> None:
+        if self._image_path is None:
+            return
+        for orientation, bar in self._canvas_widgets.scroll_bars.items():
+            self._scroll_values[orientation][self._image_path] = bar.value()
+        self._prev_image_path = self._image_path
+
     def _set_zoom(self, value: float, pos: QtCore.QPointF | None = None) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set zoom")
@@ -2117,7 +2124,7 @@ class MainWindow(QtWidgets.QMainWindow):
             == (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier)
             else []
         )
-        self._prev_image_path = self._image_path
+        self._remember_current_viewport()
         self.reset_state()
         self._canvas_widgets.canvas.setEnabled(False)
         if not QtCore.QFile.exists(image_or_label_path):
@@ -2186,6 +2193,20 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mark_clean()
             self._reset_label_file_actions()
         self._canvas_widgets.canvas.setEnabled(True)
+        # Zoom changes the live scroll positions, so resolve the intended
+        # viewport first.
+        target_scroll_values: dict[Qt.Orientation, float] = {}
+        for orientation, values_by_image in self._scroll_values.items():
+            if self._image_path in values_by_image:
+                target_scroll_values[orientation] = values_by_image[self._image_path]
+            elif (
+                self._config["keep_prev_scale"]
+                and self._prev_image_path is not None
+                and self._prev_image_path in values_by_image
+            ):
+                target_scroll_values[orientation] = values_by_image[
+                    self._prev_image_path
+                ]
         # set zoom values
         is_initial_load = not self._zoom_values
         if self._image_path in self._zoom_values:
@@ -2195,11 +2216,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._zoom_mode = _ZoomMode.FIT_WINDOW
             self._adjust_scale()
         # set scroll values
-        for orientation in self._scroll_values:
-            if self._image_path in self._scroll_values[orientation]:
-                self.set_scroll_value(
-                    orientation, self._scroll_values[orientation][self._image_path]
-                )
+        for orientation, value in target_scroll_values.items():
+            self.set_scroll_value(orientation=orientation, value=value)
         self.open_brightness_contrast_dialog(value=False, is_initial_load=True)
         self._paint_canvas()
         self.update_action_states(True)
@@ -2410,6 +2428,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def close_file(self, _value: bool = False) -> None:
         if not self._can_continue():
             return
+        self._remember_current_viewport()
         self.reset_state()
         self.mark_clean()
         self._reset_label_file_actions()
@@ -2839,6 +2858,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return lst
 
     def import_dropped_image_files(self, image_files: list[str]) -> None:
+        self._remember_current_viewport()
         extensions = _list_supported_image_extensions()
         already_loaded = set(self.image_list)
         new_files = [
@@ -2868,6 +2888,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue() or not root_dir:
             return
 
+        self._remember_current_viewport()
         self._docks.file_dock.setEnabled(True)
         self._docks.file_dock.setToolTip("")
 
