@@ -91,6 +91,65 @@ def test_auto_save_on_shape_move(
 
 
 @pytest.mark.gui
+def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
+    monkeypatch: pytest.MonkeyPatch,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    prompt_shown = False
+
+    def record_prompt(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+        nonlocal prompt_shown
+        prompt_shown = True
+        return QMessageBox.StandardButton.Discard
+
+    monkeypatch.setattr(QMessageBox, "question", record_prompt)
+    win = main_win(
+        file_or_dir=str(data_path / _TEST_FILE_NAME),
+        config_overrides=dict(auto_save=False),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    label_file = tmp_path / Path(_TEST_FILE_NAME).name
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+
+    assert win._is_changed
+    assert win._actions.save.isEnabled()
+    assert win.windowTitle().endswith("*")
+    assert not label_file.exists()
+
+    win._actions.save_auto.setChecked(True)
+    draw_and_commit_polygon(
+        qtbot=qtbot,
+        win=win,
+        label="auto-saved",
+        vertices=_VERTICES,
+    )
+
+    assert label_file.exists()
+    with open(label_file) as f:
+        saved_labels = [shape["label"] for shape in json.load(f)["shapes"]]
+    assert "auto-saved" in saved_labels
+    assert not win._is_changed
+    assert not win._actions.save.isEnabled()
+    assert not win.windowTitle().endswith("*")
+    # The window is still in polygon create mode: a successful auto-save must
+    # clear only the dirty indicators, not re-enable the draw actions.
+    assert not dict(win._actions.draw)["polygon"].isEnabled()
+
+    win.close()
+    qtbot.waitUntil(lambda: not win.isVisible(), timeout=3000)
+
+    assert not prompt_shown
+
+
+@pytest.mark.gui
 def test_auto_save_on_undo(
     qtbot: QtBot,
     _auto_save_win: MainWindow,

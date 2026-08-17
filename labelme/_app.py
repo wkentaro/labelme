@@ -1310,6 +1310,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_path=label_path,
                 show_error=self._last_failed_auto_save_path != label_path,
             ):
+                self.mark_clean()
                 return
             self._last_failed_auto_save_path = label_path
         self._is_changed = True
