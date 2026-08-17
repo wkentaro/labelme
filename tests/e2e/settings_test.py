@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest
@@ -9,6 +8,7 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
+from labelme._config import _writer
 from labelme._widgets import SettingsDialog
 from labelme._widgets.settings_dialog import _PlainTextEdit
 from labelme._yaml import safe_load
@@ -291,12 +291,7 @@ def test_setting_controls_revert_when_write_fails(
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    if hasattr(os, "geteuid") and os.geteuid() == 0:
-        pytest.skip("a read-only directory is not enforced for root")
-
-    config_dir = tmp_path / "ro"
-    config_dir.mkdir()
-    config_file = config_dir / "labelmerc.yaml"
+    config_file = tmp_path / "labelmerc.yaml"
     config_file.write_text("display_label_popup: true\n")
     win = main_win(config_file=config_file)
 
@@ -319,15 +314,16 @@ def test_setting_controls_revert_when_write_fails(
     ai_dock = win._ai_annotation._model_combo
     assert ai_dock.currentText() == "Sam2 (balanced)"
 
-    # The atomic save writes a temp file in the config directory, so a read-only
-    # directory makes set_override raise.
-    config_dir.chmod(0o500)
-    try:
-        checkbox.setChecked(False)
-        win._actions.save_auto.trigger()
-        ai_dock.setCurrentIndex(ai_dock.findText("EfficientSam (speed)"))
-    finally:
-        config_dir.chmod(0o700)
+    # Refuse the save at the boundary a read-only config directory would;
+    # injecting the failure keeps it reachable on Windows and as root, where
+    # a read-only directory does not block writes.
+    def _refuse_write(config_file: Path, content: str) -> None:
+        raise PermissionError(f"injected write failure: {config_file}")
+
+    monkeypatch.setattr(_writer, "_atomic_write", _refuse_write)
+    checkbox.setChecked(False)
+    win._actions.save_auto.trigger()
+    ai_dock.setCurrentIndex(ai_dock.findText("EfficientSam (speed)"))
 
     assert len(warned) == 3
     assert checkbox.isChecked()  # editor reverted to the last-saved value
