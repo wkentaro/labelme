@@ -142,7 +142,9 @@ def test_resolve_config_source_falls_back_to_defaults_on_missing_default_file(
 
     assert resolved == (None, {})
     assert len(warnings_logged) == 1
-    assert str(missing_default) in warnings_logged[0]
+    # The warning quotes the path with !r, which doubles the backslashes of a
+    # Windows path.
+    assert repr(str(missing_default)) in warnings_logged[0]
 
 
 def test_resolve_config_source_reads_an_existing_default_file(tmp_path: Path) -> None:
@@ -283,7 +285,7 @@ def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
 
     err = capsys.readouterr().err
     assert "Failed to set up the log file" in err
-    assert str(cache_dir / "labelme.log") in err
+    assert repr(str(cache_dir / "labelme.log")) in err
 
 
 def test_setup_loguru_degrades_to_stderr_without_localappdata(
