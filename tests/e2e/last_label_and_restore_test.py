@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from functools import partial
+from pathlib import Path
 from typing import Final
 
 import pytest
@@ -12,10 +14,12 @@ from labelme._app import MainWindow
 from labelme._widgets.label_dialog import LabelDialog
 
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
 from .conftest import draw_and_commit_polygon
 from .conftest import draw_triangle
 from .conftest import schedule_on_dialog
 from .conftest import select_shape
+from .conftest import show_window_and_wait_for_imagedata
 
 _SHAPE_TIMEOUT_MS: Final = 5_000
 _VERTICES: Final = ((0.2, 0.2), (0.6, 0.2), (0.6, 0.6))
@@ -89,5 +93,57 @@ def test_restore_last_shape_via_undo(
     assert [
         QPointF(float(p[0]), float(p[1])) for p in restored.points
     ] == original_points
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_first_and_subsequent_shapes_can_be_undone_and_saved(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    raw_win = main_win(
+        file_or_dir=data_path / "raw/2011_000003.jpg",
+        config_overrides={"auto_save": False},
+        output_dir=tmp_path,
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=raw_win)
+
+    canvas = raw_win._canvas_widgets.canvas
+    label_list = raw_win._docks.label_list
+
+    assert not canvas.shapes
+    assert not canvas.can_restore_shape
+    assert not raw_win._actions.undo.isEnabled()
+
+    _draw_and_commit_polygon(qtbot=qtbot, win=raw_win, label="first")
+
+    assert canvas.can_restore_shape
+    assert raw_win._actions.undo.isEnabled()
+    assert len(canvas.shapes) == 1
+    assert len(label_list) == 1
+
+    _draw_and_commit_polygon(qtbot=qtbot, win=raw_win, label="second")
+
+    raw_win._actions.undo.trigger()
+    assert [shape.label for shape in canvas.shapes] == ["first"]
+    assert len(label_list) == 1
+
+    raw_win._actions.undo.trigger()
+    assert not canvas.shapes
+    assert len(label_list) == 0
+    assert not canvas.can_restore_shape
+    assert not raw_win._actions.undo.isEnabled()
+
+    label_path = tmp_path / "manual-save.json"
+    monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(label_path))
+    raw_win._save_label_file()
+
+    with label_path.open() as f:
+        assert json.load(f)["shapes"] == []
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

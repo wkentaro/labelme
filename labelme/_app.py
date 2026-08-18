@@ -2217,9 +2217,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
-        if label_file_path is not None:
-            self._load_shapes(shapes=shapes)
-            flags.update(annotation.flags)
+        self._load_shapes(shapes=shapes)
+        flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if prev_shapes and self.has_no_shapes():
             self._load_shapes(shapes=prev_shapes, replace=False)
