@@ -78,6 +78,62 @@ def test_drop_image_files_loads_them(
 
 
 @pytest.mark.gui
+def test_dropped_image_files_respect_active_search_filter(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(config_overrides={"file_search": r"000003\.jpg$"})
+    win.show()
+    qtbot.waitUntil(win.isVisible)
+
+    matching_image = data_path / "raw/2011_000003.jpg"
+    hidden_image = data_path / "raw/2011_000006.jpg"
+    mime = _make_drop_mime(paths=[matching_image, hidden_image])
+
+    assert _drag_enter_accepted(win=win, mime=mime)
+    _send_drop(win=win, mime=mime)
+
+    assert win.image_list == [str(matching_image)]
+    assert matching_image.name in win.windowTitle()
+
+    win._docks.file_search.setText(r"000006\.jpg$")
+    assert win.image_list == [str(hidden_image)]
+
+    win._docks.file_search.clear()
+    assert win.image_list == [str(matching_image), str(hidden_image)]
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_opening_annotation_file_clears_loaded_directory_images(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    annotated_dir = data_path / "annotated"
+    win = main_win(file_or_dir=annotated_dir)
+    win.show()
+    qtbot.waitUntil(win.isVisible)
+
+    image_path = annotated_dir / "2011_000003.jpg"
+    win._load_from_file_or_dir(file_or_dir=str(annotated_dir / "2011_000003.json"))
+    assert win.image_list == []
+
+    mime = _make_drop_mime(paths=[image_path])
+    assert _drag_enter_accepted(win=win, mime=mime)
+    _send_drop(win=win, mime=mime)
+
+    assert win.image_list == [str(image_path)]
+    assert image_path.name in win.windowTitle()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_drag_enter_rejects_non_image_and_keeps_state(
     qtbot: QtBot,
     raw_win: MainWindow,

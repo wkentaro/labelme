@@ -196,6 +196,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_file_path: str | None
     _last_failed_auto_save_path: str | None
     _image_path: str | None
+    _loaded_image_paths: list[str]
     _prev_image_path: str | None
     _zoom_values: dict[str, tuple[_ZoomMode, float]]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
@@ -997,6 +998,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_file_path = None
         self._last_failed_auto_save_path = None
         self._image_path = None
+        self._loaded_image_paths = []
         self._prev_image_path = None
         self._zoom_values = {}
         self._brightness_contrast_values = {}
@@ -1650,9 +1652,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
 
     def _on_file_search_changed(self) -> None:
-        self._import_images_from_dir(
-            root_dir=self._prev_opened_dir, pattern=self._docks.file_search.text()
-        )
+        self._refresh_file_list()
 
     def _file_list_item_selection_changed(self) -> None:
         if not self._can_continue():
@@ -2821,6 +2821,7 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
+            self._loaded_image_paths = []
             self._docks.file_list.clear()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
@@ -2828,15 +2829,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self._load_file(image_or_label_path=file_or_dir)
         elif Path(file_or_dir).is_dir():
-            self._import_images_from_dir(
-                root_dir=file_or_dir, pattern=self._docks.file_search.text()
-            )
+            self._import_images_from_dir(root_dir=file_or_dir)
             self._open_next_image()
         else:
-            self._import_images_from_dir(
-                root_dir=str(Path(file_or_dir).parent),
-                pattern=self._docks.file_search.text(),
-            )
+            self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
             self._load_file(image_or_label_path=file_or_dir)
 
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
@@ -2875,7 +2871,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def import_dropped_image_files(self, image_files: list[str]) -> None:
         self._remember_current_viewport()
         extensions = _list_supported_image_extensions()
-        already_loaded = set(self.image_list)
+        already_loaded = set(self._loaded_image_paths)
         new_files = [
             path
             for path in image_files
@@ -2883,10 +2879,8 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
 
         self._image_path = None
-        for path in new_files:
-            self._docks.file_list.addItem(
-                _make_image_list_item(image_path=path, output_dir=self._output_dir)
-            )
+        self._loaded_image_paths.extend(new_files)
+        self._refresh_file_list()
 
         if len(self.image_list) > 1:
             self._actions.open_next_img.setEnabled(True)
@@ -2894,9 +2888,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._open_next_image()
 
-    def _import_images_from_dir(
-        self, root_dir: str | None, pattern: str | None = None
-    ) -> None:
+    def _import_images_from_dir(self, root_dir: str | None) -> None:
         self._actions.open_next_img.setEnabled(True)
         self._actions.open_prev_img.setEnabled(True)
 
@@ -2909,26 +2901,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._prev_opened_dir = root_dir
         self._image_path = None
-        self._docks.file_list.clear()
+        self._loaded_image_paths = _scan_image_files(root_dir=root_dir)
+        self._refresh_file_list()
 
-        image_paths = _scan_image_files(root_dir=root_dir)
+    def _refresh_file_list(self) -> None:
+        image_paths = self._loaded_image_paths
+        pattern = self._docks.file_search.text()
         if pattern:
             try:
                 image_paths = [x for x in image_paths if re.search(pattern, x)]
             except re.error:
                 pass
-        for image_path in image_paths:
-            item = QtWidgets.QListWidgetItem(image_path)
-            item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-            if QtCore.QFile.exists(
-                _resolve_label_path(
-                    image_or_label_path=image_path, output_dir=self._output_dir
+
+        file_list = self._docks.file_list
+        with QtCore.QSignalBlocker(file_list):
+            file_list.clear()
+            for image_path in image_paths:
+                file_list.addItem(
+                    _make_image_list_item(
+                        image_path=image_path, output_dir=self._output_dir
+                    )
                 )
-            ):
-                item.setCheckState(Qt.CheckState.Checked)
-            else:
-                item.setCheckState(Qt.CheckState.Unchecked)
-            self._docks.file_list.addItem(item)
+            if self._image_path in image_paths:
+                file_list.setCurrentRow(image_paths.index(self._image_path))
+
+        self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
         stats: list[str] = []
