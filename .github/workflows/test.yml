@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
   workflow_call:
+# Nine GUI cells per push are too expensive to keep running for superseded
+# commits. github.ref is unique per pull request (refs/pull/N/merge) even for
+# fork branches that share a name, and the event condition keeps main pushes
+# and workflow_call runs uncancelled, so only obsolete PR runs are cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   test:
     runs-on: ${{ matrix.os }}
