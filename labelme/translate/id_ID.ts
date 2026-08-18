@@ -166,6 +166,25 @@
     </message>
 </context>
 <context>
+    <name>LabelDialog</name>
+    <message>
+        <source>Shape Label</source>
+        <translation>Label Bentuk</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Label</translation>
+    </message>
+    <message>
+        <source>Group ID</source>
+        <translation>ID Grup</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Deskripsi</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

@@ -166,6 +166,25 @@
     </message>
 </context>
 <context>
+    <name>LabelDialog</name>
+    <message>
+        <source>Shape Label</source>
+        <translation>برچسب شکل</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>برچسب</translation>
+    </message>
+    <message>
+        <source>Group ID</source>
+        <translation>شناسه گروه</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>توضیحات</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
