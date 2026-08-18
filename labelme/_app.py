@@ -2085,7 +2085,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return None
         self._label_file_path = label_path
         self._annotation = annotation
-        self._image_path = str(Path(label_path).parent / annotation.image_path)
+        # The relative path stored in the label file may carry "." or ".."
+        # components, which would survive the join and break the exact-string
+        # comparisons against the file list.
+        self._image_path = os.path.normpath(
+            str(Path(label_path).parent / annotation.image_path)
+        )
         return annotation
 
     def _open_image_into_state(self, image_path: str) -> bool:
@@ -2106,6 +2111,11 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def _load_file(self, image_or_label_path: str) -> None:
+        # Qt file dialogs separate with forward slashes even on Windows, while
+        # the file list holds the separator of the platform, so an unnormalized
+        # path would neither select its file list row nor receive the saved
+        # checkmark, which both compare exact strings.
+        image_or_label_path = os.path.normpath(image_or_label_path)
         # changing fileListWidget loads file
         if image_or_label_path in self.image_list and (
             self._docks.file_list.currentRow()
