@@ -65,6 +65,15 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     assert np.array_equal(cls > 0, painted)
 
 
+def test_shapes_to_label_mask_rounds_origin_without_cropping_mask() -> None:
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=[[2.7, 1.7], [6.3, 3.3]], mask=patch)
+    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[2:5, 3:8] = True
+    assert np.array_equal(cls > 0, painted)
+
+
 def _encode_png(img_pil: PIL.Image.Image) -> bytes:
     buf = io.BytesIO()
     img_pil.save(buf, format="PNG")

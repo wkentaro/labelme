@@ -163,6 +163,39 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     assert np.array_equal(cls > 0, painted)
 
 
+@pytest.mark.parametrize(
+    ("points", "expected_origin"),
+    [
+        ([[2.3, 1.3], [6.3, 3.3]], (2, 1)),
+        ([[2.7, 1.7], [6.7, 3.7]], (3, 2)),
+        ([[2.7, 1.7], [6.3, 3.3]], (3, 2)),
+    ],
+    ids=["down", "up", "different-fractions"],
+)
+def test_shapes_to_label_mask_rounds_fractional_bounds(
+    points: list[list[float]], expected_origin: tuple[int, int]
+) -> None:
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=points, mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    x, y = expected_origin
+    painted[y : y + patch.shape[0], x : x + patch.shape[1]] = True
+    assert np.array_equal(cls > 0, painted)
+
+
+def test_shapes_to_label_mask_rounds_negative_bounds_to_nearest_pixel() -> None:
+    patch = np.zeros((5, 5), dtype=bool)
+    patch[2, 3] = True  # -> canvas (0, 0)
+    patch[4, 4] = True  # -> canvas (2, 1)
+    shape = _mask_shape(points=[[-2.6, -1.6], [1.4, 2.4]], mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[0, 0] = True
+    painted[2, 1] = True
+    assert np.array_equal(cls > 0, painted)
+
+
 def test_shape_to_mask() -> None:
     img, data = get_img_and_data()
     for shape in data["shapes"]:

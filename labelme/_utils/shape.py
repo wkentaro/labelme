@@ -104,10 +104,13 @@ def shapes_to_label(
             if not isinstance(shape["mask"], np.ndarray):
                 raise ValueError("shape['mask'] must be numpy.ndarray")
             mask = np.zeros(img_shape[:2], dtype=bool)
-            (x1, y1), (x2, y2) = np.asarray(points).astype(int)
+            # The stored mask keeps its extent when fractional bounds round apart.
+            (origin, _) = points
+            x1, y1 = np.asarray(origin).round().astype(int)
+            patch_height, patch_width = shape["mask"].shape
             height, width = img_shape[:2]
-            y_start, y_stop = max(y1, 0), min(y2 + 1, height)
-            x_start, x_stop = max(x1, 0), min(x2 + 1, width)
+            y_start, y_stop = max(y1, 0), min(y1 + patch_height, height)
+            x_start, x_stop = max(x1, 0), min(x1 + patch_width, width)
             if y_start < y_stop and x_start < x_stop:
                 mask[y_start:y_stop, x_start:x_stop] = shape["mask"][
                     y_start - y1 : y_stop - y1, x_start - x1 : x_stop - x1
