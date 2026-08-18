@@ -153,12 +153,7 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
 
-def test_shapes_from_detections_moves_overhanging_oriented_rectangle_inside_image() -> (
-    None
-):
-    # The min-area rectangle of this tilted mask overhangs x=7. Without an
-    # image size the raw fit is kept; the mask-sized image slides the corners
-    # back inside.
+def test_shapes_from_detections_bounds_edge_crossing_oriented_rectangle() -> None:
     mask = np.array(
         [
             [0, 0, 0, 0, 0, 0, 0],
@@ -182,56 +177,22 @@ def test_shapes_from_detections_moves_overhanging_oriented_rectangle_inside_imag
     )
 
     assert (raw_shape.points[:, 0] > 7).any()
-    assert (shape.points >= 0).all()
-    assert (shape.points <= [7, 6]).all()
-    raw_edges = np.roll(raw_shape.points, -1, axis=0) - raw_shape.points
-    moved_edges = np.roll(shape.points, -1, axis=0) - shape.points
-    np.testing.assert_allclose(moved_edges, raw_edges)
-
-
-def test_shapes_from_detections_clips_oriented_rectangle_wider_than_image() -> None:
-    mask = np.array(
-        [
-            [0, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 0, 0],
-            [0, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [0, 1, 1, 1, 1, 1],
-            [0, 0, 0, 1, 1, 1],
-        ],
-        dtype=bool,
+    lower = np.clip(raw_shape.points.min(axis=0), 0, [7, 6])
+    upper = np.clip(raw_shape.points.max(axis=0), 0, [7, 6])
+    np.testing.assert_allclose(
+        shape.points,
+        [lower, [upper[0], lower[1]], upper, [lower[0], upper[1]]],
     )
-    [raw_shape] = shapes_from_detections(
-        detections=[Detection(mask=mask)],
+
+
+def test_shapes_from_detections_drops_oriented_rectangle_outside_image() -> None:
+    shapes = shapes_from_detections(
+        detections=[Detection(bbox=(-10, 10, -1, 20))],
         shape_type="oriented_rectangle",
+        image_size=(100, 100),
     )
 
-    [shape] = shapes_from_detections(
-        detections=[Detection(mask=mask)],
-        shape_type="oriented_rectangle",
-        image_size=(6, 6),
-    )
-
-    # The rectangle is wider than the image, so no rigid translation can fit
-    # it; the x overhang is clipped away while y is left untouched.
-    assert np.ptp(raw_shape.points[:, 0]) > 6
-    assert shape.points[:, 0].min() == 0
-    assert shape.points[:, 0].max() == 6
-    np.testing.assert_allclose(shape.points[:, 1], raw_shape.points[:, 1])
-
-
-def test_shapes_from_detections_moves_out_of_bounds_bbox_oriented_rectangle() -> None:
-    # A mask-less detection falls back to bbox corners, which the model may
-    # place partly outside the image; those are fitted too.
-    [shape] = shapes_from_detections(
-        detections=[Detection(bbox=(-2, 5, 8, 15))],
-        shape_type="oriented_rectangle",
-        image_size=(20, 20),
-    )
-
-    expected = [(0, 5), (10, 5), (10, 15), (0, 15)]
-    for i, (x, y) in enumerate(expected):
-        assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
+    assert shapes == []
 
 
 def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
