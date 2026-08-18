@@ -18,6 +18,7 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
+_VIEWPORT_ZOOM: Final[int] = 300
 
 
 @pytest.fixture()
@@ -94,6 +95,195 @@ def test_zoom_step_keeps_fractional_precision(
     assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(115.5)
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+def _set_scroll_bars_to_fraction(
+    qtbot: QtBot,
+    win: MainWindow,
+    numerator: int,
+    denominator: int,
+) -> dict[Qt.Orientation, int]:
+    scroll_bars = win._canvas_widgets.scroll_bars
+    qtbot.waitUntil(lambda: all(bar.maximum() > 0 for bar in scroll_bars.values()))
+
+    values: dict[Qt.Orientation, int] = {}
+    for orientation, bar in scroll_bars.items():
+        value = bar.maximum() * numerator // denominator
+        assert value > 0
+        bar.setValue(value)
+        values[orientation] = value
+    return values
+
+
+def _wait_for_viewport(
+    qtbot: QtBot,
+    win: MainWindow,
+    scroll_values: dict[Qt.Orientation, int],
+) -> None:
+    scroll_bars = win._canvas_widgets.scroll_bars
+    qtbot.waitUntil(
+        lambda: win._canvas_widgets.zoom_widget.value() == _VIEWPORT_ZOOM
+        and all(
+            scroll_bars[orientation].value() == expected
+            for orientation, expected in scroll_values.items()
+        )
+    )
+    assert win._canvas_widgets.zoom_widget.value() == _VIEWPORT_ZOOM
+    for orientation, expected in scroll_values.items():
+        assert scroll_bars[orientation].value() == expected
+
+
+@pytest.fixture(name="scrolled_win")
+def _make_scrolled_win(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+) -> tuple[MainWindow, dict[Qt.Orientation, int]]:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"keep_prev_scale": True},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._set_zoom(value=_VIEWPORT_ZOOM)
+    scroll_values = _set_scroll_bars_to_fraction(
+        qtbot=qtbot,
+        win=win,
+        numerator=1,
+        denominator=3,
+    )
+    return win, scroll_values
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("keep_prev_scale", [True, False])
+def test_navigation_restores_each_image_viewport(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+    keep_prev_scale: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw"),
+        config_overrides={"keep_prev_scale": keep_prev_scale},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    win._set_zoom(value=_VIEWPORT_ZOOM)
+    scroll_bars = win._canvas_widgets.scroll_bars
+    first_scroll_values = _set_scroll_bars_to_fraction(
+        qtbot=qtbot,
+        win=win,
+        numerator=1,
+        denominator=3,
+    )
+
+    first_image_path = win._image_path
+    assert first_image_path is not None
+    win._open_next_image()
+    qtbot.waitUntil(lambda: win._image_path != first_image_path)
+
+    if keep_prev_scale:
+        _wait_for_viewport(
+            qtbot=qtbot,
+            win=win,
+            scroll_values=first_scroll_values,
+        )
+    else:
+        qtbot.waitUntil(
+            lambda: win._zoom_mode == _ZoomMode.FIT_WINDOW
+            and all(bar.value() == bar.minimum() for bar in scroll_bars.values())
+        )
+        assert win._zoom_mode == _ZoomMode.FIT_WINDOW
+        assert win._canvas_widgets.zoom_widget.value() != 300
+        for bar in scroll_bars.values():
+            assert bar.value() == bar.minimum()
+
+    win._set_zoom(value=250)
+    second_scroll_values = _set_scroll_bars_to_fraction(
+        qtbot=qtbot,
+        win=win,
+        numerator=2,
+        denominator=3,
+    )
+    assert second_scroll_values != first_scroll_values
+
+    win._open_prev_image()
+    qtbot.waitUntil(lambda: win._image_path == first_image_path)
+    _wait_for_viewport(
+        qtbot=qtbot,
+        win=win,
+        scroll_values=first_scroll_values,
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_open_file_keeps_previous_viewport(
+    scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win, expected_scroll_values = scrolled_win
+    next_image_path = str(data_path / "raw/2011_000006.jpg")
+
+    win._load_from_file_or_dir(file_or_dir=next_image_path)
+    qtbot.waitUntil(lambda: win._image_path == next_image_path)
+    _wait_for_viewport(
+        qtbot=qtbot,
+        win=win,
+        scroll_values=expected_scroll_values,
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_file_search_keeps_previous_viewport(
+    scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win, expected_scroll_values = scrolled_win
+    next_image_path = str(data_path / "raw/2011_000006.jpg")
+
+    win._docks.file_search.setText("2011_000006")
+    win._open_next_image()
+    qtbot.waitUntil(lambda: win._image_path == next_image_path)
+    _wait_for_viewport(
+        qtbot=qtbot,
+        win=win,
+        scroll_values=expected_scroll_values,
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("next_image_name", ["2011_000003.jpg", "2011_000006.jpg"])
+def test_close_and_open_restores_viewport(
+    scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+    next_image_name: str,
+) -> None:
+    win, expected_scroll_values = scrolled_win
+    next_image_path = str(data_path / "raw" / next_image_name)
+
+    win.close_file()
+    win._load_from_file_or_dir(file_or_dir=next_image_path)
+    qtbot.waitUntil(lambda: win._image_path == next_image_path)
+    _wait_for_viewport(
+        qtbot=qtbot,
+        win=win,
+        scroll_values=expected_scroll_values,
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
 def _make_wheel_event(
