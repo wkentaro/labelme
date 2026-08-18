@@ -1940,3 +1940,18 @@ def test_remove_selected_point_deselects_vertex(canvas: Canvas) -> None:
     assert len(shape.points) == 3  # the point was removed
     # Vertex is no longer selected, so the next move won't drag the neighbor (#968).
     assert not canvas._is_vertex_selected()
+
+
+@pytest.mark.gui
+def test_end_move_in_place_copies_points(canvas: Canvas) -> None:
+    shape = _make_polygon()
+    canvas.load_shapes(shapes=[shape])
+    canvas.selected_shapes = [shape]
+    clone = shape.copy()
+    clone.translate(offset=(5, -5))
+    canvas._selected_shapes_copy = [clone]
+
+    canvas.end_move(copy=False)
+
+    assert np.array_equal(shape.points, clone.points)
+    assert not np.shares_memory(shape.points, clone.points)
