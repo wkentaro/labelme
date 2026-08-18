@@ -125,9 +125,7 @@ def main() -> None:
         base = path.stem
         out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
 
-        img = utils.img_data_to_arr(label_file.image_data)
-        if img.ndim == 3 and img.shape[2] == 4:
-            img = imgviz.rgba2rgb(img)
+        img = utils.decode_img_data_as_rgb(label_file.image_data)
         imgviz.io.imsave(out_img_file, img)
         data["images"].append(
             dict(

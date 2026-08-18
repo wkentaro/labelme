@@ -27,7 +27,7 @@ def main() -> None:
 
     label_file = utils.load_label_file(json_file)
 
-    image: NDArray[np.uint8] = utils.img_data_to_arr(label_file.image_data)
+    image: NDArray[np.uint8] = utils.decode_img_data_as_rgb(label_file.image_data)
 
     label_name_to_value: dict[str, int] = {"_background_": 0}
     for shape in sorted(label_file.shapes, key=lambda x: x["label"]):

@@ -67,6 +67,13 @@ def img_data_to_arr(img_data: bytes) -> NDArray[np.uint8]:
     return np.array(PIL.Image.open(io.BytesIO(img_data)))
 
 
+def decode_img_data_as_rgb(img_data: bytes) -> NDArray[np.uint8]:
+    # Converting at the PIL level rather than on the decoded array resolves a
+    # palette image against its palette instead of reading the indices as
+    # intensities, and drops the alpha channel that JPEG cannot represent.
+    return np.array(PIL.Image.open(io.BytesIO(img_data)).convert("RGB"))
+
+
 def img_b64_to_arr(img_b64: str | bytes) -> NDArray[np.uint8]:
     return img_data_to_arr(base64.b64decode(img_b64))
 
