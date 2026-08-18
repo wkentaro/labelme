@@ -4,6 +4,8 @@ import base64
 import io
 import json
 import math
+import os
+import stat
 import time
 import typing
 from dataclasses import dataclass
@@ -362,8 +364,25 @@ def write_label_file(
             if key in _RESERVED_TOP_LEVEL_KEYS:
                 raise ValueError(f"reserved key in other_data: {key!r}")
             payload[key] = value
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=2)
+
+        # A failed save must leave the previous file intact, so write next to
+        # it and rename over it only once the temporary file closed cleanly.
+        # Windows cannot represent POSIX modes, so preservation is POSIX-only.
+        try:
+            existing_mode = (
+                None if os.name == "nt" else stat.S_IMODE(os.stat(filename).st_mode)
+            )
+        except FileNotFoundError:
+            existing_mode = None
+        temporary_path = Path(f"{filename}.tmp")
+        try:
+            with open(temporary_path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+            if existing_mode is not None:
+                os.chmod(temporary_path, existing_mode)
+            os.replace(temporary_path, filename)
+        finally:
+            temporary_path.unlink(missing_ok=True)
     except (OSError, TypeError, ValueError) as e:
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
 
