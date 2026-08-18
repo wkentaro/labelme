@@ -38,7 +38,7 @@ uv run --no-sync python .agents/skills/test-labelme-gui/scripts/prepare_run.py \
 ```
 
 Keep the printed run directory. It contains copied inputs, writable outputs, an editable
-config, isolated `QSettings`, evidence folders, a manifest, and a report skeleton. Preserve
+Config File, isolated Window State, evidence folders, a manifest, and a report skeleton. Preserve
 it through reporting. A scheduled run may delete old run directories only under an
 explicit retention policy.
 
@@ -49,7 +49,14 @@ uv run --no-sync python .agents/skills/test-labelme-gui/scripts/launch_app.py \
   RUN_DIR raw
 ```
 
-The launcher prints its PID and exact paths before starting Qt. On macOS, resolve the
+Use mode `none` for no-path startup and `annotated` to open the writable prepared
+Annotation File directly with its eight expected Shapes. The remaining modes are `raw`,
+`sequence`, `corrupt`, and `missing-image`. Each mode rejects a missing, mismatched, or
+non-isolated path before Qt starts.
+
+The launcher records the exact mode, input, output, Config File, Window State path,
+arguments, and process
+in the manifest and report before starting Qt, then prints that record. On macOS, resolve the
 process's full `.app` path from that PID and target that path with Computer Use. Abort as
 an automation gap if multiple live GUI processes remain ambiguous. For a packaged lane,
 launch the requested artifact with the prepared input and output paths; never silently

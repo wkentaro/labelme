@@ -8,7 +8,8 @@ Record these before scenarios start:
 - Git commit, dirty-tree state, app version, and artifact path
 - source or packaged lane
 - OS version, architecture, display scale, window size, and locale
-- profile, theme, clean or returning settings state, and input dataset
+- profile, theme, clean or returning Window State, and input dataset
+- exact launch mode, input, output, Config File, Window State path, arguments, and process
 - `make test` status when it was part of the request
 - run directory and process stderr path
 
