@@ -4,9 +4,11 @@ import struct
 import zlib
 from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import pytest
+from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -304,6 +306,29 @@ def test_shapes_from_dicts_merges_label_flags(
         label_flags=label_flags,
     )
     assert shape.flags == expected
+
+
+def test_shapes_from_dicts_warns_once_per_shape_with_a_non_str_label() -> None:
+    # The file format types a shape's label as a string and the reader rejects
+    # a non-string one, so only a caller bypassing the reader reaches the guard.
+    shape_dicts = [
+        _make_shape_dict(label=cast(str, None), flags={"occluded": True}),
+        _make_shape_dict(label=cast(str, None), flags={}),
+    ]
+    warnings_logged: list[str] = []
+    sink_id = logger.add(
+        lambda m: warnings_logged.append(m.record["message"]), level="WARNING"
+    )
+    try:
+        shapes = _app._shapes_from_dicts(
+            shape_dicts=shape_dicts,
+            label_flags={"^cat$": ["occluded"], "^dog$": ["truncated"]},
+        )
+    finally:
+        logger.remove(sink_id)
+
+    assert [shape.flags for shape in shapes] == [{"occluded": True}, {}]
+    assert warnings_logged == ["shape.label is not str: None"] * 2
 
 
 def test_shapes_from_dicts_gives_each_shape_its_own_flags() -> None:
