@@ -36,7 +36,7 @@ The path is a one-time setup, not a code change in this repo:
 
 1. Open a PR on `conda-forge/labelme-feedstock` adding the maintainer to
    `recipe/meta.yaml` `extra.recipe-maintainers`.
-1. Once merged, enable conda-forge bot automerge so future
+2. Once merged, enable conda-forge bot automerge so future
    `regro-cf-autotick-bot` version PRs merge automatically.
 
 After that it is genuinely zero-effort. Until someone wants to take on that
