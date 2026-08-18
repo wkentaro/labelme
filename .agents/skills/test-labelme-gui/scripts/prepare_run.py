@@ -56,6 +56,7 @@ def copy_fixture(source: Path, destination: Path) -> None:
 
 def copy_inputs(repo_root: Path, run_dir: Path) -> dict[str, str]:
     inputs_dir = run_dir / "inputs"
+    outputs_dir = run_dir / "outputs"
 
     raw_dir = inputs_dir / "raw"
     copy_fixture(
@@ -63,7 +64,7 @@ def copy_inputs(repo_root: Path, run_dir: Path) -> dict[str, str]:
         destination=raw_dir / "primitives.jpg",
     )
 
-    annotated_dir = inputs_dir / "annotated"
+    annotated_dir = outputs_dir / "annotated"
     for suffix in (".jpg", ".json"):
         copy_fixture(
             source=repo_root / f"examples/primitives/primitives{suffix}",
@@ -92,7 +93,7 @@ def copy_inputs(repo_root: Path, run_dir: Path) -> dict[str, str]:
 
     return {
         "raw": str(raw_dir),
-        "annotated": str(annotated_dir),
+        "annotated": str(annotated_dir / "primitives.json"),
         "sequence": str(sequence_dir),
         "corrupt": str(corrupt_dir / "primitives.json"),
         "missing-image": str(missing_image_dir / "primitives.json"),
@@ -145,6 +146,14 @@ def write_report(run_dir: Path, manifest: dict[str, object]) -> Path:
                 f"- Host: {manifest['host']}",
                 "- Display/locale: pending",
                 "",
+                "## Launch ledger",
+                "",
+                "<!-- launch-ledger:start -->",
+                "| Mode | Input | Output | Config file | Window state | "
+                "Application log | Process | Arguments |",
+                "| -- | -- | -- | -- | -- | -- | -- | -- |",
+                "<!-- launch-ledger:end -->",
+                "",
                 "## Findings",
                 "",
                 "None recorded.",
@@ -183,7 +192,7 @@ def prepare_run(
         "evidence/accessibility",
         "evidence/logs",
         "outputs",
-        "settings",
+        "window-state",
     ):
         (run_dir / relative_path).mkdir(parents=True, exist_ok=True)
 
@@ -203,10 +212,13 @@ def prepare_run(
         "git_commit": git_commit,
         "git_dirty": git_dirty,
         "config_path": str(config_path),
-        "settings_path": str(run_dir / "settings"),
+        "window_state_path": str(run_dir / "window-state/window-state.ini"),
         "outputs_path": str(run_dir / "outputs"),
         "evidence_path": str(run_dir / "evidence"),
+        "application_log_path": str(run_dir / "evidence/logs/application.log"),
         "datasets": dataset_paths,
+        "expected_shape_counts": {"annotated": 8},
+        "launches": [],
     }
     manifest_path = run_dir / "manifest.json"
     manifest_path.write_text(
