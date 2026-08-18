@@ -182,6 +182,25 @@
     </message>
 </context>
 <context>
+    <name>LabelDialog</name>
+    <message>
+        <source>Shape Label</source>
+        <translation>เลเบลรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>เลเบล</translation>
+    </message>
+    <message>
+        <source>Group ID</source>
+        <translation>ID กลุ่ม</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>คำอธิบาย</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
