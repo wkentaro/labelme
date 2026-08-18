@@ -1,0 +1,6 @@
+---
+interface:
+  display_name: Test Labelme GUI
+  short_description: Evidence-backed GUI QA with Computer Use
+  default_prompt: Use $test-labelme-gui to run Labelme GUI QA and report evidence-backed
+    defects, UX friction, and automation gaps.
