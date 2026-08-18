@@ -221,10 +221,8 @@ def test_navigate_with_unsaved_changes_shows_prompt(
         monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Discard
     )
 
-    # _open_next_image does not call _can_continue itself; it bumps
-    # file_list.setCurrentRow, which fires itemSelectionChanged ->
-    # _file_list_item_selection_changed, and that is where the prompt is
-    # triggered.
+    # Navigation moves the File List selection first; that transition owns the
+    # save prompt before it stages the requested session.
     _dir_win_no_autosave._open_next_image()
 
     qtbot.waitUntil(lambda: prompt_shown[0], timeout=3000)

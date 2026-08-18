@@ -233,6 +233,15 @@ def is_label_file_path(filename: str) -> bool:
 
 
 def read_image_file(filename: str) -> bytes:
+    try:
+        return _read_image_file(filename=filename)
+    except OSError:
+        raise
+    except Exception as e:
+        raise OSError(f"failed to read image {filename!r}: {e}") from e
+
+
+def _read_image_file(filename: str) -> bytes:
     t_start = time.time()
     image_pil = _imread(filename=filename)
 
