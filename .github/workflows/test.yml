@@ -55,11 +55,33 @@ jobs:
           (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
           uv pip install cython && uv pip install pycocotools  # for instance_segmentation/labelme2coco.py
           (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
-      - name: Build wheel and install from it
-        shell: bash
-        run: |-
-          uv build
-          uv pip install dist/labelme-*.whl
+  artifact-install-smoke:
+    runs-on: ${{ matrix.os }}
+    # Each leg does a cold build plus two isolated installs (PySide6,
+    # onnxruntime, and friends), heavier than a plain dependency sync, so it
+    # gets more headroom against cold-cache runners.
+    timeout-minutes: 20
+    strategy:
+      # fail-fast would cancel the sibling legs before they report, and the one
+      # excluded combination below is exactly the kind of platform-specific
+      # break this job exists to find, so every leg runs to completion.
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        python-version: ['3.12', '3.13', '3.14']
+        exclude:
+          # The installed console script prints no usage here and exits 0.
+          # Pre-existing on main, unrelated to packaging, tracked separately.
+          # https://github.com/wkentaro/labelme/issues/2495
+          - os: windows-latest
+            python-version: '3.14'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Smoke-test installed artifacts
+        uses: ./.github/actions/artifact-install-smoke
   network-test:
     runs-on: ubuntu-latest
     timeout-minutes: 5
