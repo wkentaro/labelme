@@ -34,6 +34,10 @@ _Avoid_: label file, JSON file (when more precision is helpful), annotation json
 A set of Shapes sharing a common `group_id`, marking them as belonging together. The reason for grouping is application-defined — instance segmentation uses it for the visible parts of one occluded object, but the concept is general and not tied to any one use case.
 _Avoid_: instance (it is only one application of grouping), cluster.
 
+**Shape Conversion**:
+Replacing a Shape's geometric kind (its `shape_type`) in place while keeping its identity — Label, Group, Shape Flags, and description. The UI verb is "Convert to…". A Conversion is either lossless (e.g. rectangle → polygon) or lossy (e.g. polygon → rectangle keeps only the bounding box); a lossy Conversion states what it discards at the point of use. Reverting relies on undo history, not on stored originals.
+_Avoid_: turn into, transform, cast, change type.
+
 **AI Assist**:
 Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A SAM3 box prompt is a Sweep. Candidates become new Shapes unless Existing Shape Suppression is enabled.
 _Avoid_: AI annotation (too vague — covers AI Text Prompt too), auto-annotation, automation.
