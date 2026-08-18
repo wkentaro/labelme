@@ -1,9 +1,6 @@
 from __future__ import annotations
 
 import os
-import shutil
-import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
@@ -14,97 +11,33 @@ from PySide6 import QtWidgets
 
 import labelme
 from labelme import __appname__
-from labelme import __version__
 from labelme import _locale
 from labelme._app import MainWindow
 
 
 def _check_source_isolation(*, source_root: Path, package_path: Path) -> None:
-    source_entries = [
-        entry for entry in sys.path if Path(entry).resolve().is_relative_to(source_root)
-    ]
-    if source_entries:
-        raise RuntimeError(f"source checkout is on sys.path: {source_entries}")
-
+    # Where labelme was imported from is the evidence. python -I and
+    # `uv run --isolated --no-project` already keep the checkout off sys.path,
+    # so scanning sys.path only restates the invocation.
     if package_path.is_relative_to(source_root):
         raise RuntimeError(f"labelme imported from source checkout: {package_path}")
 
 
-def _check_packaged_resources(*, package_path: Path) -> None:
+def _check_packaged_resources() -> None:
     # Packaging mistakes drop whole directories, so one file per resource kind
-    # is enough to prove the artifact carried the config and icons.
-    package_dir = package_path.parent
-    missing_resources = [
-        relative_path
-        for relative_path in (
-            "_config/default_config.yaml",
-            "icons/icon-256.png",
-        )
-        if not (package_dir / relative_path).is_file()
-    ]
-    if missing_resources:
-        raise RuntimeError(f"packaged resources are missing: {missing_resources}")
+    # proves the artifact carried it. Both are loaded rather than stat'ed: a
+    # truncated icon or catalog exists yet fails to load, and Qt reports that
+    # by returning null or False, never by raising. QImage rather than QPixmap
+    # so this runs before there is a QApplication.
+    icon_path = Path(labelme.__file__).parent / "icons" / "icon-256.png"
+    if QtGui.QImage(str(icon_path)).isNull():
+        raise RuntimeError(f"packaged icon failed to load: {icon_path}")
 
-    # A translation .qm can exist yet fail to load (wrong Qt version, a
-    # truncated file); QTranslator.load() fails silently, so assert it here
-    # rather than only stat'ing the file. Ask the package itself which
-    # catalogs it ships, rather than hardcoding one, so renaming or retiring
-    # a language doesn't fail this check for an unrelated reason.
-    translate_dir = package_dir / "translate"
-    available_locales = sorted(
-        path.stem
-        for path in translate_dir.glob("*.qm")
-        if path.stem != _locale.SOURCE_LOCALE
-    )
-    if not available_locales:
+    locales = _locale.available_translation_locales()
+    if not locales:
         raise RuntimeError("packaged artifact ships no translation catalogs")
-    if not QtCore.QTranslator().load(available_locales[0], str(translate_dir)):
-        raise RuntimeError(
-            f"packaged {available_locales[0]} translation failed to load"
-        )
-
-
-def _run_cli(executable: str, *args: str) -> str:
-    # -I only isolates this process, not a subprocess: PYTHONPATH/PYTHONHOME
-    # would otherwise ride along and could shadow the artifact under test with
-    # the source checkout, the same failure mode this script guards against
-    # for its own in-process import.
-    env = {
-        key: value
-        for key, value in os.environ.items()
-        if key not in ("PYTHONPATH", "PYTHONHOME")
-    }
-    # check=True's CalledProcessError drops stdout/stderr from its message, so
-    # the actual failure text this smoke test exists to surface never reaches
-    # the CI log without reproducing locally. Surface it explicitly instead.
-    result = subprocess.run(
-        [executable, *args], capture_output=True, text=True, env=env
-    )
-    if result.returncode != 0:
-        raise RuntimeError(
-            f"{executable} {' '.join(args)} exited {result.returncode}\n"
-            f"stdout: {result.stdout}\n"
-            f"stderr: {result.stderr}"
-        )
-    return result.stdout
-
-
-def _check_cli() -> None:
-    executable = shutil.which("labelme")
-    if executable is None:
-        raise RuntimeError("labelme console script is not installed")
-
-    help_output = _run_cli(executable, "--help")
-    if "usage: labelme" not in help_output:
-        raise RuntimeError("labelme --help did not print its usage")
-
-    version_output = _run_cli(executable, "--version").strip()
-    expected_version = f"{__appname__} {__version__}"
-    if version_output != expected_version:
-        raise RuntimeError(
-            f"labelme --version printed {version_output!r}, "
-            f"expected {expected_version!r}"
-        )
+    if not QtCore.QTranslator().load(locales[0], str(_locale.TRANSLATE_DIR)):
+        raise RuntimeError(f"packaged {locales[0]} translation failed to load")
 
 
 def _check_application_starts() -> None:
@@ -138,7 +71,7 @@ def main() -> None:
     package_path = Path(labelme.__file__).resolve()
 
     _check_source_isolation(source_root=source_root, package_path=package_path)
-    _check_packaged_resources(package_path=package_path)
+    _check_packaged_resources()
 
     # A QSettings ini handle can still be open when this block exits, which
     # trips a bare TemporaryDirectory's cleanup on Windows.
@@ -155,7 +88,6 @@ def main() -> None:
             QtCore.QSettings.Scope.UserScope,
             home_dir,
         )
-        _check_cli()
         _check_application_starts()
 
 

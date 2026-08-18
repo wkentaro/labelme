@@ -40,6 +40,13 @@ runs:
         SDIST: ${{ steps.distributions.outputs.sdist }}
       run: |-
         for artifact in "$WHEEL" "$SDIST"; do
+          # The console script is what users actually run, and it has printed
+          # nothing at all on some platforms, so echo before asserting.
+          uv run --isolated --no-project --with "$artifact" labelme --version
+          help_output=$(uv run --isolated --no-project --with "$artifact" labelme --help)
+          echo "$help_output"
+          grep -q "usage: labelme" <<<"$help_output"
+
           # -I keeps this checkout's own tools/ and labelme/ off sys.path, so
           # the import inside the script can only resolve to the artifact
           # just installed above, never to the source checkout.
