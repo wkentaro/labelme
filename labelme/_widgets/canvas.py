@@ -401,11 +401,16 @@ class Canvas(QtWidgets.QWidget):
 
     @create_mode.setter
     def create_mode(self, value: str, /) -> None:
+        if not self._set_create_mode(value=value):
+            return
+        self._update_status(extra_messages=None)
+
+    def _set_create_mode(self, *, value: str) -> bool:
         if value not in typing.get_args(_CreateMode):
             raise ValueError(f"Unsupported create_mode: {value}")
         new_mode = cast(_CreateMode, value)
         if new_mode == self._create_mode:
-            return
+            return False
         old_mode = self._create_mode
         # Update the mode before reconciling so any signals fired from a cancel
         # observe the new mode rather than the one being left behind.
@@ -414,6 +419,7 @@ class Canvas(QtWidgets.QWidget):
         self._reconcile_partial_shape_on_mode_switch(
             old_mode=old_mode, new_mode=new_mode
         )
+        return True
 
     def _reconcile_partial_shape_on_mode_switch(
         self, *, old_mode: _CreateMode, new_mode: _CreateMode
@@ -550,7 +556,11 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
-    def set_editing(self, *, value: bool = True) -> None:
+    def set_editing(
+        self, *, value: bool = True, create_mode: str | None = None
+    ) -> None:
+        if create_mode is not None:
+            self._set_create_mode(value=create_mode)
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
         if new_mode is not self.mode:
             self._clear_ai_existing_shape_highlights()
@@ -569,6 +579,7 @@ class Canvas(QtWidgets.QWidget):
             need_update |= self.deselect_shape()
             if need_update:
                 self.update()
+        self._update_status(extra_messages=None)
 
     def _set_highlight(
         self,
