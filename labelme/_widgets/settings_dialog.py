@@ -114,6 +114,20 @@ class _SettingsPage(QtWidgets.QWidget):
         )
         navigation.setCurrentRow(0)
 
+    @property
+    def _required_width(self) -> int:
+        # The width below which the settings scroll sideways. The page size hint
+        # does not report it: QScrollArea caps its own hint at 36 character
+        # widths and ignores how far its widget refuses to shrink, so a font
+        # wider than the one the layout was tuned for would size the page too
+        # narrow. Swap the scroll area's hint for what the content cannot give
+        # up, and keep the rest of the page hint as measured.
+        return (
+            self.sizeHint().width()
+            - self._scroll_area.sizeHint().width()
+            + self._content.minimumSizeHint().width()
+        )
+
     def _scroll_to_group(self, index: int) -> None:
         if not 0 <= index < len(self._groups):
             return
@@ -211,10 +225,12 @@ class SettingsDialog(QtWidgets.QDialog):
         scroll_bar_width = self.style().pixelMetric(
             QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
         )
+        page_width = max(page.sizeHint().width(), page._required_width)
+        dialog_chrome_width = self.sizeHint().width() - page.sizeHint().width()
         preferred_dialog_size = QtCore.QSize(
             max(
                 DEFAULT_DIALOG_SIZE.width(),
-                self.sizeHint().width() + scroll_bar_width,
+                page_width + dialog_chrome_width + scroll_bar_width,
             ),
             DEFAULT_DIALOG_SIZE.height(),
         )

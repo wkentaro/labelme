@@ -22,6 +22,18 @@ def applied() -> Applied:
     return []
 
 
+def _preferred_width(dialog: SettingsDialog) -> int:
+    # The width the dialog opens at on an unconstrained screen: its page held
+    # out of sideways scrolling plus its own chrome, never below the default.
+    page = dialog._page
+    scroll_bar_width = dialog.style().pixelMetric(
+        QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
+    )
+    page_width = max(page.sizeHint().width(), page._required_width)
+    dialog_chrome_width = dialog.sizeHint().width() - page.sizeHint().width()
+    return max(760, page_width + dialog_chrome_width + scroll_bar_width)
+
+
 def _make_dialog(
     qtbot: QtBot, applied: Applied, overrides: dict, succeed: bool = True
 ) -> SettingsDialog:
@@ -254,8 +266,11 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
 
         with qtbot.waitExposed(dialog):
             dialog.show()
-        if dialog.width() >= dialog.sizeHint().width():
-            assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
+        # A screen narrower than the dialog wants leaves it no room to keep the
+        # content out of a horizontal scroll bar.
+        if dialog.width() < _preferred_width(dialog):
+            pytest.skip("this screen is narrower than the settings content")
+        assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
     finally:
         qapp.removeTranslator(translator)
 
@@ -265,6 +280,9 @@ def test_default_size_scrolls_vertically_only(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
+
+    if _preferred_width(dialog) > 760:
+        pytest.skip("this font needs the dialog wider than its default size")
 
     scroll_area = dialog._page._scroll_area
     assert (dialog.width(), dialog.height()) == (760, 590)
@@ -285,6 +303,8 @@ def test_dialog_prevents_narrow_content_overflow(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
+    if dialog.width() < _preferred_width(dialog):
+        pytest.skip("this screen is narrower than the settings content")
     minimum_width = dialog.width()
 
     dialog.resize(minimum_width - 200, dialog.height())
@@ -409,13 +429,8 @@ def test_large_font_uses_default_size_with_scrolling(
             dialog.show()
 
         available_size = dialog.screen().availableGeometry().size()
-        scroll_bar_width = dialog.style().pixelMetric(
-            QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
-        )
-        assert dialog.width() == min(
-            max(760, dialog.sizeHint().width() + scroll_bar_width),
-            available_size.width(),
-        )
+        assert _preferred_width(dialog) >= 760
+        assert dialog.width() == min(_preferred_width(dialog), available_size.width())
         assert dialog.height() == min(590, available_size.height())
         assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
     finally:
