@@ -1,11 +1,18 @@
 from __future__ import annotations
 
+import io
 from typing import Any
+from typing import Final
 
 import numpy as np
+import PIL.Image
+import pytest
 from numpy.typing import NDArray
 
 from examples import utils
+
+# The source modes behind the reported failures, with RGB as the control.
+_SOURCE_MODES: Final = ["RGB", "RGBA", "LA", "L", "P"]
 
 
 def _mask_shape(points: list[list[float]], mask: NDArray[np.bool_]) -> dict[str, Any]:
@@ -56,3 +63,58 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     painted[0, 0] = True
     painted[3, 2] = True
     assert np.array_equal(cls > 0, painted)
+
+
+def _encode_png(img_pil: PIL.Image.Image) -> bytes:
+    buf = io.BytesIO()
+    img_pil.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+@pytest.fixture(name="source_rgb")
+def _make_source_rgb() -> PIL.Image.Image:
+    # Saturated, distinct colors so a palette round-trip stays lossless and a
+    # channel mix-up is visible.
+    arr = np.array(
+        [
+            [[255, 0, 0], [0, 255, 0]],
+            [[0, 0, 255], [255, 255, 0]],
+        ],
+        dtype=np.uint8,
+    )
+    return PIL.Image.fromarray(arr)
+
+
+@pytest.mark.parametrize("mode", _SOURCE_MODES)
+def test_decode_img_data_as_rgb_returns_rgb_for_every_source_mode(
+    mode: str, source_rgb: PIL.Image.Image
+) -> None:
+    arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert(mode)))
+    assert arr.dtype == np.uint8
+    assert arr.shape == (2, 2, 3)
+
+
+@pytest.mark.parametrize("mode", _SOURCE_MODES)
+def test_decode_img_data_as_rgb_output_is_jpeg_writable(
+    mode: str, source_rgb: PIL.Image.Image
+) -> None:
+    # The reported crash: the VOC converters write the decoded array as JPEG,
+    # which cannot represent an alpha channel.
+    arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert(mode)))
+    PIL.Image.fromarray(arr).save(io.BytesIO(), format="JPEG")
+
+
+def test_decode_img_data_as_rgb_resolves_palette_colors(
+    source_rgb: PIL.Image.Image,
+) -> None:
+    arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert("P")))
+    np.testing.assert_array_equal(arr, np.asarray(source_rgb))
+
+
+def test_decode_img_data_as_rgb_discards_alpha_without_compositing(
+    source_rgb: PIL.Image.Image,
+) -> None:
+    rgba = source_rgb.convert("RGBA")
+    rgba.putalpha(PIL.Image.new("L", rgba.size, 0))
+    arr = utils.decode_img_data_as_rgb(_encode_png(rgba))
+    np.testing.assert_array_equal(arr, np.asarray(source_rgb))

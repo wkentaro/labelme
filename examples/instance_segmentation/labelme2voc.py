@@ -98,7 +98,7 @@ def main() -> None:
                     output_dir / "SegmentationObjectVisualization" / f"{base}.jpg"
                 )
 
-        img = utils.img_data_to_arr(label_file.image_data)
+        img = utils.decode_img_data_as_rgb(label_file.image_data)
         imgviz.io.imsave(out_img_file, img)
 
         cls, ins = utils.shapes_to_label(

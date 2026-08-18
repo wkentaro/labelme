@@ -69,7 +69,7 @@ def main() -> None:
         if not args.noviz:
             out_viz_file = output_dir / "AnnotationsVisualization" / f"{base}.jpg"
 
-        img = utils.img_data_to_arr(label_file.image_data)
+        img = utils.decode_img_data_as_rgb(label_file.image_data)
         imgviz.io.imsave(out_img_file, img)
 
         maker = lxml.builder.ElementMaker()
