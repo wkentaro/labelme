@@ -46,6 +46,25 @@ def canvas(qtbot: QtBot) -> Canvas:
     return canvas
 
 
+@pytest.mark.gui
+def test_propose_ai_shapes_passes_rgb_image_to_model(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canvas.pixmap.fill(QtGui.QColor(10, 20, 30))
+    captured_images: list[np.ndarray] = []
+
+    def propose_shapes(*, image: np.ndarray, **_: object) -> AiAssistProposal:
+        captured_images.append(image)
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
+
+    canvas._propose_ai_shapes(prompt_kind="points", points=[], point_labels=[])
+
+    np.testing.assert_array_equal(captured_images[0][0, 0], [10, 20, 30])
+
+
 def _make_oriented_rectangle(corners: list[tuple[float, float]]) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
