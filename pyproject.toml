@@ -66,10 +66,49 @@ dev = [
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "mdformat-gfm>=1.0.0",
+  "towncrier>=24.8",
 ]
 
 [project.scripts]
 labelme = "labelme.__main__:main"
+
+[tool.towncrier]
+directory = "changelog.d"
+filename = "CHANGELOG.md"
+title_format = "## [{version}] - {project_date}"
+issue_format = "[#{issue}](https://github.com/wkentaro/labelme/pull/{issue})"
+issue_pattern = '\d+'
+ignore = ["README.md"]
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
 
 [tool.pytest.ini_options]
 addopts = "-m 'not network'"
