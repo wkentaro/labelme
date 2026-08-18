@@ -606,6 +606,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>บันทึกแอนโนเทชันหรือไม่?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>ลบรูปร่าง {} รายการ? คุณสามารถกู้คืนได้ด้วยคำสั่งยกเลิก</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - เปิดโฟลเดอร์</translation>
     </message>
@@ -706,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>ลบไฟล์เลเบลนี้อย่างถาวร? การกระทำนี้ไม่สามารถยกเลิกได้</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>ลบรูปร่าง {} รายการอย่างถาวร? การกระทำนี้ไม่สามารถยกเลิกได้</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -625,6 +625,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Зберегти анотації?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Видалити {} фігур? Ви можете відновити їх за допомогою команди «Скасувати».</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Відкрити каталог</translation>
     </message>
@@ -709,10 +713,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Остаточно видалити цей файл мітки? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Остаточно видалити {} фігур? Цю дію неможливо скасувати.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -624,6 +624,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Αποθήκευση σχολιασμών;</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Διαγραφή {} σχημάτων; Μπορείτε να τα επαναφέρετε με την Αναίρεση.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Άνοιγμα καταλόγου</translation>
     </message>
@@ -708,10 +712,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Οριστική διαγραφή αυτού του αρχείου ετικετών; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή {} σχημάτων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

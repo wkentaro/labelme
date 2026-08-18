@@ -606,6 +606,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Lưu chú thích?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Xóa {} hình dạng? Bạn có thể khôi phục chúng bằng Hoàn tác.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Mở Thư mục</translation>
     </message>
@@ -706,10 +710,6 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Xóa vĩnh viễn tệp nhãn này? Hành động này không thể hoàn tác.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn {} hình dạng? Hành động này không thể hoàn tác.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

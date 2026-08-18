@@ -606,6 +606,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>是否保存标注？</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>删除 {} 个形状？可以使用「撤销」恢复。</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - 打开目录</translation>
     </message>
@@ -706,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>永久删除该标签文件？此操作无法撤销。</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>永久删除 {} 个形状？此操作无法撤销。</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
