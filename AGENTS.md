@@ -2,7 +2,7 @@
 
 ## Changelog
 
-User-facing changes go in `CHANGELOG.md` under `## [Unreleased]` ([Keep a Changelog](https://keepachangelog.com/) format), filed in the right `### Added/Changed/Removed/Fixed` subsection with the PR number linked. Prefix `**Breaking:**` for changes that bump the major version. At release, the `[Unreleased]` section is promoted to the new version.
+User-facing changes to the packaged application go in `CHANGELOG.md` under `## [Unreleased]` ([Keep a Changelog](https://keepachangelog.com/) format), filed in the right `### Added/Changed/Removed/Fixed` subsection with the PR number linked. Changes confined to `examples/` are outside the changelog's scope. Prefix `**Breaking:**` for changes that bump the major version. At release, the `[Unreleased]` section is promoted to the new version.
 
 ## Agent skills
 
