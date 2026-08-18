@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed exported Mask Shapes with fractional bounds being shifted by integer truncation instead of matching their canvas position ([#2504](https://github.com/wkentaro/labelme/pull/2504))
 - Fixed Keep Previous Zoom preserving the scale while resetting the viewport position on each newly opened image. It now carries the previous horizontal and vertical scroll positions forward, while still restoring an image's own saved viewport when revisiting it ([#2484](https://github.com/wkentaro/labelme/pull/2484))
 - Fixed dropped image files entering the File List with forward slashes on Windows; `QUrl` reports a dropped path with forward slashes while every other path in the File List carries the separator of the platform, so the same image could be listed twice once its directory was also opened ([#2497](https://github.com/wkentaro/labelme/pull/2497))
 - Fixed images opened through the file dialog on Windows neither selecting their File List row nor receiving the saved checkmark; Qt file dialogs report a chosen path with forward slashes while the File List carries the separator of the platform, and both lookups compare exact strings ([#2499](https://github.com/wkentaro/labelme/pull/2499))
