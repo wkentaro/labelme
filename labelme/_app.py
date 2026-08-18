@@ -2217,11 +2217,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
-        self._load_shapes(shapes=shapes)
+        # Load exactly once, carrying prev_shapes forward when there's nothing
+        # else to show: a second load_shapes() call here would push a second
+        # undo backup, making Undo appear enabled before the user has made any
+        # edit to this image and letting it silently discard the carried-over
+        # shapes.
+        carry_prev_shapes = bool(prev_shapes) and not shapes
+        self._load_shapes(shapes=prev_shapes if carry_prev_shapes else shapes)
         flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
-        if prev_shapes and self.has_no_shapes():
-            self._load_shapes(shapes=prev_shapes, replace=False)
+        if carry_prev_shapes:
             self.mark_dirty()
         else:
             self.mark_clean()

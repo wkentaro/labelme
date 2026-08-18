@@ -8,6 +8,7 @@ from typing import Final
 import pytest
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -147,3 +148,45 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
         assert json.load(f)["shapes"] == []
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "raw",
+        config_overrides={"keep_prev": True, "auto_save": False},
+        output_dir=tmp_path,
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    canvas = win._canvas_widgets.canvas
+    _draw_and_commit_polygon(qtbot=qtbot, win=win, label="carried")
+    assert len(canvas.shapes) == 1
+
+    # Navigating away from a dirty, unsaved image would otherwise block on a
+    # real "save changes?" dialog; discard it non-interactively so the test
+    # can drive the navigation synchronously.
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+    )
+
+    win._actions.open_next_img.trigger()
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 1, timeout=_SHAPE_TIMEOUT_MS)
+
+    # Keep Previous Annotation carried the shape onto the next image, but
+    # nothing has been edited on this image yet: Undo must stay disabled so
+    # a stray trigger cannot silently discard the carried-forward shape.
+    assert [shape.label for shape in canvas.shapes] == ["carried"]
+    assert not canvas.can_restore_shape
+    assert not win._actions.undo.isEnabled()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
