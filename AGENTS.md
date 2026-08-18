@@ -2,7 +2,7 @@
 
 ## Changelog
 
-User-facing changes to the packaged application go in `CHANGELOG.md` under `## [Unreleased]` ([Keep a Changelog](https://keepachangelog.com/) format), filed in the right `### Added/Changed/Removed/Fixed` subsection with the PR number linked. Changes confined to `examples/` are outside the changelog's scope. Prefix `**Breaking:**` for changes that bump the major version. At release, the `[Unreleased]` section is promoted to the new version.
+Record user-facing changes to the packaged application as towncrier fragments, following `changelog.d/README.md`; never edit `CHANGELOG.md` directly. Changes confined to `examples/` are outside the changelog's scope. Prefix `**Breaking:**` for changes that bump the major version.
 
 ## Agent skills
 

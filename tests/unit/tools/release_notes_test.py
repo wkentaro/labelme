@@ -1,21 +1,19 @@
-import sys
+import shutil
 from pathlib import Path
+from typing import Final
 
 import pytest
 
 from tools.release_notes import extract_release_notes
-from tools.release_notes import main
+
+PROJECT_ROOT: Final = Path(__file__).parents[3]
 
 
 @pytest.fixture
 def changelog() -> str:
     return """# Changelog
 
-## [Unreleased]
-
-### Added
-
-- Added the next feature.
+<!-- towncrier release notes start -->
 
 ## [7.1.0] - 2026-08-07
 
@@ -29,79 +27,95 @@ def changelog() -> str:
 """
 
 
-@pytest.mark.parametrize(
-    "tag",
-    [
-        "v7.1.0a1",
-        "v7.1.0b2",
-        "v7.1.0rc1",
-        "v7.1.0-rc1",
-        "v7.1.0.dev1",
-    ],
-)
-def test_extract_release_notes_uses_unreleased_for_prerelease(
-    changelog: str, tag: str
-) -> None:
-    notes, is_prerelease = extract_release_notes(changelog=changelog, tag=tag)
-
-    assert is_prerelease is True
-    assert notes.strip() == "### Added\n\n- Added the next feature."
+@pytest.fixture
+def towncrier_project(tmp_path: Path) -> Path:
+    shutil.copyfile(
+        src=PROJECT_ROOT / "pyproject.toml", dst=tmp_path / "pyproject.toml"
+    )
+    fragments = tmp_path / "changelog.d"
+    fragments.mkdir()
+    return tmp_path
 
 
 def test_extract_release_notes_uses_exact_version_for_stable(
     changelog: str,
 ) -> None:
-    notes, is_prerelease = extract_release_notes(changelog=changelog, tag="v7.1.0")
+    notes, is_prerelease = extract_release_notes(
+        changelog=changelog, tag="v7.1.0", project_root=PROJECT_ROOT
+    )
 
     assert is_prerelease is False
     assert notes.strip() == "### Fixed\n\n- Fixed the stable bug."
 
 
-def test_extract_release_notes_rejects_missing_section(changelog: str) -> None:
+def test_extract_release_notes_rejects_missing_section(
+    changelog: str,
+) -> None:
     with pytest.raises(ValueError, match=r"No CHANGELOG\.md section found for 8\.0\.0"):
-        extract_release_notes(changelog=changelog, tag="v8.0.0")
+        extract_release_notes(
+            changelog=changelog, tag="v8.0.0", project_root=PROJECT_ROOT
+        )
 
 
-def test_extract_release_notes_matches_stable_version_exactly(changelog: str) -> None:
+def test_extract_release_notes_matches_stable_version_exactly(
+    changelog: str,
+) -> None:
     changelog = changelog.replace("## [7.1.0]", "## [7x1x0]")
 
     with pytest.raises(ValueError, match=r"No CHANGELOG\.md section found for 7\.1\.0"):
-        extract_release_notes(changelog=changelog, tag="v7.1.0")
+        extract_release_notes(
+            changelog=changelog, tag="v7.1.0", project_root=PROJECT_ROOT
+        )
 
 
-def test_main_writes_prerelease_notes_without_changing_changelog(
+def test_extract_release_notes_rejects_invalid_tag(
     changelog: str,
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
 ) -> None:
-    changelog_path = tmp_path / "CHANGELOG.md"
-    output_path = tmp_path / "release-notes.md"
-    changelog_path.write_text(changelog, encoding="utf-8")
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        [
-            "release_notes.py",
-            "v7.1.0rc1",
-            str(changelog_path),
-            str(output_path),
-        ],
+    with pytest.raises(ValueError, match=r"Invalid PEP 440 release tag: v7\.x"):
+        extract_release_notes(
+            changelog=changelog, tag="v7.x", project_root=PROJECT_ROOT
+        )
+
+
+def test_extract_release_notes_rejects_prerelease_without_fragments(
+    changelog: str,
+    towncrier_project: Path,
+) -> None:
+    with pytest.raises(
+        ValueError, match=r"No changelog fragments found for prerelease 7\.1\.0rc1"
+    ):
+        extract_release_notes(
+            changelog=changelog,
+            tag="v7.1.0rc1",
+            project_root=towncrier_project,
+        )
+
+
+def test_extract_release_notes_uses_fragments_for_prerelease(
+    changelog: str,
+    towncrier_project: Path,
+) -> None:
+    (towncrier_project / "changelog.d" / "1234.added.md").write_text(
+        "Added the next feature.\n", encoding="utf-8"
+    )
+    notes, is_prerelease = extract_release_notes(
+        changelog=changelog,
+        tag="v7.1.0rc1",
+        project_root=towncrier_project,
     )
 
-    main()
-
-    assert output_path.read_text(encoding="utf-8").strip() == (
-        "### Added\n\n- Added the next feature."
+    assert notes.strip() == (
+        "### Added\n\n"
+        "- Added the next feature. "
+        "([#1234](https://github.com/wkentaro/labelme/pull/1234))"
     )
-    assert changelog_path.read_text(encoding="utf-8") == changelog
-    assert capsys.readouterr().out == "prerelease=true\n"
+    assert is_prerelease is True
 
 
 def test_release_workflow_builds_and_publishes_before_prerelease_creation() -> None:
-    workflow = (
-        Path(__file__).parents[3] / ".github" / "workflows" / "release.yml"
-    ).read_text(encoding="utf-8")
+    workflow = (PROJECT_ROOT / ".github" / "workflows" / "release.yml").read_text(
+        encoding="utf-8"
+    )
 
     build = workflow.index("artifact-install-smoke")
     publish = workflow.index("pypa/gh-action-pypi-publish")
