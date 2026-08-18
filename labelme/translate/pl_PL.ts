@@ -622,6 +622,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Zapisać adnotacje?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Usunąć {} kształtów? Możesz je przywrócić poleceniem Cofnij.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s — Otwórz folder</translation>
     </message>
@@ -722,10 +726,6 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Trwale usunąć ten plik etykiet? Tej operacji nie można cofnąć.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Trwale usunąć {} kształtów? Tej operacji nie można cofnąć.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

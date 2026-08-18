@@ -625,6 +625,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Açıklamalar kaydedilsin mi?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>{} şekil silinsin mi? Geri Al ile geri yükleyebilirsiniz.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Klasörü Aç</translation>
     </message>
@@ -725,10 +729,6 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Bu etiket dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>{} şekil kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

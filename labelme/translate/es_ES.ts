@@ -622,6 +622,10 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>¿Guardar anotaciones?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>¿Eliminar {} formas? Puede restaurarlas con Deshacer.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Abrir directorio</translation>
     </message>
@@ -722,10 +726,6 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>¿Eliminar permanentemente este archivo de etiqueta? Esta acción no se puede deshacer.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>¿Eliminar permanentemente {} formas? Esta acción no se puede deshacer.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
