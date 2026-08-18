@@ -1272,7 +1272,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _apply_in_place_move(self) -> None:
         for original, clone in zip(self.selected_shapes, self._selected_shapes_copy):
-            original.points = clone.points
+            original.points = clone.points.copy()
 
     def _can_close_shape(self) -> bool:
         if self.mode != _CanvasMode.CREATE:
