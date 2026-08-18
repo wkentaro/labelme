@@ -25,6 +25,18 @@ from labelme._widgets.canvas import Canvas
 from labelme._widgets.label_dialog import LabelDialog
 
 
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    # The reference pixels are rendered on Linux, and Qt rendering can differ
+    # across platforms. Gating on the marker here keeps one plain `make test`
+    # correct on every OS, locally and in CI.
+    if sys.platform == "linux":
+        return
+    skip = pytest.mark.skip(reason="reference pixels are rendered on Linux")
+    for item in items:
+        if item.get_closest_marker("pixel_snapshot") is not None:
+            item.add_marker(skip)
+
+
 @pytest.fixture(scope="session")
 def session_home(tmp_path_factory: pytest.TempPathFactory) -> Path:
     return tmp_path_factory.mktemp("home")
@@ -113,6 +125,9 @@ def main_win(
 
         monkeypatch.setattr(sys, "argv", argv)
         monkeypatch.setenv("HOME", str(session_home))
+        # ntpath.expanduser ignores HOME, so without this the app would read and
+        # write the real user profile on Windows.
+        monkeypatch.setenv("USERPROFILE", str(session_home))
 
         app = QApplication.instance()
         assert isinstance(app, QApplication)

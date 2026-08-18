@@ -37,6 +37,34 @@ _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 _SHAPE_INDEX: Final[int] = 0
 
 
+def _find_edge_midpoint_clear_of_vertices(canvas: Canvas, shape: Shape) -> QPointF:
+    # Hovering prefers a vertex over an edge within epsilon/scale of it, so the
+    # middle of a short edge stops being hoverable once a smaller screen scales
+    # the image down. Take the edge midpoint standing farthest from any vertex.
+    vertices = np.array(
+        [
+            [float(point[0]), float(point[1])]
+            for other in canvas.shapes
+            for point in other.points
+        ]
+    )
+    points = [(float(point[0]), float(point[1])) for point in shape.points]
+    midpoints = [
+        ((start[0] + end[0]) / 2, (start[1] + end[1]) / 2)
+        for start, end in zip(points, points[1:] + points[:1])
+    ]
+    clearances = [
+        np.linalg.norm(vertices - np.array(midpoint), axis=1).min()
+        for midpoint in midpoints
+    ]
+    best = int(np.argmax(clearances))
+    # Fail with the cause rather than an opaque disabled action if a smaller
+    # screen ever scales every midpoint back into the vertex preference.
+    assert clearances[best] > canvas._epsilon / canvas.scale
+    x, y = midpoints[best]
+    return QPointF(x, y)
+
+
 def _hover_and_drag(
     qtbot: QtBot,
     canvas: Canvas,
@@ -284,10 +312,7 @@ def test_add_point_via_context_menu_action(
 
     assert not annotated_win._actions.add_point_to_edge.isEnabled()
 
-    p0, p1 = shape.points[0], shape.points[1]
-    midpoint = QPointF(
-        (float(p0[0]) + float(p1[0])) / 2, (float(p0[1]) + float(p1[1])) / 2
-    )
+    midpoint = _find_edge_midpoint_clear_of_vertices(canvas=canvas, shape=shape)
     qtbot.mouseMove(canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=midpoint))
     qtbot.wait(100)
 

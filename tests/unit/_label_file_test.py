@@ -380,7 +380,9 @@ def test_read_label_file_reports_shape_index_field_and_filename(
     with pytest.raises(LabelFileReadError) as exc_info:
         read_label_file(filename=str(annotated_dst))
 
-    assert str(annotated_dst) in str(exc_info.value)
+    # The message quotes the filename with !r, which doubles the backslashes of
+    # a Windows path.
+    assert repr(str(annotated_dst)) in str(exc_info.value)
     assert "shapes[1]: shape_type" in str(exc_info.value)
 
 
@@ -400,7 +402,7 @@ def test_read_label_file_wraps_coordinate_overflow(
     with pytest.raises(LabelFileReadError) as exc_info:
         read_label_file(filename=str(annotated_dst))
 
-    assert str(annotated_dst) in str(exc_info.value)
+    assert repr(str(annotated_dst)) in str(exc_info.value)
     assert "shapes[0]: points" in str(exc_info.value)
 
 

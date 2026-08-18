@@ -25,10 +25,11 @@ from .conftest import draw_and_commit_polygon
 from .conftest import image_to_widget_pos
 from .conftest import select_shape
 
-# Pinning canvas size + scale + background decouples the snapshot from
-# platform window chrome (toolbar/dock metrics) so the rendered pixels are
-# determined by Qt's raster engine, which is deterministic across platforms
-# for non-text geometry. The Fusion style is set by labelme.__main__.main(),
+pytestmark = pytest.mark.pixel_snapshot
+
+# Pinning canvas size, scale, and background decouples the snapshot from platform
+# window chrome. Reference pixels remain Linux-specific because Qt rendering can
+# differ across platforms. The Fusion style is set by labelme.__main__.main(),
 # which the main_win fixture invokes for every test.
 _RENDER_WIDTH: Final[int] = 600
 _RENDER_HEIGHT: Final[int] = 450

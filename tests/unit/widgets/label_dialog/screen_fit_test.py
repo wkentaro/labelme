@@ -71,7 +71,14 @@ def test_move_anchors_content_corner_at_target(qtbot: QtBot) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
 
-    target = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
+    # The anchoring is only observable where the dialog needs no clamping, and
+    # the screen center is not that place on a screen barely wider than the
+    # dialog. Target the top-left corner offset by the decoration instead, so
+    # the frame lands exactly inside the screen.
+    available = QtGui.QGuiApplication.primaryScreen().availableGeometry()
+    decoration = dialog.geometry().topLeft() - dialog.frameGeometry().topLeft()
+    target = available.topLeft() + decoration
+
     dialog._move_within_screen(target)
 
     assert dialog.geometry().topLeft() == target
