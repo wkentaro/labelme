@@ -2955,13 +2955,13 @@ def _shapes_from_dicts(
         )
 
         default_flags: dict[str, bool] = {}
-        for pattern, keys in compiled_label_flags.items():
-            if not isinstance(shape.label, str):
-                logger.warning("shape.label is not str: {}", shape.label)
-                continue
-            if pattern.match(shape.label):
-                for key in keys:
-                    default_flags[key] = False
+        if not isinstance(shape.label, str):
+            logger.warning("shape.label is not str: {}", shape.label)
+        else:
+            for pattern, keys in compiled_label_flags.items():
+                if pattern.match(shape.label):
+                    for key in keys:
+                        default_flags[key] = False
         shape.flags = default_flags
         shape.flags.update(shape_dict["flags"])
         shape.other_data = shape_dict["other_data"]
