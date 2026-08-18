@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>Начать аннотирование</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>Чтобы начать, откройте изображение или папку с изображениями.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>Открыть изображение</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>Открыть папку</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>Или перетащите файлы изображений сюда</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>برچسب‌گذاری را شروع کنید</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>برای شروع، یک تصویر یا پوشه‌ای از تصاویر را باز کنید.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>باز کردن تصویر</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>باز کردن پوشه</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>یا فایل‌های تصویری را اینجا بکشید و رها کنید</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

@@ -5,6 +5,7 @@ from ._status import StatusStats
 from .brightness_contrast_dialog import BrightnessContrastDialog
 from .canvas import Canvas
 from .download import download_ai_model
+from .empty_state import EmptyStateWidget
 from .label_dialog import LabelDialog
 from .label_list_widget import LabelListWidget
 from .label_list_widget import LabelListWidgetItem

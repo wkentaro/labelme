@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>เริ่มการใส่คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>เปิดรูปภาพหรือโฟลเดอร์รูปภาพเพื่อเริ่มต้น</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>เปิดรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>เปิดโฟลเดอร์</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>หรือลากและวางไฟล์รูปภาพที่นี่</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
