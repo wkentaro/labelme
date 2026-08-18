@@ -48,7 +48,6 @@ def _shape_from_detection(
     detection: Detection,
     shape_type: AiOutputFormat,
     *,
-    # Preserve the raw coordinates when the canvas permits out-of-bounds points.
     image_size: tuple[int, int] | None = None,
 ) -> Shape | None:
     if shape_type == "rectangle":
@@ -105,13 +104,13 @@ def _shape_from_detection(
         )
     if shape_type == "oriented_rectangle":
         corners = _oriented_rectangle_for_detection(detection=detection)
-        if corners is None:
-            return None
-        if image_size is not None:
+        if corners is not None and image_size is not None:
             corners = _fit_oriented_rectangle_to_image(
                 corners=corners,
                 image_size=image_size,
             )
+        if corners is None:
+            return None
         return _build_shape(
             shape_type="oriented_rectangle",
             points=corners,
@@ -144,14 +143,20 @@ def _fit_oriented_rectangle_to_image(
     *,
     corners: NDArray[np.float32],
     image_size: tuple[int, int],
-) -> NDArray[np.float32]:
-    # Slide the rectangle rigidly into the image so its shape is preserved;
-    # the final clip only bites when an axis is larger than the image, and
-    # guards the exact-boundary case against float rounding.
+) -> NDArray[np.float32] | None:
     size = np.asarray(image_size, dtype=np.float32)
-    corners = corners - np.minimum(corners.min(axis=0), 0)
-    corners = corners - np.maximum(corners.max(axis=0) - size, 0)
-    return np.clip(corners, 0, size)
+    if (corners >= 0).all() and (corners <= size).all():
+        return corners
+    # Clipping individual vertices would produce a quadrilateral that the
+    # oriented-rectangle editor cannot preserve.
+    lower = np.clip(corners.min(axis=0), 0, size)
+    upper = np.clip(corners.max(axis=0), 0, size)
+    if (upper <= lower).any():
+        return None
+    return np.array(
+        [lower, [upper[0], lower[1]], upper, [lower[0], upper[1]]],
+        dtype=np.float32,
+    )
 
 
 def _circle_for_detection(detection: Detection) -> Circle | None:
