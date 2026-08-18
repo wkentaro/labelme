@@ -1772,7 +1772,9 @@ class MainWindow(QtWidgets.QMainWindow):
             label_dir = Path(label_path).parent
             label_dir.mkdir(parents=True, exist_ok=True)
             annotation = Annotation(
-                image_path=os.path.relpath(self._image_path, label_dir),
+                image_path=_resolve_stored_image_path(
+                    image_path=self._image_path, label_dir=label_dir
+                ),
                 image_data=self._annotation.image_data,
                 shapes=shapes,
                 flags=flags,
@@ -3013,6 +3015,15 @@ def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) ->
     image_path = Path(image_or_label_path)
     parent = output_dir if output_dir is not None else image_path.parent
     return str(parent / f"{image_path.stem}{LABEL_FILE_SUFFIX}")
+
+
+def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
+    try:
+        return os.path.relpath(image_path, label_dir)
+    except ValueError:
+        # Windows drives have no relative path between them; an absolute path
+        # costs portability but beats failing the save.
+        return os.path.abspath(image_path)
 
 
 def _make_image_list_item(

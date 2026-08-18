@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 from pathlib import Path
 from typing import Final
 
@@ -54,6 +55,7 @@ def test_save_image_data_field_matches_config(
     assert label_path.exists()
     with open(label_path) as f:
         data = json.load(f)
+    assert not os.path.isabs(data["imagePath"])
     if with_image_data:
         assert isinstance(data["imageData"], str) and data["imageData"]
         decoded = _utils.img_b64_to_arr(data["imageData"])
@@ -64,6 +66,61 @@ def test_save_image_data_field_matches_config(
         assert (label_path.parent / data["imagePath"]).exists()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_save_falls_back_to_an_absolute_image_path_across_drives(
+    monkeypatch: pytest.MonkeyPatch,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    critical_messages: list[str],
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / _RAW_FILE_NAME),
+        config_overrides={"with_image_data": False},
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    draw_and_commit_polygon(
+        qtbot=qtbot, win=win, label="cat", vertices=_DEFAULT_TRIANGLE
+    )
+
+    image_path = win._image_path
+    assert image_path is not None
+    real_relpath = os.path.relpath
+
+    # Raise only for the image, as Windows does for a cross-drive pair.
+    def _relpath(path: str, start: str | os.PathLike[str] | None = None) -> str:
+        if path == image_path:
+            raise ValueError("path is on mount 'D:', start on mount 'C:'")
+        return real_relpath(path, start)
+
+    monkeypatch.setattr(os.path, "relpath", _relpath)
+
+    label_path = tmp_path / "2011_000003.json"
+    assert win.save_labels(label_path=str(label_path)) is True
+    assert not critical_messages
+
+    with open(label_path) as f:
+        data = json.load(f)
+    assert data["imagePath"] == os.path.abspath(image_path)
+
+    win.close()
+
+    win2 = main_win(file_or_dir=str(label_path), output_dir=str(tmp_path))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win2)
+    assert win2._image_path == image_path
+
+    canvas2 = win2._canvas_widgets.canvas
+    qtbot.waitUntil(
+        lambda: any(s.label == "cat" for s in canvas2.shapes), timeout=5_000
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win2, pause=pause)
 
 
 @pytest.mark.gui

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import struct
 import zlib
 from collections.abc import Callable
@@ -469,4 +470,27 @@ def test_resolve_label_path(
             image_or_label_path=image_or_label_path, output_dir=output_dir
         )
         == expected
+    )
+
+
+def test_resolve_stored_image_path_falls_back_to_absolute(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _raise(*args: object, **kwargs: object) -> str:
+        raise ValueError("path is on mount 'D:', start on mount 'C:'")
+
+    monkeypatch.setattr("os.path.relpath", _raise)
+
+    assert _app._resolve_stored_image_path(
+        image_path="img.png", label_dir=Path("/labels")
+    ) == os.path.abspath("img.png")
+
+
+@pytest.mark.skipif(os.name != "nt", reason="only Windows has cross-drive paths")
+def test_resolve_stored_image_path_falls_back_across_real_windows_drives() -> None:
+    assert (
+        _app._resolve_stored_image_path(
+            image_path=r"D:\imgs\img.png", label_dir=Path(r"C:\labels")
+        )
+        == r"D:\imgs\img.png"
     )
