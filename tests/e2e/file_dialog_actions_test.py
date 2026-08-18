@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -159,3 +160,37 @@ def test_action_via_qfile_dialog(
     assert verify(loaded_win, paths)
 
     close_or_pause(qtbot=qtbot, widget=loaded_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_open_file_dialog_normalizes_the_reported_path(
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    target = data_path / "raw" / "2011_000006.jpg"
+    # On Windows the dialog reports forward slashes while the file list holds
+    # backslashes; a redundant "." component is the unnormalized spelling of a
+    # listed path that misbehaves the same way on every platform.
+    unnormalized = os.sep.join([str(target.parent), os.curdir, target.name])
+    assert unnormalized not in win.image_list
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog,
+        "getOpenFileName",
+        lambda *args, **kwargs: (unnormalized, ""),
+    )
+
+    win._open_file_with_dialog()
+    qtbot.waitUntil(lambda: win._image_path == str(target))
+
+    assert win._image_path in win.image_list
+    current_item = win._docks.file_list.currentItem()
+    assert current_item is not None
+    assert current_item.text() == str(target)
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
