@@ -18,9 +18,13 @@ from pytestqt.qtbot import QtBot
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._widgets._shape_render import bounds as _shape_bounds
 from labelme._widgets.canvas import Canvas
+from labelme._widgets.canvas import _compute_axis_offset
+from labelme._widgets.canvas import _compute_insertion_offset
 from labelme._widgets.canvas import _compute_intersection_edges_image
 from labelme._widgets.canvas import _compute_overscroll_slack
+from labelme._widgets.canvas import _compute_shapes_bounds
 from labelme._widgets.canvas import _draft_to_shape
 from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
@@ -1882,6 +1886,17 @@ def test_snap_cursor_pos_for_square(
     assert (result.x(), result.y()) == pytest.approx(expected)
 
 
+def _make_inner_rectangle() -> Shape:
+    return Shape(shape_type="rectangle", points=np.array([(10, 10), (40, 30)]))
+
+
+def _make_corner_rectangle() -> Shape:
+    return Shape(
+        shape_type="rectangle",
+        points=np.array([(_WIDTH - 20, _HEIGHT - 20), (_WIDTH, _HEIGHT)]),
+    )
+
+
 def _make_polygon() -> Shape:
     return Shape(
         shape_type="polygon",
@@ -1955,3 +1970,399 @@ def test_end_move_in_place_copies_points(canvas: Canvas) -> None:
 
     assert np.array_equal(shape.points, clone.points)
     assert not np.shares_memory(shape.points, clone.points)
+
+
+@pytest.mark.parametrize(
+    ("low_edge", "high_edge", "expected"),
+    [
+        pytest.param(10.0, 40.0, 12.0, id="room_ahead_takes_full_step"),
+        pytest.param(10.0, 88.0, 12.0, id="step_exactly_fits_ahead"),
+        pytest.param(
+            50.0, 88.0, 12.0, id="a_fitting_step_ahead_beats_more_room_behind"
+        ),
+        pytest.param(60.0, 95.0, -12.0, id="no_room_ahead_steps_back"),
+        pytest.param(3.0, 95.0, 5.0, id="cramped_both_ways_takes_larger_room_ahead"),
+        pytest.param(8.0, 98.0, -8.0, id="cramped_both_ways_takes_larger_room_behind"),
+        pytest.param(0.0, 100.0, 0.0, id="shape_exactly_fills_image_stays_put"),
+        pytest.param(-20.0, 120.0, 12.0, id="shape_wider_than_image_takes_full_step"),
+        pytest.param(
+            0.0, 140.0, -12.0, id="shape_wider_than_image_gives_up_room_it_covers"
+        ),
+        pytest.param(
+            -8.0, 104.0, 8.0, id="shape_wider_than_image_stops_uncovering_the_image"
+        ),
+    ],
+)
+def test_compute_axis_offset(
+    low_edge: float, high_edge: float, expected: float
+) -> None:
+    assert _compute_axis_offset(
+        low_edge=low_edge, high_edge=high_edge, image_extent=100.0, step=12.0
+    ) == pytest.approx(expected)
+
+
+def test_compute_insertion_offset_clamps_each_axis_independently() -> None:
+    offset = _compute_insertion_offset(
+        bounds=QtCore.QRectF(10.0, 40.0, 20.0, 8.0),
+        image_size=QSize(_WIDTH, _HEIGHT),
+        step=12.0,
+    )
+
+    # Horizontally there is room to advance; vertically the shape sits against
+    # the bottom edge, so the copy has to go back up.
+    assert offset.x() == pytest.approx(12.0)
+    assert offset.y() == pytest.approx(-12.0)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_shifts_copy_off_its_source(
+    canvas: Canvas,
+) -> None:
+    source = _make_inner_rectangle()
+    canvas.load_shapes(shapes=[source])
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points - source.points, np.full((2, 2), 12.0))
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_leaves_a_free_position_alone(
+    canvas: Canvas,
+) -> None:
+    # Pasting onto another image finds the source position empty, and the
+    # coordinates the shapes were copied from are worth keeping.
+    source = _make_inner_rectangle()
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points, source.points)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_keeps_screen_distance_when_zoomed(
+    canvas: Canvas,
+) -> None:
+    source = _make_polygon()
+    canvas.load_shapes(shapes=[source])
+    inserted = source.copy()
+    canvas.scale = 4.0
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points - source.points, np.full((4, 2), 3.0))
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_moves_a_group_as_one(canvas: Canvas) -> None:
+    first = _make_polygon()
+    second = _make_polygon()
+    second.translate(offset=(5.0, 0.0))
+    canvas.load_shapes(shapes=[first, second])
+    inserted = [first.copy(), second.copy()]
+
+    canvas.offset_shapes_for_insertion(shapes=inserted)
+
+    assert not np.array_equal(inserted[0].points, first.points)
+    assert np.array_equal(
+        inserted[1].points - inserted[0].points, np.tile((5.0, 0.0), (4, 1))
+    )
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_keeps_copy_inside_image(canvas: Canvas) -> None:
+    source = _make_corner_rectangle()
+    canvas.load_shapes(shapes=[source])
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert inserted.points.min() >= 0.0
+    assert inserted.points[:, 0].max() <= _WIDTH
+    assert inserted.points[:, 1].max() <= _HEIGHT
+    assert inserted.points[0][0] == pytest.approx(_WIDTH - 32)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_steps_past_an_occupied_placement(
+    canvas: Canvas,
+) -> None:
+    source = _make_inner_rectangle()
+    occupant = Shape(shape_type="rectangle", points=source.points + 12.0)
+    canvas.load_shapes(shapes=[source, occupant])
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    # Two steps along x, but only the room left along y: widening the gap still
+    # respects the image edge.
+    assert np.array_equal(inserted.points, source.points + (24.0, 20.0))
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_never_reuses_an_edge_placement(
+    canvas: Canvas,
+) -> None:
+    # Against an edge the offset reverses direction, which on its own would
+    # walk a chain of copies back onto placements it already used.
+    shape = _make_inner_rectangle()
+    canvas.load_shapes(shapes=[shape])
+    placements = [shape.points.copy()]
+
+    for _ in range(8):
+        inserted = canvas.shapes[-1].copy()
+        canvas.offset_shapes_for_insertion(shapes=[inserted])
+        canvas.load_shapes(shapes=[inserted], replace=False)
+        placements.append(inserted.points.copy())
+
+    assert len({points.tobytes() for points in placements}) == len(placements)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_leaves_a_full_image_shape_in_place(
+    canvas: Canvas,
+) -> None:
+    # The issue asks for copies to stay inside the image, and a shape spanning
+    # it has no other placement, so this one copy stays under its source.
+    shape = Shape(shape_type="rectangle", points=np.array([(0, 0), (_WIDTH, _HEIGHT)]))
+    canvas.load_shapes(shapes=[shape])
+    inserted = shape.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points, shape.points)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_ignores_bounds_when_allowed(
+    canvas: Canvas,
+) -> None:
+    canvas.set_allow_out_of_bounds_points(True)
+    source = _make_corner_rectangle()
+    canvas.load_shapes(shapes=[source])
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert inserted.points[1][0] == pytest.approx(_WIDTH + 12)
+    assert inserted.points[1][1] == pytest.approx(_HEIGHT + 12)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_narrows_the_gap_when_the_image_is_full(
+    canvas: Canvas,
+) -> None:
+    # A shape nearly as wide as the image saturates the widening search after
+    # one step, and every later copy would restack without the narrowing pass.
+    source = Shape(shape_type="rectangle", points=np.array([(0, 0), (_WIDTH - 12, 20)]))
+    canvas.load_shapes(shapes=[source])
+    placements = [source.points.copy()]
+
+    for _ in range(4):
+        inserted = source.copy()
+        canvas.offset_shapes_for_insertion(shapes=[inserted])
+        canvas.load_shapes(shapes=[inserted], replace=False)
+        placements.append(inserted.points.copy())
+
+    assert len({points.tobytes() for points in placements}) == len(placements)
+    assert all(points[:, 0].max() <= _WIDTH for points in placements)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_keeps_moving_a_shape_wider_than_the_image(
+    canvas: Canvas,
+) -> None:
+    # Such a shape cannot be placed inside the image at all, so clamping it
+    # would freeze every copy onto one spot.
+    source = Shape(
+        shape_type="rectangle", points=np.array([(-20, -20), (_WIDTH + 20, _HEIGHT)])
+    )
+    canvas.load_shapes(shapes=[source])
+    placements = [source.points.copy()]
+
+    for _ in range(6):
+        inserted = canvas.shapes[-1].copy()
+        canvas.offset_shapes_for_insertion(shapes=[inserted])
+        canvas.load_shapes(shapes=[inserted], replace=False)
+        placements.append(inserted.points.copy())
+
+    assert len({points.tobytes() for points in placements}) == len(placements)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_never_settles_for_an_invisible_gap(
+    canvas: Canvas,
+) -> None:
+    MIN_VISIBLE_PX: Final[float] = 3.0
+
+    # A shape nearly as wide as the image runs out of room quickly, and the
+    # narrowing search must stop while the gap can still be seen.
+    source = Shape(shape_type="rectangle", points=np.array([(0, 0), (_WIDTH - 12, 20)]))
+    canvas.load_shapes(shapes=[source])
+
+    for _ in range(12):
+        inserted = canvas.shapes[-1].copy()
+        previous_points = inserted.points.copy()
+        canvas.offset_shapes_for_insertion(shapes=[inserted])
+        canvas.load_shapes(shapes=[inserted], replace=False)
+        gap = np.abs(inserted.points - previous_points).max()
+        assert gap == 0.0 or gap >= MIN_VISIBLE_PX
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_stays_put_when_no_visible_gap_fits(
+    canvas: Canvas,
+) -> None:
+    source = Shape(
+        shape_type="rectangle", points=np.array([(1, 1), (_WIDTH - 1, _HEIGHT - 1)])
+    )
+    canvas.load_shapes(shapes=[source])
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points, source.points)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_takes_a_gap_zooming_in_makes_visible(
+    canvas: Canvas,
+) -> None:
+    # The same one pixel of room the fit-to-window view cannot show is a wide
+    # gap once the image is magnified.
+    source = Shape(
+        shape_type="rectangle", points=np.array([(1, 1), (_WIDTH - 1, _HEIGHT - 1)])
+    )
+    canvas.load_shapes(shapes=[source])
+    canvas.scale = 8.0
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points - source.points, np.full((2, 2), 1.0))
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_pulls_a_copy_from_a_larger_image_inside(
+    canvas: Canvas,
+) -> None:
+    # Coordinates copied from a larger image land off this one, where the copy
+    # is neither visible nor clickable.
+    inserted = Shape(
+        shape_type="rectangle",
+        points=np.array([(_WIDTH + 300, _HEIGHT + 200), (_WIDTH + 340, _HEIGHT + 230)]),
+    )
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert inserted.points.min() >= 0.0
+    assert inserted.points[:, 0].max() <= _WIDTH
+    assert inserted.points[:, 1].max() <= _HEIGHT
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_brings_an_oversized_copy_back_onto_the_image(
+    canvas: Canvas,
+) -> None:
+    # Too wide to ever fit inside, and pasted from far off the image, so the
+    # best placement is the one that covers the image.
+    inserted = Shape(
+        shape_type="rectangle",
+        points=np.array([(5000, 10), (5000 + _WIDTH + 50, 30)]),
+    )
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert inserted.points[0][0] <= 0.0
+    assert inserted.points[1][0] >= _WIDTH
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_keeps_an_oversized_copy_over_the_image(
+    canvas: Canvas,
+) -> None:
+    # Every copy has to stay over the image instead of marching off it.
+    source = Shape(
+        shape_type="rectangle", points=np.array([(-20, -20), (_WIDTH + 20, 30)])
+    )
+    canvas.load_shapes(shapes=[source])
+
+    for _ in range(10):
+        inserted = canvas.shapes[-1].copy()
+        canvas.offset_shapes_for_insertion(shapes=[inserted])
+        canvas.load_shapes(shapes=[inserted], replace=False)
+        assert inserted.points[0][0] <= 0.0
+        assert inserted.points[1][0] >= _WIDTH
+
+
+def test_compute_shapes_bounds_covers_a_point_shape() -> None:
+    # A point contributes no width or height, and dropping it from the union
+    # would let the group move it off the image.
+    bounds = _compute_shapes_bounds(
+        shapes=[
+            _make_inner_rectangle(),
+            Shape(shape_type="point", points=np.array([(_WIDTH, _HEIGHT)])),
+        ]
+    )
+
+    assert bounds.right() == pytest.approx(_WIDTH)
+    assert bounds.bottom() == pytest.approx(_HEIGHT)
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_keeps_a_group_with_a_point_inside(
+    canvas: Canvas,
+) -> None:
+    rectangle = _make_inner_rectangle()
+    point = Shape(shape_type="point", points=np.array([(_WIDTH - 1, _HEIGHT - 1)]))
+    canvas.load_shapes(shapes=[rectangle, point])
+    inserted = [rectangle.copy(), point.copy()]
+
+    canvas.offset_shapes_for_insertion(shapes=inserted)
+
+    assert inserted[1].points[0][0] <= _WIDTH
+    assert inserted[1].points[0][1] <= _HEIGHT
+    assert inserted[0].points.min() >= 0.0
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_keeps_a_circle_inside_the_image(
+    canvas: Canvas,
+) -> None:
+    # A circle reaches a radius past its center point, so its drawn extent is
+    # what has to stay inside the image, not its two points.
+    source = Shape(
+        shape_type="circle", points=np.array([(_WIDTH - 15, 15), (_WIDTH - 5, 15)])
+    )
+    canvas.load_shapes(shapes=[source])
+    inserted = source.copy()
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    drawn = _shape_bounds(shape=inserted)
+    assert drawn.left() >= 0.0
+    assert drawn.top() >= 0.0
+    assert drawn.right() <= _WIDTH
+    assert drawn.bottom() <= _HEIGHT
+
+
+@pytest.mark.gui
+def test_offset_shapes_for_insertion_tells_masks_with_one_box_apart(
+    canvas: Canvas,
+) -> None:
+    # Mask shapes carry only their bounding box as points, so an existing mask
+    # sharing the box does not mean the placement is taken.
+    points = np.array([(10, 10), (30, 20)])
+    existing = Shape(
+        shape_type="mask", points=points, mask=np.ones((10, 20), dtype=bool)
+    )
+    canvas.load_shapes(shapes=[existing])
+    inserted = Shape(
+        shape_type="mask", points=points.copy(), mask=np.zeros((10, 20), dtype=bool)
+    )
+
+    canvas.offset_shapes_for_insertion(shapes=[inserted])
+
+    assert np.array_equal(inserted.points, points)

@@ -5,6 +5,7 @@ import dataclasses
 import enum
 import typing
 from collections.abc import Callable
+from collections.abc import Iterator
 from collections.abc import Sequence
 from typing import Any
 from typing import Final
@@ -12,6 +13,7 @@ from typing import Literal
 from typing import cast
 
 import numpy as np
+import numpy.typing as npt
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -1304,6 +1306,93 @@ class Canvas(QtWidgets.QWidget):
         self.selection_changed.emit(shapes)
         self.update()
 
+    def offset_shapes_for_insertion(self, shapes: list[Shape]) -> None:
+        if not shapes:
+            return
+        OFFSET_SCREEN_PX: Final[float] = 12.0
+
+        # Points live in image coordinates, so dividing by the zoom keeps the
+        # copy the same distance from its source on screen at any zoom level.
+        step = OFFSET_SCREEN_PX / self.scale
+        bounds = _compute_shapes_bounds(shapes=shapes)
+        # Nothing to offer means nothing to move, so the copy stays put.
+        offset = QPointF()
+        for candidate in self._iter_insertion_offsets(bounds=bounds, step=step):
+            offset = candidate
+            if not self._is_placement_occupied(shapes=shapes, offset=candidate):
+                break
+        for shape in shapes:
+            shape.translate(offset=(offset.x(), offset.y()))
+
+    def _iter_insertion_offsets(
+        self, *, bounds: QRectF, step: float
+    ) -> Iterator[QPointF]:
+        MAX_PLACEMENTS: Final[int] = 100
+        MIN_VISIBLE_SCREEN_PX: Final[float] = 3.0
+
+        if self._allow_out_of_bounds_points or self.pixmap.isNull():
+            yield QPointF()
+            for count in range(1, MAX_PLACEMENTS + 1):
+                yield QPointF(step * count, step * count)
+            return
+
+        image_size = self.pixmap.size()
+        # Shapes copied from a larger image start outside this one, where they
+        # are invisible and out of reach, so the search starts from wherever
+        # they first fit. Coordinates that already fit are left alone: pasting
+        # between frames of one scene relies on them.
+        entry = _compute_containment_offset(bounds=bounds, image_size=image_size)
+        bounds = bounds.translated(entry)
+        # It is also the only placement a shape spanning the whole image can
+        # take, the one case where a copy stays hidden under its source.
+        yield entry
+
+        previous = entry
+        # Widen the gap first, since a copy far from its source is the easiest
+        # to spot. The caller settles for the last placement even when it is
+        # occupied: a stacked copy inside the image beats one pushed outside.
+        for count in range(1, MAX_PLACEMENTS + 1):
+            candidate = entry + _compute_insertion_offset(
+                bounds=bounds, image_size=image_size, step=step * count
+            )
+            if candidate == previous:
+                break  # the image edge clamps every wider gap to this one
+            if not self._is_gap_visible(
+                gap=candidate - entry, minimum_screen_px=MIN_VISIBLE_SCREEN_PX
+            ):
+                return
+            previous = candidate
+            yield candidate
+        # Done widening, whether the edge clamped every wider gap or the budget
+        # ran out, so look for a spot between the source and the widest gap.
+        for count in range(2, MAX_PLACEMENTS + 1):
+            candidate = entry + _compute_insertion_offset(
+                bounds=bounds, image_size=image_size, step=step / count
+            )
+            if candidate == previous:
+                continue
+            if not self._is_gap_visible(
+                gap=candidate - entry, minimum_screen_px=MIN_VISIBLE_SCREEN_PX
+            ):
+                return
+            previous = candidate
+            yield candidate
+
+    def _is_gap_visible(self, *, gap: QPointF, minimum_screen_px: float) -> bool:
+        # A gap the eye cannot resolve is no better than the stack it avoids,
+        # and how far it reads on screen is what the zoom decides.
+        gap_on_screen = max(abs(gap.x()), abs(gap.y())) * self.scale
+        return gap_on_screen >= minimum_screen_px
+
+    def _is_placement_occupied(self, *, shapes: list[Shape], offset: QPointF) -> bool:
+        delta = np.array([offset.x(), offset.y()])
+        placements = [(inserted, inserted.points + delta) for inserted in shapes]
+        return any(
+            _is_same_placement(existing=existing, inserted=inserted, points=points)
+            for inserted, points in placements
+            for existing in self.shapes
+        )
+
     def _select_shape_point(
         self, point: QPointF, multiple_selection_mode: bool
     ) -> None:
@@ -2114,12 +2203,116 @@ def _opposite_corner_in_parallelogram(
     return neighbor1 + neighbor2 - opposite_to
 
 
+def _is_same_placement(
+    *, existing: Shape, inserted: Shape, points: npt.NDArray[np.float64]
+) -> bool:
+    TOLERANCE_PX: Final[float] = 1e-3
+
+    if existing.shape_type != inserted.shape_type:
+        return False
+    if existing.points.shape != points.shape or points.size == 0:
+        return False
+    # An image can carry thousands of shapes and every candidate placement is
+    # measured against all of them, so reject on one coordinate before paying
+    # for the whole-array comparison.
+    if abs(existing.points[0, 0] - points[0, 0]) > TOLERANCE_PX:
+        return False
+    if not np.allclose(existing.points, points, rtol=0.0, atol=TOLERANCE_PX):
+        return False
+    # A mask shape carries only its bounding box in the points, so two masks
+    # can share a box and still cover different pixels.
+    if existing.mask is None:
+        return inserted.mask is None
+    if inserted.mask is None:
+        return False
+    return np.array_equal(existing.mask, inserted.mask)
+
+
+def _compute_containment_offset(*, bounds: QRectF, image_size: QtCore.QSize) -> QPointF:
+    return QPointF(
+        _compute_axis_containment(
+            low_edge=bounds.left(),
+            high_edge=bounds.right(),
+            image_extent=float(image_size.width()),
+        ),
+        _compute_axis_containment(
+            low_edge=bounds.top(),
+            high_edge=bounds.bottom(),
+            image_extent=float(image_size.height()),
+        ),
+    )
+
+
+def _compute_axis_containment(
+    *, low_edge: float, high_edge: float, image_extent: float
+) -> float:
+    if high_edge - low_edge > image_extent:
+        # Too wide to fit inside, so the best it can do is cover the image,
+        # and only a shape that has drifted clear of it has to move at all.
+        if high_edge <= 0.0:
+            return -low_edge
+        if low_edge >= image_extent:
+            return image_extent - high_edge
+        return 0.0
+    if high_edge > image_extent:
+        return image_extent - high_edge
+    if low_edge < 0.0:
+        return -low_edge
+    return 0.0
+
+
+def _compute_insertion_offset(
+    *, bounds: QRectF, image_size: QtCore.QSize, step: float
+) -> QPointF:
+    return QPointF(
+        _compute_axis_offset(
+            low_edge=bounds.left(),
+            high_edge=bounds.right(),
+            image_extent=float(image_size.width()),
+            step=step,
+        ),
+        _compute_axis_offset(
+            low_edge=bounds.top(),
+            high_edge=bounds.bottom(),
+            image_extent=float(image_size.height()),
+            step=step,
+        ),
+    )
+
+
+def _compute_axis_offset(
+    *, low_edge: float, high_edge: float, image_extent: float, step: float
+) -> float:
+    if high_edge - low_edge > image_extent:
+        # A shape wider than the image can never sit inside it, so its room is
+        # what it can give up while still covering the image.
+        room_forward = -low_edge
+        room_backward = high_edge - image_extent
+    else:
+        room_forward = image_extent - high_edge
+        room_backward = low_edge
+    if room_forward >= step:
+        return step
+    if room_backward >= step:
+        return -step
+    # Against an edge the full step does not fit either way, so take whatever
+    # room is left: a cramped copy still beats one stacked exactly on top.
+    if room_forward >= room_backward:
+        return max(room_forward, 0.0)
+    return -max(room_backward, 0.0)
+
+
 def _compute_shapes_bounds(*, shapes: list[Shape]) -> QRectF:
     assert shapes
-    bounds = _shape_bounds(shape=shapes[0])
-    for shape in shapes[1:]:
-        bounds = bounds.united(_shape_bounds(shape=shape))
-    return bounds
+    # A point draws as a rectangle of no width or height, which united()
+    # discards as null, so the union runs over the edges instead.
+    rects = [_shape_bounds(shape=shape) for shape in shapes if len(shape.points)]
+    if not rects:
+        return QRectF()
+    return QRectF(
+        QPointF(min(r.left() for r in rects), min(r.top() for r in rects)),
+        QPointF(max(r.right() for r in rects), max(r.bottom() for r in rects)),
+    )
 
 
 def _project_oriented_rectangle_corners(

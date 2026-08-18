@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -9,6 +10,7 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
+from labelme._shape import Shape
 from labelme._widgets._shape_render import bounds as _shape_bounds
 from labelme._widgets.canvas import Canvas
 
@@ -41,6 +43,32 @@ def _open_and_select_shape(
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
     return win, canvas
+
+
+def _assert_offset_within_image(
+    *, canvas: Canvas, inserted: Shape, source_points: np.ndarray
+) -> None:
+    assert not np.array_equal(inserted.points, source_points)
+    # What has to stay inside the image is the drawn extent, which a circle
+    # carries beyond its points.
+    drawn = _shape_bounds(shape=inserted)
+    assert drawn.left() >= 0
+    assert drawn.top() >= 0
+    assert drawn.right() <= canvas.pixmap.width()
+    assert drawn.bottom() <= canvas.pixmap.height()
+
+
+def _assert_round_trip_keeps_last_shape(
+    *, win: MainWindow, canvas: Canvas, label_path: Path
+) -> None:
+    inserted_points = canvas.shapes[-1].points.copy()
+    win._save_label_file()
+    assert_labelfile_sanity(str(label_path))
+    saved = json.loads(label_path.read_text())["shapes"][-1]["points"]
+    assert np.array(saved, dtype=np.float64) == pytest.approx(inserted_points)
+
+    win._load_file(image_or_label_path=str(label_path))
+    assert canvas.shapes[-1].points == pytest.approx(inserted_points)
 
 
 def _delete_selected_shape(
@@ -86,6 +114,7 @@ def test_copy_paste_shape(
     )
 
     original_label = canvas.selected_shapes[0].label
+    original_points = canvas.selected_shapes[0].points.copy()
     num_shapes_before = len(canvas.shapes)
 
     win._actions.copy.trigger()
@@ -93,10 +122,16 @@ def test_copy_paste_shape(
     qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
-    assert canvas.shapes[-1].label == original_label
+    pasted = canvas.shapes[-1]
+    assert pasted.label == original_label
+    _assert_offset_within_image(
+        canvas=canvas, inserted=pasted, source_points=original_points
+    )
+    assert canvas.selected_shapes == [pasted]
 
-    win._save_label_file()
-    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
+    _assert_round_trip_keeps_last_shape(
+        win=win, canvas=canvas, label_path=tmp_path / "2011_000003.json"
+    )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -117,15 +152,79 @@ def test_duplicate_shape(
         output_dir=str(tmp_path),
     )
 
+    original_points = canvas.selected_shapes[0].points.copy()
     num_shapes_before = len(canvas.shapes)
 
     win._actions.duplicate.trigger()
     qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
+    duplicated = canvas.shapes[-1]
+    _assert_offset_within_image(
+        canvas=canvas, inserted=duplicated, source_points=original_points
+    )
+    assert canvas.selected_shapes == [duplicated]
 
-    win._save_label_file()
-    assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
+    _assert_round_trip_keeps_last_shape(
+        win=win, canvas=canvas, label_path=tmp_path / "2011_000003.json"
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_paste_into_another_image_keeps_the_copied_coordinates(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        main_win=main_win, qtbot=qtbot, data_path=data_path
+    )
+    copied_points = canvas.selected_shapes[0].points.copy()
+    win._actions.copy.trigger()
+
+    win._load_file(image_or_label_path=str(data_path / "annotated/2011_000006.json"))
+    qtbot.wait(50)
+    win._actions.paste.trigger()
+    qtbot.wait(50)
+
+    # Transferring annotations between frames of the same scene relies on the
+    # pasted geometry landing where it was copied from.
+    assert canvas.shapes[-1].points == pytest.approx(copied_points)
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("action_name", ["duplicate", "paste"])
+def test_repeated_insert_keeps_copies_apart_and_inside_image(
+    action_name: str,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        main_win=main_win, qtbot=qtbot, data_path=data_path
+    )
+    if action_name == "paste":
+        win._actions.copy.trigger()
+
+    placements = [canvas.selected_shapes[0].points.copy()]
+    for _ in range(5):
+        getattr(win._actions, action_name).trigger()
+        qtbot.wait(50)
+        _assert_offset_within_image(
+            canvas=canvas, inserted=canvas.shapes[-1], source_points=placements[-1]
+        )
+        placements.append(canvas.shapes[-1].points.copy())
+
+    # Every copy must sit on its own spot, not just clear of its predecessor:
+    # an offset that reverses at the image edge would otherwise alternate
+    # between two placements forever.
+    assert len({points.tobytes() for points in placements}) == len(placements)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

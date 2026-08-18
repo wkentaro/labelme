@@ -1823,6 +1823,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def _insert_shapes(self, shapes: list[Shape]) -> None:
         if not shapes:
             return
+        # A copy landing on the shape it came from is invisible, and the user
+        # cannot tell that anything was created. This has to run before the
+        # shapes join the canvas, or they would read as occupying the very
+        # placement they are being offered.
+        self._canvas_widgets.canvas.offset_shapes_for_insertion(shapes=shapes)
         self._load_shapes(shapes=shapes, replace=False)
         self._canvas_widgets.canvas.select_shapes(shapes)
         self.mark_dirty()
