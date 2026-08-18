@@ -33,6 +33,14 @@ def test_tiff_with_alpha_encoded_as_png(tmp_path: Path) -> None:
     assert data[:4] == b"\x89PNG"
 
 
+def test_corrupt_tiff_raises_os_error(tmp_path: Path) -> None:
+    path = tmp_path / "corrupt.tiff"
+    path.write_bytes(b"II*\x00")
+
+    with pytest.raises(OSError, match="failed to read image"):
+        read_image_file(filename=str(path))
+
+
 def test_jpeg_returns_raw_bytes(tmp_path: Path) -> None:
     path = _make_image(tmp_path, "test.jpg")
     data = read_image_file(filename=str(path))

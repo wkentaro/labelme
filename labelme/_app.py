@@ -196,6 +196,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_file_path: str | None
     _last_failed_auto_save_path: str | None
     _image_path: str | None
+    _file_list_image_path: str | None
     _loaded_image_paths: list[str]
     _prev_image_path: str | None
     _zoom_values: dict[str, tuple[_ZoomMode, float]]
@@ -998,6 +999,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_file_path = None
         self._last_failed_auto_save_path = None
         self._image_path = None
+        self._file_list_image_path = None
         self._loaded_image_paths = []
         self._prev_image_path = None
         self._zoom_values = {}
@@ -1178,7 +1180,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_search.setPlaceholderText(self.tr("Search Filename"))
         file_search.textChanged.connect(self._on_file_search_changed)
         file_list = QtWidgets.QListWidget()
-        file_list.itemSelectionChanged.connect(self._file_list_item_selection_changed)
+        file_list.currentItemChanged.connect(self._load_selected_image)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)
         file_list_layout.setSpacing(0)
@@ -1462,6 +1464,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.clear()
         self._annotation = None
         self._image_path = None
+        self._file_list_image_path = None
         self._label_file_path = None
         self._last_failed_auto_save_path = None
         self._canvas_widgets.canvas.reset_state()
@@ -1660,12 +1663,19 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_file_search_changed(self) -> None:
         self._refresh_file_list()
 
-    def _file_list_item_selection_changed(self) -> None:
-        if not self._can_continue():
+    def _load_selected_image(
+        self,
+        current_item: QtWidgets.QListWidgetItem | None,
+        previous_item: QtWidgets.QListWidgetItem | None,
+    ) -> None:
+        if current_item is None:
             return
-        if not (items := self._docks.file_list.selectedItems()):
-            return
-        self._load_file(image_or_label_path=items[0].text())
+        # Qt moves the selection before asking to save or staging the next
+        # session, so retain the exact prior UI state for rollback.
+        if not self._can_continue() or not self._load_file(
+            image_or_label_path=current_item.text()
+        ):
+            self._restore_file_list_state(item=previous_item)
 
     # React to canvas signals.
     def _on_shape_selection_changed(self, selected_shapes: list[Shape]) -> None:
@@ -2085,55 +2095,49 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _open_label_file_into_state(self, label_path: str) -> Annotation | None:
+    def _read_annotation_file(self, label_path: str) -> Annotation | None:
         try:
-            annotation = read_label_file(filename=label_path)
+            return read_label_file(filename=label_path)
         except LabelFileError as e:
             self._show_file_open_error(path=label_path, file_kind="label", exc=e)
             return None
-        self._label_file_path = label_path
-        self._annotation = annotation
-        # The relative path stored in the label file may carry "." or ".."
-        # components, which would survive the join and break the exact-string
-        # comparisons against the file list.
-        self._image_path = os.path.normpath(
-            str(Path(label_path).parent / annotation.image_path)
-        )
-        return annotation
 
-    def _open_image_into_state(self, image_path: str) -> bool:
+    def _read_image_as_annotation(self, image_path: str) -> Annotation | None:
         try:
             image_data = read_image_file(filename=image_path)
         except OSError as e:
             self._show_file_open_error(path=image_path, file_kind="image", exc=e)
-            return False
-        self._annotation = Annotation(
+            return None
+        return Annotation(
             image_path=os.path.basename(image_path),
             image_data=image_data,
             shapes=[],
             flags={},
             other_data={},
         )
-        self._image_path = image_path
-        self._label_file_path = None
-        return True
 
-    def _load_file(self, image_or_label_path: str) -> None:
+    def _restore_file_list_state(
+        self, *, item: QtWidgets.QListWidgetItem | None
+    ) -> None:
+        with QtCore.QSignalBlocker(self._docks.file_list):
+            if item is None:
+                self._docks.file_list.setCurrentRow(-1)
+            else:
+                self._docks.file_list.setCurrentItem(item)
+        self._docks.file_list.repaint()
+        self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
+
+    def _load_file(self, image_or_label_path: str) -> bool:
         # Qt file dialogs separate with forward slashes even on Windows, while
         # the file list holds the separator of the platform, so an unnormalized
         # path would neither select its file list row nor receive the saved
         # checkmark, which both compare exact strings.
         image_or_label_path = os.path.normpath(image_or_label_path)
-        # changing fileListWidget loads file
-        if image_or_label_path in self.image_list and (
-            self._docks.file_list.currentRow()
-            != self.image_list.index(image_or_label_path)
-        ):
-            self._docks.file_list.setCurrentRow(
-                self.image_list.index(image_or_label_path)
-            )
-            self._docks.file_list.repaint()
-            return
+        file_list_image_path = (
+            None
+            if is_label_file_path(filename=image_or_label_path)
+            else image_or_label_path
+        )
 
         prev_shapes: list[Shape] = (
             self._canvas_widgets.canvas.shapes
@@ -2142,15 +2146,12 @@ class MainWindow(QtWidgets.QMainWindow):
             == (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier)
             else []
         )
-        self._remember_current_viewport()
-        self.reset_state()
-        self._canvas_widgets.canvas.setEnabled(False)
         if not QtCore.QFile.exists(image_or_label_path):
             self.show_error_message(
                 self.tr("Error opening file"),
                 self.tr("No such file: <b>%s</b>") % image_or_label_path,
             )
-            return
+            return False
         # assumes same name, but json extension
         self.show_status_message(
             self.tr("Loading %s...") % Path(image_or_label_path).name
@@ -2161,23 +2162,34 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path=image_or_label_path,
             output_dir=self._output_dir,
         )
-        annotation: Annotation | None = None
         if QtCore.QFile.exists(label_path):
-            annotation = self._open_label_file_into_state(label_path=label_path)
+            annotation = self._read_annotation_file(label_path=label_path)
             if annotation is None:
-                return
+                return False
+            # The relative path stored in the Annotation File may carry "." or ".."
+            # components, which would survive the join and break the
+            # exact-string comparisons against the file list.
+            image_path = os.path.normpath(
+                str(Path(label_path).parent / annotation.image_path)
+            )
+            label_file_path = label_path
+            shapes = _shapes_from_dicts(
+                shape_dicts=annotation.shapes,
+                label_flags=self._config["label_flags"],
+            )
         else:
-            if not self._open_image_into_state(image_path=image_or_label_path):
-                return
-        assert self._annotation is not None
+            annotation = self._read_image_as_annotation(image_path=image_or_label_path)
+            if annotation is None:
+                return False
+            image_path = image_or_label_path
+            label_file_path = None
+            shapes = []
         t0 = time.time()
-        image = QtGui.QImage.fromData(self._annotation.image_data)
+        image = QtGui.QImage.fromData(annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            extra = _make_image_too_large_message(
-                image_data=self._annotation.image_data
-            )
+            extra = _make_image_too_large_message(image_data=annotation.image_data)
             if extra is None:
                 formats = ", ".join(
                     f"*.{fmt.toStdString()}"
@@ -2189,19 +2201,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 file_kind="image",
                 extra=extra,
             )
-            return
+            return False
+
+        # The replacement session is fully staged; only now replace the
+        # current one.
+        self._remember_current_viewport()
+        self.reset_state()
+        self._canvas_widgets.canvas.setEnabled(False)
+        self._annotation = annotation
+        self._image_path = image_path
+        self._file_list_image_path = file_list_image_path
+        self._label_file_path = label_file_path
         self._image = image
         t0 = time.time()
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
-        if annotation is not None:
-            self._load_shapes(
-                shapes=_shapes_from_dicts(
-                    shape_dicts=annotation.shapes,
-                    label_flags=self._config["label_flags"],
-                )
-            )
+        if label_file_path is not None:
+            self._load_shapes(shapes=shapes)
             flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if prev_shapes and self.has_no_shapes():
@@ -2249,6 +2266,7 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path,
             (time.time() - t0_load_file) * 1000,
         )
+        return True
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         if (
@@ -2386,7 +2404,19 @@ class MainWindow(QtWidgets.QMainWindow):
         if not output_dir:
             return
 
+        if not self._can_continue():
+            return
+
+        # Reload the current image against the candidate directory and keep
+        # the previous directory when that reload fails, so a bad candidate
+        # never becomes the autosave target.
+        previous_output_dir = self._output_dir
         self._output_dir = Path(output_dir)
+        if self._file_list_image_path is not None and not self._load_file(
+            image_or_label_path=self._file_list_image_path
+        ):
+            self._output_dir = previous_output_dir
+            return
 
         self.statusBar().showMessage(
             self.tr("%s . Annotations will be saved/loaded in %s")
@@ -2394,15 +2424,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.statusBar().show()
 
-        current_image_path = self._image_path
-        self._import_images_from_dir(root_dir=self._prev_opened_dir)
-
-        if current_image_path in self.image_list:
-            # retain currently selected file
-            self._docks.file_list.setCurrentRow(
-                self.image_list.index(current_image_path)
-            )
-            self._docks.file_list.repaint()
+        self._refresh_file_list()
 
     def _save_label_file(self, *, save_as: bool = False) -> None:
         assert not self._image.isNull(), "cannot save empty image"
@@ -2827,19 +2849,37 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
+            # Load before dropping the File List, so a failed load leaves the
+            # previous session and File List untouched.
+            if not self._load_file(image_or_label_path=file_or_dir):
+                return
             self._loaded_image_paths = []
-            self._docks.file_list.clear()
+            self._refresh_file_list()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
                 self.tr("File list is disabled when a label file is opened")
             )
-            self._load_file(image_or_label_path=file_or_dir)
         elif Path(file_or_dir).is_dir():
             self._import_images_from_dir(root_dir=file_or_dir)
-            self._open_next_image()
+            if self.image_list:
+                # Selecting the first row emits no change signal when it is
+                # already current (reopening the same directory), so drive the
+                # reload directly while retaining the prior item for rollback.
+                file_list = self._docks.file_list
+                previous_item = file_list.currentItem()
+                with QtCore.QSignalBlocker(file_list):
+                    file_list.setCurrentRow(0)
+                self._load_selected_image(
+                    current_item=file_list.currentItem(),
+                    previous_item=previous_item,
+                )
+                file_list.repaint()
         else:
+            # Load before swapping the File List, so a failed load leaves the
+            # previous session and File List untouched.
+            if not self._load_file(image_or_label_path=file_or_dir):
+                return
             self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
-            self._load_file(image_or_label_path=file_or_dir)
 
     def _open_dir_with_dialog(self, _value: bool = False) -> None:
         if not self._can_continue():
@@ -2875,7 +2915,6 @@ class MainWindow(QtWidgets.QMainWindow):
         return lst
 
     def import_dropped_image_files(self, image_files: list[str]) -> None:
-        self._remember_current_viewport()
         extensions = _list_supported_image_extensions()
         already_loaded = set(self._loaded_image_paths)
         new_files = [
@@ -2883,30 +2922,36 @@ class MainWindow(QtWidgets.QMainWindow):
             for path in image_files
             if path not in already_loaded and path.lower().endswith(extensions)
         ]
+        if not new_files:
+            return
 
-        self._image_path = None
         self._loaded_image_paths.extend(new_files)
         self._refresh_file_list()
 
-        if len(self.image_list) > 1:
+        visible_image_paths = self.image_list
+        if len(visible_image_paths) > 1:
             self._actions.open_next_img.setEnabled(True)
             self._actions.open_prev_img.setEnabled(True)
 
-        self._open_next_image()
+        for image_path in new_files:
+            if image_path in visible_image_paths:
+                self._docks.file_list.setCurrentRow(
+                    visible_image_paths.index(image_path)
+                )
+                self._docks.file_list.repaint()
+                return
 
     def _import_images_from_dir(self, root_dir: str | None) -> None:
         self._actions.open_next_img.setEnabled(True)
         self._actions.open_prev_img.setEnabled(True)
 
-        if not self._can_continue() or not root_dir:
+        if not root_dir:
             return
 
-        self._remember_current_viewport()
         self._docks.file_dock.setEnabled(True)
         self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
-        self._image_path = None
         self._loaded_image_paths = _scan_image_files(root_dir=root_dir)
         self._refresh_file_list()
 
@@ -2928,8 +2973,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         image_path=image_path, output_dir=self._output_dir
                     )
                 )
-            if self._image_path in image_paths:
-                file_list.setCurrentRow(image_paths.index(self._image_path))
+            if self._file_list_image_path in image_paths:
+                file_list.setCurrentRow(image_paths.index(self._file_list_image_path))
 
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
