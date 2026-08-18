@@ -21,3 +21,7 @@ Single-context layout: `CONTEXT.md` and `docs/adr/` at the repo root (created la
 ### AI Assist
 
 Treat AI Assist Setting Controls as proactive guidance. Enforce Prompt Compatibility at runtime before model download or inference, and reject an incompatible prompt without changing the model Setting.
+
+### GUI QA
+
+Check human-visible desktop behavior — GUI regression, release acceptance, visual or accessibility inspection — with `.agents/skills/test-labelme-gui/SKILL.md`. Keep deterministic logic in pytest.
