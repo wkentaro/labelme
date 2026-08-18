@@ -11,6 +11,8 @@ import osam.types
 import pytest
 from pytestqt.qtbot import QtBot
 
+from labelme._automation import AiOutputFormat
+
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
@@ -70,6 +72,15 @@ def _make_multi_label_response(texts: list[str]) -> osam.types.GenerateResponse:
         boxes=[(50, 30, 200, 300), (10, 150, 400, 330)],
         scores=[0.85, 0.70],
         label_indices=[person_idx, sofa_idx],
+    )
+
+
+def _make_edge_crossing_response(texts: list[str]) -> osam.types.GenerateResponse:
+    return _make_response(
+        texts=texts,
+        boxes=[(-10, 30, 50, 100)],
+        scores=[0.9],
+        label_indices=[0],
     )
 
 
@@ -147,6 +158,14 @@ def _run_text_prompt(
             id="ai_box-polygon",
         ),
         pytest.param(
+            "ai_box_to_shape",
+            "oriented_rectangle",
+            "person",
+            _make_edge_crossing_response,
+            {"person"},
+            id="ai_box-oriented_rectangle-at-edge",
+        ),
+        pytest.param(
             "rectangle",
             "rectangle",
             "person,sofa",
@@ -164,7 +183,7 @@ def test_text_prompt_creates_shapes(
     tmp_path: Path,
     pause: bool,
     create_mode: str,
-    expected_shape_type: str,
+    expected_shape_type: AiOutputFormat,
     text: str,
     response_fn: Callable[..., osam.types.GenerateResponse],
     expected_labels: set[str],
@@ -181,8 +200,8 @@ def test_text_prompt_creates_shapes(
     assert len(canvas.shapes) == 0
 
     if create_mode == "ai_box_to_shape":
-        canvas.set_ai_model_name(_AI_TEXT_MODEL)
-        canvas.set_ai_output_format("polygon")
+        output_combo = win._ai_annotation._output_format_combo
+        output_combo.setCurrentIndex(output_combo.findData(expected_shape_type))
 
     _install_mock_session(win=win, monkeypatch=monkeypatch, response_fn=response_fn)
     _run_text_prompt(
@@ -198,6 +217,9 @@ def test_text_prompt_creates_shapes(
     assert labels == expected_labels
     for shape in canvas.shapes:
         assert shape.shape_type == expected_shape_type
+        if shape.shape_type == "oriented_rectangle":
+            assert (shape.points >= 0).all()
+            assert (shape.points <= [win._image.width(), win._image.height()]).all()
 
     out_file = str(tmp_path / "2011_000003.json")
     win._save_label_file()

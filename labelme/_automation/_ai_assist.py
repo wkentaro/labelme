@@ -53,6 +53,7 @@ class AiAssistSession:
         points: NDArray[np.floating],
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
+        image_size: tuple[int, int] | None = None,
     ) -> AiAssistProposal:
         if prompt_kind == "points" and not supports_point_prompts(
             model_name=self.model_name
@@ -94,6 +95,7 @@ class AiAssistSession:
             new_shapes=shapes_from_detections(
                 detections=matches.new_detections,
                 shape_type=self.output_format,
+                image_size=image_size,
             ),
             matching_existing_shapes=matches.matching_shapes,
         )
