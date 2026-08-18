@@ -1445,7 +1445,13 @@ class MainWindow(QtWidgets.QMainWindow):
             iou_threshold=self._ai_text.get_iou_threshold(),
         )
         shapes: list[Shape] = _automation.shapes_from_detections(
-            detections=detections, shape_type=shape_type
+            detections=detections,
+            shape_type=shape_type,
+            image_size=(
+                None
+                if self._config["canvas"]["allow_out_of_bounds_points"]
+                else (self._image.width(), self._image.height())
+            ),
         )
 
         self._canvas_widgets.canvas.backup_shapes()

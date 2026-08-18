@@ -442,6 +442,11 @@ class Canvas(QtWidgets.QWidget):
             existing_shapes=(
                 self.shapes if self._ai_suppress_existing_shape_matches else []
             ),
+            image_size=(
+                None
+                if self._allow_out_of_bounds_points
+                else (image.shape[1], image.shape[0])
+            ),
         )
 
     def _report_inference_failure(self, error: Exception) -> None:

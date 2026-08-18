@@ -47,6 +47,9 @@ def _build_shape(
 def _shape_from_detection(
     detection: Detection,
     shape_type: AiOutputFormat,
+    *,
+    # Preserve the raw coordinates when the canvas permits out-of-bounds points.
+    image_size: tuple[int, int] | None = None,
 ) -> Shape | None:
     if shape_type == "rectangle":
         if detection.bbox is None:
@@ -104,6 +107,11 @@ def _shape_from_detection(
         corners = _oriented_rectangle_for_detection(detection=detection)
         if corners is None:
             return None
+        if image_size is not None:
+            corners = _fit_oriented_rectangle_to_image(
+                corners=corners,
+                image_size=image_size,
+            )
         return _build_shape(
             shape_type="oriented_rectangle",
             points=corners,
@@ -130,6 +138,20 @@ def _oriented_rectangle_for_detection(
             dtype=np.float32,
         )
     return None
+
+
+def _fit_oriented_rectangle_to_image(
+    *,
+    corners: NDArray[np.float32],
+    image_size: tuple[int, int],
+) -> NDArray[np.float32]:
+    # Slide the rectangle rigidly into the image so its shape is preserved;
+    # the final clip only bites when an axis is larger than the image, and
+    # guards the exact-boundary case against float rounding.
+    size = np.asarray(image_size, dtype=np.float32)
+    corners = corners - np.minimum(corners.min(axis=0), 0)
+    corners = corners - np.maximum(corners.max(axis=0) - size, 0)
+    return np.clip(corners, 0, size)
 
 
 def _circle_for_detection(detection: Detection) -> Circle | None:
@@ -169,10 +191,16 @@ MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
 def shapes_from_detections(
     detections: list[Detection],
     shape_type: AiOutputFormat,
+    *,
+    image_size: tuple[int, int] | None = None,
 ) -> list[Shape]:
     shapes: list[Shape] = []
     for detection in detections:
-        shape = _shape_from_detection(detection=detection, shape_type=shape_type)
+        shape = _shape_from_detection(
+            detection=detection,
+            shape_type=shape_type,
+            image_size=image_size,
+        )
         if shape is not None:
             shapes.append(shape)
     return shapes

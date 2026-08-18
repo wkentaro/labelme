@@ -608,6 +608,32 @@ def test_existing_shape_suppression_is_disabled_by_default(
 
 @pytest.mark.gui
 @pytest.mark.parametrize(
+    ("allow_out_of_bounds", "expected_image_size"),
+    [(False, (_WIDTH, _HEIGHT)), (True, None)],
+)
+def test_ai_proposal_uses_out_of_bounds_setting(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    allow_out_of_bounds: bool,
+    expected_image_size: tuple[int, int] | None,
+) -> None:
+    propose_shapes = Mock(
+        return_value=AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+    )
+    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
+    canvas.set_allow_out_of_bounds_points(allow_out_of_bounds)
+
+    canvas._propose_ai_shapes(
+        prompt_kind="points",
+        points=[QPointF(1, 1)],
+        point_labels=[1],
+    )
+
+    assert propose_shapes.call_args.kwargs["image_size"] == expected_image_size
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
     "change_setting",
     [
         pytest.param(
