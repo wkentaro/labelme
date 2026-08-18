@@ -65,12 +65,32 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     assert np.array_equal(cls > 0, painted)
 
 
-def test_shapes_to_label_mask_rounds_origin_without_cropping_mask() -> None:
+@pytest.mark.parametrize(
+    ("points", "expected_origin"),
+    [
+        ([[2.7, 1.7], [6.3, 3.3]], (3, 2)),
+        ([[2.5, 1.5], [6.5, 3.5]], (2, 2)),
+    ],
+    ids=["different-fractions", "ties-to-even"],
+)
+def test_shapes_to_label_mask_rounds_origin_without_cropping_mask(
+    points: list[list[float]], expected_origin: tuple[int, int]
+) -> None:
     patch = np.ones((3, 5), dtype=bool)
-    shape = _mask_shape(points=[[2.7, 1.7], [6.3, 3.3]], mask=patch)
+    shape = _mask_shape(points=points, mask=patch)
     cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
     painted = np.zeros((20, 20), dtype=bool)
-    painted[2:5, 3:8] = True
+    x, y = expected_origin
+    painted[y : y + patch.shape[0], x : x + patch.shape[1]] = True
+    assert np.array_equal(cls > 0, painted)
+
+
+def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=[[2.0, 1.0], [4.0, 3.0]], mask=patch)
+    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[1:4, 2:5] = True
     assert np.array_equal(cls > 0, painted)
 
 

@@ -163,14 +163,24 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     assert np.array_equal(cls > 0, painted)
 
 
+def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
+    patch = np.ones((3, 5), dtype=bool)
+    shape = _mask_shape(points=[[2.0, 1.0], [4.0, 3.0]], mask=patch)
+    cls, _ = shape_module.shapes_to_label((20, 20), [shape], {"car": 1})
+    painted = np.zeros((20, 20), dtype=bool)
+    painted[1:4, 2:5] = True
+    assert np.array_equal(cls > 0, painted)
+
+
 @pytest.mark.parametrize(
     ("points", "expected_origin"),
     [
         ([[2.3, 1.3], [6.3, 3.3]], (2, 1)),
         ([[2.7, 1.7], [6.7, 3.7]], (3, 2)),
+        ([[2.5, 1.5], [6.5, 3.5]], (2, 2)),
         ([[2.7, 1.7], [6.3, 3.3]], (3, 2)),
     ],
-    ids=["down", "up", "different-fractions"],
+    ids=["down", "up", "ties-to-even", "different-fractions"],
 )
 def test_shapes_to_label_mask_rounds_fractional_bounds(
     points: list[list[float]], expected_origin: tuple[int, int]

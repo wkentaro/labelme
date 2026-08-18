@@ -104,10 +104,14 @@ def shapes_to_label(
             if not isinstance(shape["mask"], np.ndarray):
                 raise ValueError("shape['mask'] must be numpy.ndarray")
             mask = np.zeros(img_shape[:2], dtype=bool)
-            # The stored mask keeps its extent when fractional bounds round apart.
-            (origin, _) = points
-            x1, y1 = np.asarray(origin).round().astype(int)
-            patch_height, patch_width = shape["mask"].shape
+            point_array = np.asarray(points)
+            (x1, y1), (x2, y2) = point_array.round().astype(int)
+            # Integer bounds retain legacy cropping, while fractional bounds use
+            # the stored extent so independently rounded corners cannot resize it.
+            if np.array_equal(point_array, np.trunc(point_array)):
+                patch_height, patch_width = y2 - y1 + 1, x2 - x1 + 1
+            else:
+                patch_height, patch_width = shape["mask"].shape
             height, width = img_shape[:2]
             y_start, y_stop = max(y1, 0), min(y1 + patch_height, height)
             x_start, x_stop = max(x1, 0), min(x1 + patch_width, width)
