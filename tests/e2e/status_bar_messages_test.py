@@ -4,10 +4,12 @@ from pathlib import Path
 from typing import Final
 
 import pytest
+from PySide6.QtCore import QPointF
 from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
+from labelme._widgets.canvas import _CanvasMode
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
@@ -15,6 +17,59 @@ from .conftest import dismiss_active_modal
 from .conftest import show_window_and_wait_for_imagedata
 
 _STATUS_MESSAGE_TIMEOUT_MS: Final[int] = 5000
+
+
+@pytest.mark.gui
+def test_shape_mode_actions_update_status_without_pointer_movement(
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    pause: bool,
+) -> None:
+    canvas = raw_win._canvas_widgets.canvas
+    status_messages: list[str] = []
+    canvas.status_updated.connect(status_messages.append)
+
+    for create_mode, action in raw_win._actions.draw:
+        status_messages.clear()
+        action.trigger()
+
+        assert canvas.mode == _CanvasMode.CREATE
+        assert canvas.create_mode == create_mode
+        assert len(status_messages) == 1
+        assert raw_win._status_bar.message.text().startswith(
+            f"Creating {create_mode!r}"
+        )
+        assert raw_win._status_bar.stats.text() == "mode=CREATE"
+
+        status_messages.clear()
+        raw_win._actions.edit_mode.trigger()
+
+        assert canvas.mode == _CanvasMode.EDIT
+        assert status_messages == ["Editing shapes"]
+        assert raw_win._status_bar.message.text() == "Editing shapes"
+        assert raw_win._status_bar.stats.text() == "mode=EDIT"
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_mode_status_preserves_pointer_coordinates_across_transition(
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    pause: bool,
+) -> None:
+    canvas = raw_win._canvas_widgets.canvas
+    raw_win._actions.create_rectangle_mode.trigger()
+
+    canvas.mouse_moved.emit(QPointF(12, 34))
+
+    assert raw_win._status_bar.stats.text() == ("mode=CREATE | x=  12.0, y=  34.0")
+
+    raw_win._actions.edit_mode.trigger()
+
+    assert raw_win._status_bar.stats.text() == "mode=EDIT | x=  12.0, y=  34.0"
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
 def _wait_for_status_message_containing(
