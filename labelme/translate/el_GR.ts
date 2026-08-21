@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>Ξεκινήστε την επισήμανση</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>Ανοίξτε μια εικόνα ή έναν φάκελο εικόνων για να ξεκινήσετε.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>Άνοιγμα εικόνας</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>Άνοιγμα φακέλου</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>Ή σύρετε και αποθέστε αρχεία εικόνας εδώ</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>&amp;Save

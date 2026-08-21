@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>アノテーションを開始</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>画像または画像フォルダーを開いて開始します。</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>画像を開く</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>フォルダーを開く</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>または、画像ファイルをここにドラッグ＆ドロップします</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

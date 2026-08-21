@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>Mulai anotasi</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>Buka gambar atau direktori gambar untuk memulai.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>Buka Gambar</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>Buka Direktori</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>Atau seret dan lepaskan file gambar di sini</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
