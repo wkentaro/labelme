@@ -166,6 +166,25 @@
     </message>
 </context>
 <context>
+    <name>LabelDialog</name>
+    <message>
+        <source>Shape Label</source>
+        <translation>Etiqueta de forma</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Etiqueta</translation>
+    </message>
+    <message>
+        <source>Group ID</source>
+        <translation>ID de grupo</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Descripción</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

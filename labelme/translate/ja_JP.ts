@@ -166,6 +166,25 @@
     </message>
 </context>
 <context>
+    <name>LabelDialog</name>
+    <message>
+        <source>Shape Label</source>
+        <translation>図形のラベル</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>ラベル</translation>
+    </message>
+    <message>
+        <source>Group ID</source>
+        <translation>グループ ID</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>説明</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

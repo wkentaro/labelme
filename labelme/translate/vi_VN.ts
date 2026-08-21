@@ -166,6 +166,25 @@
     </message>
 </context>
 <context>
+    <name>LabelDialog</name>
+    <message>
+        <source>Shape Label</source>
+        <translation>Nhãn hình dạng</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Nhãn</translation>
+    </message>
+    <message>
+        <source>Group ID</source>
+        <translation>ID nhóm</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Mô tả</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

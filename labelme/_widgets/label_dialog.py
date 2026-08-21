@@ -10,8 +10,6 @@ from .._label_flags import compile_label_flags
 from .._utils import label_validator
 
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
-_GROUP_ID_PLACEHOLDER: Final[str] = "Group ID"
-_DESCRIPTION_PLACEHOLDER: Final[str] = "Description"
 
 _LABEL_LIST_HEIGHT: Final[int] = 150
 _FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
@@ -52,6 +50,9 @@ class LabelDialog(QtWidgets.QDialog):
         label_history: list[str] | None = None,
     ) -> None:
         super().__init__(parent)
+        dialog_name = self.tr("Shape Label")
+        self.setWindowTitle(dialog_name)
+        self.setAccessibleName(dialog_name)
 
         self._sort_labels = sort_labels
         self._flags_spec = compile_label_flags(label_flags=flags)
@@ -73,16 +74,21 @@ class LabelDialog(QtWidgets.QDialog):
         # Build widgets
         self.edit = LabelQLineEdit()
         self.edit.setPlaceholderText(text)
+        self.edit.setAccessibleName(self.tr("Label"))
         self.edit.setValidator(label_validator())
 
+        group_id_name = self.tr("Group ID")
         self.edit_group_id = QtWidgets.QLineEdit()
-        self.edit_group_id.setPlaceholderText(_GROUP_ID_PLACEHOLDER)
+        self.edit_group_id.setPlaceholderText(group_id_name)
+        self.edit_group_id.setAccessibleName(group_id_name)
         self.edit_group_id.setValidator(
             QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[0-9]*"))
         )
 
+        description_name = self.tr("Description")
         self.edit_description = QtWidgets.QTextEdit()
-        self.edit_description.setPlaceholderText(_DESCRIPTION_PLACEHOLDER)
+        self.edit_description.setPlaceholderText(description_name)
+        self.edit_description.setAccessibleName(description_name)
         self.edit_description.setFixedHeight(50)
 
         self.label_list = QtWidgets.QListWidget()
