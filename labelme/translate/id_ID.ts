@@ -581,6 +581,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Simpan anotasi?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Hapus {} bentuk? Anda dapat memulihkannya dengan Urungkan.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Buka Direktori</translation>
     </message>
@@ -681,10 +685,6 @@ Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Hapus permanen file label ini? Tindakan ini tidak dapat dibatalkan.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Hapus permanen {} bentuk? Tindakan ini tidak dapat dibatalkan.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

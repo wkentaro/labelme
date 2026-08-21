@@ -7,6 +7,7 @@ from collections.abc import Generator
 from pathlib import Path
 
 import pytest
+from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPoint
@@ -57,6 +58,29 @@ def _isolated_qtsettings(
         labelme._app.QtCore, "QSettings", lambda *args, **kwargs: settings
     )
     yield
+
+
+@pytest.fixture(autouse=True)
+def _isolated_translators(
+    qapp: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> Generator[None, None, None]:
+    # Startup installs a translator per run and never removes it, and the whole
+    # session shares one QApplication. Qt falls back through every installed
+    # translator, so a test selecting the untranslated source language, which
+    # ships no catalog of its own, would otherwise keep rendering in whatever
+    # language an earlier test installed.
+    installed: list[QtCore.QTranslator] = []
+    original = qapp.installTranslator
+
+    def _record(translator: QtCore.QTranslator, /) -> bool:
+        installed.append(translator)
+        return original(translator)
+
+    monkeypatch.setattr(qapp, "installTranslator", _record)
+    yield
+    for translator in installed:
+        qapp.removeTranslator(translator)
 
 
 @pytest.fixture(autouse=True)

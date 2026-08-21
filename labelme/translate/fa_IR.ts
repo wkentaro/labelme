@@ -606,6 +606,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ذخیره حاشیه‌نویسی‌ها؟</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>حذف {} شکل؟ می‌توانید آن‌ها را با بازگشت بازیابی کنید.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - باز کردن پوشه</translation>
     </message>
@@ -706,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>حذف دائمی این فایل برچسب؟ این عمل قابل بازگشت نیست.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>حذف دائمی {} شکل؟ این عمل قابل بازگشت نیست.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

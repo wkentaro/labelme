@@ -612,6 +612,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Enregistrer les annotations ?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Supprimer {} formes ? Vous pouvez les restaurer avec la commande Annuler.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Ouvrir le répertoire</translation>
     </message>
@@ -712,10 +716,6 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Supprimer définitivement ce fichier d&apos;étiquettes ? Cette action est irréversible.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Supprimer définitivement {} formes ? Cette action est irréversible.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

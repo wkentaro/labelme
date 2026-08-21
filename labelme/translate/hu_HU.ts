@@ -620,6 +620,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Mentse az annotációkat?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>Törli a {} alakzatot? A Visszavonás paranccsal visszaállíthatja őket.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Könyvtár megnyitása</translation>
     </message>
@@ -712,10 +716,6 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Véglegesen törli ezt a címke fájlt? Ez a művelet nem vonható vissza.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>Véglegesen törli a {} alakzatot? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

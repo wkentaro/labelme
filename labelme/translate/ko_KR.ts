@@ -606,6 +606,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>주석을 저장하시겠습니까?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>{}개의 도형을 삭제하시겠습니까? 실행 취소로 복원할 수 있습니다.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - 폴더 열기</translation>
     </message>
@@ -706,10 +710,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>이 레이블 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>{}개의 도형을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
