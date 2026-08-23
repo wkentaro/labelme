@@ -6,14 +6,12 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
+from .. import _ai_models
 from ._info_button import InfoButton
+from .download import show_ai_model_info
 
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
-    _available_models: list[tuple[str, str]] = [
-        ("sam3:latest", "SAM3 (smart)"),
-        ("yoloworld:latest", "YOLO-World (fast)"),
-    ]
     _default_model_name: str = "yoloworld:latest"
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
@@ -43,8 +41,12 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
-            tooltip=self.tr("AI creates annotations from the text prompt")
+            tooltip=self.tr(
+                "AI creates annotations from the text prompt. "
+                "Click for model license and source."
+            )
         )
+        info_button.setAccessibleName(self.tr("Model license and source"))
         header_layout.addWidget(info_button)
         header_layout.addStretch()
         layout.addLayout(header_layout)
@@ -78,17 +80,21 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         settings_layout.setSpacing(4)
 
         self._model_combo = model_combo = QtWidgets.QComboBox()
-        for model_id, model_display in self._available_models:
-            model_combo.addItem(model_display, model_id)
-        model_index = next(
-            (
-                i
-                for i, (mid, _) in enumerate(self._available_models)
-                if mid == self._default_model_name
-            ),
-            0,
+        for model_name, display_name in (
+            ("sam3:latest", "SAM3 (smart)"),
+            ("yoloworld:latest", "YOLO-World (fast)"),
+        ):
+            if _ai_models.is_model_available(model_name=model_name):
+                model_combo.addItem(display_name, model_name)
+        model_combo.setCurrentIndex(
+            max(model_combo.findData(self._default_model_name), 0)
         )
-        model_combo.setCurrentIndex(model_index)
+        if model_combo.count() == 0:
+            body.setToolTip(self.tr("No text-to-annotation model is included."))
+        info_button.setEnabled(model_combo.count() > 0)
+        info_button.clicked.connect(
+            lambda: show_ai_model_info(model_name=self.get_model_name(), parent=self)
+        )
         settings_layout.addWidget(model_combo, stretch=1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
@@ -136,7 +142,10 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         return self._text_input.text()
 
     def get_model_name(self) -> str:
-        return self._model_combo.currentData()
+        model_name = self._model_combo.currentData()
+        if model_name is None:
+            raise ValueError(self._body.toolTip())
+        return model_name
 
     def get_model_display_name(self) -> str:
         return self._model_combo.currentText()
@@ -148,14 +157,15 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         return self._iou_spinbox.value()
 
     def setEnabled(self, a0: bool) -> None:
-        self._body.setEnabled(a0)
+        self._body.setEnabled(a0 and self._model_combo.count() > 0)
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
         if a0 == self._body and not self._body.isEnabled():
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr(
+                    self._body.toolTip()
+                    or self.tr(
                         "Select 'Polygon', 'Rectangle', or 'AI-Points' mode to enable"
                     ),
                     self._body,

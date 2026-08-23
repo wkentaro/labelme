@@ -2570,15 +2570,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_annotation.set_point_prompt_mode(enabled=enabled)
         if self._settings_dialog is None:
             return
-        disabled_reason = self.tr(
-            "Unavailable in AI-Points mode because this model does not support "
-            "point prompts."
-        )
         for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
+            is_available = _ai_models.is_model_available(model_name=option.model_name)
+            if is_available:
+                disabled_reason = self.tr(
+                    "Unavailable in AI-Points mode because this model does not "
+                    "support point prompts."
+                )
+            else:
+                disabled_reason = self.tr("Not included in this Labelme distribution.")
             self._settings_dialog.set_choice_enabled(
                 key_path=("ai", "default"),
                 value=option.display_name,
-                enabled=not enabled or option.supports_point_prompts,
+                enabled=is_available and (not enabled or option.supports_point_prompts),
                 disabled_reason=disabled_reason,
             )
 

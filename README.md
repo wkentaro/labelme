@@ -88,6 +88,8 @@ On some Linux distributions, labelme is also packaged in the system's native rep
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/labelme.svg)](https://repology.org/project/labelme/versions)
 
+Distribution maintainers can restrict AI models with a comma-separated `LABELME_AI_MODEL_ALLOWLIST` (for example, `sam2:latest,yoloworld:latest`); include at least one AI Assist model.
+
 ### Supported Python and platforms
 
 |        | Supported (v7.x)               | Maintenance (v6.3.x) |

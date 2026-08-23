@@ -180,3 +180,16 @@ def test_unencodable_model_falls_back_to_no_embedding(
 
     (request,) = registry.model.requests
     assert request.image_embedding is None
+
+
+def test_unavailable_model_is_rejected_before_loading(
+    monkeypatch: pytest.MonkeyPatch,
+    install_fake_model: Callable[..., _FakeModelRegistry],
+) -> None:
+    registry = install_fake_model()
+    monkeypatch.setenv("LABELME_AI_MODEL_ALLOWLIST", "allowed-model")
+
+    with pytest.raises(ValueError, match="not included"):
+        _run_point(OsamSession(model_name="blocked-model"), image_id="img")
+
+    assert registry.models == []

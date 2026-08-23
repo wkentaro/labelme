@@ -9,11 +9,16 @@ import osam.types
 import osam.types._blob
 import pytest
 from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QMessageBox
 from PySide6.QtWidgets import QProgressDialog
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
+import labelme._widgets.download as download_module
+from labelme._widgets.download import _confirm_ai_model_download
 from labelme._widgets.download import _format_bytes
+from labelme._widgets.download import _make_model_info_message_box
 from labelme._widgets.download import download_ai_model
 
 _MODEL_NAME: Final = "efficientsam:10m"
@@ -38,12 +43,122 @@ def isolated_model_type(
     return osam.apis.get_model_type_by_name(_MODEL_NAME)
 
 
+@pytest.fixture()
+def choose_download(monkeypatch: pytest.MonkeyPatch) -> None:
+    def click_download(message_box: QMessageBox) -> int:
+        for button in message_box.buttons():
+            if message_box.buttonRole(button) == QMessageBox.ButtonRole.AcceptRole:
+                button.click()
+                return 0
+        raise AssertionError("Download button not found")
+
+    monkeypatch.setattr(QMessageBox, "exec", click_download)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "model_name",
+    [model_type.name for model_type in osam.apis.registered_model_types],
+)
+def test_model_info_has_clickable_links_and_offline_license(
+    qtbot: QtBot,
+    model_name: str,
+) -> None:
+    parent = QWidget()
+    qtbot.addWidget(parent)
+
+    message_box = _make_model_info_message_box(
+        model_name=model_name,
+        parent=parent,
+    )
+    qtbot.addWidget(message_box)
+    message_box.show()
+
+    metadata = osam.apis.get_model_metadata(model_name)
+    assert metadata.license_url in message_box.informativeText()
+    assert metadata.source_url in message_box.informativeText()
+    assert message_box.detailedText().strip()
+    assert metadata.license_name.split()[0] in message_box.detailedText()
+    assert any(
+        label.openExternalLinks()
+        and metadata.license_url in label.text()
+        and metadata.source_url in label.text()
+        for label in message_box.findChildren(QLabel)
+    )
+
+
+@pytest.mark.gui
+def test_model_download_defaults_to_cancel(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    parent = QWidget()
+    qtbot.addWidget(parent)
+
+    def click_cancel(message_box: QMessageBox) -> int:
+        cancel_button = next(
+            button
+            for button in message_box.buttons()
+            if message_box.buttonRole(button) == QMessageBox.ButtonRole.RejectRole
+        )
+        assert message_box.defaultButton() is cancel_button
+        assert any(button.text() == "Download" for button in message_box.buttons())
+        cancel_button.click()
+        return 0
+
+    monkeypatch.setattr(QMessageBox, "exec", click_cancel)
+
+    assert _confirm_ai_model_download(model_name=_MODEL_NAME, parent=parent) is False
+
+
+@pytest.mark.gui
+def test_cancelled_model_download_does_not_pull(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    isolated_model_type: type[osam.types.Model],
+) -> None:
+    def cancel_download(*, model_name: str, parent: QWidget) -> bool:
+        return False
+
+    monkeypatch.setattr(
+        download_module,
+        "_confirm_ai_model_download",
+        cancel_download,
+    )
+
+    def fail_if_called(
+        cls: type[osam.types.Model],
+        progress: Callable[[str, int, int | None], None] | None = None,
+    ) -> None:
+        raise AssertionError("model download started")
+
+    monkeypatch.setattr(isolated_model_type, "pull", classmethod(fail_if_called))
+    parent = QWidget()
+    qtbot.addWidget(parent)
+
+    assert download_ai_model(model_name=_MODEL_NAME, parent=parent) is False
+
+
+@pytest.mark.gui
+def test_unavailable_model_is_rejected_before_download(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("LABELME_AI_MODEL_ALLOWLIST", "sam2:latest")
+    parent = QWidget()
+    qtbot.addWidget(parent)
+
+    with pytest.raises(ValueError, match="not included"):
+        download_ai_model(model_name="blocked-model", parent=parent)
+
+
 @pytest.mark.gui
 def test_download_ai_model_returns_true_when_pull_succeeds(
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
     isolated_model_type: type[osam.types.Model],
     close_failed_download_dialog: None,
+    choose_download: None,
 ) -> None:
     expected_paths = [Path(blob.path) for blob in isolated_model_type._blobs.values()]
     TEST_MODEL_DATA: Final = b"test model"
@@ -83,6 +198,7 @@ def test_download_ai_model_returns_false_when_pull_fails(
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
     close_failed_download_dialog: None,
+    choose_download: None,
 ) -> None:
     model_type = osam.apis.get_model_type_by_name(_MODEL_NAME)
 
@@ -107,6 +223,7 @@ def test_download_ai_model_from_network(
     qtbot: QtBot,
     isolated_model_type: type[osam.types.Model],
     close_failed_download_dialog: None,
+    choose_download: None,
 ) -> None:
     expected_paths = [Path(blob.path) for blob in isolated_model_type._blobs.values()]
 

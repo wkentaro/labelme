@@ -628,6 +628,39 @@ def test_ai_model_choices_follow_point_prompt_mode(
 
 
 @pytest.mark.gui
+def test_ai_model_choices_follow_distribution_allowlist(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    editable_config_file: Path,
+    pause: bool,
+) -> None:
+    monkeypatch.setenv("LABELME_AI_MODEL_ALLOWLIST", "sam2:latest,yoloworld:latest")
+    win = main_win(config_file=editable_config_file)
+
+    assert win._ai_annotation._model_combo.count() == 1
+    dialog = _open_settings_dialog(win=win)
+    combo = dialog._editors[("ai", "default")]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    sam2_index = combo.findData("Sam2 (balanced)")
+    sam3_index = combo.findData("Sam3")
+    assert combo.model().flags(combo.model().index(sam2_index, 0)) & (
+        Qt.ItemFlag.ItemIsEnabled
+    )
+    assert not combo.model().flags(combo.model().index(sam3_index, 0)) & (
+        Qt.ItemFlag.ItemIsEnabled
+    )
+    assert (
+        combo.model().data(
+            combo.model().index(sam3_index, 0), Qt.ItemDataRole.ToolTipRole
+        )
+        == "Not included in this Labelme distribution."
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_ai_dock_change_persists_and_syncs_settings_dialog(
     main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:

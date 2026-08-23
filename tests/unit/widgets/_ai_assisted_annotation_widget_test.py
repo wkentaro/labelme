@@ -3,8 +3,10 @@ from __future__ import annotations
 import pytest
 from pytestqt.qtbot import QtBot
 
+import labelme._widgets._ai_assisted_annotation_widget as widget_module
 from labelme._automation import AiOutputFormat
 from labelme._widgets._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
+from labelme._widgets._info_button import InfoButton
 
 
 @pytest.fixture
@@ -97,3 +99,47 @@ def test_selecting_another_output_format_fires_callback(
         widget._output_format_combo.findData("mask")
     )
     assert formats == ["mask"]
+
+
+def test_model_info_button_uses_current_model(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    models: list[str],
+    formats: list[AiOutputFormat],
+) -> None:
+    requested_models: list[str] = []
+
+    def record_model(*, model_name: str, parent: object) -> None:
+        requested_models.append(model_name)
+
+    monkeypatch.setattr(widget_module, "show_ai_model_info", record_model)
+    widget = _make_widget(
+        qtbot=qtbot,
+        models=models,
+        formats=formats,
+        default_model="Sam2 (balanced)",
+    )
+
+    info_button = widget.findChild(InfoButton)
+    assert info_button is not None
+    assert info_button.accessibleName() == "Model license and source"
+    info_button.click()
+
+    assert requested_models == ["sam2:latest"]
+
+
+def test_distribution_requires_an_ai_assist_model(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    models: list[str],
+    formats: list[AiOutputFormat],
+) -> None:
+    monkeypatch.setenv("LABELME_AI_MODEL_ALLOWLIST", "yoloworld:latest")
+
+    with pytest.raises(ValueError, match="must include an AI Assist model"):
+        _make_widget(
+            qtbot=qtbot,
+            models=models,
+            formats=formats,
+            default_model="Sam2 (balanced)",
+        )

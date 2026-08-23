@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import html
+import inspect
+from pathlib import Path
 from typing import Final
 
 import osam
@@ -8,8 +11,11 @@ from loguru import logger
 from PySide6.QtCore import Qt
 from PySide6.QtCore import QThread
 from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QMessageBox
 from PySide6.QtWidgets import QProgressDialog
 from PySide6.QtWidgets import QWidget
+
+from .. import _ai_models
 
 
 class _Cancelled(Exception):
@@ -79,11 +85,60 @@ def _format_bytes(n: int) -> str:
     return f"{value:.1f} TB"
 
 
+def _make_model_info_message_box(*, model_name: str, parent: QWidget) -> QMessageBox:
+    model_type = osam.apis.get_model_type_by_name(model_name)
+    metadata = model_type.metadata
+    license_path = Path(inspect.getfile(model_type)).with_name("LICENSE")
+
+    message_box = QMessageBox(parent)
+    message_box.setWindowTitle("AI Model Information")
+    message_box.setIcon(QMessageBox.Icon.Information)
+    message_box.setTextFormat(Qt.TextFormat.RichText)
+    message_box.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
+    message_box.setText(f"<b>{html.escape(model_name)}</b>")
+    message_box.setInformativeText(
+        f"License: {html.escape(metadata.license_name)}<br>"
+        f'<a href="{html.escape(metadata.license_url)}">License terms</a><br>'
+        f'<a href="{html.escape(metadata.source_url)}">Model source and provenance</a>'
+    )
+    message_box.setDetailedText(license_path.read_text(encoding="utf-8"))
+    return message_box
+
+
+def show_ai_model_info(*, model_name: str, parent: QWidget) -> None:
+    message_box = _make_model_info_message_box(
+        model_name=model_name,
+        parent=parent,
+    )
+    message_box.setStandardButtons(QMessageBox.StandardButton.Close)
+    message_box.exec()
+
+
+def _confirm_ai_model_download(*, model_name: str, parent: QWidget) -> bool:
+    message_box = _make_model_info_message_box(
+        model_name=model_name,
+        parent=parent,
+    )
+    message_box.setWindowTitle("Download AI Model")
+    message_box.setText(f"Download <b>{html.escape(model_name)}</b>?")
+    download_button = message_box.addButton(
+        "Download", QMessageBox.ButtonRole.AcceptRole
+    )
+    cancel_button = message_box.addButton(QMessageBox.StandardButton.Cancel)
+    message_box.setDefaultButton(cancel_button)
+    message_box.exec()
+    return message_box.clickedButton() is download_button
+
+
 def download_ai_model(model_name: str, parent: QWidget) -> bool:
+    _ai_models.require_model_available(model_name=model_name)
     model_type = osam.apis.get_model_type_by_name(model_name)
 
     if model_type.get_size() is not None:
         return True
+
+    if not _confirm_ai_model_download(model_name=model_name, parent=parent):
+        return False
 
     dialog = QProgressDialog(
         f"Downloading {model_name}...\n(requires internet connection)",

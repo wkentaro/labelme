@@ -11,6 +11,7 @@ from PySide6 import QtWidgets
 from .. import _ai_models
 from .. import _automation
 from ._info_button import InfoButton
+from .download import show_ai_model_info
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
@@ -19,6 +20,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     _model_combo: QtWidgets.QComboBox
     _output_format_combo: QtWidgets.QComboBox
     _body: QtWidgets.QWidget
+    _model_options: tuple[_ai_models.AiAssistModelOption, ...]
 
     def __init__(
         self,
@@ -63,8 +65,12 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
         header_layout.addWidget(label)
         info_button = InfoButton(
-            tooltip=self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
+            tooltip=self.tr(
+                "AI suggests annotation in 'AI-Points' and 'AI-Box' modes. "
+                "Click for model license and source."
+            )
         )
+        info_button.setAccessibleName(self.tr("Model license and source"))
         header_layout.addWidget(info_button)
         header_layout.addStretch()
         layout.addLayout(header_layout)
@@ -78,8 +84,20 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body.setLayout(body_layout)
 
         self._model_combo = QtWidgets.QComboBox()
-        for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
+        self._model_options = tuple(
+            option
+            for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
+            if _ai_models.is_model_available(model_name=option.model_name)
+        )
+        if not self._model_options:
+            raise ValueError(
+                "LABELME_AI_MODEL_ALLOWLIST must include an AI Assist model."
+            )
+        for option in self._model_options:
             self._model_combo.addItem(option.display_name, option.model_name)
+        info_button.clicked.connect(
+            lambda: show_ai_model_info(model_name=self.current_model_id, parent=self)
+        )
         body_layout.addWidget(self._model_combo)
 
         self._output_format_combo = QtWidgets.QComboBox()
@@ -120,7 +138,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def set_point_prompt_mode(self, enabled: bool) -> None:
         self._is_point_prompt_mode = enabled
         model = cast(QtGui.QStandardItemModel, self._model_combo.model())
-        for index, option in enumerate(_ai_models.AI_ASSIST_MODEL_OPTIONS):
+        for index, option in enumerate(self._model_options):
             item = model.item(index)
             assert item is not None
             item.setEnabled(not enabled or option.supports_point_prompts)

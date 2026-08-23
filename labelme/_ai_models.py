@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import os
 from typing import Final
 
 
@@ -58,6 +59,23 @@ AI_ASSIST_MODEL_OPTIONS: Final[tuple[AiAssistModelOption, ...]] = (
         supports_point_prompts=False,
     ),
 )
+
+
+def is_model_available(*, model_name: str) -> bool:
+    raw_allowlist = os.environ.get("LABELME_AI_MODEL_ALLOWLIST")
+    if raw_allowlist is None:
+        return True
+    return model_name in {
+        name.strip() for name in raw_allowlist.split(",") if name.strip()
+    }
+
+
+def require_model_available(*, model_name: str) -> None:
+    if is_model_available(model_name=model_name):
+        return
+    raise ValueError(
+        f"AI model {model_name!r} is not included in this Labelme distribution."
+    )
 
 
 def find_ai_assist_model_option(*, model_name: str) -> AiAssistModelOption | None:

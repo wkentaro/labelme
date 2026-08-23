@@ -808,7 +808,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2" },
-    { name = "osam", specifier = ">=0.4.0" },
+    { name = "osam", specifier = ">=0.6.0" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
     { name = "ruamel-yaml", specifier = ">=0.18" },
@@ -1247,7 +1247,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.4.0"
+version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1258,9 +1258,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/04/90/16dcc070796216b6729a93cfbbf12012b92ee54523509aafea546f13b940/osam-0.4.0.tar.gz", hash = "sha256:11b73c8eecd66929d860c1e1a0e5167a352b5f44b5d483d3ff98e98680fd987f", size = 28427843, upload-time = "2026-04-16T13:49:48.695Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/44/cf/671fb039d3cf516dffb77502ecfc8221dbf16521f6536a8cf4db12daca8b/osam-0.6.0.tar.gz", hash = "sha256:f41e84c3a01e76335de3597830cb261eb9f63bf62cab68accecf1d113b50f0bc", size = 28286476, upload-time = "2026-08-21T06:03:02.026Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/d3/937ed798428ea240688ade7a5ea7b3957999ef5ba839193b011a2ccafdea/osam-0.4.0-py3-none-any.whl", hash = "sha256:45cd1979a3b8b4fb19b6d619e7b993b1062f80dda123f268cefbfa500affc1a6", size = 2210418, upload-time = "2026-04-16T13:49:45.481Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/1f/7f405a4a66aa1440ef3eb019ce7207ecccfe293d413ff019eedc1bcc4ae0/osam-0.6.0-py3-none-any.whl", hash = "sha256:4a4b6fc0e05ae4d6daa7da72e88004463ffd118b294a95eef422edb340d26f9c", size = 2217556, upload-time = "2026-08-21T06:02:59.003Z" },
 ]
 
 [[package]]

@@ -7,6 +7,8 @@ import osam
 from loguru import logger
 from numpy.typing import NDArray
 
+from .. import _ai_models
+
 
 class OsamSession:
     _model_name: str
@@ -87,6 +89,7 @@ class OsamSession:
         return embedding
 
     def _get_or_load_model(self) -> osam.types.Model:
+        _ai_models.require_model_available(model_name=self._model_name)
         if self._model is None:
             logger.debug("Loading model with name={!r}", self._model_name)
             self._model = osam.apis.get_model_type_by_name(self._model_name)()
