@@ -8,8 +8,12 @@
         <translation>Anotação Assistida por IA</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>A IA sugere anotações nos modos &apos;AI-Points&apos; e &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>A IA sugere anotações nos modos &apos;AI-Points&apos; e &apos;AI-Box&apos;. Clique para ver a licença e a fonte do modelo.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Licença e fonte do modelo</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,8 +27,12 @@
         <translation>Texto para Anotação IA</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>IA cria anotações a partir do prompt de texto</translation>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>A IA cria anotações a partir do prompt de texto. Clique para ver a licença e a fonte do modelo.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Licença e fonte do modelo</translation>
     </message>
     <message>
         <source>e.g., dog,cat,bird</source>
@@ -33,6 +41,10 @@
     <message>
         <source>Run</source>
         <translation>Executar</translation>
+    </message>
+    <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Nenhum modelo de texto para anotação incluído.</translation>
     </message>
     <message>
         <source>Score</source>
@@ -596,6 +608,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Indisponível no modo AI-Points porque este modelo não oferece suporte a prompts de pontos.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Não incluído nesta distribuição do Labelme.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

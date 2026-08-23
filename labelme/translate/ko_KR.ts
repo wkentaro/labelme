@@ -8,8 +8,12 @@
         <translation>AI 지원 주석</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다. 모델 라이선스 및 출처를 보려면 클릭하세요.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>모델 라이선스 및 출처</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AI 프롬프트</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI가 텍스트 프롬프트로부터 주석을 생성합니다. 모델 라이선스 및 출처를 보려면 클릭하세요.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>모델 라이선스 및 출처</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>예: 개, 고양이, 새</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>실행</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>텍스트-주석 모델이 포함되어 있지 않습니다.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>점수</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI가 텍스트 프롬프트에서 주석을 생성합니다</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -596,6 +608,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>이 모델은 포인트 프롬프트를 지원하지 않으므로 AI-Points 모드에서는 사용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>이 Labelme 배포판에 포함되어 있지 않습니다.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

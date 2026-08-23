@@ -8,8 +8,12 @@
         <translation>AI-Ondersteunde Annotatie</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;. Klik voor modellicentie en -bron.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Modellicentie en -bron</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,8 +27,12 @@
         <translation>AI Tekst-naar-Annotatie</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI maakt annotaties van de tekstprompt</translation>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI maakt annotaties op basis van de tekstprompt. Klik voor modellicentie en -bron.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Modellicentie en -bron</translation>
     </message>
     <message>
         <source>e.g., dog,cat,bird</source>
@@ -33,6 +41,10 @@
     <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
+    </message>
+    <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Geen tekst-naar-annotatie-model inbegrepen.</translation>
     </message>
     <message>
         <source>Score</source>
@@ -596,6 +608,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Niet beschikbaar in de modus AI-Points, omdat dit model geen puntprompts ondersteunt.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Niet inbegrepen in deze Labelme-distributie.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

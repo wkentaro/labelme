@@ -8,8 +8,12 @@
         <translation>حاشیه‌نویسی با کمک هوش مصنوعی</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>هوش مصنوعی حاشیه‌نویسی را در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; پیشنهاد می‌دهد. برای مجوز و منبع مدل کلیک کنید.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>مجوز و منبع مدل</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>پیشنهاد هوش مصنوعی</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>هوش مصنوعی حاشیه‌نویسی‌ها را از روی درخواست متنی ایجاد می‌کند. برای مجوز و منبع مدل کلیک کنید.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>مجوز و منبع مدل</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>مثال: سگ، گربه، پرنده</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>اجرا</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>هیچ مدل متن-به-حاشیه‌نویسی گنجانده نشده است.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>امتیاز</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>هوش مصنوعی حاشیه‌نویسی‌ها را از متن ایجاد می‌کند</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -596,6 +608,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>در حالت AI-Points در دسترس نیست، زیرا این مدل از دستورات نقطه‌ای پشتیبانی نمی‌کند.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>در این توزیع Labelme گنجانده نشده است.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

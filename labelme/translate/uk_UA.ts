@@ -8,8 +8,12 @@
         <translation>AI-анотація</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>ШІ пропонує анотації в режимах &apos;AI-Points&apos; і &apos;AI-Box&apos;. Натисніть, щоб переглянути ліцензію та джерело моделі.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Ліцензія та джерело моделі</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,8 +27,12 @@
         <translation>AI: текст в анотацію</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI створює анотації з текстової підказки</translation>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>ШІ створює анотації на основі текстового запиту. Натисніть, щоб переглянути ліцензію та джерело моделі.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Ліцензія та джерело моделі</translation>
     </message>
     <message>
         <source>e.g., dog,cat,bird</source>
@@ -33,6 +41,10 @@
     <message>
         <source>Run</source>
         <translation>Запустити</translation>
+    </message>
+    <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Модель перетворення тексту на анотацію не входить до складу.</translation>
     </message>
     <message>
         <source>Score</source>
@@ -615,6 +627,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Недоступно в режимі AI-Points, оскільки ця модель не підтримує точкові запити.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Не входить до цього дистрибутива Labelme.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

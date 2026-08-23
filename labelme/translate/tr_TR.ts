@@ -8,8 +8,12 @@
         <translation>Yapay Zeka Destekli Açıklama</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Yapay zeka, &apos;AI-Points&apos; ve &apos;AI-Box&apos; modlarında açıklama önerir</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>Yapay zeka, &apos;AI-Points&apos; ve &apos;AI-Box&apos; modlarında açıklama önerir. Model lisansı ve kaynağı için tıklayın.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Model lisansı ve kaynağı</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>Yapay Zeka Metinden Açıklama</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>Yapay zeka, metin isteminden açıklamalar oluşturur. Model lisansı ve kaynağı için tıklayın.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Model lisansı ve kaynağı</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ör. köpek, kedi, kuş</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Çalıştır</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Metinden açıklamaya model dahil değil.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Puan</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Yapay zeka, metin isteminden açıklamalar üretir</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -599,6 +611,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Bu model nokta istemlerini desteklemediği için AI-Points modunda kullanılamaz.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Bu Labelme dağıtımına dahil değil.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

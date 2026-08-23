@@ -8,8 +8,12 @@
         <translation>Σχολιασμός υποβοηθούμενος από τεχνητή νοημοσύνη</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;. Κάντε κλικ για την άδεια χρήσης και την πηγή του μοντέλου.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Άδεια χρήσης και πηγή μοντέλου</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,8 +27,12 @@
         <translation>AI Text-to-Annotation</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Η τεχνητή νοημοσύνη δημιουργεί σχολιασμούς από την προτροπή κειμένου</translation>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>Το AI δημιουργεί σχολιασμούς από την προτροπή κειμένου. Κάντε κλικ για την άδεια χρήσης και την πηγή του μοντέλου.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Άδεια χρήσης και πηγή μοντέλου</translation>
     </message>
     <message>
         <source>e.g., dog,cat,bird</source>
@@ -33,6 +41,10 @@
     <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
+    </message>
+    <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Δεν περιλαμβάνεται μοντέλο κειμένου σε σχολιασμό.</translation>
     </message>
     <message>
         <source>Score</source>
@@ -614,6 +626,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Δεν περιλαμβάνεται σε αυτήν τη διανομή του Labelme.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

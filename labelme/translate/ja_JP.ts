@@ -8,8 +8,12 @@
         <translation>AI支援アノテーション</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AIは&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案します。モデルのライセンスとソースを確認するにはクリックしてください。</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>モデルのライセンスとソース</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AIプロンプト</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AIはテキストプロンプトからアノテーションを作成します。モデルのライセンスとソースを確認するにはクリックしてください。</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>モデルのライセンスとソース</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例: dog,cat,bird</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>実行</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>テキストからアノテーションを生成するモデルは含まれていません。</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>スコア</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AIがテキストプロンプトからアノテーションを作成</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -610,6 +622,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>このモデルはポイントプロンプトに対応していないため、AI-Points モードでは利用できません。</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>このLabelmeディストリビューションには含まれていません。</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

@@ -8,8 +8,12 @@
         <translation>MI-támogatott annotáció</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>Az AI annotációt javasol az &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban. Kattintson a modell licencéért és forrásáért.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Modell licence és forrása</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AI prompt</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>Az AI a szöveges promptból hoz létre annotációkat. Kattintson a modell licencéért és forrásáért.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Modell licence és forrása</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>pl. kutya,macska,madár</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Futtatás</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Nincs szöveg-annotáció modell mellékelve.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Pontszám</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -610,6 +622,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Nem érhető el AI-Points módban, mert ez a modell nem támogatja a pont alapú promptokat.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Nem tartalmazza ez a Labelme-disztribúció.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

@@ -8,8 +8,12 @@
         <translation>แอนโนเทชันด้วย AI</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos; คลิกเพื่อดูใบอนุญาตและแหล่งที่มาของโมเดล</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>ใบอนุญาตและแหล่งที่มาของโมเดล</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AI ข้อความสู่แอนโนเทชัน</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI สร้างแอนโนเทชันจากพรอมต์ข้อความ คลิกเพื่อดูใบอนุญาตและแหล่งที่มาของโมเดล</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>ใบอนุญาตและแหล่งที่มาของโมเดล</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>เช่น สุนัข, แมว, นก</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>รัน</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>ไม่มีโมเดลข้อความเป็นแอนโนเทชันรวมอยู่</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>คะแนน</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI สร้างแอนโนเทชันจากข้อความที่ป้อน</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -596,6 +608,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>ไม่สามารถใช้ในโหมด AI-Points ได้ เนื่องจากโมเดลนี้ไม่รองรับพรอมต์แบบจุด</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>ไม่ได้รวมอยู่ในดิสทริบิวชัน Labelme นี้</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

@@ -8,8 +8,12 @@
         <translation>Разметка с помощью ИИ</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ИИ предлагает аннотацию в режимах &apos;AI-Points&apos; и &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>ИИ предлагает аннотации в режимах &apos;AI-Points&apos; и &apos;AI-Box&apos;. Нажмите, чтобы увидеть лицензию и источник модели.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Лицензия и источник модели</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>ИИ: текст → разметка</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>ИИ создаёт аннотации на основе текстового запроса. Нажмите, чтобы увидеть лицензию и источник модели.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Лицензия и источник модели</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>например: собака,кот,птица</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Выполнить</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Модель для преобразования текста в аннотацию не включена.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Оценка</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>ИИ создаёт разметку по текстовому запросу</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -581,6 +593,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Недоступно в режиме AI-Points, так как эта модель не поддерживает точечные запросы.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Не включено в этот дистрибутив Labelme.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

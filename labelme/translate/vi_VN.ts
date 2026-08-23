@@ -8,8 +8,12 @@
         <translation>Chú thích dữ liệu với sự hỗ trợ của AI</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI đề xuất chú thích ở chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;. Nhấp để xem giấy phép và nguồn của mô hình.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Giấy phép và nguồn của mô hình</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AI Văn bản sang Chú thích</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI tạo chú thích từ lời nhắc văn bản. Nhấp để xem giấy phép và nguồn của mô hình.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Giấy phép và nguồn của mô hình</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ví dụ: chó,mèo,chim</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Chạy</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Không bao gồm mô hình văn bản thành chú thích.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Điểm số</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI tạo chú thích từ lời nhắc văn bản</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -596,6 +608,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Không khả dụng trong chế độ AI-Points vì mô hình này không hỗ trợ lời nhắc điểm.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Không có trong bản phân phối Labelme này.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

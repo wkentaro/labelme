@@ -8,8 +8,12 @@
         <translation>KI-gestützte Annotation</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI schlägt Annotationen in den Modi &apos;AI-Points&apos; und &apos;AI-Box&apos; vor</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>Die KI schlägt Annotationen in den Modi &apos;AI-Points&apos; und &apos;AI-Box&apos; vor. Klicken Sie für Modelllizenz und -quelle.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Modelllizenz und -quelle</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>KI-Prompt</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>Die KI erstellt Annotationen aus dem Text-Prompt. Klicken Sie für Modelllizenz und -quelle.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Modelllizenz und -quelle</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>z.B. Hund,Katze,Vogel</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Ausführen</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Kein Text-zu-Annotation-Modell enthalten.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Score</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>KI erstellt Annotationen aus dem Textprompt</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -610,6 +622,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Im AI-Points-Modus nicht verfügbar, da dieses Modell keine Punkt-Prompts unterstützt.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Nicht in dieser Labelme-Distribution enthalten.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

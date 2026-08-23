@@ -8,8 +8,12 @@
         <translation>Adnotacja wspomagana przez AI</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI sugeruje adnotacje w trybach &apos;AI-Points&apos; i &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI sugeruje adnotacje w trybach &apos;AI-Points&apos; i &apos;AI-Box&apos;. Kliknij, aby zobaczyć licencję i źródło modelu.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Licencja i źródło modelu</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AI — tekst na adnotację</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI tworzy adnotacje na podstawie polecenia tekstowego. Kliknij, aby zobaczyć licencję i źródło modelu.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Licencja i źródło modelu</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>np. pies,kot,ptak</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Uruchom</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Brak dołączonego modelu tekst-na-adnotację.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Wynik</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI tworzy adnotacje na podstawie podanego tekstu</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -596,6 +608,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Niedostępne w trybie AI-Points, ponieważ ten model nie obsługuje poleceń punktowych.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Nie dołączono do tej dystrybucji Labelme.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

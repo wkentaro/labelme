@@ -8,8 +8,12 @@
         <translation>AI 辅助标注</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>在 &apos;AI-Points&apos; 和 &apos;AI-Box&apos; 模式下，AI 会提供标注建议</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI 会在 &apos;AI-Points&apos; 和 &apos;AI-Box&apos; 模式下建议标注。点击查看模型许可证和来源。</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>模型许可证和来源</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>AI 文本转标注</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI 根据文本提示创建标注。点击查看模型许可证和来源。</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>模型许可证和来源</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例如：dog,cat,bird</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>运行</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>未包含文本转标注模型。</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>得分</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI 将根据文本提示生成标注</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -596,6 +608,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>此模型不支持点提示，因此在 AI-Points 模式下不可用。</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>此 Labelme 发行版未包含。</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>

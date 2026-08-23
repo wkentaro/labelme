@@ -8,8 +8,12 @@
         <translation>Anotasi berbasis AI</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes. Click for model license and source.</source>
+        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;. Klik untuk lisensi dan sumber model.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Lisensi dan sumber model</translation>
     </message>
     <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
@@ -23,6 +27,14 @@
         <translation>Anotasi dari teks (AI)</translation>
     </message>
     <message>
+        <source>AI creates annotations from the text prompt. Click for model license and source.</source>
+        <translation>AI membuat anotasi dari perintah teks. Klik untuk lisensi dan sumber model.</translation>
+    </message>
+    <message>
+        <source>Model license and source</source>
+        <translation>Lisensi dan sumber model</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>contoh: anjing, kucing, burung</translation>
     </message>
@@ -31,16 +43,16 @@
         <translation>Jalankan</translation>
     </message>
     <message>
+        <source>No text-to-annotation model is included.</source>
+        <translation>Tidak ada model teks-ke-anotasi yang disertakan.</translation>
+    </message>
+    <message>
         <source>Score</source>
         <translation>Skor</translation>
     </message>
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI membuat anotasi dari prompt teks</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
@@ -571,6 +583,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
         <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
+    </message>
+    <message>
+        <source>Not included in this Labelme distribution.</source>
+        <translation>Tidak disertakan dalam distribusi Labelme ini.</translation>
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
