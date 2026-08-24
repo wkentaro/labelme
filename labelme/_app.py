@@ -1324,6 +1324,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(self._get_window_title(dirty=True))
 
     def mark_clean(self) -> None:
+        canvas = self._canvas_widgets.canvas
+        self._actions.undo.setEnabled(
+            not canvas.is_drawing and canvas.can_restore_shape
+        )
         self._is_changed = False
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
@@ -1458,7 +1462,6 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-        self._canvas_widgets.canvas.backup_shapes()
         self._load_shapes(shapes, replace=False)
         self.mark_dirty()
 
@@ -1487,7 +1490,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # In the middle of drawing, toggling between modes should be disabled.
         self._actions.edit_mode.setEnabled(not drawing)
         self._actions.undo_last_point.setEnabled(drawing)
-        self._actions.undo.setEnabled(not drawing)
+        self._actions.undo.setEnabled(
+            not drawing and self._canvas_widgets.canvas.can_restore_shape
+        )
         self._actions.delete.setEnabled(not drawing)
 
     def _switch_canvas_mode(
@@ -2239,12 +2244,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
-        if label_file_path is not None:
-            self._load_shapes(shapes=shapes)
-            flags.update(annotation.flags)
+        # Record one baseline state. Loading carried-forward shapes separately
+        # would create a false Undo step that discards them before any edit.
+        carry_prev_shapes = bool(prev_shapes) and not shapes
+        self._load_shapes(shapes=prev_shapes if carry_prev_shapes else shapes)
+        flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
-        if prev_shapes and self.has_no_shapes():
-            self._load_shapes(shapes=prev_shapes, replace=False)
+        if carry_prev_shapes:
             self.mark_dirty()
         else:
             self.mark_clean()

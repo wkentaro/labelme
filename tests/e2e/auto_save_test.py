@@ -186,6 +186,39 @@ def test_auto_save_on_undo(
 
 
 @pytest.mark.gui
+def test_auto_save_on_undo_of_first_shape(
+    qtbot: QtBot,
+    _raw_auto_save_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    label_file = tmp_path / f"{Path(_RAW_FILE_NAME).stem}.json"
+    canvas = _raw_auto_save_win._canvas_widgets.canvas
+
+    draw_and_commit_polygon(
+        qtbot=qtbot,
+        win=_raw_auto_save_win,
+        label="first",
+        vertices=_VERTICES,
+    )
+
+    assert _raw_auto_save_win._actions.undo.isEnabled()
+    with label_file.open() as f:
+        assert len(json.load(f)["shapes"]) == 1
+
+    _raw_auto_save_win._actions.undo.trigger()
+
+    assert not canvas.shapes
+    assert len(_raw_auto_save_win._docks.label_list) == 0
+    assert not canvas.can_restore_shape
+    assert not _raw_auto_save_win._actions.undo.isEnabled()
+    with label_file.open() as f:
+        assert json.load(f)["shapes"] == []
+
+    close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
+
+
+@pytest.mark.gui
 def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
