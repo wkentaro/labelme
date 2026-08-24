@@ -421,11 +421,13 @@ def test_draw_actions_disable_only_active_mode(
 @pytest.mark.gui
 def test_cancel_drawing_with_escape(
     qtbot: QtBot,
-    annotated_win: MainWindow,
+    raw_win: MainWindow,
     pause: bool,
 ) -> None:
-    canvas = annotated_win._canvas_widgets.canvas
-    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    canvas = raw_win._canvas_widgets.canvas
+    assert not raw_win._actions.undo.isEnabled()
+
+    raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
     qtbot.wait(50)
 
     for xy in [(0.3, 0.3), (0.6, 0.3)]:
@@ -437,7 +439,10 @@ def test_cancel_drawing_with_escape(
     qtbot.wait(50)
 
     assert canvas._current is None
-    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+    assert not raw_win._actions.undo.isEnabled()
+    assert not raw_win._is_changed
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
 @pytest.mark.gui

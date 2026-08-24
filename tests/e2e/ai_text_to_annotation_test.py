@@ -225,6 +225,11 @@ def test_text_prompt_creates_shapes(
     win._save_label_file()
     assert_labelfile_sanity(out_file)
 
+    win._actions.undo.trigger()
+    assert not canvas.shapes
+    assert not canvas.can_restore_shape
+    assert not win._actions.undo.isEnabled()
+
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
