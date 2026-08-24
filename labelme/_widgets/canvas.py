@@ -285,6 +285,36 @@ class Canvas(QtWidgets.QWidget):
     def set_allow_out_of_bounds_points(self, value: bool) -> None:
         self._allow_out_of_bounds_points = value
 
+    def pan_view(self, step: QPointF, *, constrain_to_center: bool = True) -> None:
+        viewport = self._scroll_viewport()
+        if viewport is None:
+            return
+        target = self._view_offset + step
+        if constrain_to_center:
+            # A focal zoom can leave the image away from the center. Manual
+            # panning may bring it back but must not move it farther away.
+            x_limit = max(
+                min(self.pixmap.width() * self.scale, viewport.width()) / 2,
+                abs(self._view_offset.x()),
+            )
+            y_limit = max(
+                min(self.pixmap.height() * self.scale, viewport.height()) / 2,
+                abs(self._view_offset.y()),
+            )
+            target = QPointF(
+                max(-x_limit, min(x_limit, target.x())),
+                max(-y_limit, min(y_limit, target.y())),
+            )
+        self._view_offset = target
+        self.update()
+
+    def reset_view_offset(self) -> None:
+        self._view_offset = QPointF()
+        self.update()
+
+    def get_view_offset(self) -> QPointF:
+        return QPointF(self._view_offset)
+
     def set_color_resolver(
         self, resolver: Callable[[str], tuple[int, int, int]]
     ) -> None:
@@ -614,7 +644,7 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
         try:
-            pos = self._transform_point_widget_to_image(a0.position())
+            pos = self.transform_widget_point_to_image(a0.position())
         except AttributeError:
             return
         self.mouse_moved.emit(pos)
@@ -963,7 +993,7 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
-        pos: QPointF = self._transform_point_widget_to_image(a0.position())
+        pos: QPointF = self.transform_widget_point_to_image(a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status()
 
@@ -976,9 +1006,8 @@ class Canvas(QtWidgets.QWidget):
         if button == Qt.MouseButton.RightButton and self.mode == _CanvasMode.EDIT:
             self._press_right(pos=pos, event=event)
             return
-        if (
-            button == Qt.MouseButton.MiddleButton
-            and self._is_image_overflowing_viewport()
+        if button == Qt.MouseButton.MiddleButton and (
+            self._is_image_overflowing_viewport() or not self._view_offset.isNull()
         ):
             self._begin_pan(event=event)
 
@@ -1226,14 +1255,16 @@ class Canvas(QtWidgets.QWidget):
         return scaled_w > viewport.width() or scaled_h > viewport.height()
 
     def _scroll_viewport(self) -> QtWidgets.QWidget | None:
-        # Walk up the parent chain to the enclosing scroll area and return
-        # its viewport. Returning None when no scroll area is found lets
-        # callers degrade gracefully if the canvas is reparented (e.g. into
-        # a splitter or a test harness).
+        scroll_area = self._find_scroll_area()
+        return scroll_area.viewport() if scroll_area is not None else None
+
+    def _find_scroll_area(self) -> QtWidgets.QAbstractScrollArea | None:
+        # Parentage can include viewport chrome, so do not assume the direct
+        # parent owns scrolling.
         node: QtWidgets.QWidget | None = self.parentWidget()
         while node is not None:
             if isinstance(node, QtWidgets.QAbstractScrollArea):
-                return node.viewport()
+                return node
             node = node.parentWidget()
         return None
 
@@ -1665,19 +1696,25 @@ class Canvas(QtWidgets.QWidget):
             return proposal.new_shapes[0]
         return None
 
-    def _transform_point_widget_to_image(self, point: QPointF) -> QPointF:
+    def transform_widget_point_to_image(self, point: QPointF) -> QPointF:
         origin = self._compute_image_origin_offset()
         image_x = point.x() / self.scale - origin.x()
         image_y = point.y() / self.scale - origin.y()
         return QPointF(image_x, image_y)
 
-    def _compute_image_origin_offset(self) -> QPointF:
-        area = super().size()
+    def transform_image_point_to_widget(
+        self, point: QPointF, *, area: QtCore.QSize | None = None
+    ) -> QPointF:
+        return (point + self._compute_image_origin_offset(area=area)) * self.scale
+
+    def _compute_image_origin_offset(self, area: QtCore.QSize | None = None) -> QPointF:
+        if area is None:
+            area = super().size()
         scaled_w = self.pixmap.width() * self.scale
         scaled_h = self.pixmap.height() * self.scale
         slack_w = max(area.width() - scaled_w, 0.0)
         slack_h = max(area.height() - scaled_h, 0.0)
-        return QPointF(slack_w, slack_h) / (2.0 * self.scale)
+        return (QPointF(slack_w, slack_h) / 2.0 + self._view_offset) / self.scale
 
     def is_out_of_pixmap(self, p: QPointF) -> bool:
         return _is_out_of_image(p, self.pixmap.size())
@@ -1768,12 +1805,23 @@ class Canvas(QtWidgets.QWidget):
             return super().minimumSizeHint()
         scaled_w = int(self.pixmap.width() * self.scale)
         scaled_h = int(self.pixmap.height() * self.scale)
-        viewport = self._scroll_viewport()
-        if viewport is None:
+        scroll_area = self._find_scroll_area()
+        if scroll_area is None:
             return QtCore.QSize(scaled_w, scaled_h)
-        slack_w = _compute_overscroll_slack(scaled=scaled_w, viewport=viewport.width())
-        slack_h = _compute_overscroll_slack(scaled=scaled_h, viewport=viewport.height())
-        return QtCore.QSize(scaled_w + slack_w, scaled_h + slack_h)
+
+        viewport_size = scroll_area.maximumViewportSize()
+        h_bar_height = scroll_area.horizontalScrollBar().sizeHint().height()
+        v_bar_width = scroll_area.verticalScrollBar().sizeHint().width()
+        needs_h_bar = scaled_w > viewport_size.width()
+        needs_v_bar = scaled_h > viewport_size.height()
+        if needs_v_bar:
+            needs_h_bar = scaled_w > viewport_size.width() - v_bar_width
+        if needs_h_bar:
+            needs_v_bar = scaled_h > viewport_size.height() - h_bar_height
+
+        available_w = viewport_size.width() - (v_bar_width if needs_v_bar else 0)
+        available_h = viewport_size.height() - (h_bar_height if needs_h_bar else 0)
+        return QtCore.QSize(max(scaled_w, available_w), max(scaled_h, available_h))
 
     def sizeHint(self) -> QtCore.QSize:
         return self._compute_canvas_size()
@@ -1785,10 +1833,14 @@ class Canvas(QtWidgets.QWidget):
         self._clear_ai_existing_shape_highlights()
         mods: Qt.KeyboardModifier = a0.modifiers()
         delta: QPoint = a0.angleDelta()
+        if delta.isNull():
+            a0.accept()
+            return
         if mods == Qt.KeyboardModifier.ControlModifier:
             # with Ctrl/Command key
             # zoom
-            self.zoom_request.emit(delta.y(), a0.position())
+            if delta.y() != 0:
+                self.zoom_request.emit(delta.y(), a0.position())
         elif mods == Qt.KeyboardModifier.ShiftModifier and delta.x() == 0:
             # Shift+wheel scrolls horizontally. macOS swaps the axis for us,
             # but Linux/Windows deliver the delta on y and expect the app to
@@ -1982,6 +2034,7 @@ class Canvas(QtWidgets.QWidget):
         self.selected_shapes = []
         self._selected_shapes_copy = []
         self._current = None
+        self._view_offset = QPointF()
         self._highlight = None
         self._rotation_highlight = None
         self._set_ai_existing_shape_highlights(shapes=[])
@@ -2034,18 +2087,6 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
         np.sign(pos_from_opposite.x()) * square_size,
         np.sign(pos_from_opposite.y()) * square_size,
     )
-
-
-def _compute_overscroll_slack(*, scaled: int, viewport: int) -> int:
-    # Floor (viewport // 8) keeps middle-drag pan responsive at slight
-    # overflow; without it, scroll range equals the overflow and a
-    # 2-px-overflowing image feels locked under the cursor. The floor
-    # reintroduces a viewport/16 image shift at the threshold, 4x smaller
-    # than the original viewport/4 jump. Cap (viewport // 2) lets each
-    # image edge be panned to the viewport center but no further.
-    if scaled <= viewport:
-        return 0
-    return max(viewport // 8, min(viewport // 2, scaled - viewport))
 
 
 def _compute_intersection_edges_image(

@@ -20,7 +20,6 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _compute_intersection_edges_image
-from labelme._widgets.canvas import _compute_overscroll_slack
 from labelme._widgets.canvas import _draft_to_shape
 from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
@@ -1777,22 +1776,6 @@ def test_reproject_oriented_rectangle_clips_degenerate_projection() -> None:
         assert 0 <= corner.y() <= _HEIGHT
 
 
-@pytest.mark.parametrize(
-    ("scaled", "viewport", "expected"),
-    [
-        pytest.param(399, 400, 0, id="image_fits_below_threshold"),
-        pytest.param(400, 400, 0, id="image_exactly_fills_viewport"),
-        pytest.param(401, 400, 50, id="slight_overflow_floored_to_viewport_eighth"),
-        pytest.param(450, 400, 50, id="overflow_at_floor_boundary"),
-        pytest.param(500, 400, 100, id="ramp_grows_with_overflow_past_floor"),
-        pytest.param(600, 400, 200, id="overflow_at_cap_boundary"),
-        pytest.param(1000, 400, 200, id="large_overflow_capped_at_viewport_half"),
-    ],
-)
-def test_compute_overscroll_slack(scaled: int, viewport: int, expected: int) -> None:
-    assert _compute_overscroll_slack(scaled=scaled, viewport=viewport) == expected
-
-
 def test_should_reselect_on_right_press_with_empty_selection() -> None:
     # Empty selection reselects even when hovering nothing; without the guard this
     # input would fall through to `hovered_shape is None` and wrongly return False.
@@ -1925,6 +1908,29 @@ def test_remove_selected_point_repaints(
 
     assert len(shape.points) == n_before - 1
     update.assert_called_once()  # repaint now, not only on the next mouse move (#890)
+
+
+@pytest.mark.gui
+def test_reset_view_offset_repaints(
+    canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    canvas._view_offset = QPointF(17, 23)
+    update = Mock()
+    monkeypatch.setattr(canvas, "update", update)
+
+    canvas.reset_view_offset()
+
+    assert canvas.get_view_offset().isNull()
+    update.assert_called_once()
+
+
+@pytest.mark.gui
+def test_reset_state_clears_view_offset(canvas: Canvas) -> None:
+    canvas._view_offset = QPointF(17, 23)
+
+    canvas.reset_state()
+
+    assert canvas.get_view_offset().isNull()
 
 
 @pytest.mark.gui

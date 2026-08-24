@@ -43,7 +43,7 @@ def session_home(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 def image_to_widget_pos(canvas: Canvas, image_pos: QPointF) -> QPoint:
-    widget_pos = (image_pos + canvas._compute_image_origin_offset()) * canvas.scale
+    widget_pos = canvas.transform_image_point_to_widget(image_pos)
     return QPoint(int(widget_pos.x()), int(widget_pos.y()))
 
 
