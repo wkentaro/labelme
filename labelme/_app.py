@@ -94,6 +94,13 @@ class _CanvasWidgets(NamedTuple):
     scroll_bars: dict[Qt.Orientation, QtWidgets.QScrollBar]
 
 
+class _ViewportState(NamedTuple):
+    zoom_mode: _ZoomMode
+    zoom_value: float
+    scroll_values: dict[Qt.Orientation, int]
+    view_offset: QtCore.QPointF
+
+
 class _DockWidgets(NamedTuple):
     flag_dock: QtWidgets.QDockWidget
     flag_list: QtWidgets.QListWidget
@@ -199,9 +206,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _file_list_image_path: str | None
     _loaded_image_paths: list[str]
     _prev_image_path: str | None
-    _zoom_values: dict[str, tuple[_ZoomMode, float]]
+    _viewport_states: dict[str, _ViewportState]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
-    _scroll_values: dict[Qt.Orientation, dict[str, float]]
     _default_state: QtCore.QByteArray
 
     def __init__(
@@ -1002,12 +1008,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._file_list_image_path = None
         self._loaded_image_paths = []
         self._prev_image_path = None
-        self._zoom_values = {}
+        self._viewport_states = {}
         self._brightness_contrast_values = {}
-        self._scroll_values = {
-            Qt.Orientation.Horizontal: {},
-            Qt.Orientation.Vertical: {},
-        }
 
         if self._config["file_search"]:
             self._docks.file_search.setText(self._config["file_search"])
@@ -1951,21 +1953,42 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_pan_request(self, step: QtCore.QPoint) -> None:
         # Pan moves the viewport opposite to the cursor delta so the image
         # tracks the grabbed point one-for-one in widget pixels.
+        self._move_canvas_view(step=QtCore.QPointF(step))
+
+    def _move_canvas_view(
+        self, step: QtCore.QPointF, *, constrain_to_center: bool = True
+    ) -> None:
         h_bar = self._canvas_widgets.scroll_bars[Qt.Orientation.Horizontal]
         v_bar = self._canvas_widgets.scroll_bars[Qt.Orientation.Vertical]
+        h_old = h_bar.value()
+        v_old = v_bar.value()
         self.set_scroll_value(Qt.Orientation.Horizontal, h_bar.value() - step.x())
         self.set_scroll_value(Qt.Orientation.Vertical, v_bar.value() - step.y())
+        # Scrollbars take the movement they can; the render offset carries any
+        # clamped remainder without changing canvas geometry.
+        self._canvas_widgets.canvas.pan_view(
+            step=QtCore.QPointF(
+                step.x() + h_bar.value() - h_old,
+                step.y() + v_bar.value() - v_old,
+            ),
+            constrain_to_center=constrain_to_center,
+        )
 
     def set_scroll_value(self, orientation: Qt.Orientation, value: float) -> None:
         self._canvas_widgets.scroll_bars[orientation].setValue(int(value))
-        if self._image_path is not None:
-            self._scroll_values[orientation][self._image_path] = value
 
     def _remember_current_viewport(self) -> None:
         if self._image_path is None:
             return
-        for orientation, bar in self._canvas_widgets.scroll_bars.items():
-            self._scroll_values[orientation][self._image_path] = bar.value()
+        self._viewport_states[self._image_path] = _ViewportState(
+            zoom_mode=self._zoom_mode,
+            zoom_value=self._canvas_widgets.zoom_widget.value(),
+            scroll_values={
+                orientation: bar.value()
+                for orientation, bar in self._canvas_widgets.scroll_bars.items()
+            },
+            view_offset=self._canvas_widgets.canvas.get_view_offset(),
+        )
         self._prev_image_path = self._image_path
 
     def _set_zoom(self, value: float, pos: QtCore.QPointF | None = None) -> None:
@@ -1973,31 +1996,30 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("image_path is None, cannot set zoom")
             return
 
+        canvas = self._canvas_widgets.canvas
+        if self._zoom_mode != _ZoomMode.MANUAL_ZOOM:
+            canvas.reset_view_offset()
+            self._sync_zoom_mode_actions()
+            self._canvas_widgets.zoom_widget.setValue(value)
+            return
+
         if pos is None:
-            pos = QtCore.QPointF(
-                self._canvas_widgets.canvas.visibleRegion().boundingRect().center()
-            )
-        canvas_width_old: int = self._canvas_widgets.canvas.width()
+            pos = QtCore.QPointF(canvas.visibleRegion().boundingRect().center())
+        scroll_area = self.centralWidget()
+        assert isinstance(scroll_area, QtWidgets.QScrollArea)
+        viewport = scroll_area.viewport()
+        image_pos = canvas.transform_widget_point_to_image(pos)
+        viewport_pos = canvas.mapTo(viewport, pos)
 
         self._sync_zoom_mode_actions()
         self._canvas_widgets.zoom_widget.setValue(value)  # triggers self._paint_canvas
-        self._zoom_values[self._image_path] = (self._zoom_mode, value)
 
-        canvas_width_new: int = self._canvas_widgets.canvas.width()
-        if canvas_width_old == canvas_width_new:
-            return
-        canvas_scale_factor = canvas_width_new / canvas_width_old
-        x_shift: float = pos.x() * canvas_scale_factor - pos.x()
-        y_shift: float = pos.y() * canvas_scale_factor - pos.y()
-        self.set_scroll_value(
-            Qt.Orientation.Horizontal,
-            self._canvas_widgets.scroll_bars[Qt.Orientation.Horizontal].value()
-            + x_shift,
+        target = canvas.transform_image_point_to_widget(
+            image_pos, area=canvas.sizeHint()
         )
-        self.set_scroll_value(
-            Qt.Orientation.Vertical,
-            self._canvas_widgets.scroll_bars[Qt.Orientation.Vertical].value() + y_shift,
-        )
+        current = canvas.mapFrom(viewport, viewport_pos)
+        shift = target - current
+        self._move_canvas_view(step=-shift, constrain_to_center=False)
 
     def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
@@ -2230,31 +2252,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.setEnabled(True)
         # Zoom changes the live scroll positions, so resolve the intended
         # viewport first.
-        target_scroll_values: dict[Qt.Orientation, float] = {}
-        for orientation, values_by_image in self._scroll_values.items():
-            if self._image_path in values_by_image:
-                target_scroll_values[orientation] = values_by_image[self._image_path]
-            elif (
-                self._config["keep_prev_scale"]
-                and self._prev_image_path is not None
-                and self._prev_image_path in values_by_image
-            ):
-                target_scroll_values[orientation] = values_by_image[
-                    self._prev_image_path
-                ]
+        target_viewport = self._viewport_states.get(self._image_path)
+        if (
+            target_viewport is None
+            and self._config["keep_prev_scale"]
+            and self._prev_image_path is not None
+        ):
+            target_viewport = self._viewport_states.get(self._prev_image_path)
         # set zoom values
-        is_initial_load = not self._zoom_values
-        if self._image_path in self._zoom_values:
-            self._zoom_mode = self._zoom_values[self._image_path][0]
-            self._set_zoom(self._zoom_values[self._image_path][1])
+        is_initial_load = not self._viewport_states
+        if target_viewport is not None:
+            self._zoom_mode = target_viewport.zoom_mode
+            self._set_zoom(target_viewport.zoom_value)
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self._zoom_mode = _ZoomMode.FIT_WINDOW
             self._adjust_scale()
-        # set scroll values
-        for orientation, value in target_scroll_values.items():
-            self.set_scroll_value(orientation=orientation, value=value)
-        self.open_brightness_contrast_dialog(value=False, is_initial_load=True)
+        # The zoom value can be unchanged across images, so update geometry
+        # explicitly before restoring positions against the new scroll range.
         self._paint_canvas()
+        if target_viewport is not None:
+            for orientation, value in target_viewport.scroll_values.items():
+                self.set_scroll_value(orientation=orientation, value=value)
+            self._canvas_widgets.canvas.reset_view_offset()
+            self._canvas_widgets.canvas.pan_view(
+                step=target_viewport.view_offset, constrain_to_center=False
+            )
+        self.open_brightness_contrast_dialog(value=False, is_initial_load=True)
         self.update_action_states(True)
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
@@ -2307,9 +2330,21 @@ class MainWindow(QtWidgets.QMainWindow):
         return min(scale_by_width, scale_by_height)
 
     def _fit_width_scale(self) -> float:
-        FIT_WIDTH_SCROLLBAR_MARGIN: Final[float] = 15.0
-        available_w = self.centralWidget().width() - FIT_WIDTH_SCROLLBAR_MARGIN
-        return available_w / self._canvas_widgets.canvas.pixmap.width()
+        scroll_area = self.centralWidget()
+        assert isinstance(scroll_area, QtWidgets.QScrollArea)
+        viewport_size = scroll_area.maximumViewportSize()
+        pixmap = self._canvas_widgets.canvas.pixmap
+        precision = 10 ** self._canvas_widgets.zoom_widget.decimals()
+        available_w = viewport_size.width()
+        scale_percent = available_w / pixmap.width() * 100
+        # The zoom control rounds on assignment; fitting must never round up
+        # far enough to create horizontal overflow.
+        scale_percent = math.floor(scale_percent * precision) / precision
+        if int(pixmap.height() * scale_percent / 100) > viewport_size.height():
+            available_w -= scroll_area.verticalScrollBar().sizeHint().width()
+            scale_percent = available_w / pixmap.width() * 100
+            scale_percent = math.floor(scale_percent * precision) / precision
+        return scale_percent / 100
 
     def _reset_layout(self) -> None:
         self._window_state.remove(WINDOW_LAYOUT_KEY)
