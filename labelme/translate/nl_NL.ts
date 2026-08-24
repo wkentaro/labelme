@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>Begin met annoteren</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>Open een afbeelding of een map met afbeeldingen om te beginnen.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>Afbeelding openen</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>Map openen</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>Of sleep afbeeldingsbestanden hierheen</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

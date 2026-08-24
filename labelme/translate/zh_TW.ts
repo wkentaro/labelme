@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>開始標註</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>開啟影像或影像目錄以開始。</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>開啟影像</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>開啟目錄</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>或將影像檔案拖放到此處</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

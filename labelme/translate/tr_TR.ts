@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>Etiketlemeye başla</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>Başlamak için bir görüntü veya görüntü klasörü açın.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>Görüntü Aç</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>Klasör Aç</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>Veya görüntü dosyalarını buraya sürükleyip bırakın</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

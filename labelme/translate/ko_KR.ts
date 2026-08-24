@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>주석 작업 시작</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>시작하려면 이미지 또는 이미지 폴더를 여세요.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>이미지 열기</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>폴더 열기</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>또는 이미지 파일을 여기로 끌어다 놓으세요</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>

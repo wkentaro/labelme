@@ -166,6 +166,29 @@
     </message>
 </context>
 <context>
+    <name>EmptyStateWidget</name>
+    <message>
+        <source>Start annotating</source>
+        <translation>Annotálás indítása</translation>
+    </message>
+    <message>
+        <source>Open an image or a directory of images to begin.</source>
+        <translation>A kezdéshez nyisson meg egy képet vagy egy képeket tartalmazó mappát.</translation>
+    </message>
+    <message>
+        <source>Open Image</source>
+        <translation>Kép megnyitása</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>Mappa megnyitása</translation>
+    </message>
+    <message>
+        <source>Or drag and drop image files here</source>
+        <translation>Vagy húzzon ide képfájlokat</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
