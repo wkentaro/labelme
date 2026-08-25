@@ -847,6 +847,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>이미지를 레이블 JSON 파일에 포함합니다.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>도형 색상 모드</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>자동</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>균일</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>레이블별</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>자동 팔레트 이동</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>균일 모드 색상</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>레이블별 모드 대체 색상</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>개별 레이블 색상은 구성 파일에서 계속 편집할 수 있습니다.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>이전 주석 유지</translation>
     </message>
@@ -1005,6 +1037,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>사전 정의된 이미지 플래그</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

@@ -847,6 +847,38 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Nhúng hình ảnh vào tệp JSON nhãn.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Chế độ màu hình dạng</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Tự động</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Đồng nhất</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Theo nhãn</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Dịch bảng màu tự động</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Màu của chế độ Đồng nhất</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Màu dự phòng của chế độ Theo nhãn</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Màu của từng nhãn vẫn có thể chỉnh sửa trong Tệp cấu hình.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Giữ chú thích trước đó</translation>
     </message>
@@ -1005,6 +1037,13 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Predefined image flags</source>
         <translation>Cờ hình ảnh định sẵn</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

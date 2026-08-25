@@ -847,6 +847,38 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <translation>Incorpora a imagem no arquivo JSON de rótulos.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Modo de cor da forma</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automático</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Uniforme</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Por rótulo</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Deslocamento automático da paleta</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Cor do modo Uniforme</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Cor alternativa do modo Por rótulo</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>As cores individuais dos rótulos continuam editáveis no arquivo de configuração.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Manter anotação anterior</translation>
     </message>
@@ -1005,6 +1037,13 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Sinalizadores de imagem predefinidos</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

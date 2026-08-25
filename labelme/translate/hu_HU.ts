@@ -853,6 +853,38 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Beágyazza a képet a címke JSON-fájljába.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Alakszín mód</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatikus</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Egységes</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Címke szerint</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Automatikus palettaeltolás</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Az Egységes mód színe</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>A Címke szerint mód tartalék színe</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Az egyes címkék színei továbbra is szerkeszthetők a konfigurációs fájlban.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Előző annotáció megtartása</translation>
     </message>
@@ -1011,6 +1043,13 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Predefined image flags</source>
         <translation>Előre definiált képjelzők</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

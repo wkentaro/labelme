@@ -847,6 +847,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>將圖像嵌入標籤 JSON 文件中。</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>形狀顏色模式</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>統一</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>依標籤</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>自動調色盤位移</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>「統一」模式顏色</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>「依標籤」模式備用顏色</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>仍可在設定檔中編輯各個標籤的顏色。</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>保留之前的標註</translation>
     </message>
@@ -1005,6 +1037,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>預定義影像標記</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

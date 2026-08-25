@@ -861,6 +861,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>画像をラベル JSON ファイルに埋め込みます。</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>図形のカラーモード</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>均一</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>ラベル別</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>自動パレットシフト</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>「均一」モードの色</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>「ラベル別」モードのフォールバック色</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>ラベルごとの色は引き続き設定ファイルで編集できます。</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>前回のアノテーションを維持</translation>
     </message>
@@ -1019,6 +1051,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>定義済み画像フラグ</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

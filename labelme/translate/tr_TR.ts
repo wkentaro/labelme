@@ -850,6 +850,38 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Görüntüyü etiket JSON dosyasına gömer.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Şekil Rengi Modu</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Otomatik</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Tek tip</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Etikete göre</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Otomatik palet kaydırma</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Tek tip modu rengi</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Etikete göre modu yedek rengi</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Her etiketin rengi Yapılandırma Dosyası&apos;nda düzenlenmeye devam edilebilir.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Önceki açıklamayı koru</translation>
     </message>
@@ -1008,6 +1040,13 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Önceden tanımlı görüntü bayrakları</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

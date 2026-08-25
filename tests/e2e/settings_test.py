@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
@@ -11,6 +13,8 @@ from labelme._app import MainWindow
 from labelme._config import _writer
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
+from labelme._widgets.label_list_widget import LABEL_COLOR_ROLE
+from labelme._widgets.settings_dialog import _ColorSwatchButton
 from labelme._widgets.settings_dialog import _PlainTextEdit
 from labelme._yaml import safe_load
 
@@ -135,6 +139,84 @@ def test_setting_change_persists_and_applies(
     persisted = safe_load(editable_config_file.read_text())
     assert persisted["display_label_popup"] is False
     assert persisted["labels"] == ["cat", "dog"]
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_shape_color_picker_previews_and_persists_only_on_accept(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    use_widget_color_dialog: None,
+    editable_config_file: Path,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "annotated/2011_000003.json",
+        config_file=editable_config_file,
+    )
+    dialog = _open_settings_dialog(win=win)
+    mode = dialog._editors[("shape_color", "mode")]
+    assert isinstance(mode, QtWidgets.QComboBox)
+    mode.setCurrentIndex(mode.findData("uniform"))
+
+    swatch = dialog._editors[("shape_color", "uniform", "color")]
+    assert isinstance(swatch, _ColorSwatchButton)
+    expected = QtGui.QColor(12, 34, 56)
+    unique_labels = win._docks.unique_label_list
+    assert unique_labels.count() > 0
+    label = unique_labels.item(0).data(Qt.ItemDataRole.UserRole)
+    color_resolver = win._canvas_widgets.canvas._color_resolver
+    assert isinstance(label, str)
+    assert color_resolver is not None
+    original = unique_labels.item(0).data(LABEL_COLOR_ROLE)
+    persisted_before_pick = safe_load(editable_config_file.read_text())
+    preview_checks: list[tuple[bool, bool, bool, bool]] = []
+
+    def preview_color(*, accept: bool) -> None:
+        picker = next(
+            widget
+            for widget in QtWidgets.QApplication.topLevelWidgets()
+            if isinstance(widget, QtWidgets.QColorDialog)
+        )
+        picker.setCurrentColor(expected)
+        QtWidgets.QApplication.processEvents()
+        preview_checks.append(
+            (
+                all(
+                    unique_labels.item(row).data(LABEL_COLOR_ROLE) == expected
+                    for row in range(unique_labels.count())
+                ),
+                all(
+                    item.data(LABEL_COLOR_ROLE) == expected
+                    for item in win._docks.label_list
+                ),
+                color_resolver(label) == (12, 34, 56),
+                safe_load(editable_config_file.read_text()) == persisted_before_pick,
+            )
+        )
+        if accept:
+            picker.accept()
+        else:
+            picker.reject()
+
+    QtCore.QTimer.singleShot(50, lambda: preview_color(accept=False))
+    swatch.click()
+
+    assert preview_checks == [(True, True, True, True)]
+    assert unique_labels.item(0).data(LABEL_COLOR_ROLE) == original
+    assert safe_load(editable_config_file.read_text()) == persisted_before_pick
+
+    QtCore.QTimer.singleShot(50, lambda: preview_color(accept=True))
+    swatch.click()
+
+    assert preview_checks == [(True, True, True, True)] * 2
+    persisted = safe_load(editable_config_file.read_text())
+    assert persisted["shape_color"] == {
+        "mode": "uniform",
+        "uniform": {"color": [12, 34, 56]},
+    }
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

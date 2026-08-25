@@ -14,6 +14,7 @@ from .._utils.qt import new_icon
 from ._integer_slider import IntegerSlider
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]
+PreviewShapeColor = Callable[[tuple[str, ...], list[int] | None], None]
 
 
 class _PlainTextEdit(QtWidgets.QPlainTextEdit):
@@ -35,6 +36,40 @@ class _PlainTextEdit(QtWidgets.QPlainTextEdit):
     def focusOutEvent(self, e: QtGui.QFocusEvent) -> None:
         super().focusOutEvent(e)
         self.commit()
+
+
+class _ColorSwatchButton(QtWidgets.QPushButton):
+    _rgb: tuple[int, int, int] = (0, 0, 0)
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._accessible_note = ""
+        self.setFixedSize(48, 24)
+
+    def get_rgb(self) -> tuple[int, int, int]:
+        return self._rgb
+
+    def set_rgb(self, rgb: tuple[int, int, int]) -> None:
+        self._rgb = rgb
+        r, g, b = rgb
+        self.setToolTip(
+            self.tr("RGB: {red}, {green}, {blue}").format(red=r, green=g, blue=b)
+        )
+        self._update_accessible_description()
+        swatch = QtGui.QPixmap(32, 16)
+        swatch.fill(QtGui.QColor(r, g, b))
+        self.setIcon(QtGui.QIcon(swatch))
+        self.setIconSize(swatch.size())
+
+    def set_accessible_note(self, note: str) -> None:
+        self._accessible_note = note
+        self._update_accessible_description()
+
+    def _update_accessible_description(self) -> None:
+        description = self.toolTip()
+        if self._accessible_note:
+            description = f"{description}. {self._accessible_note}"
+        self.setAccessibleDescription(description)
 
 
 class _SettingsPage(QtWidgets.QWidget):
@@ -168,6 +203,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self,
         config: dict,
         apply_setting: ApplySetting,
+        preview_shape_color: PreviewShapeColor,
         open_as_text: Callable[[], None],
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
@@ -176,6 +212,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
         self._config = config
         self._apply_setting = apply_setting
+        self._preview_shape_color = preview_shape_color
         self._editors: dict[tuple[str, ...], QtWidgets.QWidget] = {}
 
         GROUP_ICONS: typing.Final[dict[schema.Group, str]] = {
@@ -242,6 +279,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.resize(initial_dialog_size)
 
         self._sync_validate_label_gate()
+        self._sync_shape_color_mode()
 
     def accept(self) -> None:
         # Flush text editors whose edits commit on focus-out: clicking Close
@@ -261,6 +299,8 @@ class SettingsDialog(QtWidgets.QDialog):
         editor = self._editors[key_path]
         with QtCore.QSignalBlocker(editor):
             self._set_editor_value(editor=editor, value=value)
+        if key_path == ("shape_color", "mode"):
+            self._sync_shape_color_mode()
 
     def set_choice_enabled(
         self,
@@ -297,9 +337,15 @@ class SettingsDialog(QtWidgets.QDialog):
         for setting in settings:
             editor = self._create_editor(setting=setting)
             editor.setAccessibleName(self.tr(setting.label))
+            if setting.note:
+                note = self.tr(setting.note)
+                if isinstance(editor, _ColorSwatchButton):
+                    editor.set_accessible_note(note)
+                else:
+                    editor.setAccessibleDescription(note)
             self._editors[setting.key_path] = editor
 
-            label_cell = self._build_label_cell(setting=setting)
+            label_cell = self._build_label_cell(setting=setting, editor=editor)
             row = QtWidgets.QWidget()
             if setting.kind == "str_list":
                 row_layout = QtWidgets.QVBoxLayout(row)
@@ -314,8 +360,11 @@ class SettingsDialog(QtWidgets.QDialog):
             layout.addWidget(row)
         return group_box
 
-    def _build_label_cell(self, setting: schema.Setting) -> QtWidgets.QWidget:
+    def _build_label_cell(
+        self, setting: schema.Setting, editor: QtWidgets.QWidget
+    ) -> QtWidgets.QWidget:
         label = QtWidgets.QLabel(self.tr(setting.label))
+        label.setBuddy(editor)
         label.setWordWrap(True)
         title: QtWidgets.QWidget = label
         if setting.beta:
@@ -372,9 +421,20 @@ class SettingsDialog(QtWidgets.QDialog):
                 setting=setting, value=value, items=enum_items, min_width=140
             )
         if setting.kind == "int":
+            assert isinstance(value, int)
+            if setting.minimum is None and setting.maximum is None:
+                # Qt's integer widgets are 32-bit, but Config Files accept Python ints.
+                integer_edit = QtWidgets.QLineEdit()
+                integer_edit.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
+                self._set_editor_value(editor=integer_edit, value=value)
+                integer_edit.editingFinished.connect(
+                    lambda: self._apply_integer_edit(
+                        key_path=setting.key_path, edit=integer_edit
+                    )
+                )
+                return integer_edit
             assert setting.minimum is not None
             assert setting.maximum is not None
-            assert isinstance(value, int)
             slider = IntegerSlider(
                 minimum=setting.minimum,
                 maximum=setting.maximum,
@@ -401,6 +461,11 @@ class SettingsDialog(QtWidgets.QDialog):
             return self._create_combo(
                 setting=setting, value=value, items=items, min_width=160
             )
+        if setting.kind == "color":
+            swatch = _ColorSwatchButton()
+            self._set_editor_value(editor=swatch, value=value)
+            swatch.clicked.connect(lambda: self._pick_color(setting.key_path, swatch))
+            return swatch
         if setting.kind == "str_list":
             edit = _PlainTextEdit()
             edit.setPlaceholderText(self.tr("one item per line"))
@@ -429,9 +494,53 @@ class SettingsDialog(QtWidgets.QDialog):
             combo.addItem(label, data)
         self._set_editor_value(editor=combo, value=value)
         combo.currentIndexChanged.connect(
-            lambda: self._apply(setting.key_path, combo.currentData())
+            lambda: self._apply_combo(setting=setting, combo=combo)
         )
         return combo
+
+    def _apply_combo(self, setting: schema.Setting, combo: QtWidgets.QComboBox) -> None:
+        self._apply(setting.key_path, combo.currentData())
+        if setting.key_path == ("shape_color", "mode"):
+            self._sync_shape_color_mode()
+
+    def _apply_integer_edit(
+        self, key_path: tuple[str, ...], edit: QtWidgets.QLineEdit
+    ) -> None:
+        try:
+            value = int(edit.text())
+        except ValueError:
+            self._revert_editor(key_path=key_path)
+            return
+        edit.setText(str(value))
+        self._apply(key_path, value)
+
+    def _pick_color(
+        self, key_path: tuple[str, ...], swatch: _ColorSwatchButton
+    ) -> None:
+        picker = QtWidgets.QColorDialog(
+            parent=self, currentColor=QtGui.QColor(*swatch.get_rgb())
+        )
+        picker.currentColorChanged.connect(
+            lambda color: self._preview_color(
+                key_path=key_path, swatch=swatch, color=color
+            )
+        )
+        accepted = picker.exec() == QtWidgets.QDialog.DialogCode.Accepted
+        if accepted:
+            self._apply(key_path, list(swatch.get_rgb()))
+        else:
+            self._revert_editor(key_path=key_path)
+        self._preview_shape_color(key_path, None)
+
+    def _preview_color(
+        self,
+        key_path: tuple[str, ...],
+        swatch: _ColorSwatchButton,
+        color: QtGui.QColor,
+    ) -> None:
+        rgb = (color.red(), color.green(), color.blue())
+        swatch.set_rgb(rgb)
+        self._preview_shape_color(key_path, list(rgb))
 
     def _set_editor_value(self, editor: QtWidgets.QWidget, value: object) -> None:
         if isinstance(editor, QtWidgets.QCheckBox):
@@ -441,10 +550,15 @@ class SettingsDialog(QtWidgets.QDialog):
         elif isinstance(editor, IntegerSlider):
             assert isinstance(value, int)
             editor.set_value(value)
+        elif isinstance(editor, QtWidgets.QLineEdit):
+            assert isinstance(value, int)
+            editor.setText(str(value))
         elif isinstance(editor, _PlainTextEdit):
             items = value if isinstance(value, list) else []
             editor.setPlainText("\n".join(str(item) for item in items))
             editor.mark_committed()
+        elif isinstance(editor, _ColorSwatchButton):
+            editor.set_rgb(_parse_rgb(value=value))
 
     def _apply(self, key_path: tuple[str, ...], value: object) -> bool:
         editor = self._editors[key_path]
@@ -505,6 +619,24 @@ class SettingsDialog(QtWidgets.QDialog):
         if not allowed and validate_combo.currentData() == "exact":
             validate_combo.setCurrentIndex(validate_combo.findData(None))
 
+    def _sync_shape_color_mode(self) -> None:
+        mode = self._editors.get(("shape_color", "mode"))
+        if not isinstance(mode, QtWidgets.QComboBox):
+            return
+        active_path = {
+            "auto": ("shape_color", "auto", "shift"),
+            "uniform": ("shape_color", "uniform", "color"),
+            "by_label": ("shape_color", "by_label", "fallback"),
+        }[mode.currentData()]
+        for key_path in (
+            ("shape_color", "auto", "shift"),
+            ("shape_color", "uniform", "color"),
+            ("shape_color", "by_label", "fallback"),
+        ):
+            row = self._editors[key_path].parentWidget()
+            assert row is not None
+            row.setEnabled(key_path == active_path)
+
 
 def _build_beta_badge(*, text: str) -> QtWidgets.QLabel:
     badge = QtWidgets.QLabel(text)
@@ -525,6 +657,13 @@ def _build_beta_badge(*, text: str) -> QtWidgets.QLabel:
         "}"
     )
     return badge
+
+
+def _parse_rgb(*, value: object) -> tuple[int, int, int]:
+    assert isinstance(value, list) and len(value) == 3
+    r, g, b = value
+    assert isinstance(r, int) and isinstance(g, int) and isinstance(b, int)
+    return r, g, b
 
 
 def _parse_str_list(*, edit: _PlainTextEdit) -> list[str] | None:

@@ -850,6 +850,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Встраивает изображение в JSON-файл меток.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Режим цвета фигур</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Автоматически</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Единый</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>По метке</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Автоматический сдвиг палитры</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Цвет режима «Единый»</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Резервный цвет режима «По метке»</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Цвета отдельных меток по-прежнему можно изменять в файле конфигурации.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Сохранять предыдущую разметку</translation>
     </message>
@@ -1008,6 +1040,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Предустановленные флаги изображения</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

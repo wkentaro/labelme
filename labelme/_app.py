@@ -63,6 +63,7 @@ from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import download_ai_model
 from ._widgets import format_shape_label
+from ._widgets.label_list_widget import LABEL_COLOR_ROLE
 
 
 class _ZoomMode(enum.Enum):
@@ -194,6 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _menus: _Menus
     _label_dialog: LabelDialog
     _settings_dialog: SettingsDialog | None = None
+    _shape_color_preview: dict | None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
@@ -224,6 +226,7 @@ class MainWindow(QtWidgets.QMainWindow):
             config_file=config_file, config_overrides=config_overrides
         )
         self._config_overrides = config_overrides or {}
+        self._shape_color_preview = None
 
         self._shape_clipboard = ShapeClipboard(self)
 
@@ -1750,8 +1753,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if item
             else unique_label_list.count()
         )
+        shape_color = self._shape_color_preview
+        if shape_color is None:
+            shape_color = self._config["shape_color"]
         return resolve_shape_color(
-            config=self._config["shape_color"],
+            config=shape_color,
             label=label,
             label_index=label_index,
         )
@@ -2664,6 +2670,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self._sync_setting_controls(key_path=key_path)
         return True
 
+    def _preview_shape_color(
+        self, key_path: tuple[str, ...], value: list[int] | None
+    ) -> None:
+        if value is None:
+            self._shape_color_preview = None
+        else:
+            assert len(key_path) == 3 and key_path[0] == "shape_color"
+            # Copy only the edited section so dragging stays transient without
+            # duplicating a potentially large Label map.
+            preview = dict(self._config["shape_color"])
+            section = dict(preview[key_path[1]])
+            section[key_path[2]] = value
+            preview[key_path[1]] = section
+            self._shape_color_preview = preview
+        self._refresh_shape_colors()
+
     def _try_set_overrides(
         self, overrides: list[tuple[tuple[str, ...], object]]
     ) -> bool:
@@ -2710,6 +2732,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._config["canvas"]["allow_out_of_bounds_points"]
             )
             canvas.update()
+        elif key_path[0] == "shape_color":
+            self._refresh_shape_colors()
         elif key_path[0] == "labels":
             # Update predefined labels in place so session history (labels learned
             # from loaded/created shapes via add_label_history) is preserved, while
@@ -2762,6 +2786,26 @@ class MainWindow(QtWidgets.QMainWindow):
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]
             )
 
+    def _refresh_shape_colors(self) -> None:
+        unique_labels = self._docks.unique_label_list
+        for row in range(unique_labels.count()):
+            item = unique_labels.item(row)
+            assert item is not None
+            label = item.data(Qt.ItemDataRole.UserRole)
+            color = self._get_rgb_by_label(label=label, unique_label_list=unique_labels)
+            item.setData(LABEL_COLOR_ROLE, QtGui.QColor(*color))
+        for item in self._docks.label_list:
+            shape = item.shape()
+            assert shape is not None and shape.label is not None
+            item.set_label(
+                text=format_shape_label(shape),
+                color=self._get_rgb_by_label(
+                    label=shape.label, unique_label_list=unique_labels
+                ),
+            )
+        # The canvas resolves colors during painting; the docks cache them.
+        self._canvas_widgets.canvas.update()
+
     def _read_flag_dock_states(self) -> dict[str, bool]:
         flags: dict[str, bool] = {}
         for i in range(self._docks.flag_list.count()):
@@ -2779,6 +2823,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._settings_dialog = SettingsDialog(
                 config=self._config,
                 apply_setting=self._apply_setting_change,
+                preview_shape_color=self._preview_shape_color,
                 open_as_text=self._open_config_file,
                 parent=self,
             )
