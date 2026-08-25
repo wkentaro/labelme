@@ -12,6 +12,22 @@
         <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Деталізація полігона</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Налаштувати деталізацію полігона</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Плавніше</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Більше деталей</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути анотацію за допомогою ШІ</translation>
     </message>
@@ -852,6 +868,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Дозволяє точкам фігур виходити за межі зображення, напр. для частково видимих об&apos;єктів.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Деталізація полігона</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Вищі значення зберігають більше деталей межі маски та менші області.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

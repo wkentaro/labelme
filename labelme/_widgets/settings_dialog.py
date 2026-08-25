@@ -11,6 +11,7 @@ from PySide6 import QtWidgets
 from .. import _locale
 from .._config import _schema as schema
 from .._utils.qt import new_icon
+from ._integer_slider import IntegerSlider
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]
 
@@ -370,6 +371,20 @@ class SettingsDialog(QtWidgets.QDialog):
             return self._create_combo(
                 setting=setting, value=value, items=enum_items, min_width=140
             )
+        if setting.kind == "int":
+            assert setting.minimum is not None
+            assert setting.maximum is not None
+            assert isinstance(value, int)
+            slider = IntegerSlider(
+                minimum=setting.minimum,
+                maximum=setting.maximum,
+                value=value,
+            )
+            slider.setMinimumWidth(180)
+            slider.value_changed.connect(
+                lambda new_value: self._apply(setting.key_path, new_value)
+            )
+            return slider
         if setting.kind == "language":
             languages = sorted(
                 (
@@ -423,6 +438,9 @@ class SettingsDialog(QtWidgets.QDialog):
             editor.setChecked(bool(value))
         elif isinstance(editor, QtWidgets.QComboBox):
             editor.setCurrentIndex(max(editor.findData(value), 0))
+        elif isinstance(editor, IntegerSlider):
+            assert isinstance(value, int)
+            editor.set_value(value)
         elif isinstance(editor, _PlainTextEdit):
             items = value if isinstance(value, list) else []
             editor.setPlainText("\n".join(str(item) for item in items))

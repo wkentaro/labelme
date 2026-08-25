@@ -8,13 +8,17 @@ were made together, each against a real alternative:
    pre-conversion geometry. Storing originals would make lossy conversions
    revertable across save/reload, but bloats a file that downstream pipelines
    parse and creates stale shadow geometry once the converted Shape is edited.
-2. **A multi-part mask converts to one polygon per connected region, sharing a
-   Group when there is more than one.** The keyhole alternative (one
-   self-touching polygon joined by zero-width bridges, as COCO encodes
-   multi-part masks) preserves regions and holes but is hostile to hand-editing
-   — the primary reason users convert. Largest-region-only was rejected as
-   silent data loss. Holes are dropped either way; polygons cannot represent
-   them.
+2. **Mask Polygonization emits one polygon per 4-connected exterior land,
+   sharing a Group when there is more than one.** A land is omitted when eroding
+   its hole-filled pixels by the boundary deviation leaves no area. A bounded
+   raster disk classifies every land without a full-image distance field. This
+   removes small or thin lands consistently with Polygon Detail instead of
+   introducing an unrelated area threshold. Keyholes were rejected because their
+   visible
+   seam, extra bridge points, and independently editable coincident vertices
+   conflict with the goal of clean hand-editing. Holes are dropped until Polygon
+   Shapes support explicit rings;
+   largest-land-only was rejected as silent data loss.
 3. **With multiple Shapes selected, the Convert menu offers the intersection of
    targets valid for every selected Shape and converts them all in one undoable
    step.** Union-and-skip-invalid offers more entries but makes the outcome

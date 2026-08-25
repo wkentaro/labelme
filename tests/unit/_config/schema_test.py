@@ -31,6 +31,7 @@ def _ids(settings: tuple[Setting, ...]) -> list[str]:
 
 _ENUM_SETTINGS = tuple(s for s in SETTINGS if s.kind == "enum")
 _BOOL_SETTINGS = tuple(s for s in SETTINGS if s.kind == "bool")
+_INT_SETTINGS = tuple(s for s in SETTINGS if s.kind == "int")
 
 
 @pytest.mark.parametrize("setting", SETTINGS, ids=_ids(SETTINGS))
@@ -79,3 +80,12 @@ def test_ai_choice_labels_match_shared_model_names() -> None:
 def test_bool_default_is_bool(setting: Setting, default_config: dict) -> None:
     default = _resolve(config=default_config, key_path=setting.key_path)
     assert isinstance(default, bool), setting.key_path
+
+
+@pytest.mark.parametrize("setting", _INT_SETTINGS, ids=_ids(_INT_SETTINGS))
+def test_int_default_is_inside_bounds(setting: Setting, default_config: dict) -> None:
+    assert setting.minimum is not None
+    assert setting.maximum is not None
+    default = _resolve(config=default_config, key_path=setting.key_path)
+    assert isinstance(default, int) and not isinstance(default, bool)
+    assert setting.minimum <= default <= setting.maximum

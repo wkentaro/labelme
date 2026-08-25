@@ -4,12 +4,14 @@ import math
 
 import numpy as np
 import pytest
+import skimage
 from numpy.typing import NDArray
 
+from labelme._automation._geometry import _compute_polygon_deviation
 from labelme._automation._geometry import _round_bbox_to_int
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
-from labelme._automation._geometry import compute_polygon_from_mask
+from labelme._automation._geometry import compute_polygons_from_mask
 from labelme._automation._geometry import shape_to_xyxy_bbox
 from labelme._shape import Shape
 
@@ -223,13 +225,54 @@ def test_shape_to_xyxy_bbox_raises_on_unsupported_shape_type() -> None:
         shape_to_xyxy_bbox(shape=shape)
 
 
-def test_compute_polygon_from_mask_returns_empty_for_empty_mask() -> None:
-    polygon = compute_polygon_from_mask(mask=np.zeros((5, 5), dtype=bool))
+def test_compute_polygons_from_mask_returns_empty_for_empty_mask() -> None:
+    polygons = compute_polygons_from_mask(mask=np.zeros((5, 5), dtype=bool))
 
-    assert polygon.shape == (0, 2)
+    assert polygons == []
 
 
-def test_compute_polygon_from_mask_traces_rectangle_extent_in_xy_order() -> None:
+def test_compute_polygons_from_mask_drops_concave_land_with_too_little_clearance() -> (
+    None
+):
+    mask = np.array(
+        [
+            [True, True, True],
+            [True, False, False],
+            [True, False, False],
+        ]
+    )
+
+    assert compute_polygons_from_mask(mask=mask, detail=75) == []
+
+
+def test_compute_polygons_from_mask_drops_corner_land_with_too_little_clearance() -> (
+    None
+):
+    mask = np.array(
+        [
+            [True, True, True],
+            [True, False, True],
+            [True, True, False],
+        ]
+    )
+
+    assert compute_polygons_from_mask(mask=mask, detail=75) == []
+
+
+def test_compute_polygons_from_mask_drops_land_at_exact_clearance_threshold() -> None:
+    mask = np.array(
+        [
+            [False, True, True, False],
+            [True, True, True, True],
+            [True, True, True, True],
+            [False, True, True, False],
+        ]
+    )
+
+    assert compute_polygons_from_mask(mask=mask, detail=60) == []
+
+
+def test_compute_polygons_from_mask_traces_rectangle_extent_in_xy_order() -> None:
     # Rows 1-3, cols 1-7 set. The result is xy-ordered, so the max extent is
     # x=7.5, y=3.5 (a yx result would swap them, which the max assertion catches).
     # The coordinates are the region's half-pixel boundary in image space:
@@ -237,28 +280,123 @@ def test_compute_polygon_from_mask_traces_rectangle_extent_in_xy_order() -> None
     mask = np.zeros((5, 9), dtype=bool)
     mask[1:4, 1:8] = True
 
-    polygon = compute_polygon_from_mask(mask=mask)
+    [polygon] = compute_polygons_from_mask(mask=mask)
 
-    assert polygon.min(axis=0) == pytest.approx([0.5, 0.5])
-    assert polygon.max(axis=0) == pytest.approx([7.5, 3.5])
+    assert polygon.min(axis=0) == pytest.approx([0.5, 0.5], abs=0.001)
+    assert polygon.max(axis=0) == pytest.approx([7.5, 3.5], abs=0.001)
 
 
-def test_compute_polygon_from_mask_picks_largest_contour() -> None:
-    # Two blobs; the longer-perimeter 4x6 block wins over the 2x2 one, so the
-    # returned polygon spans the larger block only.  The large blob is
-    # non-square so a yx/xy transposition would swap the unequal extents and
-    # fail both the selection check and the axis-order check simultaneously.
+def test_compute_polygons_from_mask_returns_every_disconnected_land() -> None:
+    mask = np.zeros((10, 12), dtype=bool)
+    mask[1:5, 1:7] = True
+    mask[6:9, 8:11] = True
+
+    polygons = compute_polygons_from_mask(mask=mask)
+
+    assert len(polygons) == 2
+    extents = np.array(
+        sorted(
+            (polygon.min(axis=0).tolist(), polygon.max(axis=0).tolist())
+            for polygon in polygons
+        )
+    )
+    np.testing.assert_allclose(
+        extents,
+        [[[0.5, 0.5], [6.5, 4.5]], [[7.5, 5.5], [10.5, 8.5]]],
+        atol=0.001,
+    )
+
+
+def test_compute_polygons_from_mask_traces_all_lands_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     mask = np.zeros((10, 12), dtype=bool)
     mask[1:5, 1:7] = True
     mask[6:8, 6:8] = True
+    calls = 0
+    find_contours = skimage.measure.find_contours
 
-    polygon = compute_polygon_from_mask(mask=mask)
+    def count_calls(
+        image: NDArray[np.bool_],
+        *,
+        fully_connected: str,
+        positive_orientation: str,
+    ) -> list[NDArray[np.float64]]:
+        nonlocal calls
+        calls += 1
+        return find_contours(
+            image,
+            fully_connected=fully_connected,
+            positive_orientation=positive_orientation,
+        )
 
-    assert polygon.min(axis=0) == pytest.approx([0.5, 0.5])
-    assert polygon.max(axis=0) == pytest.approx([6.5, 4.5])
+    monkeypatch.setattr(skimage.measure, "find_contours", count_calls)
+
+    polygons = compute_polygons_from_mask(mask=mask, detail=100)
+
+    assert len(polygons) == 2
+    assert calls == 1
 
 
-def test_compute_polygon_from_mask_keeps_half_pixel_boundary_at_image_edge() -> None:
+def test_compute_polygons_from_mask_keeps_tiny_land_at_large_coordinates() -> None:
+    mask = np.zeros((3010, 3010), dtype=bool)
+    mask[2999, 2999] = True
+
+    polygons = compute_polygons_from_mask(mask=mask, detail=100)
+
+    assert len(polygons) == 1
+
+
+def test_compute_polygons_from_mask_drops_curved_land_within_deviation() -> None:
+    mask = np.zeros((50, 50), dtype=bool)
+    mask[10:40, 10] = True
+    mask[39, 10:40] = True
+    mask[10:40, 39] = True
+
+    polygons = compute_polygons_from_mask(mask=mask, detail=0)
+
+    assert polygons == []
+
+
+def test_compute_polygons_from_mask_keeps_compact_land_beyond_deviation() -> None:
+    mask = np.zeros((50, 50), dtype=bool)
+    mask[10:30, 10:30] = True
+
+    polygons = compute_polygons_from_mask(mask=mask, detail=0)
+
+    assert len(polygons) == 1
+
+
+def test_compute_polygons_from_mask_keeps_boundary_error_within_deviation() -> None:
+    mask = np.zeros((30, 30), dtype=bool)
+    mask[2:28, 2:14] = True
+    mask[16:28, 2:28] = True
+    [contour] = skimage.measure.find_contours(
+        np.pad(mask, pad_width=1),
+        fully_connected="low",
+        positive_orientation="low",
+    )
+    original_points = (contour - 1)[:, ::-1]
+
+    [polygon] = compute_polygons_from_mask(mask=mask, detail=0)
+
+    starts = polygon
+    vectors = np.roll(polygon, shift=-1, axis=0) - starts
+    offsets = original_points[:, np.newaxis, :] - starts[np.newaxis, :, :]
+    positions = np.clip(
+        np.sum(offsets * vectors, axis=2) / np.sum(vectors**2, axis=1),
+        0,
+        1,
+    )
+    closest = starts + positions[:, :, np.newaxis] * vectors
+    distances = np.linalg.norm(
+        original_points[:, np.newaxis, :] - closest,
+        axis=2,
+    )
+    assert distances.min(axis=1).max() <= _compute_polygon_deviation(detail=0) + 0.001
+
+
+def test_compute_polygons_from_mask_keeps_half_pixel_boundary_at_image_edge() -> None:
     # A fully-set mask has no background border, so its contour is the outer
     # half-pixel boundary: x in [-0.5, W-0.5], y in [-0.5, H-0.5]. The near side
     # clips to 0, while the far side must clamp to mask size (W=9, H=5), not
@@ -266,10 +404,31 @@ def test_compute_polygon_from_mask_keeps_half_pixel_boundary_at_image_edge() -> 
     # pulled in by a pixel.
     mask = np.ones((5, 9), dtype=bool)
 
-    polygon = compute_polygon_from_mask(mask=mask)
+    [polygon] = compute_polygons_from_mask(mask=mask)
 
     assert polygon.min(axis=0) == pytest.approx([0.0, 0.0])
-    assert polygon.max(axis=0) == pytest.approx([8.5, 4.5])
+    assert polygon.max(axis=0) == pytest.approx([8.5, 4.5], abs=0.001)
+    incoming = polygon - np.roll(polygon, shift=1, axis=0)
+    outgoing = np.roll(polygon, shift=-1, axis=0) - polygon
+    cross_products = incoming[:, 0] * outgoing[:, 1] - incoming[:, 1] * outgoing[:, 0]
+    assert np.all(np.abs(cross_products) > np.finfo(np.float32).eps)
+
+
+def test_compute_polygons_from_mask_detail_controls_point_count() -> None:
+    mask = np.zeros((100, 100), dtype=bool)
+    mask[20:80, 30:70] = True
+
+    [maximum_detail] = compute_polygons_from_mask(mask=mask, detail=100)
+    [balanced_detail] = compute_polygons_from_mask(mask=mask, detail=80)
+
+    assert len(maximum_detail) == 8
+    assert len(balanced_detail) == 4
+
+
+@pytest.mark.parametrize("detail", [-1, 101])
+def test_compute_polygons_from_mask_rejects_detail_outside_range(detail: int) -> None:
+    with pytest.raises(ValueError, match="detail must be between 0 and 100"):
+        compute_polygons_from_mask(mask=np.ones((5, 5), dtype=bool), detail=detail)
 
 
 def test_compute_oriented_rectangle_from_mask_l_shape_is_axis_aligned() -> None:

@@ -12,6 +12,22 @@
         <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>รายละเอียดโพลีกอน</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>ปรับรายละเอียดโพลีกอน</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>เรียบขึ้น</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>รายละเอียดมากขึ้น</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
     </message>
@@ -849,6 +865,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>อนุญาตให้จุดของรูปร่างขยายออกไปนอกภาพ เช่น สำหรับวัตถุที่มองเห็นได้บางส่วน</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>รายละเอียดโพลีกอน</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>ค่าที่สูงขึ้นจะคงรายละเอียดขอบมาสก์และพื้นที่ขนาดเล็กไว้มากขึ้น</translation>
     </message>
     <message>
         <source>Predefined labels</source>

@@ -99,11 +99,50 @@ def test_default_model_name_and_output_format() -> None:
     session = AiAssistSession()
     assert session.model_name == "sam2:latest"
     assert session.output_format == "polygon"
+    assert session.polygon_detail == 80
 
     session.model_name = "efficientsam:latest"
     session.output_format = "mask"
     assert session.model_name == "efficientsam:latest"
     assert session.output_format == "mask"
+
+
+def test_polygon_detail_controls_ai_polygon_points(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    mask = np.zeros((100, 100), dtype=bool)
+    mask[20:80, 30:70] = True
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[_annotation(score=0.9, bbox=(0, 0, 99, 99), mask=mask)],
+    )
+    install_fake_osam_session(response)
+    session = AiAssistSession(polygon_detail=100)
+
+    maximum_detail = _propose(session).new_shapes
+    session.polygon_detail = 80
+    balanced_detail = _propose(session).new_shapes
+
+    assert len(maximum_detail[0].points) == 8
+    assert len(balanced_detail[0].points) == 4
+
+
+def test_polygon_proposal_groups_disconnected_lands(
+    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
+) -> None:
+    mask = np.zeros((100, 100), dtype=bool)
+    mask[10:40, 10:40] = True
+    mask[60:90, 60:90] = True
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[_annotation(score=0.9, bbox=(0, 0, 99, 99), mask=mask)],
+    )
+    install_fake_osam_session(response)
+
+    shapes = _propose(AiAssistSession()).new_shapes
+
+    assert len(shapes) == 2
+    assert shapes[0].group_id == shapes[1].group_id
 
 
 def test_sam3_point_prompt_is_rejected_before_session_creation(

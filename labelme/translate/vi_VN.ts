@@ -12,6 +12,22 @@
         <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Độ chi tiết đa giác</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Điều chỉnh độ chi tiết đa giác</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Mượt hơn</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Chi tiết hơn</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Chú thích Hỗ trợ AI</translation>
     </message>
@@ -849,6 +865,14 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Cho phép các điểm của hình vượt ra ngoài ảnh, ví dụ cho các đối tượng hiển thị một phần.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Độ chi tiết đa giác</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Giá trị cao hơn giữ lại nhiều chi tiết đường biên mặt nạ và các vùng nhỏ hơn.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

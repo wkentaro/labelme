@@ -28,15 +28,18 @@ class AiAssistProposal:
 class AiAssistSession:
     model_name: str
     output_format: AiOutputFormat
+    polygon_detail: int
     _session: OsamSession | None
 
     def __init__(
         self,
         model_name: str = "sam2:latest",
         output_format: AiOutputFormat = "polygon",
+        polygon_detail: int = 80,
     ) -> None:
         self.model_name = model_name
         self.output_format = output_format
+        self.polygon_detail = polygon_detail
         self._session = None
 
     def _get_session(self) -> OsamSession:
@@ -96,6 +99,7 @@ class AiAssistSession:
                 detections=matches.new_detections,
                 shape_type=self.output_format,
                 image_size=image_size,
+                polygon_detail=self.polygon_detail,
             ),
             matching_existing_shapes=matches.matching_shapes,
         )

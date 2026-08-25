@@ -12,6 +12,22 @@
         <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Detail poligon</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Sesuaikan detail poligon</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Lebih halus</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Lebih detail</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Anotasi yang berbasis AI</translation>
     </message>
@@ -897,6 +913,14 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Isi poligon saat menggambar</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Detail poligon</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Nilai yang lebih tinggi mempertahankan lebih banyak detail batas masker dan area yang lebih kecil.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

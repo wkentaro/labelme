@@ -12,6 +12,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._automation._types import AiOutputFormat
+from labelme._shape import Shape
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
@@ -20,6 +21,33 @@ from .conftest import show_window_and_wait_for_imagedata
 
 # Smallest available model (~40MB) to keep download and inference fast
 _AI_MODEL = "efficientsam:10m"
+
+
+@pytest.mark.gui
+def test_labeling_ai_lands_preserves_generated_group(
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    win = main_win(config_overrides={"auto_save": False})
+    canvas = win._canvas_widgets.canvas
+    shapes = [Shape(group_id=1), Shape(group_id=1)]
+    canvas.load_shapes(shapes=shapes)
+    canvas.backup_shapes()
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda *_args, **_kwargs: ("land", {}, None, ""),
+    )
+
+    win._on_new_shape()
+
+    assert [shape.label for shape in shapes] == ["land", "land"]
+    assert [shape.group_id for shape in shapes] == [1, 1]
+
+    win.mark_clean()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
 @pytest.fixture()
@@ -333,15 +361,21 @@ def test_annotate_shape_types(
 
     click(xy=finalize_click, modifier=finalize_modifier)
 
-    assert len(canvas.shapes) >= 1
-    shape = canvas.shapes[0]
-    assert shape.label == label
-    assert shape.shape_type == expected_shape_type
-    assert shape.group_id is None
-    assert shape.flags == {}
-    assert (shape.mask is not None) == (expected_shape_type == "mask")
+    shapes = canvas.shapes
+    assert len(shapes) >= 1
+    assert all(shape.label == label for shape in shapes)
+    assert all(shape.shape_type == expected_shape_type for shape in shapes)
+    assert all(shape.flags == {} for shape in shapes)
+    assert all(
+        (shape.mask is not None) == (expected_shape_type == "mask") for shape in shapes
+    )
+    if expected_shape_type == "polygon" and len(shapes) > 1:
+        assert shapes[0].group_id is not None
+        assert all(shape.group_id == shapes[0].group_id for shape in shapes)
+    else:
+        assert all(shape.group_id is None for shape in shapes)
     if expected_num_points is not None:
-        assert len(shape.points) == expected_num_points
+        assert len(shapes[0].points) == expected_num_points
 
     win._save_label_file()
     assert_labelfile_sanity(out_file)

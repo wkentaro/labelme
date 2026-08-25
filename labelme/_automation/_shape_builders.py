@@ -13,7 +13,7 @@ from ._geometry import Circle
 from ._geometry import _round_bbox_to_int
 from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask
-from ._geometry import compute_polygon_from_mask
+from ._geometry import compute_polygons_from_mask
 from ._types import AiOutputFormat
 
 
@@ -44,64 +44,75 @@ def _build_shape(
     )
 
 
-def _shape_from_detection(
+def _build_shapes_from_detection(
     detection: Detection,
     shape_type: AiOutputFormat,
     *,
     image_size: tuple[int, int] | None = None,
-) -> Shape | None:
+    polygon_detail: int = 80,
+) -> list[Shape]:
     if shape_type == "rectangle":
         if detection.bbox is None:
-            return None
+            return []
         xmin, ymin, xmax, ymax = detection.bbox
-        return _build_shape(
-            shape_type="rectangle",
-            points=[[xmin, ymin], [xmax, ymax]],
-            label=detection.label,
-            description=detection.description,
-        )
+        return [
+            _build_shape(
+                shape_type="rectangle",
+                points=[[xmin, ymin], [xmax, ymax]],
+                label=detection.label,
+                description=detection.description,
+            )
+        ]
     if shape_type == "polygon":
         if detection.mask is None:
-            return None
-        polygon = compute_polygon_from_mask(mask=detection.mask)
-        if detection.bbox is not None:
-            polygon = polygon + np.array(
-                [detection.bbox[0], detection.bbox[1]], dtype=np.float32
-            )
-        if len(polygon) < 3:
-            return None
-        return _build_shape(
-            shape_type="polygon",
-            points=polygon,
-            label=detection.label,
-            description=detection.description,
+            return []
+        polygons = compute_polygons_from_mask(
+            mask=detection.mask,
+            detail=polygon_detail,
         )
+        if detection.bbox is not None:
+            offset = np.array([detection.bbox[0], detection.bbox[1]], dtype=np.float32)
+            polygons = [polygon + offset for polygon in polygons]
+        return [
+            _build_shape(
+                shape_type="polygon",
+                points=polygon,
+                label=detection.label,
+                description=detection.description,
+            )
+            for polygon in polygons
+            if len(polygon) >= 3
+        ]
     if shape_type == "mask":
         if detection.bbox is None or detection.mask is None:
-            return None
+            return []
         if not detection.mask.any():
-            return None
+            return []
         xmin, ymin, xmax, ymax = _round_bbox_to_int(bbox=detection.bbox)
-        return _build_shape(
-            shape_type="mask",
-            points=[[xmin, ymin], [xmax, ymax]],
-            mask=detection.mask,
-            label=detection.label,
-            description=detection.description,
-        )
+        return [
+            _build_shape(
+                shape_type="mask",
+                points=[[xmin, ymin], [xmax, ymax]],
+                mask=detection.mask,
+                label=detection.label,
+                description=detection.description,
+            )
+        ]
     if shape_type == "circle":
         circle = _circle_for_detection(detection=detection)
         if circle is None:
-            return None
-        return _build_shape(
-            shape_type="circle",
-            points=[
-                [circle.cx, circle.cy],
-                [circle.cx + circle.radius, circle.cy],
-            ],
-            label=detection.label,
-            description=detection.description,
-        )
+            return []
+        return [
+            _build_shape(
+                shape_type="circle",
+                points=[
+                    [circle.cx, circle.cy],
+                    [circle.cx + circle.radius, circle.cy],
+                ],
+                label=detection.label,
+                description=detection.description,
+            )
+        ]
     if shape_type == "oriented_rectangle":
         corners = _oriented_rectangle_for_detection(detection=detection)
         if corners is not None and image_size is not None:
@@ -110,13 +121,15 @@ def _shape_from_detection(
                 image_size=image_size,
             )
         if corners is None:
-            return None
-        return _build_shape(
-            shape_type="oriented_rectangle",
-            points=corners,
-            label=detection.label,
-            description=detection.description,
-        )
+            return []
+        return [
+            _build_shape(
+                shape_type="oriented_rectangle",
+                points=corners,
+                label=detection.label,
+                description=detection.description,
+            )
+        ]
     raise ValueError(f"Unsupported shape_type: {shape_type!r}")
 
 
@@ -180,16 +193,14 @@ def _circle_for_detection(detection: Detection) -> Circle | None:
     return None
 
 
-# Output formats that drop a bbox-only detection (the builder returns None when
-# the mask is absent). Derived from _shape_from_detection so it cannot drift; the
-# probe mirrors the runtime warning condition (a box but no mask).
+# Output formats that drop a bbox-only detection. Deriving this from the same
+# conversion path keeps the runtime warning condition from drifting.
 MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
     shape_type
     for shape_type in typing.get_args(AiOutputFormat)
-    if _shape_from_detection(
+    if not _build_shapes_from_detection(
         detection=Detection(bbox=(0, 0, 1, 1), mask=None), shape_type=shape_type
     )
-    is None
 )
 
 
@@ -198,14 +209,40 @@ def shapes_from_detections(
     shape_type: AiOutputFormat,
     *,
     image_size: tuple[int, int] | None = None,
+    polygon_detail: int = 80,
 ) -> list[Shape]:
     shapes: list[Shape] = []
+    next_group_id = 1
     for detection in detections:
-        shape = _shape_from_detection(
+        detection_shapes = _build_shapes_from_detection(
             detection=detection,
             shape_type=shape_type,
             image_size=image_size,
+            polygon_detail=polygon_detail,
         )
-        if shape is not None:
-            shapes.append(shape)
+        if len(detection_shapes) > 1:
+            for shape in detection_shapes:
+                shape.group_id = next_group_id
+            next_group_id += 1
+        shapes.extend(detection_shapes)
     return shapes
+
+
+def assign_available_group_ids(
+    *, shapes: list[Shape], existing_shapes: list[Shape]
+) -> None:
+    next_group_id = (
+        max(
+            (shape.group_id for shape in existing_shapes if shape.group_id is not None),
+            default=0,
+        )
+        + 1
+    )
+    replacements: dict[int, int] = {}
+    for shape in shapes:
+        if shape.group_id is None:
+            continue
+        if shape.group_id not in replacements:
+            replacements[shape.group_id] = next_group_id
+            next_group_id += 1
+        shape.group_id = replacements[shape.group_id]

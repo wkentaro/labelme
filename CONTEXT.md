@@ -38,6 +38,10 @@ _Avoid_: instance (it is only one application of grouping), cluster.
 Replacing a Shape's geometric kind (its `shape_type`) in place while keeping its identity — Label, Group, Shape Flags, and description. The UI verb is "Convert to…". A Conversion is either lossless (e.g. rectangle → polygon) or lossy (e.g. polygon → rectangle keeps only the bounding box); a lossy Conversion states what it discards at the point of use. Reverting relies on undo history, not on stored originals.
 _Avoid_: turn into, transform, cast, change type.
 
+**Mask Polygonization**:
+Deriving one or more Polygon Shapes from a Mask, either while creating an AI Assist proposal or during Shape Conversion. Polygon Shapes from separate lands share a Group; holes are not represented.
+_Avoid_: mask-to-points conversion, contour conversion
+
 **AI Assist**:
 Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A SAM3 box prompt is a Sweep. Candidates become new Shapes unless Existing Shape Suppression is enabled.
 _Avoid_: AI annotation (too vague — covers AI Text Prompt too), auto-annotation, automation.
@@ -91,6 +95,10 @@ _Avoid_: toggle (only one kind), widget, knob.
 **Preview Setting**:
 A shipped Setting offered for early use while its interaction contract or presentation may still change. It meets normal data-safety and stability requirements and graduates after one stable release cycle with no known contract defects.
 _Avoid_: beta feature, experimental option, beta setting.
+
+**Polygon Detail**:
+The 0–100 Setting that controls how closely Mask Polygonization follows a Mask boundary. Higher values retain more boundary detail, smaller lands, and Polygon Shape points; lower values produce smoother, simpler Polygon Shapes and omit lands whose area disappears within the same deviation.
+_Avoid_: polygon quality, smoothness, simplification tolerance
 
 **Config File**:
 The on-disk YAML where Settings are persisted as sparse Overrides on top of the Default Config. Defaults to `~/.labelmerc`, but can be relocated, e.g. a `labelmerc` file beside the executable in standalone builds, or any path passed to `--config`. The file is called "config"; the values it carries are Settings.

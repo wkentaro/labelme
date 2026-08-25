@@ -12,6 +12,22 @@
         <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>폴리곤 세부 수준</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>폴리곤 세부 수준 조정</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>더 부드럽게</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>더 자세하게</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 지원 주석을 활성화</translation>
     </message>
@@ -849,6 +865,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>도형의 점이 이미지 밖으로 확장되도록 허용합니다. 예: 부분적으로 보이는 객체.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>폴리곤 세부 수준</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>값이 높을수록 마스크 경계의 세부 정보와 작은 영역이 더 많이 유지됩니다.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

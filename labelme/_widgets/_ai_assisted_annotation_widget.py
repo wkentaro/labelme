@@ -10,7 +10,9 @@ from PySide6 import QtWidgets
 
 from .. import _ai_models
 from .. import _automation
+from .._utils.qt import new_icon
 from ._info_button import InfoButton
+from ._integer_slider import IntegerSlider
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
@@ -23,16 +25,20 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def __init__(
         self,
         default_model: str,
+        polygon_detail: int,
         on_model_changed: Callable[[str], None],
         on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
+        on_polygon_detail_changed: Callable[[int], None],
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
         self._is_point_prompt_mode = False
         self._init_ui(
             default_model=default_model,
+            polygon_detail=polygon_detail,
             on_model_changed=on_model_changed,
             on_output_format_changed=on_output_format_changed,
+            on_polygon_detail_changed=on_polygon_detail_changed,
         )
 
     @property
@@ -50,8 +56,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def _init_ui(
         self,
         default_model: str,
+        polygon_detail: int,
         on_model_changed: Callable[[str], None],
         on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
+        on_polygon_detail_changed: Callable[[int], None],
     ) -> None:
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(4, 4, 4, 4)
@@ -66,6 +74,37 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             tooltip=self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
         )
         header_layout.addWidget(info_button)
+        self._polygon_detail_button = QtWidgets.QToolButton()
+        self._polygon_detail_button.setAutoRaise(True)
+        self._polygon_detail_button.setIcon(new_icon("phosphor/sliders-horizontal.svg"))
+        self._polygon_detail_button.setIconSize(QtCore.QSize(16, 16))
+        self._polygon_detail_button.setAccessibleName(self.tr("Polygon detail"))
+        self._polygon_detail_button.setToolTip(self.tr("Adjust polygon detail"))
+        self._polygon_detail_button.setPopupMode(
+            QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
+        )
+        detail_menu = QtWidgets.QMenu(self._polygon_detail_button)
+        detail_panel = QtWidgets.QWidget()
+        detail_layout = QtWidgets.QVBoxLayout(detail_panel)
+        detail_layout.addWidget(QtWidgets.QLabel(self.tr("Polygon detail")))
+        self._polygon_detail_slider = IntegerSlider(
+            minimum=0,
+            maximum=100,
+            value=polygon_detail,
+        )
+        self._polygon_detail_slider.setAccessibleName(self.tr("Polygon detail"))
+        self._polygon_detail_slider.setMinimumWidth(200)
+        detail_layout.addWidget(self._polygon_detail_slider)
+        endpoints = QtWidgets.QHBoxLayout()
+        endpoints.addWidget(QtWidgets.QLabel(self.tr("Smoother")))
+        endpoints.addStretch(1)
+        endpoints.addWidget(QtWidgets.QLabel(self.tr("More detail")))
+        detail_layout.addLayout(endpoints)
+        detail_action = QtWidgets.QWidgetAction(detail_menu)
+        detail_action.setDefaultWidget(detail_panel)
+        detail_menu.addAction(detail_action)
+        self._polygon_detail_button.setMenu(detail_menu)
+        header_layout.addWidget(self._polygon_detail_button)
         header_layout.addStretch()
         layout.addLayout(header_layout)
 
@@ -103,11 +142,16 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         )
 
         self._output_format_combo.setCurrentIndex(0)
+
+        def handle_output_format_changed(index: int) -> None:
+            output_format = self._output_format_combo.itemData(index)
+            self._polygon_detail_button.setVisible(output_format == "polygon")
+            on_output_format_changed(output_format)
+
         self._output_format_combo.currentIndexChanged.connect(
-            lambda index: on_output_format_changed(
-                self._output_format_combo.itemData(index)
-            )
+            handle_output_format_changed
         )
+        self._polygon_detail_slider.value_changed.connect(on_polygon_detail_changed)
 
         self.setMaximumWidth(200)
 
@@ -116,6 +160,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         if index < 0 or self._model_combo.currentIndex() == index:
             return
         self._model_combo.setCurrentIndex(index)
+
+    def set_polygon_detail(self, detail: int) -> None:
+        with QtCore.QSignalBlocker(self._polygon_detail_slider):
+            self._polygon_detail_slider.set_value(detail)
 
     def set_point_prompt_mode(self, enabled: bool) -> None:
         self._is_point_prompt_mode = enabled
@@ -127,6 +175,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     def setEnabled(self, a0: bool) -> None:
         self._body.setEnabled(a0)
+        self._polygon_detail_button.setEnabled(a0)
         self.hover_highlight_requested.emit(False)
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:

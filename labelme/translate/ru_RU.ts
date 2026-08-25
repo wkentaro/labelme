@@ -12,6 +12,22 @@
         <translation>ИИ предлагает аннотацию в режимах &apos;AI-Points&apos; и &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Детализация полигона</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Настроить детализацию полигона</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Более гладко</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Больше деталей</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Выберите режим &apos;AI-Points&apos; или &apos;AI-Box&apos;, чтобы включить аннотацию с помощью ИИ</translation>
     </message>
@@ -852,6 +868,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Позволяет точкам фигур выходить за пределы изображения, например для частично видимых объектов.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Детализация полигона</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Более высокие значения сохраняют больше деталей границы маски и более мелкие области.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

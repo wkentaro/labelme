@@ -19,7 +19,7 @@ Group = Literal[
     "Label behavior",
     "AI assist",
 ]
-Kind = Literal["bool", "enum", "str_list", "language"]
+Kind = Literal["bool", "enum", "int", "str_list", "language"]
 
 # Group names double as headings. QT_TRANSLATE_NOOP marks them for
 # pyside6-lupdate under the SettingsDialog context (where they are resolved via
@@ -51,6 +51,8 @@ class Setting:
     choice_labels: tuple[str, ...] | None = None
     # Optional muted caption rendered beneath the control.
     note: str | None = None
+    minimum: int | None = None
+    maximum: int | None = None
     # Marks a feature shipped for early use: renders a "BETA" badge beside the
     # label so users expect rough edges and report issues. Drop when it stabilizes.
     beta: bool = False
@@ -165,6 +167,21 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         ),
         kind="bool",
         beta=True,
+    ),
+    Setting(
+        key_path=("shape", "polygon_detail"),
+        group="Drawing and canvas",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Polygon detail")),
+        kind="int",
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "Higher values preserve more Mask boundary detail and smaller lands.",
+            ),
+        ),
+        minimum=0,
+        maximum=100,
     ),
     Setting(
         key_path=("labels",),
