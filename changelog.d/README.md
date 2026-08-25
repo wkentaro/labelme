@@ -12,6 +12,10 @@ Each user-facing change ships as one file in this directory instead of editing
   `Fixed the thing`. Towncrier adds the link from the filename. Prefix
   `**Breaking:**` for changes that bump the major version.
 
+There is no minimum release size. Release a minor version for any ready
+backward-compatible feature or improvement; do not wait to accumulate changes.
+Release patches for backward-compatible fixes only.
+
 To release version `X.Y.Z` on `YYYY-MM-DD`:
 
 1. Run `uv run towncrier build --yes --version X.Y.Z --date YYYY-MM-DD`.
