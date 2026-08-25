@@ -19,7 +19,7 @@ Group = Literal[
     "Label behavior",
     "AI assist",
 ]
-Kind = Literal["bool", "enum", "int", "str_list", "language"]
+Kind = Literal["bool", "color", "enum", "int", "str_list", "language"]
 
 # Group names double as headings. QT_TRANSLATE_NOOP marks them for
 # pyside6-lupdate under the SettingsDialog context (where they are resolved via
@@ -107,6 +107,43 @@ SETTINGS: Final[tuple[Setting, ...]] = (
             str, QT_TRANSLATE_NOOP("SettingsDialog", "Show label popup on new shape")
         ),
         kind="bool",
+    ),
+    Setting(
+        key_path=("shape_color", "mode"),
+        group="Drawing and canvas",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Shape Color Mode")),
+        kind="enum",
+        choices=("auto", "uniform", "by_label"),
+        choice_labels=(
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Automatic")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Uniform")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "By Label")),
+        ),
+    ),
+    Setting(
+        key_path=("shape_color", "auto", "shift"),
+        group="Drawing and canvas",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Automatic palette shift")),
+        kind="int",
+    ),
+    Setting(
+        key_path=("shape_color", "uniform", "color"),
+        group="Drawing and canvas",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Uniform mode color")),
+        kind="color",
+    ),
+    Setting(
+        key_path=("shape_color", "by_label", "fallback"),
+        group="Drawing and canvas",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "By Label fallback color")),
+        kind="color",
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "Individual Label colors remain editable in the Config File.",
+            ),
+        ),
     ),
     Setting(
         key_path=("keep_prev",),

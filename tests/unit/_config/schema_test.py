@@ -31,6 +31,7 @@ def _ids(settings: tuple[Setting, ...]) -> list[str]:
 
 _ENUM_SETTINGS = tuple(s for s in SETTINGS if s.kind == "enum")
 _BOOL_SETTINGS = tuple(s for s in SETTINGS if s.kind == "bool")
+_COLOR_SETTINGS = tuple(s for s in SETTINGS if s.kind == "color")
 _INT_SETTINGS = tuple(s for s in SETTINGS if s.kind == "int")
 
 
@@ -82,10 +83,22 @@ def test_bool_default_is_bool(setting: Setting, default_config: dict) -> None:
     assert isinstance(default, bool), setting.key_path
 
 
+@pytest.mark.parametrize("setting", _COLOR_SETTINGS, ids=_ids(_COLOR_SETTINGS))
+def test_color_default_is_rgb(setting: Setting, default_config: dict) -> None:
+    default = _resolve(config=default_config, key_path=setting.key_path)
+    assert (
+        isinstance(default, list)
+        and len(default) == 3
+        and all(isinstance(channel, int) for channel in default)
+    ), setting.key_path
+
+
 @pytest.mark.parametrize("setting", _INT_SETTINGS, ids=_ids(_INT_SETTINGS))
-def test_int_default_is_inside_bounds(setting: Setting, default_config: dict) -> None:
-    assert setting.minimum is not None
-    assert setting.maximum is not None
+def test_int_default_matches_editor_range(
+    setting: Setting, default_config: dict
+) -> None:
+    assert (setting.minimum is None) == (setting.maximum is None)
     default = _resolve(config=default_config, key_path=setting.key_path)
     assert isinstance(default, int) and not isinstance(default, bool)
-    assert setting.minimum <= default <= setting.maximum
+    if setting.minimum is not None and setting.maximum is not None:
+        assert setting.minimum <= default <= setting.maximum

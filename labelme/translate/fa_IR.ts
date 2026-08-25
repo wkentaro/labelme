@@ -847,6 +847,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>تصویر را در فایل JSON برچسب جاسازی می‌کند.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>حالت رنگ شکل</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>خودکار</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>یکنواخت</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>بر اساس برچسب</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>جابجایی خودکار پالت</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>رنگ حالت یکنواخت</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>رنگ جایگزین حالت بر اساس برچسب</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>رنگ هر برچسب همچنان در فایل پیکربندی قابل ویرایش است.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>نگه داشتن حاشیه‌نویسی قبلی</translation>
     </message>
@@ -1005,6 +1037,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>پرچم‌های تصویر از پیش تعریف‌شده</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

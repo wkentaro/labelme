@@ -100,6 +100,14 @@ _Avoid_: beta feature, experimental option, beta setting.
 The 0–100 Setting that controls how closely Mask Polygonization follows a Mask boundary. Higher values retain more boundary detail, smaller lands, and Polygon Shape points; lower values produce smoother, simpler Polygon Shapes and omit lands whose area disappears within the same deviation.
 _Avoid_: polygon quality, smoothness, simplification tolerance
 
+**Shape Color**:
+The visual color used to distinguish a Shape. The Shape Color Mode determines whether Shapes use automatically assigned colors, one uniform color, or colors assigned per Label with a fallback.
+_Avoid_: drawing color (also describes non-Shape canvas colors), label color (when referring to the Shape itself).
+
+**Shape Color Mode**:
+The Setting that selects automatic, uniform, or per-Label Shape Colors.
+_Avoid_: color assignment, shape colors (when referring specifically to the mode choice).
+
 **Config File**:
 The on-disk YAML where Settings are persisted as sparse Overrides on top of the Default Config. Defaults to `~/.labelmerc`, but can be relocated, e.g. a `labelmerc` file beside the executable in standalone builds, or any path passed to `--config`. The file is called "config"; the values it carries are Settings.
 _Avoid_: settings file, rc file, labelmerc.

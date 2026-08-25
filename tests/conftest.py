@@ -10,9 +10,12 @@ from pathlib import Path
 
 import imgviz
 import pytest
+from PySide6 import QtWidgets
 from PySide6.QtCore import QTimer
+from PySide6.QtGui import QColor
 from PySide6.QtGui import QImageReader
 from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QColorDialog
 from PySide6.QtWidgets import QProgressDialog
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
@@ -74,6 +77,16 @@ def close_failed_download_dialog(
 @pytest.fixture()
 def pause(request: pytest.FixtureRequest) -> bool:
     return request.config.getoption("--pause", default=False)
+
+
+@pytest.fixture()
+def use_widget_color_dialog(monkeypatch: pytest.MonkeyPatch) -> None:
+    class WidgetColorDialog(QColorDialog):
+        def __init__(self, parent: QWidget, *, currentColor: QColor) -> None:
+            super().__init__(parent=parent, currentColor=currentColor)
+            self.setOption(QColorDialog.ColorDialogOption.DontUseNativeDialog)
+
+    monkeypatch.setattr(QtWidgets, "QColorDialog", WidgetColorDialog)
 
 
 @pytest.fixture()

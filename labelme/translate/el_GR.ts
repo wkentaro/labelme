@@ -849,6 +849,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Ενσωματώνει την εικόνα στο αρχείο JSON της ετικέτας.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Λειτουργία χρώματος σχήματος</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Αυτόματο</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Ομοιόμορφο</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Ανά ετικέτα</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Αυτόματη μετατόπιση παλέτας</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Χρώμα λειτουργίας «Ομοιόμορφο»</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Εφεδρικό χρώμα λειτουργίας «Ανά ετικέτα»</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Τα μεμονωμένα χρώματα ετικετών παραμένουν επεξεργάσιμα στο αρχείο ρυθμίσεων.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Διατήρηση προηγούμενου σχολιασμού</translation>
     </message>
@@ -1007,6 +1039,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

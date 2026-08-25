@@ -847,6 +847,38 @@ Please select a different model or use AI-Box mode.</source>
         <translation>ฝังรูปภาพไว้ในไฟล์ JSON ของเลเบล</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>โหมดสีรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>อัตโนมัติ</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>เหมือนกันทั้งหมด</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>ตามป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>การเลื่อนพาเล็ตอัตโนมัติ</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>สีโหมดเหมือนกันทั้งหมด</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>สีสำรองโหมดตามป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>ยังคงแก้ไขสีของแต่ละป้ายกำกับได้ในไฟล์การกำหนดค่า</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>คงแอนโนเทชันก่อนหน้าไว้</translation>
     </message>
@@ -1005,6 +1037,13 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>แฟล็กรูปภาพที่กำหนดไว้ล่วงหน้า</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

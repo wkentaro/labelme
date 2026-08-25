@@ -847,6 +847,38 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Sluit de afbeelding in het JSON-labelbestand in.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Vormkleurmodus</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatisch</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Uniform</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Per label</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Automatische paletverschuiving</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Kleur voor modus Uniform</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Terugvalkleur voor modus Per label</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Afzonderlijke labelkleuren blijven bewerkbaar in het configuratiebestand.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Vorige annotatie behouden</translation>
     </message>
@@ -1005,6 +1037,13 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Voorgedefinieerde afbeeldingsvlaggen</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

@@ -13,9 +13,11 @@ from labelme._config import _schema as schema
 from labelme._config import load_config
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets.settings_dialog import SettingsDialog
+from labelme._widgets.settings_dialog import _ColorSwatchButton
 from labelme._widgets.settings_dialog import _PlainTextEdit
 
 Applied = list[tuple[tuple[str, ...], object]]
+Previewed = list[tuple[tuple[str, ...], list[int] | None]]
 
 
 @pytest.fixture
@@ -36,7 +38,11 @@ def _preferred_width(dialog: SettingsDialog) -> int:
 
 
 def _make_dialog(
-    qtbot: QtBot, applied: Applied, overrides: dict, succeed: bool = True
+    qtbot: QtBot,
+    applied: Applied,
+    overrides: dict,
+    succeed: bool = True,
+    previewed: Previewed | None = None,
 ) -> SettingsDialog:
     config = load_config(config_file=None, config_overrides=overrides)
 
@@ -44,9 +50,14 @@ def _make_dialog(
         applied.append((key_path, value))
         return succeed
 
+    def preview_shape_color(key_path: tuple[str, ...], value: list[int] | None) -> None:
+        if previewed is not None:
+            previewed.append((key_path, value))
+
     dialog = SettingsDialog(
         config=config,
         apply_setting=apply_setting,
+        preview_shape_color=preview_shape_color,
         open_as_text=lambda: None,
     )
     qtbot.addWidget(dialog)
@@ -82,10 +93,131 @@ def test_polygon_detail_slider_applies_integer_value(
     assert (("shape", "polygon_detail"), 60) in applied
 
 
+def test_unbounded_integer_edit_accepts_python_ints(
+    qtbot: QtBot, applied: Applied
+) -> None:
+    initial = 2**31
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"shape_color": {"auto": {"shift": initial}}},
+    )
+    edit = dialog._editors[("shape_color", "auto", "shift")]
+    assert isinstance(edit, QtWidgets.QLineEdit)
+    assert edit.text() == str(initial)
+
+    edit.setText("not an integer")
+    edit.editingFinished.emit()
+    assert edit.text() == str(initial)
+    assert applied == []
+
+    edit.setText(str(initial + 1))
+    edit.editingFinished.emit()
+    assert (("shape_color", "auto", "shift"), initial + 1) in applied
+
+
 def test_editors_have_accessible_names(dialog: SettingsDialog) -> None:
     for setting in schema.SETTINGS:
         editor = dialog._editors[setting.key_path]
         assert editor.accessibleName() == dialog.tr(setting.label)
+        interface = QtGui.QAccessible.queryAccessibleInterface(editor)
+        assert interface is not None
+        assert any(
+            relation & QtGui.QAccessible.RelationFlag.Label
+            and related.text(QtGui.QAccessible.Text.Name) == dialog.tr(setting.label)
+            for related, relation in interface.relations()
+        )
+
+
+def test_shape_color_mode_enables_only_its_control(
+    dialog: SettingsDialog, applied: Applied
+) -> None:
+    mode = dialog._editors[("shape_color", "mode")]
+    shift = dialog._editors[("shape_color", "auto", "shift")]
+    uniform = dialog._editors[("shape_color", "uniform", "color")]
+    fallback = dialog._editors[("shape_color", "by_label", "fallback")]
+    shift_row = shift.parentWidget()
+    uniform_row = uniform.parentWidget()
+    fallback_row = fallback.parentWidget()
+    assert shift_row is not None
+    assert uniform_row is not None
+    assert fallback_row is not None
+    assert isinstance(mode, QtWidgets.QComboBox)
+    assert shift.isEnabled()
+    assert not uniform.isEnabled()
+    assert not fallback.isEnabled()
+    assert all(label.isEnabled() for label in shift_row.findChildren(QtWidgets.QLabel))
+    assert all(
+        not label.isEnabled()
+        for row in (uniform_row, fallback_row)
+        for label in row.findChildren(QtWidgets.QLabel)
+    )
+
+    mode.setCurrentIndex(mode.findData("uniform"))
+
+    assert (("shape_color", "mode"), "uniform") in applied
+    assert not shift.isEnabled()
+    assert uniform.isEnabled()
+    assert not fallback.isEnabled()
+    assert all(
+        not label.isEnabled()
+        for row in (shift_row, fallback_row)
+        for label in row.findChildren(QtWidgets.QLabel)
+    )
+    assert all(
+        label.isEnabled() for label in uniform_row.findChildren(QtWidgets.QLabel)
+    )
+
+
+def test_shape_color_picker_applies_rgb(
+    qtbot: QtBot,
+    applied: Applied,
+    use_widget_color_dialog: None,
+) -> None:
+    previewed: Previewed = []
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"shape_color": {"mode": "uniform"}},
+        previewed=previewed,
+    )
+    swatch = dialog._editors[("shape_color", "uniform", "color")]
+    assert isinstance(swatch, _ColorSwatchButton)
+
+    def choose_color() -> None:
+        picker = next(
+            widget
+            for widget in QtWidgets.QApplication.topLevelWidgets()
+            if isinstance(widget, QtWidgets.QColorDialog)
+        )
+        picker.setCurrentColor(QtGui.QColor(12, 34, 56))
+        picker.accept()
+
+    QtCore.QTimer.singleShot(50, choose_color)
+    swatch.click()
+
+    assert swatch.get_rgb() == (12, 34, 56)
+    assert swatch.toolTip() == "RGB: 12, 34, 56"
+    assert swatch.accessibleDescription() == "RGB: 12, 34, 56"
+    assert applied == [(("shape_color", "uniform", "color"), [12, 34, 56])]
+    assert previewed == [
+        (("shape_color", "uniform", "color"), [12, 34, 56]),
+        (("shape_color", "uniform", "color"), None),
+    ]
+
+
+def test_setting_note_is_accessible_description(dialog: SettingsDialog) -> None:
+    setting = next(
+        setting
+        for setting in schema.SETTINGS
+        if setting.key_path == ("shape_color", "by_label", "fallback")
+    )
+    assert setting.note is not None
+    swatch = dialog._editors[setting.key_path]
+    assert isinstance(swatch, _ColorSwatchButton)
+    assert swatch.accessibleDescription() == (
+        f"RGB: 0, 255, 0. {dialog.tr(setting.note)}"
+    )
 
 
 def test_beta_settings_render_a_badge(dialog: SettingsDialog) -> None:

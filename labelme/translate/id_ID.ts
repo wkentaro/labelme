@@ -899,6 +899,38 @@ Shapes</source>
         <translation>Menyematkan gambar dalam file JSON label.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Mode Warna Bentuk</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Otomatis</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Seragam</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Menurut Label</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Pergeseran palet otomatis</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Warna mode Seragam</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Warna cadangan mode Menurut Label</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Warna masing-masing Label tetap dapat diedit di File Konfigurasi.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Pertahankan anotasi sebelumnya</translation>
     </message>
@@ -1005,6 +1037,13 @@ Shapes</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>

@@ -847,6 +847,38 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Osadza obraz w pliku JSON etykiety.</translation>
     </message>
     <message>
+        <source>Shape Color Mode</source>
+        <translation>Tryb koloru kształtu</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatyczny</translation>
+    </message>
+    <message>
+        <source>Uniform</source>
+        <translation>Jednolity</translation>
+    </message>
+    <message>
+        <source>By Label</source>
+        <translation>Według etykiety</translation>
+    </message>
+    <message>
+        <source>Automatic palette shift</source>
+        <translation>Automatyczne przesunięcie palety</translation>
+    </message>
+    <message>
+        <source>Uniform mode color</source>
+        <translation>Kolor trybu Jednolity</translation>
+    </message>
+    <message>
+        <source>By Label fallback color</source>
+        <translation>Kolor zastępczy trybu Według etykiety</translation>
+    </message>
+    <message>
+        <source>Individual Label colors remain editable in the Config File.</source>
+        <translation>Kolory poszczególnych etykiet nadal można edytować w pliku konfiguracyjnym.</translation>
+    </message>
+    <message>
         <source>Keep previous annotation</source>
         <translation>Zachowaj poprzednią adnotację</translation>
     </message>
@@ -1005,6 +1037,13 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Predefiniowane flagi obrazu</translation>
+    </message>
+</context>
+<context>
+    <name>_ColorSwatchButton</name>
+    <message>
+        <source>RGB: {red}, {green}, {blue}</source>
+        <translation>RGB: {red}, {green}, {blue}</translation>
     </message>
 </context>
 <context>
