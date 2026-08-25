@@ -206,21 +206,6 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         beta=True,
     ),
     Setting(
-        key_path=("shape", "polygon_detail"),
-        group="Drawing and canvas",
-        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Polygon detail")),
-        kind="int",
-        note=cast(
-            str,
-            QT_TRANSLATE_NOOP(
-                "SettingsDialog",
-                "Higher values preserve more Mask boundary detail and smaller lands.",
-            ),
-        ),
-        minimum=0,
-        maximum=100,
-    ),
-    Setting(
         key_path=("labels",),
         group="Label sources",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Predefined labels")),
@@ -296,6 +281,21 @@ SETTINGS: Final[tuple[Setting, ...]] = (
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (accuracy)")),
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam3")),
         ),
+    ),
+    Setting(
+        key_path=("mask_polygonization", "detail"),
+        group="AI assist",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Polygon detail")),
+        kind="int",
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "Higher values preserve more Mask boundary detail and smaller lands.",
+            ),
+        ),
+        minimum=0,
+        maximum=100,
     ),
     Setting(
         key_path=("ai", "suppress_existing_shape_matches"),
