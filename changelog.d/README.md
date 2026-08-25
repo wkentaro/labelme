@@ -20,7 +20,8 @@ To release version `X.Y.Z` on `YYYY-MM-DD`:
 
 1. Run `uv run towncrier build --yes --version X.Y.Z --date YYYY-MM-DD`.
 2. Add `[X.Y.Z]: https://github.com/wkentaro/labelme/compare/v<previous>...vX.Y.Z`
-   to the link list at the bottom of `CHANGELOG.md`.
+   to the link list at the bottom of `CHANGELOG.md`, then update `[Unreleased]`
+   to compare `vX.Y.Z...main`.
 3. Commit the updated changelog and deleted fragments, then tag that commit.
 
 Prerelease tags render pending fragments without changing files.
