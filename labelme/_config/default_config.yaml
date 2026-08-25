@@ -35,6 +35,7 @@ shape:
   hvertex_fill_color: [255, 255, 255, 255]
   point_size: 8
   show_labels: false
+  polygon_detail: 80
 ai:
   default: Sam2 (balanced)
   suppress_existing_shape_matches: false

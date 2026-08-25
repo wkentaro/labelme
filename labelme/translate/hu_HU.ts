@@ -12,6 +12,22 @@
         <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Poligon részletessége</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Poligon részletességének beállítása</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Simább</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Részletesebb</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az AI-támogatott annotáció engedélyezéséhez</translation>
     </message>
@@ -855,6 +871,14 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Lehetővé teszi, hogy az alakzatpontok túlnyúljanak a képen, pl. részben látható objektumokhoz.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Poligon részletessége</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>A magasabb értékek több részletet őriznek meg a maszk határvonalából és a kisebb területekből.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

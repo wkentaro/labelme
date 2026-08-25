@@ -12,6 +12,22 @@
         <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>ポリゴンの詳細度</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>ポリゴンの詳細度を調整</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>より滑らか</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>より詳細</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>&apos;AI-Points&apos;または&apos;AI-Box&apos;モードを選択してAI支援アノテーションを有効化</translation>
     </message>
@@ -863,6 +879,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>図形の点が画像の外まで広がることを許可します（例: 部分的にしか見えない物体）。</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>ポリゴンの詳細度</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>値を高くすると、マスク境界の詳細と小さな領域がより多く保持されます。</translation>
     </message>
     <message>
         <source>Predefined labels</source>

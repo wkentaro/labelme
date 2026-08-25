@@ -51,6 +51,12 @@ def _update_dict(
 
 
 def _validate_config_item(key: str, value: object) -> None:
+    if key == "polygon_detail" and (
+        isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= 100
+    ):
+        raise ValueError(
+            f"polygon_detail must be an integer between 0 and 100, but got {value!r}"
+        )
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
     if key == "labels" and value is not None:

@@ -681,6 +681,19 @@ def test_changing_ai_assist_setting_clears_highlights(
 
 
 @pytest.mark.gui
+def test_changing_polygon_detail_requests_preview_repaint(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    update = Mock()
+    monkeypatch.setattr(canvas, "update", update)
+
+    canvas.set_ai_polygon_detail(60)
+
+    update.assert_called_once_with()
+
+
+@pytest.mark.gui
 def test_delete_shape_clears_highlights(canvas: Canvas) -> None:
     existing = _make_rectangle(label="existing")
     canvas.load_shapes([existing])
@@ -1091,15 +1104,63 @@ def test_points_preview_hides_failed_and_empty_predictions(
     failed: list[str] = []
     canvas.inference_failed.connect(failed.append)
 
-    assert canvas._build_ai_points_preview(current=current) is None
-    assert canvas._build_ai_points_preview(current=current) is None
+    assert canvas._build_ai_points_preview(current=current) == []
+    assert canvas._build_ai_points_preview(current=current) == []
     assert failed == ["RuntimeError: boom"]
 
     behavior["fail"] = False
-    assert canvas._build_ai_points_preview(current=current) is None
+    assert canvas._build_ai_points_preview(current=current) == []
     behavior["fail"] = True
-    assert canvas._build_ai_points_preview(current=current) is None
+    assert canvas._build_ai_points_preview(current=current) == []
     assert failed == ["RuntimeError: boom", "RuntimeError: boom"]
+
+
+@pytest.mark.gui
+def test_ai_points_preview_renders_every_proposed_shape(
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    previews = [
+        Shape(
+            shape_type="polygon",
+            points=np.array(points, dtype=np.float64),
+            closed=True,
+        )
+        for points in (
+            [(10, 10), (20, 10), (20, 20)],
+            [(60, 10), (70, 10), (70, 20)],
+        )
+    ]
+    monkeypatch.setattr(
+        canvas,
+        "_propose_ai_shapes",
+        lambda **_: AiAssistProposal(
+            new_shapes=previews,
+            matching_existing_shapes=[],
+        ),
+    )
+    canvas.create_mode = "ai_points_to_shape"
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(5, 5),),
+        point_labels=(1,),
+    )
+    canvas._line = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(5, 5), QPointF(6, 6)),
+        point_labels=(1, 1),
+    )
+    image = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(Qt.GlobalColor.black)
+    painter = QtGui.QPainter(image)
+
+    canvas._draw_preview_overlay_layer(painter)
+    painter.end()
+
+    for x in (15, 65):
+        color = image.pixelColor(x, 10)
+        assert color.green() > color.red()
+        assert color.green() > color.blue()
 
 
 @pytest.mark.gui

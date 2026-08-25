@@ -11,6 +11,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._config import _schema as schema
 from labelme._config import load_config
+from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets.settings_dialog import SettingsDialog
 from labelme._widgets.settings_dialog import _PlainTextEdit
 
@@ -67,6 +68,18 @@ def test_existing_shape_suppression_is_disabled_by_default(
     checkbox = dialog._editors[("ai", "suppress_existing_shape_matches")]
     assert isinstance(checkbox, QtWidgets.QCheckBox)
     assert checkbox.isChecked() is False
+
+
+def test_polygon_detail_slider_applies_integer_value(
+    dialog: SettingsDialog, applied: Applied
+) -> None:
+    slider = dialog._editors[("shape", "polygon_detail")]
+    assert isinstance(slider, IntegerSlider)
+    assert slider.value == 80
+
+    slider.set_value(60)
+
+    assert (("shape", "polygon_detail"), 60) in applied
 
 
 def test_editors_have_accessible_names(dialog: SettingsDialog) -> None:

@@ -449,6 +449,12 @@ class Canvas(QtWidgets.QWidget):
         self._ai_assist_session.output_format = output_format
         self._clear_ai_existing_shape_highlights()
 
+    def set_ai_polygon_detail(self, detail: int) -> None:
+        if self._ai_assist_session.polygon_detail == detail:
+            return
+        self._ai_assist_session.polygon_detail = detail
+        self._clear_ai_existing_shape_highlights()
+
     def set_ai_existing_shape_suppression(self, enabled: bool) -> None:
         if self._ai_suppress_existing_shape_matches == enabled:
             return
@@ -463,7 +469,7 @@ class Canvas(QtWidgets.QWidget):
         point_labels: Sequence[int],
     ) -> _automation.AiAssistProposal:
         image: np.ndarray = _utils.img_qt_to_rgb_arr(img_qt=self.pixmap.toImage())
-        return self._ai_assist_session.propose_shapes(
+        proposal = self._ai_assist_session.propose_shapes(
             image=image,
             image_id=str(self._pixmap_hash),
             prompt_kind=prompt_kind,
@@ -478,6 +484,11 @@ class Canvas(QtWidgets.QWidget):
                 else (image.shape[1], image.shape[0])
             ),
         )
+        _automation.assign_available_group_ids(
+            shapes=proposal.new_shapes,
+            existing_shapes=self.shapes,
+        )
+        return proposal
 
     def _report_inference_failure(self, error: Exception) -> None:
         self._ai_inference_failed = True
@@ -1608,8 +1619,8 @@ class Canvas(QtWidgets.QWidget):
             render_shape(painter=painter, shape=copy_shape, context=context)
 
     def _draw_preview_overlay_layer(self, painter: QtGui.QPainter) -> None:
-        preview = self._build_preview_shape()
-        if preview is None:
+        previews = self._build_preview_shapes()
+        if not previews:
             return
         context = self._draft_render_context(
             selected=self._fill_drawing,
@@ -1617,7 +1628,8 @@ class Canvas(QtWidgets.QWidget):
             highlight=None,
             rotation_highlight=None,
         )
-        render_shape(painter=painter, shape=preview, context=context)
+        for preview in previews:
+            render_shape(painter=painter, shape=preview, context=context)
 
     def _draw_ai_existing_match_layer(self, painter: QtGui.QPainter) -> None:
         AI_EXISTING_MATCH_PALETTE: Final[Palette] = Palette(
@@ -1654,14 +1666,14 @@ class Canvas(QtWidgets.QWidget):
         )
         render_shape(painter=painter, shape=shape, context=context)
 
-    def _build_preview_shape(self) -> Shape | None:
+    def _build_preview_shapes(self) -> list[Shape]:
         if self._current is None:
-            return None
+            return []
         if self.create_mode == "polygon":
-            return self._build_polygon_preview(current=self._current)
+            return [self._build_polygon_preview(current=self._current)]
         if self.create_mode == "ai_points_to_shape":
             return self._build_ai_points_preview(current=self._current)
-        return None
+        return []
 
     def _build_polygon_preview(self, current: _DraftShape) -> Shape:
         preview = current
@@ -1669,9 +1681,9 @@ class Canvas(QtWidgets.QWidget):
             preview = preview.add_point(point=self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
-    def _build_ai_points_preview(self, current: _DraftShape) -> Shape | None:
+    def _build_ai_points_preview(self, current: _DraftShape) -> list[Shape]:
         if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
-            return None
+            return []
         preview = current.add_point(
             point=self._line.points[1],
             label=self._line.point_labels[1],
@@ -1689,12 +1701,10 @@ class Canvas(QtWidgets.QWidget):
             if not self._ai_inference_failed:
                 self._report_inference_failure(error=e)
             self._set_ai_existing_shape_highlights(shapes=[])
-            return None
+            return []
         self._ai_inference_failed = False
         self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
-        if proposal.new_shapes:
-            return proposal.new_shapes[0]
-        return None
+        return proposal.new_shapes
 
     def transform_widget_point_to_image(self, point: QPointF) -> QPointF:
         origin = self._compute_image_origin_offset()
@@ -1793,9 +1803,8 @@ class Canvas(QtWidgets.QWidget):
         self._ai_existing_shape_highlights = shapes[:]
 
     def _clear_ai_existing_shape_highlights(self) -> None:
-        if not self._ai_existing_shape_highlights:
-            return
-        self._set_ai_existing_shape_highlights(shapes=[])
+        if self._ai_existing_shape_highlights:
+            self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
 
     # Required by QScrollArea: it queries these to compute the

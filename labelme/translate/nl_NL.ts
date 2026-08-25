@@ -12,6 +12,22 @@
         <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Polygoondetail</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Polygoondetail aanpassen</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Gladder</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Meer detail</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om AI-ondersteunde annotatie in te schakelen</translation>
     </message>
@@ -849,6 +865,14 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Laat vormpunten buiten de afbeelding vallen, bijv. voor gedeeltelijk zichtbare objecten.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Polygoondetail</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Hogere waarden behouden meer details van de maskerrand en kleinere gebieden.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

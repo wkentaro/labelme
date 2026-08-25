@@ -10,7 +10,10 @@ from numpy.typing import NDArray
 from labelme._automation import MASK_REQUIRED_SHAPE_TYPES
 from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
+from labelme._automation import assign_available_group_ids
 from labelme._automation import shapes_from_detections
+from labelme._shape import Shape
+from labelme._utils.shape import shape_to_mask
 
 
 def test_shapes_from_detections_rectangle_uses_bbox() -> None:
@@ -205,12 +208,56 @@ def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
     assert len(shape.points) >= 3
 
 
-def test_shapes_from_detections_polygon_drops_degenerate_thin_mask() -> None:
-    # A near-collinear sliver mask collapses to fewer than 3 contour points,
-    # which is not a valid polygon; downstream consumers (e.g. shape_to_mask)
-    # assert len(points) > 2, so the builder must drop it rather than emit it.
-    mask = np.zeros((3, 400), dtype=bool)
-    mask[1, :] = True
+def test_shapes_from_detections_polygon_simplifies_pixel_stair_steps() -> None:
+    mask = np.zeros((100, 100), dtype=bool)
+    mask[20:80, 30:70] = True
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+    )
+
+    assert len(shape.points) == 4
+
+
+def test_shapes_from_detections_polygon_keeps_disconnected_regions() -> None:
+    mask = np.zeros((100, 100), dtype=bool)
+    mask[10:40, 10:40] = True
+    mask[60:90, 60:90] = True
+
+    shapes = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+    )
+
+    assert len(shapes) == 2
+    assert shapes[0].group_id == shapes[1].group_id
+    assert shapes[0].group_id is not None
+
+
+def test_shapes_from_detections_polygon_drops_hole() -> None:
+    mask = np.zeros((100, 100), dtype=bool)
+    mask[10:90, 10:90] = True
+    mask[30:70, 30:70] = False
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+    )
+
+    polygon_mask = shape_to_mask(
+        img_shape=mask.shape,
+        points=shape.points.tolist(),
+        shape_type="polygon",
+    )
+    assert polygon_mask[20, 20]
+    assert polygon_mask[50, 50]
+
+
+def test_shapes_from_detections_polygon_drops_lands_within_deviation() -> None:
+    mask = np.zeros((5, 5), dtype=bool)
+    mask[1, 1] = True
+    mask[2, 2] = True
 
     shapes = shapes_from_detections(
         detections=[Detection(mask=mask)],
@@ -218,6 +265,28 @@ def test_shapes_from_detections_polygon_drops_degenerate_thin_mask() -> None:
     )
 
     assert shapes == []
+
+    detailed_shapes = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+        polygon_detail=100,
+    )
+
+    assert len(detailed_shapes) == 2
+    assert detailed_shapes[0].group_id == detailed_shapes[1].group_id
+
+
+def test_shapes_from_detections_polygon_maximum_detail_keeps_thin_mask() -> None:
+    mask = np.zeros((3, 400), dtype=bool)
+    mask[1, :] = True
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(mask=mask)],
+        shape_type="polygon",
+        polygon_detail=100,
+    )
+
+    assert len(shape.points) >= 3
 
 
 def test_shapes_from_detections_polygon_with_bbox_offsets_contour() -> None:
@@ -278,3 +347,17 @@ def test_shapes_from_detections_without_bbox_or_mask_is_dropped(
 
 def test_mask_required_shape_types_is_polygon_and_mask() -> None:
     assert MASK_REQUIRED_SHAPE_TYPES == {"polygon", "mask"}
+
+
+def test_assign_available_group_ids_avoids_existing_ids() -> None:
+    existing = [Shape(group_id=5)]
+    new_shapes = [
+        Shape(group_id=1),
+        Shape(group_id=1),
+        Shape(group_id=2),
+        Shape(group_id=None),
+    ]
+
+    assign_available_group_ids(shapes=new_shapes, existing_shapes=existing)
+
+    assert [shape.group_id for shape in new_shapes] == [6, 6, 7, None]

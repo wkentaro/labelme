@@ -12,6 +12,22 @@
         <translation>在 &apos;AI-Points&apos; 和 &apos;AI-Box&apos; 模式下，AI 会提供标注建议</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>多边形细节</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>调整多边形细节</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>更平滑</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>更多细节</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>请选择 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以启用 AI 辅助标注</translation>
     </message>
@@ -849,6 +865,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>允许形状的点延伸到图像之外，例如用于部分可见的对象。</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>多边形细节</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>值越高，保留的蒙版边界细节和较小区域越多。</translation>
     </message>
     <message>
         <source>Predefined labels</source>

@@ -12,6 +12,22 @@
         <translation>Yapay zeka, &apos;AI-Points&apos; ve &apos;AI-Box&apos; modlarında açıklama önerir</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Poligon ayrıntısı</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Poligon ayrıntısını ayarla</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Daha yumuşak</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Daha fazla ayrıntı</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Yapay Zeka Destekli Açıklamayı etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
     </message>
@@ -852,6 +868,14 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Şekil noktalarının görüntünün dışına taşmasına izin verir, örn. kısmen görünen nesneler için.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Poligon ayrıntısı</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Daha yüksek değerler maske sınırı ayrıntılarını ve küçük bölgeleri daha fazla korur.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

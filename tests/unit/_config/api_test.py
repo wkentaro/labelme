@@ -91,6 +91,17 @@ def test_load_config_keeps_other_keys_when_ai_default_is_not_a_string(
     assert config["labels"] == ["cat", "dog"]
 
 
+@pytest.mark.parametrize("value", [-1, 101, True, "80"])
+def test_load_config_rejects_invalid_polygon_detail(
+    tmp_path: Path, value: object
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"shape:\n  polygon_detail: {json.dumps(value)}\n")
+
+    with pytest.raises(ValueError, match="polygon_detail must be an integer"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
 _POLYGON_TO_SHAPE_RENAMES = {
     "edit_polygon": "edit_shape",
     "delete_polygon": "delete_shape",

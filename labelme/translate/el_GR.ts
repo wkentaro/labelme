@@ -12,6 +12,22 @@
         <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Λεπτομέρεια πολυγώνου</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Προσαρμογή λεπτομέρειας πολυγώνου</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Πιο ομαλό</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Περισσότερη λεπτομέρεια</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
     </message>
@@ -851,6 +867,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Επιτρέπει στα σημεία των σχημάτων να εκτείνονται πέρα από την εικόνα, π.χ. για μερικώς ορατά αντικείμενα.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Λεπτομέρεια πολυγώνου</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Οι υψηλότερες τιμές διατηρούν περισσότερες λεπτομέρειες του ορίου της μάσκας και μικρότερες περιοχές.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

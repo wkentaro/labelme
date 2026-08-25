@@ -255,8 +255,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._ai_annotation = AiAssistedAnnotationWidget(
             default_model=self._config["ai"]["default"],
+            polygon_detail=self._config["shape"]["polygon_detail"],
             on_model_changed=self._on_ai_model_changed,
             on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
+            on_polygon_detail_changed=self._on_ai_polygon_detail_changed,
             parent=self,
         )
         self._canvas_widgets.canvas.set_ai_model_name(
@@ -264,6 +266,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.set_ai_output_format(
             self._ai_annotation.output_format
+        )
+        self._canvas_widgets.canvas.set_ai_polygon_detail(
+            self._config["shape"]["polygon_detail"]
         )
         self._ai_annotation.setEnabled(False)
         self._ai_buttons_highlighted = False
@@ -1460,6 +1465,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self._config["canvas"]["allow_out_of_bounds_points"]
                 else (self._image.width(), self._image.height())
             ),
+            polygon_detail=self._config["shape"]["polygon_detail"],
+        )
+        _automation.assign_available_group_ids(
+            shapes=shapes,
+            existing_shapes=self._canvas_widgets.canvas.shapes,
         )
 
         self._load_shapes(shapes, replace=False)
@@ -1917,7 +1927,8 @@ class MainWindow(QtWidgets.QMainWindow):
             assert isinstance(flags, dict)
             shapes = self._canvas_widgets.canvas.set_last_label(text, flags)
             for shape in shapes:
-                shape.group_id = group_id
+                if group_id is not None or shape.group_id is None:
+                    shape.group_id = group_id
                 shape.description = description
                 self.add_label(shape)
             self._actions.edit_mode.setEnabled(True)
@@ -2607,6 +2618,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self._apply_setting_change(key_path=("ai", "default"), value=model_display)
 
+    def _on_ai_polygon_detail_changed(self, detail: int) -> None:
+        self._apply_setting_change(
+            key_path=("shape", "polygon_detail"),
+            value=detail,
+        )
+
     def _set_point_prompt_mode(self, enabled: bool) -> None:
         self._ai_annotation.set_point_prompt_mode(enabled=enabled)
         if self._settings_dialog is None:
@@ -2683,6 +2700,10 @@ class MainWindow(QtWidgets.QMainWindow):
             canvas = self._canvas_widgets.canvas
             canvas.set_show_labels(self._config["shape"]["show_labels"])
             canvas.update()
+        elif key_path == ("shape", "polygon_detail"):
+            detail = self._config["shape"]["polygon_detail"]
+            self._ai_annotation.set_polygon_detail(detail)
+            self._canvas_widgets.canvas.set_ai_polygon_detail(detail)
         elif key_path == ("canvas", "allow_out_of_bounds_points"):
             canvas = self._canvas_widgets.canvas
             canvas.set_allow_out_of_bounds_points(

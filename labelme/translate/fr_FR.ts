@@ -12,6 +12,22 @@
         <translation>L&apos;IA suggère des annotations dans les modes &apos;AI-Points&apos; et &apos;AI-Box&apos;</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>Détail du polygone</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>Ajuster le détail du polygone</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Plus lisse</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Plus de détails</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Sélectionnez le mode &apos;AI-Points&apos; ou &apos;AI-Box&apos; pour activer l&apos;annotation assistée par IA</translation>
     </message>
@@ -855,6 +871,14 @@ Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>Permet aux points des formes de dépasser l&apos;image, par exemple pour les objets partiellement visibles.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Détail du polygone</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>Les valeurs élevées préservent davantage de détails du contour du masque et les petites régions.</translation>
     </message>
     <message>
         <source>Predefined labels</source>

@@ -12,6 +12,22 @@
         <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
     </message>
     <message>
+        <source>Polygon detail</source>
+        <translation>جزئیات چندضلعی</translation>
+    </message>
+    <message>
+        <source>Adjust polygon detail</source>
+        <translation>تنظیم جزئیات چندضلعی</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>هموارتر</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>جزئیات بیشتر</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی حاشیه‌نویسی با کمک AI انتخاب کنید</translation>
     </message>
@@ -849,6 +865,14 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
         <translation>به نقاط شکل اجازه می‌دهد فراتر از تصویر امتداد یابند، مثلاً برای اشیای تا حدی قابل مشاهده.</translation>
+    </message>
+    <message>
+        <source>Polygon detail</source>
+        <translation>جزئیات چندضلعی</translation>
+    </message>
+    <message>
+        <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
+        <translation>مقادیر بالاتر جزئیات بیشتری از مرز ماسک و نواحی کوچک‌تر را حفظ می‌کنند.</translation>
     </message>
     <message>
         <source>Predefined labels</source>
