@@ -739,17 +739,17 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
 ) -> None:
     win = main_win(config_file=editable_config_file)
     dialog = _open_settings_dialog(win=win)
-    settings_slider = dialog._editors[("shape", "polygon_detail")]
+    settings_slider = dialog._editors[("mask_polygonization", "detail")]
     assert isinstance(settings_slider, IntegerSlider)
 
     toolbar_slider = win._ai_annotation._polygon_detail_slider
     toolbar_slider.set_value(60)
 
-    assert win._config["shape"]["polygon_detail"] == 60
+    assert win._config["mask_polygonization"]["detail"] == 60
     assert settings_slider.value == 60
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 60
     persisted = safe_load(editable_config_file.read_text())
-    assert persisted["shape"]["polygon_detail"] == 60
+    assert persisted["mask_polygonization"]["detail"] == 60
 
     settings_slider.set_value(70)
 

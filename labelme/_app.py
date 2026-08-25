@@ -258,7 +258,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._ai_annotation = AiAssistedAnnotationWidget(
             default_model=self._config["ai"]["default"],
-            polygon_detail=self._config["shape"]["polygon_detail"],
+            polygon_detail=self._config["mask_polygonization"]["detail"],
             on_model_changed=self._on_ai_model_changed,
             on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
             on_polygon_detail_changed=self._on_ai_polygon_detail_changed,
@@ -271,7 +271,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.output_format
         )
         self._canvas_widgets.canvas.set_ai_polygon_detail(
-            self._config["shape"]["polygon_detail"]
+            self._config["mask_polygonization"]["detail"]
         )
         self._ai_annotation.setEnabled(False)
         self._ai_buttons_highlighted = False
@@ -1468,7 +1468,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self._config["canvas"]["allow_out_of_bounds_points"]
                 else (self._image.width(), self._image.height())
             ),
-            polygon_detail=self._config["shape"]["polygon_detail"],
+            polygon_detail=self._config["mask_polygonization"]["detail"],
         )
         _automation.assign_available_group_ids(
             shapes=shapes,
@@ -2626,7 +2626,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_ai_polygon_detail_changed(self, detail: int) -> None:
         self._apply_setting_change(
-            key_path=("shape", "polygon_detail"),
+            key_path=("mask_polygonization", "detail"),
             value=detail,
         )
 
@@ -2722,8 +2722,8 @@ class MainWindow(QtWidgets.QMainWindow):
             canvas = self._canvas_widgets.canvas
             canvas.set_show_labels(self._config["shape"]["show_labels"])
             canvas.update()
-        elif key_path == ("shape", "polygon_detail"):
-            detail = self._config["shape"]["polygon_detail"]
+        elif key_path == ("mask_polygonization", "detail"):
+            detail = self._config["mask_polygonization"]["detail"]
             self._ai_annotation.set_polygon_detail(detail)
             self._canvas_widgets.canvas.set_ai_polygon_detail(detail)
         elif key_path == ("canvas", "allow_out_of_bounds_points"):

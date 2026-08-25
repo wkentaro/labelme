@@ -96,9 +96,11 @@ def test_load_config_rejects_invalid_polygon_detail(
     tmp_path: Path, value: object
 ) -> None:
     config_file = tmp_path / "config.yaml"
-    config_file.write_text(f"shape:\n  polygon_detail: {json.dumps(value)}\n")
+    config_file.write_text(f"mask_polygonization:\n  detail: {json.dumps(value)}\n")
 
-    with pytest.raises(ValueError, match="polygon_detail must be an integer"):
+    with pytest.raises(
+        ValueError, match=r"mask_polygonization\.detail must be an integer"
+    ):
         _config.load_config(config_file=config_file, config_overrides={})
 
 
