@@ -22,6 +22,18 @@ from labelme.__main__ import _setup_loguru
 from labelme.__main__ import main
 
 
+def test_help_uses_console_script_name(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(sys, "argv", ["launcher-path", "--help"])
+
+    with pytest.raises(SystemExit) as exc:
+        main()
+
+    assert exc.value.code == 0
+    assert capsys.readouterr().out.startswith("usage: labelme ")
+
+
 @pytest.mark.parametrize("flag", ["--nodata", "--autosave"])
 def test_removed_flag_errors_as_unknown(
     flag: str, monkeypatch: pytest.MonkeyPatch

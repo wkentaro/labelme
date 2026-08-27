@@ -210,7 +210,7 @@ def _resolve_config_source(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="labelme")
     parser.add_argument("--version", "-V", action="store_true", help="show version")
     parser.add_argument(
         "--reset-config",
