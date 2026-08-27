@@ -10,9 +10,9 @@ Record user-facing changes to the packaged application as towncrier fragments, f
 
 Issues are tracked as GitHub issues on `wkentaro/labelme` via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
-### Triage labels
+### Issue and pull-request labels
 
-Five canonical triage roles map 1:1 to label strings of the same name (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+For issue triage and type labels or pull-request verdict labels, follow `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
