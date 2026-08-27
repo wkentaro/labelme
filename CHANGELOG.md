@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## [7.2.0] - 2026-08-27
+
+### Added
+
+- Added Shape Color controls to Settings for automatic, uniform, and per-Label fallback coloring. ([#2552](https://github.com/wkentaro/labelme/pull/2552))
+
+### Changed
+
+- Improved AI Assist polygon output with cleaner boundaries, grouped disconnected lands, and adjustable detail. ([#2555](https://github.com/wkentaro/labelme/pull/2555))
+
+### Fixed
+
+- Fixed Undo appearing enabled immediately after opening an image whose Shapes were carried forward via Keep Previous Annotation / Ctrl+Shift, which could silently discard the carried-forward Shapes if clicked before any edit on the new image ([#2523](https://github.com/wkentaro/labelme/pull/2523))
+- Fixed Undo remaining disabled after committing the first Shape on a raw Image. Undo now removes that Shape from the canvas, Annotation List, and both manually saved and auto-saved Annotation Files ([#2523](https://github.com/wkentaro/labelme/pull/2523))
+- Kept the image point beneath the cursor stationary during Ctrl/Cmd-wheel zoom without canvas flicker. ([#2553](https://github.com/wkentaro/labelme/pull/2553))
+- Fixed `labelme --help` showing a Python executable and temporary launcher path instead of the stable `labelme` command on Windows with Python 3.14. ([#2559](https://github.com/wkentaro/labelme/pull/2559))
+
 ## [7.1.0] - 2026-08-21
 
 ### Added
@@ -776,4 +793,5 @@ See the [GitHub Releases](https://github.com/wkentaro/labelme/releases) page for
 [7.0.3]: https://github.com/wkentaro/labelme/compare/v7.0.2...v7.0.3
 [7.0.4]: https://github.com/wkentaro/labelme/compare/v7.0.3...v7.0.4
 [7.1.0]: https://github.com/wkentaro/labelme/compare/v7.0.4...v7.1.0
-[unreleased]: https://github.com/wkentaro/labelme/compare/v7.1.0...main
+[7.2.0]: https://github.com/wkentaro/labelme/compare/v7.1.0...v7.2.0
+[unreleased]: https://github.com/wkentaro/labelme/compare/v7.2.0...main
