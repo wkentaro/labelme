@@ -53,7 +53,6 @@ dev = [
   "ipython",
   "mdformat-frontmatter>=2.0.10",
   "mdformat>=0.7",
-  "packaging>=25.0",
   "pytest>=8.3.4",
   "pytest-cov>=7.1.0",
   "pytest-qt>=4.4.0",
@@ -74,40 +73,17 @@ labelme = "labelme.__main__:main"
 [tool.towncrier]
 directory = "changelog.d"
 filename = "CHANGELOG.md"
-title_format = "## [{version}] - {project_date}"
+title_format = "## {version} - {project_date}"
 issue_format = "[#{issue}](https://github.com/wkentaro/labelme/pull/{issue})"
-issue_pattern = '\d+'
 ignore = ["README.md"]
-
-[[tool.towncrier.type]]
-directory = "added"
-name = "Added"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "changed"
-name = "Changed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "deprecated"
-name = "Deprecated"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "removed"
-name = "Removed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "security"
-name = "Security"
-showcontent = true
+type = [
+  { directory = "added", name = "Added", showcontent = true },
+  { directory = "changed", name = "Changed", showcontent = true },
+  { directory = "deprecated", name = "Deprecated", showcontent = true },
+  { directory = "removed", name = "Removed", showcontent = true },
+  { directory = "fixed", name = "Fixed", showcontent = true },
+  { directory = "security", name = "Security", showcontent = true },
+]
 
 [tool.pytest.ini_options]
 addopts = "-m 'not network'"

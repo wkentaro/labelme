@@ -15,14 +15,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
       - uses: astral-sh/setup-uv@v7
       - run: make check_translate
-      - name: Extract release notes from CHANGELOG.md
-        id: release_notes
-        run: uv run tools/release_notes.py "$GITHUB_REF_NAME" CHANGELOG.md release-notes.md
-          >> "$GITHUB_OUTPUT"
       - name: Validate release artifacts
         uses: ./.github/actions/artifact-install-smoke
       - uses: pypa/gh-action-pypi-publish@release/v1
@@ -32,12 +26,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |-
-          args=(
-            "$GITHUB_REF_NAME"
-            --title "$GITHUB_REF_NAME"
-            --notes-file release-notes.md
-          )
-          if [[ "${{ steps.release_notes.outputs.prerelease }}" == "true" ]]; then
-            args+=(--prerelease)
-          fi
-          gh release create "${args[@]}"
+          version=${GITHUB_REF_NAME#v}
+          awk -v heading="## $version " 'index($0, heading) == 1 {found = 1; next}
+            found && /^## / {exit} found' CHANGELOG.md > notes.md
+          test -s notes.md
+          case $version in *[a-z]*) prerelease=--prerelease ;; esac
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" \
+            --notes-file notes.md $prerelease
