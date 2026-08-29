@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
 
 <!-- towncrier release notes start -->
 
-## [7.2.0] - 2026-08-27
+## 7.2.0 - 2026-08-27
 
 ### Added
 
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Kept the image point beneath the cursor stationary during Ctrl/Cmd-wheel zoom without canvas flicker. ([#2553](https://github.com/wkentaro/labelme/pull/2553))
 - Fixed `labelme --help` showing a Python executable and temporary launcher path instead of the stable `labelme` command on Windows with Python 3.14. ([#2559](https://github.com/wkentaro/labelme/pull/2559))
 
-## [7.1.0] - 2026-08-21
+## 7.1.0 - 2026-08-21
 
 ### Added
 
@@ -99,13 +99,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed exported Mask Shapes with fractional bounds being shifted by integer truncation instead of matching their canvas position ([#2504](https://github.com/wkentaro/labelme/pull/2504))
 - Fixed AI Assist and AI Text Prompt oriented-rectangle Shapes extending beyond the Image when out-of-bounds points are disabled. Edge-crossing fits now use an in-bounds axis-aligned rectangle, while enabling out-of-bounds points preserves the original vertices ([#2512](https://github.com/wkentaro/labelme/pull/2512)) ([#2506](https://github.com/wkentaro/labelme/pull/2506))
 
-## [7.0.4] - 2026-07-12
+## 7.0.4 - 2026-07-12
 
 ### Fixed
 
 - Fixed AI Assist / AI Box crashing with `ValueError: incorrect coordinate type` when suppressing detections that overlap an existing polygon or oriented-rectangle shape on Pillow older than 11.2.1; the overlap check rasterized the existing shape by passing a list-of-lists (`ndarray.tolist()`) to `PIL.ImageDraw.polygon`, which older Pillow rejects, so it now passes the documented list-of-tuples form as elsewhere in the codebase ([#2331](https://github.com/wkentaro/labelme/pull/2331))
 
-## [7.0.3] - 2026-07-11
+## 7.0.3 - 2026-07-11
 
 ### Fixed
 
@@ -117,13 +117,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a startup crash when a config section is set to a non-mapping value such as `shortcuts: oops`; the malformed section now surfaces in the configuration-error dialog (with an Ignore-and-use-defaults option) instead of crashing ([#2300](https://github.com/wkentaro/labelme/pull/2300))
 - Fixed noisy Qt log lines flooding the terminal (notably the macOS per-keypress `qt.qpa.keymapper: Mismatch between Cocoa and Carbon` warning); Qt logging is now routed through the app logger with these harmless lines filtered out while genuine Qt warnings still surface ([#2292](https://github.com/wkentaro/labelme/pull/2292))
 
-## [7.0.2] - 2026-07-03
+## 7.0.2 - 2026-07-03
 
 ### Fixed
 
 - Fixed Undo (Ctrl+Z) not triggering auto-save; undoing a shape edit now marks the file dirty, so with auto-save on the restored state is written to disk instead of leaving the previous edit saved ([#2288](https://github.com/wkentaro/labelme/pull/2288))
 
-## [7.0.1] - 2026-07-03
+## 7.0.1 - 2026-07-03
 
 ### Changed
 
@@ -133,7 +133,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed the label dialog visibly jumping right after opening; the post-show screen-edge correction now only nudges the dialog when it actually overflows the screen ([#2286](https://github.com/wkentaro/labelme/pull/2286))
 
-## [7.0.0] - 2026-07-03
+## 7.0.0 - 2026-07-03
 
 ### Added
 
@@ -187,13 +187,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed the label dialog overflowing the screen when a label has many flags by making the flag list scrollable and keeping the popup on screen ([#2263](https://github.com/wkentaro/labelme/pull/2263))
 - Fixed the Edit Label dialog opening away from the cursor instead of at the context-menu origin ([#2264](https://github.com/wkentaro/labelme/pull/2264))
 
-## [6.3.1] - 2026-05-27
+## 6.3.1 - 2026-05-27
 
 ### Fixed
 
 - Fixed a crash when switching drawing modes while a shape was partially drawn; the in-progress shape is now retyped when both modes accept a single click as a starting point, and cancelled otherwise. Degenerate shapes (zero-area rectangle, zero-length line, polygon with fewer than 3 distinct vertices) are now rejected at the point of completion ([#2103](https://github.com/wkentaro/labelme/pull/2103))
 
-## [6.3.0] - 2026-05-19
+## 6.3.0 - 2026-05-19
 
 ### Added
 
@@ -206,7 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed AI detections with empty segmentation masks being emitted as transparent shapes; they are now dropped ([#2094](https://github.com/wkentaro/labelme/pull/2094))
 - Fixed vertex-drag handles appearing on mask shapes, which previously shifted the bounding box without moving the underlying bitmap ([#2095](https://github.com/wkentaro/labelme/pull/2095))
 
-## [6.2.0] - 2026-05-10
+## 6.2.0 - 2026-05-10
 
 ### Added
 
@@ -232,25 +232,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed oriented rectangle being lost when cancelling the label dialog after drawing ([#2079](https://github.com/wkentaro/labelme/pull/2079))
 - Fixed `validate_label: null` not skipping validation as documented
 
-## [6.1.3] - 2026-04-24
+## 6.1.3 - 2026-04-24
 
 ### Fixed
 
 - Stale snap highlight no longer stays on canvas after scroll, zoom, or resize ([#1975](https://github.com/wkentaro/labelme/pull/1975))
 
-## [6.1.2] - 2026-04-21
+## 6.1.2 - 2026-04-21
 
 ### Fixed
 
 - Restored first-vertex snap highlight when closing a polygon ([#1974](https://github.com/wkentaro/labelme/pull/1974))
 
-## [6.1.1] - 2026-04-19
+## 6.1.1 - 2026-04-19
 
 ### Fixed
 
 - Fixed Ctrl/Cmd+A (Edit > Select All) not working when the canvas has focus ([#1964](https://github.com/wkentaro/labelme/pull/1964))
 
-## [6.1.0] - 2026-04-16
+## 6.1.0 - 2026-04-16
 
 ### Added
 
@@ -285,19 +285,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed AI mode tooltip names to match the renamed menu labels ([#1928](https://github.com/wkentaro/labelme/pull/1928))
 - Equalized button widths in the vertical toolbar ([#1961](https://github.com/wkentaro/labelme/pull/1961))
 
-## [6.0.2] - 2026-04-16
+## 6.0.2 - 2026-04-16
 
 ### Fixed
 
 - Fixed broken images on the PyPI project page by rewriting relative image paths to absolute GitHub raw URLs at build time ([#1954](https://github.com/wkentaro/labelme/pull/1954))
 
-## [6.0.1] - 2026-04-16
+## 6.0.1 - 2026-04-16
 
 ### Fixed
 
 - Fixed the "Save Automatically" checkbox having no effect after v6.0.0 changed its default to enabled ([#1953](https://github.com/wkentaro/labelme/pull/1953))
 
-## [6.0.0] - 2026-03-28
+## 6.0.0 - 2026-03-28
 
 ### Added
 
@@ -350,7 +350,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed display issues by forcing light mode (dark mode not yet supported) ([#1808](https://github.com/wkentaro/labelme/pull/1808))
 - Fixed points on the edge of the image being rejected; edge placement is now allowed ([#1801](https://github.com/wkentaro/labelme/pull/1801))
 
-## [5.11.4] - 2026-03-10
+## 5.11.4 - 2026-03-10
 
 ### Added
 
@@ -360,23 +360,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed window state reset for users upgrading from older versions ([#1863](https://github.com/wkentaro/labelme/pull/1863))
 
-## [5.11.3] - 2026-02-20
+## 5.11.3 - 2026-02-20
 
 ### Fixed
 
 - Forced light mode since dark mode is not yet supported
 
-## [5.11.2] - 2026-01-31
+## 5.11.2 - 2026-01-31
 
 ### Fixed
 
 - Fixed mask being set and drawn for non-mask shapes (e.g. polygon) ([#1797](https://github.com/wkentaro/labelme/pull/1797))
 
-## [5.11.1] - 2026-01-28
+## 5.11.1 - 2026-01-28
 
 _No user-facing changes._
 
-## [5.11.0] - 2026-01-28
+## 5.11.0 - 2026-01-28
 
 ### Added
 
@@ -424,7 +424,7 @@ _No user-facing changes._
 - Fixed the file list not being filtered immediately when opening a directory with a file_search config filter ([#1788](https://github.com/wkentaro/labelme/pull/1788))
 - Fixed Japanese (ja_JP) menu and toolbar labels wrapping incorrectly by adding explicit newlines ([#1768](https://github.com/wkentaro/labelme/pull/1768))
 
-## [5.10.1] - 2025-11-29
+## 5.10.1 - 2025-11-29
 
 ### Fixed
 
@@ -432,7 +432,7 @@ _No user-facing changes._
 - Fixed a crash on double-click shape finalization by correctly checking whether the shape was closeable
 - Fixed a startup crash on some systems by importing onnxruntime before PyQt5
 
-## [5.10.0] - 2025-11-25
+## 5.10.0 - 2025-11-25
 
 ### Added
 
@@ -464,13 +464,13 @@ _No user-facing changes._
 - Fixed excessive VRAM usage by removing the cache on the SAM model ([#1715](https://github.com/wkentaro/labelme/pull/1715))
 - Fixed a duplicate unsaved-changes confirmation dialog when navigating between images ([#1693](https://github.com/wkentaro/labelme/pull/1693))
 
-## [5.9.1] - 2025-10-17
+## 5.9.1 - 2025-10-17
 
 ### Fixed
 
 - Fixed canvas cursor so changes take effect immediately without flickering ([#1681](https://github.com/wkentaro/labelme/pull/1681))
 
-## [5.9.0] - 2025-10-16
+## 5.9.0 - 2025-10-16
 
 ### Added
 
@@ -493,7 +493,7 @@ _No user-facing changes._
 - Fixed the brightness/contrast dialog failing on non-RGB images (e.g. PNG with alpha channel) ([#1655](https://github.com/wkentaro/labelme/pull/1655))
 - Fixed the Save Automatically checkmark not appearing on Windows ([#1657](https://github.com/wkentaro/labelme/pull/1657))
 
-## [5.8.3] - 2025-07-13
+## 5.8.3 - 2025-07-13
 
 ### Fixed
 
@@ -501,7 +501,7 @@ _No user-facing changes._
 - Fixed the AI mask feature crashing due to a missing file-handle attribute on the logger's output stream ([#1603](https://github.com/wkentaro/labelme/pull/1603))
 - Fixed Python 3.12 compatibility when loading Docker by replacing the deprecated executable-search function with the standard `shutil.which` ([#1589](https://github.com/wkentaro/labelme/pull/1589))
 
-## [5.8.2] - 2025-06-21
+## 5.8.2 - 2025-06-21
 
 ### Changed
 
@@ -514,13 +514,13 @@ _No user-facing changes._
 - Fixed a crash when switching from AI polygon mode to polygon mode after the AI model was initialized ([#1588](https://github.com/wkentaro/labelme/pull/1588))
 - Fixed shape flags staying disabled in the label dialog after group-editing flags on multiple shapes
 
-## [5.8.1] - 2025-03-24
+## 5.8.1 - 2025-03-24
 
 ### Fixed
 
 - Fixed missing check for AI segmentation model in canvas finalization ([#1566](https://github.com/wkentaro/labelme/pull/1566))
 
-## [5.8.0] - 2025-03-16
+## 5.8.0 - 2025-03-16
 
 ### Added
 
@@ -536,7 +536,7 @@ _No user-facing changes._
 - Fixed a crash when finishing a shape in AI-mask or AI-polygon mode ([#1558](https://github.com/wkentaro/labelme/pull/1558))
 - Fixed a crash caused by a null bounding box in AI-mask mode response ([#1556](https://github.com/wkentaro/labelme/pull/1556))
 
-## [5.7.0] - 2025-03-04
+## 5.7.0 - 2025-03-04
 
 ### Changed
 
@@ -547,14 +547,14 @@ _No user-facing changes._
 - Fixed a crash when a shape's flags field is None, which occurred when using AI text-to-rectangle ([#1536](https://github.com/wkentaro/labelme/pull/1536))
 - Fixed a crash in the packaged app caused by missing stderr when downloading AI models via gdown ([#1549](https://github.com/wkentaro/labelme/pull/1549))
 
-## [5.6.1] - 2025-01-23
+## 5.6.1 - 2025-01-23
 
 ### Fixed
 
 - Fixed an encoding error on Windows when reading annotation files ([#1525](https://github.com/wkentaro/labelme/pull/1525))
 - Fixed a crash on startup caused by an undefined logging method when using loguru ([#1530](https://github.com/wkentaro/labelme/pull/1530))
 
-## [5.6.0] - 2024-12-30
+## 5.6.0 - 2024-12-30
 
 ### Added
 
@@ -571,7 +571,7 @@ _No user-facing changes._
 - Fixed group ID editing when the text field is disabled ([#1497](https://github.com/wkentaro/labelme/pull/1497))
 - Fixed crosshair and point size rendering to stay consistent regardless of zoom level ([#1471](https://github.com/wkentaro/labelme/pull/1471))
 
-## [5.5.0] - 2024-06-13
+## 5.5.0 - 2024-06-13
 
 ### Added
 
@@ -591,7 +591,7 @@ _No user-facing changes._
 - Fixed slider alignment in the brightness/contrast dialog
 - Fixed stride value in the brightness/contrast dialog
 
-## [5.4.1] - 2024-01-06
+## 5.4.1 - 2024-01-06
 
 ### Added
 
@@ -602,7 +602,7 @@ _No user-facing changes._
 - Fixed an encoding error on Windows caused by emoji characters in output ([#1390](https://github.com/wkentaro/labelme/pull/1390))
 - Fixed crashes during annotation caused by empty contours ([#1391](https://github.com/wkentaro/labelme/pull/1391))
 
-## [5.4.0] - 2023-12-31
+## 5.4.0 - 2023-12-31
 
 ### Added
 
@@ -632,13 +632,13 @@ _No user-facing changes._
 - Fixed a crash caused by an incompatible `onnxruntime` version by pinning away from 1.16.0 ([#1364](https://github.com/wkentaro/labelme/pull/1364))
 - Fixed a crash when an AI mode was activated before an image was loaded
 
-## [5.3.1] - 2023-08-22
+## 5.3.1 - 2023-08-22
 
 ### Fixed
 
 - Fixed `labelme_export_json` CLI to strip only the file extension from the output directory name, so files with multiple dots (e.g. `image.v2.json`) no longer produce a mangled directory name
 
-## [5.3.0] - 2023-08-06
+## 5.3.0 - 2023-08-06
 
 ### Added
 
@@ -666,13 +666,13 @@ _No user-facing changes._
 - Treated zero-length lines as lines to avoid unintuitive behavior ([#1262](https://github.com/wkentaro/labelme/pull/1262))
 - Fixed portrait-orientation image handling in Segment Anything Model ([#1262](https://github.com/wkentaro/labelme/pull/1262))
 
-## [5.2.1] - 2023-05-16
+## 5.2.1 - 2023-05-16
 
 ### Fixed
 
 - Fixed an undefined label description when the label popup is disabled ([#1270](https://github.com/wkentaro/labelme/pull/1270))
 
-## [5.2.0] - 2023-04-06
+## 5.2.0 - 2023-04-06
 
 ### Added
 
@@ -683,13 +683,13 @@ _No user-facing changes._
 - Fixed floating-point coordinate handling when moving multiple shapes on the canvas ([#1253](https://github.com/wkentaro/labelme/pull/1253))
 - Fixed removing a vertex from a polygon or linestrip that was already at its minimum point count, which would produce a malformed shape ([#1254](https://github.com/wkentaro/labelme/pull/1254))
 
-## [5.1.1] - 2022-11-20
+## 5.1.1 - 2022-11-20
 
 ### Fixed
 
 - Removed the overly broad matplotlib version restriction from install requirements; the constraint is only needed when building the standalone executable, so regular installs can now use any matplotlib version
 
-## [5.1.0] - 2022-11-15
+## 5.1.0 - 2022-11-15
 
 ### Added
 
@@ -699,13 +699,13 @@ _No user-facing changes._
 
 - **Breaking:** Removed Docker support as it was unstable and Docker Hub policy changed
 
-## [5.0.5] - 2022-10-30
+## 5.0.5 - 2022-10-30
 
 ### Fixed
 
 - Fixed a TypeError when using the polygon annotation tool on Python 3.10 caused by an internal point type mismatch
 
-## [5.0.4] - 2022-10-24
+## 5.0.4 - 2022-10-24
 
 ### Fixed
 
@@ -713,24 +713,24 @@ _No user-facing changes._
 - Fixed a crash when scrolling annotations loaded from older JSON files due to a float value passed to the scroll bar
 - Fixed removing the last point of a shape not always marking the annotation as modified
 
-## [5.0.3] - 2022-10-23
+## 5.0.3 - 2022-10-23
 
 ### Fixed
 
 - Fixed type errors when annotating on Python 3.10
 
-## [5.0.2] - 2022-09-26
+## 5.0.2 - 2022-09-26
 
 ### Fixed
 
 - Fixed a crash when editing a label whose name does not exist in the label list
 - Escaped label names so that labels containing angle brackets (e.g. `<cat>`, `<background>`) are displayed and handled correctly
 
-## [5.0.1] - 2022-03-03
+## 5.0.1 - 2022-03-03
 
 _No user-facing changes._
 
-## [5.0.0] - 2022-02-26
+## 5.0.0 - 2022-02-26
 
 ### Changed
 
@@ -745,53 +745,3 @@ _No user-facing changes._
 ## v4.6.0 and earlier
 
 See the [GitHub Releases](https://github.com/wkentaro/labelme/releases) page for changelogs of v4.6.0 and earlier.
-
-[5.0.0]: https://github.com/wkentaro/labelme/compare/v4.6.0...v5.0.0
-[5.0.1]: https://github.com/wkentaro/labelme/compare/v5.0.0...v5.0.1
-[5.0.2]: https://github.com/wkentaro/labelme/compare/v5.0.1...v5.0.2
-[5.0.3]: https://github.com/wkentaro/labelme/compare/v5.0.2...v5.0.3
-[5.0.4]: https://github.com/wkentaro/labelme/compare/v5.0.3...v5.0.4
-[5.0.5]: https://github.com/wkentaro/labelme/compare/v5.0.4...v5.0.5
-[5.1.0]: https://github.com/wkentaro/labelme/compare/v5.0.5...v5.1.0
-[5.1.1]: https://github.com/wkentaro/labelme/compare/v5.1.0...v5.1.1
-[5.10.0]: https://github.com/wkentaro/labelme/compare/v5.9.1...v5.10.0
-[5.10.1]: https://github.com/wkentaro/labelme/compare/v5.10.0...v5.10.1
-[5.11.0]: https://github.com/wkentaro/labelme/compare/v5.10.1...v5.11.0
-[5.11.1]: https://github.com/wkentaro/labelme/compare/v5.11.0...v5.11.1
-[5.11.2]: https://github.com/wkentaro/labelme/compare/v5.11.1...v5.11.2
-[5.11.3]: https://github.com/wkentaro/labelme/compare/v5.11.2...v5.11.3
-[5.11.4]: https://github.com/wkentaro/labelme/compare/v5.11.3...v5.11.4
-[5.2.0]: https://github.com/wkentaro/labelme/compare/v5.1.1...v5.2.0
-[5.2.1]: https://github.com/wkentaro/labelme/compare/v5.2.0...v5.2.1
-[5.3.0]: https://github.com/wkentaro/labelme/compare/v5.2.1...v5.3.0
-[5.3.1]: https://github.com/wkentaro/labelme/compare/v5.3.0...v5.3.1
-[5.4.0]: https://github.com/wkentaro/labelme/compare/v5.3.1...v5.4.0
-[5.4.1]: https://github.com/wkentaro/labelme/compare/v5.4.0...v5.4.1
-[5.5.0]: https://github.com/wkentaro/labelme/compare/v5.4.1...v5.5.0
-[5.6.0]: https://github.com/wkentaro/labelme/compare/v5.5.0...v5.6.0
-[5.6.1]: https://github.com/wkentaro/labelme/compare/v5.6.0...v5.6.1
-[5.7.0]: https://github.com/wkentaro/labelme/compare/v5.6.1...v5.7.0
-[5.8.0]: https://github.com/wkentaro/labelme/compare/v5.7.0...v5.8.0
-[5.8.1]: https://github.com/wkentaro/labelme/compare/v5.8.0...v5.8.1
-[5.8.2]: https://github.com/wkentaro/labelme/compare/v5.8.1...v5.8.2
-[5.8.3]: https://github.com/wkentaro/labelme/compare/v5.8.2...v5.8.3
-[5.9.0]: https://github.com/wkentaro/labelme/compare/v5.8.3...v5.9.0
-[5.9.1]: https://github.com/wkentaro/labelme/compare/v5.9.0...v5.9.1
-[6.0.0]: https://github.com/wkentaro/labelme/compare/v5.11.4...v6.0.0
-[6.0.1]: https://github.com/wkentaro/labelme/compare/v6.0.0...v6.0.1
-[6.0.2]: https://github.com/wkentaro/labelme/compare/v6.0.1...v6.0.2
-[6.1.0]: https://github.com/wkentaro/labelme/compare/v6.0.2...v6.1.0
-[6.1.1]: https://github.com/wkentaro/labelme/compare/v6.1.0...v6.1.1
-[6.1.2]: https://github.com/wkentaro/labelme/compare/v6.1.1...v6.1.2
-[6.1.3]: https://github.com/wkentaro/labelme/compare/v6.1.2...v6.1.3
-[6.2.0]: https://github.com/wkentaro/labelme/compare/v6.1.3...v6.2.0
-[6.3.0]: https://github.com/wkentaro/labelme/compare/v6.2.0...v6.3.0
-[6.3.1]: https://github.com/wkentaro/labelme/compare/v6.3.0...v6.3.1
-[7.0.0]: https://github.com/wkentaro/labelme/compare/v6.3.1...v7.0.0
-[7.0.1]: https://github.com/wkentaro/labelme/compare/v7.0.0...v7.0.1
-[7.0.2]: https://github.com/wkentaro/labelme/compare/v7.0.1...v7.0.2
-[7.0.3]: https://github.com/wkentaro/labelme/compare/v7.0.2...v7.0.3
-[7.0.4]: https://github.com/wkentaro/labelme/compare/v7.0.3...v7.0.4
-[7.1.0]: https://github.com/wkentaro/labelme/compare/v7.0.4...v7.1.0
-[7.2.0]: https://github.com/wkentaro/labelme/compare/v7.1.0...v7.2.0
-[unreleased]: https://github.com/wkentaro/labelme/compare/v7.2.0...main

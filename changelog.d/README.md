@@ -1,27 +1,24 @@
 # Changelog fragments
 
-Each user-facing change ships as one file in this directory instead of editing
+Each user-facing change ships as one file here instead of editing
 `CHANGELOG.md` directly, so concurrent pull requests never conflict.
 
-- Filename: `<PR number>.<type>.md`, where `<type>` is one of `added`,
-  `changed`, `deprecated`, `removed`, `fixed`, `security` (the Keep a Changelog
-  section the entry belongs in). A second fragment for the same PR and type
-  gets a counter suffix: `1234.fixed.2.md`. Add the fragment after opening the
-  PR, when its number is known.
-- Content: the entry as a single line without a bullet or PR link, e.g.
-  `Fixed the thing`. Towncrier adds the link from the filename. Prefix
-  `**Breaking:**` for changes that bump the major version.
+Name the file `<PR number>.<type>.md`, where `<type>` is one of `added`,
+`changed`, `deprecated`, `removed`, `fixed`, or `security`. A second fragment
+for the same PR and type takes a counter suffix: `1234.fixed.2.md`. Add the
+fragment after opening the PR, when its number is known.
 
-There is no minimum release size. Release a minor version for any ready
-backward-compatible feature or improvement; do not wait to accumulate changes.
-Release patches for backward-compatible fixes only.
+Write the entry as a single line without a bullet or PR link; towncrier adds
+the link from the filename. Prefix `**Breaking:**` for changes that bump the
+major version.
 
-To release version `X.Y.Z` on `YYYY-MM-DD`:
+Release a minor version for any ready backward-compatible improvement and a
+patch for backward-compatible fixes; there is no minimum release size.
 
-1. Run `uv run towncrier build --yes --version X.Y.Z --date YYYY-MM-DD`.
-2. Add `[X.Y.Z]: https://github.com/wkentaro/labelme/compare/v<previous>...vX.Y.Z`
-   to the link list at the bottom of `CHANGELOG.md`, then update `[Unreleased]`
-   to compare `vX.Y.Z...main`.
-3. Commit the updated changelog and deleted fragments, then tag that commit.
+To release version `X.Y.Z`:
 
-Prerelease tags render pending fragments without changing files.
+1. Run `uv run towncrier build --yes --version X.Y.Z`.
+2. Commit the updated changelog and deleted fragments, then tag that commit.
+
+Pushing the tag publishes to PyPI and creates the GitHub release from the
+matching `CHANGELOG.md` section.
