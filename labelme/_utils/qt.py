@@ -69,7 +69,7 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         return pixmap
 
     def pixmap(
-        self, size: QtCore.QSize, mode: QtGui.QIcon.Mode, state: QtGui.QIcon.State
+        self, size: QtCore.QSize, mode: QtGui.QIcon.Mode, _state: QtGui.QIcon.State
     ) -> QtGui.QPixmap:
         # Copy so neither callers nor Qt's scaledPixmap (which sets a device pixel
         # ratio on the result) mutate the shared cached pixmap.
@@ -81,7 +81,7 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         painter: QtGui.QPainter,
         rect: QtCore.QRect,
         mode: QtGui.QIcon.Mode,
-        state: QtGui.QIcon.State,
+        _state: QtGui.QIcon.State,
     ) -> None:
         # Render at device pixels so the icon stays crisp on HiDPI/Retina screens,
         # where rect is in device-independent coordinates. Copy before stamping the

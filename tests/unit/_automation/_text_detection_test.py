@@ -140,9 +140,7 @@ def test_nms_bboxes_scatters_scores_into_one_hot_class_matrix(
         *,
         boxes: np.ndarray,
         scores: np.ndarray,
-        iou_threshold: float,
-        score_threshold: float,
-        max_num_detections: int,
+        **_kwargs: object,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         captured["scores"] = scores
         keep = np.array([0], dtype=np.int64)

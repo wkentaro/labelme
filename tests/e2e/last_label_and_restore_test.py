@@ -45,7 +45,7 @@ def discard_unsaved_changes(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         QMessageBox,
         "question",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
     )
 
 
@@ -90,7 +90,7 @@ def test_restore_last_shape_via_undo(
         QPointF(float(p[0]), float(p[1])) for p in canvas.shapes[0].points
     ]
 
-    monkeypatch.setattr(raw_win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(raw_win, "_confirm_deletion", lambda *_args, **_kwargs: True)
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     raw_win.delete_selected_shapes()
@@ -161,10 +161,10 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("discard_unsaved_changes")
 def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
     qtbot: QtBot,
     main_win: MainWinFactory,
-    discard_unsaved_changes: None,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
@@ -195,10 +195,10 @@ def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
 
 @pytest.mark.gui
 @pytest.mark.parametrize("image_dir", ["raw", "annotated"])
+@pytest.mark.usefixtures("discard_unsaved_changes")
 def test_navigation_disables_undo_for_clean_image_history(
     qtbot: QtBot,
     main_win: MainWinFactory,
-    discard_unsaved_changes: None,
     data_path: Path,
     image_dir: str,
     pause: bool,

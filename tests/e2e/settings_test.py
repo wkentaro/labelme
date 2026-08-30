@@ -144,10 +144,10 @@ def test_setting_change_persists_and_applies(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("use_widget_color_dialog")
 def test_shape_color_picker_previews_and_persists_only_on_accept(
     main_win: MainWinFactory,
     qtbot: QtBot,
-    use_widget_color_dialog: None,
     editable_config_file: Path,
     data_path: Path,
     pause: bool,
@@ -336,7 +336,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: warned.append(args[2]),
+        lambda *args, **_kwargs: warned.append(args[2]),
     )
 
     dialog = _open_settings_dialog(win=win)
@@ -382,7 +382,7 @@ def test_setting_controls_revert_when_write_fails(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: warned.append(args[2]),
+        lambda *args, **_kwargs: warned.append(args[2]),
     )
 
     dialog = _open_settings_dialog(win=win)
@@ -400,7 +400,7 @@ def test_setting_controls_revert_when_write_fails(
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
     # a read-only directory does not block writes.
-    def _refuse_write(*, config_file: Path, content: str) -> None:
+    def _refuse_write(*, config_file: Path, **_kwargs: object) -> None:
         raise PermissionError(f"injected write failure: {config_file}")
 
     monkeypatch.setattr(_writer, "_atomic_write", _refuse_write)
@@ -436,7 +436,7 @@ def test_settings_dialog_is_deleted_when_opening_text_editor(
 
     deleted: list[bool] = []
     dialog.destroyed.connect(lambda: deleted.append(True))
-    monkeypatch.setattr("labelme._app.subprocess.Popen", lambda *args, **kwargs: None)
+    monkeypatch.setattr("labelme._app.subprocess.Popen", lambda *_args, **_kwargs: None)
 
     win._open_config_file()
 

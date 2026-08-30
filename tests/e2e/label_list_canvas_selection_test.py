@@ -168,7 +168,7 @@ def test_delete_shape_removes_label_list_entry(
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_selected_shapes()
     qtbot.waitUntil(lambda: len(label_list) == count_before - 1)
     assert len(canvas.shapes) == count_before - 1
@@ -239,7 +239,7 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
     monkeypatch.setattr(
         QMessageBox,
         "critical",
-        lambda *args, **kwargs: error_shown.append(True)
+        lambda *_args, **_kwargs: error_shown.append(True)
         or QMessageBox.StandardButton.Ok,
     )
 

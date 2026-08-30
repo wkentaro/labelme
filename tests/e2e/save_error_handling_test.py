@@ -31,13 +31,13 @@ def test_save_labels_reports_filesystem_failure_without_crashing(
 
     errors_shown: list[bool] = []
 
-    def _record_critical(*args: object, **kwargs: object) -> int:
+    def _record_critical(*_args: object, **_kwargs: object) -> int:
         errors_shown.append(True)
         return QMessageBox.StandardButton.Ok
 
     monkeypatch.setattr(QMessageBox, "critical", _record_critical)
 
-    def _raise(*args: object, **kwargs: object) -> None:
+    def _raise(*_args: object, **_kwargs: object) -> None:
         raise PermissionError("read-only output directory")
 
     monkeypatch.setattr("pathlib.Path.mkdir", _raise)

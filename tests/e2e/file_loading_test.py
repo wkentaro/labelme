@@ -270,7 +270,7 @@ def choose_candidate_output_dir(
     monkeypatch.setattr(
         QtWidgets.QFileDialog,
         "getExistingDirectory",
-        lambda *args, **kwargs: str(candidate_dir),
+        lambda *_args, **_kwargs: str(candidate_dir),
     )
     return candidate_dir
 
@@ -481,7 +481,7 @@ def test_failed_navigation_refreshes_title_after_saving(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "question",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Save,
+        lambda *_args, **_kwargs: QtWidgets.QMessageBox.StandardButton.Save,
     )
 
     win._open_next_image()

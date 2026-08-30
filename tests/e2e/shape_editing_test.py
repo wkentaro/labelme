@@ -49,7 +49,7 @@ def _delete_selected_shape(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
 ) -> None:
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_selected_shapes()
     qtbot.wait(50)
 
@@ -215,7 +215,7 @@ def test_right_drag_copy_here_duplicates_shape(
     # and return it truthy so the canvas treats the release as handled.
     copy_here_action = canvas.context_menus.with_selection.actions()[0]
 
-    def trigger_copy_here(*args: object, **kwargs: object) -> object:
+    def trigger_copy_here(*_args: object, **_kwargs: object) -> object:
         copy_here_action.trigger()
         return copy_here_action
 

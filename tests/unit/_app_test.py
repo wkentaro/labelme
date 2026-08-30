@@ -12,7 +12,6 @@ import pytest
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
-from PySide6 import QtWidgets
 
 from labelme import __appname__
 from labelme import _app
@@ -166,9 +165,8 @@ def test_make_image_too_large_message_accounts_for_bit_depth(
     assert "2 MB" in message
 
 
-def test_make_image_too_large_message_reports_per_side_limit(
-    qapp: QtWidgets.QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_make_image_too_large_message_reports_per_side_limit() -> None:
     # A hand-built PNG whose header claims the dimensions from #2388 but
     # carries no pixel data: QImageReader reads the size from the header
     # alone, so the real decode path runs without a multi-GB allocation.
@@ -215,15 +213,13 @@ def test_make_image_too_large_message_rounds_the_need_up(
     assert "2 MB" in message
 
 
-def test_make_image_too_large_message_is_none_for_undecodable_data(
-    qapp: QtWidgets.QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_make_image_too_large_message_is_none_for_undecodable_data() -> None:
     assert _app._make_image_too_large_message(image_data=b"not an image") is None
 
 
-def test_make_image_too_large_message_is_none_within_allocation_limit(
-    qapp: QtWidgets.QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_make_image_too_large_message_is_none_within_allocation_limit() -> None:
     assert (
         _app._make_image_too_large_message(
             image_data=_make_png_bytes(
@@ -482,7 +478,7 @@ def test_resolve_label_path(
 def test_resolve_stored_image_path_falls_back_to_absolute(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def _raise(*args: object, **kwargs: object) -> str:
+    def _raise(*_args: object, **_kwargs: object) -> str:
         raise ValueError("path is on mount 'D:', start on mount 'C:'")
 
     monkeypatch.setattr("os.path.relpath", _raise)

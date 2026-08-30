@@ -69,7 +69,9 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
         load_calls.append(image_or_label_path)
         load_file(image_or_label_path=image_or_label_path)
 
-    def _track_question(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+    def _track_question(
+        *_args: object, **_kwargs: object
+    ) -> QMessageBox.StandardButton:
         questions.append(True)
         return QMessageBox.StandardButton.Discard
 

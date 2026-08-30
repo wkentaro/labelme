@@ -86,7 +86,7 @@ def test_validate_label_exact_rejects_unknown_label(
 
     error_shown: list[bool] = []
 
-    def _record_critical(*args: object, **kwargs: object) -> int:
+    def _record_critical(*_args: object, **_kwargs: object) -> int:
         error_shown.append(True)
         return QMessageBox.StandardButton.Ok
 

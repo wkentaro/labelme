@@ -60,7 +60,7 @@ def install_fake_model(
         monkeypatch.setattr(
             osam.apis,
             "get_model_type_by_name",
-            lambda name: (lambda: _FakeModel(registry)),
+            lambda _name: (lambda: _FakeModel(registry)),
         )
         return registry
 

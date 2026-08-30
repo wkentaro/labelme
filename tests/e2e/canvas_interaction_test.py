@@ -803,12 +803,12 @@ def test_right_click_on_shape_opens_context_menu(
     monkeypatch.setattr(
         canvas.context_menus.without_selection,
         "exec",
-        lambda *args, **kwargs: menu_opened.append(0) or None,
+        lambda *_args, **_kwargs: menu_opened.append(0) or None,
     )
     monkeypatch.setattr(
         canvas.context_menus.with_selection,
         "exec",
-        lambda *args, **kwargs: menu_opened.append(1) or None,
+        lambda *_args, **_kwargs: menu_opened.append(1) or None,
     )
 
     bounds_center = _shape_bounds(shape=canvas.shapes[_SHAPE_INDEX]).center()

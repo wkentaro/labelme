@@ -98,7 +98,7 @@ def test_cancelled_close_keeps_persisted_window_state(
     prompt_shown = [False]
 
     def cancel_save_prompt(
-        *args: object, **kwargs: object
+        *_args: object, **_kwargs: object
     ) -> QMessageBox.StandardButton:
         prompt_shown[0] = True
         return QMessageBox.StandardButton.Cancel

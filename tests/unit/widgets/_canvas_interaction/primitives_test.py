@@ -5,7 +5,6 @@ from typing import Final
 import numpy as np
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QMenu
 
 from labelme._shape import Shape
@@ -362,9 +361,8 @@ def test_cursor_shape_for_all_roles(role: CursorRole, expected: Qt.CursorShape) 
 
 
 @pytest.mark.gui
-def test_context_menu_pair_menu_for_no_selection(
-    qapp: QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_context_menu_pair_menu_for_no_selection() -> None:
     without = QMenu()
     with_ = QMenu()
     pair = ContextMenuPair(without_selection=without, with_selection=with_)
@@ -372,9 +370,8 @@ def test_context_menu_pair_menu_for_no_selection(
 
 
 @pytest.mark.gui
-def test_context_menu_pair_menu_for_with_selection(
-    qapp: QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_context_menu_pair_menu_for_with_selection() -> None:
     without = QMenu()
     with_ = QMenu()
     pair = ContextMenuPair(without_selection=without, with_selection=with_)
@@ -382,9 +379,8 @@ def test_context_menu_pair_menu_for_with_selection(
 
 
 @pytest.mark.gui
-def test_context_menu_pair_stores_menus_as_named_attributes(
-    qapp: QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_context_menu_pair_stores_menus_as_named_attributes() -> None:
     without = QMenu()
     with_ = QMenu()
     pair = ContextMenuPair(without_selection=without, with_selection=with_)

@@ -193,7 +193,7 @@ class LabelDialog(QtWidgets.QDialog):
     def _on_label_selected(
         self,
         current: QtWidgets.QListWidgetItem | None,
-        previous: QtWidgets.QListWidgetItem | None,
+        _previous: QtWidgets.QListWidgetItem | None,
         /,
     ) -> None:
         if current is None:

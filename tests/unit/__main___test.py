@@ -240,12 +240,12 @@ def remove_loguru_sinks() -> Iterator[None]:
     logger.remove()
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
-    def raise_permission_error(*args: object, **kwargs: object) -> None:
+    def raise_permission_error(*_args: object, **_kwargs: object) -> None:
         raise PermissionError(13, "Permission denied")
 
     monkeypatch.setattr(Path, "mkdir", raise_permission_error)
@@ -257,12 +257,12 @@ def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
     assert "PermissionError" in err
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_when_the_home_directory_is_unknown(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
-    def raise_runtime_error(*args: object, **kwargs: object) -> None:
+    def raise_runtime_error(*_args: object, **_kwargs: object) -> None:
         raise RuntimeError("Could not determine home directory.")
 
     monkeypatch.setattr(os, "name", "posix")
@@ -275,17 +275,17 @@ def test_setup_loguru_degrades_to_stderr_when_the_home_directory_is_unknown(
     assert "RuntimeError: Could not determine home directory." in err
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
     cache_dir = tmp_path / ".cache" / "labelme"
     cache_dir.mkdir(parents=True)
     (cache_dir / "labelme.log").mkdir()
 
-    def expand_to_tmp_cache_dir(self: Path) -> Path:
+    def expand_to_tmp_cache_dir(_self: Path) -> Path:
         return cache_dir
 
     monkeypatch.setattr(os, "name", "posix")
@@ -300,10 +300,10 @@ def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
     assert repr(str(cache_dir / "labelme.log")) in err
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_without_localappdata(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
     monkeypatch.setattr(os, "name", "nt")
     monkeypatch.delenv("LOCALAPPDATA", raising=False)

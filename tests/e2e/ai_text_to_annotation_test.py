@@ -99,7 +99,9 @@ def _install_mock_session(
         def get_size() -> int:
             return 1
 
-    monkeypatch.setattr("osam.apis.get_model_type_by_name", lambda name: _FakeModelType)
+    monkeypatch.setattr(
+        "osam.apis.get_model_type_by_name", lambda _name: _FakeModelType
+    )
 
     mock_session = MagicMock()
     mock_session.model_name = _AI_TEXT_MODEL

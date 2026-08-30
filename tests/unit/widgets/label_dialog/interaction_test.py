@@ -236,7 +236,8 @@ def test_completion_contains_popup_and_matchcontains(qtbot: QtBot) -> None:
     assert completer.filterMode() == QtCore.Qt.MatchFlag.MatchContains
 
 
-def test_completion_invalid_raises(qtbot: QtBot) -> None:
+@pytest.mark.usefixtures("qtbot")
+def test_completion_invalid_raises() -> None:
     with pytest.raises(ValueError):
         LabelDialog(completion="fuzzy")
 

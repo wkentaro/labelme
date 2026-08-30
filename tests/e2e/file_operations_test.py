@@ -53,7 +53,7 @@ def test_delete_label_file(
     assert item is not None
     assert item.checkState() == Qt.CheckState.Checked
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -84,7 +84,7 @@ def test_delete_label_file_keeps_image(
     assert canvas.shapes
     assert len(win._docks.label_list) > 0
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -130,7 +130,7 @@ def test_delete_file_respects_output_dir(
     assert win.current_label_file_path() == str(saved_path)
     assert win.has_label_file()
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -176,7 +176,7 @@ def test_undo_after_delete_file_does_not_restore_shapes(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
 
     # A prior shape edit in the same session enables the undo action.
     win._switch_canvas_mode(edit=True, create_mode=None)

@@ -161,7 +161,7 @@ class _DeprecatedAlias(argparse.Action):
 
     def __call__(
         self,
-        parser: argparse.ArgumentParser,
+        parser: argparse.ArgumentParser,  # noqa: ARG002 -- fixed by the base class
         namespace: argparse.Namespace,
         values: object,
         option_string: str | None = None,

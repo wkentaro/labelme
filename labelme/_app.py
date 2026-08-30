@@ -2080,7 +2080,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def open_brightness_contrast_dialog(
-        self, value: bool, is_initial_load: bool = False
+        self, _value: bool, is_initial_load: bool = False
     ) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set brightness/contrast")
@@ -2306,7 +2306,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._canvas_widgets.canvas.pan_view(
                 step=target_viewport.view_offset, constrain_to_center=False
             )
-        self.open_brightness_contrast_dialog(value=False, is_initial_load=True)
+        self.open_brightness_contrast_dialog(False, is_initial_load=True)
         self.update_action_states(True)
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.

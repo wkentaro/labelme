@@ -55,7 +55,7 @@ def pytest_configure(config: pytest.Config) -> None:
 
 @pytest.fixture()
 def close_failed_download_dialog(
-    qapp: QApplication,
+    qapp: QApplication,  # noqa: ARG001 -- a fixture cannot use usefixtures
 ) -> Generator[None, None, None]:
     timer = QTimer()
 
@@ -101,7 +101,9 @@ def snapshot_dir() -> Path:
 
 
 @pytest.fixture()
-def set_allocation_limit(qapp: QApplication) -> Iterator[Callable[[int], None]]:
+def set_allocation_limit(
+    qapp: QApplication,  # noqa: ARG001 -- a fixture cannot use usefixtures
+) -> Iterator[Callable[[int], None]]:
     original_limit = QImageReader.allocationLimit()
     yield QImageReader.setAllocationLimit
     QImageReader.setAllocationLimit(original_limit)

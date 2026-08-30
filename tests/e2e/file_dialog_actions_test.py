@@ -151,7 +151,7 @@ def test_action_via_qfile_dialog(
     monkeypatch.setattr(
         QtWidgets.QFileDialog,
         dialog_method,
-        lambda *args, **kwargs: dialog_return(paths),
+        lambda *_args, **_kwargs: dialog_return(paths),
     )
 
     trigger(loaded_win)
@@ -182,7 +182,7 @@ def test_open_file_dialog_normalizes_the_reported_path(
     monkeypatch.setattr(
         QtWidgets.QFileDialog,
         "getOpenFileName",
-        lambda *args, **kwargs: (unnormalized, ""),
+        lambda *_args, **_kwargs: (unnormalized, ""),
     )
 
     win._open_file_with_dialog()

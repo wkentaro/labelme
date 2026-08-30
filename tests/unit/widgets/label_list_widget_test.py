@@ -272,7 +272,9 @@ def _model_texts(model: _ItemModel, /) -> list[str]:
 
 
 @pytest.fixture()
-def item_model(qapp: QtWidgets.QApplication) -> _ItemModel:
+def item_model(
+    qapp: QtWidgets.QApplication,  # noqa: ARG001 -- a fixture cannot use usefixtures
+) -> _ItemModel:
     model = _ItemModel()
     model.setItemPrototype(LabelListWidgetItem())
     for text in ["a", "b", "c"]:

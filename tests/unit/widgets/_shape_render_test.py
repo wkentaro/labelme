@@ -120,7 +120,8 @@ def test_bounds_is_empty_for_incomplete_shape(
 
 
 @pytest.mark.gui
-def test_show_labels_draws_text_above_shape(qapp: QtGui.QGuiApplication) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_show_labels_draws_text_above_shape() -> None:
     shape = _polygon(label="car")
     # The polygon top edge sits at y=50, so the label text lands above it.
     assert (
@@ -134,7 +135,8 @@ def test_show_labels_draws_text_above_shape(qapp: QtGui.QGuiApplication) -> None
 
 
 @pytest.mark.gui
-def test_empty_label_draws_no_text(qapp: QtGui.QGuiApplication) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_empty_label_draws_no_text() -> None:
     for label in (None, ""):
         shape = _polygon(label=label)
         assert (
@@ -148,7 +150,8 @@ def test_empty_label_draws_no_text(qapp: QtGui.QGuiApplication) -> None:
 
 
 @pytest.mark.gui
-def test_point_shape_label_is_drawn(qapp: QtGui.QGuiApplication) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_point_shape_label_is_drawn() -> None:
     # A single-point shape has a degenerate bounding box; the label must still
     # render (anchored at the point itself).
     shape = Shape(
@@ -199,7 +202,8 @@ def _outline_center(*, image: QtGui.QImage) -> tuple[float, float]:
 
 
 @pytest.mark.gui
-def test_mask_outline_aligns_with_fill(qapp: QtGui.QGuiApplication) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_mask_outline_aligns_with_fill() -> None:
     # The mask fill is rasterized at the correct position; the contour outline
     # must be centered on that same block, not sit a pixel off from it.
     shape = _mask_shape()
@@ -217,7 +221,8 @@ def test_mask_outline_aligns_with_fill(qapp: QtGui.QGuiApplication) -> None:
 
 
 @pytest.mark.gui
-def test_label_anchor_tracks_scale(qapp: QtGui.QGuiApplication) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_label_anchor_tracks_scale() -> None:
     shape = _polygon(label="car")
     # At scale 0.5 the shape top moves from y=50 to y=25, so the label follows
     # into the band above y=24 rather than staying near y=48.

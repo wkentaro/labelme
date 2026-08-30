@@ -348,10 +348,12 @@ def test_right_release_without_selection_copy_executes_menus_0(
     canvas.scale = 1.0
     calls: list[int] = []
     monkeypatch.setattr(
-        canvas.context_menus.without_selection, "exec", lambda pos=None: calls.append(0)
+        canvas.context_menus.without_selection,
+        "exec",
+        lambda _pos=None: calls.append(0),
     )
     monkeypatch.setattr(
-        canvas.context_menus.with_selection, "exec", lambda pos=None: calls.append(1)
+        canvas.context_menus.with_selection, "exec", lambda _pos=None: calls.append(1)
     )
     pos = _image_to_widget(canvas=canvas, img_x=50, img_y=25)
 
@@ -380,10 +382,12 @@ def test_right_release_with_selection_copy_executes_menus_1(
     canvas._selected_shapes_copy = [shape.copy()]
     calls: list[int] = []
     monkeypatch.setattr(
-        canvas.context_menus.without_selection, "exec", lambda pos=None: calls.append(0)
+        canvas.context_menus.without_selection,
+        "exec",
+        lambda _pos=None: calls.append(0),
     )
     monkeypatch.setattr(
-        canvas.context_menus.with_selection, "exec", lambda pos=None: calls.append(1)
+        canvas.context_menus.with_selection, "exec", lambda _pos=None: calls.append(1)
     )
     pos = _image_to_widget(canvas=canvas, img_x=30, img_y=25)
 

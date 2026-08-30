@@ -517,11 +517,11 @@ class Canvas(QtWidgets.QWidget):
         self.selected_shapes.clear()
         self.update()
 
-    def enterEvent(self, a0: QtCore.QEvent) -> None:
+    def enterEvent(self, _a0: QtCore.QEvent) -> None:
         self._apply_cursor(self._cursor)
         self._update_status(extra_messages=None)
 
-    def leaveEvent(self, a0: QtCore.QEvent) -> None:
+    def leaveEvent(self, _a0: QtCore.QEvent) -> None:
         if self._set_highlight(
             hovered_shape=None,
             hovered_edge=None,
@@ -532,7 +532,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
-    def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
+    def focusOutEvent(self, _a0: QtGui.QFocusEvent) -> None:
         self._release_cursor()
         self._update_status(extra_messages=None)
 
@@ -1344,7 +1344,7 @@ class Canvas(QtWidgets.QWidget):
             )
         return len(self._current.points) >= 3
 
-    def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent) -> None:
+    def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent) -> None:
         if self._double_click != "close":
             return
         if not self._can_close_shape():

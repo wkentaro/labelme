@@ -343,7 +343,7 @@ def test_write_failure_leaves_no_temp_file(
 ) -> None:
     config_file = tmp_path / ".labelmerc"
 
-    def _fail(*args: object, **kwargs: object) -> None:
+    def _fail(*_args: object, **_kwargs: object) -> None:
         raise OSError("disk full")
 
     monkeypatch.setattr("labelme._config._writer.os.replace", _fail)

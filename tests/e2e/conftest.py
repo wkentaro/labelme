@@ -57,7 +57,7 @@ def _isolated_qtsettings(
     settings_file = tmp_path / "qtsettings.ini"
     settings: QSettings = QSettings(str(settings_file), QSettings.Format.IniFormat)
     monkeypatch.setattr(
-        labelme._app.QtCore, "QSettings", lambda *args, **kwargs: settings
+        labelme._app.QtCore, "QSettings", lambda *_args, **_kwargs: settings
     )
     yield
 
@@ -68,7 +68,7 @@ def _stub_setup_loguru(*, monkeypatch: pytest.MonkeyPatch) -> None:
     # spawns a multiprocessing.Queue (semaphores → file descriptors). Calling
     # main() per test leaks FDs faster than GC reclaims them and exhausts the
     # worker's ulimit. Tests don't need file logging, so stub it out.
-    monkeypatch.setattr("labelme.__main__._setup_loguru", lambda *, logger_level: None)
+    monkeypatch.setattr("labelme.__main__._setup_loguru", lambda **_kwargs: None)
 
 
 MainWinFactory = Callable[..., MainWindow]
@@ -81,7 +81,7 @@ class _QAppProxy:
     def __init__(self, existing_app: QApplication) -> None:
         self._app = existing_app
 
-    def __call__(self, argv: list[str]) -> QApplication:
+    def __call__(self, _argv: list[str]) -> QApplication:
         return self._app
 
     def __getattr__(self, name: str) -> object:
@@ -90,7 +90,7 @@ class _QAppProxy:
 
 @pytest.fixture()
 def main_win(
-    qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, session_home: Path
+    qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, session_home: Path
 ) -> Generator[MainWinFactory, None, None]:
     created: list[MainWindow] = []
 
@@ -346,7 +346,7 @@ def critical_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     messages: list[str] = []
 
     def capture_critical(
-        parent: QtWidgets.QWidget, title: str, text: str
+        _parent: QtWidgets.QWidget, _title: str, text: str
     ) -> QtWidgets.QMessageBox.StandardButton:
         messages.append(text)
         return QtWidgets.QMessageBox.StandardButton.Ok

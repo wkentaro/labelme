@@ -294,10 +294,10 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
         ),
     ],
 )
+@pytest.mark.usefixtures("close_failed_download_dialog")
 def test_annotate_shape_types(
     main_win: MainWinFactory,
     qtbot: QtBot,
-    close_failed_download_dialog: None,
     data_path: Path,
     tmp_path: Path,
     pause: bool,

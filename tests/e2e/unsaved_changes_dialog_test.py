@@ -32,7 +32,7 @@ def _intercept_question(
 ) -> list[bool]:
     prompt_shown = [False]
 
-    def _fake(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+    def _fake(*_args: object, **_kwargs: object) -> QMessageBox.StandardButton:
         prompt_shown[0] = True
         return response
 
@@ -174,7 +174,9 @@ def test_close_choose_save_but_write_fails_keeps_window_open(
         "prompt_save_file_path",
         lambda: str(tmp_path / _OUTPUT_JSON_NAME),
     )
-    monkeypatch.setattr(_raw_win_no_autosave, "save_labels", lambda label_path: False)
+    monkeypatch.setattr(
+        _raw_win_no_autosave, "save_labels", lambda *_args, **_kwargs: False
+    )
 
     _raw_win_no_autosave.close()
 

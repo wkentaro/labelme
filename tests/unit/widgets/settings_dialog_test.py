@@ -72,7 +72,8 @@ def dialog(qtbot: QtBot, applied: Applied) -> SettingsDialog:
     )
 
 
-def test_no_apply_on_construction(dialog: SettingsDialog, applied: Applied) -> None:
+@pytest.mark.usefixtures("dialog")
+def test_no_apply_on_construction(applied: Applied) -> None:
     assert applied == []
 
 
@@ -174,10 +175,10 @@ def test_shape_color_mode_enables_only_its_control(
     )
 
 
+@pytest.mark.usefixtures("use_widget_color_dialog")
 def test_shape_color_picker_applies_rgb(
     qtbot: QtBot,
     applied: Applied,
-    use_widget_color_dialog: None,
 ) -> None:
     previewed: Previewed = []
     dialog = _make_dialog(
@@ -318,7 +319,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: warned.append(args[2]),
+        lambda *args, **_kwargs: warned.append(args[2]),
     )
 
     validate_combo = dialog._editors[("validate_label",)]
