@@ -136,8 +136,8 @@ def test_setting_change_persists_and_applies(
     assert win._config["labels"] == ["cat", "dog"]
     assert win._label_dialog is label_dialog_before  # updated in place, not rebuilt
     unique_label_list = win._docks.unique_label_list
-    assert unique_label_list.find_label_item("cat") is not None
-    assert unique_label_list.find_label_item("dog") is not None
+    assert unique_label_list.find_label_item(label="cat") is not None
+    assert unique_label_list.find_label_item(label="dog") is not None
 
     persisted = safe_load(editable_config_file.read_text())
     assert persisted["display_label_popup"] is False

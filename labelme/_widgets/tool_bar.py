@@ -18,6 +18,7 @@ _VERTICAL_SEPARATOR_STYLE: Final = (
 class ToolBar(QtWidgets.QToolBar):
     def __init__(
         self,
+        *,
         title: str,
         actions: list[QtGui.QAction | None],
         orientation: Qt.Orientation = Qt.Orientation.Horizontal,
@@ -45,12 +46,12 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Orientation.Vertical:
             self.setStyleSheet(_VERTICAL_SEPARATOR_STYLE)
 
-        add_actions(self, actions)
+        add_actions(widget=self, actions=actions)
 
         if orientation == Qt.Orientation.Vertical:
             self._equalize_button_widths()
 
-    def addAction(self, action: QtGui.QAction) -> None:  # ty: ignore[invalid-method-override]
+    def addAction(self, action: QtGui.QAction, /) -> None:  # ty: ignore[invalid-method-override]
         if isinstance(action, QtWidgets.QWidgetAction):
             super().addAction(action)
             return

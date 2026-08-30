@@ -40,7 +40,7 @@ def _render(*, shape: Shape, show_label: bool, scale: float) -> QtGui.QImage:
     painter = QtGui.QPainter(image)
     context = ShapeRenderContext(
         scale=scale,
-        palette=Palette.from_rgb(rgb=(255, 0, 0)),
+        palette=Palette.from_rgb((255, 0, 0)),
         point_size=8,
         point_type="round",
         selected=False,

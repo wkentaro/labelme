@@ -9,7 +9,7 @@ from ._osam_session import OsamSession
 
 
 def get_bboxes_from_texts(
-    session: OsamSession, image: np.ndarray, image_id: str, texts: list[str]
+    *, session: OsamSession, image: np.ndarray, image_id: str, texts: list[str]
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
     logger.debug(
         f"Requesting with model={session.model_name!r}, "
@@ -59,6 +59,7 @@ def get_bboxes_from_texts(
 
 
 def nms_bboxes(
+    *,
     boxes: np.ndarray,
     scores: np.ndarray,
     labels: np.ndarray,

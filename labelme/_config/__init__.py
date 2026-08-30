@@ -184,7 +184,7 @@ def get_user_config_file(*, create_if_missing: bool = True) -> str:
     return str(user_config_path)
 
 
-def load_config(config_file: Path | None, config_overrides: dict) -> dict:
+def load_config(*, config_file: Path | None, config_overrides: dict) -> dict:
     config: dict
     with open(here / "default_config.yaml", encoding="utf-8") as f:
         config = _yaml.safe_load(f)

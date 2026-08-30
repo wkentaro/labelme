@@ -33,7 +33,9 @@ def _mask_shape(
 def test_shapes_to_label_mask_paints_bbox_pixels() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[2.0, 1.0], [6.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[1:4, 2:7] = True
     assert np.array_equal(cls > 0, painted)
@@ -42,14 +44,18 @@ def test_shapes_to_label_mask_paints_bbox_pixels() -> None:
 def test_shapes_to_label_mask_clips_bbox_off_left_edge() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[-6.0, 1.0], [-2.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     assert not (cls > 0).any()
 
 
 def test_shapes_to_label_mask_clips_bbox_over_right_edge() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[17.0, 1.0], [21.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[1:4, 17:20] = True
     assert np.array_equal(cls > 0, painted)
@@ -60,7 +66,9 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     patch[1, 2] = True  # -> canvas (0, 0)
     patch[4, 4] = True  # -> canvas (3, 2)
     shape = _mask_shape(points=[[-2.0, -1.0], [2.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[0, 0] = True
     painted[3, 2] = True
@@ -80,7 +88,9 @@ def test_shapes_to_label_mask_rounds_origin_without_cropping_mask(
 ) -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=points, mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     x, y = expected_origin
     painted[y : y + patch.shape[0], x : x + patch.shape[1]] = True
@@ -90,7 +100,9 @@ def test_shapes_to_label_mask_rounds_origin_without_cropping_mask(
 def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[2.0, 1.0], [4.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[1:4, 2:5] = True
     assert np.array_equal(cls > 0, painted)

@@ -607,12 +607,12 @@ def test_failed_load_of_dropped_image_preserves_current_session(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     annotation_before = win._annotation
 
-    win.import_dropped_image_files([str(existing_image)])
+    win.import_dropped_image_files(image_files=[str(existing_image)])
     assert win._image_path == str(current_image)
 
     corrupt_image = tmp_path / "dropped.jpg"
     corrupt_image.write_bytes(b"not an image")
-    win.import_dropped_image_files([str(corrupt_image)])
+    win.import_dropped_image_files(image_files=[str(corrupt_image)])
 
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._image_path == str(current_image)

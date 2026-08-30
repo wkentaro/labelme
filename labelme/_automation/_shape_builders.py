@@ -216,9 +216,9 @@ MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
 
 
 def shapes_from_detections(
+    *,
     detections: list[Detection],
     shape_type: AiOutputFormat,
-    *,
     image_size: tuple[int, int] | None = None,
     polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
 ) -> list[Shape]:

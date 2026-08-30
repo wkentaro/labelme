@@ -27,6 +27,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def __init__(
         self,
+        *,
         on_submit: Callable[[bool], None],
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
@@ -148,10 +149,10 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def get_iou_threshold(self) -> float:
         return self._iou_spinbox.value()
 
-    def setEnabled(self, a0: bool) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
+    def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
         self._body.setEnabled(a0)
 
-    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
+    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent, /) -> bool:
         if a0 == self._body and not self._body.isEnabled():
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(

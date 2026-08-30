@@ -246,8 +246,8 @@ def test_shapes_from_detections_polygon_drops_hole() -> None:
     )
 
     polygon_mask = shape_to_mask(
-        img_shape=mask.shape,
-        points=shape.points.tolist(),
+        mask.shape,
+        shape.points.tolist(),
         shape_type="polygon",
     )
     assert polygon_mask[20, 20]

@@ -45,7 +45,7 @@ class LabeledImage:
     shapes: list[dict[str, Any]]
 
 
-def load_label_file(filename: str) -> LabeledImage:
+def load_label_file(filename: str, /) -> LabeledImage:
     with open(filename, encoding="utf-8") as f:
         data = json.load(f)
 
@@ -71,24 +71,26 @@ def load_label_file(filename: str) -> LabeledImage:
     return LabeledImage(image_data=image_data, shapes=shapes)
 
 
-def img_data_to_arr(img_data: bytes) -> NDArray[np.uint8]:
+def img_data_to_arr(img_data: bytes, /) -> NDArray[np.uint8]:
     return np.array(PIL.Image.open(io.BytesIO(img_data)))
 
 
-def decode_img_data_as_rgb(img_data: bytes) -> NDArray[np.uint8]:
+def decode_img_data_as_rgb(img_data: bytes, /) -> NDArray[np.uint8]:
     # Converting at the PIL level rather than on the decoded array resolves a
     # palette image against its palette instead of reading the indices as
     # intensities, and drops the alpha channel that JPEG cannot represent.
     return np.array(PIL.Image.open(io.BytesIO(img_data)).convert("RGB"))
 
 
-def img_b64_to_arr(img_b64: str | bytes) -> NDArray[np.uint8]:
+def img_b64_to_arr(img_b64: str | bytes, /) -> NDArray[np.uint8]:
     return img_data_to_arr(base64.b64decode(img_b64))
 
 
 def shape_to_mask(
     img_shape: tuple[int, ...],
     points: list[list[float]],
+    /,
+    *,
     shape_type: str | None = None,
     line_width: int = 10,
     point_size: int = 5,
@@ -142,6 +144,7 @@ def shape_to_mask(
 
 
 def shapes_to_label(
+    *,
     img_shape: tuple[int, ...],
     shapes: list[dict[str, Any]],
     label_name_to_value: dict[str, int],
@@ -191,7 +194,7 @@ def shapes_to_label(
                     y_start - y1 : y_stop - y1, x_start - x1 : x_stop - x1
                 ]
         else:
-            mask = shape_to_mask(img_shape[:2], points, shape_type)
+            mask = shape_to_mask(img_shape[:2], points, shape_type=shape_type)
 
         cls[mask] = cls_id
         ins[mask] = ins_id

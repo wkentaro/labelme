@@ -33,6 +33,7 @@ class AiAssistSession:
 
     def __init__(
         self,
+        *,
         model_name: str = "sam2:latest",
         output_format: AiOutputFormat = "polygon",
         polygon_detail: int = 80,

@@ -291,9 +291,9 @@ def test_move_by_keyboard_ignores_stale_mouse_position(canvas: Canvas) -> None:
         points=np.array([(40, 20), (60, 30)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_pixmap(QtGui.QPixmap(200, 100))
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(200, 100))
     canvas._prev_point = QPointF(150, 80)
-    canvas.load_pixmap(QtGui.QPixmap(_WIDTH, _HEIGHT))
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
     canvas.shapes = [shape]
     canvas.selected_shapes = [shape]
 
@@ -475,14 +475,14 @@ def test_set_shape_visible_toggles_visibility(canvas: Canvas) -> None:
         points=np.array([(0, 0), (10, 10)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes([shape])
+    canvas.load_shapes(shapes=[shape])
 
     assert canvas.shapes[0].visible is True
 
-    canvas.set_shape_visible(canvas.shapes[0], value=False)
+    canvas.set_shape_visible(shape=canvas.shapes[0], value=False)
     assert canvas.shapes[0].visible is False
 
-    canvas.set_shape_visible(canvas.shapes[0], value=True)
+    canvas.set_shape_visible(shape=canvas.shapes[0], value=True)
     assert canvas.shapes[0].visible is True
 
 
@@ -496,11 +496,11 @@ def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
         points=np.array([(0, 0), (10, 10)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes([shape])
+    canvas.load_shapes(shapes=[shape])
 
-    canvas.set_shape_visible(canvas.shapes[0], value=False)
+    canvas.set_shape_visible(shape=canvas.shapes[0], value=False)
     canvas.backup_shapes()
-    canvas.load_shapes([shape.copy()])
+    canvas.load_shapes(shapes=[shape.copy()])
     assert canvas.shapes[0].visible is False
 
     canvas.restore_last_shape()
@@ -528,9 +528,9 @@ def test_set_last_label_applies_only_to_trailing_unlabeled_run(
     labeled = _make_rectangle(label="old")
     fresh_a = _make_rectangle(label=None)
     fresh_b = _make_rectangle(label=None)
-    canvas.load_shapes([stale, labeled, fresh_a, fresh_b])
+    canvas.load_shapes(shapes=[stale, labeled, fresh_a, fresh_b])
 
-    updated = canvas.set_last_label("new", {"occluded": True})
+    updated = canvas.set_last_label(text="new", flags={"occluded": True})
 
     assert updated == [fresh_a, fresh_b]
     assert stale.label is None
@@ -544,7 +544,7 @@ def test_set_last_label_applies_only_to_trailing_unlabeled_run(
 @pytest.mark.gui
 def test_set_last_label_rejects_empty_text(canvas: Canvas) -> None:
     with pytest.raises(ValueError, match="text must not be empty"):
-        canvas.set_last_label("", {})
+        canvas.set_last_label(text="", flags={})
 
 
 @pytest.mark.gui
@@ -596,7 +596,7 @@ def test_existing_shape_suppression_is_disabled_by_default(
         points=np.array([(20, 20), (30, 30)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes([existing])
+    canvas.load_shapes(shapes=[existing])
 
     def propose_shapes(
         *, existing_shapes: list[Shape], **_: object
@@ -656,7 +656,7 @@ def test_ai_proposal_uses_out_of_bounds_setting(
     "change_setting",
     [
         pytest.param(
-            lambda canvas: canvas.set_ai_model_name("efficientsam:10m"),
+            lambda canvas: canvas.set_ai_model_name(model_name="efficientsam:10m"),
             id="model",
         ),
         pytest.param(
@@ -689,7 +689,7 @@ def test_changing_polygon_detail_requests_preview_repaint(
     update = Mock()
     monkeypatch.setattr(canvas, "update", update)
 
-    canvas.set_ai_polygon_detail(60)
+    canvas.set_ai_polygon_detail(detail=60)
 
     update.assert_called_once_with()
 
@@ -697,10 +697,10 @@ def test_changing_polygon_detail_requests_preview_repaint(
 @pytest.mark.gui
 def test_delete_shape_clears_highlights(canvas: Canvas) -> None:
     existing = _make_rectangle(label="existing")
-    canvas.load_shapes([existing])
+    canvas.load_shapes(shapes=[existing])
     canvas._set_ai_existing_shape_highlights(shapes=[existing])
 
-    canvas.delete_shape(existing)
+    canvas.delete_shape(shape=existing)
 
     assert canvas._ai_existing_shape_highlights == []
 
@@ -708,7 +708,7 @@ def test_delete_shape_clears_highlights(canvas: Canvas) -> None:
 @pytest.mark.gui
 def test_delete_selected_clears_highlights(canvas: Canvas) -> None:
     existing = _make_rectangle(label="existing")
-    canvas.load_shapes([existing])
+    canvas.load_shapes(shapes=[existing])
     canvas.selected_shapes.append(existing)
     canvas._set_ai_existing_shape_highlights(shapes=[existing])
 
@@ -737,7 +737,7 @@ def ai_existing_shape_highlight_harness(
         points=np.array([[20, 10], [60, 40]], dtype=np.float64),
         visible=False,
     )
-    canvas.load_shapes([existing])
+    canvas.load_shapes(shapes=[existing])
     canvas.set_ai_existing_shape_suppression(enabled=True)
     canvas.create_mode = "ai_box_to_shape"
     canvas.set_editing(value=False)
@@ -954,7 +954,7 @@ def test_ai_points_rejects_incompatible_model_before_download(
     qtbot: QtBot,
 ) -> None:
     canvas = ai_points_harness.canvas
-    canvas.set_ai_model_name("sam3:latest")
+    canvas.set_ai_model_name(model_name="sam3:latest")
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
 
@@ -978,12 +978,12 @@ def test_ai_points_rejects_incompatible_model_after_draft_started(
 
     monkeypatch.setattr(canvas, "_propose_ai_shapes", _propose_ai_shapes)
     canvas.point_prompt_rejected.connect(lambda _: canvas.repaint())
-    canvas.set_ai_model_name("sam2:latest")
+    canvas.set_ai_model_name(model_name="sam2:latest")
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
     draft_before_rejection = canvas._current
     assert draft_before_rejection is not None
-    canvas.set_ai_model_name("sam3:latest")
+    canvas.set_ai_model_name(model_name="sam3:latest")
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
 
@@ -1010,12 +1010,12 @@ def test_ai_points_rejects_incompatible_model_on_finalize(
     monkeypatch.setattr(canvas, "_propose_ai_shapes", _propose_ai_shapes)
     canvas.point_prompt_rejected.connect(lambda _: canvas.repaint())
     canvas.inference_failed.connect(inference_failures.append)
-    canvas.set_ai_model_name("sam2:latest")
+    canvas.set_ai_model_name(model_name="sam2:latest")
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
     draft_before_rejection = canvas._current
     assert draft_before_rejection is not None
-    canvas.set_ai_model_name("sam3:latest")
+    canvas.set_ai_model_name(model_name="sam3:latest")
 
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
@@ -1033,7 +1033,7 @@ def test_ai_points_ignores_incompatible_first_click_outside_image(
 ) -> None:
     canvas = ai_points_harness.canvas
     canvas.resize(_WIDTH * 2, _HEIGHT * 2)
-    canvas.set_ai_model_name("sam3:latest")
+    canvas.set_ai_model_name(model_name="sam3:latest")
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(1, 1))
 
@@ -1169,7 +1169,7 @@ def test_load_pixmap_rearms_inference_failure_report(canvas: Canvas) -> None:
     # A new image is a fresh inference context: a previous image's latched
     # failure must not mute the first failure report on the new image.
     canvas._ai_inference_failed = True
-    canvas.load_pixmap(QtGui.QPixmap(_WIDTH, _HEIGHT))
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
     assert canvas._ai_inference_failed is False
 
 

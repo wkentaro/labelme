@@ -179,7 +179,7 @@ def test_flags_survive_retyping_the_label(
     item = next(
         it for it in label_list if (s := it.shape()) is not None and s.label == "cat"
     )
-    label_list.select_item(item)
+    label_list.select_item(item=item)
     schedule_on_dialog(
         label_dialog=label_dialog,
         action=partial(

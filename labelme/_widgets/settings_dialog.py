@@ -34,7 +34,7 @@ class _PlainTextEdit(QtWidgets.QPlainTextEdit):
         self.mark_committed()
         self.editing_finished.emit()
 
-    def focusOutEvent(self, e: QtGui.QFocusEvent) -> None:
+    def focusOutEvent(self, e: QtGui.QFocusEvent, /) -> None:
         super().focusOutEvent(e)
         self.commit()
 
@@ -50,7 +50,7 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
     def get_rgb(self) -> tuple[int, int, int]:
         return self._rgb
 
-    def set_rgb(self, rgb: tuple[int, int, int]) -> None:
+    def set_rgb(self, rgb: tuple[int, int, int], /) -> None:
         self._rgb = rgb
         r, g, b = rgb
         self.setToolTip(
@@ -62,7 +62,7 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
         self.setIcon(QtGui.QIcon(swatch))
         self.setIconSize(swatch.size())
 
-    def set_accessible_note(self, note: str) -> None:
+    def set_accessible_note(self, note: str, /) -> None:
         self._accessible_note = note
         self._update_accessible_description()
 
@@ -76,6 +76,7 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
 class _SettingsPage(QtWidgets.QWidget):
     def __init__(
         self,
+        *,
         groups: Sequence[tuple[str, QtGui.QIcon, QtWidgets.QGroupBox]],
     ) -> None:
         super().__init__()
@@ -202,6 +203,7 @@ class _SettingsPage(QtWidgets.QWidget):
 class SettingsDialog(QtWidgets.QDialog):
     def __init__(
         self,
+        *,
         config: dict,
         apply_setting: ApplySetting,
         preview_shape_color: PreviewShapeColor,
@@ -296,7 +298,7 @@ class SettingsDialog(QtWidgets.QDialog):
         # nothing, so treat them like Close and flush pending edits.
         self.accept()
 
-    def set_value(self, key_path: tuple[str, ...], value: object) -> None:
+    def set_value(self, *, key_path: tuple[str, ...], value: object) -> None:
         editor = self._editors[key_path]
         with QtCore.QSignalBlocker(editor):
             self._set_editor_value(editor=editor, value=value)
@@ -305,9 +307,9 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def set_choice_enabled(
         self,
+        *,
         key_path: tuple[str, ...],
         value: object,
-        *,
         enabled: bool,
         disabled_reason: str,
     ) -> None:

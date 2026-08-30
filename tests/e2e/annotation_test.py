@@ -326,7 +326,7 @@ def test_annotate_shape_types(
 
     label = "test_shape"
     canvas = win._canvas_widgets.canvas
-    canvas.set_ai_model_name(_AI_MODEL)
+    canvas.set_ai_model_name(model_name=_AI_MODEL)
     if ai_output_format is not None:
         canvas.set_ai_output_format(ai_output_format)
 

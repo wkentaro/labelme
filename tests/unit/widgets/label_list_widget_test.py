@@ -142,10 +142,10 @@ def selected_pair(
 ) -> tuple[LabelListWidgetItem, LabelListWidgetItem]:
     item_a = LabelListWidgetItem(text="cat")
     item_b = LabelListWidgetItem(text="dog")
-    widget.add_item(item_a)
-    widget.add_item(item_b)
-    widget.select_item(item_a)
-    widget.select_item(item_b)
+    widget.add_item(item=item_a)
+    widget.add_item(item=item_b)
+    widget.select_item(item=item_a)
+    widget.select_item(item=item_b)
     return item_a, item_b
 
 
@@ -174,13 +174,13 @@ def test_selection_at_press_drops_items_removed_before_release(
     # snapshot legally outlives the items it references (e.g. right-click
     # -> Delete on macOS, where the menu opens on press).
     item = LabelListWidgetItem(text="cat")
-    widget.add_item(item)
-    widget.select_item(item)
+    widget.add_item(item=item)
+    widget.select_item(item=item)
     _press_on_item(qtbot=qtbot, widget=widget, item=item)
 
-    widget.remove_item(item)
+    widget.remove_item(item=item)
     replacement = LabelListWidgetItem(text="cat")
-    widget.add_item(replacement)
+    widget.add_item(item=replacement)
 
     selection_at_press = widget.selection_at_press()
     assert replacement not in selection_at_press
@@ -195,7 +195,7 @@ def test_mouse_release_after_item_removal_does_not_crash(
     item_a, _ = selected_pair
     _press_on_item(qtbot=qtbot, widget=widget, item=item_a)
 
-    widget.remove_item(item_a)
+    widget.remove_item(item=item_a)
     release_pos = widget.viewport().rect().center()
     qtbot.mouseRelease(widget.viewport(), Qt.MouseButton.LeftButton, pos=release_pos)
 

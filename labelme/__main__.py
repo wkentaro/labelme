@@ -31,7 +31,7 @@ _LOGGER_LEVELS: Final = ("debug", "info", "warning", "error", "critical")
 
 
 class _LoggerIO(io.StringIO):
-    def write(self, s: AnyStr) -> int:
+    def write(self, s: AnyStr, /) -> int:
         assert isinstance(s, str)
         if stripped_s := s.strip():
             logger.debug(stripped_s)
@@ -159,12 +159,16 @@ class _DeprecatedAlias(argparse.Action):
     argparse matched (including abbreviations) warns and points back to it.
     """
 
-    def __call__(
+    # argparse invokes the action positionally, but its stub leaves the
+    # parameters positional-or-keyword, so the narrower spelling reads as an
+    # incompatible override.
+    def __call__(  # ty: ignore[invalid-method-override]
         self,
         parser: argparse.ArgumentParser,  # noqa: ARG002 -- fixed by the base class
         namespace: argparse.Namespace,
         values: object,
         option_string: str | None = None,
+        /,
     ) -> None:
         canonical = self.option_strings[0]
         if option_string is not None and option_string != canonical:

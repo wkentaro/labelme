@@ -24,6 +24,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     def __init__(
         self,
+        *,
         default_model: str,
         polygon_detail: int,
         on_model_changed: Callable[[str], None],
@@ -156,13 +157,13 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         self.setMaximumWidth(200)
 
-    def set_current_model(self, model_display: str) -> None:
+    def set_current_model(self, *, model_display: str) -> None:
         index = self._model_combo.findText(model_display)
         if index < 0 or self._model_combo.currentIndex() == index:
             return
         self._model_combo.setCurrentIndex(index)
 
-    def set_polygon_detail(self, detail: int) -> None:
+    def set_polygon_detail(self, detail: int, /) -> None:
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
             self._polygon_detail_slider.set_value(detail)
 
@@ -174,12 +175,12 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             assert item is not None
             item.setEnabled(not enabled or option.supports_point_prompts)
 
-    def setEnabled(self, a0: bool) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
+    def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
         self._body.setEnabled(a0)
         self._polygon_detail_button.setEnabled(a0)
         self.hover_highlight_requested.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
 
-    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent) -> bool:
+    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent, /) -> bool:
         if a0 in (self, self._body) and not self._body.isEnabled():
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(

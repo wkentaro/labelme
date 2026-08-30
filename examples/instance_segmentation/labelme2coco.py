@@ -146,7 +146,7 @@ def main() -> None:
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
-            mask = utils.shape_to_mask(img.shape[:2], points, shape_type)
+            mask = utils.shape_to_mask(img.shape[:2], points, shape_type=shape_type)
 
             if group_id is None:
                 group_id = uuid.uuid1()

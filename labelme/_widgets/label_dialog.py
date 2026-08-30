@@ -20,14 +20,14 @@ _FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
 class LabelQLineEdit(QtWidgets.QLineEdit):
     """QLineEdit that forwards Up/Down key events to a paired list widget."""
 
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(self, *, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
         self.list_widget: QtWidgets.QListWidget | None = None
 
-    def set_list_widget(self, list_widget: QtWidgets.QListWidget) -> None:
+    def set_list_widget(self, *, list_widget: QtWidgets.QListWidget) -> None:
         self.list_widget = list_widget
 
-    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+    def keyPressEvent(self, event: QtGui.QKeyEvent, /) -> None:
         key = event.key()
         if key in (QtCore.Qt.Key.Key_Up, QtCore.Qt.Key.Key_Down):
             if self.list_widget is not None:
@@ -41,10 +41,10 @@ class LabelDialog(QtWidgets.QDialog):
 
     def __init__(
         self,
+        *,
         text: str = _PLACEHOLDER_TEXT,
         parent: QtWidgets.QWidget | None = None,
         labels: list[str] | None = None,
-        *,
         sort_labels: bool = True,
         show_text_field: bool = True,
         completion: str = "startswith",
@@ -111,7 +111,7 @@ class LabelDialog(QtWidgets.QDialog):
         # Set up completer bound to label_list's model
         completer = self._make_completer(completion=completion)
         self.edit.setCompleter(completer)
-        self.edit.set_list_widget(self.label_list)
+        self.edit.set_list_widget(list_widget=self.label_list)
 
         # Button box
         button_box = QtWidgets.QDialogButtonBox(
@@ -230,7 +230,7 @@ class LabelDialog(QtWidgets.QDialog):
                 flags[key] = self._flag_states.get(key, False)
         self._set_flag_checkboxes(flags=flags)
 
-    def add_label_history(self, label: str) -> None:
+    def add_label_history(self, *, label: str) -> None:
         if label not in self._label_history:
             self._label_history.append(label)
 
@@ -239,7 +239,7 @@ class LabelDialog(QtWidgets.QDialog):
             if self._sort_labels:
                 self.label_list.sortItems()
 
-    def set_predefined_labels(self, labels: list[str]) -> None:
+    def set_predefined_labels(self, *, labels: list[str]) -> None:
         history_extras = [h for h in self._label_history if h not in labels]
         all_labels = list(dict.fromkeys(labels)) + history_extras
 
@@ -252,8 +252,8 @@ class LabelDialog(QtWidgets.QDialog):
 
     def popup(
         self,
-        text: str | None = None,
         *,
+        text: str | None = None,
         move: bool = True,
         position: QtCore.QPoint | None = None,
         flags: dict[str, bool] | None = None,

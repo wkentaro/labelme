@@ -51,7 +51,7 @@ _MIN_SHAPE_BACKUPS_FOR_UNDO: Final = 2
 _MIN_POINTS_FOR_FILL_PREVIEW: Final = 2
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
-_DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(rgb=_DEFAULT_SHAPE_RGB)
+_DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -74,7 +74,7 @@ class _DraftShape:
         return dataclasses.replace(self, closed=False)
 
     def add_point(
-        self, point: QPointF, label: int = 1, *, autoclose: bool = False
+        self, point: QPointF, /, *, label: int = 1, autoclose: bool = False
     ) -> _DraftShape:
         if autoclose and self.points and self.points[0] == point:
             return dataclasses.replace(self, closed=True)
@@ -296,7 +296,7 @@ class Canvas(QtWidgets.QWidget):
     def set_allow_out_of_bounds_points(self, *, value: bool) -> None:
         self._allow_out_of_bounds_points = value
 
-    def pan_view(self, step: QPointF, *, constrain_to_center: bool = True) -> None:
+    def pan_view(self, *, step: QPointF, constrain_to_center: bool = True) -> None:
         viewport = self._scroll_viewport()
         if viewport is None:
             return
@@ -327,11 +327,11 @@ class Canvas(QtWidgets.QWidget):
         return QPointF(self._view_offset)
 
     def set_color_resolver(
-        self, resolver: Callable[[str], tuple[int, int, int]]
+        self, *, resolver: Callable[[str], tuple[int, int, int]]
     ) -> None:
         self._color_resolver = resolver
 
-    def set_point_size(self, point_size: int) -> None:
+    def set_point_size(self, *, point_size: int) -> None:
         self._point_size = point_size
 
     def _resolve_palette(self, label: str | None, /) -> Palette:
@@ -343,11 +343,11 @@ class Canvas(QtWidgets.QWidget):
         # resolution into one lookup per distinct label per frame.
         palette = self._palette_cache.get(label)
         if palette is None:
-            palette = Palette.from_rgb(rgb=self._color_resolver(label))
+            palette = Palette.from_rgb(self._color_resolver(label))
             self._palette_cache[label] = palette
         return palette
 
-    def set_draft_palette(self, palette: Palette) -> None:
+    def set_draft_palette(self, *, palette: Palette) -> None:
         self._draft_palette = palette
 
     def _highlight_vertex(self, *, index: int, mode: Literal["move", "near"]) -> None:
@@ -406,7 +406,7 @@ class Canvas(QtWidgets.QWidget):
         return self._create_mode
 
     @create_mode.setter
-    def create_mode(self, value: str) -> None:
+    def create_mode(self, value: str, /) -> None:
         if value not in typing.get_args(_CreateMode):
             raise ValueError(f"Unsupported create_mode: {value}")
         new_mode = cast(_CreateMode, value)
@@ -448,19 +448,21 @@ class Canvas(QtWidgets.QWidget):
     def get_ai_model_name(self) -> str:
         return self._ai_assist_session.model_name
 
-    def set_ai_model_name(self, model_name: str) -> None:
+    def set_ai_model_name(self, *, model_name: str) -> None:
         if self._ai_assist_session.model_name == model_name:
             return
         self._ai_assist_session.model_name = model_name
         self._clear_ai_existing_shape_highlights()
 
-    def set_ai_output_format(self, output_format: _automation.AiOutputFormat) -> None:
+    def set_ai_output_format(
+        self, output_format: _automation.AiOutputFormat, /
+    ) -> None:
         if self._ai_assist_session.output_format == output_format:
             return
         self._ai_assist_session.output_format = output_format
         self._clear_ai_existing_shape_highlights()
 
-    def set_ai_polygon_detail(self, detail: int) -> None:
+    def set_ai_polygon_detail(self, *, detail: int) -> None:
         if self._ai_assist_session.polygon_detail == detail:
             return
         self._ai_assist_session.polygon_detail = detail
@@ -479,7 +481,7 @@ class Canvas(QtWidgets.QWidget):
         points: Sequence[QPointF],
         point_labels: Sequence[int],
     ) -> _automation.AiAssistProposal:
-        image: np.ndarray = _utils.img_qt_to_rgb_arr(img_qt=self.pixmap.toImage())
+        image: np.ndarray = _utils.img_qt_to_rgb_arr(self.pixmap.toImage())
         proposal = self._ai_assist_session.propose_shapes(
             image=image,
             image_id=str(self._pixmap_hash),
@@ -526,11 +528,11 @@ class Canvas(QtWidgets.QWidget):
         self.selected_shapes.clear()
         self.update()
 
-    def enterEvent(self, _a0: QtCore.QEvent) -> None:
+    def enterEvent(self, _a0: QtCore.QEvent, /) -> None:
         self._apply_cursor(self._cursor)
         self._update_status(extra_messages=None)
 
-    def leaveEvent(self, _a0: QtCore.QEvent) -> None:
+    def leaveEvent(self, _a0: QtCore.QEvent, /) -> None:
         if self._set_highlight(
             hovered_shape=None,
             hovered_edge=None,
@@ -541,7 +543,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
-    def focusOutEvent(self, _a0: QtGui.QFocusEvent) -> None:
+    def focusOutEvent(self, _a0: QtGui.QFocusEvent, /) -> None:
         self._release_cursor()
         self._update_status(extra_messages=None)
 
@@ -663,7 +665,7 @@ class Canvas(QtWidgets.QWidget):
             return self.tr("Click third corner to close oriented rectangle")
         return self.tr("Click to add point")
 
-    def mouseMoveEvent(self, a0: QtGui.QMouseEvent) -> None:
+    def mouseMoveEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         try:
             pos = self.transform_widget_point_to_image(a0.position())
         except AttributeError:
@@ -991,7 +993,7 @@ class Canvas(QtWidgets.QWidget):
         point = self._prev_move_point
         if shape is None or index is None or point is None:
             return
-        shape.insert_point(index, (point.x(), point.y()))
+        shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")
         self.hovered_shape = shape
         self._hovered_vertex = index
@@ -1005,7 +1007,7 @@ class Canvas(QtWidgets.QWidget):
         index = self._last_hovered_vertex
         if shape is None or index is None or not shape.can_remove_point():
             return False
-        shape.remove_point(index)
+        shape.remove_point(i=index)
         self._clear_highlight_state()
         # Drop the hovered vertex and selection so the press that deleted the
         # point cannot also drag the adjacent vertex (#968) or the whole shape.
@@ -1018,7 +1020,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         return True
 
-    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+    def mousePressEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status(extra_messages=None)
@@ -1224,7 +1226,7 @@ class Canvas(QtWidgets.QWidget):
         self._apply_cursor(CursorRole.GRAB)
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
-    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
+    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         self._dispatch_pointer_release(event=a0)
         self._commit_pending_shape_move()
         self._update_status(extra_messages=None)
@@ -1356,14 +1358,14 @@ class Canvas(QtWidgets.QWidget):
             )
         return len(self._current.points) >= MIN_POLYGON_POINT_COUNT
 
-    def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent) -> None:
+    def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent, /) -> None:
         if self._double_click != "close":
             return
         if not self._can_close_shape():
             return
         self._finalize()
 
-    def select_shapes(self, shapes: list[Shape]) -> None:
+    def select_shapes(self, *, shapes: list[Shape]) -> None:
         self.selection_changed.emit(shapes)
         self.update()
 
@@ -1522,7 +1524,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         return removed
 
-    def delete_shape(self, shape: Shape) -> None:
+    def delete_shape(self, *, shape: Shape) -> None:
         if shape in self.selected_shapes:
             self.selected_shapes.remove(shape)
         self.shapes = [s for s in self.shapes if s is not shape]
@@ -1530,7 +1532,7 @@ class Canvas(QtWidgets.QWidget):
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
 
-    def paintEvent(self, a0: QtGui.QPaintEvent) -> None:
+    def paintEvent(self, a0: QtGui.QPaintEvent, /) -> None:
         if self.pixmap.isNull():
             super().paintEvent(a0)
             return
@@ -1702,14 +1704,14 @@ class Canvas(QtWidgets.QWidget):
     def _build_polygon_preview(self, *, current: _DraftShape) -> Shape:
         preview = current
         if self._fill_drawing and len(preview.points) >= _MIN_POINTS_FOR_FILL_PREVIEW:
-            preview = preview.add_point(point=self._line.points[1], autoclose=True)
+            preview = preview.add_point(self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
     def _build_ai_points_preview(self, *, current: _DraftShape) -> list[Shape]:
         if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
             return []
         preview = current.add_point(
-            point=self._line.points[1],
+            self._line.points[1],
             label=self._line.point_labels[1],
         )
         try:
@@ -1730,14 +1732,14 @@ class Canvas(QtWidgets.QWidget):
         self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
         return proposal.new_shapes
 
-    def transform_widget_point_to_image(self, point: QPointF) -> QPointF:
+    def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
         origin = self._compute_image_origin_offset(area=None)
         image_x = point.x() / self.scale - origin.x()
         image_y = point.y() / self.scale - origin.y()
         return QPointF(image_x, image_y)
 
     def transform_image_point_to_widget(
-        self, point: QPointF, *, area: QtCore.QSize | None = None
+        self, point: QPointF, /, *, area: QtCore.QSize | None = None
     ) -> QPointF:
         return (point + self._compute_image_origin_offset(area=area)) * self.scale
 
@@ -1750,7 +1752,7 @@ class Canvas(QtWidgets.QWidget):
         slack_h = max(area.height() - scaled_h, 0.0)
         return (QPointF(slack_w, slack_h) / 2.0 + self._view_offset) / self.scale
 
-    def is_out_of_pixmap(self, p: QPointF) -> bool:
+    def is_out_of_pixmap(self, p: QPointF, /) -> bool:
         return _is_out_of_image(p, self.pixmap.size())
 
     def _should_constrain_to_pixmap(self, point: QPointF, /) -> bool:
@@ -1862,7 +1864,7 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self) -> QtCore.QSize:
         return self._compute_canvas_size()
 
-    def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
+    def wheelEvent(self, a0: QtGui.QWheelEvent, /) -> None:
         self._clear_ai_existing_shape_highlights()
         mods: Qt.KeyboardModifier = a0.modifiers()
         delta: QPoint = a0.angleDelta()
@@ -1896,7 +1898,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         self._is_moving_shape = True
 
-    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+    def keyPressEvent(self, a0: QtGui.QKeyEvent, /) -> None:
         self._clear_ai_existing_shape_highlights()
         modifiers = a0.modifiers()
         key = a0.key()
@@ -1922,7 +1924,7 @@ class Canvas(QtWidgets.QWidget):
                 self.select_shapes(shapes=self.shapes[:])
         self._update_status(extra_messages=None)
 
-    def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
+    def keyReleaseEvent(self, a0: QtGui.QKeyEvent, /) -> None:
         modifiers = a0.modifiers()
         if self.mode == _CanvasMode.CREATE:
             if not modifiers:
@@ -1942,7 +1944,7 @@ class Canvas(QtWidgets.QWidget):
 
                 self._is_moving_shape = False
 
-    def set_last_label(self, text: str, flags: dict[str, bool]) -> list[Shape]:
+    def set_last_label(self, *, text: str, flags: dict[str, bool]) -> list[Shape]:
         if not text:
             raise ValueError("text must not be empty")
         shapes = []
@@ -2019,8 +2021,8 @@ class Canvas(QtWidgets.QWidget):
         self._clear_highlight_state()
         self._set_ai_existing_shape_highlights(shapes=[])
 
-    def load_pixmap(self, pixmap: QtGui.QPixmap, *, clear_shapes: bool = True) -> None:
-        pixmap_arr = _utils.img_qt_to_arr(img_qt=pixmap.toImage())
+    def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
+        pixmap_arr = _utils.img_qt_to_arr(pixmap.toImage())
         self.pixmap = pixmap
         self._pixmap_hash = hash(pixmap_arr.tobytes())
         # A new image is a fresh inference context that should surface its own
@@ -2031,13 +2033,13 @@ class Canvas(QtWidgets.QWidget):
             self.shapes = []
         self.update()
 
-    def load_shapes(self, shapes: list[Shape], *, replace: bool = True) -> None:
+    def load_shapes(self, *, shapes: list[Shape], replace: bool = True) -> None:
         self.shapes = list(shapes) if replace else self.shapes + list(shapes)
         self.backup_shapes()
         self._reset_interaction_state()
         self.update()
 
-    def set_shape_visible(self, shape: Shape, *, value: bool) -> None:
+    def set_shape_visible(self, *, shape: Shape, value: bool) -> None:
         if shape.visible == value:
             return
         shape.visible = value
@@ -2046,7 +2048,7 @@ class Canvas(QtWidgets.QWidget):
     def _apply_cursor(self, role: CursorRole, /) -> None:
         if role == self._cursor:
             return
-        shape = _canvas_interaction.cursor_shape_for(role=role)
+        shape = _canvas_interaction.cursor_shape_for(role)
         # Push on first apply; swap the top of the stack we already own afterwards.
         if self._cursor == CursorRole.DEFAULT:
             QtWidgets.QApplication.setOverrideCursor(shape)

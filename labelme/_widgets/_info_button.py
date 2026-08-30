@@ -8,7 +8,9 @@ from .._utils.qt import new_icon
 
 
 class InfoButton(QtWidgets.QToolButton):
-    def __init__(self, tooltip: str, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(
+        self, *, tooltip: str, parent: QtWidgets.QWidget | None = None
+    ) -> None:
         super().__init__(parent=parent)
         self.setIcon(new_icon("phosphor/info.svg"))
         self.setIconSize(QtCore.QSize(16, 16))
@@ -27,6 +29,6 @@ class InfoButton(QtWidgets.QToolButton):
         self.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.setToolTip(tooltip)
 
-    def enterEvent(self, a0: QtGui.QEnterEvent) -> None:
+    def enterEvent(self, a0: QtGui.QEnterEvent, /) -> None:
         super().enterEvent(a0)
         QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), self.toolTip())

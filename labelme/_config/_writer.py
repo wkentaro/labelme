@@ -77,7 +77,7 @@ def _atomic_write(*, config_file: Path, content: str) -> None:
 
 
 def set_overrides(
-    config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
+    *, config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
 ) -> None:
     yaml = YAML()
     yaml.preserve_quotes = True

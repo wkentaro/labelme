@@ -85,7 +85,7 @@ def test_set_list_widget_stores_reference(qtbot: QtBot) -> None:
     qtbot.addWidget(edit)
     list_widget = QtWidgets.QListWidget()
     qtbot.addWidget(list_widget)
-    edit.set_list_widget(list_widget)
+    edit.set_list_widget(list_widget=list_widget)
     assert edit.list_widget is list_widget
 
 
@@ -96,7 +96,7 @@ def test_key_down_forwarded_to_list_widget(qtbot: QtBot) -> None:
     qtbot.addWidget(list_widget)
     list_widget.addItems(["a", "b", "c"])
     list_widget.setCurrentRow(0)
-    edit.set_list_widget(list_widget)
+    edit.set_list_widget(list_widget=list_widget)
     edit.show()
     qtbot.keyClick(edit, QtCore.Qt.Key.Key_Down)
     assert list_widget.currentRow() == 1
@@ -109,7 +109,7 @@ def test_key_up_forwarded_to_list_widget(qtbot: QtBot) -> None:
     qtbot.addWidget(list_widget)
     list_widget.addItems(["a", "b", "c"])
     list_widget.setCurrentRow(2)
-    edit.set_list_widget(list_widget)
+    edit.set_list_widget(list_widget=list_widget)
     edit.show()
     qtbot.keyClick(edit, QtCore.Qt.Key.Key_Up)
     assert list_widget.currentRow() == 1
@@ -122,7 +122,7 @@ def test_other_keys_edit_text_not_forwarded(qtbot: QtBot) -> None:
     qtbot.addWidget(list_widget)
     list_widget.addItems(["a", "b", "c"])
     list_widget.setCurrentRow(0)
-    edit.set_list_widget(list_widget)
+    edit.set_list_widget(list_widget=list_widget)
     edit.show()
     qtbot.keyClicks(edit, "x")
     assert edit.text() == "x"
@@ -254,14 +254,14 @@ def test_completer_bound_to_label_list_model(qtbot: QtBot) -> None:
 
 def test_add_label_history_appends_new(qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=[]))
-    dialog.add_label_history("dog")
+    dialog.add_label_history(label="dog")
     items = [dialog.label_list.item(i).text() for i in range(dialog.label_list.count())]
     assert "dog" in items
 
 
 def test_add_label_history_no_duplicate(qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["dog"]))
-    dialog.add_label_history("dog")
+    dialog.add_label_history(label="dog")
     items = [dialog.label_list.item(i).text() for i in range(dialog.label_list.count())]
     assert items.count("dog") == 1
 
@@ -270,15 +270,15 @@ def test_add_label_history_sorts_when_sort_enabled(qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(labels=["banana", "apple"], sort_labels=True)
     )
-    dialog.add_label_history("cherry")
+    dialog.add_label_history(label="cherry")
     items = [dialog.label_list.item(i).text() for i in range(dialog.label_list.count())]
     assert items == ["apple", "banana", "cherry"]
 
 
 def test_set_predefined_labels_merges_and_dedups(qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["a"], sort_labels=False))
-    dialog.add_label_history("b")
-    dialog.set_predefined_labels(["a", "c"])
+    dialog.add_label_history(label="b")
+    dialog.set_predefined_labels(labels=["a", "c"])
     items = [dialog.label_list.item(i).text() for i in range(dialog.label_list.count())]
     assert set(items) == {"a", "b", "c"}
     assert len(items) == 3
@@ -286,7 +286,7 @@ def test_set_predefined_labels_merges_and_dedups(qtbot: QtBot) -> None:
 
 def test_set_predefined_labels_keeps_completer_bound(qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["a"]))
-    dialog.set_predefined_labels(["a", "b", "c"])
+    dialog.set_predefined_labels(labels=["a", "b", "c"])
     assert dialog.edit.completer().model() is dialog.label_list.model()
 
 

@@ -33,6 +33,8 @@ class ShapeDict(TypedDict):
 def shape_to_mask(
     img_shape: tuple[int, ...],
     points: list[list[float]],
+    /,
+    *,
     shape_type: str | None = None,
     line_width: int = 10,
     point_size: int = 5,
@@ -86,6 +88,7 @@ def shape_to_mask(
 
 
 def shapes_to_label(
+    *,
     img_shape: tuple[int, ...],
     shapes: list[ShapeDict],
     label_name_to_value: dict[str, int],
@@ -136,7 +139,7 @@ def shapes_to_label(
                     y_start - y1 : y_stop - y1, x_start - x1 : x_stop - x1
                 ]
         else:
-            mask = shape_to_mask(img_shape[:2], points, shape_type)
+            mask = shape_to_mask(img_shape[:2], points, shape_type=shape_type)
 
         cls[mask] = cls_id
         ins[mask] = ins_id

@@ -150,7 +150,7 @@ def test_multi_select_toggle_propagates(
 
     label_list.clearSelection()
     for i in selected_indices:
-        label_list.select_item(label_list[i])
+        label_list.select_item(item=label_list[i])
     qtbot.wait(50)
     assert {item for item in label_list.selected_items()} == {
         label_list[i] for i in selected_indices
@@ -192,7 +192,7 @@ def test_multi_select_preserves_selection_after_checkbox_click(
 
     label_list.clearSelection()
     for i in selected_indices:
-        label_list.select_item(label_list[i])
+        label_list.select_item(item=label_list[i])
     qtbot.wait(50)
 
     target_index = label_list._model.indexFromItem(label_list[selected_indices[1]])
@@ -225,7 +225,7 @@ def test_multi_select_collapses_on_row_body_click(
 
     label_list.clearSelection()
     for i in selected_indices:
-        label_list.select_item(label_list[i])
+        label_list.select_item(item=label_list[i])
     qtbot.wait(50)
 
     target_index = label_list._model.indexFromItem(label_list[clicked_index])

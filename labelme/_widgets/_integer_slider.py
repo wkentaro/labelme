@@ -34,7 +34,7 @@ class IntegerSlider(QtWidgets.QWidget):
         self._slider.valueChanged.connect(self._on_value_changed)
         self.set_value(value)
 
-    def setAccessibleName(self, name: str) -> None:
+    def setAccessibleName(self, name: str, /) -> None:
         super().setAccessibleName(name)
         self._slider.setAccessibleName(name)
 
@@ -42,7 +42,7 @@ class IntegerSlider(QtWidgets.QWidget):
     def value(self) -> int:
         return self._slider.value()
 
-    def set_value(self, value: int) -> None:
+    def set_value(self, value: int, /) -> None:
         self._slider.setValue(value)
         self._value_label.setNum(self._slider.value())
 

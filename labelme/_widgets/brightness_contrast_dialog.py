@@ -16,6 +16,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
 
     def __init__(
         self,
+        *,
         img: PIL.Image.Image,
         callback: Callable[[QImage], None],
         parent: QtWidgets.QWidget | None = None,

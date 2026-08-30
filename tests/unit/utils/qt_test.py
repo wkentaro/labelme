@@ -365,7 +365,7 @@ def test_add_actions_adds_qaction_to_menu(qtbot: QtBot) -> None:
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
     action = QtGui.QAction("Cut", parent)
-    add_actions(menu, [action])
+    add_actions(widget=menu, actions=[action])
     assert action in menu.actions()
 
 
@@ -374,7 +374,7 @@ def test_add_actions_none_adds_separator_to_menu(qtbot: QtBot) -> None:
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
     action = QtGui.QAction("Cut", parent)
-    add_actions(menu, [action, None])
+    add_actions(widget=menu, actions=[action, None])
     separators = [a for a in menu.actions() if a.isSeparator()]
     assert len(separators) == 1
 
@@ -384,7 +384,7 @@ def test_add_actions_submenu_to_menu(qtbot: QtBot) -> None:
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
     submenu = QtWidgets.QMenu("Sub", parent)
-    add_actions(menu, [submenu])
+    add_actions(widget=menu, actions=[submenu])
     # QMenu added as submenu appears in actions list
     titles = [a.text() for a in menu.actions()]
     assert "Sub" in titles
@@ -394,7 +394,7 @@ def test_add_actions_adds_qaction_to_toolbar(qtbot: QtBot) -> None:
     toolbar = QtWidgets.QToolBar()
     qtbot.addWidget(toolbar)
     action = QtGui.QAction("Copy", toolbar)
-    add_actions(toolbar, [action])
+    add_actions(widget=toolbar, actions=[action])
     assert action in toolbar.actions()
 
 
@@ -402,7 +402,7 @@ def test_add_actions_none_adds_separator_to_toolbar(qtbot: QtBot) -> None:
     toolbar = QtWidgets.QToolBar()
     qtbot.addWidget(toolbar)
     action = QtGui.QAction("Copy", toolbar)
-    add_actions(toolbar, [action, None])
+    add_actions(widget=toolbar, actions=[action, None])
     separators = [a for a in toolbar.actions() if a.isSeparator()]
     assert len(separators) == 1
 
@@ -411,5 +411,5 @@ def test_add_actions_empty_sequence(qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
-    add_actions(menu, [])
+    add_actions(widget=menu, actions=[])
     assert menu.actions() == []

@@ -65,7 +65,7 @@ class Shape:
     def can_add_point(self) -> bool:
         return self.shape_type in POLYLINE_SHAPE_TYPES
 
-    def insert_point(self, i: int, point: npt.ArrayLike, label: int = 1) -> None:
+    def insert_point(self, *, i: int, point: npt.ArrayLike, label: int = 1) -> None:
         if not self.can_add_point():
             logger.warning(
                 "Cannot add point to: shape_type={!r}, len(points)={:d}",
@@ -89,7 +89,7 @@ class Shape:
             return False
         return True
 
-    def remove_point(self, i: int) -> None:
+    def remove_point(self, *, i: int) -> None:
         if not self.can_remove_point():
             logger.warning(
                 "Cannot remove point from: shape_type={!r}, len(points)={:d}",
@@ -100,10 +100,10 @@ class Shape:
         self.points = np.delete(self.points, i, axis=0)
         self.point_labels = np.delete(self.point_labels, i)
 
-    def move_vertex(self, i: int, pos: npt.ArrayLike) -> None:
+    def move_vertex(self, *, i: int, pos: npt.ArrayLike) -> None:
         self.points[i] = np.asarray(pos, dtype=np.float64).reshape(2)
 
-    def translate(self, offset: npt.ArrayLike) -> None:
+    def translate(self, *, offset: npt.ArrayLike) -> None:
         self.points = self.points + np.asarray(offset, dtype=np.float64).reshape(2)
 
     def copy(self) -> Shape:

@@ -90,7 +90,7 @@ def test_click_label_list_entry_selects_canvas_shape(
     expected_shape = first_item.shape()
     assert expected_shape is not None
 
-    label_list.select_item(first_item)
+    label_list.select_item(item=first_item)
     qtbot.waitUntil(lambda: expected_shape in canvas.selected_shapes)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -287,8 +287,8 @@ def test_edit_label_multi_shape_mismatch_disables_text_field(
     )
 
     label_list.clearSelection()
-    label_list.select_item(label_list[0])
-    label_list.select_item(label_list[3])
+    label_list.select_item(item=label_list[0])
+    label_list.select_item(item=label_list[3])
 
     edit_disabled_during_popup: list[bool] = []
 

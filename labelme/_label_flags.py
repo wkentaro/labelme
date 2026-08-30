@@ -6,6 +6,7 @@ from loguru import logger
 
 
 def compile_label_flags(
+    *,
     label_flags: dict[str, list[str]] | None,
 ) -> dict[re.Pattern[str], list[str]]:
     # The patterns arrive unvalidated from ~/.labelmerc or --label-flags, so

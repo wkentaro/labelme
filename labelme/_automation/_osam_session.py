@@ -15,6 +15,7 @@ class OsamSession:
 
     def __init__(
         self,
+        *,
         model_name: str = "sam2:latest",
         embedding_cache_size: int = 3,
     ) -> None:
@@ -30,6 +31,7 @@ class OsamSession:
 
     def run(
         self,
+        *,
         image: NDArray[np.uint8],
         image_id: str,
         points: NDArray[np.floating] | None = None,

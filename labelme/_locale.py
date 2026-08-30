@@ -18,7 +18,7 @@ def available_translation_locales() -> list[str]:
     )
 
 
-def is_valid_language(code: object) -> bool:
+def is_valid_language(code: object, /) -> bool:
     if code is None or code == SOURCE_LOCALE:
         return True
     return code in available_translation_locales()

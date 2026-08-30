@@ -23,7 +23,7 @@ class _DownloadThread(QThread):
     succeeded = Signal()
     error = Signal(Exception)
 
-    def __init__(self, model_type: type[osam.types.Model], parent: QWidget) -> None:
+    def __init__(self, *, model_type: type[osam.types.Model], parent: QWidget) -> None:
         super().__init__(parent)
         self._model_type = model_type
         self._total_files = sum(
@@ -79,7 +79,7 @@ def _format_bytes(n: int, /) -> str:
     return f"{value:.1f} TB"
 
 
-def download_ai_model(model_name: str, parent: QWidget) -> bool:
+def download_ai_model(*, model_name: str, parent: QWidget) -> bool:
     model_type = osam.apis.get_model_type_by_name(model_name)
 
     if model_type.get_size() is not None:

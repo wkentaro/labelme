@@ -70,7 +70,7 @@ def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
     return np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
 
 
-def compute_circle_from_mask(mask: NDArray[np.bool_]) -> Circle | None:
+def compute_circle_from_mask(*, mask: NDArray[np.bool_]) -> Circle | None:
     if not mask.any():
         return None
     ys, xs = np.nonzero(mask)
@@ -85,6 +85,7 @@ def compute_circle_from_mask(mask: NDArray[np.bool_]) -> Circle | None:
 
 
 def compute_oriented_rectangle_from_mask(
+    *,
     mask: NDArray[np.bool_],
 ) -> NDArray[np.float32] | None:
     if not mask.any():
@@ -247,7 +248,7 @@ def _simplify_contour(
 
 
 def compute_polygons_from_mask(
-    mask: NDArray[np.bool_], detail: int = 80
+    *, mask: NDArray[np.bool_], detail: int = 80
 ) -> list[NDArray[np.float32]]:
     if not 0 <= detail <= _DETAIL_MAX:
         raise ValueError(f"detail must be between 0 and 100, got {detail}")

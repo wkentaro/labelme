@@ -123,7 +123,7 @@ def test_fit_width_uses_full_width_when_quantized_image_fits_height(
     )
     image.fill(0)
     _win._image = image
-    _win._canvas_widgets.canvas.load_pixmap(QtGui.QPixmap.fromImage(image))
+    _win._canvas_widgets.canvas.load_pixmap(pixmap=QtGui.QPixmap.fromImage(image))
 
     _win.set_fit_width_mode(True)
 

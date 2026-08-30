@@ -233,11 +233,11 @@ _RESERVED_TOP_LEVEL_KEYS: Final[tuple[str, ...]] = (
 )
 
 
-def is_label_file_path(filename: str) -> bool:
+def is_label_file_path(*, filename: str) -> bool:
     return Path(filename).suffix.lower() == LABEL_FILE_SUFFIX
 
 
-def read_image_file(filename: str) -> bytes:
+def read_image_file(*, filename: str) -> bytes:
     try:
         return _read_image_file(filename=filename)
     except OSError:
@@ -250,7 +250,7 @@ def _read_image_file(*, filename: str) -> bytes:
     t_start = time.time()
     image_pil = _imread(filename)
 
-    oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
+    oriented: PIL.Image.Image = _utils.apply_exif_orientation(image_pil)
     ext = Path(filename).suffix.lower()
     if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
         with open(filename, "rb") as f:
@@ -291,7 +291,7 @@ def _check_image_dimensions(
         isinstance(expected_width, bool) or not isinstance(expected_width, int)
     ):
         raise TypeError(f"imageWidth must be int: {expected_width}")
-    actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
+    actual_w, actual_h = _utils.img_data_to_pil(image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
             f"imageHeight mismatch: declared={expected_height}, actual={actual_h}"
@@ -302,7 +302,7 @@ def _check_image_dimensions(
         )
 
 
-def read_label_file(filename: str) -> Annotation:
+def read_label_file(*, filename: str) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
@@ -348,9 +348,9 @@ def read_label_file(filename: str) -> Annotation:
 
 
 def write_label_file(
+    *,
     filename: str,
     annotation: Annotation,
-    *,
     image_height: int | None,
     image_width: int | None,
     save_image_data: bool,
