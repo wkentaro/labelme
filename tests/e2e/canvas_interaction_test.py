@@ -37,7 +37,7 @@ _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 _SHAPE_INDEX: Final[int] = 0
 
 
-def _find_edge_midpoint_clear_of_vertices(canvas: Canvas, shape: Shape) -> QPointF:
+def _find_edge_midpoint_clear_of_vertices(*, canvas: Canvas, shape: Shape) -> QPointF:
     # Hovering prefers a vertex over an edge within epsilon/scale of it, so the
     # middle of a short edge stops being hoverable once a smaller screen scales
     # the image down. Take the edge midpoint standing farthest from any vertex.
@@ -66,6 +66,7 @@ def _find_edge_midpoint_clear_of_vertices(canvas: Canvas, shape: Shape) -> QPoin
 
 
 def _hover_and_drag(
+    *,
     qtbot: QtBot,
     canvas: Canvas,
     start_image_pos: QPointF,
@@ -85,6 +86,7 @@ def _hover_and_drag(
 
 
 def _cancel_label(
+    *,
     qtbot: QtBot,
     label_dialog: LabelDialog,
 ) -> None:
@@ -94,7 +96,7 @@ def _cancel_label(
     )
 
 
-def _wait_for_shape(qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
+def _wait_for_shape(*, qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
     result: list[Shape] = []
 
     def created() -> None:
@@ -109,6 +111,7 @@ def _wait_for_shape(qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
 
 
 def _click_to_remove_point(
+    *,
     qtbot: QtBot,
     canvas: Canvas,
     vertex: QPointF,
@@ -126,6 +129,7 @@ def _click_to_remove_point(
 
 
 def _save_and_check(
+    *,
     win: MainWindow,
     tmp_path: Path,
 ) -> None:
@@ -746,7 +750,7 @@ def test_remove_point_blocked_at_minimum(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-def _click_to_select(qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> None:
+def _click_to_select(*, qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> None:
     pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=pos)
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)

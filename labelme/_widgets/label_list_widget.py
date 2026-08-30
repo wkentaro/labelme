@@ -247,7 +247,7 @@ class LabelListWidget(QtWidgets.QListView):
         )
 
     def _resolve_item(
-        self, index: QtCore.QPersistentModelIndex
+        self, *, index: QtCore.QPersistentModelIndex
     ) -> LabelListWidgetItem | None:
         if not index.isValid():
             return None
@@ -275,12 +275,13 @@ class LabelListWidget(QtWidgets.QListView):
         self,
         selected: QtCore.QItemSelection,
         deselected: QtCore.QItemSelection,
+        /,
     ) -> None:
         selected_items = [self._model.itemFromIndex(i) for i in selected.indexes()]
         deselected_items = [self._model.itemFromIndex(i) for i in deselected.indexes()]
         self.item_selection_changed.emit(selected_items, deselected_items)
 
-    def _on_item_double_clicked(self, index: QtCore.QModelIndex) -> None:
+    def _on_item_double_clicked(self, index: QtCore.QModelIndex, /) -> None:
         self.item_double_clicked.emit(self._model.itemFromIndex(index))
 
     def selected_items(self) -> list[LabelListWidgetItem]:

@@ -15,7 +15,9 @@ from examples import utils
 _SOURCE_MODES: Final = ["RGB", "RGBA", "LA", "L", "P"]
 
 
-def _mask_shape(points: list[list[float]], mask: NDArray[np.bool_]) -> dict[str, Any]:
+def _mask_shape(
+    *, points: list[list[float]], mask: NDArray[np.bool_]
+) -> dict[str, Any]:
     return dict(
         label="car",
         points=points,
@@ -94,7 +96,7 @@ def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
     assert np.array_equal(cls > 0, painted)
 
 
-def _encode_png(img_pil: PIL.Image.Image) -> bytes:
+def _encode_png(img_pil: PIL.Image.Image, /) -> bytes:
     buf = io.BytesIO()
     img_pil.save(buf, format="PNG")
     return buf.getvalue()

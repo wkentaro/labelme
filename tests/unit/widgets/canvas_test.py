@@ -64,7 +64,7 @@ def test_propose_ai_shapes_passes_rgb_image_to_model(
     np.testing.assert_array_equal(captured_images[0][0, 0], [10, 20, 30])
 
 
-def _make_oriented_rectangle(corners: list[tuple[float, float]]) -> Shape:
+def _make_oriented_rectangle(*, corners: list[tuple[float, float]]) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
         points=np.array(corners, dtype=np.float64),
@@ -507,7 +507,7 @@ def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
     assert canvas.shapes[0].visible is False
 
 
-def _make_rectangle(label: str | None) -> Shape:
+def _make_rectangle(*, label: str | None) -> Shape:
     return Shape(
         label=label,
         shape_type="rectangle",

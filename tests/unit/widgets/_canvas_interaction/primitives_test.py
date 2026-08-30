@@ -23,11 +23,11 @@ _SCALE: Final[float] = 1.0
 _POINT_SIZE: Final[int] = 8
 
 
-def _point(x: float, y: float) -> np.ndarray:
+def _point(x: float, y: float, /) -> np.ndarray:
     return np.array([x, y], dtype=np.float64)
 
 
-def _polygon(points: list[tuple[float, float]], *, visible: bool) -> Shape:
+def _polygon(points: list[tuple[float, float]], /, *, visible: bool) -> Shape:
     return Shape(
         shape_type="polygon",
         points=np.array(points, dtype=np.float64),

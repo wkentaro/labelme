@@ -5,7 +5,7 @@ from typing import cast
 from loguru import logger
 
 
-def _is_rgb(value: object) -> bool:
+def _is_rgb(value: object, /) -> bool:
     return (
         isinstance(value, list)
         and len(value) == 3

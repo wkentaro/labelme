@@ -90,7 +90,7 @@ def test_img_qt_to_arr_copies_source_buffer() -> None:
     np.testing.assert_array_equal(arr[0, 0], [30, 20, 10, 255])
 
 
-def _make_jpeg_with_red_marker(orientation: int) -> PIL.Image.Image:
+def _make_jpeg_with_red_marker(*, orientation: int) -> PIL.Image.Image:
     # Round-trip through JPEG so apply_exif_orientation can read the EXIF
     # Orientation tag; pin quality so the red marker stays the brightest pixel.
     ORIENTATION_TAG: Final = 274  # EXIF Orientation tag (0x0112)
@@ -105,7 +105,7 @@ def _make_jpeg_with_red_marker(orientation: int) -> PIL.Image.Image:
     return PIL.Image.open(buf)
 
 
-def _find_brightest_red_rowcol(image: PIL.Image.Image) -> tuple[int, int]:
+def _find_brightest_red_rowcol(image: PIL.Image.Image, /) -> tuple[int, int]:
     red = np.asarray(image)[:, :, 0]
     row, col = np.unravel_index(red.argmax(), red.shape)
     return int(row), int(col)

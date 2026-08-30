@@ -65,7 +65,7 @@ class _DownloadThread(QThread):
             self.error.emit(e)
 
 
-def _format_bytes(n: int) -> str:
+def _format_bytes(n: int, /) -> str:
     UNIT: Final = 1024
     value = float(n)
     # Advance a tier when the value rounds up to a full UNIT, so the display

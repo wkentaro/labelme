@@ -10,6 +10,7 @@ from .conftest import MainWinFactory
 
 def _exec_clicking_role(
     role: QtWidgets.QMessageBox.ButtonRole,
+    /,
 ) -> Callable[[QtWidgets.QMessageBox], int]:
     def _exec(msg_box: QtWidgets.QMessageBox) -> int:
         for button in msg_box.buttons():

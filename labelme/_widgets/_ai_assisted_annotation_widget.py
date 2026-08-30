@@ -55,6 +55,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     def _init_ui(
         self,
+        *,
         default_model: str,
         polygon_detail: int,
         on_model_changed: Callable[[str], None],

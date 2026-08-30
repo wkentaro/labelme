@@ -30,7 +30,7 @@ from ._utils.shape import ShapeDict
 PIL.Image.MAX_IMAGE_PIXELS = None
 
 
-def _validate_flags(flags: object) -> dict[str, bool]:
+def _validate_flags(*, flags: object) -> dict[str, bool]:
     if flags is None:
         return {}
     if not isinstance(flags, dict):
@@ -90,7 +90,7 @@ def _validate_shape_semantics(
         raise ValueError(f"mask must decode to a 2D image, got shape {mask.shape}")
 
 
-def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
+def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
     SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
@@ -178,7 +178,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     return loaded
 
 
-def _dump_shape_to_json_obj(shape: ShapeDict) -> dict[str, Any]:
+def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
     json_obj: dict[str, Any] = dict(shape["other_data"])
     json_obj.update(
         label=shape["label"],
@@ -241,9 +241,9 @@ def read_image_file(filename: str) -> bytes:
         raise OSError(f"failed to read image {filename!r}: {e}") from e
 
 
-def _read_image_file(filename: str) -> bytes:
+def _read_image_file(*, filename: str) -> bytes:
     t_start = time.time()
-    image_pil = _imread(filename=filename)
+    image_pil = _imread(filename)
 
     oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
     ext = Path(filename).suffix.lower()
@@ -363,7 +363,9 @@ def write_label_file(
         payload: dict[str, Any] = {
             "version": __version__,
             "flags": dict(annotation.flags) if annotation.flags else {},
-            "shapes": [_dump_shape_to_json_obj(shape) for shape in annotation.shapes],
+            "shapes": [
+                _dump_shape_to_json_obj(shape=shape) for shape in annotation.shapes
+            ],
             "imagePath": annotation.image_path,
             "imageData": image_data_b64,
             "imageHeight": image_height,
@@ -399,7 +401,7 @@ def write_label_file(
 _DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
 
-def _imread(filename: str) -> PIL.Image.Image:
+def _imread(filename: str, /) -> PIL.Image.Image:
     ext: str = Path(filename).suffix.lower()
     try:
         image_pil = PIL.Image.open(filename)
@@ -412,7 +414,7 @@ def _imread(filename: str) -> PIL.Image.Image:
         raise
 
 
-def _imread_tiff(filename: str) -> PIL.Image.Image:
+def _imread_tiff(filename: str, /) -> PIL.Image.Image:
     img_arr: NDArray = tifffile.imread(filename)
 
     if img_arr.ndim == 2:
@@ -431,7 +433,7 @@ def _imread_tiff(filename: str) -> PIL.Image.Image:
     return PIL.Image.fromarray(img_arr_normalized)
 
 
-def _normalize_to_uint8(arr: NDArray) -> NDArray[np.uint8]:
+def _normalize_to_uint8(arr: NDArray, /) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
     finite = arr[np.isfinite(arr)]
     if finite.size == 0:

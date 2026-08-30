@@ -21,6 +21,7 @@ from .conftest import submit_label_dialog
 
 
 def _draw_polygon(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     canvas: Canvas,

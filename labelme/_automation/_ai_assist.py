@@ -136,6 +136,7 @@ def _is_point_inside_detection(
 
 def _detections_from_annotations(
     annotations: list[osam.types.Annotation],
+    /,
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")

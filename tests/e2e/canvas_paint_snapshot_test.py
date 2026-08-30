@@ -45,14 +45,14 @@ _TRIANGLE_FRACTIONS: Final[tuple[tuple[float, float], ...]] = (
 )
 
 
-def _pin_canvas_for_snapshot(qtbot: QtBot, canvas: Canvas) -> None:
+def _pin_canvas_for_snapshot(*, qtbot: QtBot, canvas: Canvas) -> None:
     canvas.setFixedSize(_RENDER_WIDTH, _RENDER_HEIGHT)
     canvas.scale = _RENDER_SCALE
     canvas.update()
     qtbot.wait(_PAINT_SETTLE_MS)
 
 
-def _render_canvas_offscreen(canvas: Canvas) -> QImage:
+def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
     image = QImage(_RENDER_WIDTH, _RENDER_HEIGHT, QImage.Format.Format_ARGB32)
     image.fill(_BACKGROUND_COLOR)
     painter = QPainter(image)
@@ -70,7 +70,7 @@ def _render_canvas_offscreen(canvas: Canvas) -> QImage:
     return image
 
 
-def _qimage_to_numpy(image: QImage) -> np.ndarray:
+def _qimage_to_numpy(image: QImage, /) -> np.ndarray:
     assert image.format() == QImage.Format.Format_ARGB32
     width = image.width()
     height = image.height()
@@ -82,12 +82,12 @@ def _qimage_to_numpy(image: QImage) -> np.ndarray:
     return arr[:, :width, :].copy()
 
 
-def _save_snapshot(path: Path, image: QImage) -> None:
+def _save_snapshot(*, path: Path, image: QImage) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     image.save(str(path))
 
 
-def _assert_matches_snapshot(actual: QImage, snapshot_path: Path) -> None:
+def _assert_matches_snapshot(*, actual: QImage, snapshot_path: Path) -> None:
     TOLERANCE_MAX_DIFF: Final[int] = 1
     TOLERANCE_PASSING_FRACTION: Final[float] = 0.995
     if not snapshot_path.exists():
@@ -115,6 +115,7 @@ def _assert_matches_snapshot(actual: QImage, snapshot_path: Path) -> None:
 
 
 def _check_or_update_snapshot(
+    *,
     canvas: Canvas,
     snapshot_path: Path,
     update_snapshots: bool,

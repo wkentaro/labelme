@@ -18,6 +18,7 @@ def formats() -> list[AiOutputFormat]:
 
 
 def _make_widget(
+    *,
     qtbot: QtBot,
     models: list[str],
     formats: list[AiOutputFormat],

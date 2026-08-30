@@ -26,6 +26,7 @@ _AI_TEXT_MODEL: Final = "yoloworld:latest"
 
 
 def _make_response(
+    *,
     texts: list[str],
     boxes: list[tuple[int, int, int, int]],
     scores: list[float],
@@ -53,7 +54,7 @@ def _make_response(
 
 
 def _make_person_response(
-    texts: list[str], with_masks: bool
+    *, texts: list[str], with_masks: bool
 ) -> osam.types.GenerateResponse:
     person_idx = texts.index("person")
     return _make_response(
@@ -65,7 +66,7 @@ def _make_person_response(
     )
 
 
-def _make_multi_label_response(texts: list[str]) -> osam.types.GenerateResponse:
+def _make_multi_label_response(*, texts: list[str]) -> osam.types.GenerateResponse:
     person_idx = texts.index("person")
     sofa_idx = texts.index("sofa")
     return _make_response(
@@ -77,7 +78,7 @@ def _make_multi_label_response(texts: list[str]) -> osam.types.GenerateResponse:
     )
 
 
-def _make_edge_crossing_response(texts: list[str]) -> osam.types.GenerateResponse:
+def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResponse:
     return _make_response(
         texts=texts,
         boxes=[(-10, 30, 50, 100)],
@@ -88,6 +89,7 @@ def _make_edge_crossing_response(texts: list[str]) -> osam.types.GenerateRespons
 
 
 def _install_mock_session(
+    *,
     win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
     response_fn: Callable[..., osam.types.GenerateResponse],

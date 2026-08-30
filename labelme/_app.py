@@ -1241,7 +1241,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _load_config(
-        self, config_file: Path | None, config_overrides: dict | None
+        self, *, config_file: Path | None, config_overrides: dict | None
     ) -> tuple[Path | None, dict]:
         try:
             config = _config.load_config(
@@ -1355,7 +1355,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_status_message(self, message: str, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
-    def _submit_ai_prompt(self, _: bool) -> None:
+    def _submit_ai_prompt(self, _: bool, /) -> None:
         create_mode = self._canvas_widgets.canvas.create_mode
         shape_type = _resolve_text_annotation_shape_type(
             create_mode=create_mode,
@@ -1387,7 +1387,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         except Exception as e:
             logger.opt(exception=e).error("AI text inference failed")
-            self._on_inference_failed(message=f"{type(e).__name__}: {e}")
+            self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
 
         if (
@@ -1499,7 +1499,7 @@ class MainWindow(QtWidgets.QMainWindow):
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def _on_drawing_polygon_changed(self, drawing: bool) -> None:
+    def _on_drawing_polygon_changed(self, drawing: bool, /) -> None:
         # In the middle of drawing, toggling between modes should be disabled.
         self._actions.edit_mode.setEnabled(not drawing)
         self._actions.undo_last_point.setEnabled(drawing)
@@ -1508,7 +1508,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._actions.delete.setEnabled(not drawing)
 
-    def _switch_canvas_mode(self, edit: bool, create_mode: str | None) -> None:
+    def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(edit)
         if create_mode is not None:
             self._canvas_widgets.canvas.create_mode = create_mode
@@ -1531,7 +1531,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
         self._set_point_prompt_mode(enabled=create_mode == "ai_points_to_shape")
 
-    def _highlight_ai_buttons(self, highlight: bool) -> None:
+    def _highlight_ai_buttons(self, highlight: bool, /) -> None:
         self._ai_buttons_highlighted = highlight
         BG_ALPHA: Final = 60
         BORDER_ALPHA: Final = 120
@@ -1685,6 +1685,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self,
         current_item: QtWidgets.QListWidgetItem | None,
         previous_item: QtWidgets.QListWidgetItem | None,
+        /,
     ) -> None:
         if current_item is None:
             return
@@ -1696,7 +1697,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._restore_file_list_state(item=previous_item)
 
     # React to canvas signals.
-    def _on_shape_selection_changed(self, selected_shapes: list[Shape]) -> None:
+    def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
@@ -1742,6 +1743,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _get_rgb_by_label(
         self,
+        *,
         label: str,
         unique_label_list: UniqueLabelQListWidget,
     ) -> tuple[int, int, int]:
@@ -1767,7 +1769,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._docks.label_list.remove_item(item)
         self._docks.label_list.item_dropped.connect(self._on_label_order_changed)
 
-    def _load_shapes(self, shapes: list[Shape], replace: bool) -> None:
+    def _load_shapes(self, shapes: list[Shape], /, *, replace: bool) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
@@ -1782,6 +1784,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _load_flags(
         self,
+        *,
         flags: dict[str, bool],
         widget: QtWidgets.QListWidget,
     ) -> None:
@@ -1841,10 +1844,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             return False
 
-    def _insert_shapes(self, shapes: list[Shape]) -> None:
+    def _insert_shapes(self, shapes: list[Shape], /) -> None:
         if not shapes:
             return
-        self._load_shapes(shapes=shapes, replace=False)
+        self._load_shapes(shapes, replace=False)
         self._canvas_widgets.canvas.select_shapes(shapes)
         self.mark_dirty()
 
@@ -1860,7 +1863,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._canvas_widgets.canvas.deselect_shape():
                 self._canvas_widgets.canvas.update()
 
-    def _on_label_item_changed(self, item: LabelListWidgetItem) -> None:
+    def _on_label_item_changed(self, item: LabelListWidgetItem, /) -> None:
         is_visible_new = item.checkState() == Qt.CheckState.Checked
 
         selected_group = (
@@ -1948,10 +1951,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tr("AI inference produced no new annotation."), 5000
         )
 
-    def _on_inference_failed(self, message: str) -> None:
+    def _on_inference_failed(self, message: str, /) -> None:
         self.show_status_message(self.tr("AI inference failed: %s") % message, 10000)
 
-    def _on_point_prompt_rejected(self, model_name: str) -> None:
+    def _on_point_prompt_rejected(self, model_name: str, /) -> None:
         option = _ai_models.find_ai_assist_model_option(model_name=model_name)
         assert option is not None
         QtWidgets.QMessageBox.warning(
@@ -1964,19 +1967,19 @@ class MainWindow(QtWidgets.QMainWindow):
             % option.display_name,
         )
 
-    def _on_scroll_request(self, delta: int, orientation: Qt.Orientation) -> None:
+    def _on_scroll_request(self, delta: int, orientation: Qt.Orientation, /) -> None:
         units = -delta * 0.1  # natural scroll
         bar = self._canvas_widgets.scroll_bars[orientation]
         value = bar.value() + bar.singleStep() * units
         self.set_scroll_value(orientation, value)
 
-    def _on_pan_request(self, step: QtCore.QPoint) -> None:
+    def _on_pan_request(self, step: QtCore.QPoint, /) -> None:
         # Pan moves the viewport opposite to the cursor delta so the image
         # tracks the grabbed point one-for-one in widget pixels.
         self._move_canvas_view(step=QtCore.QPointF(step), constrain_to_center=True)
 
     def _move_canvas_view(
-        self, step: QtCore.QPointF, *, constrain_to_center: bool
+        self, *, step: QtCore.QPointF, constrain_to_center: bool
     ) -> None:
         h_bar = self._canvas_widgets.scroll_bars[Qt.Orientation.Horizontal]
         v_bar = self._canvas_widgets.scroll_bars[Qt.Orientation.Vertical]
@@ -2011,7 +2014,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._prev_image_path = self._image_path
 
-    def _set_zoom(self, value: float, pos: QtCore.QPointF | None) -> None:
+    def _set_zoom(self, *, value: float, pos: QtCore.QPointF | None) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set zoom")
             return
@@ -2045,14 +2048,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=100, pos=None)
 
-    def _add_zoom(self, increment: float, pos: QtCore.QPointF | None) -> None:
+    def _add_zoom(self, *, increment: float, pos: QtCore.QPointF | None) -> None:
         # Multiplicative stepping on a float widget; the QDoubleSpinBox rounds to
         # its decimal precision, so no integer ceil/floor clamping is needed.
         zoom_value = self._canvas_widgets.zoom_widget.value() * increment
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
 
-    def _zoom_requested(self, delta: int, pos: QtCore.QPointF) -> None:
+    def _zoom_requested(self, delta: int, pos: QtCore.QPointF, /) -> None:
         self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
 
     def set_fit_window_mode(self, value: bool = True) -> None:
@@ -2063,7 +2066,7 @@ class MainWindow(QtWidgets.QMainWindow):
         target = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
-    def _switch_zoom_mode(self, mode: _ZoomMode) -> None:
+    def _switch_zoom_mode(self, mode: _ZoomMode, /) -> None:
         self._zoom_mode = mode
         self._adjust_scale()
 
@@ -2071,7 +2074,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
         self._actions.fit_width.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
 
-    def _on_brightness_contrast_changed(self, qimage: QtGui.QImage) -> None:
+    def _on_brightness_contrast_changed(self, qimage: QtGui.QImage, /) -> None:
         self._canvas_widgets.canvas.load_pixmap(
             QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
@@ -2137,7 +2140,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _read_annotation_file(self, label_path: str) -> Annotation | None:
+    def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
         try:
             return read_label_file(filename=label_path)
         except LabelFileError as e:
@@ -2146,7 +2149,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return None
 
-    def _read_image_as_annotation(self, image_path: str) -> Annotation | None:
+    def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
             image_data = read_image_file(filename=image_path)
         except OSError as e:
@@ -2173,7 +2176,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_list.repaint()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
-    def _load_file(self, image_or_label_path: str) -> bool:
+    def _load_file(self, *, image_or_label_path: str) -> bool:
         # Qt file dialogs separate with forward slashes even on Windows, while
         # the file list holds the separator of the platform, so an unnormalized
         # path would neither select its file list row nor receive the saved
@@ -2267,9 +2270,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Record one baseline state. Loading carried-forward shapes separately
         # would create a false Undo step that discards them before any edit.
         carry_prev_shapes = bool(prev_shapes) and not shapes
-        self._load_shapes(
-            shapes=prev_shapes if carry_prev_shapes else shapes, replace=True
-        )
+        self._load_shapes(prev_shapes if carry_prev_shapes else shapes, replace=True)
         flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if carry_prev_shapes:
@@ -2291,7 +2292,7 @@ class MainWindow(QtWidgets.QMainWindow):
         is_initial_load = not self._viewport_states
         if target_viewport is not None:
             self._zoom_mode = target_viewport.zoom_mode
-            self._set_zoom(target_viewport.zoom_value, pos=None)
+            self._set_zoom(value=target_viewport.zoom_value, pos=None)
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self._zoom_mode = _ZoomMode.FIT_WINDOW
             self._adjust_scale()
@@ -2551,7 +2552,7 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path=self._image_path, output_dir=self._output_dir
         )
 
-    def _confirm_deletion(self, message: str) -> bool:
+    def _confirm_deletion(self, *, message: str) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         msg_box.setWindowTitle(self.tr("Attention"))
@@ -2600,7 +2601,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _is_settings_editable(self) -> bool:
         return self._config_file is not None and not self._config_overrides
 
-    def _make_label_dialog(self, label_history: list[str] | None) -> LabelDialog:
+    def _make_label_dialog(self, *, label_history: list[str] | None) -> LabelDialog:
         return LabelDialog(
             parent=self,
             labels=self._config["labels"],
@@ -2615,27 +2616,22 @@ class MainWindow(QtWidgets.QMainWindow):
     def _connect_persistent_actions(self) -> None:
         for key_path, action in self._persistent_actions.items():
             action.toggled.connect(
-                lambda checked, path=key_path: self._apply_setting_change(
-                    key_path=path, value=checked
-                )
+                lambda checked, path=key_path: self._apply_setting_change(path, checked)
             )
 
-    def _on_ai_model_changed(self, model_id: str) -> None:
+    def _on_ai_model_changed(self, model_id: str, /) -> None:
         self._canvas_widgets.canvas.set_ai_model_name(model_id)
         option = _ai_models.find_ai_assist_model_option(model_name=model_id)
         assert option is not None
         model_display = option.display_name
         if self._config["ai"]["default"] == model_display:
             return
-        self._apply_setting_change(key_path=("ai", "default"), value=model_display)
+        self._apply_setting_change(("ai", "default"), model_display)
 
-    def _on_ai_polygon_detail_changed(self, detail: int) -> None:
-        self._apply_setting_change(
-            key_path=("mask_polygonization", "detail"),
-            value=detail,
-        )
+    def _on_ai_polygon_detail_changed(self, detail: int, /) -> None:
+        self._apply_setting_change(("mask_polygonization", "detail"), detail)
 
-    def _set_point_prompt_mode(self, enabled: bool) -> None:
+    def _set_point_prompt_mode(self, *, enabled: bool) -> None:
         self._ai_annotation.set_point_prompt_mode(enabled=enabled)
         if self._settings_dialog is None:
             return
@@ -2651,20 +2647,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 disabled_reason=disabled_reason,
             )
 
-    def _set_setting_value(self, key_path: tuple[str, ...], value: object) -> None:
+    def _set_setting_value(self, *, key_path: tuple[str, ...], value: object) -> None:
         node: dict = self._config
         for key in key_path[:-1]:
             node = node[key]
         node[key_path[-1]] = value
 
-    def _read_setting_value(self, key_path: tuple[str, ...]) -> object:
+    def _read_setting_value(self, *, key_path: tuple[str, ...]) -> object:
         node: object = self._config
         for key in key_path:
             assert isinstance(node, dict)
             node = node[key]
         return node
 
-    def _apply_setting_change(self, key_path: tuple[str, ...], value: object) -> bool:
+    def _apply_setting_change(
+        self, key_path: tuple[str, ...], value: object, /
+    ) -> bool:
         if self._is_settings_editable and not self._try_set_overrides(
             overrides=[(key_path, value)]
         ):
@@ -2676,7 +2674,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def _preview_shape_color(
-        self, key_path: tuple[str, ...], value: list[int] | None
+        self, key_path: tuple[str, ...], value: list[int] | None, /
     ) -> None:
         if value is None:
             self._shape_color_preview = None
@@ -2692,7 +2690,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_shape_colors()
 
     def _try_set_overrides(
-        self, overrides: list[tuple[tuple[str, ...], object]]
+        self, *, overrides: list[tuple[tuple[str, ...], object]]
     ) -> bool:
         assert self._config_file is not None
         try:
@@ -2702,7 +2700,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         return True
 
-    def _sync_setting_controls(self, key_path: tuple[str, ...]) -> None:
+    def _sync_setting_controls(self, *, key_path: tuple[str, ...]) -> None:
         if self._settings_dialog is not None:
             self._settings_dialog.set_value(
                 key_path=key_path,
@@ -2710,7 +2708,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         self._apply_to_live_widgets(key_path=key_path)
 
-    def _apply_to_live_widgets(self, key_path: tuple[str, ...]) -> None:
+    def _apply_to_live_widgets(self, *, key_path: tuple[str, ...]) -> None:
         if key_path == ("color_theme",):
             # apply_color_theme -> setColorScheme emits colorSchemeChanged, which
             # drives _retheme; no explicit refresh needed here.
@@ -2956,7 +2954,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.end_move(copy=False)
         self.mark_dirty()
 
-    def _load_from_file_or_dir(self, file_or_dir: str) -> None:
+    def _load_from_file_or_dir(self, *, file_or_dir: str) -> None:
         if not file_or_dir:
             raise ValueError("file_or_dir cannot be empty")
 
@@ -2981,10 +2979,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 previous_item = file_list.currentItem()
                 with QtCore.QSignalBlocker(file_list):
                     file_list.setCurrentRow(0)
-                self._load_selected_image(
-                    current_item=file_list.currentItem(),
-                    previous_item=previous_item,
-                )
+                self._load_selected_image(file_list.currentItem(), previous_item)
                 file_list.repaint()
         else:
             # Load before swapping the File List, so a failed load leaves the
@@ -3053,7 +3048,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._docks.file_list.repaint()
                 return
 
-    def _import_images_from_dir(self, root_dir: str | None) -> None:
+    def _import_images_from_dir(self, *, root_dir: str | None) -> None:
         self._actions.open_next_img.setEnabled(True)
         self._actions.open_prev_img.setEnabled(True)
 
@@ -3090,7 +3085,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
-    def _update_status_stats(self, mouse_pos: QtCore.QPointF) -> None:
+    def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
         stats: list[str] = []
         stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
         stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
@@ -3199,7 +3194,7 @@ def _make_image_list_item(
     return item
 
 
-def _shape_to_dict(shape: Shape) -> ShapeDict:
+def _shape_to_dict(shape: Shape, /) -> ShapeDict:
     assert shape.label is not None
     return ShapeDict(
         label=shape.label,
@@ -3280,7 +3275,7 @@ def _list_supported_image_extensions() -> tuple[str, ...]:
     )
 
 
-def _scan_image_files(root_dir: str) -> list[str]:
+def _scan_image_files(*, root_dir: str) -> list[str]:
     extensions = _list_supported_image_extensions()
 
     images: list[str] = []

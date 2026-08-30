@@ -52,7 +52,7 @@ def image_to_widget_pos(canvas: Canvas, image_pos: QPointF) -> QPoint:
 
 @pytest.fixture(autouse=True)
 def _isolated_qtsettings(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> Generator[None, None, None]:
     settings_file = tmp_path / "qtsettings.ini"
     settings: QSettings = QSettings(str(settings_file), QSettings.Format.IniFormat)
@@ -63,12 +63,12 @@ def _isolated_qtsettings(
 
 
 @pytest.fixture(autouse=True)
-def _stub_setup_loguru(monkeypatch: pytest.MonkeyPatch) -> None:
+def _stub_setup_loguru(*, monkeypatch: pytest.MonkeyPatch) -> None:
     # main() configures loguru with a file handler using enqueue=True, which
     # spawns a multiprocessing.Queue (semaphores → file descriptors). Calling
     # main() per test leaks FDs faster than GC reclaims them and exhausts the
     # worker's ulimit. Tests don't need file logging, so stub it out.
-    monkeypatch.setattr("labelme.__main__._setup_loguru", lambda logger_level: None)
+    monkeypatch.setattr("labelme.__main__._setup_loguru", lambda *, logger_level: None)
 
 
 MainWinFactory = Callable[..., MainWindow]

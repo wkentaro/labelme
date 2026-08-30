@@ -20,16 +20,18 @@ from .conftest import image_to_widget_pos
 from .conftest import submit_label_dialog
 
 
-def _centroid(points: np.ndarray) -> QPointF:
+def _centroid(points: np.ndarray, /) -> QPointF:
     return QPointF(float(points[:, 0].mean()), float(points[:, 1].mean()))
 
 
-def _edge_lengths(points: np.ndarray) -> list[float]:
+def _edge_lengths(points: np.ndarray, /) -> list[float]:
     n = len(points)
     return [float(np.linalg.norm(points[(i + 1) % n] - points[i])) for i in range(n)]
 
 
-def _vertex_displacements(actual: np.ndarray, original: list[QPointF]) -> list[float]:
+def _vertex_displacements(
+    *, actual: np.ndarray, original: list[QPointF]
+) -> list[float]:
     return [
         math.hypot(float(actual[i][0]) - o.x(), float(actual[i][1]) - o.y())
         for i, o in enumerate(original)
@@ -37,6 +39,7 @@ def _vertex_displacements(actual: np.ndarray, original: list[QPointF]) -> list[f
 
 
 def _draw_oriented_rectangle(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     label: str,

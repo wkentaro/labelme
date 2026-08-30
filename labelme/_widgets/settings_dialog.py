@@ -164,7 +164,7 @@ class _SettingsPage(QtWidgets.QWidget):
             + self._content.minimumSizeHint().width()
         )
 
-    def _scroll_to_group(self, index: int) -> None:
+    def _scroll_to_group(self, index: int, /) -> None:
         if not 0 <= index < len(self._groups):
             return
         group = self._groups[index]
@@ -178,7 +178,7 @@ class _SettingsPage(QtWidgets.QWidget):
         with QtCore.QSignalBlocker(self._navigation):
             self._navigation.setCurrentRow(index)
 
-    def _sync_navigation_to_scroll(self, value: int) -> None:
+    def _sync_navigation_to_scroll(self, value: int, /) -> None:
         if self._scrolling_to_group:
             return
         viewport = self._scroll_area.viewport()
@@ -320,7 +320,7 @@ class SettingsDialog(QtWidgets.QDialog):
         item.setEnabled(enabled)
         item.setToolTip("" if enabled else disabled_reason)
 
-    def _read_value(self, key_path: tuple[str, ...]) -> object:
+    def _read_value(self, *, key_path: tuple[str, ...]) -> object:
         node: object = self._config
         for key in key_path:
             if not isinstance(node, dict):
@@ -329,7 +329,7 @@ class SettingsDialog(QtWidgets.QDialog):
         return node
 
     def _build_group(
-        self, title: str, settings: list[schema.Setting]
+        self, *, title: str, settings: list[schema.Setting]
     ) -> QtWidgets.QGroupBox:
         group_box = QtWidgets.QGroupBox(title)
         group_box.setFlat(True)
@@ -361,7 +361,7 @@ class SettingsDialog(QtWidgets.QDialog):
         return group_box
 
     def _build_label_cell(
-        self, setting: schema.Setting, editor: QtWidgets.QWidget
+        self, *, setting: schema.Setting, editor: QtWidgets.QWidget
     ) -> QtWidgets.QWidget:
         label = QtWidgets.QLabel(self.tr(setting.label))
         label.setBuddy(editor)
@@ -397,8 +397,8 @@ class SettingsDialog(QtWidgets.QDialog):
         cell_layout.addWidget(note)
         return cell
 
-    def _create_editor(self, setting: schema.Setting) -> QtWidgets.QWidget:
-        value = self._read_value(setting.key_path)
+    def _create_editor(self, *, setting: schema.Setting) -> QtWidgets.QWidget:
+        value = self._read_value(key_path=setting.key_path)
         if setting.kind == "bool":
             check = QtWidgets.QCheckBox()
             self._set_editor_value(editor=check, value=value)
@@ -464,7 +464,9 @@ class SettingsDialog(QtWidgets.QDialog):
         if setting.kind == "color":
             swatch = _ColorSwatchButton()
             self._set_editor_value(editor=swatch, value=value)
-            swatch.clicked.connect(lambda: self._pick_color(setting.key_path, swatch))
+            swatch.clicked.connect(
+                lambda: self._pick_color(key_path=setting.key_path, swatch=swatch)
+            )
             return swatch
         if setting.kind == "str_list":
             edit = _PlainTextEdit()
@@ -483,6 +485,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def _create_combo(
         self,
+        *,
         setting: schema.Setting,
         value: object,
         items: Sequence[tuple[str, object]],
@@ -498,13 +501,15 @@ class SettingsDialog(QtWidgets.QDialog):
         )
         return combo
 
-    def _apply_combo(self, setting: schema.Setting, combo: QtWidgets.QComboBox) -> None:
+    def _apply_combo(
+        self, *, setting: schema.Setting, combo: QtWidgets.QComboBox
+    ) -> None:
         self._apply(setting.key_path, combo.currentData())
         if setting.key_path == ("shape_color", "mode"):
             self._sync_shape_color_mode()
 
     def _apply_integer_edit(
-        self, key_path: tuple[str, ...], edit: QtWidgets.QLineEdit
+        self, *, key_path: tuple[str, ...], edit: QtWidgets.QLineEdit
     ) -> None:
         try:
             value = int(edit.text())
@@ -515,7 +520,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self._apply(key_path, value)
 
     def _pick_color(
-        self, key_path: tuple[str, ...], swatch: _ColorSwatchButton
+        self, *, key_path: tuple[str, ...], swatch: _ColorSwatchButton
     ) -> None:
         picker = QtWidgets.QColorDialog(
             parent=self, currentColor=QtGui.QColor(*swatch.get_rgb())
@@ -534,6 +539,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def _preview_color(
         self,
+        *,
         key_path: tuple[str, ...],
         swatch: _ColorSwatchButton,
         color: QtGui.QColor,
@@ -542,7 +548,7 @@ class SettingsDialog(QtWidgets.QDialog):
         swatch.set_rgb(rgb)
         self._preview_shape_color(key_path, list(rgb))
 
-    def _set_editor_value(self, editor: QtWidgets.QWidget, value: object) -> None:
+    def _set_editor_value(self, *, editor: QtWidgets.QWidget, value: object) -> None:
         if isinstance(editor, QtWidgets.QCheckBox):
             editor.setChecked(bool(value))
         elif isinstance(editor, QtWidgets.QComboBox):
@@ -560,7 +566,7 @@ class SettingsDialog(QtWidgets.QDialog):
         elif isinstance(editor, _ColorSwatchButton):
             editor.set_rgb(_parse_rgb(value=value))
 
-    def _apply(self, key_path: tuple[str, ...], value: object) -> bool:
+    def _apply(self, key_path: tuple[str, ...], value: object, /) -> bool:
         editor = self._editors[key_path]
         if isinstance(editor, QtWidgets.QComboBox):
             model = editor.model()
@@ -578,10 +584,10 @@ class SettingsDialog(QtWidgets.QDialog):
         self._revert_editor(key_path=key_path)
         return False
 
-    def _revert_editor(self, key_path: tuple[str, ...]) -> None:
-        self.set_value(key_path=key_path, value=self._read_value(key_path))
+    def _revert_editor(self, *, key_path: tuple[str, ...]) -> None:
+        self.set_value(key_path=key_path, value=self._read_value(key_path=key_path))
 
-    def _on_labels_edited(self, edit: _PlainTextEdit) -> None:
+    def _on_labels_edited(self, *, edit: _PlainTextEdit) -> None:
         labels = _parse_str_list(edit=edit)
         validate_combo = self._editors.get(("validate_label",))
         if (

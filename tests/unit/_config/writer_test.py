@@ -12,7 +12,7 @@ from labelme import _config
 from labelme import _yaml
 
 
-def _parse(config_file: Path) -> dict | None:
+def _parse(config_file: Path, /) -> dict | None:
     return _yaml.safe_load(config_file.read_text(encoding="utf-8"))
 
 

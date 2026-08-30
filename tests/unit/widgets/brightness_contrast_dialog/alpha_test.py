@@ -21,7 +21,7 @@ def rgba_img() -> PIL.Image.Image:
 
 
 def _make_dialog(
-    qtbot: QtBot, img: PIL.Image.Image
+    *, qtbot: QtBot, img: PIL.Image.Image
 ) -> tuple[BrightnessContrastDialog, list[NDArray[np.uint8]]]:
     captured: list[NDArray[np.uint8]] = []
     dialog = BrightnessContrastDialog(

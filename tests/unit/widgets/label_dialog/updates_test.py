@@ -6,7 +6,7 @@ from pytestqt.qtbot import QtBot
 from labelme._widgets.label_dialog import LabelDialog
 
 
-def _labels(dialog: LabelDialog) -> set[str]:
+def _labels(dialog: LabelDialog, /) -> set[str]:
     label_list = dialog.label_list
     return {label_list.item(i).text() for i in range(label_list.count())}
 

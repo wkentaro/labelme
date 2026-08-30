@@ -11,7 +11,7 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 
 
-def _make_oriented_rectangle(points: list[tuple[float, float]]) -> Shape:
+def _make_oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
         points=np.array(points, dtype=np.float64),

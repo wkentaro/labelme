@@ -29,6 +29,7 @@ _draw_and_commit_polygon = partial(draw_and_commit_polygon, vertices=_VERTICES)
 
 
 def _schedule_capture_then_cancel(
+    *,
     label_dialog: LabelDialog,
     captured: list[str],
 ) -> None:

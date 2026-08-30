@@ -81,7 +81,7 @@ class _DraftShape:
         )
 
 
-def _draft_to_shape(draft: _DraftShape) -> Shape:
+def _draft_to_shape(draft: _DraftShape, /) -> Shape:
     return Shape(
         shape_type=draft.shape_type,
         points=np.array([[p.x(), p.y()] for p in draft.points], dtype=np.float64),
@@ -90,7 +90,7 @@ def _draft_to_shape(draft: _DraftShape) -> Shape:
     )
 
 
-def _shape_to_draft(shape: Shape) -> _DraftShape:
+def _shape_to_draft(shape: Shape, /) -> _DraftShape:
     return _DraftShape(
         shape_type=shape.shape_type,
         points=tuple(QPointF(*point) for point in shape.points),
@@ -323,7 +323,7 @@ class Canvas(QtWidgets.QWidget):
     def set_point_size(self, point_size: int) -> None:
         self._point_size = point_size
 
-    def _resolve_palette(self, label: str | None) -> Palette:
+    def _resolve_palette(self, label: str | None, /) -> Palette:
         if label is None or self._color_resolver is None:
             return _DEFAULT_PALETTE
         # Auto colors depend on the live label ordering, so the palette cannot
@@ -339,12 +339,12 @@ class Canvas(QtWidgets.QWidget):
     def set_draft_palette(self, palette: Palette) -> None:
         self._draft_palette = palette
 
-    def _highlight_vertex(self, index: int, mode: Literal["move", "near"]) -> None:
+    def _highlight_vertex(self, *, index: int, mode: Literal["move", "near"]) -> None:
         self._highlight = VertexHighlight(index=index, mode=mode)
         self._rotation_highlight = None
 
     def _highlight_rotation_point(
-        self, index: int, mode: Literal["move", "near"]
+        self, *, index: int, mode: Literal["move", "near"]
     ) -> None:
         self._rotation_highlight = VertexHighlight(index=index, mode=mode)
         self._highlight = None
@@ -353,7 +353,7 @@ class Canvas(QtWidgets.QWidget):
         self._highlight = None
         self._rotation_highlight = None
 
-    def _render_context(self, shape: Shape, *, highlighted: bool) -> ShapeRenderContext:
+    def _render_context(self, *, shape: Shape, highlighted: bool) -> ShapeRenderContext:
         selected = shape in self.selected_shapes
         return ShapeRenderContext(
             scale=self.scale,
@@ -490,7 +490,7 @@ class Canvas(QtWidgets.QWidget):
         )
         return proposal
 
-    def _report_inference_failure(self, error: Exception) -> None:
+    def _report_inference_failure(self, *, error: Exception) -> None:
         self._ai_inference_failed = True
         logger.opt(exception=error).error("AI inference failed")
         self.inference_failed.emit(f"{type(error).__name__}: {error}")
@@ -558,6 +558,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _set_highlight(
         self,
+        *,
         hovered_shape: Shape | None,
         hovered_edge: int | None,
         hovered_vertex: int | None,
@@ -593,7 +594,7 @@ class Canvas(QtWidgets.QWidget):
     def _is_rotation_point_selected(self) -> bool:
         return self._hovered_rotation is not None
 
-    def _update_status(self, extra_messages: list[str] | None) -> None:
+    def _update_status(self, *, extra_messages: list[str] | None) -> None:
         messages: list[str] = []
         if self.mode == _CanvasMode.CREATE:
             messages.append(self.tr("Creating %r") % self.create_mode)
@@ -662,7 +663,7 @@ class Canvas(QtWidgets.QWidget):
         self._prev_move_point = pos
         self._dispatch_pointer_move(pos=pos, event=a0)
 
-    def _dispatch_pointer_move(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+    def _dispatch_pointer_move(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         if self._pan_anchor is not None:
             self._advance_pan(event=event)
             return
@@ -678,7 +679,7 @@ class Canvas(QtWidgets.QWidget):
             return
         self._refresh_hover_state(pos=pos)
 
-    def _advance_pan(self, event: QtGui.QMouseEvent) -> None:
+    def _advance_pan(self, *, event: QtGui.QMouseEvent) -> None:
         assert self._pan_anchor is not None
         # Use screen coordinates so the anchor does not drift when our own
         # pan emit shifts the canvas widget under the scroll area — a
@@ -688,7 +689,7 @@ class Canvas(QtWidgets.QWidget):
         self._pan_anchor = cursor
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
 
-    def _track_drawing_cursor(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+    def _track_drawing_cursor(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         desired_line_shape_type = _CREATE_MODE_TO_SHAPE_TYPE[self.create_mode]
         if self._line.shape_type != desired_line_shape_type:
             self._line = dataclasses.replace(
@@ -706,7 +707,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         self._update_status(extra_messages=None)
 
-    def _project_drawing_pos_into_image(self, pos: QPointF) -> QPointF:
+    def _project_drawing_pos_into_image(self, *, pos: QPointF) -> QPointF:
         current = self._current
         assert current is not None
         if self.create_mode == "oriented_rectangle" and len(current.points) == 4:
@@ -727,7 +728,7 @@ class Canvas(QtWidgets.QWidget):
             return self._current.points[MOVING_CORNER_INDEX]
         if self._should_constrain_to_pixmap(pos):
             return _compute_intersection_edges_image(
-                current.points[-1], pos, image_size=self.pixmap.size()
+                p1=current.points[-1], p2=pos, image_size=self.pixmap.size()
             )
         if not self._cursor_should_snap_to_polygon_origin(pos=pos):
             return pos
@@ -735,7 +736,7 @@ class Canvas(QtWidgets.QWidget):
         self._highlight_vertex(index=0, mode="near")
         return current.points[0]
 
-    def _cursor_should_snap_to_polygon_origin(self, pos: QPointF) -> bool:
+    def _cursor_should_snap_to_polygon_origin(self, *, pos: QPointF) -> bool:
         if not self._snapping:
             return False
         if self.create_mode != "polygon":
@@ -751,14 +752,14 @@ class Canvas(QtWidgets.QWidget):
             epsilon=self._epsilon,
         )
 
-    def _refresh_hover_state(self, pos: QPointF) -> None:
+    def _refresh_hover_state(self, *, pos: QPointF) -> None:
         status_messages: list[str] = []
         self._highlight_hover_shape(pos=pos, status_messages=status_messages)
         self.vertex_selected.emit(self._hovered_vertex is not None)
         self.edge_selected.emit(self._hovered_edge is not None)
         self._update_status(extra_messages=status_messages)
 
-    def _update_drawing_line(self, pos: QPointF, is_shift_pressed: bool) -> QPointF:
+    def _update_drawing_line(self, *, pos: QPointF, is_shift_pressed: bool) -> QPointF:
         current = self._current
         assert current is not None
         mode = self.create_mode
@@ -808,7 +809,7 @@ class Canvas(QtWidgets.QWidget):
             )
         return pos
 
-    def _continue_right_button_drag(self, pos: QPointF) -> None:
+    def _continue_right_button_drag(self, *, pos: QPointF) -> None:
         if self._selected_shapes_copy:
             self._apply_cursor(CursorRole.MOVE)
             self._drag_shapes(
@@ -823,7 +824,7 @@ class Canvas(QtWidgets.QWidget):
         self._update_status(extra_messages=None)
 
     def _continue_left_button_drag(
-        self, pos: QPointF, event: QtGui.QMouseEvent
+        self, *, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         if self._is_vertex_selected():
@@ -836,7 +837,7 @@ class Canvas(QtWidgets.QWidget):
             return
         self._drag_selected_shapes(pos=pos)
 
-    def _drag_hovered_vertex(self, pos: QPointF, is_shift_pressed: bool) -> None:
+    def _drag_hovered_vertex(self, *, pos: QPointF, is_shift_pressed: bool) -> None:
         assert self._hovered_vertex is not None
         assert self.hovered_shape is not None
         self._bounded_move_vertex(
@@ -848,7 +849,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         self._is_moving_shape = True
 
-    def _drag_hovered_rotation_point(self, pos: QPointF) -> None:
+    def _drag_hovered_rotation_point(self, *, pos: QPointF) -> None:
         assert self.hovered_shape is not None
         assert len(self._rotation_original_points) > 0, (
             "_capture_rotation_anchors must be called before dragging"
@@ -879,7 +880,7 @@ class Canvas(QtWidgets.QWidget):
         )
         self._rotation_original_points = self.hovered_shape.points.copy()
 
-    def _drag_selected_shapes(self, pos: QPointF) -> None:
+    def _drag_selected_shapes(self, *, pos: QPointF) -> None:
         self._apply_cursor(CursorRole.MOVE)
         self._drag_shapes(
             shapes=self.selected_shapes, cursor=pos, constrain_cursor=True
@@ -887,7 +888,9 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         self._is_moving_shape = True
 
-    def _highlight_hover_shape(self, pos: QPointF, status_messages: list[str]) -> None:
+    def _highlight_hover_shape(
+        self, *, pos: QPointF, status_messages: list[str]
+    ) -> None:
         target = _canvas_interaction.find_hover_target(
             shapes=self.shapes,
             point=np.array([pos.x(), pos.y()]),
@@ -1008,7 +1011,9 @@ class Canvas(QtWidgets.QWidget):
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status(extra_messages=None)
 
-    def _dispatch_pointer_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+    def _dispatch_pointer_press(
+        self, *, pos: QPointF, event: QtGui.QMouseEvent
+    ) -> None:
         self._clear_ai_existing_shape_highlights()
         button = event.button()
         if button == Qt.MouseButton.LeftButton:
@@ -1022,7 +1027,7 @@ class Canvas(QtWidgets.QWidget):
         ):
             self._begin_pan(event=event)
 
-    def _press_left(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+    def _press_left(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         if self.mode == _CanvasMode.CREATE:
             self._press_left_while_drawing(
@@ -1034,6 +1039,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _press_left_while_drawing(
         self,
+        *,
         pos: QPointF,
         event: QtGui.QMouseEvent,
         is_shift_pressed: bool,
@@ -1057,7 +1063,7 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def _extend_current_shape(
-        self, current: _DraftShape, event: QtGui.QMouseEvent
+        self, *, current: _DraftShape, event: QtGui.QMouseEvent
     ) -> None:
         mode = self.create_mode
         modifiers = event.modifiers()
@@ -1100,7 +1106,7 @@ class Canvas(QtWidgets.QWidget):
             if modifiers & Qt.KeyboardModifier.ControlModifier:
                 self._finalize()
 
-    def _lock_oriented_rectangle_first_edge(self, current: _DraftShape) -> None:
+    def _lock_oriented_rectangle_first_edge(self, *, current: _DraftShape) -> None:
         first_corner = self._line.points[0]
         second_corner = self._line.points[1]
         self._current = dataclasses.replace(
@@ -1117,7 +1123,7 @@ class Canvas(QtWidgets.QWidget):
             self._line, points=(second_corner,) + self._line.points[1:]
         )
 
-    def _unlock_oriented_rectangle_first_edge(self, current: _DraftShape) -> None:
+    def _unlock_oriented_rectangle_first_edge(self, *, current: _DraftShape) -> None:
         anchor = current.points[0]
         self._current = dataclasses.replace(
             current, points=(anchor,), point_labels=(current.point_labels[0],)
@@ -1126,6 +1132,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _start_new_shape(
         self,
+        *,
         pos: QPointF,
         event: QtGui.QMouseEvent,
         is_shift_pressed: bool,
@@ -1160,7 +1167,9 @@ class Canvas(QtWidgets.QWidget):
         self.drawing_polygon.emit(True)
         self.update()
 
-    def _press_left_while_editing(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+    def _press_left_while_editing(
+        self, *, pos: QPointF, event: QtGui.QMouseEvent
+    ) -> None:
         modifiers = event.modifiers()
         if self._maybe_modify_polygon_topology(modifiers=modifiers):
             # remove_selected_point already repainted; just consume the press.
@@ -1174,7 +1183,7 @@ class Canvas(QtWidgets.QWidget):
         self._prev_point = pos
         self.update()
 
-    def _maybe_modify_polygon_topology(self, modifiers: Qt.KeyboardModifier) -> bool:
+    def _maybe_modify_polygon_topology(self, *, modifiers: Qt.KeyboardModifier) -> bool:
         # Returns True only when the press is consumed as a terminal edit (a point
         # removal), so the caller skips point selection and starts no drag. Adding
         # a point intentionally falls through so the new vertex can be dragged.
@@ -1187,7 +1196,7 @@ class Canvas(QtWidgets.QWidget):
             return self.remove_selected_point()
         return False
 
-    def _press_right(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
+    def _press_right(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         if _should_reselect_on_right_press(
             selected_shapes=self.selected_shapes, hovered_shape=self.hovered_shape
         ):
@@ -1199,7 +1208,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()
         self._prev_point = pos
 
-    def _begin_pan(self, event: QtGui.QMouseEvent) -> None:
+    def _begin_pan(self, *, event: QtGui.QMouseEvent) -> None:
         self._apply_cursor(CursorRole.GRAB)
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
@@ -1208,7 +1217,7 @@ class Canvas(QtWidgets.QWidget):
         self._commit_pending_shape_move()
         self._update_status(extra_messages=None)
 
-    def _dispatch_pointer_release(self, event: QtGui.QMouseEvent) -> None:
+    def _dispatch_pointer_release(self, *, event: QtGui.QMouseEvent) -> None:
         button = event.button()
         if button == Qt.MouseButton.RightButton:
             self._release_right(event=event)
@@ -1219,7 +1228,7 @@ class Canvas(QtWidgets.QWidget):
         if button == Qt.MouseButton.MiddleButton:
             self._finish_pan()
 
-    def _release_right(self, event: QtGui.QMouseEvent) -> None:
+    def _release_right(self, *, event: QtGui.QMouseEvent) -> None:
         menu = self.context_menus.menu_for(
             has_selection=len(self._selected_shapes_copy) > 0
         )
@@ -1347,7 +1356,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def _select_shape_point(
-        self, point: QPointF, multiple_selection_mode: bool
+        self, point: QPointF, /, *, multiple_selection_mode: bool
     ) -> None:
         if self._hovered_vertex is not None:
             assert self.hovered_shape is not None
@@ -1375,7 +1384,7 @@ class Canvas(QtWidgets.QWidget):
             self._hovered_shape_is_selected = False
         self._record_drag_anchor(shapes=self.selected_shapes, click=point)
 
-    def _find_shape_at_point(self, point: QPointF) -> Shape | None:
+    def _find_shape_at_point(self, point: QPointF, /) -> Shape | None:
         query = np.array([point.x(), point.y()])
         for shape in reversed(self.shapes):
             if shape.visible and is_hit_by_point(
@@ -1388,7 +1397,7 @@ class Canvas(QtWidgets.QWidget):
                 return shape
         return None
 
-    def _record_drag_anchor(self, shapes: list[Shape], click: QPointF) -> None:
+    def _record_drag_anchor(self, *, shapes: list[Shape], click: QPointF) -> None:
         if not shapes:
             self._drag_anchor = (QPointF(), QRectF())
             return
@@ -1397,6 +1406,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _bounded_move_vertex(
         self,
+        *,
         shape: Shape,
         vertex_index: int,
         pos: QPointF,
@@ -1418,7 +1428,9 @@ class Canvas(QtWidgets.QWidget):
 
         if self._should_constrain_to_pixmap(pos):
             pos = _compute_intersection_edges_image(
-                QPointF(*shape.points[vertex_index]), pos, image_size=self.pixmap.size()
+                p1=QPointF(*shape.points[vertex_index]),
+                p2=pos,
+                image_size=self.pixmap.size(),
             )
 
         if is_shift_pressed and shape.shape_type == "rectangle":
@@ -1429,7 +1441,7 @@ class Canvas(QtWidgets.QWidget):
         shape.move_vertex(i=vertex_index, pos=(pos.x(), pos.y()))
 
     def _bounded_move_oriented_rectangle_vertex(
-        self, shape: Shape, vertex_index: int, pos: QPointF
+        self, *, shape: Shape, vertex_index: int, pos: QPointF
     ) -> None:
         assert len(shape.points) == 4
         corners = tuple(QPointF(*point) for point in shape.points)
@@ -1444,7 +1456,7 @@ class Canvas(QtWidgets.QWidget):
             shape.move_vertex(i=i, pos=(corner.x(), corner.y()))
 
     def _drag_shapes(
-        self, shapes: list[Shape], cursor: QPointF, constrain_cursor: bool
+        self, *, shapes: list[Shape], cursor: QPointF, constrain_cursor: bool
     ) -> bool:
         if constrain_cursor and self._should_constrain_to_pixmap(cursor):
             return False
@@ -1525,7 +1537,7 @@ class Canvas(QtWidgets.QWidget):
         finally:
             painter.end()
 
-    def _setup_world_transform(self, painter: QtGui.QPainter) -> None:
+    def _setup_world_transform(self, *, painter: QtGui.QPainter) -> None:
         for hint in (
             QtGui.QPainter.RenderHint.Antialiasing,
             QtGui.QPainter.RenderHint.SmoothPixmapTransform,
@@ -1545,7 +1557,7 @@ class Canvas(QtWidgets.QWidget):
             self._draw_ai_existing_match_layer,
         )
 
-    def _draw_pixmap_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_pixmap_layer(self, painter: QtGui.QPainter, /) -> None:
         target = QtCore.QRectF(
             0.0,
             0.0,
@@ -1554,7 +1566,7 @@ class Canvas(QtWidgets.QWidget):
         )
         painter.drawPixmap(target, self.pixmap, QtCore.QRectF(self.pixmap.rect()))
 
-    def _draw_crosshair_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_crosshair_layer(self, painter: QtGui.QPainter, /) -> None:
         cursor: QPointF | None = self._prev_move_point
         if not self._should_draw_crosshair(cursor=cursor):
             return
@@ -1578,7 +1590,7 @@ class Canvas(QtWidgets.QWidget):
         painter.drawLine(left, cy, right, cy)
         painter.drawLine(cx, top, cx, bottom)
 
-    def _should_draw_crosshair(self, cursor: QPointF | None) -> bool:
+    def _should_draw_crosshair(self, *, cursor: QPointF | None) -> bool:
         if self.mode != _CanvasMode.CREATE:
             return False
         if not self._crosshair[self._create_mode]:
@@ -1587,7 +1599,7 @@ class Canvas(QtWidgets.QWidget):
             return False
         return not self._should_constrain_to_pixmap(cursor)
 
-    def _draw_committed_shapes_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_committed_shapes_layer(self, painter: QtGui.QPainter, /) -> None:
         for shape in self.shapes:
             if not shape.visible:
                 continue
@@ -1596,14 +1608,14 @@ class Canvas(QtWidgets.QWidget):
             )
             render_shape(painter=painter, shape=shape, context=context)
 
-    def _draw_active_shape_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_active_shape_layer(self, painter: QtGui.QPainter, /) -> None:
         if self._current is None:
             return
         assert len(self._line.points) == len(self._line.point_labels)
         self._render_draft(painter=painter, draft=self._current, highlighted=True)
         self._render_draft(painter=painter, draft=self._line, highlighted=False)
 
-    def _draw_drag_copy_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_drag_copy_layer(self, painter: QtGui.QPainter, /) -> None:
         for copy_shape in self._selected_shapes_copy:
             context = ShapeRenderContext(
                 scale=self.scale,
@@ -1618,7 +1630,7 @@ class Canvas(QtWidgets.QWidget):
             )
             render_shape(painter=painter, shape=copy_shape, context=context)
 
-    def _draw_preview_overlay_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_preview_overlay_layer(self, painter: QtGui.QPainter, /) -> None:
         previews = self._build_preview_shapes()
         if not previews:
             return
@@ -1631,7 +1643,7 @@ class Canvas(QtWidgets.QWidget):
         for preview in previews:
             render_shape(painter=painter, shape=preview, context=context)
 
-    def _draw_ai_existing_match_layer(self, painter: QtGui.QPainter) -> None:
+    def _draw_ai_existing_match_layer(self, painter: QtGui.QPainter, /) -> None:
         AI_EXISTING_MATCH_PALETTE: Final[Palette] = Palette(
             line=QtGui.QColor(255, 170, 0),
             fill=QtGui.QColor(255, 170, 0, 64),
@@ -1655,7 +1667,7 @@ class Canvas(QtWidgets.QWidget):
             render_shape(painter=painter, shape=shape, context=context)
 
     def _render_draft(
-        self, painter: QtGui.QPainter, draft: _DraftShape, highlighted: bool
+        self, *, painter: QtGui.QPainter, draft: _DraftShape, highlighted: bool
     ) -> None:
         shape = _draft_to_shape(draft)
         context = self._draft_render_context(
@@ -1675,13 +1687,13 @@ class Canvas(QtWidgets.QWidget):
             return self._build_ai_points_preview(current=self._current)
         return []
 
-    def _build_polygon_preview(self, current: _DraftShape) -> Shape:
+    def _build_polygon_preview(self, *, current: _DraftShape) -> Shape:
         preview = current
         if self._fill_drawing and len(preview.points) >= 2:
             preview = preview.add_point(point=self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
-    def _build_ai_points_preview(self, current: _DraftShape) -> list[Shape]:
+    def _build_ai_points_preview(self, *, current: _DraftShape) -> list[Shape]:
         if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
             return []
         preview = current.add_point(
@@ -1717,7 +1729,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> QPointF:
         return (point + self._compute_image_origin_offset(area=area)) * self.scale
 
-    def _compute_image_origin_offset(self, area: QtCore.QSize | None) -> QPointF:
+    def _compute_image_origin_offset(self, *, area: QtCore.QSize | None) -> QPointF:
         if area is None:
             area = super().size()
         scaled_w = self.pixmap.width() * self.scale
@@ -1729,7 +1741,7 @@ class Canvas(QtWidgets.QWidget):
     def is_out_of_pixmap(self, p: QPointF) -> bool:
         return _is_out_of_image(p, self.pixmap.size())
 
-    def _should_constrain_to_pixmap(self, point: QPointF) -> bool:
+    def _should_constrain_to_pixmap(self, point: QPointF, /) -> bool:
         return not self._allow_out_of_bounds_points and self.is_out_of_pixmap(point)
 
     def _finalize(self) -> None:
@@ -1861,7 +1873,7 @@ class Canvas(QtWidgets.QWidget):
             self.scroll_request.emit(delta.y(), Qt.Orientation.Vertical)
         a0.accept()
 
-    def _move_by_keyboard(self, offset: QPointF) -> None:
+    def _move_by_keyboard(self, *, offset: QPointF) -> None:
         if not self.selected_shapes:
             return
         self._drag_shapes(
@@ -1887,13 +1899,13 @@ class Canvas(QtWidgets.QWidget):
                 self._snapping = False
         elif self.mode == _CanvasMode.EDIT:
             if key == Qt.Key.Key_Up:
-                self._move_by_keyboard(QPointF(0.0, -MOVE_SPEED))
+                self._move_by_keyboard(offset=QPointF(0.0, -MOVE_SPEED))
             elif key == Qt.Key.Key_Down:
-                self._move_by_keyboard(QPointF(0.0, MOVE_SPEED))
+                self._move_by_keyboard(offset=QPointF(0.0, MOVE_SPEED))
             elif key == Qt.Key.Key_Left:
-                self._move_by_keyboard(QPointF(-MOVE_SPEED, 0.0))
+                self._move_by_keyboard(offset=QPointF(-MOVE_SPEED, 0.0))
             elif key == Qt.Key.Key_Right:
-                self._move_by_keyboard(QPointF(MOVE_SPEED, 0.0))
+                self._move_by_keyboard(offset=QPointF(MOVE_SPEED, 0.0))
             elif a0.matches(QtGui.QKeySequence.StandardKey.SelectAll):
                 self.select_shapes(shapes=self.shapes[:])
         self._update_status(extra_messages=None)
@@ -2016,7 +2028,7 @@ class Canvas(QtWidgets.QWidget):
         shape.visible = value
         self.update()
 
-    def _apply_cursor(self, role: CursorRole) -> None:
+    def _apply_cursor(self, role: CursorRole, /) -> None:
         if role == self._cursor:
             return
         shape = _canvas_interaction.cursor_shape_for(role=role)
@@ -2057,7 +2069,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
 
-def _is_degenerate_draft(draft: _DraftShape) -> bool:
+def _is_degenerate_draft(draft: _DraftShape, /) -> bool:
     points = draft.points
     shape_type = draft.shape_type
     if shape_type == "polygon":
@@ -2077,7 +2089,7 @@ def _is_degenerate_draft(draft: _DraftShape) -> bool:
     return False
 
 
-def _normalize_bbox_points(bbox_points: Sequence[QPointF]) -> list[QPointF]:
+def _normalize_bbox_points(*, bbox_points: Sequence[QPointF]) -> list[QPointF]:
     if len(bbox_points) != 2:
         raise ValueError(f"Expected 2 points for bbox, got {len(bbox_points)}")
 
@@ -2089,7 +2101,7 @@ def _normalize_bbox_points(bbox_points: Sequence[QPointF]) -> list[QPointF]:
     return [QPointF(xmin, ymin), QPointF(xmax, ymax)]
 
 
-def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPointF:
+def _snap_cursor_pos_for_square(*, pos: QPointF, opposite_vertex: QPointF) -> QPointF:
     pos_from_opposite: QPointF = pos - opposite_vertex
     square_size: float = min(abs(pos_from_opposite.x()), abs(pos_from_opposite.y()))
     return opposite_vertex + QPointF(
@@ -2099,7 +2111,7 @@ def _snap_cursor_pos_for_square(pos: QPointF, opposite_vertex: QPointF) -> QPoin
 
 
 def _compute_intersection_edges_image(
-    p1: QPointF, p2: QPointF, image_size: QtCore.QSize
+    *, p1: QPointF, p2: QPointF, image_size: QtCore.QSize
 ) -> QPointF:
     width = image_size.width()
     height = image_size.height()
@@ -2137,7 +2149,7 @@ def _compute_intersection_edges_image(
 
 
 def _should_reselect_on_right_press(
-    selected_shapes: list[Shape], hovered_shape: Shape | None
+    *, selected_shapes: list[Shape], hovered_shape: Shape | None
 ) -> bool:
     if not selected_shapes:
         return True
@@ -2147,7 +2159,7 @@ def _should_reselect_on_right_press(
 
 
 def _pick_pending_moved_shape(
-    is_moving_shape: bool, hovered_shape: Shape | None, shapes: list[Shape]
+    *, is_moving_shape: bool, hovered_shape: Shape | None, shapes: list[Shape]
 ) -> Shape | None:
     if not is_moving_shape:
         return None
@@ -2184,7 +2196,7 @@ def _project_oriented_rectangle_corners(
     return perp, para
 
 
-def _is_out_of_image(point: QPointF, image_size: QtCore.QSize) -> bool:
+def _is_out_of_image(point: QPointF, image_size: QtCore.QSize, /) -> bool:
     return (
         point.x() < 0
         or point.y() < 0

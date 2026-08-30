@@ -18,13 +18,13 @@ from .conftest import image_to_widget_pos
 _DRAG_OFFSET_PX: Final[int] = 40
 
 
-def _diagonal_drag_endpoints(canvas: Canvas) -> tuple[QPoint, QPoint]:
+def _diagonal_drag_endpoints(*, canvas: Canvas) -> tuple[QPoint, QPoint]:
     start = QPoint(canvas.width() // 2, canvas.height() // 2)
     end = QPoint(start.x() + _DRAG_OFFSET_PX, start.y() + _DRAG_OFFSET_PX)
     return start, end
 
 
-def _zoom_until_overflow(canvas: Canvas) -> None:
+def _zoom_until_overflow(*, canvas: Canvas) -> None:
     # Mutates canvas.scale directly to bypass the public zoom path because
     # this fixture only needs to force overflow; if the zoom pipeline gains
     # additional side effects relevant to a test, route through that instead.

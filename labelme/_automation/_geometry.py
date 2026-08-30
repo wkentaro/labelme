@@ -96,10 +96,10 @@ def compute_oriented_rectangle_from_mask(
         # All pixels are collinear, so no rectangle can be fit; let callers
         # fall back to the axis-aligned bbox.
         return None
-    return _min_area_rect(hull=points[hull_indices]).astype(np.float32)
+    return _min_area_rect(points[hull_indices]).astype(np.float32)
 
 
-def _min_area_rect(hull: NDArray[np.float64]) -> NDArray[np.float64]:
+def _min_area_rect(hull: NDArray[np.float64], /) -> NDArray[np.float64]:
     # Rotating calipers: the minimum-area enclosing rectangle must have one
     # side flush with an edge of the convex hull. Try each hull edge as the
     # rect orientation and keep the smallest-area candidate.
@@ -150,7 +150,7 @@ def _min_area_rect(hull: NDArray[np.float64]) -> NDArray[np.float64]:
     return best_corners
 
 
-def _compute_signed_area(points: NDArray[np.float64]) -> float:
+def _compute_signed_area(points: NDArray[np.float64], /) -> float:
     local_points = points - points[0]
     x = local_points[:, 0]
     y = local_points[:, 1]
@@ -162,7 +162,7 @@ def _compute_signed_area(points: NDArray[np.float64]) -> float:
     )
 
 
-def _compute_polygon_deviation(detail: int) -> float:
+def _compute_polygon_deviation(*, detail: int) -> float:
     # The default maps to half a pixel; the curve reserves finer control near
     # the detailed end, where small slider changes are most visible.
     detail_loss = (100 - detail) / 20
@@ -268,7 +268,7 @@ def compute_polygons_from_mask(
     for contour in contours:
         contour = contour - PAD
         raw_points = contour[:, ::-1]
-        if _compute_signed_area(points=raw_points) <= 0:
+        if _compute_signed_area(raw_points) <= 0:
             continue
         polygon = _simplify_contour(
             contour=contour,

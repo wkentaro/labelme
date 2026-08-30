@@ -166,7 +166,7 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
 
     set_allocation_limit(1)
 
-    raw_win._load_file(str(image_path))
+    raw_win._load_file(image_or_label_path=str(image_path))
 
     assert len(critical_messages) == 1
     assert "800x600" in critical_messages[0]
@@ -236,7 +236,7 @@ def test_MainWindow_rejects_malformed_shapes_before_installing_any(
             }
         )
     )
-    raw_win._load_file(str(label_path))
+    raw_win._load_file(image_or_label_path=str(label_path))
 
     assert len(critical_messages) == 1
     assert str(label_path) in critical_messages[0]

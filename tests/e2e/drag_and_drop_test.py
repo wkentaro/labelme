@@ -19,13 +19,13 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
-def _make_drop_mime(paths: list[Path]) -> QMimeData:
+def _make_drop_mime(*, paths: list[Path]) -> QMimeData:
     mime = QMimeData()
     mime.setUrls([QUrl.fromLocalFile(str(p)) for p in paths])
     return mime
 
 
-def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
+def _drag_enter_accepted(*, win: MainWindow, mime: QMimeData) -> bool:
     event = QDragEnterEvent(
         QPoint(0, 0),
         Qt.DropAction.CopyAction,
@@ -37,7 +37,7 @@ def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
     return event.isAccepted()
 
 
-def _send_drop(win: MainWindow, mime: QMimeData) -> None:
+def _send_drop(*, win: MainWindow, mime: QMimeData) -> None:
     event = QDropEvent(
         QPointF(0, 0),
         Qt.DropAction.CopyAction,

@@ -22,7 +22,7 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
-def _set_flag_checked(win: MainWindow, name: str) -> None:
+def _set_flag_checked(*, win: MainWindow, name: str) -> None:
     flag_list = win._docks.flag_list
     flag_list.blockSignals(True)  # avoid mark_dirty; we test only the flag refresh
     try:
@@ -37,7 +37,7 @@ def _set_flag_checked(win: MainWindow, name: str) -> None:
         flag_list.blockSignals(False)
 
 
-def _open_settings_dialog(win: MainWindow) -> SettingsDialog:
+def _open_settings_dialog(*, win: MainWindow) -> SettingsDialog:
     win._open_settings()
     dialog = win._settings_dialog
     assert dialog is not None
@@ -310,7 +310,7 @@ def test_flags_setting_refreshes_flag_dock_live(
     assert win._read_flag_dock_states() == {"occluded": False, "truncated": False}
     assert not win._is_changed  # a settings-driven refresh must not dirty the image
 
-    _set_flag_checked(win, "occluded")
+    _set_flag_checked(win=win, name="occluded")
     flags_editor.setPlainText("occluded\ntruncated\nblurry")
     flags_editor.commit()
 
@@ -400,7 +400,7 @@ def test_setting_controls_revert_when_write_fails(
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
     # a read-only directory does not block writes.
-    def _refuse_write(config_file: Path, content: str) -> None:
+    def _refuse_write(*, config_file: Path, content: str) -> None:
         raise PermissionError(f"injected write failure: {config_file}")
 
     monkeypatch.setattr(_writer, "_atomic_write", _refuse_write)

@@ -29,9 +29,9 @@ class Detection:
 
 
 def _build_shape(
+    *,
     shape_type: AiOutputFormat,
     points: ArrayLike,
-    *,
     mask: NDArray[np.bool_] | None,
     label: str | None,
     description: str | None,
@@ -47,9 +47,9 @@ def _build_shape(
 
 
 def _build_shapes_from_detection(
+    *,
     detection: Detection,
     shape_type: AiOutputFormat,
-    *,
     image_size: tuple[int, int] | None,
     polygon_detail: int,
 ) -> list[Shape]:
@@ -140,6 +140,7 @@ def _build_shapes_from_detection(
 
 
 def _oriented_rectangle_for_detection(
+    *,
     detection: Detection,
 ) -> NDArray[np.float32] | None:
     if detection.mask is not None:
@@ -178,7 +179,7 @@ def _fit_oriented_rectangle_to_image(
     )
 
 
-def _circle_for_detection(detection: Detection) -> Circle | None:
+def _circle_for_detection(*, detection: Detection) -> Circle | None:
     if detection.mask is not None:
         circle = compute_circle_from_mask(mask=detection.mask)
         if circle is not None:

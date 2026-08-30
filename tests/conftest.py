@@ -145,7 +145,7 @@ def close_or_pause(
         widget.close()
 
 
-def _create_annotated_nested(data_path: Path) -> None:
+def _create_annotated_nested(*, data_path: Path) -> None:
     dst_dir: Path = data_path / "annotated_nested"
     dst_dir.mkdir()
 

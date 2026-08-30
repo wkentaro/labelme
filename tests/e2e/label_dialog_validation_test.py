@@ -24,7 +24,7 @@ _CLOSE_POLYGON_CLICK: Final = _VERTICES[0]
 _draw_triangle = partial(draw_triangle, vertices=_VERTICES)
 
 
-def _label_list_texts(label_list: QtWidgets.QListWidget) -> list[str]:
+def _label_list_texts(*, label_list: QtWidgets.QListWidget) -> list[str]:
     texts: list[str] = []
     for i in range(label_list.count()):
         item = label_list.item(i)

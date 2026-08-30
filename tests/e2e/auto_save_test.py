@@ -32,6 +32,7 @@ _VERTICES: Final[tuple[tuple[float, float], ...]] = (
 
 @pytest.fixture()
 def _auto_save_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -48,6 +49,7 @@ def _auto_save_win(
 
 @pytest.fixture()
 def _raw_auto_save_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

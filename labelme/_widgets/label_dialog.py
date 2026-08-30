@@ -170,7 +170,7 @@ class LabelDialog(QtWidgets.QDialog):
     def label_history(self) -> list[str]:
         return self._label_history[:]
 
-    def _make_completer(self, completion: str) -> QtWidgets.QCompleter:
+    def _make_completer(self, *, completion: str) -> QtWidgets.QCompleter:
         if completion == "startswith":
             completer = QtWidgets.QCompleter(self.label_list.model())
             completer.setCompletionMode(
@@ -194,12 +194,13 @@ class LabelDialog(QtWidgets.QDialog):
         self,
         current: QtWidgets.QListWidgetItem | None,
         previous: QtWidgets.QListWidgetItem | None,
+        /,
     ) -> None:
         if current is None:
             return
         self.edit.setText(current.text())
 
-    def _on_item_double_clicked(self, item: QtWidgets.QListWidgetItem) -> None:
+    def _on_item_double_clicked(self, item: QtWidgets.QListWidgetItem, /) -> None:
         self.label_list.setCurrentItem(item)
         self._on_ok_clicked()
 
@@ -218,7 +219,7 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.setParent(None)
                 widget.deleteLater()
 
-    def _update_flags(self, text: str) -> None:
+    def _update_flags(self, text: str, /) -> None:
         self._flag_states.update(self._collect_flags())
         flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
@@ -312,7 +313,7 @@ class LabelDialog(QtWidgets.QDialog):
 
         return None, None, None, None
 
-    def _set_flag_checkboxes(self, flags: dict[str, bool]) -> None:
+    def _set_flag_checkboxes(self, *, flags: dict[str, bool]) -> None:
         self._clear_flag_checkboxes()
         for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
@@ -340,14 +341,14 @@ class LabelDialog(QtWidgets.QDialog):
         if self._fit_to_content["column"]:
             self.label_list.setMinimumWidth(self.label_list.sizeHintForColumn(0) + 2)
 
-    def _move_within_screen(self, target: QtCore.QPoint) -> None:
+    def _move_within_screen(self, target: QtCore.QPoint, /) -> None:
         self.adjustSize()
         # setGeometry() anchors the client area, unlike move() which anchors the
         # window frame: the content corner lands at target, not the title bar's.
         self.setGeometry(QtCore.QRect(target, self.size()))
         self._clamp_within_screen(target)
 
-    def _clamp_within_screen(self, target: QtCore.QPoint) -> None:
+    def _clamp_within_screen(self, target: QtCore.QPoint, /) -> None:
         screen = (
             QtGui.QGuiApplication.screenAt(target)
             or QtGui.QGuiApplication.primaryScreen()

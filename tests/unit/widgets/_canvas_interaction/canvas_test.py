@@ -47,7 +47,7 @@ def canvas(qtbot: QtBot) -> Canvas:
     return c
 
 
-def _make_move_event(pos: QPointF) -> QtGui.QMouseEvent:
+def _make_move_event(*, pos: QPointF) -> QtGui.QMouseEvent:
     return QtGui.QMouseEvent(
         QtCore.QEvent.Type.MouseMove,
         pos,
@@ -58,7 +58,7 @@ def _make_move_event(pos: QPointF) -> QtGui.QMouseEvent:
     )
 
 
-def _make_press_event(pos: QPointF) -> QtGui.QMouseEvent:
+def _make_press_event(*, pos: QPointF) -> QtGui.QMouseEvent:
     return QtGui.QMouseEvent(
         QtCore.QEvent.Type.MouseButtonPress,
         pos,
@@ -69,7 +69,7 @@ def _make_press_event(pos: QPointF) -> QtGui.QMouseEvent:
     )
 
 
-def _make_release_event(pos: QPointF) -> QtGui.QMouseEvent:
+def _make_release_event(*, pos: QPointF) -> QtGui.QMouseEvent:
     return QtGui.QMouseEvent(
         QtCore.QEvent.Type.MouseButtonRelease,
         pos,
@@ -80,14 +80,14 @@ def _make_release_event(pos: QPointF) -> QtGui.QMouseEvent:
     )
 
 
-def _image_to_widget(canvas: Canvas, img_x: float, img_y: float) -> QPointF:
+def _image_to_widget(*, canvas: Canvas, img_x: float, img_y: float) -> QPointF:
     origin = canvas._compute_image_origin_offset(area=None)
     wx = (img_x + origin.x()) * canvas.scale
     wy = (img_y + origin.y()) * canvas.scale
     return QPointF(wx, wy)
 
 
-def _clear_cursor_override(canvas: Canvas) -> None:
+def _clear_cursor_override(*, canvas: Canvas) -> None:
     canvas._release_cursor()
 
 

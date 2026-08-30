@@ -44,7 +44,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.img = img
 
     def _add_slider_row(
-        self, grid: QtWidgets.QGridLayout, row: int, title: str
+        self, *, grid: QtWidgets.QGridLayout, row: int, title: str
     ) -> QtWidgets.QSlider:
         slider = QtWidgets.QSlider(Qt.Orientation.Horizontal)
         slider.setRange(0, 3 * self._base_value)
@@ -63,7 +63,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         grid.addWidget(value_label, row, 2)
         return slider
 
-    def _format_factor(self, value: int) -> str:
+    def _format_factor(self, value: int, /) -> str:
         return f"{value / self._base_value:.2f}"
 
     def apply(self) -> None:

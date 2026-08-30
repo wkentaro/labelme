@@ -26,7 +26,7 @@ _CLOSE_POLYGON_CLICK: Final = _VERTICES[0]
 _draw_triangle = partial(draw_triangle, vertices=_VERTICES)
 
 
-def _check_flag(label_dialog: LabelDialog, name: str) -> None:
+def _check_flag(*, label_dialog: LabelDialog, name: str) -> None:
     for cb in label_dialog.findChildren(QCheckBox):
         if cb.text() == name:
             cb.setChecked(True)
@@ -35,6 +35,7 @@ def _check_flag(label_dialog: LabelDialog, name: str) -> None:
 
 
 def _enter_label(
+    *,
     qtbot: QtBot,
     label_dialog: LabelDialog,
     name: str,

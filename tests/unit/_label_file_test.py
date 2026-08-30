@@ -67,7 +67,7 @@ def annotated_dst(data_path: Path, tmp_path: Path) -> Path:
     return tmp_path / "2011_000003.json"
 
 
-def _dump_json(path: Path, raw: dict[str, Any]) -> None:
+def _dump_json(*, path: Path, raw: dict[str, Any]) -> None:
     with open(path, "w") as f:
         json.dump(raw, f)
 

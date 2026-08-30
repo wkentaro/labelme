@@ -15,7 +15,7 @@ from labelme._widgets.tool_bar import ToolBar
 _EXT_BUTTON_NAME: Final = "qt_toolbar_ext_button"
 
 
-def _user_buttons(toolbar: ToolBar) -> list[QtWidgets.QToolButton]:
+def _user_buttons(toolbar: ToolBar, /) -> list[QtWidgets.QToolButton]:
     return [
         b
         for b in toolbar.findChildren(QtWidgets.QToolButton)
@@ -23,7 +23,7 @@ def _user_buttons(toolbar: ToolBar) -> list[QtWidgets.QToolButton]:
     ]
 
 
-def _make_action(text: str) -> QtGui.QAction:
+def _make_action(text: str, /) -> QtGui.QAction:
     # Create without a parent so the action outlives any ephemeral container.
     return QtGui.QAction(text)
 

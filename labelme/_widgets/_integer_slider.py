@@ -46,6 +46,6 @@ class IntegerSlider(QtWidgets.QWidget):
         self._slider.setValue(value)
         self._value_label.setNum(self._slider.value())
 
-    def _on_value_changed(self, value: int) -> None:
+    def _on_value_changed(self, value: int, /) -> None:
         self._value_label.setNum(value)
         self.value_changed.emit(value)

@@ -146,7 +146,7 @@ def test_new_icon_with_path_that_includes_subdir(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _set_window_text(app: QtWidgets.QApplication, color: QtGui.QColor) -> None:
+def _set_window_text(app: QtWidgets.QApplication, /, *, color: QtGui.QColor) -> None:
     palette = app.palette()
     palette.setColor(
         QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.WindowText, color
@@ -159,7 +159,7 @@ def test_tinted_svg_engine_renders_window_text_color(
 ) -> None:
     original = qapp.palette()
     try:
-        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
         svg = (
             b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
             b'<rect width="4" height="4" fill="currentColor"/></svg>'
@@ -204,9 +204,9 @@ def test_new_icon_tints_monochrome_icon_to_palette(
     original = qapp.palette()
     try:
         icon = new_icon("phosphor/polygon.svg")  # authored with fill="currentColor"
-        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
         red = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, QtGui.QColor(0, 0, 255))
+        _set_window_text(qapp, color=QtGui.QColor(0, 0, 255))
         blue = icon.pixmap(QtCore.QSize(24, 24)).toImage()
         assert red != blue
     finally:
@@ -217,9 +217,9 @@ def test_new_icon_keeps_accent_icon_fixed(qapp: QtWidgets.QApplication) -> None:
     original = qapp.palette()
     try:
         icon = new_icon("phosphor/floppy-disk.svg")  # baked accent color, not tinted
-        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
         a = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, QtGui.QColor(0, 255, 0))
+        _set_window_text(qapp, color=QtGui.QColor(0, 255, 0))
         b = icon.pixmap(QtCore.QSize(24, 24)).toImage()
         assert a == b
     finally:

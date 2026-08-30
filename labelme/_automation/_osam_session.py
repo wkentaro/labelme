@@ -73,7 +73,7 @@ class OsamSession:
         )
 
     def _get_or_compute_embedding(
-        self, image: NDArray[np.uint8], image_id: str
+        self, *, image: NDArray[np.uint8], image_id: str
     ) -> osam.types.ImageEmbedding:
         for key, embedding in self._embedding_cache:
             if key == image_id:

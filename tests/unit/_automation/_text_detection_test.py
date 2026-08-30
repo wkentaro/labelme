@@ -29,6 +29,7 @@ def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
 
 def _get_bboxes(
     response: osam.types.GenerateResponse,
+    /,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
     return get_bboxes_from_texts(
         session=_FakeOsamSession(response),  # ty: ignore[invalid-argument-type]

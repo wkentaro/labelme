@@ -22,6 +22,7 @@ from .conftest import show_window_and_wait_for_imagedata
 
 
 def _open_and_select_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -43,6 +44,7 @@ def _open_and_select_shape(
 
 
 def _delete_selected_shape(
+    *,
     win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,

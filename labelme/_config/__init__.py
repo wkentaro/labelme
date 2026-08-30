@@ -19,13 +19,14 @@ here = Path(__file__).resolve().parent
 
 
 def _update_dict(
+    *,
     target_dict: dict[str, object],
     new_dict: dict[str, object],
     key_path: tuple[str, ...],
 ) -> None:
     for key, value in new_dict.items():
         item_path = (*key_path, key)
-        _validate_config_item(item_path, value)
+        _validate_config_item(key_path=item_path, value=value)
         if key not in target_dict:
             raise ValueError(f"Unexpected key in config: {key}")
         if not isinstance(target_dict[key], dict):
@@ -46,13 +47,13 @@ def _update_dict(
                 f"but got {type(value).__name__}: {value!r}"
             )
         _update_dict(
-            cast(dict[str, object], target_dict[key]),
-            cast(dict[str, object], value),
+            target_dict=cast(dict[str, object], target_dict[key]),
+            new_dict=cast(dict[str, object], value),
             key_path=item_path,
         )
 
 
-def _validate_config_item(key_path: tuple[str, ...], value: object) -> None:
+def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
     key = key_path[-1]
     if key_path == ("mask_polygonization", "detail") and (
         isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= 100
@@ -75,7 +76,7 @@ def _validate_config_item(key_path: tuple[str, ...], value: object) -> None:
             )
 
 
-def _migrate_config_from_file(config_from_yaml: dict) -> None:
+def _migrate_config_from_file(*, config_from_yaml: dict) -> None:
     migrate_shape_color(config=config_from_yaml)
     keep_prev_brightness: bool = config_from_yaml.pop("keep_prev_brightness", False)
     keep_prev_contrast: bool = config_from_yaml.pop("keep_prev_contrast", False)
@@ -191,13 +192,13 @@ def load_config(config_file: Path | None, config_overrides: dict) -> dict:
             _migrate_config_from_file(config_from_yaml=config_from_yaml)
             if "shape_color" in config_from_yaml:
                 validate_shape_color(config=config_from_yaml["shape_color"])
-            _update_dict(config, config_from_yaml, key_path=())
+            _update_dict(target_dict=config, new_dict=config_from_yaml, key_path=())
 
     config_overrides = copy.deepcopy(config_overrides)
     migrate_shape_color(config=config_overrides)
     if "shape_color" in config_overrides:
         validate_shape_color(config=config_overrides["shape_color"])
-    _update_dict(config, config_overrides, key_path=())
+    _update_dict(target_dict=config, new_dict=config_overrides, key_path=())
 
     if not config["labels"] and config["validate_label"]:
         raise ValueError("labels must be specified when validate_label is enabled")

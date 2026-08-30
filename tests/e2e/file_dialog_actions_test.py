@@ -47,47 +47,47 @@ def loaded_win(
     return win
 
 
-def _open_file_dialog_return(paths: _Paths) -> tuple[str, str]:
+def _open_file_dialog_return(paths: _Paths, /) -> tuple[str, str]:
     return (str(paths.next_image), "")
 
 
-def _open_dir_dialog_return(paths: _Paths) -> str:
+def _open_dir_dialog_return(paths: _Paths, /) -> str:
     return str(paths.annotated_dir)
 
 
-def _save_file_dialog_return(paths: _Paths) -> tuple[str, str]:
+def _save_file_dialog_return(paths: _Paths, /) -> tuple[str, str]:
     return (str(paths.save_path), "")
 
 
-def _new_output_dir_dialog_return(paths: _Paths) -> str:
+def _new_output_dir_dialog_return(paths: _Paths, /) -> str:
     paths.new_output_dir.mkdir(exist_ok=True)
     return str(paths.new_output_dir)
 
 
-def _trigger_open_file(win: MainWindow) -> None:
+def _trigger_open_file(win: MainWindow, /) -> None:
     win._open_file_with_dialog()
 
 
-def _trigger_open_dir(win: MainWindow) -> None:
+def _trigger_open_dir(win: MainWindow, /) -> None:
     win._open_dir_with_dialog()
 
 
-def _trigger_save_as(win: MainWindow) -> None:
+def _trigger_save_as(win: MainWindow, /) -> None:
     win._save_label_file(save_as=True)
 
 
-def _trigger_change_output_dir(win: MainWindow) -> None:
+def _trigger_change_output_dir(win: MainWindow, /) -> None:
     win.prompt_output_dir()
 
 
-def _verify_open_file(win: MainWindow, paths: _Paths) -> bool:
+def _verify_open_file(win: MainWindow, paths: _Paths, /) -> bool:
     return (
         win._image_path is not None
         and Path(win._image_path).resolve() == paths.next_image.resolve()
     )
 
 
-def _verify_open_dir(win: MainWindow, paths: _Paths) -> bool:
+def _verify_open_dir(win: MainWindow, paths: _Paths, /) -> bool:
     return (
         win._docks.file_list.count() > 0
         and win._image_path is not None
@@ -95,11 +95,11 @@ def _verify_open_dir(win: MainWindow, paths: _Paths) -> bool:
     )
 
 
-def _verify_save_as(_win: MainWindow, paths: _Paths) -> bool:
+def _verify_save_as(_win: MainWindow, paths: _Paths, /) -> bool:
     return paths.save_path.exists()
 
 
-def _verify_change_output_dir(win: MainWindow, paths: _Paths) -> bool:
+def _verify_change_output_dir(win: MainWindow, paths: _Paths, /) -> bool:
     return win._output_dir == paths.new_output_dir
 
 

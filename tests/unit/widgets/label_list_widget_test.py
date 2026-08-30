@@ -17,6 +17,7 @@ from labelme._widgets.label_list_widget import format_shape_label
 
 
 def _paint_item(
+    *,
     delegate: QtWidgets.QAbstractItemDelegate,
     item: LabelListWidgetItem,
     option: QtWidgets.QStyleOptionViewItem,
@@ -31,7 +32,9 @@ def _paint_item(
     return image
 
 
-def _pixels_with_color(image: QtGui.QImage, color: QtGui.QColor) -> list[QtCore.QPoint]:
+def _pixels_with_color(
+    *, image: QtGui.QImage, color: QtGui.QColor
+) -> list[QtCore.QPoint]:
     return [
         QtCore.QPoint(x, y)
         for x in range(image.width())
@@ -146,14 +149,16 @@ def selected_pair(
     return item_a, item_b
 
 
-def _item_center(widget: LabelListWidget, item: LabelListWidgetItem) -> QtCore.QPoint:
+def _item_center(
+    *, widget: LabelListWidget, item: LabelListWidgetItem
+) -> QtCore.QPoint:
     model = widget.model()
     assert model is not None
     return widget.visualRect(model.index(item.row(), 0)).center()
 
 
 def _press_on_item(
-    qtbot: QtBot, widget: LabelListWidget, item: LabelListWidgetItem
+    *, qtbot: QtBot, widget: LabelListWidget, item: LabelListWidgetItem
 ) -> None:
     qtbot.mousePress(
         widget.viewport(),
@@ -262,7 +267,7 @@ def test_format_shape_label(shape: Shape, expected: str) -> None:
     assert format_shape_label(shape=shape) == expected
 
 
-def _model_texts(model: _ItemModel) -> list[str]:
+def _model_texts(model: _ItemModel, /) -> list[str]:
     return [model.item(row).text() for row in range(model.rowCount())]
 
 

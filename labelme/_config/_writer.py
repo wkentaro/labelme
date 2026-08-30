@@ -22,7 +22,7 @@ _DEFAULT_CONFIG: Final = _yaml.safe_load(
 )
 
 
-def _default_value(key_path: Sequence[str]) -> object:
+def _default_value(*, key_path: Sequence[str]) -> object:
     node: object = _DEFAULT_CONFIG
     for key in key_path:
         if not isinstance(node, dict) or key not in node:
@@ -31,7 +31,7 @@ def _default_value(key_path: Sequence[str]) -> object:
     return node
 
 
-def _assign(doc: CommentedMap, key_path: Sequence[str], value: object) -> None:
+def _assign(*, doc: CommentedMap, key_path: Sequence[str], value: object) -> None:
     node = doc
     for key in key_path[:-1]:
         if key in node and not isinstance(node[key], dict):
@@ -49,7 +49,7 @@ def _assign(doc: CommentedMap, key_path: Sequence[str], value: object) -> None:
     node[key_path[-1]] = value
 
 
-def _prune(doc: CommentedMap, key_path: Sequence[str]) -> None:
+def _prune(*, doc: CommentedMap, key_path: Sequence[str]) -> None:
     head, *rest = key_path
     if head not in doc:
         return
@@ -63,7 +63,7 @@ def _prune(doc: CommentedMap, key_path: Sequence[str]) -> None:
         del doc[head]
 
 
-def _atomic_write(config_file: Path, content: str) -> None:
+def _atomic_write(*, config_file: Path, content: str) -> None:
     fd, tmp = tempfile.mkstemp(
         dir=config_file.parent, prefix=f"{config_file.name}.", suffix=".tmp"
     )

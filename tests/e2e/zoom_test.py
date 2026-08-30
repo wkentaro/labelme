@@ -26,6 +26,7 @@ _VIEWPORT_ZOOM: Final[int] = 300
 
 @pytest.fixture()
 def _win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -181,6 +182,7 @@ def test_zoom_step_keeps_fractional_precision(
 
 
 def _set_scroll_bars_to_fraction(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     numerator: int,
@@ -199,6 +201,7 @@ def _set_scroll_bars_to_fraction(
 
 
 def _wait_for_viewport(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     scroll_values: dict[Qt.Orientation, int],
@@ -218,6 +221,7 @@ def _wait_for_viewport(
 
 @pytest.fixture(name="scrolled_win")
 def _make_scrolled_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -462,6 +466,7 @@ def test_close_and_open_restores_viewport(
 
 
 def _make_wheel_event(
+    *,
     pos: QPointF,
     angle_delta: QPoint,
     modifiers: Qt.KeyboardModifier,

@@ -105,7 +105,7 @@ def test_shapes_to_label_groups_instances_by_label_and_group_id() -> None:
     assert ins[17, 17] == 1  # same (label, group_id) as the first -> same instance
 
 
-def _mask_shape(points: list[list[float]], mask: NDArray[np.bool_]) -> ShapeDict:
+def _mask_shape(*, points: list[list[float]], mask: NDArray[np.bool_]) -> ShapeDict:
     return ShapeDict(
         label="car",
         points=points,

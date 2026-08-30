@@ -268,9 +268,9 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
         json.dump(json_data, f)
 
     QTimer.singleShot(0, lambda: dismiss_active_modal(qtbot=qtbot))
-    raw_win._load_file(str(missing_image_json))
+    raw_win._load_file(image_or_label_path=str(missing_image_json))
 
-    raw_win._load_file(str(data_path / _RAW_FILE_NAME))
+    raw_win._load_file(image_or_label_path=str(data_path / _RAW_FILE_NAME))
     qtbot.waitUntil(lambda: raw_win._annotation is not None, timeout=5_000)
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

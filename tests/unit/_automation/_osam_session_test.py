@@ -67,7 +67,7 @@ def install_fake_model(
     return _install
 
 
-def _run_point(session: OsamSession, image_id: str) -> None:
+def _run_point(session: OsamSession, /, *, image_id: str) -> None:
     session.run(
         image=_IMAGE,
         image_id=image_id,

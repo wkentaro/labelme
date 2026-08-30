@@ -27,7 +27,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     scan_calls: list[str] = []
     scan_image_files = labelme._app._scan_image_files
 
-    def _track_scan_image_files(root_dir: str) -> list[str]:
+    def _track_scan_image_files(*, root_dir: str) -> list[str]:
         scan_calls.append(root_dir)
         return scan_image_files(root_dir=root_dir)
 
@@ -65,7 +65,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
         continue_checks.append(True)
         return can_continue()
 
-    def _track_load_file(image_or_label_path: str) -> None:
+    def _track_load_file(*, image_or_label_path: str) -> None:
         load_calls.append(image_or_label_path)
         load_file(image_or_label_path=image_or_label_path)
 

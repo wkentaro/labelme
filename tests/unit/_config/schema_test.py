@@ -17,7 +17,7 @@ def default_config() -> dict:
     return load_config(config_file=None, config_overrides={})
 
 
-def _resolve(config: dict, key_path: tuple[str, ...]) -> object:
+def _resolve(*, config: dict, key_path: tuple[str, ...]) -> object:
     node: object = config
     for key in key_path:
         assert isinstance(node, dict), key_path
@@ -26,7 +26,7 @@ def _resolve(config: dict, key_path: tuple[str, ...]) -> object:
     return node
 
 
-def _ids(settings: tuple[Setting, ...]) -> list[str]:
+def _ids(settings: tuple[Setting, ...], /) -> list[str]:
     return [".".join(setting.key_path) for setting in settings]
 
 

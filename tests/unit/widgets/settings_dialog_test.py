@@ -25,7 +25,7 @@ def applied() -> Applied:
     return []
 
 
-def _preferred_width(dialog: SettingsDialog) -> int:
+def _preferred_width(dialog: SettingsDialog, /) -> int:
     # The width the dialog opens at on an unconstrained screen: its page held
     # out of sideways scrolling plus its own chrome, never below the default.
     page = dialog._page
@@ -38,6 +38,7 @@ def _preferred_width(dialog: SettingsDialog) -> int:
 
 
 def _make_dialog(
+    *,
     qtbot: QtBot,
     applied: Applied,
     overrides: dict,

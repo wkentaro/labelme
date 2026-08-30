@@ -39,6 +39,7 @@ def install_fake_osam_session(
 
 def _propose(
     session: AiAssistSession,
+    /,
     *,
     prompt_kind: _ai_assist.AiPromptKind,
     existing_shapes: list[Shape] | None,
@@ -179,8 +180,8 @@ def test_sam3_box_prompt_reaches_session(
 
 
 def _annotation(
-    score: float | None,
     *,
+    score: float | None,
     bbox: tuple[int, int, int, int] | None,
     mask: NDArray[np.bool_] | None,
 ) -> osam.types.Annotation:

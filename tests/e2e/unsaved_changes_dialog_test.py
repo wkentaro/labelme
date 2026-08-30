@@ -42,6 +42,7 @@ def _intercept_question(
 
 @pytest.fixture()
 def _raw_win_no_autosave(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -58,6 +59,7 @@ def _raw_win_no_autosave(
 
 @pytest.fixture()
 def _dir_win_no_autosave(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
