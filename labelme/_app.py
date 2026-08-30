@@ -2183,8 +2183,14 @@ class MainWindow(QtWidgets.QMainWindow):
             else image_or_label_path
         )
 
+        # A shape still waiting to be named cannot be carried forward: the
+        # label list rejects a shape with no label.
         prev_shapes: list[Shape] = (
-            self._canvas_widgets.canvas.shapes
+            [
+                shape
+                for shape in self._canvas_widgets.canvas.shapes
+                if shape.label is not None
+            ]
             if self._config["keep_prev"]
             or QtWidgets.QApplication.keyboardModifiers()
             == (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier)
