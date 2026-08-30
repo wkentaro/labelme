@@ -11,3 +11,19 @@ from ._text_detection import get_bboxes_from_texts
 from ._text_detection import nms_bboxes
 from ._types import AiOutputFormat
 from ._types import AiPromptKind
+
+__all__ = [
+    "MASK_REQUIRED_SHAPE_TYPES",
+    "AiAssistProposal",
+    "AiAssistSession",
+    "AiOutputFormat",
+    "AiPromptKind",
+    "Detection",
+    "OsamSession",
+    "assign_available_group_ids",
+    "get_bboxes_from_texts",
+    "nms_bboxes",
+    "shape_to_xyxy_bbox",
+    "shapes_from_detections",
+    "suppress_detections_greedy",
+]

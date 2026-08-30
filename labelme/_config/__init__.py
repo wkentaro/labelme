@@ -13,6 +13,8 @@ from ._shape_color import migrate_shape_color
 from ._shape_color import validate_shape_color
 from ._writer import set_overrides
 
+__all__ = ["get_user_config_file", "load_config", "set_overrides"]
+
 here = Path(__file__).resolve().parent
 
 

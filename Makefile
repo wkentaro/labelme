@@ -21,6 +21,7 @@ setup:  # Setup the development environment
 lint:  # Lint code
 	$(call exec,uv run ruff format --check)
 	$(call exec,uv run ruff check)
+	$(call exec,uv run gruff check .)
 	$(call exec,uv run ty check --no-progress)
 	$(call exec,git ls-files "*.toml" | xargs uv run taplo fmt --check)
 	$(call exec,git ls-files "*.md" | xargs uv run mdformat --check)
