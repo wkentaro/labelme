@@ -1,10 +1,11 @@
 import re
 import tomllib
 from pathlib import Path
+from typing import Final
 
 from ruamel.yaml import YAML
 
-_REPO_ROOT = Path(__file__).parents[1]
+_REPO_ROOT: Final = Path(__file__).parents[1]
 
 
 def test_test_matrix_covers_every_supported_python_version() -> None:

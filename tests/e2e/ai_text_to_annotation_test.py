@@ -4,6 +4,7 @@ import functools
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
+from typing import Final
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -21,7 +22,7 @@ from .conftest import show_window_and_wait_for_imagedata
 if TYPE_CHECKING:
     from labelme._app import MainWindow
 
-_AI_TEXT_MODEL = "yoloworld:latest"
+_AI_TEXT_MODEL: Final = "yoloworld:latest"
 
 
 def _make_response(

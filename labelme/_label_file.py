@@ -91,7 +91,7 @@ def _validate_shape_semantics(
 
 
 def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
-    SHAPE_KEYS: set[str] = {
+    SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
         "group_id",
@@ -396,7 +396,7 @@ def write_label_file(
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
 
 
-_DISPLAYABLE_MODES = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
+_DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
 
 def _imread(filename: str) -> PIL.Image.Image:

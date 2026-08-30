@@ -5,6 +5,7 @@ import subprocess
 import sys
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Final
 from xml.etree import ElementTree
 
 import PIL.Image
@@ -19,8 +20,8 @@ from labelme import _locale
 from labelme._widgets import brightness_contrast_dialog
 from labelme._widgets.brightness_contrast_dialog import BrightnessContrastDialog
 
-_LOCALE = "ja_JP"
-_SLIDER_LABELS = ("Brightness:", "Contrast:")
+_LOCALE: Final = "ja_JP"
+_SLIDER_LABELS: Final = ("Brightness:", "Contrast:")
 
 
 @pytest.fixture()

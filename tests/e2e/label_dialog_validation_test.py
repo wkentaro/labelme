@@ -163,9 +163,9 @@ def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
     label_list = win._label_dialog.label_list
     assert _label_list_texts(label_list=label_list) == ["cat"]
 
-    triangle_zebra: Final = ((0.10, 0.10), (0.25, 0.10), (0.25, 0.25))
-    triangle_cat: Final = ((0.40, 0.10), (0.55, 0.10), (0.55, 0.25))
-    triangle_ant: Final = ((0.70, 0.10), (0.85, 0.10), (0.85, 0.25))
+    triangle_zebra = ((0.10, 0.10), (0.25, 0.10), (0.25, 0.25))
+    triangle_cat = ((0.40, 0.10), (0.55, 0.10), (0.55, 0.25))
+    triangle_ant = ((0.70, 0.10), (0.85, 0.10), (0.85, 0.25))
 
     draw_and_commit_polygon(
         qtbot=qtbot, win=win, label="zebra", vertices=triangle_zebra

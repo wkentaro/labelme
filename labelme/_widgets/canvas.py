@@ -99,7 +99,7 @@ def _shape_to_draft(shape: Shape) -> _DraftShape:
     )
 
 
-MOVE_SPEED: float = 5.0
+MOVE_SPEED: Final[float] = 5.0
 
 _CreateMode = Literal[
     "polygon",

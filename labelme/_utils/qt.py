@@ -15,15 +15,15 @@ from PySide6 import QtWidgets
 
 _ICONS_DIR: Final = os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons")
 _DEFAULT_ICON_SUFFIX: Final = ".png"
+_SCHEME_BY_THEME: Final = {
+    "system": QtCore.Qt.ColorScheme.Unknown,
+    "light": QtCore.Qt.ColorScheme.Light,
+    "dark": QtCore.Qt.ColorScheme.Dark,
+}
 
 
 def apply_color_theme(theme: str) -> None:
-    scheme_by_theme: Final = {
-        "system": QtCore.Qt.ColorScheme.Unknown,
-        "light": QtCore.Qt.ColorScheme.Light,
-        "dark": QtCore.Qt.ColorScheme.Dark,
-    }
-    scheme = scheme_by_theme.get(theme, QtCore.Qt.ColorScheme.Unknown)
+    scheme = _SCHEME_BY_THEME.get(theme, QtCore.Qt.ColorScheme.Unknown)
     QtGui.QGuiApplication.styleHints().setColorScheme(scheme)
 
 
