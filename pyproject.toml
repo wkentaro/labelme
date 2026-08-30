@@ -100,11 +100,12 @@ select = ["GR003", "GR006"]
 
 [tool.ruff.lint]
 select = [
-  "ANN", # flake8-annotations
-  "E",   # pycodestyle
-  "F",   # pyflakes
-  "I",   # isort
-  "UP",  # pyupgrade
+  "ANN",    # flake8-annotations
+  "E",      # pycodestyle
+  "F",      # pyflakes
+  "I",      # isort
+  "UP",     # pyupgrade
+  "RUF022", # sorted __all__
 ]
 # UP040 wants PEP 695 `type X = ...`, but our Literal aliases are enumerated at
 # runtime via typing.get_args(), which returns () for a lazy `type` alias.
