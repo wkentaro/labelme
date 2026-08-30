@@ -37,7 +37,7 @@ def _isolated_override_cursor_stack() -> Generator[None, None, None]:
 
 
 @pytest.fixture()
-def canvas(qtbot: QtBot) -> Canvas:
+def canvas(*, qtbot: QtBot) -> Canvas:
     c = Canvas()
     c.pixmap = QtGui.QPixmap(_W, _H)
     # Resize to exactly the pixmap dimensions so the image-origin offset is
@@ -97,7 +97,7 @@ def _clear_cursor_override(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_cursor_is_cross_when_hovering_in_create_mode(canvas: Canvas) -> None:
+def test_cursor_is_cross_when_hovering_in_create_mode(*, canvas: Canvas) -> None:
     # Any mouse move in CREATE mode should engage CrossCursor.
     canvas.set_editing(value=False)
     canvas.create_mode = "rectangle"
@@ -112,7 +112,7 @@ def test_cursor_is_cross_when_hovering_in_create_mode(canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_cursor_reverts_to_no_override_after_cursor_cleared(canvas: Canvas) -> None:
+def test_cursor_reverts_to_no_override_after_cursor_cleared(*, canvas: Canvas) -> None:
     # After _release_cursor the override stack is empty; callers treat that
     # as ArrowCursor.
     canvas.set_editing(value=False)
@@ -133,6 +133,7 @@ def test_cursor_reverts_to_no_override_after_cursor_cleared(canvas: Canvas) -> N
 
 @pytest.mark.gui
 def test_cursor_is_arrow_when_hovering_empty_canvas_in_edit_mode(
+    *,
     canvas: Canvas,
 ) -> None:
     # Moving over blank canvas area (no shapes) leaves no override cursor.
@@ -152,6 +153,7 @@ def test_cursor_is_arrow_when_hovering_empty_canvas_in_edit_mode(
 
 @pytest.mark.gui
 def test_cursor_is_open_hand_when_hovering_shape_body_in_edit_mode(
+    *,
     canvas: Canvas,
 ) -> None:
     # Hovering the interior of a shape (not near a vertex or edge) uses
@@ -182,6 +184,7 @@ def test_cursor_is_open_hand_when_hovering_shape_body_in_edit_mode(
 
 @pytest.mark.gui
 def test_shape_hidden_while_hovered_stops_being_hover_interactive(
+    *,
     canvas: Canvas,
 ) -> None:
     # Regression for #2250: hiding the hovered shape must make it inert to the
@@ -220,6 +223,7 @@ def test_shape_hidden_while_hovered_stops_being_hover_interactive(
 
 @pytest.mark.gui
 def test_cursor_is_pointing_hand_when_hovering_vertex_in_edit_mode(
+    *,
     canvas: Canvas,
 ) -> None:
     # Hovering a vertex in EDIT mode engages PointingHandCursor.
@@ -248,6 +252,7 @@ def test_cursor_is_pointing_hand_when_hovering_vertex_in_edit_mode(
 
 @pytest.mark.gui
 def test_cursor_is_pointing_hand_when_hovering_edge_in_edit_mode(
+    *,
     canvas: Canvas,
 ) -> None:
     # Hovering an edge midpoint of a polygon (but not near a vertex) also
@@ -278,6 +283,7 @@ def test_cursor_is_pointing_hand_when_hovering_edge_in_edit_mode(
 
 @pytest.mark.gui
 def test_cursor_is_pointing_hand_when_snapping_to_polygon_origin(
+    *,
     canvas: Canvas,
 ) -> None:
     # While drawing a polygon with 3+ points, approaching the first point
@@ -302,7 +308,7 @@ def test_cursor_is_pointing_hand_when_snapping_to_polygon_origin(
 
 
 @pytest.mark.gui
-def test_cursor_is_cross_when_far_from_polygon_origin(canvas: Canvas) -> None:
+def test_cursor_is_cross_when_far_from_polygon_origin(*, canvas: Canvas) -> None:
     # When the cursor is more than epsilon/scale away from the polygon origin,
     # CrossCursor is kept (no snap engagement).
     canvas.set_editing(value=False)
@@ -330,7 +336,7 @@ def test_cursor_is_cross_when_far_from_polygon_origin(canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_context_menus_pair_holds_two_menus(canvas: Canvas) -> None:
+def test_context_menus_pair_holds_two_menus(*, canvas: Canvas) -> None:
     # The public context_menus pair exposes a no-selection menu and a
     # selection menu as named QMenu attributes.
     assert isinstance(canvas.context_menus.without_selection, QtWidgets.QMenu)
@@ -339,6 +345,7 @@ def test_context_menus_pair_holds_two_menus(canvas: Canvas) -> None:
 
 @pytest.mark.gui
 def test_right_release_without_selection_copy_executes_menus_0(
+    *,
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -365,6 +372,7 @@ def test_right_release_without_selection_copy_executes_menus_0(
 
 @pytest.mark.gui
 def test_right_release_with_selection_copy_executes_menus_1(
+    *,
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -431,6 +439,7 @@ def _make_center_polygon() -> Shape:
     ids=["scale_0.5", "scale_1.0", "scale_2.0"],
 )
 def test_vertex_hover_within_epsilon_screen_pixels_gives_pointing_hand(
+    *,
     qtbot: QtBot,
     scale: float,
 ) -> None:
@@ -470,6 +479,7 @@ def test_vertex_hover_within_epsilon_screen_pixels_gives_pointing_hand(
     ids=["scale_0.5", "scale_1.0", "scale_2.0"],
 )
 def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
+    *,
     qtbot: QtBot,
     scale: float,
 ) -> None:
@@ -501,6 +511,7 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
 
 @pytest.mark.gui
 def test_screen_pixel_hit_radius_is_constant_across_scale_levels(
+    *,
     qtbot: QtBot,
 ) -> None:
     # Confirm parity: a fixed 7-screen-pixel offset from the vertex always

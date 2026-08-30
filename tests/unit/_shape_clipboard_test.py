@@ -78,7 +78,7 @@ def test_store_preserves_all_shapes_in_order() -> None:
     ],
 )
 def test_availability_changed_emits_only_on_emptiness_transitions(
-    prior_count: int, new_count: int, expected_emissions: list[bool]
+    *, prior_count: int, new_count: int, expected_emissions: list[bool]
 ) -> None:
     clipboard = ShapeClipboard()
     clipboard.store(shapes=[_make_polygon() for _ in range(prior_count)])

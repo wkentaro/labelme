@@ -50,10 +50,10 @@ def _send_drop(*, win: MainWindow, mime: QMimeData) -> None:
 
 @pytest.mark.gui
 def test_drop_image_files_loads_them(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win()
@@ -80,10 +80,10 @@ def test_drop_image_files_loads_them(
 
 @pytest.mark.gui
 def test_dropped_image_files_respect_active_search_filter(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(config_overrides={"file_search": r"000003\.jpg$"})
@@ -111,10 +111,10 @@ def test_dropped_image_files_respect_active_search_filter(
 
 @pytest.mark.gui
 def test_opening_annotation_file_clears_loaded_directory_images(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     annotated_dir = data_path / "annotated"
@@ -138,11 +138,11 @@ def test_opening_annotation_file_clears_loaded_directory_images(
 
 @pytest.mark.gui
 def test_drag_enter_rejects_non_image_and_keeps_state(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     original_title = raw_win.windowTitle()

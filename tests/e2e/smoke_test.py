@@ -11,7 +11,7 @@ from .conftest import MainWinFactory
 
 @pytest.mark.gui
 def test_MainWindow_open(
-    main_win: MainWinFactory, qtbot: QtBot, *, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, pause: bool
 ) -> None:
     win = main_win()
 
@@ -20,7 +20,7 @@ def test_MainWindow_open(
 
 @pytest.mark.gui
 def test_file_search_config_regex_filters_on_startup(
-    main_win: MainWinFactory, qtbot: QtBot, data_path: Path, *, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, pause: bool
 ) -> None:
     raw_dir = data_path / "raw"
     all_images = list(raw_dir.glob("*.jpg"))

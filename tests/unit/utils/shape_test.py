@@ -203,7 +203,7 @@ def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
     ids=["down", "up", "ties-to-even", "different-fractions"],
 )
 def test_shapes_to_label_mask_rounds_fractional_bounds(
-    points: list[list[float]], expected_origin: tuple[int, int]
+    *, points: list[list[float]], expected_origin: tuple[int, int]
 ) -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=points, mask=patch)

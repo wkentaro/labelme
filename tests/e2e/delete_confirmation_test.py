@@ -24,6 +24,7 @@ def _exec_clicking_role(
 
 @pytest.mark.gui
 def test_confirm_deletion_defaults_to_cancel(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -44,6 +45,7 @@ def test_confirm_deletion_defaults_to_cancel(
 
 @pytest.mark.gui
 def test_confirm_deletion_returns_true_when_delete_clicked(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -60,6 +62,7 @@ def test_confirm_deletion_returns_true_when_delete_clicked(
 
 @pytest.mark.gui
 def test_confirm_deletion_returns_false_when_cancel_clicked(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

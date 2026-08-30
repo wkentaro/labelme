@@ -37,7 +37,7 @@ def _make_widget(
 
 
 def test_construction_exposes_default_without_firing_callbacks(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
@@ -53,7 +53,7 @@ def test_construction_exposes_default_without_firing_callbacks(
 
 
 def test_first_listed_default_resolves(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
@@ -66,7 +66,7 @@ def test_first_listed_default_resolves(
 
 
 def test_unknown_default_falls_back_to_first_model(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
@@ -79,7 +79,7 @@ def test_unknown_default_falls_back_to_first_model(
 
 
 def test_selecting_another_model_fires_callback(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
@@ -93,7 +93,7 @@ def test_selecting_another_model_fires_callback(
 
 
 def test_selecting_another_output_format_fires_callback(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
@@ -115,7 +115,7 @@ def test_selecting_another_output_format_fires_callback(
 
 
 def test_polygon_detail_control_fires_callback_and_exposes_value(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     details: list[int] = []
     widget = _make_widget(
@@ -134,7 +134,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
 
 
 def test_setting_polygon_detail_from_config_does_not_fire_callback(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     details: list[int] = []
     widget = _make_widget(

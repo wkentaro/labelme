@@ -66,18 +66,19 @@ def _make_dialog(
 
 
 @pytest.fixture
-def dialog(qtbot: QtBot, applied: Applied) -> SettingsDialog:
+def dialog(*, qtbot: QtBot, applied: Applied) -> SettingsDialog:
     return _make_dialog(
         qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
     )
 
 
 @pytest.mark.usefixtures("dialog")
-def test_no_apply_on_construction(applied: Applied) -> None:
+def test_no_apply_on_construction(*, applied: Applied) -> None:
     assert applied == []
 
 
 def test_existing_shape_suppression_is_disabled_by_default(
+    *,
     dialog: SettingsDialog,
 ) -> None:
     checkbox = dialog._editors[("ai", "suppress_existing_shape_matches")]
@@ -86,7 +87,7 @@ def test_existing_shape_suppression_is_disabled_by_default(
 
 
 def test_polygon_detail_slider_applies_integer_value(
-    dialog: SettingsDialog, applied: Applied
+    *, dialog: SettingsDialog, applied: Applied
 ) -> None:
     slider = dialog._editors[("mask_polygonization", "detail")]
     assert isinstance(slider, IntegerSlider)
@@ -98,7 +99,7 @@ def test_polygon_detail_slider_applies_integer_value(
 
 
 def test_unbounded_integer_edit_accepts_python_ints(
-    qtbot: QtBot, applied: Applied
+    *, qtbot: QtBot, applied: Applied
 ) -> None:
     initial = 2**31
     dialog = _make_dialog(
@@ -122,7 +123,7 @@ def test_unbounded_integer_edit_accepts_python_ints(
     assert (("shape_color", "auto", "shift"), initial + 1) in applied
 
 
-def test_editors_have_accessible_names(dialog: SettingsDialog) -> None:
+def test_editors_have_accessible_names(*, dialog: SettingsDialog) -> None:
     for setting in schema.SETTINGS:
         editor = dialog._editors[setting.key_path]
         assert editor.accessibleName() == dialog.tr(setting.label)
@@ -136,7 +137,7 @@ def test_editors_have_accessible_names(dialog: SettingsDialog) -> None:
 
 
 def test_shape_color_mode_enables_only_its_control(
-    dialog: SettingsDialog, applied: Applied
+    *, dialog: SettingsDialog, applied: Applied
 ) -> None:
     mode = dialog._editors[("shape_color", "mode")]
     shift = dialog._editors[("shape_color", "auto", "shift")]
@@ -177,6 +178,7 @@ def test_shape_color_mode_enables_only_its_control(
 
 @pytest.mark.usefixtures("use_widget_color_dialog")
 def test_shape_color_picker_applies_rgb(
+    *,
     qtbot: QtBot,
     applied: Applied,
 ) -> None:
@@ -213,7 +215,7 @@ def test_shape_color_picker_applies_rgb(
     ]
 
 
-def test_setting_note_is_accessible_description(dialog: SettingsDialog) -> None:
+def test_setting_note_is_accessible_description(*, dialog: SettingsDialog) -> None:
     setting = next(
         setting
         for setting in schema.SETTINGS
@@ -227,7 +229,7 @@ def test_setting_note_is_accessible_description(dialog: SettingsDialog) -> None:
     )
 
 
-def test_beta_settings_render_a_badge(dialog: SettingsDialog) -> None:
+def test_beta_settings_render_a_badge(*, dialog: SettingsDialog) -> None:
     expected = {dialog.tr(setting.label) for setting in schema.SETTINGS if setting.beta}
     assert expected, "no beta settings to verify"
 
@@ -247,31 +249,33 @@ def test_beta_settings_render_a_badge(dialog: SettingsDialog) -> None:
 
 
 def test_accept_does_not_reapply_unchanged_str_list(
-    dialog: SettingsDialog, applied: Applied
+    *, dialog: SettingsDialog, applied: Applied
 ) -> None:
     dialog.accept()
     assert applied == []
 
 
-def test_str_list_none_initial_is_blank(dialog: SettingsDialog) -> None:
+def test_str_list_none_initial_is_blank(*, dialog: SettingsDialog) -> None:
     edit = dialog._editors[("labels",)]
     assert isinstance(edit, QtWidgets.QPlainTextEdit)
     assert edit.toPlainText() == ""
 
 
-def test_language_default_selects_system(dialog: SettingsDialog) -> None:
+def test_language_default_selects_system(*, dialog: SettingsDialog) -> None:
     combo = dialog._editors[("language",)]
     assert isinstance(combo, QtWidgets.QComboBox)
     assert combo.currentData() is None
 
 
-def test_language_lists_bundled_locales(dialog: SettingsDialog) -> None:
+def test_language_lists_bundled_locales(*, dialog: SettingsDialog) -> None:
     combo = dialog._editors[("language",)]
     assert isinstance(combo, QtWidgets.QComboBox)
     assert combo.findData("ja_JP") >= 0
 
 
-def test_language_applies_locale_code(dialog: SettingsDialog, applied: Applied) -> None:
+def test_language_applies_locale_code(
+    *, dialog: SettingsDialog, applied: Applied
+) -> None:
     combo = dialog._editors[("language",)]
     assert isinstance(combo, QtWidgets.QComboBox)
     combo.setCurrentIndex(combo.findData("en_US"))
@@ -279,7 +283,7 @@ def test_language_applies_locale_code(dialog: SettingsDialog, applied: Applied) 
 
 
 def test_language_applies_discovered_locale(
-    dialog: SettingsDialog, applied: Applied
+    *, dialog: SettingsDialog, applied: Applied
 ) -> None:
     combo = dialog._editors[("language",)]
     assert isinstance(combo, QtWidgets.QComboBox)
@@ -290,7 +294,7 @@ def test_language_applies_discovered_locale(
 
 
 def test_language_unknown_code_falls_back_to_system(
-    qtbot: QtBot, applied: Applied
+    *, qtbot: QtBot, applied: Applied
 ) -> None:
     dialog = _make_dialog(
         qtbot=qtbot,
@@ -306,7 +310,7 @@ def test_language_unknown_code_falls_back_to_system(
 
 
 def test_clearing_labels_is_rejected_when_validate_label_is_exact(
-    qtbot: QtBot, applied: Applied, monkeypatch: pytest.MonkeyPatch
+    *, qtbot: QtBot, applied: Applied, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     dialog = _make_dialog(
         qtbot=qtbot,
@@ -347,7 +351,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     assert labels_editor.toPlainText() == "cat"
 
 
-def test_failed_apply_reverts_checkbox(qtbot: QtBot, applied: Applied) -> None:
+def test_failed_apply_reverts_checkbox(*, qtbot: QtBot, applied: Applied) -> None:
     dialog = _make_dialog(
         qtbot=qtbot,
         applied=applied,
@@ -364,7 +368,7 @@ def test_failed_apply_reverts_checkbox(qtbot: QtBot, applied: Applied) -> None:
     assert checkbox.isChecked()  # reverted to the last-saved value
 
 
-def test_failed_apply_reverts_labels_editor(qtbot: QtBot, applied: Applied) -> None:
+def test_failed_apply_reverts_labels_editor(*, qtbot: QtBot, applied: Applied) -> None:
     dialog = _make_dialog(
         qtbot=qtbot,
         applied=applied,
@@ -385,7 +389,7 @@ def test_failed_apply_reverts_labels_editor(qtbot: QtBot, applied: Applied) -> N
     assert applied == []
 
 
-def test_groups_and_navigation_follow_schema_order(dialog: SettingsDialog) -> None:
+def test_groups_and_navigation_follow_schema_order(*, dialog: SettingsDialog) -> None:
     expected = list(typing.get_args(schema.Group))
     assert [group.title() for group in dialog._page._groups] == expected
     assert [
@@ -400,6 +404,7 @@ def test_groups_and_navigation_follow_schema_order(dialog: SettingsDialog) -> No
 
 
 def test_navigation_uses_readable_typography_and_spacing(
+    *,
     dialog: SettingsDialog,
 ) -> None:
     navigation = dialog._page._navigation
@@ -413,7 +418,7 @@ def test_navigation_uses_readable_typography_and_spacing(
 
 
 def test_navigation_elides_long_localized_names_without_squeezing_content(
-    qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied
+    *, qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied
 ) -> None:
     translator = QtCore.QTranslator()
     translation_path = Path(__file__).parents[3] / "labelme" / "translate" / "ru_RU.qm"
@@ -443,7 +448,7 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
 
 
 def test_default_size_scrolls_vertically_only(
-    qtbot: QtBot, dialog: SettingsDialog
+    *, qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -457,7 +462,7 @@ def test_default_size_scrolls_vertically_only(
     assert scroll_area.verticalScrollBar().maximum() > 0
 
 
-def test_dialog_is_resizable(dialog: SettingsDialog) -> None:
+def test_dialog_is_resizable(*, dialog: SettingsDialog) -> None:
     target_width = dialog.width() + 40
     target_height = dialog.height() + 40
     dialog.resize(target_width, target_height)
@@ -466,7 +471,7 @@ def test_dialog_is_resizable(dialog: SettingsDialog) -> None:
 
 
 def test_dialog_prevents_narrow_content_overflow(
-    qtbot: QtBot, dialog: SettingsDialog
+    *, qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -482,7 +487,7 @@ def test_dialog_prevents_narrow_content_overflow(
 
 @pytest.mark.parametrize("target", range(len(typing.get_args(schema.Group))))
 def test_navigation_jumps_to_group(
-    qtbot: QtBot, dialog: SettingsDialog, target: int
+    *, qtbot: QtBot, dialog: SettingsDialog, target: int
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -511,7 +516,7 @@ def test_navigation_jumps_to_group(
     assert navigation.currentRow() == target
 
 
-def test_scrolling_updates_navigation(qtbot: QtBot, dialog: SettingsDialog) -> None:
+def test_scrolling_updates_navigation(*, qtbot: QtBot, dialog: SettingsDialog) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
 
@@ -524,7 +529,7 @@ def test_scrolling_updates_navigation(qtbot: QtBot, dialog: SettingsDialog) -> N
 
 
 def test_scrolling_updates_navigation_after_a_jump(
-    qtbot: QtBot, dialog: SettingsDialog
+    *, qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -544,7 +549,7 @@ def test_scrolling_updates_navigation_after_a_jump(
 
 
 def test_navigation_returns_to_first_group_when_resize_removes_scrollbar(
-    qtbot: QtBot, dialog: SettingsDialog
+    *, qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -561,7 +566,7 @@ def test_navigation_returns_to_first_group_when_resize_removes_scrollbar(
 
 
 def test_reopening_preserves_scroll_position(
-    qtbot: QtBot, dialog: SettingsDialog
+    *, qtbot: QtBot, dialog: SettingsDialog
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -575,7 +580,7 @@ def test_reopening_preserves_scroll_position(
     assert scroll_bar.value() == expected
 
 
-def test_short_dialog_scrolls_page(qtbot: QtBot, dialog: SettingsDialog) -> None:
+def test_short_dialog_scrolls_page(*, qtbot: QtBot, dialog: SettingsDialog) -> None:
     dialog.resize(dialog.width(), 160)
     with qtbot.waitExposed(dialog):
         dialog.show()
@@ -584,7 +589,7 @@ def test_short_dialog_scrolls_page(qtbot: QtBot, dialog: SettingsDialog) -> None
 
 
 def test_large_font_uses_default_size_with_scrolling(
-    qtbot: QtBot, applied: Applied
+    *, qtbot: QtBot, applied: Applied
 ) -> None:
     original_font = QtWidgets.QApplication.font()
     large_font = QtGui.QFont(original_font)

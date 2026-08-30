@@ -31,11 +31,11 @@ _DEFAULT_TRIANGLE: Final[tuple[tuple[float, float], ...]] = (
 @pytest.mark.gui
 @pytest.mark.parametrize("with_image_data", [True, False])
 def test_save_image_data_field_matches_config(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
     with_image_data: bool,
 ) -> None:
@@ -71,13 +71,13 @@ def test_save_image_data_field_matches_config(
 
 @pytest.mark.gui
 def test_save_falls_back_to_an_absolute_image_path_across_drives(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
     critical_messages: list[str],
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -127,11 +127,11 @@ def test_save_falls_back_to_an_absolute_image_path_across_drives(
 
 @pytest.mark.gui
 def test_round_trip_polygon_preserves_points(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     raw_win: MainWindow,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     label = "rt_polygon"
@@ -172,11 +172,11 @@ def test_round_trip_polygon_preserves_points(
 
 @pytest.mark.gui
 def test_round_trip_mask_shape_via_fixture(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     mask_arr = np.zeros((4, 4), dtype=np.uint8)
@@ -252,11 +252,11 @@ def test_round_trip_mask_shape_via_fixture(
 
 @pytest.mark.gui
 def test_open_json_with_missing_image_shows_error_and_recovers(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     missing_image_json = tmp_path / "missing_image.json"
@@ -283,12 +283,12 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
 
 @pytest.mark.gui
 def test_title_returns_to_clean_after_save(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(

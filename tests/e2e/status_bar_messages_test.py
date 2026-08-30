@@ -39,10 +39,10 @@ def _wait_for_status_message_containing(
 
 @pytest.mark.gui
 def test_status_bar_shows_loaded_message_after_opening(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     file_path = str(data_path / "raw" / "2011_000003.jpg")
@@ -59,11 +59,11 @@ def test_status_bar_shows_loaded_message_after_opening(
 
 @pytest.mark.gui
 def test_save_does_not_emit_transient_status_message(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     json_basename = "2011_000003.json"
@@ -92,10 +92,10 @@ def test_save_does_not_emit_transient_status_message(
 
 @pytest.mark.gui
 def test_status_bar_shows_error_message_on_corrupt_file(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     corrupt_json = tmp_path / "corrupt.json"

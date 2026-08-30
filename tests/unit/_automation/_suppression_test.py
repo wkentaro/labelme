@@ -26,6 +26,7 @@ def make_full_detection() -> Callable[..., Detection]:
 
 
 def test_redundant_drops_duplicate_mask_keeps_first(
+    *,
     make_full_detection: Callable[..., Detection],
 ) -> None:
     first = make_full_detection()
@@ -50,6 +51,7 @@ def test_redundant_keeps_first_when_descriptions_differ() -> None:
 
 
 def test_redundant_keeps_only_first_among_three_duplicates(
+    *,
     make_full_detection: Callable[..., Detection],
 ) -> None:
     first = make_full_detection()
@@ -133,6 +135,7 @@ def test_redundant_keeps_triangles_sharing_bbox() -> None:
 
 
 def test_redundant_does_not_suppress_across_labels(
+    *,
     make_full_detection: Callable[..., Detection],
 ) -> None:
     tree = make_full_detection(label="tree")
@@ -376,7 +379,7 @@ def test_overlapping_rasterizes_existing_circle_as_a_disk() -> None:
     ],
 )
 def test_overlapping_skips_existing_shape_without_bbox_interpretation(
-    shape_type: ShapeType, extra_points: list[list[float]]
+    *, shape_type: ShapeType, extra_points: list[list[float]]
 ) -> None:
     # Canvas shapes without a bbox/mask interpretation (e.g. a stray point
     # landmark) must not break the AI suppression call.

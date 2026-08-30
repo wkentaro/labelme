@@ -183,12 +183,12 @@ def _run_text_prompt(
     ],
 )
 def test_text_prompt_creates_shapes(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
     create_mode: str,
     expected_shape_type: AiOutputFormat,
@@ -243,11 +243,11 @@ def test_text_prompt_creates_shapes(
 
 @pytest.mark.gui
 def test_nms_deduplicates_existing_shapes(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -286,11 +286,11 @@ def test_nms_deduplicates_existing_shapes(
 
 @pytest.mark.gui
 def test_score_threshold_filters_detections(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -333,11 +333,11 @@ def test_score_threshold_filters_detections(
 
 @pytest.mark.gui
 def test_text_prompt_inference_error_surfaces_without_crashing(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     # A model error during text-to-annotation inference must not crash the app:
@@ -367,10 +367,10 @@ def test_text_prompt_inference_error_surfaces_without_crashing(
 
 @pytest.mark.gui
 def test_canvas_inference_failed_signal_surfaces_status_message(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     # The hover-preview path emits inference_failed from inside paintEvent, so

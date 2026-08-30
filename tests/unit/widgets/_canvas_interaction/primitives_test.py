@@ -351,7 +351,9 @@ def test_is_within_pick_threshold_larger_scale_smaller_image_radius() -> None:
         (CursorRole.MOVE, Qt.CursorShape.ClosedHandCursor),
     ],
 )
-def test_cursor_shape_for_all_roles(role: CursorRole, expected: Qt.CursorShape) -> None:
+def test_cursor_shape_for_all_roles(
+    *, role: CursorRole, expected: Qt.CursorShape
+) -> None:
     assert cursor_shape_for(role) == expected
 
 

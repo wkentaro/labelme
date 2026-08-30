@@ -85,6 +85,7 @@ def test_compute_oriented_rectangle_from_mask_axis_aligned_taller_than_wide() ->
 
 
 def test_compute_oriented_rectangle_from_mask_recovers_rotation_angle(
+    *,
     rotated_rectangle_mask: NDArray[np.bool_],
     rotated_rectangle_angle: float,
 ) -> None:
@@ -308,6 +309,7 @@ def test_compute_polygons_from_mask_returns_every_disconnected_land() -> None:
 
 
 def test_compute_polygons_from_mask_traces_all_lands_once(
+    *,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     mask = np.zeros((10, 12), dtype=bool)
@@ -426,7 +428,9 @@ def test_compute_polygons_from_mask_detail_controls_point_count() -> None:
 
 
 @pytest.mark.parametrize("detail", [-1, 101])
-def test_compute_polygons_from_mask_rejects_detail_outside_range(detail: int) -> None:
+def test_compute_polygons_from_mask_rejects_detail_outside_range(
+    *, detail: int
+) -> None:
     with pytest.raises(ValueError, match="detail must be between 0 and 100"):
         compute_polygons_from_mask(mask=np.ones((5, 5), dtype=bool), detail=detail)
 

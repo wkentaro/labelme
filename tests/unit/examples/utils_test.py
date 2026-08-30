@@ -84,7 +84,7 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     ids=["different-fractions", "ties-to-even"],
 )
 def test_shapes_to_label_mask_rounds_origin_without_cropping_mask(
-    points: list[list[float]], expected_origin: tuple[int, int]
+    *, points: list[list[float]], expected_origin: tuple[int, int]
 ) -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=points, mask=patch)
@@ -130,7 +130,7 @@ def _make_source_rgb() -> PIL.Image.Image:
 
 @pytest.mark.parametrize("mode", _SOURCE_MODES)
 def test_decode_img_data_as_rgb_returns_rgb_for_every_source_mode(
-    mode: str, source_rgb: PIL.Image.Image
+    *, mode: str, source_rgb: PIL.Image.Image
 ) -> None:
     arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert(mode)))
     assert arr.dtype == np.uint8
@@ -139,7 +139,7 @@ def test_decode_img_data_as_rgb_returns_rgb_for_every_source_mode(
 
 @pytest.mark.parametrize("mode", _SOURCE_MODES)
 def test_decode_img_data_as_rgb_output_is_jpeg_writable(
-    mode: str, source_rgb: PIL.Image.Image
+    *, mode: str, source_rgb: PIL.Image.Image
 ) -> None:
     # The reported crash: the VOC converters write the decoded array as JPEG,
     # which cannot represent an alpha channel.
@@ -148,6 +148,7 @@ def test_decode_img_data_as_rgb_output_is_jpeg_writable(
 
 
 def test_decode_img_data_as_rgb_resolves_palette_colors(
+    *,
     source_rgb: PIL.Image.Image,
 ) -> None:
     arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert("P")))
@@ -155,6 +156,7 @@ def test_decode_img_data_as_rgb_resolves_palette_colors(
 
 
 def test_decode_img_data_as_rgb_discards_alpha_without_compositing(
+    *,
     source_rgb: PIL.Image.Image,
 ) -> None:
     rgba = source_rgb.convert("RGBA")

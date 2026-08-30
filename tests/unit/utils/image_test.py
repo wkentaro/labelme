@@ -125,6 +125,7 @@ def _find_brightest_red_rowcol(image: PIL.Image.Image, /) -> tuple[int, int]:
     ],
 )
 def test_apply_exif_orientation_transforms_marker(
+    *,
     orientation: int,
     expected_size: tuple[int, int],
     expected_rowcol: tuple[int, int],

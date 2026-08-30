@@ -53,5 +53,5 @@ from labelme._shape_color import resolve_shape_color
     ],
     ids=["auto", "uniform", "by-label-match", "by-label-fallback"],
 )
-def test_resolve_shape_color(config: dict, expected: tuple[int, int, int]) -> None:
+def test_resolve_shape_color(*, config: dict, expected: tuple[int, int, int]) -> None:
     assert resolve_shape_color(config=config, label="cat", label_index=0) == expected

@@ -35,10 +35,10 @@ def _label_list_texts(*, label_list: QtWidgets.QListWidget) -> list[str]:
 
 @pytest.mark.gui
 def test_blank_input_keeps_dialog_open(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / _RAW_FILE))
@@ -70,11 +70,11 @@ def test_blank_input_keeps_dialog_open(
 
 @pytest.mark.gui
 def test_validate_label_exact_rejects_unknown_label(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -112,10 +112,10 @@ def test_validate_label_exact_rejects_unknown_label(
 
 @pytest.mark.gui
 def test_arrow_keys_in_label_edit_navigate_label_list(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -153,10 +153,10 @@ def test_arrow_keys_in_label_edit_navigate_label_list(
 
 @pytest.mark.gui
 def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -190,10 +190,10 @@ def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
 
 @pytest.mark.gui
 def test_label_completer_autocompletes_typed_prefix(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -231,10 +231,10 @@ def test_label_completer_autocompletes_typed_prefix(
 
 @pytest.mark.gui
 def test_trailing_whitespace_label_is_stripped(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(

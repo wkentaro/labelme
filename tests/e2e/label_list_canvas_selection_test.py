@@ -49,9 +49,9 @@ def _draw_polygon(
 
 @pytest.mark.gui
 def test_draw_shape_appears_in_label_list(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     win = raw_win
@@ -71,9 +71,9 @@ def test_draw_shape_appears_in_label_list(
 
 @pytest.mark.gui
 def test_click_label_list_entry_selects_canvas_shape(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     win = annotated_win
@@ -98,9 +98,9 @@ def test_click_label_list_entry_selects_canvas_shape(
 
 @pytest.mark.gui
 def test_click_canvas_shape_selects_label_list_entry(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     win = annotated_win
@@ -122,9 +122,9 @@ def test_click_canvas_shape_selects_label_list_entry(
 
 @pytest.mark.gui
 def test_rename_via_label_dialog_updates_shape_and_list(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     win = annotated_win
@@ -158,10 +158,10 @@ def test_rename_via_label_dialog_updates_shape_and_list(
 
 @pytest.mark.gui
 def test_delete_shape_removes_label_list_entry(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     win = annotated_win
@@ -183,6 +183,7 @@ def test_delete_shape_removes_label_list_entry(
 
 @pytest.fixture()
 def annotated_with_labels(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -199,9 +200,9 @@ def annotated_with_labels(
 
 @pytest.mark.gui
 def test_edit_label_cancel_keeps_labels(
+    *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     win = annotated_with_labels
@@ -230,10 +231,10 @@ def test_edit_label_cancel_keeps_labels(
     indirect=True,
 )
 def test_edit_label_invalid_label_keeps_labels_and_shows_error(
+    *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     win = annotated_with_labels
@@ -269,9 +270,9 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
 
 @pytest.mark.gui
 def test_edit_label_multi_shape_mismatch_disables_text_field(
+    *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     # Mismatched labels make `_edit_label` disable the text field while the
@@ -308,10 +309,10 @@ def test_edit_label_multi_shape_mismatch_disables_text_field(
 
 @pytest.mark.gui
 def test_open_different_file_repopulates_label_list(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "annotated"))

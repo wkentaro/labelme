@@ -26,10 +26,10 @@ _AI_MODEL: Final = "efficientsam:10m"
 
 @pytest.mark.gui
 def test_labeling_ai_lands_preserves_generated_group(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(config_overrides={"auto_save": False})
@@ -53,16 +53,16 @@ def test_labeling_ai_lands_preserves_generated_group(
 
 
 @pytest.fixture()
-def ai_model_combo(raw_win: MainWindow) -> QComboBox:
+def ai_model_combo(*, raw_win: MainWindow) -> QComboBox:
     return raw_win._ai_annotation._model_combo
 
 
 @pytest.mark.gui
 def test_ai_points_mode_disables_sam3(
+    *,
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
-    *,
     pause: bool,
 ) -> None:
     sam3_index = ai_model_combo.findData("sam3:latest")
@@ -78,11 +78,11 @@ def test_ai_points_mode_disables_sam3(
 
 @pytest.mark.gui
 def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
+    *,
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     warnings: list[tuple[str, str]] = []
@@ -299,11 +299,11 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
 )
 @pytest.mark.usefixtures("close_failed_download_dialog")
 def test_annotate_shape_types(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
     create_mode: str,
     setup_clicks: list[tuple[float, float]],

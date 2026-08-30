@@ -40,9 +40,9 @@ def _win(
 
 @pytest.mark.gui
 def test_zoom_fit_window(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     _win.set_fit_window_mode(True)
@@ -57,9 +57,9 @@ def test_zoom_fit_window(
 
 @pytest.mark.gui
 def test_zoom_fit_width(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     _win.set_fit_window_mode(True)
@@ -74,10 +74,10 @@ def test_zoom_fit_width(
 
 @pytest.mark.gui
 def test_zoom_fit_width_does_not_scroll_horizontally(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     image_path = tmp_path / "portrait.png"
@@ -100,9 +100,9 @@ def test_zoom_fit_width_does_not_scroll_horizontally(
 
 @pytest.mark.gui
 def test_fit_width_uses_full_width_when_quantized_image_fits_height(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     scroll_area = _win.centralWidget()
@@ -137,9 +137,9 @@ def test_fit_width_uses_full_width_when_quantized_image_fits_height(
 
 @pytest.mark.gui
 def test_manual_zoom_only_scrolls_the_overflowing_axis(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     _win._set_zoom_to_original()
@@ -157,9 +157,9 @@ def test_manual_zoom_only_scrolls_the_overflowing_axis(
 
 @pytest.mark.gui
 def test_zoom_to_original(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     _win.set_fit_window_mode(True)
@@ -175,9 +175,9 @@ def test_zoom_to_original(
 
 @pytest.mark.gui
 def test_zoom_step_keeps_fractional_precision(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     _win._canvas_widgets.zoom_widget.setValue(105)
@@ -251,10 +251,10 @@ def _make_scrolled_win(
 @pytest.mark.gui
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
 def test_navigation_restores_each_image_viewport(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     keep_prev_scale: bool,
 ) -> None:
@@ -324,10 +324,10 @@ def test_navigation_restores_each_image_viewport(
 
 @pytest.mark.gui
 def test_navigation_restores_view_offset_with_retained_brightness(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -356,10 +356,10 @@ def test_navigation_restores_view_offset_with_retained_brightness(
 
 @pytest.mark.gui
 def test_navigation_restores_viewport_after_layout_settles(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     for name, size in [("a.png", (1000, 1500)), ("b.png", (1200, 800))]:
@@ -410,10 +410,10 @@ def test_navigation_restores_viewport_after_layout_settles(
 
 @pytest.mark.gui
 def test_open_file_keeps_previous_viewport(
+    *,
     scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win, expected_scroll_values = scrolled_win
@@ -432,10 +432,10 @@ def test_open_file_keeps_previous_viewport(
 
 @pytest.mark.gui
 def test_file_search_keeps_previous_viewport(
+    *,
     scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win, expected_scroll_values = scrolled_win
@@ -456,10 +456,10 @@ def test_file_search_keeps_previous_viewport(
 @pytest.mark.gui
 @pytest.mark.parametrize("next_image_name", ["2011_000003.jpg", "2011_000006.jpg"])
 def test_close_and_open_restores_viewport(
+    *,
     scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     next_image_name: str,
 ) -> None:
@@ -527,9 +527,9 @@ def _make_wheel_event(
     ],
 )
 def test_canvas_wheel_event_dispatches_signal(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
     modifiers: Qt.KeyboardModifier,
     angle_delta: QPoint,
@@ -579,9 +579,9 @@ def test_canvas_wheel_event_dispatches_signal(
     ],
 )
 def test_canvas_wheel_event_ignores_non_vertical_zoom(
+    *,
     qtbot: QtBot,
     _win: MainWindow,
-    *,
     pause: bool,
     angle_delta: QPoint,
     phase: Qt.ScrollPhase,
@@ -610,10 +610,10 @@ def test_canvas_wheel_event_ignores_non_vertical_zoom(
     ],
 )
 def test_ctrl_wheel_keeps_image_point_under_cursor(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     angle_delta: int,
     repetitions: int,

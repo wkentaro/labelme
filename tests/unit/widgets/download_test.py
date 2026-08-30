@@ -21,6 +21,7 @@ _MODEL_NAME: Final = "efficientsam:10m"
 
 @pytest.fixture()
 def isolated_model_type(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> type[osam.types.Model]:
@@ -41,6 +42,7 @@ def isolated_model_type(
 @pytest.mark.gui
 @pytest.mark.usefixtures("close_failed_download_dialog")
 def test_download_ai_model_returns_true_when_pull_succeeds(
+    *,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
     isolated_model_type: type[osam.types.Model],
@@ -81,6 +83,7 @@ def test_download_ai_model_returns_true_when_pull_succeeds(
 @pytest.mark.gui
 @pytest.mark.usefixtures("close_failed_download_dialog")
 def test_download_ai_model_returns_false_when_pull_fails(
+    *,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -102,6 +105,7 @@ def test_download_ai_model_returns_false_when_pull_fails(
 @pytest.mark.network
 @pytest.mark.usefixtures("close_failed_download_dialog")
 def test_download_ai_model_from_network(
+    *,
     qtbot: QtBot,
     isolated_model_type: type[osam.types.Model],
 ) -> None:
@@ -132,5 +136,5 @@ def test_download_ai_model_from_network(
         (1099511627776, "1.0 TB"),
     ],
 )
-def test_format_bytes(n: int, expected: str) -> None:
+def test_format_bytes(*, n: int, expected: str) -> None:
     assert _format_bytes(n) == expected

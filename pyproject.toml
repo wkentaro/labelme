@@ -97,8 +97,6 @@ markers = [
 
 [tool.gruff.lint]
 select = ["GR001", "GR002", "GR003", "GR004", "GR005", "GR006"]
-# The tests migration lands in the next commit.
-per-file-ignores = { "tests/**" = ["GR005"] }
 
 [tool.ruff.lint]
 select = [

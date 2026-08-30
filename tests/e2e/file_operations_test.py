@@ -16,9 +16,9 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_close_file(
+    *,
     annotated_win: MainWindow,
     qtbot: QtBot,
-    *,
     pause: bool,
 ) -> None:
     assert annotated_win._annotation is not None
@@ -36,10 +36,10 @@ def test_close_file(
 
 @pytest.mark.gui
 def test_delete_label_file(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -70,10 +70,10 @@ def test_delete_label_file(
 
 @pytest.mark.gui
 def test_delete_label_file_keeps_image(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -104,11 +104,11 @@ def test_delete_label_file_keeps_image(
 
 @pytest.mark.gui
 def test_delete_file_respects_output_dir(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -146,11 +146,11 @@ def test_delete_file_respects_output_dir(
 
 @pytest.mark.gui
 def test_current_label_file_path_prefers_opened_file(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     opened_path = data_path / "annotated/2011_000003.json"
@@ -169,10 +169,10 @@ def test_current_label_file_path_prefers_opened_file(
 
 @pytest.mark.gui
 def test_undo_after_delete_file_does_not_restore_shapes(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

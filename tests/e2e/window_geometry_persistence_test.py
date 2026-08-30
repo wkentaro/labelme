@@ -28,9 +28,9 @@ _TOLERANCE_PX: Final[int] = 10
 
 @pytest.mark.gui
 def test_window_geometry_persists_across_sessions(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
-    *,
     pause: bool,
 ) -> None:
     win1 = main_win(size=None)
@@ -64,12 +64,12 @@ def test_window_geometry_persists_across_sessions(
 
 @pytest.mark.gui
 def test_cancelled_close_keeps_persisted_window_state(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     PERSISTED_SIZE: Final[QSize] = QSize(900, 700)

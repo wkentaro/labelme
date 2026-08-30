@@ -38,6 +38,7 @@ from labelme._shape import Shape
     ],
 )
 def test_resolve_text_annotation_shape_type(
+    *,
     create_mode: str,
     ai_output_format: _automation.AiOutputFormat,
     expected: _automation.AiOutputFormat | None,
@@ -61,7 +62,7 @@ def test_resolve_text_annotation_shape_type(
     ids=["policy-none", "exact-match", "exact-no-match", "unknown-policy"],
 )
 def test_is_valid_label(
-    label: str, existing_labels: list[str], policy: str | None, *, expected: bool
+    *, label: str, existing_labels: list[str], policy: str | None, expected: bool
 ) -> None:
     assert (
         _app._is_valid_label(
@@ -97,10 +98,10 @@ def test_is_valid_label(
     ],
 )
 def test_format_window_title(
+    *,
     image_path: str | None,
     file_index: int | None,
     file_count: int,
-    *,
     dirty: bool,
     expected: str,
 ) -> None:
@@ -130,6 +131,7 @@ def _make_png_bytes(
 
 
 def test_make_image_too_large_message_explains_allocation_limit(
+    *,
     set_allocation_limit: Callable[[int], None],
 ) -> None:
     image_data = _make_png_bytes(
@@ -147,6 +149,7 @@ def test_make_image_too_large_message_explains_allocation_limit(
 
 
 def test_make_image_too_large_message_accounts_for_bit_depth(
+    *,
     set_allocation_limit: Callable[[int], None],
 ) -> None:
     # 800x600 at 16 bits per channel decodes to 8 bytes/pixel (~3.7 MB), so a
@@ -196,6 +199,7 @@ def test_make_image_too_large_message_reports_per_side_limit() -> None:
 
 
 def test_make_image_too_large_message_rounds_the_need_up(
+    *,
     set_allocation_limit: Callable[[int], None],
 ) -> None:
     # 800x680 at 4 bytes/pixel needs ~2.1 MB: over a 2 MB limit, but plain
@@ -300,6 +304,7 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
     ],
 )
 def test_shapes_from_dicts_merges_label_flags(
+    *,
     label: str,
     saved_flags: dict[str, bool],
     label_flags: dict[str, list[str]] | None,
@@ -412,6 +417,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
     ],
 )
 def test_shape_to_dict_coalesces_optional_flags_and_description(
+    *,
     flags: dict[str, bool] | None,
     description: str | None,
     expected_flags: dict[str, bool],
@@ -464,6 +470,7 @@ def test_shape_to_dict_requires_label() -> None:
     ],
 )
 def test_resolve_label_path(
+    *,
     image_or_label_path: str,
     output_dir: Path | None,
     expected: str,
@@ -477,6 +484,7 @@ def test_resolve_label_path(
 
 
 def test_resolve_stored_image_path_falls_back_to_absolute(
+    *,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     def _raise(*_args: object, **_kwargs: object) -> str:

@@ -80,7 +80,7 @@ def _ok_button(dialog: LabelDialog, /) -> QtWidgets.QPushButton:
 # ---------------------------------------------------------------------------
 
 
-def test_set_list_widget_stores_reference(qtbot: QtBot) -> None:
+def test_set_list_widget_stores_reference(*, qtbot: QtBot) -> None:
     edit = LabelQLineEdit()
     qtbot.addWidget(edit)
     list_widget = QtWidgets.QListWidget()
@@ -89,7 +89,7 @@ def test_set_list_widget_stores_reference(qtbot: QtBot) -> None:
     assert edit.list_widget is list_widget
 
 
-def test_key_down_forwarded_to_list_widget(qtbot: QtBot) -> None:
+def test_key_down_forwarded_to_list_widget(*, qtbot: QtBot) -> None:
     edit = LabelQLineEdit()
     qtbot.addWidget(edit)
     list_widget = QtWidgets.QListWidget()
@@ -102,7 +102,7 @@ def test_key_down_forwarded_to_list_widget(qtbot: QtBot) -> None:
     assert list_widget.currentRow() == 1
 
 
-def test_key_up_forwarded_to_list_widget(qtbot: QtBot) -> None:
+def test_key_up_forwarded_to_list_widget(*, qtbot: QtBot) -> None:
     edit = LabelQLineEdit()
     qtbot.addWidget(edit)
     list_widget = QtWidgets.QListWidget()
@@ -115,7 +115,7 @@ def test_key_up_forwarded_to_list_widget(qtbot: QtBot) -> None:
     assert list_widget.currentRow() == 1
 
 
-def test_other_keys_edit_text_not_forwarded(qtbot: QtBot) -> None:
+def test_other_keys_edit_text_not_forwarded(*, qtbot: QtBot) -> None:
     edit = LabelQLineEdit()
     qtbot.addWidget(edit)
     list_widget = QtWidgets.QListWidget()
@@ -134,7 +134,7 @@ def test_other_keys_edit_text_not_forwarded(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_default_widgets_exist(qtbot: QtBot) -> None:
+def test_default_widgets_exist(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     assert isinstance(dialog.edit, LabelQLineEdit)
     assert isinstance(dialog.edit_group_id, QtWidgets.QLineEdit)
@@ -142,33 +142,33 @@ def test_default_widgets_exist(qtbot: QtBot) -> None:
     assert isinstance(dialog.label_list, QtWidgets.QListWidget)
 
 
-def test_default_placeholder_is_non_empty(qtbot: QtBot) -> None:
+def test_default_placeholder_is_non_empty(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     assert dialog.edit.placeholderText() != ""
 
 
-def test_custom_placeholder_text(qtbot: QtBot) -> None:
+def test_custom_placeholder_text(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(text="Type here"))
     assert dialog.edit.placeholderText() == "Type here"
 
 
-def test_group_id_and_description_placeholders_non_empty(qtbot: QtBot) -> None:
+def test_group_id_and_description_placeholders_non_empty(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     assert dialog.edit_group_id.placeholderText() != ""
     assert dialog.edit_description.placeholderText() != ""
 
 
-def test_show_text_field_true_parents_edit_to_dialog(qtbot: QtBot) -> None:
+def test_show_text_field_true_parents_edit_to_dialog(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(show_text_field=True))
     assert dialog.edit.parent() is dialog
 
 
-def test_show_text_field_false_leaves_edit_parentless(qtbot: QtBot) -> None:
+def test_show_text_field_false_leaves_edit_parentless(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(show_text_field=False))
     assert dialog.edit.parent() is None
 
 
-def test_initial_labels_listed(qtbot: QtBot) -> None:
+def test_initial_labels_listed(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(labels=["banana", "apple", "cherry"])
     )
@@ -176,7 +176,7 @@ def test_initial_labels_listed(qtbot: QtBot) -> None:
     assert set(items) == {"apple", "banana", "cherry"}
 
 
-def test_sort_labels_true_sorts(qtbot: QtBot) -> None:
+def test_sort_labels_true_sorts(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot,
         dialog=LabelDialog(labels=["banana", "apple", "cherry"], sort_labels=True),
@@ -185,7 +185,7 @@ def test_sort_labels_true_sorts(qtbot: QtBot) -> None:
     assert items == ["apple", "banana", "cherry"]
 
 
-def test_sort_labels_false_preserves_order_and_enables_drag(qtbot: QtBot) -> None:
+def test_sort_labels_false_preserves_order_and_enables_drag(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot,
         dialog=LabelDialog(labels=["banana", "apple", "cherry"], sort_labels=False),
@@ -201,7 +201,7 @@ def test_sort_labels_false_preserves_order_and_enables_drag(qtbot: QtBot) -> Non
 @pytest.mark.parametrize("row_off", [True, False])
 @pytest.mark.parametrize("col_off", [True, False])
 def test_fit_to_content_scrollbar_policies(
-    qtbot: QtBot, *, row_off: bool, col_off: bool
+    *, qtbot: QtBot, row_off: bool, col_off: bool
 ) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(fit_to_content={"row": row_off, "column": col_off})
@@ -218,7 +218,7 @@ def test_fit_to_content_scrollbar_policies(
 # ---------------------------------------------------------------------------
 
 
-def test_completion_startswith_inline(qtbot: QtBot) -> None:
+def test_completion_startswith_inline(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(completion="startswith"))
     assert (
         dialog.edit.completer().completionMode()
@@ -226,7 +226,7 @@ def test_completion_startswith_inline(qtbot: QtBot) -> None:
     )
 
 
-def test_completion_contains_popup_and_matchcontains(qtbot: QtBot) -> None:
+def test_completion_contains_popup_and_matchcontains(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(completion="contains"))
     completer = dialog.edit.completer()
     assert (
@@ -242,7 +242,7 @@ def test_completion_invalid_raises() -> None:
         LabelDialog(completion="fuzzy")
 
 
-def test_completer_bound_to_label_list_model(qtbot: QtBot) -> None:
+def test_completer_bound_to_label_list_model(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["a", "b"]))
     assert dialog.edit.completer().model() is dialog.label_list.model()
 
@@ -252,21 +252,21 @@ def test_completer_bound_to_label_list_model(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_add_label_history_appends_new(qtbot: QtBot) -> None:
+def test_add_label_history_appends_new(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=[]))
     dialog.add_label_history(label="dog")
     items = [dialog.label_list.item(i).text() for i in range(dialog.label_list.count())]
     assert "dog" in items
 
 
-def test_add_label_history_no_duplicate(qtbot: QtBot) -> None:
+def test_add_label_history_no_duplicate(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["dog"]))
     dialog.add_label_history(label="dog")
     items = [dialog.label_list.item(i).text() for i in range(dialog.label_list.count())]
     assert items.count("dog") == 1
 
 
-def test_add_label_history_sorts_when_sort_enabled(qtbot: QtBot) -> None:
+def test_add_label_history_sorts_when_sort_enabled(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(labels=["banana", "apple"], sort_labels=True)
     )
@@ -275,7 +275,7 @@ def test_add_label_history_sorts_when_sort_enabled(qtbot: QtBot) -> None:
     assert items == ["apple", "banana", "cherry"]
 
 
-def test_set_predefined_labels_merges_and_dedups(qtbot: QtBot) -> None:
+def test_set_predefined_labels_merges_and_dedups(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["a"], sort_labels=False))
     dialog.add_label_history(label="b")
     dialog.set_predefined_labels(labels=["a", "c"])
@@ -284,7 +284,7 @@ def test_set_predefined_labels_merges_and_dedups(qtbot: QtBot) -> None:
     assert len(items) == 3
 
 
-def test_set_predefined_labels_keeps_completer_bound(qtbot: QtBot) -> None:
+def test_set_predefined_labels_keeps_completer_bound(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["a"]))
     dialog.set_predefined_labels(labels=["a", "b", "c"])
     assert dialog.edit.completer().model() is dialog.label_list.model()
@@ -295,21 +295,21 @@ def test_set_predefined_labels_keeps_completer_bound(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_editing_finished_strips_whitespace(qtbot: QtBot) -> None:
+def test_editing_finished_strips_whitespace(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("  hello  ")
     dialog.edit.editingFinished.emit()
     assert dialog.edit.text() == "hello"
 
 
-def test_selecting_label_sets_edit_text(qtbot: QtBot) -> None:
+def test_selecting_label_sets_edit_text(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog"]))
     item = dialog.label_list.findItems("dog", QtCore.Qt.MatchFlag.MatchExactly)[0]
     dialog.label_list.setCurrentItem(item)
     assert dialog.edit.text() == "dog"
 
 
-def test_clearing_selection_with_none_does_not_crash(qtbot: QtBot) -> None:
+def test_clearing_selection_with_none_does_not_crash(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
     dialog.label_list.setCurrentItem(
         dialog.label_list.findItems("cat", QtCore.Qt.MatchFlag.MatchExactly)[0]
@@ -323,28 +323,28 @@ def test_clearing_selection_with_none_does_not_crash(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_ok_with_text_accepts(qtbot: QtBot) -> None:
+def test_ok_with_text_accepts(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("car")
     _ok_button(dialog).click()
     assert dialog.result() == QtWidgets.QDialog.DialogCode.Accepted
 
 
-def test_ok_with_empty_text_does_not_accept(qtbot: QtBot) -> None:
+def test_ok_with_empty_text_does_not_accept(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("")
     _ok_button(dialog).click()
     assert dialog.result() != QtWidgets.QDialog.DialogCode.Accepted
 
 
-def test_ok_with_whitespace_text_does_not_accept(qtbot: QtBot) -> None:
+def test_ok_with_whitespace_text_does_not_accept(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("   ")
     _ok_button(dialog).click()
     assert dialog.result() != QtWidgets.QDialog.DialogCode.Accepted
 
 
-def test_ok_accepts_when_edit_disabled_even_if_empty(qtbot: QtBot) -> None:
+def test_ok_accepts_when_edit_disabled_even_if_empty(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("")
     dialog.edit.setEnabled(False)
@@ -352,7 +352,7 @@ def test_ok_accepts_when_edit_disabled_even_if_empty(qtbot: QtBot) -> None:
     assert dialog.result() == QtWidgets.QDialog.DialogCode.Accepted
 
 
-def test_double_click_label_accepts(qtbot: QtBot) -> None:
+def test_double_click_label_accepts(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
     item = dialog.label_list.findItems("cat", QtCore.Qt.MatchFlag.MatchExactly)[0]
     dialog.label_list.setCurrentItem(item)  # selection sets the edit text
@@ -365,7 +365,7 @@ def test_double_click_label_accepts(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_flags_shown_for_matching_label(qtbot: QtBot) -> None:
+def test_flags_shown_for_matching_label(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(flags={"^cat$": ["indoor", "outdoor"]})
     )
@@ -374,20 +374,20 @@ def test_flags_shown_for_matching_label(qtbot: QtBot) -> None:
     assert names == {"indoor", "outdoor"}
 
 
-def test_flags_absent_for_non_matching_label(qtbot: QtBot) -> None:
+def test_flags_absent_for_non_matching_label(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"^cat$": ["indoor"]}))
     dialog.edit.setText("dog")
     assert _checkboxes(dialog) == []
 
 
-def test_flags_shown_for_prefix_match(qtbot: QtBot) -> None:
+def test_flags_shown_for_prefix_match(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"car": ["fast"]}))
     dialog.edit.setText("car_red")
     names = {cb.text() for cb in _checkboxes(dialog)}
     assert names == {"fast"}
 
 
-def test_flag_checked_state_preserved_across_text_change(qtbot: QtBot) -> None:
+def test_flag_checked_state_preserved_across_text_change(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"^cat": ["indoor"]}))
     dialog.edit.setText("cat")
     box = next(cb for cb in _checkboxes(dialog) if cb.text() == "indoor")
@@ -397,7 +397,7 @@ def test_flag_checked_state_preserved_across_text_change(qtbot: QtBot) -> None:
     assert box2.isChecked()
 
 
-def test_flag_checked_state_preserved_across_non_matching_text(qtbot: QtBot) -> None:
+def test_flag_checked_state_preserved_across_non_matching_text(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"^cat": ["indoor"]}))
     dialog.edit.setText("cat")
     _checkbox(dialog=dialog, name="indoor").setChecked(True)
@@ -407,7 +407,7 @@ def test_flag_checked_state_preserved_across_non_matching_text(qtbot: QtBot) -> 
     assert _checkbox(dialog=dialog, name="indoor").isChecked()
 
 
-def test_flag_checked_state_shared_across_labels(qtbot: QtBot) -> None:
+def test_flag_checked_state_shared_across_labels(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(flags={"^cat$": ["indoor"], "^dog$": ["indoor"]})
     )
@@ -417,7 +417,7 @@ def test_flag_checked_state_shared_across_labels(qtbot: QtBot) -> None:
     assert _checkbox(dialog=dialog, name="indoor").isChecked()
 
 
-def test_flag_checkboxes_stay_visible_when_rebuilt_while_shown(qtbot: QtBot) -> None:
+def test_flag_checkboxes_stay_visible_when_rebuilt_while_shown(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={".*": ["occluded"]}))
     dialog.edit.setText("cat")
     with qtbot.waitExposed(dialog):
@@ -429,7 +429,7 @@ def test_flag_checkboxes_stay_visible_when_rebuilt_while_shown(qtbot: QtBot) -> 
     )
 
 
-def test_flag_named_by_two_matching_patterns_shown_once(qtbot: QtBot) -> None:
+def test_flag_named_by_two_matching_patterns_shown_once(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot,
         dialog=LabelDialog(flags={".*": ["occluded"], "^cat$": ["occluded", "urgent"]}),
@@ -439,6 +439,7 @@ def test_flag_named_by_two_matching_patterns_shown_once(qtbot: QtBot) -> None:
 
 
 def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
+    *,
     qtbot: QtBot,
 ) -> None:
     dialog = _add_dialog(
@@ -464,7 +465,7 @@ def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
 # ---------------------------------------------------------------------------
 
 
-def test_popup_returns_typed_values_on_accept(qtbot: QtBot) -> None:
+def test_popup_returns_typed_values_on_accept(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
     text, flags, group_id, description = _run_popup(
         dialog=dialog,
@@ -482,7 +483,7 @@ def test_popup_returns_typed_values_on_accept(qtbot: QtBot) -> None:
     assert flags == {}
 
 
-def test_popup_preserves_html_like_description(qtbot: QtBot) -> None:
+def test_popup_preserves_html_like_description(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     _, _, _, description = _run_popup(
         dialog=dialog,
@@ -497,7 +498,7 @@ def test_popup_preserves_html_like_description(qtbot: QtBot) -> None:
     assert description == "<b>bold</b>"
 
 
-def test_popup_returns_all_none_on_reject(qtbot: QtBot) -> None:
+def test_popup_returns_all_none_on_reject(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     result = _run_popup(
         dialog=dialog,
@@ -512,7 +513,7 @@ def test_popup_returns_all_none_on_reject(qtbot: QtBot) -> None:
     assert result == (None, None, None, None)
 
 
-def test_popup_group_id_none_yields_empty_then_none(qtbot: QtBot) -> None:
+def test_popup_group_id_none_yields_empty_then_none(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     _, _, group_id, _ = _run_popup(
@@ -529,7 +530,7 @@ def test_popup_group_id_none_yields_empty_then_none(qtbot: QtBot) -> None:
     assert group_id is None
 
 
-def test_popup_group_id_zero_is_preserved(qtbot: QtBot) -> None:
+def test_popup_group_id_zero_is_preserved(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     _, _, group_id, _ = _run_popup(
         dialog=dialog,
@@ -544,7 +545,7 @@ def test_popup_group_id_zero_is_preserved(qtbot: QtBot) -> None:
     assert group_id == 0
 
 
-def test_popup_sets_group_id_text_at_show(qtbot: QtBot) -> None:
+def test_popup_sets_group_id_text_at_show(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     _run_popup(
@@ -560,7 +561,7 @@ def test_popup_sets_group_id_text_at_show(qtbot: QtBot) -> None:
     assert seen["gid"] == "7"
 
 
-def test_popup_text_none_preserves_existing_edit_text(qtbot: QtBot) -> None:
+def test_popup_text_none_preserves_existing_edit_text(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("preexisting")
@@ -577,7 +578,7 @@ def test_popup_text_none_preserves_existing_edit_text(qtbot: QtBot) -> None:
     assert seen["t"] == "preexisting"
 
 
-def test_popup_text_none_selects_existing_edit_text(qtbot: QtBot) -> None:
+def test_popup_text_none_selects_existing_edit_text(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("preexisting")
@@ -594,7 +595,7 @@ def test_popup_text_none_selects_existing_edit_text(qtbot: QtBot) -> None:
     assert seen["sel"] == "preexisting"
 
 
-def test_popup_highlights_matching_label_at_show(qtbot: QtBot) -> None:
+def test_popup_highlights_matching_label_at_show(*, qtbot: QtBot) -> None:
     seen: dict[str, object] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog"]))
     _run_popup(
@@ -614,7 +615,7 @@ def test_popup_highlights_matching_label_at_show(qtbot: QtBot) -> None:
     assert seen["cur"] == "dog"
 
 
-def test_popup_highlights_matching_label_case_insensitively(qtbot: QtBot) -> None:
+def test_popup_highlights_matching_label_case_insensitively(*, qtbot: QtBot) -> None:
     seen: dict[str, object] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["Cat", "Dog"]))
     _run_popup(
@@ -634,7 +635,7 @@ def test_popup_highlights_matching_label_case_insensitively(qtbot: QtBot) -> Non
     assert seen["cur"] == "Cat"
 
 
-def test_popup_sets_description_at_show(qtbot: QtBot) -> None:
+def test_popup_sets_description_at_show(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     _run_popup(
@@ -650,7 +651,7 @@ def test_popup_sets_description_at_show(qtbot: QtBot) -> None:
     assert seen["desc"] == "hello world"
 
 
-def test_popup_flags_disabled_disables_checkboxes(qtbot: QtBot) -> None:
+def test_popup_flags_disabled_disables_checkboxes(*, qtbot: QtBot) -> None:
     seen: dict[str, list[bool]] = {}
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(flags={"^cat": ["indoor", "outdoor"]})
@@ -671,7 +672,7 @@ def test_popup_flags_disabled_disables_checkboxes(qtbot: QtBot) -> None:
     assert not any(seen["enabled"])
 
 
-def test_popup_flags_enabled_by_default(qtbot: QtBot) -> None:
+def test_popup_flags_enabled_by_default(*, qtbot: QtBot) -> None:
     seen: dict[str, list[bool]] = {}
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(flags={"^cat": ["indoor", "outdoor"]})
@@ -692,7 +693,7 @@ def test_popup_flags_enabled_by_default(qtbot: QtBot) -> None:
     assert all(seen["enabled"])
 
 
-def test_flags_disabled_resets_between_popups(qtbot: QtBot) -> None:
+def test_flags_disabled_resets_between_popups(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"^cat": ["indoor"]}))
     _run_popup(
         dialog=dialog,
@@ -723,6 +724,7 @@ def test_flags_disabled_resets_between_popups(qtbot: QtBot) -> None:
 
 
 def test_flag_checked_state_does_not_leak_into_next_new_shape_popup(
+    *,
     qtbot: QtBot,
 ) -> None:
     seen: dict[str, bool] = {}
@@ -753,6 +755,7 @@ def test_flag_checked_state_does_not_leak_into_next_new_shape_popup(
 
 
 def test_edited_shape_flags_do_not_leak_into_next_new_shape_popup(
+    *,
     qtbot: QtBot,
 ) -> None:
     seen: dict[str, bool] = {}
@@ -782,7 +785,7 @@ def test_edited_shape_flags_do_not_leak_into_next_new_shape_popup(
     assert seen["checked"] is False
 
 
-def test_flags_disabled_survives_text_edit_rebuild(qtbot: QtBot) -> None:
+def test_flags_disabled_survives_text_edit_rebuild(*, qtbot: QtBot) -> None:
     seen: dict[str, list[bool]] = {}
 
     def edit_then_inspect(d: LabelDialog) -> None:

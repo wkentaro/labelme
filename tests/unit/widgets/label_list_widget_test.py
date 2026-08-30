@@ -44,7 +44,7 @@ def _pixels_with_color(
 
 
 @pytest.fixture()
-def widget(qtbot: QtBot) -> LabelListWidget:
+def widget(*, qtbot: QtBot) -> LabelListWidget:
     widget = LabelListWidget()
     qtbot.addWidget(widget)
     widget.resize(200, 200)
@@ -53,6 +53,7 @@ def widget(qtbot: QtBot) -> LabelListWidget:
 
 
 def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
+    *,
     widget: LabelListWidget,
 ) -> None:
     option = QtWidgets.QStyleOptionViewItem()
@@ -89,6 +90,7 @@ def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
 
 
 def test_color_dot_is_painted_without_a_text_colored_fringe(
+    *,
     widget: LabelListWidget,
 ) -> None:
     option = QtWidgets.QStyleOptionViewItem()
@@ -121,7 +123,7 @@ def test_color_dot_is_painted_without_a_text_colored_fringe(
     ]
 
 
-def test_label_list_item_clone_preserves_color_dot(widget: LabelListWidget) -> None:
+def test_label_list_item_clone_preserves_color_dot(*, widget: LabelListWidget) -> None:
     item = LabelListWidgetItem(shape=Shape(label="cat"))
     item.set_label(text="cat", color=(0, 255, 0))
     option = QtWidgets.QStyleOptionViewItem()
@@ -138,6 +140,7 @@ def test_label_list_item_clone_preserves_color_dot(widget: LabelListWidget) -> N
 
 @pytest.fixture()
 def selected_pair(
+    *,
     widget: LabelListWidget,
 ) -> tuple[LabelListWidgetItem, LabelListWidgetItem]:
     item_a = LabelListWidgetItem(text="cat")
@@ -168,7 +171,7 @@ def _press_on_item(
 
 
 def test_selection_at_press_drops_items_removed_before_release(
-    qtbot: QtBot, widget: LabelListWidget
+    *, qtbot: QtBot, widget: LabelListWidget
 ) -> None:
     # A context menu or drag can consume the mouse release, so the press
     # snapshot legally outlives the items it references (e.g. right-click
@@ -188,6 +191,7 @@ def test_selection_at_press_drops_items_removed_before_release(
 
 
 def test_mouse_release_after_item_removal_does_not_crash(
+    *,
     qtbot: QtBot,
     widget: LabelListWidget,
     selected_pair: tuple[LabelListWidgetItem, LabelListWidgetItem],
@@ -203,6 +207,7 @@ def test_mouse_release_after_item_removal_does_not_crash(
 
 
 def test_selection_at_press_returns_live_multi_selection(
+    *,
     qtbot: QtBot,
     widget: LabelListWidget,
     selected_pair: tuple[LabelListWidgetItem, LabelListWidgetItem],
@@ -214,6 +219,7 @@ def test_selection_at_press_returns_live_multi_selection(
 
 
 def test_release_keeps_multi_selection_when_press_toggled_checkbox(
+    *,
     qtbot: QtBot,
     widget: LabelListWidget,
     selected_pair: tuple[LabelListWidgetItem, LabelListWidgetItem],
@@ -263,7 +269,7 @@ def test_release_keeps_multi_selection_when_press_toggled_checkbox(
         "keeps_markup_literal",
     ],
 )
-def test_format_shape_label(shape: Shape, expected: str) -> None:
+def test_format_shape_label(*, shape: Shape, expected: str) -> None:
     assert format_shape_label(shape=shape) == expected
 
 
@@ -273,6 +279,7 @@ def _model_texts(model: _ItemModel, /) -> list[str]:
 
 @pytest.fixture()
 def item_model(
+    *,
     qapp: QtWidgets.QApplication,  # noqa: ARG001 -- a fixture cannot use usefixtures
 ) -> _ItemModel:
     model = _ItemModel()
@@ -283,6 +290,7 @@ def item_model(
 
 
 def test_drop_on_item_inserts_after_it_without_overwriting(
+    *,
     item_model: _ItemModel,
 ) -> None:
     # Drop the dragged "c" (row 2) onto "a" (row 0) with row == -1, the way a
@@ -300,7 +308,7 @@ def test_drop_on_item_inserts_after_it_without_overwriting(
     assert _model_texts(item_model) == ["a", "c", "b", "c"]
 
 
-def test_drop_in_empty_space_appends_to_end(item_model: _ItemModel) -> None:
+def test_drop_in_empty_space_appends_to_end(*, item_model: _ItemModel) -> None:
     # A drop below the last row reports row == -1 with an invalid parent.
     mime = item_model.mimeData([item_model.index(0, 0)])
     dropped = item_model.dropMimeData(
@@ -313,7 +321,7 @@ def test_drop_in_empty_space_appends_to_end(item_model: _ItemModel) -> None:
     assert _model_texts(item_model) == ["a", "b", "c", "a"]
 
 
-def test_remove_rows_emits_item_dropped(item_model: _ItemModel) -> None:
+def test_remove_rows_emits_item_dropped(*, item_model: _ItemModel) -> None:
     fired: list[None] = []
     item_model.item_dropped.connect(lambda: fired.append(None))
 

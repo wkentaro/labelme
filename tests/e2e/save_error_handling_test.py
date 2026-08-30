@@ -16,12 +16,12 @@ _RAW_FILE_NAME: Final[str] = "raw/2011_000003.jpg"
 
 @pytest.mark.gui
 def test_save_labels_reports_filesystem_failure_without_crashing(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(

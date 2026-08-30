@@ -8,12 +8,12 @@ from numpy.typing import NDArray
 
 
 @pytest.fixture(params=[math.pi / 6, -math.pi / 6], ids=["+30deg", "-30deg"])
-def rotated_rectangle_angle(request: pytest.FixtureRequest) -> float:
+def rotated_rectangle_angle(*, request: pytest.FixtureRequest) -> float:
     return request.param
 
 
 @pytest.fixture
-def rotated_rectangle_mask(rotated_rectangle_angle: float) -> NDArray[np.bool_]:
+def rotated_rectangle_mask(*, rotated_rectangle_angle: float) -> NDArray[np.bool_]:
     cos_a = math.cos(rotated_rectangle_angle)
     sin_a = math.sin(rotated_rectangle_angle)
     half_long, half_short = 10.0, 2.0

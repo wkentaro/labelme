@@ -25,7 +25,7 @@ _SLIDER_LABELS: Final = ("Brightness:", "Contrast:")
 
 
 @pytest.fixture()
-def japanese_translator(qapp: QApplication) -> Iterator[None]:
+def japanese_translator(*, qapp: QApplication) -> Iterator[None]:
     translator = QTranslator()
     assert translator.load(str(_locale.TRANSLATE_DIR / f"{_LOCALE}.qm"))
     qapp.installTranslator(translator)
@@ -33,7 +33,7 @@ def japanese_translator(qapp: QApplication) -> Iterator[None]:
     qapp.removeTranslator(translator)
 
 
-def test_slider_labels_are_extractable_by_lupdate(tmp_path: Path) -> None:
+def test_slider_labels_are_extractable_by_lupdate(*, tmp_path: Path) -> None:
     lupdate = shutil.which(
         "pyside6-lupdate", path=str(Path(sys.executable).parent)
     ) or shutil.which("pyside6-lupdate")
@@ -52,7 +52,7 @@ def test_slider_labels_are_extractable_by_lupdate(tmp_path: Path) -> None:
 
 
 @pytest.mark.usefixtures("japanese_translator")
-def test_slider_labels_render_the_installed_translation(qtbot: QtBot) -> None:
+def test_slider_labels_render_the_installed_translation(*, qtbot: QtBot) -> None:
     translated = {
         source: QCoreApplication.translate("BrightnessContrastDialog", source)
         for source in _SLIDER_LABELS

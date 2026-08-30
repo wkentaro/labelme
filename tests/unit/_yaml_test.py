@@ -29,6 +29,6 @@ def test_safe_load_returns_none_for_empty_string() -> None:
         "!!python/module:os",
     ],
 )
-def test_safe_load_rejects_unsafe_python_tag(payload: str) -> None:
+def test_safe_load_rejects_unsafe_python_tag(*, payload: str) -> None:
     with pytest.raises(YAMLError):
         _yaml.safe_load(payload)

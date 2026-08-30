@@ -27,7 +27,7 @@ from labelme._label_file import write_label_file
 from labelme._utils import img_arr_to_b64
 
 
-def test_read_label_file_load_windows_path(data_path: Path, tmp_path: Path) -> None:
+def test_read_label_file_load_windows_path(*, data_path: Path, tmp_path: Path) -> None:
     """Test that read_label_file loads JSON with Windows-style backslash paths.
 
     Regression test for https://github.com/wkentaro/labelme/issues/1725
@@ -52,14 +52,14 @@ def test_read_label_file_load_windows_path(data_path: Path, tmp_path: Path) -> N
 
 
 @pytest.fixture()
-def annotated_raw(data_path: Path) -> dict[str, Any]:
+def annotated_raw(*, data_path: Path) -> dict[str, Any]:
     src = data_path / "annotated" / "2011_000003.json"
     with open(src) as f:
         return json.load(f)
 
 
 @pytest.fixture()
-def annotated_dst(data_path: Path, tmp_path: Path) -> Path:
+def annotated_dst(*, data_path: Path, tmp_path: Path) -> Path:
     shutil.copy(
         data_path / "annotated" / "2011_000003.jpg",
         tmp_path / "2011_000003.jpg",
@@ -72,7 +72,7 @@ def _dump_json(*, path: Path, raw: dict[str, Any]) -> None:
         json.dump(raw, f)
 
 
-def test_read_label_file_returns_label_data(data_path: Path) -> None:
+def test_read_label_file_returns_label_data(*, data_path: Path) -> None:
     label_data = read_label_file(
         filename=str(data_path / "annotated" / "2011_000003.json")
     )
@@ -83,6 +83,7 @@ def test_read_label_file_returns_label_data(data_path: Path) -> None:
 
 
 def test_read_label_file_extracts_other_data(
+    *,
     annotated_raw: dict[str, Any],
     annotated_dst: Path,
 ) -> None:
@@ -129,6 +130,7 @@ def test_read_label_file_extracts_other_data(
     ],
 )
 def test_read_label_file_raises_read_error_on_malformed(
+    *,
     annotated_raw: dict[str, Any],
     annotated_dst: Path,
     mutator: Callable[[dict[str, Any]], Any],
@@ -185,6 +187,7 @@ def test_read_label_file_raises_read_error_on_malformed(
     ],
 )
 def test_read_label_file_raises_on_malformed_shape_field(
+    *,
     annotated_raw: dict[str, Any],
     annotated_dst: Path,
     break_shape: Callable[[dict[str, Any]], Any],
@@ -234,7 +237,7 @@ def sample_mask() -> NDArray[np.bool_]:
     ],
 )
 def test_load_shape_json_obj_accepts_supported_geometry(
-    shape_type: str, points: list[list[float]]
+    *, shape_type: str, points: list[list[float]]
 ) -> None:
     loaded = _load_shape_json_obj(
         shape_json_obj={
@@ -249,6 +252,7 @@ def test_load_shape_json_obj_accepts_supported_geometry(
 
 
 def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
+    *,
     sample_mask: NDArray[np.bool_],
 ) -> None:
     loaded = _load_shape_json_obj(
@@ -279,7 +283,7 @@ def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
     ],
 )
 def test_load_shape_json_obj_rejects_wrong_point_count(
-    shape_type: str, points: list[list[float]]
+    *, shape_type: str, points: list[list[float]]
 ) -> None:
     shape_json_obj: dict[str, Any] = {
         "label": "shape",
@@ -327,6 +331,7 @@ def test_load_shape_json_obj_requires_mask_for_mask_shape() -> None:
 
 
 def test_load_shape_json_obj_rejects_mask_for_non_mask_shape(
+    *,
     sample_mask: NDArray[np.bool_],
 ) -> None:
     with pytest.raises(ValueError, match="mask"):
@@ -353,6 +358,7 @@ def test_load_shape_json_obj_rejects_multichannel_mask() -> None:
 
 
 def test_load_shape_json_obj_accepts_mask_extent_mismatch(
+    *,
     sample_mask: NDArray[np.bool_],
 ) -> None:
     # Fractional whole-shape drags shift points without resampling the mask,
@@ -371,6 +377,7 @@ def test_load_shape_json_obj_accepts_mask_extent_mismatch(
 
 
 def test_read_label_file_reports_shape_index_field_and_filename(
+    *,
     annotated_raw: dict[str, Any],
     annotated_dst: Path,
 ) -> None:
@@ -390,6 +397,7 @@ def test_read_label_file_reports_shape_index_field_and_filename(
 
 
 def test_read_label_file_wraps_coordinate_overflow(
+    *,
     annotated_raw: dict[str, Any],
     annotated_dst: Path,
 ) -> None:
@@ -482,6 +490,7 @@ def test_load_shape_json_obj_buckets_unknown_keys_into_other_data() -> None:
 
 
 def test_load_shape_json_obj_decodes_mask_to_bool_array(
+    *,
     sample_mask: NDArray[np.bool_],
 ) -> None:
     loaded = _load_shape_json_obj(
@@ -524,7 +533,7 @@ def test_dump_shape_to_json_obj_without_mask() -> None:
     }
 
 
-def test_shape_codec_round_trips_mask(sample_mask: NDArray[np.bool_]) -> None:
+def test_shape_codec_round_trips_mask(*, sample_mask: NDArray[np.bool_]) -> None:
     shape = ShapeDict(
         label="thing",
         points=[[0.0, 0.0], [4.0, 3.0]],
@@ -542,7 +551,7 @@ def test_shape_codec_round_trips_mask(sample_mask: NDArray[np.bool_]) -> None:
     assert np.array_equal(reloaded["mask"], sample_mask)
 
 
-def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
+def test_write_label_file_round_trips(*, data_path: Path, tmp_path: Path) -> None:
     src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
     dst = tmp_path / "out.json"
 
@@ -571,7 +580,7 @@ def test_write_label_file_round_trips(data_path: Path, tmp_path: Path) -> None:
 
 
 def test_write_label_file_round_trips_mask_shape(
-    data_path: Path, annotated_dst: Path
+    *, data_path: Path, annotated_dst: Path
 ) -> None:
     src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
     mask = np.zeros((4, 5), dtype=bool)
@@ -624,13 +633,14 @@ def annotation_to_write() -> Annotation:
 
 
 @pytest.fixture()
-def existing_label_file(tmp_path: Path) -> Path:
+def existing_label_file(*, tmp_path: Path) -> Path:
     filename = tmp_path / "annotation.json"
     filename.write_text("last good", encoding="utf-8")
     return filename
 
 
 def test_write_label_file_atomically_replaces_existing_file(
+    *,
     annotation_to_write: Annotation,
     existing_label_file: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -666,6 +676,7 @@ def test_write_label_file_atomically_replaces_existing_file(
 
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
 def test_write_label_file_preserves_existing_file_mode(
+    *,
     annotation_to_write: Annotation,
     existing_label_file: Path,
 ) -> None:
@@ -684,6 +695,7 @@ def test_write_label_file_preserves_existing_file_mode(
 
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
 def test_write_label_file_uses_default_mode_for_new_file(
+    *,
     annotation_to_write: Annotation,
     tmp_path: Path,
 ) -> None:
@@ -706,6 +718,7 @@ def test_write_label_file_uses_default_mode_for_new_file(
 
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX filename limits")
 def test_write_label_file_supports_long_filename(
+    *,
     annotation_to_write: Annotation,
     tmp_path: Path,
 ) -> None:
@@ -724,6 +737,7 @@ def test_write_label_file_supports_long_filename(
 
 
 def test_write_label_file_serialization_failure_preserves_existing_file(
+    *,
     annotation_to_write: Annotation,
     existing_label_file: Path,
 ) -> None:
@@ -749,6 +763,7 @@ def test_write_label_file_serialization_failure_preserves_existing_file(
 
 
 def test_write_label_file_write_failure_preserves_existing_file(
+    *,
     annotation_to_write: Annotation,
     existing_label_file: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -773,6 +788,7 @@ def test_write_label_file_write_failure_preserves_existing_file(
 
 
 def test_write_label_file_close_failure_preserves_existing_file(
+    *,
     annotation_to_write: Annotation,
     existing_label_file: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -799,6 +815,7 @@ def test_write_label_file_close_failure_preserves_existing_file(
 
 
 def test_write_label_file_replacement_failure_preserves_existing_file(
+    *,
     annotation_to_write: Annotation,
     existing_label_file: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -834,7 +851,7 @@ def test_write_label_file_replacement_failure_preserves_existing_file(
     ],
 )
 def test_write_label_file_rejects_reserved_other_data_key(
-    tmp_path: Path, reserved_key: str
+    *, tmp_path: Path, reserved_key: str
 ) -> None:
     annotation = Annotation(
         image_path="foo.jpg",
@@ -854,7 +871,7 @@ def test_write_label_file_rejects_reserved_other_data_key(
 
 
 def test_write_label_file_raises_on_dimension_mismatch(
-    data_path: Path, tmp_path: Path
+    *, data_path: Path, tmp_path: Path
 ) -> None:
     src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
     annotation = Annotation(
@@ -875,7 +892,7 @@ def test_write_label_file_raises_on_dimension_mismatch(
         )
 
 
-def test_write_label_file_raises_write_error_on_io_failure(tmp_path: Path) -> None:
+def test_write_label_file_raises_write_error_on_io_failure(*, tmp_path: Path) -> None:
     bad_path = tmp_path / "missing_dir" / "out.json"
     annotation = Annotation(
         image_path="foo.jpg",
@@ -933,18 +950,18 @@ def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
         ("dir.json/foo.png", False),
     ],
 )
-def test_is_label_file_path(filename: str, *, expected: bool) -> None:
+def test_is_label_file_path(*, filename: str, expected: bool) -> None:
     assert is_label_file_path(filename=filename) is expected
 
 
 @pytest.fixture()
-def sample_image_data(data_path: Path) -> bytes:
+def sample_image_data(*, data_path: Path) -> bytes:
     return read_label_file(
         filename=str(data_path / "annotated" / "2011_000003.json")
     ).image_data
 
 
-def test_check_image_dimensions_both_none_is_noop(sample_image_data: bytes) -> None:
+def test_check_image_dimensions_both_none_is_noop(*, sample_image_data: bytes) -> None:
     result = _check_image_dimensions(
         image_data=sample_image_data,
         expected_height=None,
@@ -954,6 +971,7 @@ def test_check_image_dimensions_both_none_is_noop(sample_image_data: bytes) -> N
 
 
 def test_check_image_dimensions_accepts_matching_dimensions(
+    *,
     sample_image_data: bytes,
 ) -> None:
     # The image embedded in 2011_000003.json is 500x338.
@@ -973,6 +991,7 @@ def test_check_image_dimensions_accepts_matching_dimensions(
     ids=["height_mismatch", "width_mismatch"],
 )
 def test_check_image_dimensions_raises_on_mismatch(
+    *,
     sample_image_data: bytes,
     expected_height: int | None,
     expected_width: int | None,

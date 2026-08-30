@@ -16,11 +16,11 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_file_search_filters_loaded_images_without_changing_active_annotation(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     image_dir = data_path / "annotated_nested/images"

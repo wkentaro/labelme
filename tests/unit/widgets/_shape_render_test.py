@@ -92,6 +92,7 @@ def _shape(*, shape_type: ShapeType, points: list[list[float]]) -> Shape:
     ],
 )
 def test_bounds_spans_the_shape(
+    *,
     shape_type: ShapeType,
     points: list[list[float]],
     expected: tuple[float, float, float, float],
@@ -113,7 +114,7 @@ def test_bounds_spans_the_shape(
     ],
 )
 def test_bounds_is_empty_for_incomplete_shape(
-    shape_type: ShapeType, points: list[list[float]]
+    *, shape_type: ShapeType, points: list[list[float]]
 ) -> None:
     shape = _shape(shape_type=shape_type, points=points)
     assert bounds(shape=shape).getRect() == (0.0, 0.0, 0.0, 0.0)

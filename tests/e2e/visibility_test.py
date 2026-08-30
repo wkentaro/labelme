@@ -12,9 +12,9 @@ from ..conftest import close_or_pause
 
 @pytest.mark.gui
 def test_toggle_all_shapes(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -45,9 +45,9 @@ def test_toggle_all_shapes(
 
 @pytest.mark.gui
 def test_toggle_individual_shape(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -73,9 +73,9 @@ def test_toggle_individual_shape(
 
 @pytest.mark.gui
 def test_visibility_preserved_when_undoing_unrelated_edit(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -108,9 +108,9 @@ def test_visibility_preserved_when_undoing_unrelated_edit(
 
 @pytest.mark.gui
 def test_undo_recovers_accidental_hide(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -137,9 +137,9 @@ def test_undo_recovers_accidental_hide(
 
 @pytest.mark.gui
 def test_multi_select_toggle_propagates(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -179,9 +179,9 @@ def test_multi_select_toggle_propagates(
 
 @pytest.mark.gui
 def test_multi_select_preserves_selection_after_checkbox_click(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -213,9 +213,9 @@ def test_multi_select_preserves_selection_after_checkbox_click(
 
 @pytest.mark.gui
 def test_multi_select_collapses_on_row_body_click(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
-    *,
     pause: bool,
 ) -> None:
     label_list = annotated_win._docks.label_list

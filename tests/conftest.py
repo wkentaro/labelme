@@ -23,7 +23,7 @@ from pytestqt.qtbot import QtBot
 import labelme._utils
 
 
-def pytest_addoption(parser: pytest.Parser) -> None:
+def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     parser.addoption(
         "--pause",
         action="store_true",
@@ -48,13 +48,14 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def pytest_configure(config: pytest.Config) -> None:
+def pytest_configure(config: pytest.Config) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     if not config.getoption("--headed"):
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 
 @pytest.fixture()
 def close_failed_download_dialog(
+    *,
     qapp: QApplication,  # noqa: ARG001 -- a fixture cannot use usefixtures
 ) -> Generator[None, None, None]:
     timer = QTimer()
@@ -75,14 +76,14 @@ def close_failed_download_dialog(
 
 
 @pytest.fixture()
-def pause(request: pytest.FixtureRequest) -> bool:
+def pause(*, request: pytest.FixtureRequest) -> bool:
     return request.config.getoption("--pause", default=False)
 
 
 @pytest.fixture()
-def use_widget_color_dialog(monkeypatch: pytest.MonkeyPatch) -> None:
+def use_widget_color_dialog(*, monkeypatch: pytest.MonkeyPatch) -> None:
     class WidgetColorDialog(QColorDialog):
-        def __init__(self, parent: QWidget, *, currentColor: QColor) -> None:
+        def __init__(self, *, parent: QWidget, currentColor: QColor) -> None:
             super().__init__(parent=parent, currentColor=currentColor)
             self.setOption(QColorDialog.ColorDialogOption.DontUseNativeDialog)
 
@@ -90,7 +91,7 @@ def use_widget_color_dialog(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture()
-def update_snapshots(request: pytest.FixtureRequest) -> bool:
+def update_snapshots(*, request: pytest.FixtureRequest) -> bool:
     return request.config.getoption("--update-snapshots")
 
 
@@ -102,6 +103,7 @@ def snapshot_dir() -> Path:
 
 @pytest.fixture()
 def set_allocation_limit(
+    *,
     qapp: QApplication,  # noqa: ARG001 -- a fixture cannot use usefixtures
 ) -> Iterator[Callable[[int], None]]:
     original_limit = QImageReader.allocationLimit()
@@ -109,7 +111,7 @@ def set_allocation_limit(
     QImageReader.setAllocationLimit(original_limit)
 
 
-def assert_labelfile_sanity(filename: str) -> None:
+def assert_labelfile_sanity(filename: str, /) -> None:
     label_path = Path(filename)
     assert label_path.exists()
 
@@ -167,7 +169,7 @@ def _create_annotated_nested(*, data_path: Path) -> None:
 
 
 @pytest.fixture(scope="function")
-def data_path(tmp_path: Path) -> Path:
+def data_path(*, tmp_path: Path) -> Path:
     data_path: Path = tmp_path / "data"
     shutil.copytree(Path(__file__).parent / "data", data_path)
 

@@ -25,7 +25,7 @@ class _Paths:
 
 
 @pytest.fixture()
-def paths(data_path: Path, tmp_path: Path) -> _Paths:
+def paths(*, data_path: Path, tmp_path: Path) -> _Paths:
     return _Paths(
         annotated_dir=data_path / "annotated",
         next_image=data_path / "raw" / "2011_000006.jpg",
@@ -36,6 +36,7 @@ def paths(data_path: Path, tmp_path: Path) -> _Paths:
 
 @pytest.fixture()
 def loaded_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -138,11 +139,11 @@ def _verify_change_output_dir(win: MainWindow, paths: _Paths, /) -> bool:
     ],
 )
 def test_action_via_qfile_dialog(
+    *,
     qtbot: QtBot,
     loaded_win: MainWindow,
     paths: _Paths,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
     dialog_method: str,
     dialog_return: Callable[[_Paths], tuple[str, str] | str],
@@ -165,11 +166,11 @@ def test_action_via_qfile_dialog(
 
 @pytest.mark.gui
 def test_open_file_dialog_normalizes_the_reported_path(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "raw"))

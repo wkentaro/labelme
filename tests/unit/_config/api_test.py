@@ -17,7 +17,7 @@ def _steer_home(*, monkeypatch: pytest.MonkeyPatch, home: Path) -> None:
 
 
 def test_get_user_config_file_creates_empty(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_file = _config.get_user_config_file()
@@ -25,7 +25,7 @@ def test_get_user_config_file_creates_empty(
 
 
 def test_get_user_config_file_does_not_overwrite(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_path = tmp_path / ".labelmerc"
@@ -36,7 +36,7 @@ def test_get_user_config_file_does_not_overwrite(
 
 
 def test_get_user_config_file_skip_creation(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_file = _config.get_user_config_file(create_if_missing=False)
@@ -45,7 +45,7 @@ def test_get_user_config_file_skip_creation(
 
 @pytest.mark.parametrize("old_value", [True, False])
 def test_migrate_store_data_to_with_image_data(
-    tmp_path: Path, *, old_value: bool
+    *, tmp_path: Path, old_value: bool
 ) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(f"store_data: {str(old_value).lower()}\n")
@@ -54,7 +54,7 @@ def test_migrate_store_data_to_with_image_data(
     assert "store_data" not in config
 
 
-def test_migrate_removes_logger_level(tmp_path: Path) -> None:
+def test_migrate_removes_logger_level(*, tmp_path: Path) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text("logger_level: info\n")
     config = _config.load_config(config_file=config_file, config_overrides={})
@@ -71,20 +71,21 @@ def test_migrate_removes_logger_level(tmp_path: Path) -> None:
         ("Sam2 (balanced)", "Sam2 (balanced)"),
     ],
 )
-def test_migrate_ai_model_name(input_name: str, expected_name: str) -> None:
+def test_migrate_ai_model_name(*, input_name: str, expected_name: str) -> None:
     config: dict = {"ai": {"default": input_name}}
     _config._migrate_config_from_file(config_from_yaml=config)
     assert config["ai"]["default"] == expected_name
 
 
 @pytest.mark.parametrize("model_name", [True, 42, ["Sam"]])
-def test_migrate_tolerates_non_string_ai_default(model_name: object) -> None:
+def test_migrate_tolerates_non_string_ai_default(*, model_name: object) -> None:
     config: dict = {"ai": {"default": model_name}}
     _config._migrate_config_from_file(config_from_yaml=config)
     assert config["ai"]["default"] == model_name
 
 
 def test_load_config_keeps_other_keys_when_ai_default_is_not_a_string(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -96,7 +97,7 @@ def test_load_config_keeps_other_keys_when_ai_default_is_not_a_string(
 
 @pytest.mark.parametrize("value", [-1, 101, True, "80"])
 def test_load_config_rejects_invalid_polygon_detail(
-    tmp_path: Path, value: object
+    *, tmp_path: Path, value: object
 ) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(f"mask_polygonization:\n  detail: {json.dumps(value)}\n")
@@ -124,7 +125,7 @@ _POLYGON_TO_SHAPE_RENAMES: Final = {
     list(_POLYGON_TO_SHAPE_RENAMES.items()),
     ids=list(_POLYGON_TO_SHAPE_RENAMES.keys()),
 )
-def test_migrate_polygon_shortcut_to_shape(old_key: str, new_key: str) -> None:
+def test_migrate_polygon_shortcut_to_shape(*, old_key: str, new_key: str) -> None:
     config = {"shortcuts": {old_key: "Ctrl+X"}}
     _config._migrate_config_from_file(config_from_yaml=config)
     assert old_key not in config["shortcuts"]
@@ -138,7 +139,7 @@ def test_migrate_polygon_shortcuts_no_shortcuts_key() -> None:
 
 
 @pytest.mark.parametrize("section", ["shortcuts", "ai"])
-def test_migrate_tolerates_empty_section(section: str) -> None:
+def test_migrate_tolerates_empty_section(*, section: str) -> None:
     config = {section: None}
     _config._migrate_config_from_file(config_from_yaml=config)
     assert config[section] is None
@@ -150,7 +151,7 @@ def test_migrate_tolerates_empty_section(section: str) -> None:
     ids=["shortcuts", "ai"],
 )
 def test_load_config_empty_section_keeps_defaults(
-    tmp_path: Path, section: str, probe: tuple[str, str]
+    *, tmp_path: Path, section: str, probe: tuple[str, str]
 ) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(f"{section}:\n")
@@ -160,14 +161,14 @@ def test_load_config_empty_section_keeps_defaults(
 
 
 @pytest.mark.parametrize("section", ["shortcuts", "ai"])
-def test_migrate_leaves_malformed_section_for_merge_to_report(section: str) -> None:
+def test_migrate_leaves_malformed_section_for_merge_to_report(*, section: str) -> None:
     config = {section: "oops"}
     _config._migrate_config_from_file(config_from_yaml=config)
     assert config[section] == "oops"
 
 
 @pytest.mark.parametrize("section", ["shortcuts", "ai"])
-def test_load_config_malformed_section_raises(tmp_path: Path, section: str) -> None:
+def test_load_config_malformed_section_raises(*, tmp_path: Path, section: str) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(f"{section}: oops\n")
     with pytest.raises(
@@ -182,7 +183,7 @@ def test_load_config_malformed_section_raises(tmp_path: Path, section: str) -> N
     ids=list(_POLYGON_TO_SHAPE_RENAMES.keys()),
 )
 def test_migrate_polygon_shortcut_drops_old_key_when_new_key_exists(
-    old_key: str, new_key: str
+    *, old_key: str, new_key: str
 ) -> None:
     config = {"shortcuts": {old_key: "Ctrl+X", new_key: "Ctrl+Y"}}
     _config._migrate_config_from_file(config_from_yaml=config)
@@ -191,6 +192,7 @@ def test_migrate_polygon_shortcut_drops_old_key_when_new_key_exists(
 
 
 def test_load_config_tolerates_both_polygon_and_shape_shortcuts(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -214,6 +216,7 @@ def test_migrate_removes_add_point_to_edge_shortcut() -> None:
 
 
 def test_load_config_tolerates_removed_add_point_to_edge_shortcut(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -253,7 +256,7 @@ def test_migrate_ai_crosshair_keeps_explicit_ai_points_to_shape() -> None:
     assert crosshair["ai_points_to_shape"] is False
 
 
-def test_load_config_tolerates_legacy_ai_crosshair_keys(tmp_path: Path) -> None:
+def test_load_config_tolerates_legacy_ai_crosshair_keys(*, tmp_path: Path) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
         "canvas:\n  crosshair:\n    ai_polygon: true\n    ai_mask: false\n"
@@ -268,7 +271,7 @@ def test_migrate_leaves_malformed_crosshair_for_merge_to_report() -> None:
     assert config["canvas"]["crosshair"] == "oops"
 
 
-def test_load_config_malformed_crosshair_raises(tmp_path: Path) -> None:
+def test_load_config_malformed_crosshair_raises(*, tmp_path: Path) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text("canvas:\n  crosshair: oops\n")
     with pytest.raises(
@@ -291,7 +294,7 @@ def test_load_config_malformed_crosshair_raises(tmp_path: Path) -> None:
     ids=["brightness", "contrast", "both", "both_disabled"],
 )
 def test_migrate_keep_prev_brightness_contrast(
-    old_config: dict[str, bool], expected: dict[str, bool]
+    *, old_config: dict[str, bool], expected: dict[str, bool]
 ) -> None:
     config = old_config.copy()
     _config._migrate_config_from_file(config_from_yaml=config)
@@ -323,7 +326,7 @@ def test_migrate_keep_prev_brightness_contrast(
         "unknown_key_nested",
     ],
 )
-def test_load_config_rejects_invalid_override(overrides: dict, message: str) -> None:
+def test_load_config_rejects_invalid_override(*, overrides: dict, message: str) -> None:
     with pytest.raises(ValueError, match=message):
         _config.load_config(config_file=None, config_overrides=overrides)
 
@@ -381,7 +384,7 @@ def test_load_config_requires_labels_when_validate_label_enabled() -> None:
     ids=["auto", "uniform", "by-label"],
 )
 def test_load_config_migrates_legacy_shape_color_from_file(
-    tmp_path: Path, legacy: dict, expected: dict
+    *, tmp_path: Path, legacy: dict, expected: dict
 ) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(json.dumps(legacy))
@@ -422,6 +425,7 @@ def test_load_config_migrates_legacy_shape_color_sibling_without_mode() -> None:
 
 
 def test_load_config_rejects_invalid_migrated_legacy_shape_color(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -439,6 +443,7 @@ def test_load_config_rejects_invalid_migrated_legacy_shape_color(
 
 
 def test_load_config_rejects_falsey_invalid_legacy_default_shape_color(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -458,6 +463,7 @@ def test_load_config_native_empty_shape_color_section_keeps_defaults() -> None:
 
 
 def test_load_config_validates_native_shape_color_over_legacy_file(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -471,6 +477,7 @@ def test_load_config_validates_native_shape_color_over_legacy_file(
 
 
 def test_legacy_shape_color_override_preserves_config_file_values(
+    *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
@@ -528,7 +535,7 @@ def test_load_config_rejects_mixed_new_and_legacy_shape_color() -> None:
     ids=["mode", "shift", "uniform-rgb", "label-rgb"],
 )
 def test_load_config_rejects_invalid_shape_color(
-    shape_color: dict, message: str
+    *, shape_color: dict, message: str
 ) -> None:
     with pytest.raises(ValueError, match=message):
         _config.load_config(

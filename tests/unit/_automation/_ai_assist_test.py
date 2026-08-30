@@ -18,13 +18,14 @@ from labelme._shape import Shape
 
 @pytest.fixture
 def install_fake_osam_session(
+    *,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[osam.types.GenerateResponse], list[str]]:
     def _install(response: osam.types.GenerateResponse) -> list[str]:
         created_model_names: list[str] = []
 
         class _FakeOsamSession:
-            def __init__(self, model_name: str) -> None:
+            def __init__(self, *, model_name: str) -> None:
                 self.model_name = model_name
                 created_model_names.append(model_name)
 
@@ -61,6 +62,7 @@ def _propose(
 
 
 def test_point_prompt_uses_best_answer_and_reuses_session(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:
     response = osam.types.GenerateResponse(
@@ -109,6 +111,7 @@ def test_default_model_name_and_output_format() -> None:
 
 
 def test_polygon_detail_controls_ai_polygon_points(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:
     mask = np.zeros((100, 100), dtype=bool)
@@ -133,6 +136,7 @@ def test_polygon_detail_controls_ai_polygon_points(
 
 
 def test_polygon_proposal_groups_disconnected_lands(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:
     mask = np.zeros((100, 100), dtype=bool)
@@ -153,6 +157,7 @@ def test_polygon_proposal_groups_disconnected_lands(
 
 
 def test_sam3_point_prompt_is_rejected_before_session_creation(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:
     response = osam.types.GenerateResponse(model="stub", annotations=[])
@@ -166,6 +171,7 @@ def test_sam3_point_prompt_is_rejected_before_session_creation(
 
 
 def test_sam3_box_prompt_reaches_session(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:
     response = osam.types.GenerateResponse(model="stub", annotations=[])
@@ -277,6 +283,7 @@ def test_point_inside_detection_uses_rounded_mask_origin() -> None:
 
 
 def test_point_prompt_reports_best_matching_existing_shape(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> None:
     response = osam.types.GenerateResponse(
@@ -320,6 +327,7 @@ def test_point_prompt_reports_best_matching_existing_shape(
     ],
 )
 def test_point_prompt_reports_matching_existing_shape(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
     existing_bbox: tuple[int, int, int, int],
     proposal_bbox: tuple[int, int, int, int],
@@ -343,6 +351,7 @@ def test_point_prompt_reports_matching_existing_shape(
 
 
 def test_sweep_suppresses_only_proposals_matching_existing_shapes(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
     existing_rectangle: Shape,
 ) -> None:
@@ -372,6 +381,7 @@ def test_sweep_suppresses_only_proposals_matching_existing_shapes(
 
 
 def test_single_result_sweep_reports_matching_existing_shape(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
     existing_rectangle: Shape,
 ) -> None:
@@ -395,6 +405,7 @@ def test_single_result_sweep_reports_matching_existing_shape(
 
 @pytest.fixture(name="duplicate_sweep_session")
 def make_duplicate_sweep_session(
+    *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
 ) -> AiAssistSession:
     response = osam.types.GenerateResponse(
@@ -409,6 +420,7 @@ def make_duplicate_sweep_session(
 
 
 def test_sweep_matches_existing_shape_after_greedy_suppression(
+    *,
     duplicate_sweep_session: AiAssistSession,
     existing_rectangle: Shape,
 ) -> None:
@@ -424,6 +436,7 @@ def test_sweep_matches_existing_shape_after_greedy_suppression(
 
 
 def test_sweep_still_applies_greedy_suppression_among_new_detections(
+    *,
     duplicate_sweep_session: AiAssistSession,
 ) -> None:
     proposal = _propose(

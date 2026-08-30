@@ -58,10 +58,10 @@ def _enter_label(
     ],
 )
 def test_label_flags_applied_to_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
     flag_to_toggle: str | None,
     expected_flags: dict[str, bool],
@@ -101,10 +101,10 @@ def test_label_flags_applied_to_shape(
 
 @pytest.mark.gui
 def test_enabled_flags_shown_in_label_list(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -144,10 +144,10 @@ def test_enabled_flags_shown_in_label_list(
 
 @pytest.mark.gui
 def test_flags_survive_retyping_the_label(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -201,11 +201,11 @@ def test_flags_survive_retyping_the_label(
 
 @pytest.mark.gui
 def test_flags_survive_save_reload_roundtrip(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
-    *,
     pause: bool,
 ) -> None:
     win = main_win(
