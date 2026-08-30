@@ -107,6 +107,7 @@ select = [
   "UP",     # pyupgrade
   "RUF022", # sorted __all__
   "B006",   # mutable argument defaults
+  "RUF012", # mutable class attributes
 ]
 # UP040 wants PEP 695 `type X = ...`, but our Literal aliases are enumerated at
 # runtime via typing.get_args(), which returns () for a lazy `type` alias.
