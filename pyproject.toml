@@ -113,6 +113,8 @@ select = [
   "FBT",     # boolean traps
   "PLR2004", # magic value comparisons
 ]
+# Keep ruff from flagging gruff's GR noqa codes as unknown.
+external = ["GR"]
 # UP040 wants PEP 695 `type X = ...`, but our Literal aliases are enumerated at
 # runtime via typing.get_args(), which returns () for a lazy `type` alias.
 ignore = ["UP040"]
