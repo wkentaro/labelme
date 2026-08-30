@@ -65,6 +65,7 @@ dev = [
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
+  "gruff>=0.0.4",
 ]
 
 [project.scripts]
@@ -93,6 +94,9 @@ markers = [
   "network: mark a test that accesses an external network service.",
   "pixel_snapshot: mark a test that compares rendering against a stored pixel snapshot.",
 ]
+
+[tool.gruff.lint]
+select = []
 
 [tool.ruff.lint]
 select = [
