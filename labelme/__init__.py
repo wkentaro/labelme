@@ -11,6 +11,6 @@ __version__ = importlib.metadata.version("labelme")
 
 # XXX: has to be imported before PySide6 to load dlls in order on Windows
 # https://github.com/wkentaro/labelme/issues/1564
-import onnxruntime
+import onnxruntime  # noqa: F401
 
 __all__: list[str] = []
