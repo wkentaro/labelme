@@ -2201,10 +2201,9 @@ def _reproject_oriented_rectangle_corners(
     image_size: QtCore.QSize,
     allow_out_of_bounds: bool,
 ) -> tuple[QPointF, ...]:
-    """Given a 4-corner oriented rectangle and a dragged corner, return the new
-    corner positions: the dragged corner and its two neighbors move so the shape
-    stays a parallelogram, clipped to the image unless out-of-bounds points are
-    allowed; the opposite anchor is fixed."""
+    # The dragged corner and its two neighbors move so the shape stays a
+    # parallelogram, clipped to the image unless out-of-bounds points are
+    # allowed; the opposite anchor is fixed.
     anchor = corners[(vertex_index - 2) % 4]
     edge_axis = corners[(vertex_index - 1) % 4]
     moving = pos

@@ -86,7 +86,6 @@ def _make_release_event(
 
 
 def _image_to_widget(canvas: Canvas, img_x: float, img_y: float) -> QPointF:
-    """Convert image-space coordinates to widget-space coordinates."""
     origin = canvas._compute_image_origin_offset()
     wx = (img_x + origin.x()) * canvas.scale
     wy = (img_y + origin.y()) * canvas.scale
@@ -94,7 +93,6 @@ def _image_to_widget(canvas: Canvas, img_x: float, img_y: float) -> QPointF:
 
 
 def _clear_cursor_override(canvas: Canvas) -> None:
-    """Remove any outstanding override cursor pushed by the canvas."""
     canvas._release_cursor()
 
 
@@ -416,7 +414,7 @@ def test_right_release_with_selection_copy_executes_menus_1(
 
 
 def _make_center_polygon() -> Shape:
-    """Polygon with a vertex at image-center (100, 50), others at corners."""
+    # One vertex sits at image-center (100, 50); the rest at corners.
     return Shape(
         shape_type="polygon",
         points=np.array(
