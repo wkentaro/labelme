@@ -59,6 +59,7 @@ def test_select_shape(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
@@ -80,6 +81,7 @@ def test_copy_paste_shape(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
@@ -112,6 +114,7 @@ def test_duplicate_shape(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
@@ -141,6 +144,7 @@ def test_delete_shape(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -169,6 +173,7 @@ def test_delete_undo_shape(
     data_path: Path,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
@@ -198,6 +203,7 @@ def test_right_drag_copy_here_duplicates_shape(
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas

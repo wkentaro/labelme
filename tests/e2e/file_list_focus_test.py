@@ -17,6 +17,7 @@ def test_arrow_keys_walk_file_list_across_loads(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "annotated"))
@@ -43,6 +44,7 @@ def test_canvas_takes_focus_when_file_list_has_none(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "annotated"))

@@ -26,6 +26,7 @@ def test_MainWindow_open_img(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     image_file: str = str(data_path / "raw/2011_000003.jpg")
@@ -40,6 +41,7 @@ def test_MainWindow_open_json(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     json_files: list[str] = [
@@ -64,6 +66,7 @@ def test_MainWindow_open_dir(
     qtbot: QtBot,
     scenario: Literal["raw", "annotated", "annotated_nested"],
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     directory: str
@@ -127,6 +130,7 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
     qtbot: QtBot,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -157,6 +161,7 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
     tmp_path: Path,
     critical_messages: list[str],
     set_allocation_limit: Callable[[int], None],
+    *,
     pause: bool,
 ) -> None:
     image_path = tmp_path / "too_large.png"
@@ -293,6 +298,7 @@ def test_failed_navigation_preserves_current_session(
     data_path: Path,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
     failure: str,
     navigation: str,
@@ -365,6 +371,7 @@ def test_failed_navigation_restores_selected_source_item(
     qtbot: QtBot,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -397,6 +404,7 @@ def test_direct_image_open_preserves_source_selection(
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -438,6 +446,7 @@ def test_failed_navigation_restores_filtered_out_selection(
     qtbot: QtBot,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -467,6 +476,7 @@ def test_failed_navigation_refreshes_title_after_saving(
     qtbot: QtBot,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -502,6 +512,7 @@ def test_prompt_output_dir_rejects_corrupt_annotation(
     create_annotated_session_image: Path,
     choose_candidate_output_dir: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
     hide_active_image: bool,
 ) -> None:
@@ -541,6 +552,7 @@ def test_prompt_output_dir_loads_candidate_before_committing(
     qtbot: QtBot,
     create_annotated_session_image: Path,
     choose_candidate_output_dir: Path,
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -580,6 +592,7 @@ def test_failed_load_of_dropped_image_preserves_current_session(
     tmp_path: Path,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image
@@ -619,6 +632,7 @@ def test_open_dir_with_failing_first_image_keeps_other_images_reachable(
     tmp_path: Path,
     create_annotated_session_image: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     current_image = create_annotated_session_image

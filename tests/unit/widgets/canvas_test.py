@@ -162,7 +162,7 @@ def test_bounded_move_vertex_clamps_to_image_by_default(canvas: Canvas) -> None:
 
 @pytest.mark.gui
 def test_bounded_move_vertex_keeps_out_of_bounds_when_enabled(canvas: Canvas) -> None:
-    canvas.set_allow_out_of_bounds_points(True)
+    canvas.set_allow_out_of_bounds_points(value=True)
     shape = Shape(
         shape_type="rectangle",
         points=np.array([(10, 10), (50, 40)], dtype=np.float64),
@@ -226,7 +226,7 @@ def test_drag_shapes_blocked_off_image_by_default(canvas: Canvas) -> None:
 
 @pytest.mark.gui
 def test_drag_shapes_keeps_out_of_bounds_when_enabled(canvas: Canvas) -> None:
-    canvas.set_allow_out_of_bounds_points(True)
+    canvas.set_allow_out_of_bounds_points(value=True)
     shape = Shape(
         shape_type="rectangle",
         points=np.array([(40, 20), (60, 30)], dtype=np.float64),
@@ -459,9 +459,9 @@ def test_drag_shapes_preserves_orthogonal_out_of_bounds_position(
 def test_should_draw_crosshair_off_image_when_out_of_bounds_allowed(
     canvas: Canvas,
 ) -> None:
-    canvas.set_allow_out_of_bounds_points(True)
+    canvas.set_allow_out_of_bounds_points(value=True)
     canvas._crosshair[canvas._create_mode] = True
-    canvas.set_editing(False)
+    canvas.set_editing(value=False)
 
     assert canvas._should_draw_crosshair(cursor=QPointF(_WIDTH + 20, _HEIGHT + 20))
 
@@ -479,10 +479,10 @@ def test_set_shape_visible_toggles_visibility(canvas: Canvas) -> None:
 
     assert canvas.shapes[0].visible is True
 
-    canvas.set_shape_visible(canvas.shapes[0], False)
+    canvas.set_shape_visible(canvas.shapes[0], value=False)
     assert canvas.shapes[0].visible is False
 
-    canvas.set_shape_visible(canvas.shapes[0], True)
+    canvas.set_shape_visible(canvas.shapes[0], value=True)
     assert canvas.shapes[0].visible is True
 
 
@@ -498,7 +498,7 @@ def test_shape_visibility_survives_backup_and_restore(canvas: Canvas) -> None:
     )
     canvas.load_shapes([shape])
 
-    canvas.set_shape_visible(canvas.shapes[0], False)
+    canvas.set_shape_visible(canvas.shapes[0], value=False)
     canvas.backup_shapes()
     canvas.load_shapes([shape.copy()])
     assert canvas.shapes[0].visible is False
@@ -632,6 +632,7 @@ def test_existing_shape_suppression_is_disabled_by_default(
 def test_ai_proposal_uses_out_of_bounds_setting(
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     allow_out_of_bounds: bool,
     expected_image_size: tuple[int, int] | None,
 ) -> None:
@@ -639,7 +640,7 @@ def test_ai_proposal_uses_out_of_bounds_setting(
         return_value=AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
     )
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    canvas.set_allow_out_of_bounds_points(allow_out_of_bounds)
+    canvas.set_allow_out_of_bounds_points(value=allow_out_of_bounds)
 
     canvas._propose_ai_shapes(
         prompt_kind="points",
@@ -739,7 +740,7 @@ def ai_existing_shape_highlight_harness(
     canvas.load_shapes([existing])
     canvas.set_ai_existing_shape_suppression(enabled=True)
     canvas.create_mode = "ai_box_to_shape"
-    canvas.set_editing(False)
+    canvas.set_editing(value=False)
     canvas._current = _DraftShape(
         shape_type="rectangle",
         points=(QPointF(0, 0), QPointF(10, 10)),
@@ -817,7 +818,7 @@ def test_finalize_existing_only_inference_highlights_hidden_shape(
                 Qt.MouseButton.NoButton,
                 Qt.KeyboardModifier.NoModifier,
                 Qt.ScrollPhase.NoScrollPhase,
-                False,
+                False,  # noqa: FBT003 -- QWheelEvent takes inverted positionally
             )
         )
 
@@ -936,7 +937,7 @@ def ai_points_harness(
     monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", _download_ai_model)
     canvas.point_prompt_rejected.connect(rejected_models.append)
     canvas.resize(_WIDTH, _HEIGHT)
-    canvas.set_editing(False)
+    canvas.set_editing(value=False)
     canvas.create_mode = "ai_points_to_shape"
     with qtbot.waitExposed(canvas):
         canvas.show()
@@ -1213,7 +1214,7 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     emissions: list[bool] = []
     observed_modes: list[str] = []
 
-    def listener(drawing: bool) -> None:
+    def listener(drawing: bool) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
         emissions.append(drawing)
         observed_modes.append(canvas.create_mode)
 
@@ -1374,7 +1375,7 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
     ],
 )
 def test_is_degenerate_draft(
-    shape_type: ShapeType, points: list[tuple[float, float]], expected: bool
+    shape_type: ShapeType, points: list[tuple[float, float]], *, expected: bool
 ) -> None:
     draft = _DraftShape(
         shape_type=shape_type,
@@ -1396,7 +1397,7 @@ def test_is_degenerate_draft(
         pytest.param((_WIDTH / 2, _HEIGHT + 0.1), True, id="below_image"),
     ],
 )
-def test_is_out_of_image(point: tuple[float, float], expected: bool) -> None:
+def test_is_out_of_image(point: tuple[float, float], *, expected: bool) -> None:
     # The image rect is inclusive at both edges: a point exactly on the far
     # width/height boundary counts as inside, since the clamping callers treat
     # the pixmap size as a reachable coordinate rather than an exclusive extent.

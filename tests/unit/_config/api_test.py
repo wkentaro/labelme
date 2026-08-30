@@ -44,7 +44,9 @@ def test_get_user_config_file_skip_creation(
 
 
 @pytest.mark.parametrize("old_value", [True, False])
-def test_migrate_store_data_to_with_image_data(tmp_path: Path, old_value: bool) -> None:
+def test_migrate_store_data_to_with_image_data(
+    tmp_path: Path, *, old_value: bool
+) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(f"store_data: {str(old_value).lower()}\n")
     config = _config.load_config(config_file=config_file, config_overrides={})
@@ -231,7 +233,7 @@ def test_load_config_tolerates_removed_add_point_to_edge_shortcut(
     ids=["polygon", "mask", "both", "neither"],
 )
 def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
-    ai_polygon: bool, ai_mask: bool, expected: bool
+    *, ai_polygon: bool, ai_mask: bool, expected: bool
 ) -> None:
     config = {"canvas": {"crosshair": {"ai_polygon": ai_polygon, "ai_mask": ai_mask}}}
     _config._migrate_config_from_file(config_from_yaml=config)

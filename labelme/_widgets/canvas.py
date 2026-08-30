@@ -276,13 +276,13 @@ class Canvas(QtWidgets.QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
-    def set_fill_drawing(self, value: bool) -> None:
+    def set_fill_drawing(self, *, value: bool) -> None:
         self._fill_drawing = value
 
-    def set_show_labels(self, value: bool) -> None:
+    def set_show_labels(self, *, value: bool) -> None:
         self._show_labels = value
 
-    def set_allow_out_of_bounds_points(self, value: bool) -> None:
+    def set_allow_out_of_bounds_points(self, *, value: bool) -> None:
         self._allow_out_of_bounds_points = value
 
     def pan_view(self, step: QPointF, *, constrain_to_center: bool = True) -> None:
@@ -455,7 +455,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_assist_session.polygon_detail = detail
         self._clear_ai_existing_shape_highlights()
 
-    def set_ai_existing_shape_suppression(self, enabled: bool) -> None:
+    def set_ai_existing_shape_suppression(self, *, enabled: bool) -> None:
         if self._ai_suppress_existing_shape_matches == enabled:
             return
         self._ai_suppress_existing_shape_matches = enabled
@@ -536,7 +536,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
-    def set_editing(self, value: bool = True) -> None:
+    def set_editing(self, *, value: bool = True) -> None:
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
         if new_mode is not self.mode:
             self._clear_ai_existing_shape_highlights()
@@ -1164,7 +1164,7 @@ class Canvas(QtWidgets.QWidget):
                 (0, 0) if mode == "ai_points_to_shape" and is_shift_pressed else (1, 1)
             ),
         )
-        self.drawing_polygon.emit(True)
+        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
         self.update()
 
     def _press_left_while_editing(
@@ -1304,7 +1304,7 @@ class Canvas(QtWidgets.QWidget):
             self.shape_moved.emit()
         self._is_moving_shape = False
 
-    def end_move(self, copy: bool) -> bool:
+    def end_move(self, *, copy: bool) -> bool:
         assert self.selected_shapes and self._selected_shapes_copy
         assert len(self._selected_shapes_copy) == len(self.selected_shapes)
         if copy:
@@ -1808,7 +1808,7 @@ class Canvas(QtWidgets.QWidget):
     def _cancel_current_shape(self) -> None:
         self._current = None
         self._set_ai_existing_shape_highlights(shapes=[])
-        self.drawing_polygon.emit(False)
+        self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
         self.update()
 
     def _set_ai_existing_shape_highlights(self, *, shapes: list[Shape]) -> None:
@@ -1975,7 +1975,7 @@ class Canvas(QtWidgets.QWidget):
             self._current = None
         else:
             assert self.create_mode == "oriented_rectangle"
-        self.drawing_polygon.emit(True)
+        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
 
     def undo_last_point(self) -> None:
         current = self._current
@@ -2004,7 +2004,7 @@ class Canvas(QtWidgets.QWidget):
         self._clear_highlight_state()
         self._set_ai_existing_shape_highlights(shapes=[])
 
-    def load_pixmap(self, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
+    def load_pixmap(self, pixmap: QtGui.QPixmap, *, clear_shapes: bool = True) -> None:
         pixmap_arr = _utils.img_qt_to_arr(img_qt=pixmap.toImage())
         self.pixmap = pixmap
         self._pixmap_hash = hash(pixmap_arr.tobytes())
@@ -2016,13 +2016,13 @@ class Canvas(QtWidgets.QWidget):
             self.shapes = []
         self.update()
 
-    def load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
+    def load_shapes(self, shapes: list[Shape], *, replace: bool = True) -> None:
         self.shapes = list(shapes) if replace else self.shapes + list(shapes)
         self.backup_shapes()
         self._reset_interaction_state()
         self.update()
 
-    def set_shape_visible(self, shape: Shape, value: bool) -> None:
+    def set_shape_visible(self, shape: Shape, *, value: bool) -> None:
         if shape.visible == value:
             return
         shape.visible = value

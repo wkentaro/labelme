@@ -58,6 +58,7 @@ def _draw_oriented_rectangle(
 def test_drag_rotation_handle_rotates_oriented_rectangle(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -116,6 +117,7 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
 def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -182,6 +184,7 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
 def test_oriented_rectangle_disallows_add_and_remove_point(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas

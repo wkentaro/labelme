@@ -132,7 +132,7 @@ def _run_text_prompt(
             combo.setCurrentIndex(i)
             break
 
-    win._submit_ai_prompt(False)
+    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
     qtbot.wait(100)
 
 
@@ -188,6 +188,7 @@ def test_text_prompt_creates_shapes(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
     create_mode: str,
     expected_shape_type: AiOutputFormat,
@@ -246,6 +247,7 @@ def test_nms_deduplicates_existing_shapes(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -288,6 +290,7 @@ def test_score_threshold_filters_detections(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -334,6 +337,7 @@ def test_text_prompt_inference_error_surfaces_without_crashing(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     # A model error during text-to-annotation inference must not crash the app:
@@ -366,6 +370,7 @@ def test_canvas_inference_failed_signal_surfaces_status_message(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     # The hover-preview path emits inference_failed from inside paintEvent, so

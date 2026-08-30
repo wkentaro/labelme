@@ -200,7 +200,7 @@ def _make_open_linestrip() -> Shape:
         ("mask", False),
     ],
 )
-def test_can_add_point(shape_type: ShapeType, expected: bool) -> None:
+def test_can_add_point(shape_type: ShapeType, *, expected: bool) -> None:
     assert Shape(shape_type=shape_type).can_add_point() is expected
 
 

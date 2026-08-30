@@ -20,6 +20,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     image_dir = data_path / "annotated_nested/images"

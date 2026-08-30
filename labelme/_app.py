@@ -667,11 +667,11 @@ class MainWindow(QtWidgets.QMainWindow):
             checked=self._config["canvas"]["fill_drawing"],
         )
         self._canvas_widgets.canvas.set_fill_drawing(
-            self._config["canvas"]["fill_drawing"]
+            value=self._config["canvas"]["fill_drawing"]
         )
         hide_all = action(
             self.tr("&Hide\nShapes"),
-            functools.partial(self.toggle_shape_visibility, False),
+            functools.partial(self.toggle_shape_visibility, value=False),
             shortcuts["hide_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Hide all shapes"),
@@ -679,7 +679,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         show_all = action(
             self.tr("&Show\nShapes"),
-            functools.partial(self.toggle_shape_visibility, True),
+            functools.partial(self.toggle_shape_visibility, value=True),
             shortcuts["show_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Show all shapes"),
@@ -687,7 +687,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         toggle_all = action(
             self.tr("&Toggle\nShapes"),
-            functools.partial(self.toggle_shape_visibility, None),
+            functools.partial(self.toggle_shape_visibility, value=None),
             shortcuts["toggle_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Toggle all shapes"),
@@ -1085,7 +1085,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ],
         )
         canvas.set_point_size(self._config["shape"]["point_size"])
-        canvas.set_show_labels(self._config["shape"]["show_labels"])
+        canvas.set_show_labels(value=self._config["shape"]["show_labels"])
         canvas.set_ai_existing_shape_suppression(
             enabled=self._config["ai"]["suppress_existing_shape_matches"]
         )
@@ -1348,14 +1348,14 @@ class MainWindow(QtWidgets.QMainWindow):
             action.setEnabled(True)
         self._actions.delete_file.setEnabled(self.has_label_file())
 
-    def update_action_states(self, value: bool = True) -> None:
+    def update_action_states(self, *, value: bool = True) -> None:
         for action in (*self._actions.zoom, *self._actions.on_load_active):
             action.setEnabled(value)
 
     def show_status_message(self, message: str, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
-    def _submit_ai_prompt(self, _: bool, /) -> None:
+    def _submit_ai_prompt(self, _: bool, /) -> None:  # noqa: FBT001 -- submit callback receives the Qt clicked flag
         create_mode = self._canvas_widgets.canvas.create_mode
         shape_type = _resolve_text_annotation_shape_type(
             create_mode=create_mode,
@@ -1499,7 +1499,7 @@ class MainWindow(QtWidgets.QMainWindow):
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def _on_drawing_polygon_changed(self, drawing: bool, /) -> None:
+    def _on_drawing_polygon_changed(self, drawing: bool, /) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
         # In the middle of drawing, toggling between modes should be disabled.
         self._actions.edit_mode.setEnabled(not drawing)
         self._actions.undo_last_point.setEnabled(drawing)
@@ -1509,7 +1509,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(not drawing)
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
-        self._canvas_widgets.canvas.set_editing(edit)
+        self._canvas_widgets.canvas.set_editing(value=edit)
         if create_mode is not None:
             self._canvas_widgets.canvas.create_mode = create_mode
         if edit:
@@ -1531,7 +1531,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
         self._set_point_prompt_mode(enabled=create_mode == "ai_points_to_shape")
 
-    def _highlight_ai_buttons(self, highlight: bool, /) -> None:
+    def _highlight_ai_buttons(self, highlight: bool, /) -> None:  # noqa: FBT001 -- hover_highlight_requested slot
         self._ai_buttons_highlighted = highlight
         BG_ALPHA: Final = 60
         BORDER_ALPHA: Final = 120
@@ -1903,7 +1903,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes = [
             s for item in self._docks.label_list if (s := item.shape()) is not None
         ]
-        self._canvas_widgets.canvas.load_shapes(shapes)
+        self._canvas_widgets.canvas.load_shapes(shapes=shapes)
 
     # Callback functions:
 
@@ -1917,7 +1917,7 @@ class MainWindow(QtWidgets.QMainWindow):
         description = ""
         if self._config["display_label_popup"] or not text:
             previous_text = self._label_dialog.edit.text()
-            text, flags, group_id, description = self._label_dialog.popup(text)
+            text, flags, group_id, description = self._label_dialog.popup(text=text)
             if not text:
                 self._label_dialog.edit.setText(previous_text)
 
@@ -2058,11 +2058,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def _zoom_requested(self, delta: int, pos: QtCore.QPointF, /) -> None:
         self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
 
-    def set_fit_window_mode(self, value: bool = True) -> None:
+    def set_fit_window_mode(self, value: bool = True) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
-    def set_fit_width_mode(self, value: bool = True) -> None:
+    def set_fit_width_mode(self, value: bool = True) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         target = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
@@ -2080,7 +2080,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def open_brightness_contrast_dialog(
-        self, _value: bool, is_initial_load: bool = False
+        self,
+        _value: bool,  # noqa: FBT001 -- QAction.triggered slot
+        *,
+        is_initial_load: bool = False,
     ) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set brightness/contrast")
@@ -2131,7 +2134,7 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast,
         )
 
-    def toggle_shape_visibility(self, value: bool | None) -> None:
+    def toggle_shape_visibility(self, *, value: bool | None) -> None:
         for item in self._docks.label_list:
             target = (
                 item.checkState() == Qt.CheckState.Unchecked if value is None else value
@@ -2306,8 +2309,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self._canvas_widgets.canvas.pan_view(
                 step=target_viewport.view_offset, constrain_to_center=False
             )
-        self.open_brightness_contrast_dialog(False, is_initial_load=True)
-        self.update_action_states(True)
+        self.open_brightness_contrast_dialog(
+            False,  # noqa: FBT003 -- placeholder for the Qt triggered flag
+            is_initial_load=True,
+        )
+        self.update_action_states(value=True)
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
@@ -2447,7 +2453,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if image_or_label_path:
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
-    def prompt_output_dir(self, _value: bool = False) -> None:
+    def prompt_output_dir(self, _value: bool = False) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         default_output_dir: str
         if self._output_dir is not None:
             default_output_dir = str(self._output_dir)
@@ -2519,8 +2525,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         dlg.setDefaultSuffix(LABEL_FILE_SUFFIX[1:])
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
-        dlg.setOption(QtWidgets.QFileDialog.Option.DontConfirmOverwrite, False)
-        dlg.setOption(QtWidgets.QFileDialog.Option.DontUseNativeDialog, False)
+        dlg.setOption(QtWidgets.QFileDialog.Option.DontConfirmOverwrite, False)  # noqa: FBT003 -- Qt setter takes the flag positionally
+        dlg.setOption(QtWidgets.QFileDialog.Option.DontUseNativeDialog, False)  # noqa: FBT003 -- Qt setter takes the flag positionally
         label_path, _ = dlg.getSaveFileName(
             parent=self,
             caption=self.tr("Choose File"),
@@ -2532,14 +2538,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         return label_path
 
-    def close_file(self, _value: bool = False) -> None:
+    def close_file(self, _value: bool = False) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         if not self._can_continue():
             return
         self._remember_current_viewport()
         self.reset_state()
         self.mark_clean()
         self._reset_label_file_actions()
-        self.update_action_states(False)
+        self.update_action_states(value=False)
         self._canvas_widgets.canvas.setEnabled(False)
         self._docks.file_list.setFocus()
         self._actions.save_as.setEnabled(False)
@@ -2720,10 +2726,10 @@ class MainWindow(QtWidgets.QMainWindow):
             with QtCore.QSignalBlocker(action):
                 action.setChecked(value)
             if key_path == ("canvas", "fill_drawing"):
-                self._canvas_widgets.canvas.set_fill_drawing(value)
+                self._canvas_widgets.canvas.set_fill_drawing(value=value)
         elif key_path == ("shape", "show_labels"):
             canvas = self._canvas_widgets.canvas
-            canvas.set_show_labels(self._config["shape"]["show_labels"])
+            canvas.set_show_labels(value=self._config["shape"]["show_labels"])
             canvas.update()
         elif key_path == ("mask_polygonization", "detail"):
             detail = self._config["mask_polygonization"]["detail"]
@@ -2732,7 +2738,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif key_path == ("canvas", "allow_out_of_bounds_points"):
             canvas = self._canvas_widgets.canvas
             canvas.set_allow_out_of_bounds_points(
-                self._config["canvas"]["allow_out_of_bounds_points"]
+                value=self._config["canvas"]["allow_out_of_bounds_points"]
             )
             canvas.update()
         elif key_path[0] == "shape_color":

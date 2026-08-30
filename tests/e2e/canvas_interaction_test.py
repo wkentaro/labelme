@@ -143,6 +143,7 @@ def test_move_shape_by_drag(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -171,6 +172,7 @@ def test_move_vertex_by_drag(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -207,6 +209,7 @@ def test_move_vertex_by_drag(
 def test_move_shape_by_arrow_key(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
     key: int,
     expected_dx: float,
@@ -233,6 +236,7 @@ def test_move_shape_by_arrow_key(
 def test_select_all_shapes_from_canvas(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -254,6 +258,7 @@ def test_add_point_on_edge(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -308,6 +313,7 @@ def test_add_point_via_context_menu_action(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -335,6 +341,7 @@ def test_remove_point_from_shape(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -359,6 +366,7 @@ def test_remove_point_does_not_drag_adjacent(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
     remove_index: int,
 ) -> None:
@@ -398,6 +406,7 @@ def test_remove_point_does_not_drag_adjacent(
 def test_draw_actions_disable_only_active_mode(
     annotated_win: MainWindow,
     qtbot: QtBot,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -426,6 +435,7 @@ def test_draw_actions_disable_only_active_mode(
 def test_cancel_drawing_with_escape(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -454,6 +464,7 @@ def test_undo_last_point_while_drawing(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -502,6 +513,7 @@ def test_finalize_polygon_with_enter(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -534,6 +546,7 @@ def test_undo_shape_creation(
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -614,6 +627,7 @@ def test_select_nonpolygon_shape(
     qtbot: QtBot,
     raw_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
     create_mode: str,
     setup_click: tuple[float, float],
@@ -656,6 +670,7 @@ def test_select_nonpolygon_shape(
 def test_cancel_label_reopens_shape(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -712,6 +727,7 @@ def test_remove_point_blocked_at_minimum(
     qtbot: QtBot,
     raw_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
     create_mode: str,
     setup_clicks: list[tuple[float, float]],
@@ -761,6 +777,7 @@ def _click_to_select(*, qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> Non
 def test_select_point_shape_by_click(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -792,6 +809,7 @@ def test_right_click_on_shape_opens_context_menu(
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -829,6 +847,7 @@ def test_select_mask_shape_by_click(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     # Mask cells are indexed pixel-for-pixel from points[0]; clicking inside

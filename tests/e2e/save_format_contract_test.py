@@ -35,6 +35,7 @@ def test_save_image_data_field_matches_config(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
     with_image_data: bool,
 ) -> None:
@@ -76,6 +77,7 @@ def test_save_falls_back_to_an_absolute_image_path_across_drives(
     data_path: Path,
     tmp_path: Path,
     critical_messages: list[str],
+    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -129,6 +131,7 @@ def test_round_trip_polygon_preserves_points(
     qtbot: QtBot,
     raw_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     label = "rt_polygon"
@@ -173,6 +176,7 @@ def test_round_trip_mask_shape_via_fixture(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     mask_arr = np.zeros((4, 4), dtype=np.uint8)
@@ -252,6 +256,7 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
     raw_win: MainWindow,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     missing_image_json = tmp_path / "missing_image.json"
@@ -283,6 +288,7 @@ def test_title_returns_to_clean_after_save(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(

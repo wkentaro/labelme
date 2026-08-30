@@ -29,6 +29,7 @@ def test_labeling_ai_lands_preserves_generated_group(
     main_win: MainWinFactory,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(config_overrides={"auto_save": False})
@@ -61,6 +62,7 @@ def test_ai_points_mode_disables_sam3(
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
+    *,
     pause: bool,
 ) -> None:
     sam3_index = ai_model_combo.findData("sam3:latest")
@@ -80,6 +82,7 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
     ai_model_combo: QComboBox,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     warnings: list[tuple[str, str]] = []
@@ -300,6 +303,7 @@ def test_annotate_shape_types(
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
     create_mode: str,
     setup_clicks: list[tuple[float, float]],

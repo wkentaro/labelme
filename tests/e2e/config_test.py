@@ -19,6 +19,7 @@ from .conftest import MainWinFactory
 )
 def test_MainWindow_config(
     main_win: MainWinFactory,
+    *,
     with_config_file: bool,
     qtbot: QtBot,
     tmp_path: Path,
@@ -54,6 +55,7 @@ def test_MainWindow_config_load_error_falls_back(
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     # Malformed YAML makes load_config raise a non-ValueError (a yaml

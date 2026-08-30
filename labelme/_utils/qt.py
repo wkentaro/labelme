@@ -128,6 +128,7 @@ def new_action(
     shortcut: str | list[str] | tuple[str, ...] | None = None,
     icon: str | None = None,
     tip: str | None = None,
+    *,
     checkable: bool = False,
     enabled: bool = True,
     checked: bool = False,

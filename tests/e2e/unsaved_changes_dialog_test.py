@@ -79,6 +79,7 @@ def test_close_with_unsaved_changes_cancel_keeps_window_open(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
@@ -133,6 +134,7 @@ def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
@@ -160,6 +162,7 @@ def test_close_choose_save_but_write_fails_keeps_window_open(
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     _draw_and_commit_polygon(qtbot=qtbot, win=_raw_win_no_autosave, label="cat")
@@ -213,6 +216,7 @@ def test_navigate_with_unsaved_changes_shows_prompt(
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _dir_win_no_autosave: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     _draw_and_commit_polygon(qtbot=qtbot, win=_dir_win_no_autosave, label="cat")

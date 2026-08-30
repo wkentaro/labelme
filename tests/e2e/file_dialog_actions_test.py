@@ -142,6 +142,7 @@ def test_action_via_qfile_dialog(
     loaded_win: MainWindow,
     paths: _Paths,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
     dialog_method: str,
     dialog_return: Callable[[_Paths], tuple[str, str] | str],
@@ -168,6 +169,7 @@ def test_open_file_dialog_normalizes_the_reported_path(
     main_win: MainWinFactory,
     data_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "raw"))

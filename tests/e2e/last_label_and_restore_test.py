@@ -53,6 +53,7 @@ def discard_unsaved_changes(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_last_label_memo(
     qtbot: QtBot,
     raw_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -78,6 +79,7 @@ def test_restore_last_shape_via_undo(
     qtbot: QtBot,
     raw_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
@@ -115,6 +117,7 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
     monkeypatch: pytest.MonkeyPatch,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     raw_win = main_win(
@@ -167,6 +170,7 @@ def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
     main_win: MainWinFactory,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -201,6 +205,7 @@ def test_navigation_disables_undo_for_clean_image_history(
     main_win: MainWinFactory,
     data_path: Path,
     image_dir: str,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(
@@ -232,6 +237,7 @@ def test_save_keeps_shape_undo_disabled_while_drawing(
     monkeypatch: pytest.MonkeyPatch,
     data_path: Path,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(

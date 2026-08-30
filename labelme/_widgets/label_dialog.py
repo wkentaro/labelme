@@ -44,6 +44,7 @@ class LabelDialog(QtWidgets.QDialog):
         text: str = _PLACEHOLDER_TEXT,
         parent: QtWidgets.QWidget | None = None,
         labels: list[str] | None = None,
+        *,
         sort_labels: bool = True,
         show_text_field: bool = True,
         completion: str = "startswith",
@@ -252,6 +253,7 @@ class LabelDialog(QtWidgets.QDialog):
     def popup(
         self,
         text: str | None = None,
+        *,
         move: bool = True,
         position: QtCore.QPoint | None = None,
         flags: dict[str, bool] | None = None,

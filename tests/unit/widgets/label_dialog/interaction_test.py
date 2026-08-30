@@ -201,7 +201,7 @@ def test_sort_labels_false_preserves_order_and_enables_drag(qtbot: QtBot) -> Non
 @pytest.mark.parametrize("row_off", [True, False])
 @pytest.mark.parametrize("col_off", [True, False])
 def test_fit_to_content_scrollbar_policies(
-    qtbot: QtBot, row_off: bool, col_off: bool
+    qtbot: QtBot, *, row_off: bool, col_off: bool
 ) -> None:
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(fit_to_content={"row": row_off, "column": col_off})

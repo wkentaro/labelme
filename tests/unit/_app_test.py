@@ -61,7 +61,7 @@ def test_resolve_text_annotation_shape_type(
     ids=["policy-none", "exact-match", "exact-no-match", "unknown-policy"],
 )
 def test_is_valid_label(
-    label: str, existing_labels: list[str], policy: str | None, expected: bool
+    label: str, existing_labels: list[str], policy: str | None, *, expected: bool
 ) -> None:
     assert (
         _app._is_valid_label(
@@ -100,6 +100,7 @@ def test_format_window_title(
     image_path: str | None,
     file_index: int | None,
     file_count: int,
+    *,
     dirty: bool,
     expected: str,
 ) -> None:

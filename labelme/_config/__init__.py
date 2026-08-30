@@ -170,7 +170,7 @@ def _migrate_config_from_file(*, config_from_yaml: dict) -> None:
             crosshair["ai_points_to_shape"] = bool(ai_polygon) or bool(ai_mask)
 
 
-def get_user_config_file(create_if_missing: bool = True) -> str:
+def get_user_config_file(*, create_if_missing: bool = True) -> str:
     user_config_path = Path("~/.labelmerc").expanduser()
     if not user_config_path.exists() and create_if_missing:
         try:

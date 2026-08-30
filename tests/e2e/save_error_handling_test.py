@@ -21,6 +21,7 @@ def test_save_labels_reports_filesystem_failure_without_crashing(
     data_path: Path,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(

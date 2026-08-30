@@ -17,6 +17,7 @@ def test_image_navigation_while_selecting_shape(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
+    *,
     pause: bool,
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "annotated"))

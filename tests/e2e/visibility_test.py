@@ -14,6 +14,7 @@ from ..conftest import close_or_pause
 def test_toggle_all_shapes(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -23,7 +24,7 @@ def test_toggle_all_shapes(
     for shape in canvas.shapes:
         assert shape.visible
 
-    annotated_win.toggle_shape_visibility(False)
+    annotated_win.toggle_shape_visibility(value=False)
     qtbot.wait(50)
 
     for item in label_list:
@@ -31,7 +32,7 @@ def test_toggle_all_shapes(
     for shape in canvas.shapes:
         assert not shape.visible
 
-    annotated_win.toggle_shape_visibility(True)
+    annotated_win.toggle_shape_visibility(value=True)
     qtbot.wait(50)
 
     for item in label_list:
@@ -46,6 +47,7 @@ def test_toggle_all_shapes(
 def test_toggle_individual_shape(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -73,6 +75,7 @@ def test_toggle_individual_shape(
 def test_visibility_preserved_when_undoing_unrelated_edit(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -107,6 +110,7 @@ def test_visibility_preserved_when_undoing_unrelated_edit(
 def test_undo_recovers_accidental_hide(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -135,6 +139,7 @@ def test_undo_recovers_accidental_hide(
 def test_multi_select_toggle_propagates(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -176,6 +181,7 @@ def test_multi_select_toggle_propagates(
 def test_multi_select_preserves_selection_after_checkbox_click(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -209,6 +215,7 @@ def test_multi_select_preserves_selection_after_checkbox_click(
 def test_multi_select_collapses_on_row_body_click(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     label_list = annotated_win._docks.label_list

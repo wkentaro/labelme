@@ -306,6 +306,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self,
         key_path: tuple[str, ...],
         value: object,
+        *,
         enabled: bool,
         disabled_reason: str,
     ) -> None:

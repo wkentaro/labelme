@@ -933,7 +933,7 @@ def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
         ("dir.json/foo.png", False),
     ],
 )
-def test_is_label_file_path(filename: str, expected: bool) -> None:
+def test_is_label_file_path(filename: str, *, expected: bool) -> None:
     assert is_label_file_path(filename) is expected
 
 

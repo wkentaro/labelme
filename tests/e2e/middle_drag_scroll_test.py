@@ -43,6 +43,7 @@ def _zoom_until_overflow(*, canvas: Canvas) -> None:
 def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -73,6 +74,7 @@ def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
 def test_middle_drag_no_pan_when_image_fits_viewport(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
@@ -106,6 +108,7 @@ def test_middle_drag_no_pan_when_image_fits_viewport(
 def test_middle_drag_recenters_fitting_image_after_focal_zoom(
     qtbot: QtBot,
     annotated_win: MainWindow,
+    *,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas

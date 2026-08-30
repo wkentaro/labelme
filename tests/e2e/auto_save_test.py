@@ -69,6 +69,7 @@ def test_auto_save_on_shape_move(
     qtbot: QtBot,
     _auto_save_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     label_file = tmp_path / Path(_TEST_FILE_NAME).name
@@ -156,6 +157,7 @@ def test_auto_save_on_undo(
     qtbot: QtBot,
     _auto_save_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     label_file = tmp_path / Path(_TEST_FILE_NAME).name
@@ -192,6 +194,7 @@ def test_auto_save_on_undo_of_first_shape(
     qtbot: QtBot,
     _raw_auto_save_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     label_file = tmp_path / f"{Path(_RAW_FILE_NAME).stem}.json"
@@ -226,6 +229,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     qtbot: QtBot,
     _raw_auto_save_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     label_file = tmp_path / f"{Path(_RAW_FILE_NAME).stem}.json"
@@ -320,6 +324,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     qtbot: QtBot,
     _raw_auto_save_win: MainWindow,
     tmp_path: Path,
+    *,
     pause: bool,
 ) -> None:
     errors_shown: list[bool] = []
