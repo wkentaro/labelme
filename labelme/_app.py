@@ -1647,6 +1647,21 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
+        rows = list(self._docks.label_list)
+        if any(item not in rows for item in items):
+            # The dialog spins a nested event loop. Application modality keeps
+            # user input out of it, so this is defence in depth rather than a
+            # path anyone has reproduced -- but writing through rows something
+            # else replaced would rename the shape without ever updating what
+            # the user sees, so it is worth the two lines.
+            logger.warning(
+                "Label list rebuilt under a modal dialog: {} rows, {} selected, {!r}",
+                len(rows),
+                len(items),
+                self._image_path,
+            )
+            return
+
         self._canvas_widgets.canvas.backup_shapes()
         for item in items:
             shape = item.shape()
@@ -1928,6 +1943,33 @@ class MainWindow(QtWidgets.QMainWindow):
                 ),
             )
             text = ""
+
+        canvas = self._canvas_widgets.canvas
+        if not canvas.shapes or canvas.shapes[-1].label is not None:
+            # The label dialog and the invalid-label box each spin a nested
+            # event loop. An empty canvas is the state behind the crash this
+            # guard exists for, and returning here covers it whatever emptied
+            # it. The labeled-tail half is defence in depth: application
+            # modality keeps user input out of those loops, so nothing has
+            # reproduced it, but a replacement never ends in an unlabeled
+            # shape, and going on would dirty the file now on screen -- with
+            # auto-save, write it -- or, on the way out, take one of its
+            # shapes, since outside the AI modes the last shape is popped
+            # whatever it is. That is why this is stricter than the check
+            # guarding an edited label.
+            logger.warning(
+                "Canvas changed under a modal dialog: {} shapes, mode={!r}, {!r}",
+                len(canvas.shapes),
+                canvas.create_mode,
+                self._image_path,
+            )
+            # The success path below lifts the same mid-draw toolbar freeze;
+            # this one has to as well, or the replacement session is stuck in
+            # it until a draw mode is picked again.
+            self._actions.edit_mode.setEnabled(True)
+            self._actions.undo_last_point.setEnabled(False)
+            return
+
         if text:
             self._docks.label_list.clearSelection()
             assert isinstance(flags, dict)
