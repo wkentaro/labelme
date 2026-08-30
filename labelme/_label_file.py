@@ -29,6 +29,11 @@ from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
+_POINT_COORDINATE_COUNT: Final = 2
+_SINGLE_CHANNEL_NDIM: Final = 2
+_MULTI_CHANNEL_NDIM: Final = 3
+_RGB_CHANNEL_COUNT: Final = 3
+
 
 def _validate_flags(*, flags: object) -> dict[str, bool]:
     if flags is None:
@@ -86,7 +91,7 @@ def _validate_shape_semantics(
         return
     if mask is None:
         raise ValueError("mask is required for shape_type='mask'")
-    if mask.ndim != 2:
+    if mask.ndim != _SINGLE_CHANNEL_NDIM:
         raise ValueError(f"mask must decode to a 2D image, got shape {mask.shape}")
 
 
@@ -115,7 +120,7 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         raise ValueError(f"points must be non-empty: {shape_json_obj}")
     if not all(
         isinstance(point, list)
-        and len(point) == 2
+        and len(point) == _POINT_COORDINATE_COUNT
         and all(
             isinstance(xy, int | float) and not isinstance(xy, bool) for xy in point
         )
@@ -417,12 +422,15 @@ def _imread(filename: str, /) -> PIL.Image.Image:
 def _imread_tiff(filename: str, /) -> PIL.Image.Image:
     img_arr: NDArray = tifffile.imread(filename)
 
-    if img_arr.ndim == 2:
+    if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
         img_arr_normalized = _normalize_to_uint8(img_arr)
-    elif img_arr.ndim == 3:
-        if img_arr.shape[2] >= 3:
+    elif img_arr.ndim == _MULTI_CHANNEL_NDIM:
+        if img_arr.shape[2] >= _RGB_CHANNEL_COUNT:
             img_arr_normalized = np.stack(
-                [_normalize_to_uint8(img_arr[:, :, i]) for i in range(3)],
+                [
+                    _normalize_to_uint8(img_arr[:, :, i])
+                    for i in range(_RGB_CHANNEL_COUNT)
+                ],
                 axis=2,
             )
         else:

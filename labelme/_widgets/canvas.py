@@ -25,7 +25,12 @@ from .. import _ai_models
 from .. import _automation
 from .. import _shape
 from .. import _utils
+from .._shape import CIRCLE_POINT_COUNT
+from .._shape import MIN_LINESTRIP_POINT_COUNT
+from .._shape import MIN_POLYGON_POINT_COUNT
+from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import POLYLINE_SHAPE_TYPES
+from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
 from .._shape import ShapeType
 from . import _canvas_interaction
@@ -38,6 +43,12 @@ from ._shape_render import bounds as _shape_bounds
 from ._shape_render import is_hit_by_point
 from ._shape_render import render_shape
 from .download import download_ai_model
+
+# The latest backup mirrors the current state, so an undo needs a prior one too.
+_MIN_SHAPE_BACKUPS_FOR_UNDO: Final = 2
+# The cursor supplies the closing point, so a fill preview needs one point
+# fewer than the polygon it previews.
+_MIN_POINTS_FOR_FILL_PREVIEW: Final = 2
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(rgb=_DEFAULT_SHAPE_RGB)
@@ -500,9 +511,7 @@ class Canvas(QtWidgets.QWidget):
 
     @property
     def can_restore_shape(self) -> bool:
-        # The latest entry on the backup stack mirrors the current state, so
-        # at least one prior entry must exist for an undo to be meaningful.
-        return len(self.shape_backups) >= 2
+        return len(self.shape_backups) >= _MIN_SHAPE_BACKUPS_FOR_UNDO
 
     def restore_last_shape(self) -> None:
         # Undo coordinates with app.py::undo_shape_edit, app.py::load_shapes,
@@ -710,7 +719,10 @@ class Canvas(QtWidgets.QWidget):
     def _project_drawing_pos_into_image(self, *, pos: QPointF) -> QPointF:
         current = self._current
         assert current is not None
-        if self.create_mode == "oriented_rectangle" and len(current.points) == 4:
+        if (
+            self.create_mode == "oriented_rectangle"
+            and len(current.points) == ORIENTED_RECTANGLE_POINT_COUNT
+        ):
             # The second click only locks the orientation of the first edge,
             # not its length. The third-corner cursor drives parallelogram
             # completion through the diagonal anchor at points[0], so the
@@ -1076,7 +1088,7 @@ class Canvas(QtWidgets.QWidget):
             if current.closed:
                 self._finalize()
         elif mode == "oriented_rectangle":
-            if len(current.points) == 4:
+            if len(current.points) == ORIENTED_RECTANGLE_POINT_COUNT:
                 self._finalize()
             else:
                 assert len(current.points) == 1
@@ -1333,16 +1345,16 @@ class Canvas(QtWidgets.QWidget):
         if self.create_mode == "ai_points_to_shape":
             return True
         if self.create_mode == "linestrip":
-            return len(self._current.points) >= 2
+            return len(self._current.points) >= MIN_LINESTRIP_POINT_COUNT
         if self.create_mode == "oriented_rectangle":
             # Points 2 and 3 are seeded as duplicates of points 1 and 0 after
             # the first edge is locked; mouse movement reprojects them. Treat
             # the shape as closeable only once the third corner has moved.
             return (
-                len(self._current.points) == 4
+                len(self._current.points) == ORIENTED_RECTANGLE_POINT_COUNT
                 and self._current.points[2] != self._current.points[1]
             )
-        return len(self._current.points) >= 3
+        return len(self._current.points) >= MIN_POLYGON_POINT_COUNT
 
     def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent) -> None:
         if self._double_click != "close":
@@ -1443,7 +1455,7 @@ class Canvas(QtWidgets.QWidget):
     def _bounded_move_oriented_rectangle_vertex(
         self, *, shape: Shape, vertex_index: int, pos: QPointF
     ) -> None:
-        assert len(shape.points) == 4
+        assert len(shape.points) == ORIENTED_RECTANGLE_POINT_COUNT
         corners = tuple(QPointF(*point) for point in shape.points)
         new_corners = _reproject_oriented_rectangle_corners(
             corners=corners,
@@ -1689,7 +1701,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _build_polygon_preview(self, *, current: _DraftShape) -> Shape:
         preview = current
-        if self._fill_drawing and len(preview.points) >= 2:
+        if self._fill_drawing and len(preview.points) >= _MIN_POINTS_FOR_FILL_PREVIEW:
             preview = preview.add_point(point=self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
@@ -1981,7 +1993,10 @@ class Canvas(QtWidgets.QWidget):
         current = self._current
         if current is None or current.closed:
             return
-        if self.create_mode == "oriented_rectangle" and len(current.points) == 4:
+        if (
+            self.create_mode == "oriented_rectangle"
+            and len(current.points) == ORIENTED_RECTANGLE_POINT_COUNT
+        ):
             self._unlock_oriented_rectangle_first_edge(current=current)
             self.update()
             return
@@ -2073,24 +2088,28 @@ def _is_degenerate_draft(draft: _DraftShape, /) -> bool:
     points = draft.points
     shape_type = draft.shape_type
     if shape_type == "polygon":
-        return len({(p.x(), p.y()) for p in points}) < 3
+        return len({(p.x(), p.y()) for p in points}) < MIN_POLYGON_POINT_COUNT
     if shape_type == "linestrip":
-        return len({(p.x(), p.y()) for p in points}) < 2
+        return len({(p.x(), p.y()) for p in points}) < MIN_LINESTRIP_POINT_COUNT
     if shape_type == "rectangle":
         return (
-            len(points) != 2
+            len(points) != RECTANGLE_POINT_COUNT
             or points[0].x() == points[1].x()
             or points[0].y() == points[1].y()
         )
     if shape_type in ("circle", "line"):
-        return len(points) != 2 or points[0] == points[1]
+        return len(points) != CIRCLE_POINT_COUNT or points[0] == points[1]
     if shape_type == "oriented_rectangle":
-        return len(points) != 4 or points[0] == points[1] or points[1] == points[2]
+        return (
+            len(points) != ORIENTED_RECTANGLE_POINT_COUNT
+            or points[0] == points[1]
+            or points[1] == points[2]
+        )
     return False
 
 
 def _normalize_bbox_points(*, bbox_points: Sequence[QPointF]) -> list[QPointF]:
-    if len(bbox_points) != 2:
+    if len(bbox_points) != RECTANGLE_POINT_COUNT:
         raise ValueError(f"Expected 2 points for bbox, got {len(bbox_points)}")
 
     p1, p2 = bbox_points

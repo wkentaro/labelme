@@ -2685,7 +2685,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if value is None:
             self._shape_color_preview = None
         else:
-            assert len(key_path) == 3 and key_path[0] == "shape_color"
+            SHAPE_COLOR_KEY_PATH_LENGTH: Final[int] = 3
+            assert (
+                len(key_path) == SHAPE_COLOR_KEY_PATH_LENGTH
+                and key_path[0] == "shape_color"
+            )
             # Copy only the edited section so dragging stays transient without
             # duplicating a potentially large Label map.
             preview = dict(self._config["shape_color"])

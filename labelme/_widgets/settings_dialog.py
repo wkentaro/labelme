@@ -10,6 +10,7 @@ from PySide6 import QtWidgets
 
 from .. import _locale
 from .._config import _schema as schema
+from .._config._shape_color import RGB_CHANNEL_COUNT
 from .._utils.qt import new_icon
 from ._integer_slider import IntegerSlider
 
@@ -667,7 +668,7 @@ def _build_beta_badge(*, text: str) -> QtWidgets.QLabel:
 
 
 def _parse_rgb(*, value: object) -> tuple[int, int, int]:
-    assert isinstance(value, list) and len(value) == 3
+    assert isinstance(value, list) and len(value) == RGB_CHANNEL_COUNT
     r, g, b = value
     assert isinstance(r, int) and isinstance(g, int) and isinstance(b, int)
     return r, g, b

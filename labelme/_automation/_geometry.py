@@ -10,7 +10,12 @@ import skimage
 from loguru import logger
 from numpy.typing import NDArray
 
+from .._shape import CIRCLE_POINT_COUNT
+from .._shape import MIN_POLYGON_POINT_COUNT
 from .._shape import Shape
+
+# Highest value of the mask polygonization detail slider.
+_DETAIL_MAX: Final = 100
 
 
 class Circle(NamedTuple):
@@ -37,7 +42,7 @@ def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
     raises ValueError for shape types that have no bbox interpretation.
     """
     if shape.shape_type == "circle":
-        if len(shape.points) != 2:
+        if len(shape.points) != CIRCLE_POINT_COUNT:
             return None
         center, edge = shape.points
         radius = float(np.linalg.norm(edge - center))
@@ -85,7 +90,7 @@ def compute_oriented_rectangle_from_mask(
     if not mask.any():
         return None
     ys, xs = np.nonzero(mask)
-    if len(xs) < 3:
+    if len(xs) < MIN_POLYGON_POINT_COUNT:
         return None
     points = np.stack([xs, ys], axis=1).astype(np.float64)
     try:
@@ -165,7 +170,7 @@ def _compute_signed_area(points: NDArray[np.float64], /) -> float:
 def _compute_polygon_deviation(*, detail: int) -> float:
     # The default maps to half a pixel; the curve reserves finer control near
     # the detailed end, where small slider changes are most visible.
-    detail_loss = (100 - detail) / 20
+    detail_loss = (_DETAIL_MAX - detail) / 20
     return 0.5 * detail_loss**1.5
 
 
@@ -244,7 +249,7 @@ def _simplify_contour(
 def compute_polygons_from_mask(
     mask: NDArray[np.bool_], detail: int = 80
 ) -> list[NDArray[np.float32]]:
-    if not 0 <= detail <= 100:
+    if not 0 <= detail <= _DETAIL_MAX:
         raise ValueError(f"detail must be between 0 and 100, got {detail}")
     if not mask.any():
         logger.warning("No contour found, so returning no polygons.")
@@ -275,6 +280,6 @@ def compute_polygons_from_mask(
             detail=detail,
             mask_shape=mask.shape,
         )
-        if len(polygon) >= 3:
+        if len(polygon) >= MIN_POLYGON_POINT_COUNT:
             polygons.append(polygon)
     return polygons

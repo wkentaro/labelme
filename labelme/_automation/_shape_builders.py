@@ -8,6 +8,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 from numpy.typing import NDArray
 
+from .._shape import MIN_POLYGON_POINT_COUNT
 from .._shape import Shape
 from ._geometry import Circle
 from ._geometry import _round_bbox_to_int
@@ -85,7 +86,7 @@ def _build_shapes_from_detection(
                 description=detection.description,
             )
             for polygon in polygons
-            if len(polygon) >= 3
+            if len(polygon) >= MIN_POLYGON_POINT_COUNT
         ]
     if shape_type == "mask":
         if detection.bbox is None or detection.mask is None:

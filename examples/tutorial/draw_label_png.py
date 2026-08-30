@@ -2,11 +2,15 @@
 
 import argparse
 from pathlib import Path
+from typing import Final
 
 import imgviz
 import matplotlib.pyplot as plt
 import numpy as np
 from loguru import logger
+
+# json_to_dataset stores the ignore label as 255 in the 8-bit label PNG.
+_UNLABELED_PNG_VALUE: Final = 255
 
 
 def main() -> None:
@@ -38,7 +42,7 @@ def main() -> None:
 
     label = imgviz.io.imread(args.label_png)
     label = label.astype(np.int32)
-    label[label == 255] = -1
+    label[label == _UNLABELED_PNG_VALUE] = -1
 
     unique_label_values = np.unique(label)
 

@@ -26,6 +26,15 @@ ShapeType: TypeAlias = Literal[
 
 POLYLINE_SHAPE_TYPES: Final[tuple[ShapeType, ...]] = ("polygon", "linestrip")
 
+# Point counts each shape type's geometry is defined by. A shape being drawn
+# holds fewer points than these until the user finishes it.
+CIRCLE_POINT_COUNT: Final = 2
+LINE_POINT_COUNT: Final = 2
+RECTANGLE_POINT_COUNT: Final = 2
+ORIENTED_RECTANGLE_POINT_COUNT: Final = 4
+MIN_LINESTRIP_POINT_COUNT: Final = 2
+MIN_POLYGON_POINT_COUNT: Final = 3
+
 
 @dataclasses.dataclass(eq=False)
 class Shape:
@@ -71,9 +80,12 @@ class Shape:
     def can_remove_point(self) -> bool:
         if not self.can_add_point():
             return False
-        if self.shape_type == "polygon" and len(self.points) <= 3:
+        if self.shape_type == "polygon" and len(self.points) <= MIN_POLYGON_POINT_COUNT:
             return False
-        if self.shape_type == "linestrip" and len(self.points) <= 2:
+        if (
+            self.shape_type == "linestrip"
+            and len(self.points) <= MIN_LINESTRIP_POINT_COUNT
+        ):
             return False
         return True
 
@@ -157,7 +169,10 @@ def nearest_rotation_point_index(
     scale: float,
     epsilon: float,
 ) -> int | None:
-    if shape.shape_type != "oriented_rectangle" or len(shape.points) != 4:
+    if (
+        shape.shape_type != "oriented_rectangle"
+        or len(shape.points) != ORIENTED_RECTANGLE_POINT_COUNT
+    ):
         return None
     handles = (shape.points + np.roll(shape.points, 1, axis=0)) / 2
     distances = np.linalg.norm((handles - point) * scale, axis=1)
@@ -165,7 +180,10 @@ def nearest_rotation_point_index(
 
 
 def get_rotation_handle(*, shape: Shape, index: int) -> npt.NDArray[np.float64]:
-    if shape.shape_type != "oriented_rectangle" or len(shape.points) != 4:
+    if (
+        shape.shape_type != "oriented_rectangle"
+        or len(shape.points) != ORIENTED_RECTANGLE_POINT_COUNT
+    ):
         raise ValueError(
             "Rotation handles are only defined for 4-point oriented rectangles, "
             f"got shape_type={shape.shape_type!r}, len(points)={len(shape.points)}"
@@ -178,7 +196,7 @@ def oriented_rectangle_center(*, shape: Shape) -> npt.NDArray[np.float64]:
         raise ValueError(
             f"Center is only defined for oriented rectangles, got {shape.shape_type!r}"
         )
-    if len(shape.points) != 4:
+    if len(shape.points) != ORIENTED_RECTANGLE_POINT_COUNT:
         raise ValueError(
             f"Oriented rectangle center requires 4 points, got {len(shape.points)}"
         )
@@ -225,7 +243,10 @@ def rotate(
             f"got {shape.shape_type!r}"
         )
     points = shape.points if source_points is None else source_points
-    if len(points) != 4 or len(shape.points) != 4:
+    if (
+        len(points) != ORIENTED_RECTANGLE_POINT_COUNT
+        or len(shape.points) != ORIENTED_RECTANGLE_POINT_COUNT
+    ):
         raise ValueError(
             "Shape rotation requires 4 points, got "
             f"len(source_points)={len(points)}, len(shape.points)={len(shape.points)}"
