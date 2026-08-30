@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import ClassVar
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -10,7 +11,7 @@ from ._info_button import InfoButton
 
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
-    _available_models: list[tuple[str, str]] = [
+    _available_models: ClassVar[list[tuple[str, str]]] = [
         ("sam3:latest", "SAM3 (smart)"),
         ("yoloworld:latest", "YOLO-World (fast)"),
     ]

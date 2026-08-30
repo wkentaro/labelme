@@ -27,6 +27,9 @@ def format_shape_label(shape: Shape) -> str:
     return text
 
 
+_INVALID_MODEL_INDEX: Final = QtCore.QModelIndex()
+
+
 class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
     _DOT: Final = " ●"
 
@@ -137,7 +140,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         row: int,
         count: int,
         parent: QtCore.QModelIndex
-        | QtCore.QPersistentModelIndex = QtCore.QModelIndex(),
+        | QtCore.QPersistentModelIndex = _INVALID_MODEL_INDEX,
     ) -> bool:
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()

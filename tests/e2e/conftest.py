@@ -5,6 +5,7 @@ import sys
 from collections.abc import Callable
 from collections.abc import Generator
 from pathlib import Path
+from typing import Final
 
 import pytest
 from PySide6 import QtGui
@@ -23,6 +24,8 @@ from labelme.__main__ import main
 from labelme._app import MainWindow
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.label_dialog import LabelDialog
+
+_DEFAULT_WINDOW_SIZE: Final = QSize(800, 600)
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
@@ -100,7 +103,7 @@ def main_win(
         config_file: str | Path | None = None,
         config_overrides: dict | None = None,
         output_dir: str | Path | None = None,
-        size: QSize | None = QSize(800, 600),
+        size: QSize | None = _DEFAULT_WINDOW_SIZE,
     ) -> MainWindow:
         argv = ["labelme"]
 
