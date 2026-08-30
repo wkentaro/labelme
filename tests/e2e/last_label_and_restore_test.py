@@ -82,7 +82,7 @@ def test_restore_last_shape_via_undo(
     canvas = raw_win._canvas_widgets.canvas
 
     _draw_and_commit_polygon(qtbot=qtbot, win=raw_win, label="restore_me")
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
 
     assert len(canvas.shapes) == 1
     original_points = [
@@ -151,7 +151,7 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
 
     label_path = tmp_path / "manual-save.json"
     monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(label_path))
-    raw_win._save_label_file()
+    raw_win._save_label_file(save_as=False)
 
     with label_path.open() as f:
         assert json.load(f)["shapes"] == []
@@ -252,7 +252,7 @@ def test_save_keeps_shape_undo_disabled_while_drawing(
         "prompt_save_file_path",
         lambda: str(tmp_path / "save-while-drawing.json"),
     )
-    win._save_label_file()
+    win._save_label_file(save_as=False)
 
     assert canvas.is_drawing
     assert not win._actions.undo.isEnabled()

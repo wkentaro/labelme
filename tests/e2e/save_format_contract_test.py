@@ -299,7 +299,7 @@ def test_title_returns_to_clean_after_save(
 
     label_path = tmp_path / "2011_000003.json"
     monkeypatch.setattr(win, "prompt_save_file_path", lambda: str(label_path))
-    win._save_label_file()
+    win._save_label_file(save_as=False)
 
     assert label_path.exists()
     assert not win.windowTitle().endswith("*")

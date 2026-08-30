@@ -378,7 +378,7 @@ def test_annotate_shape_types(
     if expected_num_points is not None:
         assert len(shapes[0].points) == expected_num_points
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(out_file)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

@@ -40,8 +40,8 @@ def install_fake_osam_session(
 def _propose(
     session: AiAssistSession,
     *,
-    prompt_kind: _ai_assist.AiPromptKind = "points",
-    existing_shapes: list[Shape] | None = None,
+    prompt_kind: _ai_assist.AiPromptKind,
+    existing_shapes: list[Shape] | None,
 ) -> AiAssistProposal:
     if prompt_kind == "box":
         points = np.zeros((2, 2))
@@ -78,7 +78,7 @@ def test_point_prompt_uses_best_answer_and_reuses_session(
     created_model_names = install_fake_osam_session(response)
     session = AiAssistSession(model_name="a", output_format="rectangle")
 
-    proposal = _propose(session)
+    proposal = _propose(session, prompt_kind="points", existing_shapes=None)
 
     assert len(proposal.new_shapes) == 1
     assert proposal.new_shapes[0].shape_type == "rectangle"
@@ -87,11 +87,11 @@ def test_point_prompt_uses_best_answer_and_reuses_session(
         [[0, 0], [10, 10]],
     )
 
-    _propose(session)
+    _propose(session, prompt_kind="points", existing_shapes=None)
     assert created_model_names == ["a"]
 
     session.model_name = "b"
-    _propose(session)
+    _propose(session, prompt_kind="points", existing_shapes=None)
     assert created_model_names == ["a", "b"]
 
 
@@ -119,9 +119,13 @@ def test_polygon_detail_controls_ai_polygon_points(
     install_fake_osam_session(response)
     session = AiAssistSession(polygon_detail=100)
 
-    maximum_detail = _propose(session).new_shapes
+    maximum_detail = _propose(
+        session, prompt_kind="points", existing_shapes=None
+    ).new_shapes
     session.polygon_detail = 80
-    balanced_detail = _propose(session).new_shapes
+    balanced_detail = _propose(
+        session, prompt_kind="points", existing_shapes=None
+    ).new_shapes
 
     assert len(maximum_detail[0].points) == 8
     assert len(balanced_detail[0].points) == 4
@@ -139,7 +143,9 @@ def test_polygon_proposal_groups_disconnected_lands(
     )
     install_fake_osam_session(response)
 
-    shapes = _propose(AiAssistSession()).new_shapes
+    shapes = _propose(
+        AiAssistSession(), prompt_kind="points", existing_shapes=None
+    ).new_shapes
 
     assert len(shapes) == 2
     assert shapes[0].group_id == shapes[1].group_id
@@ -153,7 +159,7 @@ def test_sam3_point_prompt_is_rejected_before_session_creation(
     session = AiAssistSession(model_name="sam3:latest")
 
     with pytest.raises(ValueError, match="does not support point prompts"):
-        _propose(session)
+        _propose(session, prompt_kind="points", existing_shapes=None)
 
     assert created_model_names == []
 
@@ -165,7 +171,7 @@ def test_sam3_box_prompt_reaches_session(
     created_model_names = install_fake_osam_session(response)
     session = AiAssistSession(model_name="sam3:latest")
 
-    proposal = _propose(session, prompt_kind="box")
+    proposal = _propose(session, prompt_kind="box", existing_shapes=None)
 
     assert proposal.new_shapes == []
     assert proposal.matching_existing_shapes == []
@@ -175,8 +181,8 @@ def test_sam3_box_prompt_reaches_session(
 def _annotation(
     score: float | None,
     *,
-    bbox: tuple[int, int, int, int] | None = None,
-    mask: NDArray[np.bool_] | None = None,
+    bbox: tuple[int, int, int, int] | None,
+    mask: NDArray[np.bool_] | None,
 ) -> osam.types.Annotation:
     bounding_box = (
         osam.types.BoundingBox(xmin=bbox[0], ymin=bbox[1], xmax=bbox[2], ymax=bbox[3])
@@ -201,9 +207,9 @@ def test_detections_from_annotations_empty_returns_empty() -> None:
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
     detections = _detections_from_annotations(
         [
-            _annotation(score=0.2, bbox=(0, 0, 1, 1)),
-            _annotation(score=0.9, bbox=(2, 2, 3, 3)),
-            _annotation(score=0.5, bbox=(4, 4, 5, 5)),
+            _annotation(score=0.2, bbox=(0, 0, 1, 1), mask=None),
+            _annotation(score=0.9, bbox=(2, 2, 3, 3), mask=None),
+            _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
         ]
     )
 
@@ -217,8 +223,8 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
 def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
     detections = _detections_from_annotations(
         [
-            _annotation(score=None, bbox=(0, 0, 1, 1)),
-            _annotation(score=0.5, bbox=(2, 2, 3, 3)),
+            _annotation(score=None, bbox=(0, 0, 1, 1), mask=None),
+            _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
         ]
     )
 
@@ -230,14 +236,16 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
 
 def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        [_annotation(score=0.5, bbox=(1, 2, 3, 4))]
+        [_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)]
     )
 
     assert detection.bbox == (1, 2, 3, 4)
 
 
 def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> None:
-    (detection,) = _detections_from_annotations([_annotation(score=0.5)])
+    (detection,) = _detections_from_annotations(
+        [_annotation(score=0.5, bbox=None, mask=None)]
+    )
 
     assert detection.bbox is None
     assert detection.mask is None
@@ -273,8 +281,8 @@ def test_point_prompt_reports_best_matching_existing_shape(
     response = osam.types.GenerateResponse(
         model="stub",
         annotations=[
-            _annotation(score=0.9, bbox=(20, 20, 30, 30)),
-            _annotation(score=0.8, bbox=(0, 0, 10, 10)),
+            _annotation(score=0.9, bbox=(20, 20, 30, 30), mask=None),
+            _annotation(score=0.8, bbox=(0, 0, 10, 10), mask=None),
         ],
     )
     install_fake_osam_session(response)
@@ -317,7 +325,7 @@ def test_point_prompt_reports_matching_existing_shape(
 ) -> None:
     response = osam.types.GenerateResponse(
         model="stub",
-        annotations=[_annotation(score=0.9, bbox=proposal_bbox)],
+        annotations=[_annotation(score=0.9, bbox=proposal_bbox, mask=None)],
     )
     install_fake_osam_session(response)
     existing = Shape(
@@ -326,7 +334,7 @@ def test_point_prompt_reports_matching_existing_shape(
     )
     session = AiAssistSession(output_format="rectangle")
 
-    proposal = _propose(session, existing_shapes=[existing])
+    proposal = _propose(session, existing_shapes=[existing], prompt_kind="points")
 
     assert proposal.new_shapes == []
     assert len(proposal.matching_existing_shapes) == 1
@@ -340,8 +348,8 @@ def test_sweep_suppresses_only_proposals_matching_existing_shapes(
     response = osam.types.GenerateResponse(
         model="stub",
         annotations=[
-            _annotation(score=0.9, bbox=(0, 0, 10, 10)),
-            _annotation(score=0.8, bbox=(20, 20, 30, 30)),
+            _annotation(score=0.9, bbox=(0, 0, 10, 10), mask=None),
+            _annotation(score=0.8, bbox=(20, 20, 30, 30), mask=None),
         ],
     )
     install_fake_osam_session(response)
@@ -368,7 +376,7 @@ def test_single_result_sweep_reports_matching_existing_shape(
 ) -> None:
     response = osam.types.GenerateResponse(
         model="stub",
-        annotations=[_annotation(score=0.9, bbox=(0, 0, 10, 10))],
+        annotations=[_annotation(score=0.9, bbox=(0, 0, 10, 10), mask=None)],
     )
     install_fake_osam_session(response)
     session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
@@ -391,8 +399,8 @@ def make_duplicate_sweep_session(
     response = osam.types.GenerateResponse(
         model="stub",
         annotations=[
-            _annotation(score=0.9, bbox=(0, 0, 10, 10)),
-            _annotation(score=0.8, bbox=(0, 0, 10, 10)),
+            _annotation(score=0.9, bbox=(0, 0, 10, 10), mask=None),
+            _annotation(score=0.8, bbox=(0, 0, 10, 10), mask=None),
         ],
     )
     install_fake_osam_session(response)
@@ -417,7 +425,9 @@ def test_sweep_matches_existing_shape_after_greedy_suppression(
 def test_sweep_still_applies_greedy_suppression_among_new_detections(
     duplicate_sweep_session: AiAssistSession,
 ) -> None:
-    proposal = _propose(duplicate_sweep_session, prompt_kind="box")
+    proposal = _propose(
+        duplicate_sweep_session, prompt_kind="box", existing_shapes=None
+    )
 
     assert len(proposal.new_shapes) == 1
     np.testing.assert_array_equal(

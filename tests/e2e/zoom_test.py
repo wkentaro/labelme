@@ -137,7 +137,7 @@ def test_manual_zoom_only_scrolls_the_overflowing_axis(
     pause: bool,
 ) -> None:
     _win._set_zoom_to_original()
-    _win._set_zoom(value=110)
+    _win._set_zoom(value=110, pos=None)
 
     scroll_bars = _win._canvas_widgets.scroll_bars
     qtbot.waitUntil(
@@ -173,7 +173,7 @@ def test_zoom_step_keeps_fractional_precision(
     pause: bool,
 ) -> None:
     _win._canvas_widgets.zoom_widget.setValue(105)
-    _win._add_zoom(increment=1.1)
+    _win._add_zoom(increment=1.1, pos=None)
     # 105 * 1.1 = 115.5; the old integer widget clamped this up to 116.
     assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(115.5)
 
@@ -227,7 +227,7 @@ def _make_scrolled_win(
         config_overrides={"keep_prev_scale": True},
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    win._set_zoom(value=_VIEWPORT_ZOOM)
+    win._set_zoom(value=_VIEWPORT_ZOOM, pos=None)
     scroll_values = _set_scroll_bars_to_fraction(
         qtbot=qtbot,
         win=win,
@@ -253,7 +253,7 @@ def test_navigation_restores_each_image_viewport(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
-    win._set_zoom(value=_VIEWPORT_ZOOM)
+    win._set_zoom(value=_VIEWPORT_ZOOM, pos=None)
     scroll_bars = win._canvas_widgets.scroll_bars
     first_scroll_values = _set_scroll_bars_to_fraction(
         qtbot=qtbot,
@@ -287,7 +287,7 @@ def test_navigation_restores_each_image_viewport(
             assert bar.value() == bar.minimum()
         assert canvas.get_view_offset().isNull()
 
-    win._set_zoom(value=250)
+    win._set_zoom(value=250, pos=None)
     second_scroll_values = _set_scroll_bars_to_fraction(
         qtbot=qtbot,
         win=win,
@@ -363,7 +363,7 @@ def test_navigation_restores_viewport_after_layout_settles(
     qtbot.waitUntil(lambda: v_bar.maximum() > 0)
     v_bar.setValue(v_bar.maximum() * 2 // 3)
     with qtbot.waitSignal(v_bar.rangeChanged):
-        win._add_zoom(increment=0.9)
+        win._add_zoom(increment=0.9, pos=None)
 
     first_image_path = win._image_path
     assert first_image_path is not None
@@ -465,7 +465,7 @@ def _make_wheel_event(
     pos: QPointF,
     angle_delta: QPoint,
     modifiers: Qt.KeyboardModifier,
-    phase: Qt.ScrollPhase = Qt.ScrollPhase.NoScrollPhase,
+    phase: Qt.ScrollPhase,
 ) -> QtGui.QWheelEvent:
     # PySide6's QWheelEvent constructor takes positional args;
     # the 8-arg form matches the modern Qt6 signature.
@@ -527,6 +527,7 @@ def test_canvas_wheel_event_dispatches_signal(
             pos=QPointF(canvas.width() / 2, canvas.height() / 2),
             angle_delta=angle_delta,
             modifiers=modifiers,
+            phase=Qt.ScrollPhase.NoScrollPhase,
         )
     )
 
@@ -619,6 +620,7 @@ def test_ctrl_wheel_keeps_image_point_under_cursor(
                 pos=canvas.mapFrom(viewport, cursor),
                 angle_delta=QPoint(0, angle_delta),
                 modifiers=Qt.KeyboardModifier.ControlModifier,
+                phase=Qt.ScrollPhase.NoScrollPhase,
             ),
         )
         qtbot.waitUntil(

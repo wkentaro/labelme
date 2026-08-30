@@ -275,7 +275,7 @@ def test_add_point_on_edge(
     shape = next(s for s in canvas.shapes if s.label == label)
     num_points_before = len(shape.points)
 
-    annotated_win._switch_canvas_mode(edit=True)
+    annotated_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     p0, p1 = shape.points[0], shape.points[1]
@@ -408,7 +408,7 @@ def test_draw_actions_disable_only_active_mode(
         else:
             assert draw_action.isEnabled()
 
-    annotated_win._switch_canvas_mode(edit=True)
+    annotated_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
     assert canvas.mode == _CanvasMode.EDIT
 
@@ -632,7 +632,7 @@ def test_select_nonpolygon_shape(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert shape.shape_type == create_mode
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     click_pos = _shape_bounds(shape=shape).center() + QPointF(*select_offset)
@@ -731,7 +731,7 @@ def test_remove_point_blocked_at_minimum(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert len(shape.points) == expected_points
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     _click_to_remove_point(
@@ -769,7 +769,7 @@ def test_select_point_shape_by_click(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label="pt")
     assert shape.shape_type == "point"
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     _click_to_select(

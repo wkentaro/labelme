@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import copy
 import re
-from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 from typing import cast
@@ -22,13 +21,11 @@ here = Path(__file__).resolve().parent
 def _update_dict(
     target_dict: dict[str, object],
     new_dict: dict[str, object],
-    validate_item: Callable[[tuple[str, ...], object], None] | None = None,
-    key_path: tuple[str, ...] = (),
+    key_path: tuple[str, ...],
 ) -> None:
     for key, value in new_dict.items():
         item_path = (*key_path, key)
-        if validate_item:
-            validate_item(item_path, value)
+        _validate_config_item(item_path, value)
         if key not in target_dict:
             raise ValueError(f"Unexpected key in config: {key}")
         if not isinstance(target_dict[key], dict):
@@ -51,7 +48,6 @@ def _update_dict(
         _update_dict(
             cast(dict[str, object], target_dict[key]),
             cast(dict[str, object], value),
-            validate_item=validate_item,
             key_path=item_path,
         )
 
@@ -195,13 +191,13 @@ def load_config(config_file: Path | None, config_overrides: dict) -> dict:
             _migrate_config_from_file(config_from_yaml=config_from_yaml)
             if "shape_color" in config_from_yaml:
                 validate_shape_color(config=config_from_yaml["shape_color"])
-            _update_dict(config, config_from_yaml, validate_item=_validate_config_item)
+            _update_dict(config, config_from_yaml, key_path=())
 
     config_overrides = copy.deepcopy(config_overrides)
     migrate_shape_color(config=config_overrides)
     if "shape_color" in config_overrides:
         validate_shape_color(config=config_overrides["shape_color"])
-    _update_dict(config, config_overrides, validate_item=_validate_config_item)
+    _update_dict(config, config_overrides, key_path=())
 
     if not config["labels"] and config["validate_label"]:
         raise ValueError("labels must be specified when validate_label is enabled")

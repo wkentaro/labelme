@@ -11,18 +11,16 @@ import tifffile
 from labelme._label_file import read_image_file
 
 
-def _make_image(
-    tmp_path: Path, filename: str, mode: str = "RGB", size: tuple[int, int] = (100, 100)
-) -> Path:
+def _make_image(tmp_path: Path, filename: str, mode: str) -> Path:
     channels = 4 if mode == "RGBA" else 3
-    arr = np.random.randint(0, 255, (size[1], size[0], channels), dtype=np.uint8)
+    arr = np.random.randint(0, 255, (100, 100, channels), dtype=np.uint8)
     path = tmp_path / filename
     PIL.Image.fromarray(arr, mode=mode).save(str(path))
     return path
 
 
 def test_tiff_without_alpha_encoded_as_jpeg(tmp_path: Path) -> None:
-    path = _make_image(tmp_path, "test.tiff")
+    path = _make_image(tmp_path, "test.tiff", mode="RGB")
     data = read_image_file(filename=str(path))
     assert data[:2] == b"\xff\xd8"
 
@@ -42,13 +40,13 @@ def test_corrupt_tiff_raises_os_error(tmp_path: Path) -> None:
 
 
 def test_jpeg_returns_raw_bytes(tmp_path: Path) -> None:
-    path = _make_image(tmp_path, "test.jpg")
+    path = _make_image(tmp_path, "test.jpg", mode="RGB")
     data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
 
 
 def test_png_returns_raw_bytes(tmp_path: Path) -> None:
-    path = _make_image(tmp_path, "test.png")
+    path = _make_image(tmp_path, "test.png", mode="RGB")
     data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
 

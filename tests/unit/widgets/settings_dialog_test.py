@@ -41,8 +41,8 @@ def _make_dialog(
     qtbot: QtBot,
     applied: Applied,
     overrides: dict,
-    succeed: bool = True,
-    previewed: Previewed | None = None,
+    succeed: bool,
+    previewed: Previewed | None,
 ) -> SettingsDialog:
     config = load_config(config_file=None, config_overrides=overrides)
 
@@ -66,7 +66,9 @@ def _make_dialog(
 
 @pytest.fixture
 def dialog(qtbot: QtBot, applied: Applied) -> SettingsDialog:
-    return _make_dialog(qtbot=qtbot, applied=applied, overrides={})
+    return _make_dialog(
+        qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
+    )
 
 
 def test_no_apply_on_construction(dialog: SettingsDialog, applied: Applied) -> None:
@@ -101,6 +103,8 @@ def test_unbounded_integer_edit_accepts_python_ints(
         qtbot=qtbot,
         applied=applied,
         overrides={"shape_color": {"auto": {"shift": initial}}},
+        succeed=True,
+        previewed=None,
     )
     edit = dialog._editors[("shape_color", "auto", "shift")]
     assert isinstance(edit, QtWidgets.QLineEdit)
@@ -180,6 +184,7 @@ def test_shape_color_picker_applies_rgb(
         applied=applied,
         overrides={"shape_color": {"mode": "uniform"}},
         previewed=previewed,
+        succeed=True,
     )
     swatch = dialog._editors[("shape_color", "uniform", "color")]
     assert isinstance(swatch, _ColorSwatchButton)
@@ -285,7 +290,13 @@ def test_language_applies_discovered_locale(
 def test_language_unknown_code_falls_back_to_system(
     qtbot: QtBot, applied: Applied
 ) -> None:
-    dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={"language": "xx_ZZ"})
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"language": "xx_ZZ"},
+        succeed=True,
+        previewed=None,
+    )
     combo = dialog._editors[("language",)]
     assert isinstance(combo, QtWidgets.QComboBox)
     assert combo.currentData() is None
@@ -299,6 +310,8 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
         qtbot=qtbot,
         applied=applied,
         overrides={"labels": ["cat"], "validate_label": "exact"},
+        succeed=True,
+        previewed=None,
     )
     warned: list[str] = []
     monkeypatch.setattr(
@@ -338,6 +351,7 @@ def test_failed_apply_reverts_checkbox(qtbot: QtBot, applied: Applied) -> None:
         applied=applied,
         overrides={"display_label_popup": True},
         succeed=False,
+        previewed=None,
     )
     checkbox = dialog._editors[("display_label_popup",)]
     assert isinstance(checkbox, QtWidgets.QCheckBox)
@@ -350,7 +364,11 @@ def test_failed_apply_reverts_checkbox(qtbot: QtBot, applied: Applied) -> None:
 
 def test_failed_apply_reverts_labels_editor(qtbot: QtBot, applied: Applied) -> None:
     dialog = _make_dialog(
-        qtbot=qtbot, applied=applied, overrides={"labels": ["cat"]}, succeed=False
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"labels": ["cat"]},
+        succeed=False,
+        previewed=None,
     )
     edit = dialog._editors[("labels",)]
     assert isinstance(edit, _PlainTextEdit)
@@ -400,7 +418,9 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
     assert translator.load(str(translation_path))
     qapp.installTranslator(translator)
     try:
-        dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={})
+        dialog = _make_dialog(
+            qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
+        )
         navigation = dialog._page._navigation
         long_title = "Продолжение работы между изображениями"
 
@@ -569,7 +589,9 @@ def test_large_font_uses_default_size_with_scrolling(
     large_font.setPointSize(24)
     QtWidgets.QApplication.setFont(large_font)
     try:
-        dialog = _make_dialog(qtbot=qtbot, applied=applied, overrides={})
+        dialog = _make_dialog(
+            qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
+        )
         with qtbot.waitExposed(dialog):
             dialog.show()
 

@@ -34,7 +34,7 @@ def _unit_square_polygon() -> Shape:
     )
 
 
-def _render(shape: Shape, *, show_label: bool, scale: float = 1.0) -> QtGui.QImage:
+def _render(shape: Shape, *, show_label: bool, scale: float) -> QtGui.QImage:
     image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
     image.fill(QtGui.QColor(255, 255, 255))
     painter = QtGui.QPainter(image)
@@ -125,8 +125,8 @@ def test_show_labels_draws_text_above_shape(qapp: QtGui.QGuiApplication) -> None
     # The polygon top edge sits at y=50, so the label text lands above it.
     assert (
         _diff_rows(
-            _render(shape, show_label=True),
-            _render(shape, show_label=False),
+            _render(shape, show_label=True, scale=1.0),
+            _render(shape, show_label=False, scale=1.0),
             bottom=48,
         )
         > 0
@@ -139,8 +139,8 @@ def test_empty_label_draws_no_text(qapp: QtGui.QGuiApplication) -> None:
         shape = _polygon(label=label)
         assert (
             _diff_rows(
-                _render(shape, show_label=True),
-                _render(shape, show_label=False),
+                _render(shape, show_label=True, scale=1.0),
+                _render(shape, show_label=False, scale=1.0),
                 bottom=_SIZE,
             )
             == 0
@@ -158,8 +158,8 @@ def test_point_shape_label_is_drawn(qapp: QtGui.QGuiApplication) -> None:
     )
     assert (
         _diff_rows(
-            _render(shape, show_label=True),
-            _render(shape, show_label=False),
+            _render(shape, show_label=True, scale=1.0),
+            _render(shape, show_label=False, scale=1.0),
             bottom=_SIZE,
         )
         > 0
@@ -203,7 +203,7 @@ def test_mask_outline_aligns_with_fill(qapp: QtGui.QGuiApplication) -> None:
     # The mask fill is rasterized at the correct position; the contour outline
     # must be centered on that same block, not sit a pixel off from it.
     shape = _mask_shape()
-    image = _render(shape=shape, show_label=False)
+    image = _render(shape=shape, show_label=False, scale=1.0)
     outline = _outline_center(image=image)
     assert shape.mask is not None
     ys, xs = np.nonzero(shape.mask)

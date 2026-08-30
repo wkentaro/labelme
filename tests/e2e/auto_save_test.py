@@ -262,7 +262,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     assert _raw_auto_save_win._actions.save_auto.isChecked()
 
     canvas = _raw_auto_save_win._canvas_widgets.canvas
-    _raw_auto_save_win._switch_canvas_mode(edit=True)
+    _raw_auto_save_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
@@ -341,7 +341,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     )
 
     canvas = _raw_auto_save_win._canvas_widgets.canvas
-    _raw_auto_save_win._switch_canvas_mode(edit=True)
+    _raw_auto_save_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)

@@ -96,7 +96,7 @@ markers = [
 ]
 
 [tool.gruff.lint]
-select = ["GR003", "GR004", "GR006"]
+select = ["GR002", "GR003", "GR004", "GR006"]
 
 [tool.ruff.lint]
 select = [

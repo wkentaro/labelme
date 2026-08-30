@@ -179,7 +179,7 @@ def test_undo_after_delete_file_does_not_restore_shapes(
     monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
 
     # A prior shape edit in the same session enables the undo action.
-    win._switch_canvas_mode(edit=True)
+    win._switch_canvas_mode(edit=True, create_mode=None)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     win.delete_selected_shapes()
     qtbot.wait(50)

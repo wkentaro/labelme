@@ -519,7 +519,7 @@ class Canvas(QtWidgets.QWidget):
 
     def enterEvent(self, a0: QtCore.QEvent) -> None:
         self._apply_cursor(self._cursor)
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
         if self._set_highlight(
@@ -530,11 +530,11 @@ class Canvas(QtWidgets.QWidget):
         ):
             self.update()
         self._release_cursor()
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def focusOutEvent(self, a0: QtGui.QFocusEvent) -> None:
         self._release_cursor()
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def set_editing(self, value: bool = True) -> None:
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
@@ -593,7 +593,7 @@ class Canvas(QtWidgets.QWidget):
     def _is_rotation_point_selected(self) -> bool:
         return self._hovered_rotation is not None
 
-    def _update_status(self, extra_messages: list[str] | None = None) -> None:
+    def _update_status(self, extra_messages: list[str] | None) -> None:
         messages: list[str] = []
         if self.mode == _CanvasMode.CREATE:
             messages.append(self.tr("Creating %r") % self.create_mode)
@@ -697,14 +697,14 @@ class Canvas(QtWidgets.QWidget):
         self._apply_cursor(CursorRole.DRAW)
         if self._current is None:
             self.update()
-            self._update_status()
+            self._update_status(extra_messages=None)
             return
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         pos = self._project_drawing_pos_into_image(pos=pos)
         self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
         assert len(self._line.points) == len(self._line.point_labels)
         self.update()
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def _project_drawing_pos_into_image(self, pos: QPointF) -> QPointF:
         current = self._current
@@ -820,7 +820,7 @@ class Canvas(QtWidgets.QWidget):
         elif self.selected_shapes:
             self._selected_shapes_copy = [s.copy() for s in self.selected_shapes]
             self.update()
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def _continue_left_button_drag(
         self, pos: QPointF, event: QtGui.QMouseEvent
@@ -1006,7 +1006,7 @@ class Canvas(QtWidgets.QWidget):
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def _dispatch_pointer_press(self, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         self._clear_ai_existing_shape_highlights()
@@ -1206,7 +1206,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent) -> None:
         self._dispatch_pointer_release(event=a0)
         self._commit_pending_shape_move()
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def _dispatch_pointer_release(self, event: QtGui.QMouseEvent) -> None:
         button = event.button()
@@ -1531,7 +1531,7 @@ class Canvas(QtWidgets.QWidget):
             QtGui.QPainter.RenderHint.SmoothPixmapTransform,
         ):
             painter.setRenderHint(hint)
-        painter.translate(self._compute_image_origin_offset() * self.scale)
+        painter.translate(self._compute_image_origin_offset(area=None) * self.scale)
 
     def _render_layers(self) -> tuple[Callable[[QtGui.QPainter], None], ...]:
         # Order is z-order, back-to-front.
@@ -1565,7 +1565,7 @@ class Canvas(QtWidgets.QWidget):
         if self._allow_out_of_bounds_points:
             # The cursor may be in the margin around the image, so span the whole
             # viewport instead of stopping the lines at the image edge.
-            offset = self._compute_image_origin_offset() * self.scale
+            offset = self._compute_image_origin_offset(area=None) * self.scale
             area = super().size()
             left = int(-offset.x())
             top = int(-offset.y())
@@ -1707,7 +1707,7 @@ class Canvas(QtWidgets.QWidget):
         return proposal.new_shapes
 
     def transform_widget_point_to_image(self, point: QPointF) -> QPointF:
-        origin = self._compute_image_origin_offset()
+        origin = self._compute_image_origin_offset(area=None)
         image_x = point.x() / self.scale - origin.x()
         image_y = point.y() / self.scale - origin.y()
         return QPointF(image_x, image_y)
@@ -1717,7 +1717,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> QPointF:
         return (point + self._compute_image_origin_offset(area=area)) * self.scale
 
-    def _compute_image_origin_offset(self, area: QtCore.QSize | None = None) -> QPointF:
+    def _compute_image_origin_offset(self, area: QtCore.QSize | None) -> QPointF:
         if area is None:
             area = super().size()
         scaled_w = self.pixmap.width() * self.scale
@@ -1896,7 +1896,7 @@ class Canvas(QtWidgets.QWidget):
                 self._move_by_keyboard(QPointF(MOVE_SPEED, 0.0))
             elif a0.matches(QtGui.QKeySequence.StandardKey.SelectAll):
                 self.select_shapes(shapes=self.shapes[:])
-        self._update_status()
+        self._update_status(extra_messages=None)
 
     def keyReleaseEvent(self, a0: QtGui.QKeyEvent) -> None:
         modifiers = a0.modifiers()

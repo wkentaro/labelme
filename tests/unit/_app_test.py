@@ -119,7 +119,7 @@ def _make_png_bytes(
     *,
     width: int,
     height: int,
-    image_format: QtGui.QImage.Format = QtGui.QImage.Format.Format_RGB32,
+    image_format: QtGui.QImage.Format,
 ) -> bytes:
     image = QtGui.QImage(width, height, image_format)
     image.fill(0)
@@ -132,7 +132,9 @@ def _make_png_bytes(
 def test_make_image_too_large_message_explains_allocation_limit(
     set_allocation_limit: Callable[[int], None],
 ) -> None:
-    image_data = _make_png_bytes(width=800, height=600)
+    image_data = _make_png_bytes(
+        width=800, height=600, image_format=QtGui.QImage.Format.Format_RGB32
+    )
     set_allocation_limit(1)
     assert QtGui.QImage.fromData(image_data).isNull()
 
@@ -200,7 +202,9 @@ def test_make_image_too_large_message_rounds_the_need_up(
     # 800x680 at 4 bytes/pixel needs ~2.1 MB: over a 2 MB limit, but plain
     # round() would render the contradictory "needs about 2 MB, but the
     # decode limit is 2 MB".
-    image_data = _make_png_bytes(width=800, height=680)
+    image_data = _make_png_bytes(
+        width=800, height=680, image_format=QtGui.QImage.Format.Format_RGB32
+    )
     set_allocation_limit(2)
     assert QtGui.QImage.fromData(image_data).isNull()
 
@@ -222,7 +226,9 @@ def test_make_image_too_large_message_is_none_within_allocation_limit(
 ) -> None:
     assert (
         _app._make_image_too_large_message(
-            image_data=_make_png_bytes(width=8, height=8)
+            image_data=_make_png_bytes(
+                width=8, height=8, image_format=QtGui.QImage.Format.Format_RGB32
+            )
         )
         is None
     )

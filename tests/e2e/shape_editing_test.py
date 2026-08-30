@@ -25,9 +25,8 @@ def _open_and_select_shape(
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    shape_index: int = 0,
-    config_overrides: dict[str, bool] | None = None,
-    output_dir: str | None = None,
+    config_overrides: dict[str, bool] | None,
+    output_dir: str | None,
 ) -> tuple[MainWindow, Canvas]:
     win = main_win(
         file_or_dir=str(data_path / "annotated/2011_000003.json"),
@@ -39,7 +38,7 @@ def _open_and_select_shape(
     canvas = win._canvas_widgets.canvas
     assert len(canvas.shapes) == 5
 
-    select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     return win, canvas
 
 
@@ -61,7 +60,11 @@ def test_select_shape(
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
-        main_win=main_win, qtbot=qtbot, data_path=data_path
+        main_win=main_win,
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=None,
+        output_dir=None,
     )
 
     assert canvas.selected_shapes[0].label == "person"
@@ -95,7 +98,7 @@ def test_copy_paste_shape(
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == original_label
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -124,7 +127,7 @@ def test_duplicate_shape(
 
     assert len(canvas.shapes) == num_shapes_before + 1
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -151,7 +154,7 @@ def test_delete_shape(
 
     assert len(canvas.shapes) == 4
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -182,7 +185,7 @@ def test_delete_undo_shape(
     assert len(canvas.shapes) == 5
     assert canvas.shapes[0].label == "person"
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

@@ -69,7 +69,7 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     original_centroid = _centroid(shape.points)
     original_edges = _edge_lengths(shape.points)
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     p0, p1 = original_points[0], original_points[1]
@@ -133,7 +133,7 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     )
     shape = next(s for s in canvas.shapes if s.label == "rect")
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     original_points = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
@@ -191,7 +191,7 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
     shape = next(s for s in canvas.shapes if s.label == "rect")
     num_points = len(shape.points)
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     # Hovering over an edge midpoint enables `add_point_to_edge` for polygons,

@@ -230,7 +230,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._shape_clipboard = ShapeClipboard(self)
 
-        self._label_dialog = self._make_label_dialog()
+        self._label_dialog = self._make_label_dialog(label_history=None)
 
         self._prev_opened_dir = None
         self._label_list_menu_origin: QtCore.QPoint | None = None
@@ -349,7 +349,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save = action(
             text=self.tr("&Save\n"),
-            slot=self._save_label_file,
+            slot=lambda: self._save_label_file(save_as=False),
             shortcut=shortcuts["save"],
             icon="phosphor/floppy-disk.svg",
             tip=self.tr("Save labels to file"),
@@ -508,7 +508,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         edit_mode = action(
             self.tr("Edit Shapes"),
-            lambda: self._switch_canvas_mode(edit=True),
+            lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcuts["edit_shape"],
             icon="phosphor/note-pencil.svg",
             tip=self.tr("Move and edit the selected shapes"),
@@ -631,7 +631,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoom_in = action(
             self.tr("Zoom &In"),
-            lambda _: self._add_zoom(increment=1.1),
+            lambda _: self._add_zoom(increment=1.1, pos=None),
             shortcuts["zoom_in"],
             icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Increase zoom level"),
@@ -639,7 +639,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoom_out = action(
             self.tr("&Zoom Out"),
-            lambda _: self._add_zoom(increment=0.9),
+            lambda _: self._add_zoom(increment=0.9, pos=None),
             shortcuts["zoom_out"],
             icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Decrease zoom level"),
@@ -1492,14 +1492,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def undo_shape_edit(self) -> None:
         self._canvas_widgets.canvas.restore_last_shape()
         self._docks.label_list.clear()
-        self._load_shapes(self._canvas_widgets.canvas.shapes)
+        self._load_shapes(self._canvas_widgets.canvas.shapes, replace=True)
         self.mark_dirty()
 
     def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def _on_drawing_polygon_changed(self, drawing: bool = True) -> None:
+    def _on_drawing_polygon_changed(self, drawing: bool) -> None:
         # In the middle of drawing, toggling between modes should be disabled.
         self._actions.edit_mode.setEnabled(not drawing)
         self._actions.undo_last_point.setEnabled(drawing)
@@ -1508,9 +1508,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._actions.delete.setEnabled(not drawing)
 
-    def _switch_canvas_mode(
-        self, edit: bool = True, create_mode: str | None = None
-    ) -> None:
+    def _switch_canvas_mode(self, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(edit)
         if create_mode is not None:
             self._canvas_widgets.canvas.create_mode = create_mode
@@ -1576,7 +1574,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label=label, existing_labels=existing_labels, policy=policy
         )
 
-    def _edit_label(self, value: object | None = None) -> None:
+    def _edit_label(self) -> None:
         items = self._docks.label_list.selected_items()
         if not items:
             logger.warning("No label is selected, so cannot edit label.")
@@ -1769,7 +1767,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._docks.label_list.remove_item(item)
         self._docks.label_list.item_dropped.connect(self._on_label_order_changed)
 
-    def _load_shapes(self, shapes: list[Shape], replace: bool = True) -> None:
+    def _load_shapes(self, shapes: list[Shape], replace: bool) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
@@ -1975,10 +1973,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_pan_request(self, step: QtCore.QPoint) -> None:
         # Pan moves the viewport opposite to the cursor delta so the image
         # tracks the grabbed point one-for-one in widget pixels.
-        self._move_canvas_view(step=QtCore.QPointF(step))
+        self._move_canvas_view(step=QtCore.QPointF(step), constrain_to_center=True)
 
     def _move_canvas_view(
-        self, step: QtCore.QPointF, *, constrain_to_center: bool = True
+        self, step: QtCore.QPointF, *, constrain_to_center: bool
     ) -> None:
         h_bar = self._canvas_widgets.scroll_bars[Qt.Orientation.Horizontal]
         v_bar = self._canvas_widgets.scroll_bars[Qt.Orientation.Vertical]
@@ -2013,7 +2011,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._prev_image_path = self._image_path
 
-    def _set_zoom(self, value: float, pos: QtCore.QPointF | None = None) -> None:
+    def _set_zoom(self, value: float, pos: QtCore.QPointF | None) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set zoom")
             return
@@ -2045,9 +2043,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
-        self._set_zoom(value=100)
+        self._set_zoom(value=100, pos=None)
 
-    def _add_zoom(self, increment: float, pos: QtCore.QPointF | None = None) -> None:
+    def _add_zoom(self, increment: float, pos: QtCore.QPointF | None) -> None:
         # Multiplicative stepping on a float widget; the QDoubleSpinBox rounds to
         # its decimal precision, so no integer ceil/floor clamping is needed.
         zoom_value = self._canvas_widgets.zoom_widget.value() * increment
@@ -2143,14 +2141,18 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             return read_label_file(filename=label_path)
         except LabelFileError as e:
-            self._show_file_open_error(path=label_path, file_kind="label", exc=e)
+            self._show_file_open_error(
+                path=label_path, file_kind="label", exc=e, extra=None
+            )
             return None
 
     def _read_image_as_annotation(self, image_path: str) -> Annotation | None:
         try:
             image_data = read_image_file(filename=image_path)
         except OSError as e:
-            self._show_file_open_error(path=image_path, file_kind="image", exc=e)
+            self._show_file_open_error(
+                path=image_path, file_kind="image", exc=e, extra=None
+            )
             return None
         return Annotation(
             image_path=os.path.basename(image_path),
@@ -2243,6 +2245,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_file_open_error(
                 path=image_or_label_path,
                 file_kind="image",
+                exc=None,
                 extra=extra,
             )
             return False
@@ -2264,7 +2267,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Record one baseline state. Loading carried-forward shapes separately
         # would create a false Undo step that discards them before any edit.
         carry_prev_shapes = bool(prev_shapes) and not shapes
-        self._load_shapes(shapes=prev_shapes if carry_prev_shapes else shapes)
+        self._load_shapes(
+            shapes=prev_shapes if carry_prev_shapes else shapes, replace=True
+        )
         flags.update(annotation.flags)
         self._load_flags(flags=flags, widget=self._docks.flag_list)
         if carry_prev_shapes:
@@ -2286,7 +2291,7 @@ class MainWindow(QtWidgets.QMainWindow):
         is_initial_load = not self._viewport_states
         if target_viewport is not None:
             self._zoom_mode = target_viewport.zoom_mode
-            self._set_zoom(target_viewport.zoom_value)
+            self._set_zoom(target_viewport.zoom_value, pos=None)
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self._zoom_mode = _ZoomMode.FIT_WINDOW
             self._adjust_scale()
@@ -2340,7 +2345,7 @@ class MainWindow(QtWidgets.QMainWindow):
             scale = self._fit_width_scale()
         else:
             scale = 1.0
-        self._set_zoom(value=scale * 100)
+        self._set_zoom(value=scale * 100, pos=None)
 
     def _fit_window_scale(self) -> float:
         FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0
@@ -2402,7 +2407,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # User Dialogs #
 
-    def _open_prev_image(self, _value: bool = False) -> None:
+    def _open_prev_image(self) -> None:
         row_prev: int = self._docks.file_list.currentRow() - 1
         if row_prev < 0:
             logger.debug("there is no prev image")
@@ -2412,7 +2417,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_list.setCurrentRow(row_prev)
         self._docks.file_list.repaint()
 
-    def _open_next_image(self, _value: bool = False) -> None:
+    def _open_next_image(self) -> None:
         row_next: int = self._docks.file_list.currentRow() + 1
         if row_next >= self._docks.file_list.count():
             logger.debug("there is no next image")
@@ -2422,7 +2427,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_list.setCurrentRow(row_next)
         self._docks.file_list.repaint()
 
-    def _open_file_with_dialog(self, _value: bool = False) -> None:
+    def _open_file_with_dialog(self) -> None:
         if not self._can_continue():
             return
         formats = [
@@ -2484,7 +2489,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._refresh_file_list()
 
-    def _save_label_file(self, *, save_as: bool = False) -> None:
+    def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
 
         label_path: str | None = None
@@ -2595,7 +2600,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _is_settings_editable(self) -> bool:
         return self._config_file is not None and not self._config_overrides
 
-    def _make_label_dialog(self, label_history: list[str] | None = None) -> LabelDialog:
+    def _make_label_dialog(self, label_history: list[str] | None) -> LabelDialog:
         return LabelDialog(
             parent=self,
             labels=self._config["labels"],
@@ -2877,7 +2882,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.StandardButton.Save,
         )
         if user_choice == QtWidgets.QMessageBox.StandardButton.Save:
-            self._save_label_file()
+            self._save_label_file(save_as=False)
             return not self._is_changed
         return user_choice == QtWidgets.QMessageBox.StandardButton.Discard
 
@@ -2891,8 +2896,8 @@ class MainWindow(QtWidgets.QMainWindow):
         *,
         path: str,
         file_kind: Literal["label", "image"],
-        exc: BaseException | None = None,
-        extra: str | None = None,
+        exc: BaseException | None,
+        extra: str | None,
     ) -> None:
         if file_kind == "label":
             message = self.tr(
@@ -2988,7 +2993,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
 
-    def _open_dir_with_dialog(self, _value: bool = False) -> None:
+    def _open_dir_with_dialog(self) -> None:
         if not self._can_continue():
             return
 
