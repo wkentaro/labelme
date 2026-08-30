@@ -111,6 +111,7 @@ select = [
   "B008",    # function calls in argument defaults
   "ARG",     # unused arguments
   "FBT",     # boolean traps
+  "PLC0415", # import outside top level
   "PLR2004", # magic value comparisons
 ]
 # Keep ruff from flagging gruff's GR noqa codes as unknown.
