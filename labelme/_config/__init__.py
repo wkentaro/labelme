@@ -4,6 +4,7 @@ import copy
 import re
 from collections.abc import Callable
 from pathlib import Path
+from typing import Final
 from typing import cast
 
 from loguru import logger
@@ -122,7 +123,7 @@ def _migrate_config_from_file(config_from_yaml: dict) -> None:
         ai["default"] = model_name_new
 
     # Migrate polygon shortcut keys to shape
-    _POLYGON_TO_SHAPE_RENAMES = {
+    _POLYGON_TO_SHAPE_RENAMES: Final = {
         "edit_polygon": "edit_shape",
         "delete_polygon": "delete_shape",
         "duplicate_polygon": "duplicate_shape",

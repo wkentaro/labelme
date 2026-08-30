@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Final
+
 import numpy as np
 import pytest
 from PySide6 import QtGui
@@ -12,7 +14,7 @@ from labelme._widgets._shape_render import bounds
 from labelme._widgets._shape_render import is_hit_by_point
 from labelme._widgets._shape_render import render_shape
 
-_SIZE = 200
+_SIZE: Final = 200
 
 
 def _polygon(label: str | None) -> Shape:

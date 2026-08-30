@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Final
+
 import pytest
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -10,7 +12,7 @@ from labelme._widgets.tool_bar import ToolBar
 
 # Qt automatically adds an internal extension/overflow button to every QToolBar.
 # Filter it out when counting user-added buttons.
-_EXT_BUTTON_NAME = "qt_toolbar_ext_button"
+_EXT_BUTTON_NAME: Final = "qt_toolbar_ext_button"
 
 
 def _user_buttons(toolbar: ToolBar) -> list[QtWidgets.QToolButton]:

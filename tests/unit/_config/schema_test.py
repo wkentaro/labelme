@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from typing import Final
 
 import pytest
 
@@ -29,10 +30,10 @@ def _ids(settings: tuple[Setting, ...]) -> list[str]:
     return [".".join(setting.key_path) for setting in settings]
 
 
-_ENUM_SETTINGS = tuple(s for s in SETTINGS if s.kind == "enum")
-_BOOL_SETTINGS = tuple(s for s in SETTINGS if s.kind == "bool")
-_COLOR_SETTINGS = tuple(s for s in SETTINGS if s.kind == "color")
-_INT_SETTINGS = tuple(s for s in SETTINGS if s.kind == "int")
+_ENUM_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "enum")
+_BOOL_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "bool")
+_COLOR_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "color")
+_INT_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "int")
 
 
 @pytest.mark.parametrize("setting", SETTINGS, ids=_ids(SETTINGS))

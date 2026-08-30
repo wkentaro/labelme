@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Final
 
 import pytest
 from PySide6.QtCore import QPoint
@@ -20,7 +21,7 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 # Smallest available model (~40MB) to keep download and inference fast
-_AI_MODEL = "efficientsam:10m"
+_AI_MODEL: Final = "efficientsam:10m"
 
 
 @pytest.mark.gui

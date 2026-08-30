@@ -73,7 +73,7 @@ class _ZoomMode(enum.Enum):
 
 
 _TextToAnnotationCreateMode: TypeAlias = Literal["polygon", "rectangle"]
-_AI_CREATE_MODES: tuple[str, ...] = (
+_AI_CREATE_MODES: Final[tuple[str, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
 )
@@ -1031,7 +1031,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #
         # Bump this when dock/toolbar layout changes to reset window state
         # for users upgrading from an older version.
-        SETTINGS_VERSION: int = 1
+        SETTINGS_VERSION: Final[int] = 1
         if self._window_state.value("settingsVersion", 0, type=int) != SETTINGS_VERSION:
             self._reset_layout()
             self._window_state.setValue("settingsVersion", SETTINGS_VERSION)

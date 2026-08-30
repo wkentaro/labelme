@@ -64,7 +64,7 @@ def test_save_does_not_emit_transient_status_message(
     tmp_path: Path,
     pause: bool,
 ) -> None:
-    json_basename: Final[str] = "2011_000003.json"
+    json_basename = "2011_000003.json"
     NO_TEMP_MESSAGE_TIMEOUT_MS: Final[int] = 3000
     win = main_win(
         file_or_dir=str(data_path / "annotated" / json_basename),

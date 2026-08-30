@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from typing import Final
 
 import numpy as np
 import pytest
@@ -16,11 +17,11 @@ from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _DraftShape
 
 # Default epsilon in Canvas (screen-pixel hit radius).
-_EPSILON: float = 10.0
+_EPSILON: Final[float] = 10.0
 
 # Pixmap dimensions used across all tests.
-_W: int = 200
-_H: int = 100
+_W: Final[int] = 200
+_H: Final[int] = 100
 
 
 @pytest.fixture(autouse=True)

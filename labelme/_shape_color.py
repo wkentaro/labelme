@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Final
+
 import imgviz
 import numpy as np
 from numpy.typing import NDArray
 
-_LABEL_COLORMAP: NDArray[np.uint8] = imgviz.label_colormap()
+_LABEL_COLORMAP: Final[NDArray[np.uint8]] = imgviz.label_colormap()
 
 
 def resolve_shape_color(

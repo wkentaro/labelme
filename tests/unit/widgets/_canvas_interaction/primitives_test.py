@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Final
+
 import numpy as np
 import pytest
 from PySide6.QtCore import Qt
@@ -16,9 +18,9 @@ from labelme._widgets._canvas_interaction import find_hover_target
 from labelme._widgets._canvas_interaction import is_within_pick_threshold
 
 # Shared test constants
-_EPSILON: float = 10.0
-_SCALE: float = 1.0
-_POINT_SIZE: int = 8
+_EPSILON: Final[float] = 10.0
+_SCALE: Final[float] = 1.0
+_POINT_SIZE: Final[int] = 8
 
 
 def _point(x: float, y: float) -> np.ndarray:

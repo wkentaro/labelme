@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Final
 
 import pytest
 
@@ -104,7 +105,7 @@ def test_load_config_rejects_invalid_polygon_detail(
         _config.load_config(config_file=config_file, config_overrides={})
 
 
-_POLYGON_TO_SHAPE_RENAMES = {
+_POLYGON_TO_SHAPE_RENAMES: Final = {
     "edit_polygon": "edit_shape",
     "delete_polygon": "delete_shape",
     "duplicate_polygon": "duplicate_shape",

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 import numpy as np
 import osam
@@ -9,9 +10,9 @@ from numpy.typing import NDArray
 
 from labelme._automation._osam_session import OsamSession
 
-_IMAGE: NDArray[np.uint8] = np.zeros((2, 3, 3), dtype=np.uint8)
-_POINTS: NDArray[np.floating] = np.array([[1.0, 2.0]])
-_POINT_LABELS: NDArray[np.intp] = np.array([1])
+_IMAGE: Final[NDArray[np.uint8]] = np.zeros((2, 3, 3), dtype=np.uint8)
+_POINTS: Final[NDArray[np.floating]] = np.array([[1.0, 2.0]])
+_POINT_LABELS: Final[NDArray[np.intp]] = np.array([1])
 
 
 class _FakeModelRegistry:

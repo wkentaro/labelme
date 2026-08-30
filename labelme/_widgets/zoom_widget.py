@@ -9,9 +9,9 @@ _ZOOM_LEVEL_LABEL: Final = "Zoom Level"
 
 
 class ZoomWidget(QtWidgets.QDoubleSpinBox):
-    PERCENT_MAX: int = 1000
-    PERCENT_DECIMALS: int = 1
-    PERCENT_SUFFIX: str = " %"
+    PERCENT_MAX: Final[int] = 1000
+    PERCENT_DECIMALS: Final[int] = 1
+    PERCENT_SUFFIX: Final[str] = " %"
 
     def __init__(self) -> None:
         super().__init__()
