@@ -105,6 +105,7 @@ def test_shapes_from_detections_oriented_rectangle_without_mask_falls_back() -> 
 
 
 def test_shapes_from_detections_oriented_rectangle_with_rotated_mask(
+    *,
     rotated_rectangle_mask: NDArray[np.bool_],
     rotated_rectangle_angle: float,
 ) -> None:
@@ -246,8 +247,8 @@ def test_shapes_from_detections_polygon_drops_hole() -> None:
     )
 
     polygon_mask = shape_to_mask(
-        img_shape=mask.shape,
-        points=shape.points.tolist(),
+        mask.shape,
+        shape.points.tolist(),
         shape_type="polygon",
     )
     assert polygon_mask[20, 20]
@@ -333,6 +334,7 @@ def test_shapes_from_detections_mask_drops_empty_mask() -> None:
 
 @pytest.mark.parametrize("shape_type", typing.get_args(AiOutputFormat))
 def test_shapes_from_detections_without_bbox_or_mask_is_dropped(
+    *,
     shape_type: AiOutputFormat,
 ) -> None:
     # Every shape type needs a bbox, a mask, or both; with neither there is

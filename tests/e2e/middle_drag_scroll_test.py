@@ -18,13 +18,13 @@ from .conftest import image_to_widget_pos
 _DRAG_OFFSET_PX: Final[int] = 40
 
 
-def _diagonal_drag_endpoints(canvas: Canvas) -> tuple[QPoint, QPoint]:
+def _diagonal_drag_endpoints(*, canvas: Canvas) -> tuple[QPoint, QPoint]:
     start = QPoint(canvas.width() // 2, canvas.height() // 2)
     end = QPoint(start.x() + _DRAG_OFFSET_PX, start.y() + _DRAG_OFFSET_PX)
     return start, end
 
 
-def _zoom_until_overflow(canvas: Canvas) -> None:
+def _zoom_until_overflow(*, canvas: Canvas) -> None:
     # Mutates canvas.scale directly to bypass the public zoom path because
     # this fixture only needs to force overflow; if the zoom pipeline gains
     # additional side effects relevant to a test, route through that instead.
@@ -41,6 +41,7 @@ def _zoom_until_overflow(canvas: Canvas) -> None:
 
 @pytest.mark.gui
 def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -71,6 +72,7 @@ def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
 
 @pytest.mark.gui
 def test_middle_drag_no_pan_when_image_fits_viewport(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -104,6 +106,7 @@ def test_middle_drag_no_pan_when_image_fits_viewport(
 
 @pytest.mark.gui
 def test_middle_drag_recenters_fitting_image_after_focal_zoom(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,

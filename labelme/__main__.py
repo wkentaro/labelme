@@ -31,7 +31,7 @@ _LOGGER_LEVELS: Final = ("debug", "info", "warning", "error", "critical")
 
 
 class _LoggerIO(io.StringIO):
-    def write(self, s: AnyStr) -> int:
+    def write(self, s: AnyStr, /) -> int:
         assert isinstance(s, str)
         if stripped_s := s.strip():
             logger.debug(stripped_s)
@@ -44,7 +44,7 @@ class _LoggerIO(io.StringIO):
         return False
 
 
-def _setup_loguru(logger_level: str) -> None:
+def _setup_loguru(*, logger_level: str) -> None:
     logger.remove()
 
     if sys.stderr:
@@ -129,6 +129,7 @@ def _handle_exception(
     exc_type: type[BaseException],
     exc_value: BaseException,
     exc_traceback: types.TracebackType | None,
+    /,
 ) -> None:
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
@@ -158,12 +159,16 @@ class _DeprecatedAlias(argparse.Action):
     argparse matched (including abbreviations) warns and points back to it.
     """
 
-    def __call__(
+    # argparse invokes the action positionally, but its stub leaves the
+    # parameters positional-or-keyword, so the narrower spelling reads as an
+    # incompatible override.
+    def __call__(  # ty: ignore[invalid-method-override]
         self,
-        parser: argparse.ArgumentParser,
+        parser: argparse.ArgumentParser,  # noqa: ARG002 -- fixed by the base class
         namespace: argparse.Namespace,
         values: object,
         option_string: str | None = None,
+        /,
     ) -> None:
         canonical = self.option_strings[0]
         if option_string is not None and option_string != canonical:
@@ -176,7 +181,7 @@ class _DeprecatedAlias(argparse.Action):
         setattr(namespace, self.dest, self.const if self.nargs == 0 else values)
 
 
-def _parse_list_arg(value: str) -> list[str]:
+def _parse_list_arg(value: str, /) -> list[str]:
     if os.path.isfile(value):
         with open(value, encoding="utf-8") as f:
             return [line.strip() for line in f if line.strip()]
@@ -184,7 +189,7 @@ def _parse_list_arg(value: str) -> list[str]:
 
 
 def _resolve_config_source(
-    config_arg: str | None, default_config_file: str
+    *, config_arg: str | None, default_config_file: str
 ) -> tuple[Path | None, dict]:
     if config_arg is None:
         # A missing file is fatal only when the user asked for that file: the

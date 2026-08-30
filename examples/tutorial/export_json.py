@@ -37,7 +37,11 @@ def main() -> None:
         else:
             label_value = len(label_name_to_value)
             label_name_to_value[label_name] = label_value
-    lbl, _ = utils.shapes_to_label(image.shape, label_file.shapes, label_name_to_value)
+    lbl, _ = utils.shapes_to_label(
+        img_shape=image.shape,
+        shapes=label_file.shapes,
+        label_name_to_value=label_name_to_value,
+    )
 
     label_names: list[str] = [""] * (max(label_name_to_value.values()) + 1)
     for name, value in label_name_to_value.items():

@@ -26,6 +26,7 @@ _AI_MODEL: Final = "efficientsam:10m"
 
 @pytest.mark.gui
 def test_labeling_ai_lands_preserves_generated_group(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
@@ -52,12 +53,13 @@ def test_labeling_ai_lands_preserves_generated_group(
 
 
 @pytest.fixture()
-def ai_model_combo(raw_win: MainWindow) -> QComboBox:
+def ai_model_combo(*, raw_win: MainWindow) -> QComboBox:
     return raw_win._ai_annotation._model_combo
 
 
 @pytest.mark.gui
 def test_ai_points_mode_disables_sam3(
+    *,
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
@@ -76,6 +78,7 @@ def test_ai_points_mode_disables_sam3(
 
 @pytest.mark.gui
 def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
+    *,
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
@@ -294,10 +297,11 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
         ),
     ],
 )
+@pytest.mark.usefixtures("close_failed_download_dialog")
 def test_annotate_shape_types(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
-    close_failed_download_dialog: None,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
@@ -322,7 +326,7 @@ def test_annotate_shape_types(
 
     label = "test_shape"
     canvas = win._canvas_widgets.canvas
-    canvas.set_ai_model_name(_AI_MODEL)
+    canvas.set_ai_model_name(model_name=_AI_MODEL)
     if ai_output_format is not None:
         canvas.set_ai_output_format(ai_output_format)
 
@@ -378,7 +382,7 @@ def test_annotate_shape_types(
     if expected_num_points is not None:
         assert len(shapes[0].points) == expected_num_points
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(out_file)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

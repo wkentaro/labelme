@@ -28,13 +28,13 @@ class _FakeModelRegistry:
 class _FakeModel:
     name = "fake-model"
 
-    def __init__(self, registry: _FakeModelRegistry) -> None:
+    def __init__(self, *, registry: _FakeModelRegistry) -> None:
         self._registry = registry
         self.encode_calls = 0
         self.requests: list[osam.types.GenerateRequest] = []
         registry.models.append(self)
 
-    def encode_image(self, image: NDArray[np.uint8]) -> osam.types.ImageEmbedding:
+    def encode_image(self, *, image: NDArray[np.uint8]) -> osam.types.ImageEmbedding:
         if self._registry.encode_raises:
             raise NotImplementedError
         self.encode_calls += 1
@@ -45,7 +45,7 @@ class _FakeModel:
         )
 
     def generate(
-        self, request: osam.types.GenerateRequest
+        self, *, request: osam.types.GenerateRequest
     ) -> osam.types.GenerateResponse:
         self.requests.append(request)
         return osam.types.GenerateResponse(model=self.name, annotations=[])
@@ -53,6 +53,7 @@ class _FakeModel:
 
 @pytest.fixture
 def install_fake_model(
+    *,
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[..., _FakeModelRegistry]:
     def _install(*, encode_raises: bool = False) -> _FakeModelRegistry:
@@ -60,14 +61,14 @@ def install_fake_model(
         monkeypatch.setattr(
             osam.apis,
             "get_model_type_by_name",
-            lambda name: (lambda: _FakeModel(registry)),
+            lambda _name: (lambda: _FakeModel(registry=registry)),
         )
         return registry
 
     return _install
 
 
-def _run_point(session: OsamSession, image_id: str) -> None:
+def _run_point(session: OsamSession, /, *, image_id: str) -> None:
     session.run(
         image=_IMAGE,
         image_id=image_id,
@@ -77,6 +78,7 @@ def _run_point(session: OsamSession, image_id: str) -> None:
 
 
 def test_point_prompt_carries_points_through_to_generate(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -91,6 +93,7 @@ def test_point_prompt_carries_points_through_to_generate(
 
 
 def test_text_prompt_uses_detection_thresholds(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -110,6 +113,7 @@ def test_text_prompt_uses_detection_thresholds(
 
 
 def test_run_without_a_prompt_raises_and_never_generates(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -121,6 +125,7 @@ def test_run_without_a_prompt_raises_and_never_generates(
 
 
 def test_points_without_labels_is_not_treated_as_a_prompt(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -132,6 +137,7 @@ def test_points_without_labels_is_not_treated_as_a_prompt(
 
 
 def test_embedding_is_reused_for_a_repeated_image_id(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -145,6 +151,7 @@ def test_embedding_is_reused_for_a_repeated_image_id(
 
 
 def test_embedding_cache_evicts_by_insertion_order_not_recency(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -161,6 +168,7 @@ def test_embedding_cache_evicts_by_insertion_order_not_recency(
 
 
 def test_model_is_loaded_once_and_reused_across_runs(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model()
@@ -173,6 +181,7 @@ def test_model_is_loaded_once_and_reused_across_runs(
 
 
 def test_unencodable_model_falls_back_to_no_embedding(
+    *,
     install_fake_model: Callable[..., _FakeModelRegistry],
 ) -> None:
     registry = install_fake_model(encode_raises=True)

@@ -22,7 +22,7 @@ _SCHEME_BY_THEME: Final = {
 }
 
 
-def apply_color_theme(theme: str) -> None:
+def apply_color_theme(*, theme: str) -> None:
     scheme = _SCHEME_BY_THEME.get(theme, QtCore.Qt.ColorScheme.Unknown)
     QtGui.QGuiApplication.styleHints().setColorScheme(scheme)
 
@@ -69,7 +69,7 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         return pixmap
 
     def pixmap(
-        self, size: QtCore.QSize, mode: QtGui.QIcon.Mode, state: QtGui.QIcon.State
+        self, size: QtCore.QSize, mode: QtGui.QIcon.Mode, _state: QtGui.QIcon.State, /
     ) -> QtGui.QPixmap:
         # Copy so neither callers nor Qt's scaledPixmap (which sets a device pixel
         # ratio on the result) mutate the shared cached pixmap.
@@ -81,7 +81,8 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         painter: QtGui.QPainter,
         rect: QtCore.QRect,
         mode: QtGui.QIcon.Mode,
-        state: QtGui.QIcon.State,
+        _state: QtGui.QIcon.State,
+        /,
     ) -> None:
         # Render at device pixels so the icon stays crisp on HiDPI/Retina screens,
         # where rect is in device-independent coordinates. Copy before stamping the
@@ -109,7 +110,7 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         return _TintedSvgIconEngine(svg=self._svg)
 
 
-def new_icon(name: str) -> QtGui.QIcon:
+def new_icon(name: str, /) -> QtGui.QIcon:
     if not os.path.splitext(name)[1]:
         name = name + _DEFAULT_ICON_SUFFIX
     path = os.path.join(_ICONS_DIR, name)
@@ -123,6 +124,8 @@ def new_icon(name: str) -> QtGui.QIcon:
 
 def new_action(
     parent: QtWidgets.QWidget,
+    /,
+    *,
     text: str = "",
     slot: Callable[..., object] | None = None,
     shortcut: str | list[str] | tuple[str, ...] | None = None,
@@ -153,6 +156,7 @@ def new_action(
 
 
 def add_actions(
+    *,
     widget: QtWidgets.QMenu | QtWidgets.QToolBar,
     actions: Sequence[QtGui.QAction | QtWidgets.QMenu | None],
 ) -> None:

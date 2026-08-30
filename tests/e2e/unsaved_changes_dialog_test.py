@@ -32,7 +32,7 @@ def _intercept_question(
 ) -> list[bool]:
     prompt_shown = [False]
 
-    def _fake(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+    def _fake(*_args: object, **_kwargs: object) -> QMessageBox.StandardButton:
         prompt_shown[0] = True
         return response
 
@@ -42,6 +42,7 @@ def _intercept_question(
 
 @pytest.fixture()
 def _raw_win_no_autosave(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -58,6 +59,7 @@ def _raw_win_no_autosave(
 
 @pytest.fixture()
 def _dir_win_no_autosave(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -74,6 +76,7 @@ def _dir_win_no_autosave(
 
 @pytest.mark.gui
 def test_close_with_unsaved_changes_cancel_keeps_window_open(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
@@ -98,6 +101,7 @@ def test_close_with_unsaved_changes_cancel_keeps_window_open(
 
 @pytest.mark.gui
 def test_close_choose_save_writes_json_and_closes(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
@@ -127,6 +131,7 @@ def test_close_choose_save_writes_json_and_closes(
 
 @pytest.mark.gui
 def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
@@ -154,6 +159,7 @@ def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
 
 @pytest.mark.gui
 def test_close_choose_save_but_write_fails_keeps_window_open(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
@@ -172,7 +178,9 @@ def test_close_choose_save_but_write_fails_keeps_window_open(
         "prompt_save_file_path",
         lambda: str(tmp_path / _OUTPUT_JSON_NAME),
     )
-    monkeypatch.setattr(_raw_win_no_autosave, "save_labels", lambda label_path: False)
+    monkeypatch.setattr(
+        _raw_win_no_autosave, "save_labels", lambda *_args, **_kwargs: False
+    )
 
     _raw_win_no_autosave.close()
 
@@ -184,6 +192,7 @@ def test_close_choose_save_but_write_fails_keeps_window_open(
 
 @pytest.mark.gui
 def test_close_choose_discard_no_json_window_closes(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,
@@ -206,6 +215,7 @@ def test_close_choose_discard_no_json_window_closes(
 
 @pytest.mark.gui
 def test_navigate_with_unsaved_changes_shows_prompt(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _dir_win_no_autosave: MainWindow,
@@ -234,6 +244,7 @@ def test_navigate_with_unsaved_changes_shows_prompt(
 
 @pytest.mark.gui
 def test_close_clean_window_no_prompt(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_win_no_autosave: MainWindow,

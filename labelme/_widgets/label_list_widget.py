@@ -16,7 +16,7 @@ from .._shape import Shape
 LABEL_COLOR_ROLE: Final = Qt.ItemDataRole.UserRole.value + 1
 
 
-def format_shape_label(shape: Shape) -> str:
+def format_shape_label(*, shape: Shape) -> str:
     assert shape.label is not None
     text = shape.label
     if shape.group_id is not None:
@@ -37,6 +37,7 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
         self,
         option: QtWidgets.QStyleOptionViewItem,
         index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
+        /,
     ) -> QtCore.QSize:
         size = super().sizeHint(option, index)
         if isinstance(index.data(LABEL_COLOR_ROLE), QtGui.QColor):
@@ -50,6 +51,7 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
         painter: QtGui.QPainter,
         option: QtWidgets.QStyleOptionViewItem,
         index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
+        /,
     ) -> None:
         color = index.data(LABEL_COLOR_ROLE)
         if not isinstance(color, QtGui.QColor):
@@ -97,10 +99,10 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
-    def __init__(self, text: str | None = None, shape: Shape | None = None) -> None:
+    def __init__(self, *, text: str | None = None, shape: Shape | None = None) -> None:
         super().__init__()
         self.setText(text or "")
-        self.set_shape(shape)
+        self.set_shape(shape=shape)
 
         self.setCheckable(True)
         self.setCheckState(
@@ -115,10 +117,10 @@ class LabelListWidgetItem(QtGui.QStandardItem):
         item.setData(self.data(LABEL_COLOR_ROLE), LABEL_COLOR_ROLE)
         return item
 
-    def set_shape(self, shape: Shape | None) -> None:
+    def set_shape(self, *, shape: Shape | None) -> None:
         self.setData(shape, Qt.ItemDataRole.UserRole)
 
-    def set_label(self, text: str, color: tuple[int, int, int]) -> None:
+    def set_label(self, *, text: str, color: tuple[int, int, int]) -> None:
         self.setText(text)
         self.setData(QtGui.QColor(*color), LABEL_COLOR_ROLE)
 
@@ -139,9 +141,10 @@ class _ItemModel(QtGui.QStandardItemModel):
         self,
         row: int,
         count: int,
+        /,
         parent: QtCore.QModelIndex
         | QtCore.QPersistentModelIndex = _INVALID_MODEL_INDEX,
-    ) -> bool:
+    ) -> bool:  # noqa: GR005 -- PySide6 declares `parent` positional-or-keyword
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()
         return ret
@@ -153,6 +156,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         row: int,
         column: int,
         parent: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
+        /,
     ) -> bool:
         # NOTE: By default, PyQt will overwrite items when dropped on them, so we need
         # to adjust the row/parent to insert after the item instead.
@@ -202,7 +206,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self._press_snapshot: tuple[_ItemSnapshot, ...] = ()
 
-    def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
+    def mousePressEvent(self, e: QtGui.QMouseEvent, /) -> None:
         self._press_snapshot = tuple(
             _ItemSnapshot(
                 index=QtCore.QPersistentModelIndex(self._model.indexFromItem(item)),
@@ -212,7 +216,7 @@ class LabelListWidget(QtWidgets.QListView):
         )
         super().mousePressEvent(e)
 
-    def mouseReleaseEvent(self, e: QtGui.QMouseEvent) -> None:
+    def mouseReleaseEvent(self, e: QtGui.QMouseEvent, /) -> None:
         super().mouseReleaseEvent(e)
 
         # Restore the multi-selection only when a checkbox toggle collapsed it.
@@ -247,7 +251,7 @@ class LabelListWidget(QtWidgets.QListView):
         )
 
     def _resolve_item(
-        self, index: QtCore.QPersistentModelIndex
+        self, *, index: QtCore.QPersistentModelIndex
     ) -> LabelListWidgetItem | None:
         if not index.isValid():
             return None
@@ -256,7 +260,7 @@ class LabelListWidget(QtWidgets.QListView):
     def __len__(self) -> int:
         return self._model.rowCount()
 
-    def __getitem__(self, i: int) -> LabelListWidgetItem:
+    def __getitem__(self, i: int, /) -> LabelListWidgetItem:
         return cast(LabelListWidgetItem, self._model.item(i))
 
     def __iter__(self) -> Iterator[LabelListWidgetItem]:
@@ -275,12 +279,13 @@ class LabelListWidget(QtWidgets.QListView):
         self,
         selected: QtCore.QItemSelection,
         deselected: QtCore.QItemSelection,
+        /,
     ) -> None:
         selected_items = [self._model.itemFromIndex(i) for i in selected.indexes()]
         deselected_items = [self._model.itemFromIndex(i) for i in deselected.indexes()]
         self.item_selection_changed.emit(selected_items, deselected_items)
 
-    def _on_item_double_clicked(self, index: QtCore.QModelIndex) -> None:
+    def _on_item_double_clicked(self, index: QtCore.QModelIndex, /) -> None:
         self.item_double_clicked.emit(self._model.itemFromIndex(index))
 
     def selected_items(self) -> list[LabelListWidgetItem]:
@@ -289,25 +294,25 @@ class LabelListWidget(QtWidgets.QListView):
             for i in self.selectedIndexes()
         ]
 
-    def scroll_to_item(self, item: LabelListWidgetItem) -> None:
+    def scroll_to_item(self, *, item: LabelListWidgetItem) -> None:
         self.scrollTo(self._model.indexFromItem(item))
 
-    def add_item(self, item: LabelListWidgetItem) -> None:
+    def add_item(self, *, item: LabelListWidgetItem) -> None:
         if not isinstance(item, LabelListWidgetItem):
             raise TypeError("item must be LabelListWidgetItem")
         self._model.setItem(self._model.rowCount(), 0, item)
 
-    def remove_item(self, item: LabelListWidgetItem) -> None:
+    def remove_item(self, *, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)
         self._model.removeRows(index.row(), 1)
 
-    def select_item(self, item: LabelListWidgetItem) -> None:
+    def select_item(self, *, item: LabelListWidgetItem) -> None:
         index = self._model.indexFromItem(item)
         self.selectionModel().select(
             index, QtCore.QItemSelectionModel.SelectionFlag.Select
         )
 
-    def find_item_by_shape(self, shape: Shape) -> LabelListWidgetItem:
+    def find_item_by_shape(self, *, shape: Shape) -> LabelListWidgetItem:
         for row in range(self._model.rowCount()):
             item = self._model.item(row, 0)
             item = cast(LabelListWidgetItem, item)

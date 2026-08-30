@@ -28,6 +28,7 @@ _TOLERANCE_PX: Final[int] = 10
 
 @pytest.mark.gui
 def test_window_geometry_persists_across_sessions(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     pause: bool,
@@ -63,6 +64,7 @@ def test_window_geometry_persists_across_sessions(
 
 @pytest.mark.gui
 def test_cancelled_close_keeps_persisted_window_state(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -98,7 +100,7 @@ def test_cancelled_close_keeps_persisted_window_state(
     prompt_shown = [False]
 
     def cancel_save_prompt(
-        *args: object, **kwargs: object
+        *_args: object, **_kwargs: object
     ) -> QMessageBox.StandardButton:
         prompt_shown[0] = True
         return QMessageBox.StandardButton.Cancel

@@ -28,7 +28,7 @@ from labelme._widgets.label_dialog import LabelDialog
 _DEFAULT_WINDOW_SIZE: Final = QSize(800, 600)
 
 
-def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     # The reference pixels are rendered on Linux, and Qt rendering can differ
     # across platforms. Gating on the marker here keeps one plain `make test`
     # correct on every OS, locally and in CI.
@@ -41,34 +41,34 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
 
 
 @pytest.fixture(scope="session")
-def session_home(tmp_path_factory: pytest.TempPathFactory) -> Path:
+def session_home(*, tmp_path_factory: pytest.TempPathFactory) -> Path:
     return tmp_path_factory.mktemp("home")
 
 
-def image_to_widget_pos(canvas: Canvas, image_pos: QPointF) -> QPoint:
+def image_to_widget_pos(*, canvas: Canvas, image_pos: QPointF) -> QPoint:
     widget_pos = canvas.transform_image_point_to_widget(image_pos)
     return QPoint(int(widget_pos.x()), int(widget_pos.y()))
 
 
 @pytest.fixture(autouse=True)
 def _isolated_qtsettings(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> Generator[None, None, None]:
     settings_file = tmp_path / "qtsettings.ini"
     settings: QSettings = QSettings(str(settings_file), QSettings.Format.IniFormat)
     monkeypatch.setattr(
-        labelme._app.QtCore, "QSettings", lambda *args, **kwargs: settings
+        labelme._app.QtCore, "QSettings", lambda *_args, **_kwargs: settings
     )
     yield
 
 
 @pytest.fixture(autouse=True)
-def _stub_setup_loguru(monkeypatch: pytest.MonkeyPatch) -> None:
+def _stub_setup_loguru(*, monkeypatch: pytest.MonkeyPatch) -> None:
     # main() configures loguru with a file handler using enqueue=True, which
     # spawns a multiprocessing.Queue (semaphores → file descriptors). Calling
     # main() per test leaks FDs faster than GC reclaims them and exhausts the
     # worker's ulimit. Tests don't need file logging, so stub it out.
-    monkeypatch.setattr("labelme.__main__._setup_loguru", lambda logger_level: None)
+    monkeypatch.setattr("labelme.__main__._setup_loguru", lambda **_kwargs: None)
 
 
 MainWinFactory = Callable[..., MainWindow]
@@ -78,19 +78,19 @@ class _QAppProxy:
     """Proxy that returns the existing QApplication from constructor calls
     and forwards static/class method access to the real QApplication class."""
 
-    def __init__(self, existing_app: QApplication) -> None:
+    def __init__(self, *, existing_app: QApplication) -> None:
         self._app = existing_app
 
-    def __call__(self, argv: list[str]) -> QApplication:
+    def __call__(self, _argv: list[str], /) -> QApplication:
         return self._app
 
-    def __getattr__(self, name: str) -> object:
+    def __getattr__(self, name: str, /) -> object:
         return getattr(QApplication, name)
 
 
 @pytest.fixture()
 def main_win(
-    qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, session_home: Path
+    *, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, session_home: Path
 ) -> Generator[MainWinFactory, None, None]:
     created: list[MainWindow] = []
 
@@ -135,7 +135,9 @@ def main_win(
         app = QApplication.instance()
         assert isinstance(app, QApplication)
 
-        monkeypatch.setattr("labelme.__main__.QtWidgets.QApplication", _QAppProxy(app))
+        monkeypatch.setattr(
+            "labelme.__main__.QtWidgets.QApplication", _QAppProxy(existing_app=app)
+        )
         monkeypatch.setattr(app, "exec", lambda: 0)
 
         existing = set(w for w in app.topLevelWidgets() if isinstance(w, MainWindow))
@@ -163,7 +165,7 @@ def main_win(
             pass
 
 
-def hover_widget_pos(qtbot: QtBot, canvas: Canvas, pos: QPoint) -> None:
+def hover_widget_pos(*, qtbot: QtBot, canvas: Canvas, pos: QPoint) -> None:
     # The offscreen Qt platform dedupes mouseMove events that match the
     # current cursor position, which suppresses hover-state refresh after a
     # click that landed on the same pixel. Nudging to (0, 0) first guarantees
@@ -175,6 +177,7 @@ def hover_widget_pos(qtbot: QtBot, canvas: Canvas, pos: QPoint) -> None:
 
 
 def click_canvas_fraction(
+    *,
     qtbot: QtBot,
     canvas: Canvas,
     xy: tuple[float, float],
@@ -193,6 +196,7 @@ def click_canvas_fraction(
 
 
 def drag_canvas(
+    *,
     qtbot: QtBot,
     canvas: Canvas,
     button: Qt.MouseButton,
@@ -219,6 +223,7 @@ def drag_canvas(
 
 
 def schedule_on_dialog(
+    *,
     label_dialog: LabelDialog,
     action: Callable[[], None],
 ) -> None:
@@ -232,6 +237,7 @@ def schedule_on_dialog(
 
 
 def submit_label_dialog(
+    *,
     qtbot: QtBot,
     label_dialog: LabelDialog,
     label: str,
@@ -246,6 +252,7 @@ def submit_label_dialog(
 
 
 def draw_triangle(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     vertices: tuple[tuple[float, float], ...],
@@ -258,6 +265,7 @@ def draw_triangle(
 
 
 def draw_and_commit_polygon(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     label: str,
@@ -281,7 +289,7 @@ def draw_and_commit_polygon(
     qtbot.waitUntil(shape_committed, timeout=timeout)
 
 
-def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
+def select_shape(*, qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
     points = canvas.shapes[shape_index].points
     centroid = QPointF(float(points[:, 0].mean()), float(points[:, 1].mean()))
     pos = image_to_widget_pos(canvas=canvas, image_pos=centroid)
@@ -292,7 +300,7 @@ def select_shape(qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
     assert len(canvas.selected_shapes) == 1
 
 
-def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:
+def show_window_and_wait_for_imagedata(*, qtbot: QtBot, win: MainWindow) -> None:
     win.show()
 
     def check_image_data() -> None:
@@ -301,7 +309,7 @@ def show_window_and_wait_for_imagedata(qtbot: QtBot, win: MainWindow) -> None:
     qtbot.waitUntil(check_image_data)
 
 
-def dismiss_active_modal(qtbot: QtBot, timeout: int = 3000) -> None:
+def dismiss_active_modal(*, qtbot: QtBot, timeout: int = 3000) -> None:
     qtbot.waitUntil(
         lambda: QApplication.activeModalWidget() is not None,
         timeout=timeout,
@@ -313,6 +321,7 @@ def dismiss_active_modal(qtbot: QtBot, timeout: int = 3000) -> None:
 
 @pytest.fixture()
 def annotated_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -328,6 +337,7 @@ def annotated_win(
 
 @pytest.fixture()
 def raw_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -342,11 +352,11 @@ def raw_win(
 
 
 @pytest.fixture()
-def critical_messages(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+def critical_messages(*, monkeypatch: pytest.MonkeyPatch) -> list[str]:
     messages: list[str] = []
 
     def capture_critical(
-        parent: QtWidgets.QWidget, title: str, text: str
+        _parent: QtWidgets.QWidget, _title: str, text: str
     ) -> QtWidgets.QMessageBox.StandardButton:
         messages.append(text)
         return QtWidgets.QMessageBox.StandardButton.Ok

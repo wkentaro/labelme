@@ -9,31 +9,31 @@ from .label_list_widget import TrailingColorDotDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
-    def keyPressEvent(self, keyEvent: QtGui.QKeyEvent) -> None:
+    def keyPressEvent(self, keyEvent: QtGui.QKeyEvent, /) -> None:
         super().keyPressEvent(keyEvent)
         if keyEvent.key() == Qt.Key.Key_Escape:
             self.clearSelection()
 
 
 class UniqueLabelQListWidget(_EscapableQListWidget):
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(self, *, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent=parent)
         self.setItemDelegate(TrailingColorDotDelegate(parent=self))
 
-    def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent) -> None:
+    def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent, /) -> None:
         super().mousePressEvent(mouseEvent)
         if not self.indexAt(mouseEvent.position().toPoint()).isValid():
             self.clearSelection()
 
-    def find_label_item(self, label: str) -> QtWidgets.QListWidgetItem | None:
+    def find_label_item(self, *, label: str) -> QtWidgets.QListWidgetItem | None:
         for row in range(self.count()):
             item = self.item(row)
             if item and item.data(Qt.ItemDataRole.UserRole) == label:
                 return item
         return None
 
-    def add_label_item(self, label: str, color: tuple[int, int, int]) -> None:
-        if self.find_label_item(label):
+    def add_label_item(self, *, label: str, color: tuple[int, int, int]) -> None:
+        if self.find_label_item(label=label):
             raise ValueError(f"Item for label '{label}' already exists")
 
         item = QtWidgets.QListWidgetItem()

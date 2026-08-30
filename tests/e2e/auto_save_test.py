@@ -32,6 +32,7 @@ _VERTICES: Final[tuple[tuple[float, float], ...]] = (
 
 @pytest.fixture()
 def _auto_save_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -48,6 +49,7 @@ def _auto_save_win(
 
 @pytest.fixture()
 def _raw_auto_save_win(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -64,6 +66,7 @@ def _raw_auto_save_win(
 
 @pytest.mark.gui
 def test_auto_save_on_shape_move(
+    *,
     qtbot: QtBot,
     _auto_save_win: MainWindow,
     tmp_path: Path,
@@ -92,6 +95,7 @@ def test_auto_save_on_shape_move(
 
 @pytest.mark.gui
 def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -100,7 +104,7 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
 ) -> None:
     prompt_shown = False
 
-    def record_prompt(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+    def record_prompt(*_args: object, **_kwargs: object) -> QMessageBox.StandardButton:
         nonlocal prompt_shown
         prompt_shown = True
         return QMessageBox.StandardButton.Discard
@@ -151,6 +155,7 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
 
 @pytest.mark.gui
 def test_auto_save_on_undo(
+    *,
     qtbot: QtBot,
     _auto_save_win: MainWindow,
     tmp_path: Path,
@@ -187,6 +192,7 @@ def test_auto_save_on_undo(
 
 @pytest.mark.gui
 def test_auto_save_on_undo_of_first_shape(
+    *,
     qtbot: QtBot,
     _raw_auto_save_win: MainWindow,
     tmp_path: Path,
@@ -220,6 +226,7 @@ def test_auto_save_on_undo_of_first_shape(
 
 @pytest.mark.gui
 def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_auto_save_win: MainWindow,
@@ -242,7 +249,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
 
     original_write_label_file = labelme._app.write_label_file
 
-    def _raise_permission_error(*args: object, **kwargs: object) -> None:
+    def _raise_permission_error(*_args: object, **_kwargs: object) -> None:
         raise PermissionError("read-only output directory")
 
     monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
@@ -262,7 +269,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     assert _raw_auto_save_win._actions.save_auto.isChecked()
 
     canvas = _raw_auto_save_win._canvas_widgets.canvas
-    _raw_auto_save_win._switch_canvas_mode(edit=True)
+    _raw_auto_save_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
@@ -272,7 +279,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
 
     close_prompts: list[bool] = []
 
-    def _cancel_close(*args: object, **kwargs: object) -> QMessageBox.StandardButton:
+    def _cancel_close(*_args: object, **_kwargs: object) -> QMessageBox.StandardButton:
         close_prompts.append(True)
         return QMessageBox.StandardButton.Cancel
 
@@ -307,13 +314,14 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     monkeypatch.setattr(
         QMessageBox,
         "question",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
     )
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
 
 
 @pytest.mark.gui
 def test_failed_auto_save_shows_error_again_after_target_changes(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     _raw_auto_save_win: MainWindow,
@@ -322,13 +330,13 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
 ) -> None:
     errors_shown: list[bool] = []
 
-    def _record_critical(*args: object, **kwargs: object) -> int:
+    def _record_critical(*_args: object, **_kwargs: object) -> int:
         errors_shown.append(True)
         return QMessageBox.StandardButton.Ok
 
     monkeypatch.setattr(QMessageBox, "critical", _record_critical)
 
-    def _raise_permission_error(*args: object, **kwargs: object) -> None:
+    def _raise_permission_error(*_args: object, **_kwargs: object) -> None:
         raise PermissionError("read-only output directory")
 
     monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
@@ -341,7 +349,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     )
 
     canvas = _raw_auto_save_win._canvas_widgets.canvas
-    _raw_auto_save_win._switch_canvas_mode(edit=True)
+    _raw_auto_save_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
@@ -365,7 +373,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     monkeypatch.setattr(
         QMessageBox,
         "question",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
     )
     _raw_auto_save_win.close_file()
     _raw_auto_save_win._load_file(image_or_label_path=image_path)
@@ -381,7 +389,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     monkeypatch.setattr(
         QMessageBox,
         "question",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
     )
 
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)

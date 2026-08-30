@@ -12,6 +12,7 @@ from ..conftest import close_or_pause
 
 @pytest.mark.gui
 def test_toggle_all_shapes(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -23,7 +24,7 @@ def test_toggle_all_shapes(
     for shape in canvas.shapes:
         assert shape.visible
 
-    annotated_win.toggle_shape_visibility(False)
+    annotated_win.toggle_shape_visibility(value=False)
     qtbot.wait(50)
 
     for item in label_list:
@@ -31,7 +32,7 @@ def test_toggle_all_shapes(
     for shape in canvas.shapes:
         assert not shape.visible
 
-    annotated_win.toggle_shape_visibility(True)
+    annotated_win.toggle_shape_visibility(value=True)
     qtbot.wait(50)
 
     for item in label_list:
@@ -44,6 +45,7 @@ def test_toggle_all_shapes(
 
 @pytest.mark.gui
 def test_toggle_individual_shape(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -71,6 +73,7 @@ def test_toggle_individual_shape(
 
 @pytest.mark.gui
 def test_visibility_preserved_when_undoing_unrelated_edit(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -105,6 +108,7 @@ def test_visibility_preserved_when_undoing_unrelated_edit(
 
 @pytest.mark.gui
 def test_undo_recovers_accidental_hide(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -133,6 +137,7 @@ def test_undo_recovers_accidental_hide(
 
 @pytest.mark.gui
 def test_multi_select_toggle_propagates(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -145,7 +150,7 @@ def test_multi_select_toggle_propagates(
 
     label_list.clearSelection()
     for i in selected_indices:
-        label_list.select_item(label_list[i])
+        label_list.select_item(item=label_list[i])
     qtbot.wait(50)
     assert {item for item in label_list.selected_items()} == {
         label_list[i] for i in selected_indices
@@ -174,6 +179,7 @@ def test_multi_select_toggle_propagates(
 
 @pytest.mark.gui
 def test_multi_select_preserves_selection_after_checkbox_click(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -186,7 +192,7 @@ def test_multi_select_preserves_selection_after_checkbox_click(
 
     label_list.clearSelection()
     for i in selected_indices:
-        label_list.select_item(label_list[i])
+        label_list.select_item(item=label_list[i])
     qtbot.wait(50)
 
     target_index = label_list._model.indexFromItem(label_list[selected_indices[1]])
@@ -207,6 +213,7 @@ def test_multi_select_preserves_selection_after_checkbox_click(
 
 @pytest.mark.gui
 def test_multi_select_collapses_on_row_body_click(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -218,7 +225,7 @@ def test_multi_select_collapses_on_row_body_click(
 
     label_list.clearSelection()
     for i in selected_indices:
-        label_list.select_item(label_list[i])
+        label_list.select_item(item=label_list[i])
     qtbot.wait(50)
 
     target_index = label_list._model.indexFromItem(label_list[clicked_index])

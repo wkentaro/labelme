@@ -19,13 +19,13 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
-def _make_drop_mime(paths: list[Path]) -> QMimeData:
+def _make_drop_mime(*, paths: list[Path]) -> QMimeData:
     mime = QMimeData()
     mime.setUrls([QUrl.fromLocalFile(str(p)) for p in paths])
     return mime
 
 
-def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
+def _drag_enter_accepted(*, win: MainWindow, mime: QMimeData) -> bool:
     event = QDragEnterEvent(
         QPoint(0, 0),
         Qt.DropAction.CopyAction,
@@ -37,7 +37,7 @@ def _drag_enter_accepted(win: MainWindow, mime: QMimeData) -> bool:
     return event.isAccepted()
 
 
-def _send_drop(win: MainWindow, mime: QMimeData) -> None:
+def _send_drop(*, win: MainWindow, mime: QMimeData) -> None:
     event = QDropEvent(
         QPointF(0, 0),
         Qt.DropAction.CopyAction,
@@ -50,6 +50,7 @@ def _send_drop(win: MainWindow, mime: QMimeData) -> None:
 
 @pytest.mark.gui
 def test_drop_image_files_loads_them(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
@@ -79,6 +80,7 @@ def test_drop_image_files_loads_them(
 
 @pytest.mark.gui
 def test_dropped_image_files_respect_active_search_filter(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
@@ -109,6 +111,7 @@ def test_dropped_image_files_respect_active_search_filter(
 
 @pytest.mark.gui
 def test_opening_annotation_file_clears_loaded_directory_images(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,
@@ -135,6 +138,7 @@ def test_opening_annotation_file_clears_loaded_directory_images(
 
 @pytest.mark.gui
 def test_drag_enter_rejects_non_image_and_keeps_state(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     data_path: Path,

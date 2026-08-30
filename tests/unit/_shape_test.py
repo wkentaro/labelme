@@ -11,7 +11,7 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 
 
-def _make_oriented_rectangle(points: list[tuple[float, float]]) -> Shape:
+def _make_oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
         points=np.array(points, dtype=np.float64),
@@ -200,7 +200,7 @@ def _make_open_linestrip() -> Shape:
         ("mask", False),
     ],
 )
-def test_can_add_point(shape_type: ShapeType, expected: bool) -> None:
+def test_can_add_point(*, shape_type: ShapeType, expected: bool) -> None:
     assert Shape(shape_type=shape_type).can_add_point() is expected
 
 
@@ -398,7 +398,7 @@ def test_translate_shifts_all_points_by_offset() -> None:
     ],
 )
 def test_nearest_edge_index_matches_edge_under_point(
-    point: tuple[float, float], expected_edge: int
+    *, point: tuple[float, float], expected_edge: int
 ) -> None:
     shape = _make_square_polygon()
 
@@ -515,7 +515,7 @@ def test_nearest_vertex_index_returns_none_for_empty_shape() -> None:
     ],
 )
 def test_get_rotation_handle_returns_edge_midpoints(
-    index: int, expected: tuple[float, float]
+    *, index: int, expected: tuple[float, float]
 ) -> None:
     shape = _make_axis_aligned_oriented_rectangle()
 

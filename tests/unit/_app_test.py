@@ -12,7 +12,6 @@ import pytest
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
-from PySide6 import QtWidgets
 
 from labelme import __appname__
 from labelme import _app
@@ -39,6 +38,7 @@ from labelme._shape import Shape
     ],
 )
 def test_resolve_text_annotation_shape_type(
+    *,
     create_mode: str,
     ai_output_format: _automation.AiOutputFormat,
     expected: _automation.AiOutputFormat | None,
@@ -62,7 +62,7 @@ def test_resolve_text_annotation_shape_type(
     ids=["policy-none", "exact-match", "exact-no-match", "unknown-policy"],
 )
 def test_is_valid_label(
-    label: str, existing_labels: list[str], policy: str | None, expected: bool
+    *, label: str, existing_labels: list[str], policy: str | None, expected: bool
 ) -> None:
     assert (
         _app._is_valid_label(
@@ -98,6 +98,7 @@ def test_is_valid_label(
     ],
 )
 def test_format_window_title(
+    *,
     image_path: str | None,
     file_index: int | None,
     file_count: int,
@@ -119,7 +120,7 @@ def _make_png_bytes(
     *,
     width: int,
     height: int,
-    image_format: QtGui.QImage.Format = QtGui.QImage.Format.Format_RGB32,
+    image_format: QtGui.QImage.Format,
 ) -> bytes:
     image = QtGui.QImage(width, height, image_format)
     image.fill(0)
@@ -130,9 +131,12 @@ def _make_png_bytes(
 
 
 def test_make_image_too_large_message_explains_allocation_limit(
+    *,
     set_allocation_limit: Callable[[int], None],
 ) -> None:
-    image_data = _make_png_bytes(width=800, height=600)
+    image_data = _make_png_bytes(
+        width=800, height=600, image_format=QtGui.QImage.Format.Format_RGB32
+    )
     set_allocation_limit(1)
     assert QtGui.QImage.fromData(image_data).isNull()
 
@@ -145,6 +149,7 @@ def test_make_image_too_large_message_explains_allocation_limit(
 
 
 def test_make_image_too_large_message_accounts_for_bit_depth(
+    *,
     set_allocation_limit: Callable[[int], None],
 ) -> None:
     # 800x600 at 16 bits per channel decodes to 8 bytes/pixel (~3.7 MB), so a
@@ -164,9 +169,8 @@ def test_make_image_too_large_message_accounts_for_bit_depth(
     assert "2 MB" in message
 
 
-def test_make_image_too_large_message_reports_per_side_limit(
-    qapp: QtWidgets.QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_make_image_too_large_message_reports_per_side_limit() -> None:
     # A hand-built PNG whose header claims the dimensions from #2388 but
     # carries no pixel data: QImageReader reads the size from the header
     # alone, so the real decode path runs without a multi-GB allocation.
@@ -195,12 +199,15 @@ def test_make_image_too_large_message_reports_per_side_limit(
 
 
 def test_make_image_too_large_message_rounds_the_need_up(
+    *,
     set_allocation_limit: Callable[[int], None],
 ) -> None:
     # 800x680 at 4 bytes/pixel needs ~2.1 MB: over a 2 MB limit, but plain
     # round() would render the contradictory "needs about 2 MB, but the
     # decode limit is 2 MB".
-    image_data = _make_png_bytes(width=800, height=680)
+    image_data = _make_png_bytes(
+        width=800, height=680, image_format=QtGui.QImage.Format.Format_RGB32
+    )
     set_allocation_limit(2)
     assert QtGui.QImage.fromData(image_data).isNull()
 
@@ -211,18 +218,18 @@ def test_make_image_too_large_message_rounds_the_need_up(
     assert "2 MB" in message
 
 
-def test_make_image_too_large_message_is_none_for_undecodable_data(
-    qapp: QtWidgets.QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_make_image_too_large_message_is_none_for_undecodable_data() -> None:
     assert _app._make_image_too_large_message(image_data=b"not an image") is None
 
 
-def test_make_image_too_large_message_is_none_within_allocation_limit(
-    qapp: QtWidgets.QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_make_image_too_large_message_is_none_within_allocation_limit() -> None:
     assert (
         _app._make_image_too_large_message(
-            image_data=_make_png_bytes(width=8, height=8)
+            image_data=_make_png_bytes(
+                width=8, height=8, image_format=QtGui.QImage.Format.Format_RGB32
+            )
         )
         is None
     )
@@ -297,6 +304,7 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
     ],
 )
 def test_shapes_from_dicts_merges_label_flags(
+    *,
     label: str,
     saved_flags: dict[str, bool],
     label_flags: dict[str, list[str]] | None,
@@ -409,6 +417,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
     ],
 )
 def test_shape_to_dict_coalesces_optional_flags_and_description(
+    *,
     flags: dict[str, bool] | None,
     description: str | None,
     expected_flags: dict[str, bool],
@@ -461,6 +470,7 @@ def test_shape_to_dict_requires_label() -> None:
     ],
 )
 def test_resolve_label_path(
+    *,
     image_or_label_path: str,
     output_dir: Path | None,
     expected: str,
@@ -474,9 +484,10 @@ def test_resolve_label_path(
 
 
 def test_resolve_stored_image_path_falls_back_to_absolute(
+    *,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def _raise(*args: object, **kwargs: object) -> str:
+    def _raise(*_args: object, **_kwargs: object) -> str:
         raise ValueError("path is on mount 'D:', start on mount 'C:'")
 
     monkeypatch.setattr("os.path.relpath", _raise)

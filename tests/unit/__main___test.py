@@ -23,7 +23,7 @@ from labelme.__main__ import main
 
 
 def test_help_uses_console_script_name(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    *, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     monkeypatch.setattr(sys, "argv", ["launcher-path", "--help"])
 
@@ -36,7 +36,7 @@ def test_help_uses_console_script_name(
 
 @pytest.mark.parametrize("flag", ["--nodata", "--autosave"])
 def test_removed_flag_errors_as_unknown(
-    flag: str, monkeypatch: pytest.MonkeyPatch
+    *, flag: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(sys, "argv", ["labelme", flag])
     with pytest.raises(SystemExit) as exc:
@@ -45,11 +45,11 @@ def test_removed_flag_errors_as_unknown(
 
 
 @pytest.mark.parametrize("level", _LOGGER_LEVELS)
-def test_logger_level_choice_is_a_valid_loguru_level(level: str) -> None:
+def test_logger_level_choice_is_a_valid_loguru_level(*, level: str) -> None:
     assert logger.level(level.upper()).name == level.upper()
 
 
-def test_logger_level_rejects_fatal(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_logger_level_rejects_fatal(*, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "argv", ["labelme", "--logger-level", "fatal"])
     with pytest.raises(SystemExit) as exc:
         main()
@@ -58,7 +58,7 @@ def test_logger_level_rejects_fatal(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.mark.parametrize("output", ["notes.json", "notes.JSON"])
 def test_output_rejects_json_file_path_case_insensitively(
-    output: str, monkeypatch: pytest.MonkeyPatch
+    *, output: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(sys, "argv", ["labelme", "--output", output])
     with pytest.raises(SystemExit) as exc:
@@ -76,7 +76,7 @@ def test_output_rejects_json_file_path_case_insensitively(
     ],
 )
 def test_deprecated_alias_warns_pointing_to_canonical(
-    argv: list[str], canonical: str, monkeypatch: pytest.MonkeyPatch
+    *, argv: list[str], canonical: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(sys, "argv", ["labelme", *argv, "--version"])
     with pytest.warns(FutureWarning, match=canonical):
@@ -96,7 +96,7 @@ def test_deprecated_alias_warns_pointing_to_canonical(
     ],
 )
 def test_canonical_flag_does_not_warn(
-    argv: list[str], monkeypatch: pytest.MonkeyPatch
+    *, argv: list[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(sys, "argv", ["labelme", *argv, "--version"])
     with warnings.catch_warnings():
@@ -118,12 +118,12 @@ def test_canonical_flag_does_not_warn(
     ],
 )
 def test_parse_list_arg_splits_comma_separated_value(
-    value: str, expected: list[str]
+    *, value: str, expected: list[str]
 ) -> None:
     assert _parse_list_arg(value) == expected
 
 
-def test_parse_list_arg_reads_and_strips_file_lines(tmp_path: Path) -> None:
+def test_parse_list_arg_reads_and_strips_file_lines(*, tmp_path: Path) -> None:
     labels_file = tmp_path / "labels.txt"
     labels_file.write_text("  cat  \n\ndog\n  \nperson\n", encoding="utf-8")
 
@@ -138,6 +138,7 @@ def test_parse_list_arg_splits_value_too_long_to_be_a_path() -> None:
 
 
 def test_resolve_config_source_falls_back_to_defaults_on_missing_default_file(
+    *,
     tmp_path: Path,
 ) -> None:
     missing_default = tmp_path / "unwritable" / ".labelmerc"
@@ -159,7 +160,9 @@ def test_resolve_config_source_falls_back_to_defaults_on_missing_default_file(
     assert repr(str(missing_default)) in warnings_logged[0]
 
 
-def test_resolve_config_source_reads_an_existing_default_file(tmp_path: Path) -> None:
+def test_resolve_config_source_reads_an_existing_default_file(
+    *, tmp_path: Path
+) -> None:
     default_config_file = tmp_path / ".labelmerc"
     default_config_file.touch()
 
@@ -169,6 +172,7 @@ def test_resolve_config_source_reads_an_existing_default_file(tmp_path: Path) ->
 
 
 def test_resolve_config_source_exits_on_an_explicit_missing_file(
+    *,
     tmp_path: Path,
 ) -> None:
     with pytest.raises(SystemExit) as exc:
@@ -181,6 +185,7 @@ def test_resolve_config_source_exits_on_an_explicit_missing_file(
 
 
 def test_resolve_config_source_exits_on_a_value_too_long_to_be_a_path(
+    *,
     tmp_path: Path,
 ) -> None:
     with pytest.raises(SystemExit) as exc:
@@ -191,7 +196,7 @@ def test_resolve_config_source_exits_on_a_value_too_long_to_be_a_path(
     assert exc.value.code == 1
 
 
-def test_resolve_config_source_reads_an_explicit_file(tmp_path: Path) -> None:
+def test_resolve_config_source_reads_an_explicit_file(*, tmp_path: Path) -> None:
     config_file = tmp_path / "custom.yaml"
     config_file.write_text("auto_save: true\n", encoding="utf-8")
 
@@ -200,7 +205,9 @@ def test_resolve_config_source_reads_an_explicit_file(tmp_path: Path) -> None:
     ) == (config_file, {})
 
 
-def test_resolve_config_source_takes_a_yaml_string_as_overrides(tmp_path: Path) -> None:
+def test_resolve_config_source_takes_a_yaml_string_as_overrides(
+    *, tmp_path: Path
+) -> None:
     assert _resolve_config_source(
         config_arg="{auto_save: true}",
         default_config_file=str(tmp_path / ".labelmerc"),
@@ -240,12 +247,13 @@ def remove_loguru_sinks() -> Iterator[None]:
     logger.remove()
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
-    def raise_permission_error(*args: object, **kwargs: object) -> None:
+    def raise_permission_error(*_args: object, **_kwargs: object) -> None:
         raise PermissionError(13, "Permission denied")
 
     monkeypatch.setattr(Path, "mkdir", raise_permission_error)
@@ -257,12 +265,13 @@ def test_setup_loguru_degrades_to_stderr_when_the_cache_dir_cannot_be_created(
     assert "PermissionError" in err
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_when_the_home_directory_is_unknown(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
-    def raise_runtime_error(*args: object, **kwargs: object) -> None:
+    def raise_runtime_error(*_args: object, **_kwargs: object) -> None:
         raise RuntimeError("Could not determine home directory.")
 
     monkeypatch.setattr(os, "name", "posix")
@@ -275,17 +284,18 @@ def test_setup_loguru_degrades_to_stderr_when_the_home_directory_is_unknown(
     assert "RuntimeError: Could not determine home directory." in err
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
     cache_dir = tmp_path / ".cache" / "labelme"
     cache_dir.mkdir(parents=True)
     (cache_dir / "labelme.log").mkdir()
 
-    def expand_to_tmp_cache_dir(self: Path) -> Path:
+    def expand_to_tmp_cache_dir(_self: Path) -> Path:
         return cache_dir
 
     monkeypatch.setattr(os, "name", "posix")
@@ -300,10 +310,11 @@ def test_setup_loguru_degrades_to_stderr_when_the_log_file_cannot_be_opened(
     assert repr(str(cache_dir / "labelme.log")) in err
 
 
+@pytest.mark.usefixtures("remove_loguru_sinks")
 def test_setup_loguru_degrades_to_stderr_without_localappdata(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    remove_loguru_sinks: None,
 ) -> None:
     monkeypatch.setattr(os, "name", "nt")
     monkeypatch.delenv("LOCALAPPDATA", raising=False)

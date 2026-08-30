@@ -26,11 +26,12 @@ _AI_TEXT_MODEL: Final = "yoloworld:latest"
 
 
 def _make_response(
+    *,
     texts: list[str],
     boxes: list[tuple[int, int, int, int]],
     scores: list[float],
     label_indices: list[int],
-    with_masks: bool = False,
+    with_masks: bool,
 ) -> osam.types.GenerateResponse:
     annotations = []
     for (xmin, ymin, xmax, ymax), score, label_idx in zip(
@@ -53,7 +54,7 @@ def _make_response(
 
 
 def _make_person_response(
-    texts: list[str], with_masks: bool = False
+    *, texts: list[str], with_masks: bool
 ) -> osam.types.GenerateResponse:
     person_idx = texts.index("person")
     return _make_response(
@@ -65,7 +66,7 @@ def _make_person_response(
     )
 
 
-def _make_multi_label_response(texts: list[str]) -> osam.types.GenerateResponse:
+def _make_multi_label_response(*, texts: list[str]) -> osam.types.GenerateResponse:
     person_idx = texts.index("person")
     sofa_idx = texts.index("sofa")
     return _make_response(
@@ -73,19 +74,22 @@ def _make_multi_label_response(texts: list[str]) -> osam.types.GenerateResponse:
         boxes=[(50, 30, 200, 300), (10, 150, 400, 330)],
         scores=[0.85, 0.70],
         label_indices=[person_idx, sofa_idx],
+        with_masks=False,
     )
 
 
-def _make_edge_crossing_response(texts: list[str]) -> osam.types.GenerateResponse:
+def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResponse:
     return _make_response(
         texts=texts,
         boxes=[(-10, 30, 50, 100)],
         scores=[0.9],
         label_indices=[0],
+        with_masks=False,
     )
 
 
 def _install_mock_session(
+    *,
     win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
     response_fn: Callable[..., osam.types.GenerateResponse],
@@ -95,7 +99,9 @@ def _install_mock_session(
         def get_size() -> int:
             return 1
 
-    monkeypatch.setattr("osam.apis.get_model_type_by_name", lambda name: _FakeModelType)
+    monkeypatch.setattr(
+        "osam.apis.get_model_type_by_name", lambda _name: _FakeModelType
+    )
 
     mock_session = MagicMock()
     mock_session.model_name = _AI_TEXT_MODEL
@@ -111,7 +117,7 @@ def _run_text_prompt(
     qtbot: QtBot,
     text: str,
     create_mode: str,
-    score_threshold: float = 0.1,
+    score_threshold: float,
 ) -> None:
     win._switch_canvas_mode(edit=False, create_mode=create_mode)
     qtbot.wait(50)
@@ -126,7 +132,7 @@ def _run_text_prompt(
             combo.setCurrentIndex(i)
             break
 
-    win._submit_ai_prompt(False)
+    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
     qtbot.wait(100)
 
 
@@ -138,7 +144,7 @@ def _run_text_prompt(
             "rectangle",
             "rectangle",
             "person",
-            _make_person_response,
+            functools.partial(_make_person_response, with_masks=False),
             {"person"},
             id="rectangle",
         ),
@@ -177,6 +183,7 @@ def _run_text_prompt(
     ],
 )
 def test_text_prompt_creates_shapes(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -223,7 +230,7 @@ def test_text_prompt_creates_shapes(
             assert (shape.points <= [win._image.width(), win._image.height()]).all()
 
     out_file = str(tmp_path / "2011_000003.json")
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(out_file)
 
     win._actions.undo.trigger()
@@ -236,6 +243,7 @@ def test_text_prompt_creates_shapes(
 
 @pytest.mark.gui
 def test_nms_deduplicates_existing_shapes(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -249,7 +257,9 @@ def test_nms_deduplicates_existing_shapes(
     canvas = win._canvas_widgets.canvas
 
     _install_mock_session(
-        win=win, monkeypatch=monkeypatch, response_fn=_make_person_response
+        win=win,
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
     )
 
     _run_text_prompt(
@@ -276,6 +286,7 @@ def test_nms_deduplicates_existing_shapes(
 
 @pytest.mark.gui
 def test_score_threshold_filters_detections(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -289,7 +300,9 @@ def test_score_threshold_filters_detections(
     canvas = win._canvas_widgets.canvas
 
     _install_mock_session(
-        win=win, monkeypatch=monkeypatch, response_fn=_make_person_response
+        win=win,
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
     )
 
     _run_text_prompt(
@@ -320,6 +333,7 @@ def test_score_threshold_filters_detections(
 
 @pytest.mark.gui
 def test_text_prompt_inference_error_surfaces_without_crashing(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -336,7 +350,13 @@ def test_text_prompt_inference_error_surfaces_without_crashing(
         raise RuntimeError("boom")
 
     _install_mock_session(win=win, monkeypatch=monkeypatch, response_fn=_raise)
-    _run_text_prompt(win=win, qtbot=qtbot, text="person", create_mode="rectangle")
+    _run_text_prompt(
+        win=win,
+        qtbot=qtbot,
+        text="person",
+        create_mode="rectangle",
+        score_threshold=0.1,
+    )
 
     assert win.isVisible()
     assert canvas.shapes == []
@@ -347,6 +367,7 @@ def test_text_prompt_inference_error_surfaces_without_crashing(
 
 @pytest.mark.gui
 def test_canvas_inference_failed_signal_surfaces_status_message(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

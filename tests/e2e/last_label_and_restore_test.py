@@ -29,6 +29,7 @@ _draw_and_commit_polygon = partial(draw_and_commit_polygon, vertices=_VERTICES)
 
 
 def _schedule_capture_then_cancel(
+    *,
     label_dialog: LabelDialog,
     captured: list[str],
 ) -> None:
@@ -40,16 +41,17 @@ def _schedule_capture_then_cancel(
 
 
 @pytest.fixture()
-def discard_unsaved_changes(monkeypatch: pytest.MonkeyPatch) -> None:
+def discard_unsaved_changes(*, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         QMessageBox,
         "question",
-        lambda *args, **kwargs: QMessageBox.StandardButton.Discard,
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
     )
 
 
 @pytest.mark.gui
 def test_last_label_memo(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     pause: bool,
@@ -74,6 +76,7 @@ def test_last_label_memo(
 
 @pytest.mark.gui
 def test_restore_last_shape_via_undo(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
@@ -82,14 +85,14 @@ def test_restore_last_shape_via_undo(
     canvas = raw_win._canvas_widgets.canvas
 
     _draw_and_commit_polygon(qtbot=qtbot, win=raw_win, label="restore_me")
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
 
     assert len(canvas.shapes) == 1
     original_points = [
         QPointF(float(p[0]), float(p[1])) for p in canvas.shapes[0].points
     ]
 
-    monkeypatch.setattr(raw_win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(raw_win, "_confirm_deletion", lambda *_args, **_kwargs: True)
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     raw_win.delete_selected_shapes()
@@ -109,6 +112,7 @@ def test_restore_last_shape_via_undo(
 
 @pytest.mark.gui
 def test_first_and_subsequent_shapes_can_be_undone_and_saved(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
@@ -151,7 +155,7 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
 
     label_path = tmp_path / "manual-save.json"
     monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(label_path))
-    raw_win._save_label_file()
+    raw_win._save_label_file(save_as=False)
 
     with label_path.open() as f:
         assert json.load(f)["shapes"] == []
@@ -160,10 +164,11 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("discard_unsaved_changes")
 def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
-    discard_unsaved_changes: None,
     data_path: Path,
     tmp_path: Path,
     pause: bool,
@@ -194,10 +199,11 @@ def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
 
 @pytest.mark.gui
 @pytest.mark.parametrize("image_dir", ["raw", "annotated"])
+@pytest.mark.usefixtures("discard_unsaved_changes")
 def test_navigation_disables_undo_for_clean_image_history(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
-    discard_unsaved_changes: None,
     data_path: Path,
     image_dir: str,
     pause: bool,
@@ -226,6 +232,7 @@ def test_navigation_disables_undo_for_clean_image_history(
 
 @pytest.mark.gui
 def test_save_keeps_shape_undo_disabled_while_drawing(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
@@ -252,7 +259,7 @@ def test_save_keeps_shape_undo_disabled_while_drawing(
         "prompt_save_file_path",
         lambda: str(tmp_path / "save-while-drawing.json"),
     )
-    win._save_label_file()
+    win._save_label_file(save_as=False)
 
     assert canvas.is_drawing
     assert not win._actions.undo.isEnabled()

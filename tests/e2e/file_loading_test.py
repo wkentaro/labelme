@@ -23,6 +23,7 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_MainWindow_open_img(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -37,6 +38,7 @@ def test_MainWindow_open_img(
 
 @pytest.mark.gui
 def test_MainWindow_open_json(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -60,6 +62,7 @@ def test_MainWindow_open_json(
 @pytest.mark.gui
 @pytest.mark.parametrize("scenario", ["raw", "annotated", "annotated_nested"])
 def test_MainWindow_open_dir(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     scenario: Literal["raw", "annotated", "annotated_nested"],
@@ -123,6 +126,7 @@ def test_MainWindow_open_dir(
 
 @pytest.mark.gui
 def test_reopening_directory_preserves_session_when_first_image_fails(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
@@ -152,6 +156,7 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
 
 @pytest.mark.gui
 def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
+    *,
     raw_win: MainWindow,
     qtbot: QtBot,
     tmp_path: Path,
@@ -166,7 +171,7 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
 
     set_allocation_limit(1)
 
-    raw_win._load_file(str(image_path))
+    raw_win._load_file(image_or_label_path=str(image_path))
 
     assert len(critical_messages) == 1
     assert "800x600" in critical_messages[0]
@@ -209,6 +214,7 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
     ids=["unknown-shape-type", "invalid-point-count", "missing-mask"],
 )
 def test_MainWindow_rejects_malformed_shapes_before_installing_any(
+    *,
     raw_win: MainWindow,
     critical_messages: list[str],
     data_path: Path,
@@ -236,7 +242,7 @@ def test_MainWindow_rejects_malformed_shapes_before_installing_any(
             }
         )
     )
-    raw_win._load_file(str(label_path))
+    raw_win._load_file(image_or_label_path=str(label_path))
 
     assert len(critical_messages) == 1
     assert str(label_path) in critical_messages[0]
@@ -247,7 +253,7 @@ def test_MainWindow_rejects_malformed_shapes_before_installing_any(
 
 
 @pytest.fixture
-def create_annotated_session_image(data_path: Path, tmp_path: Path) -> Path:
+def create_annotated_session_image(*, data_path: Path, tmp_path: Path) -> Path:
     session_dir = tmp_path / "session"
     session_dir.mkdir()
     image_path = session_dir / "01-current.jpg"
@@ -263,14 +269,14 @@ def create_annotated_session_image(data_path: Path, tmp_path: Path) -> Path:
 
 @pytest.fixture
 def choose_candidate_output_dir(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    *, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> Path:
     candidate_dir = tmp_path / "candidate"
     candidate_dir.mkdir()
     monkeypatch.setattr(
         QtWidgets.QFileDialog,
         "getExistingDirectory",
-        lambda *args, **kwargs: str(candidate_dir),
+        lambda *_args, **_kwargs: str(candidate_dir),
     )
     return candidate_dir
 
@@ -288,6 +294,7 @@ def choose_candidate_output_dir(
     ],
 )
 def test_failed_navigation_preserves_current_session(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -361,6 +368,7 @@ def test_failed_navigation_preserves_current_session(
 
 @pytest.mark.gui
 def test_failed_navigation_restores_selected_source_item(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
@@ -394,6 +402,7 @@ def test_failed_navigation_restores_selected_source_item(
 
 @pytest.mark.gui
 def test_direct_image_open_preserves_source_selection(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
@@ -434,6 +443,7 @@ def test_direct_image_open_preserves_source_selection(
 
 @pytest.mark.gui
 def test_failed_navigation_restores_filtered_out_selection(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
@@ -462,6 +472,7 @@ def test_failed_navigation_restores_filtered_out_selection(
 
 @pytest.mark.gui
 def test_failed_navigation_refreshes_title_after_saving(
+    *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -481,7 +492,7 @@ def test_failed_navigation_refreshes_title_after_saving(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "question",
-        lambda *args, **kwargs: QtWidgets.QMessageBox.StandardButton.Save,
+        lambda *_args, **_kwargs: QtWidgets.QMessageBox.StandardButton.Save,
     )
 
     win._open_next_image()
@@ -497,6 +508,7 @@ def test_failed_navigation_refreshes_title_after_saving(
 @pytest.mark.gui
 @pytest.mark.parametrize("hide_active_image", [False, True])
 def test_prompt_output_dir_rejects_corrupt_annotation(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
@@ -537,6 +549,7 @@ def test_prompt_output_dir_rejects_corrupt_annotation(
 
 @pytest.mark.gui
 def test_prompt_output_dir_loads_candidate_before_committing(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     create_annotated_session_image: Path,
@@ -574,6 +587,7 @@ def test_prompt_output_dir_loads_candidate_before_committing(
 
 @pytest.mark.gui
 def test_failed_load_of_dropped_image_preserves_current_session(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -594,12 +608,12 @@ def test_failed_load_of_dropped_image_preserves_current_session(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     annotation_before = win._annotation
 
-    win.import_dropped_image_files([str(existing_image)])
+    win.import_dropped_image_files(image_files=[str(existing_image)])
     assert win._image_path == str(current_image)
 
     corrupt_image = tmp_path / "dropped.jpg"
     corrupt_image.write_bytes(b"not an image")
-    win.import_dropped_image_files([str(corrupt_image)])
+    win.import_dropped_image_files(image_files=[str(corrupt_image)])
 
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._image_path == str(current_image)
@@ -613,6 +627,7 @@ def test_failed_load_of_dropped_image_preserves_current_session(
 
 @pytest.mark.gui
 def test_open_dir_with_failing_first_image_keeps_other_images_reachable(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

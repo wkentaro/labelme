@@ -23,7 +23,7 @@ def _setup_logging() -> None:
     )
 
 
-def _log_tool_version(tool: str) -> None:
+def _log_tool_version(tool: str, /) -> None:
     version: str = (
         subprocess.check_output([tool, "-version"], stderr=subprocess.STDOUT)
         .decode()
@@ -33,7 +33,7 @@ def _log_tool_version(tool: str) -> None:
 
 
 def _build_catalogs(
-    source_files: list[Path], ts_paths: list[Path], out_dir: Path, quiet: bool
+    *, source_files: list[Path], ts_paths: list[Path], out_dir: Path, quiet: bool
 ) -> None:
     targets: list[Path] = []
     for ts_path in ts_paths:
@@ -69,7 +69,7 @@ def _build_catalogs(
             raise RuntimeError(f"pyside6-lrelease did not produce {qm_path}")
 
 
-def _find_problems(ts_paths: list[Path], rebuilt_dir: Path) -> list[str]:
+def _find_problems(*, ts_paths: list[Path], rebuilt_dir: Path) -> list[str]:
     problems: list[str] = []
     for ts_path in ts_paths:
         rebuilt_ts: Path = rebuilt_dir / ts_path.name

@@ -9,7 +9,7 @@ from tools.artifact_install_smoke import _check_packaged_resources
 
 
 def test_check_packaged_resources_rejects_corrupt_translation(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # A truncated .qm is the failure mode QTranslator.load() swallows silently,
     # so it is the one case a stat-based check would wrongly pass. A real build

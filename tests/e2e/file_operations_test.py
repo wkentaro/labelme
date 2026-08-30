@@ -16,6 +16,7 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_close_file(
+    *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,
@@ -35,6 +36,7 @@ def test_close_file(
 
 @pytest.mark.gui
 def test_delete_label_file(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -53,7 +55,7 @@ def test_delete_label_file(
     assert item is not None
     assert item.checkState() == Qt.CheckState.Checked
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -68,6 +70,7 @@ def test_delete_label_file(
 
 @pytest.mark.gui
 def test_delete_label_file_keeps_image(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -84,7 +87,7 @@ def test_delete_label_file_keeps_image(
     assert canvas.shapes
     assert len(win._docks.label_list) > 0
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -101,6 +104,7 @@ def test_delete_label_file_keeps_image(
 
 @pytest.mark.gui
 def test_delete_file_respects_output_dir(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -130,7 +134,7 @@ def test_delete_file_respects_output_dir(
     assert win.current_label_file_path() == str(saved_path)
     assert win.has_label_file()
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
     qtbot.wait(50)
 
@@ -142,6 +146,7 @@ def test_delete_file_respects_output_dir(
 
 @pytest.mark.gui
 def test_current_label_file_path_prefers_opened_file(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -164,6 +169,7 @@ def test_current_label_file_path_prefers_opened_file(
 
 @pytest.mark.gui
 def test_undo_after_delete_file_does_not_restore_shapes(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -176,10 +182,10 @@ def test_undo_after_delete_file_does_not_restore_shapes(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
 
     # A prior shape edit in the same session enables the undo action.
-    win._switch_canvas_mode(edit=True)
+    win._switch_canvas_mode(edit=True, create_mode=None)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     win.delete_selected_shapes()
     qtbot.wait(50)

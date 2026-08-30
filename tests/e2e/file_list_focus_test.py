@@ -14,6 +14,7 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_arrow_keys_walk_file_list_across_loads(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -40,6 +41,7 @@ def test_arrow_keys_walk_file_list_across_loads(
 
 @pytest.mark.gui
 def test_canvas_takes_focus_when_file_list_has_none(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

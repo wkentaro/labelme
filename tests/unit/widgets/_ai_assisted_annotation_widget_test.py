@@ -18,11 +18,12 @@ def formats() -> list[AiOutputFormat]:
 
 
 def _make_widget(
+    *,
     qtbot: QtBot,
     models: list[str],
     formats: list[AiOutputFormat],
     default_model: str,
-    details: list[int] | None = None,
+    details: list[int] | None,
 ) -> AiAssistedAnnotationWidget:
     widget = AiAssistedAnnotationWidget(
         default_model=default_model,
@@ -36,13 +37,14 @@ def _make_widget(
 
 
 def test_construction_exposes_default_without_firing_callbacks(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
         models=models,
         formats=formats,
         default_model="Sam2 (balanced)",
+        details=None,
     )
     assert widget.current_model_id == "sam2:latest"
     assert widget.output_format == "polygon"
@@ -51,50 +53,54 @@ def test_construction_exposes_default_without_firing_callbacks(
 
 
 def test_first_listed_default_resolves(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
         models=models,
         formats=formats,
         default_model="EfficientSam (speed)",
+        details=None,
     )
     assert widget.current_model_id == "efficientsam:10m"
 
 
 def test_unknown_default_falls_back_to_first_model(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
         models=models,
         formats=formats,
         default_model="does-not-exist",
+        details=None,
     )
     assert widget.current_model_id == "efficientsam:10m"
 
 
 def test_selecting_another_model_fires_callback(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
         models=models,
         formats=formats,
         default_model="EfficientSam (speed)",
+        details=None,
     )
     widget._model_combo.setCurrentIndex(widget._model_combo.findData("sam2:latest"))
     assert models == ["sam2:latest"]
 
 
 def test_selecting_another_output_format_fires_callback(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
         qtbot=qtbot,
         models=models,
         formats=formats,
         default_model="EfficientSam (speed)",
+        details=None,
     )
     widget._output_format_combo.setCurrentIndex(
         widget._output_format_combo.findData("mask")
@@ -109,7 +115,7 @@ def test_selecting_another_output_format_fires_callback(
 
 
 def test_polygon_detail_control_fires_callback_and_exposes_value(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     details: list[int] = []
     widget = _make_widget(
@@ -128,7 +134,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
 
 
 def test_setting_polygon_detail_from_config_does_not_fire_callback(
-    qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     details: list[int] = []
     widget = _make_widget(

@@ -23,7 +23,7 @@ def test_paste_returns_independent_copies_each_call() -> None:
     # Regression guard: paste() must hand out fresh copies so editing one
     # pasted shape never mutates a later paste of the same buffer.
     clipboard = ShapeClipboard()
-    clipboard.store([_make_polygon()])
+    clipboard.store(shapes=[_make_polygon()])
 
     first = clipboard.paste()
     second = clipboard.paste()
@@ -38,7 +38,7 @@ def test_store_snapshots_shapes_at_store_time() -> None:
     # leak into the buffer.
     clipboard = ShapeClipboard()
     source = _make_polygon()
-    clipboard.store([source])
+    clipboard.store(shapes=[source])
 
     source.move_vertex(i=0, pos=(99.0, 99.0))
 
@@ -52,7 +52,7 @@ def test_store_preserves_all_shapes_in_order() -> None:
     second.label = "second"
     clipboard = ShapeClipboard()
 
-    clipboard.store([first, second])
+    clipboard.store(shapes=[first, second])
     pasted = clipboard.paste()
 
     assert [shape.label for shape in pasted] == ["first", "second"]
@@ -78,13 +78,13 @@ def test_store_preserves_all_shapes_in_order() -> None:
     ],
 )
 def test_availability_changed_emits_only_on_emptiness_transitions(
-    prior_count: int, new_count: int, expected_emissions: list[bool]
+    *, prior_count: int, new_count: int, expected_emissions: list[bool]
 ) -> None:
     clipboard = ShapeClipboard()
-    clipboard.store([_make_polygon() for _ in range(prior_count)])
+    clipboard.store(shapes=[_make_polygon() for _ in range(prior_count)])
     emissions: list[bool] = []
     clipboard.availability_changed.connect(emissions.append)
 
-    clipboard.store([_make_polygon() for _ in range(new_count)])
+    clipboard.store(shapes=[_make_polygon() for _ in range(new_count)])
 
     assert emissions == expected_emissions

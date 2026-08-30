@@ -12,6 +12,9 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 
 from .. import _utils
+from .._shape import CIRCLE_POINT_COUNT
+from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
+from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
 from .._shape import get_rotation_handle
 from .._shape import nearest_edge_index
@@ -53,7 +56,7 @@ class Palette:
     hvertex_fill: QtGui.QColor
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int]) -> Palette:
+    def from_rgb(cls, rgb: tuple[int, int, int], /) -> Palette:
         r, g, b = rgb
         return cls(
             line=QtGui.QColor(r, g, b),
@@ -80,7 +83,7 @@ class ShapeRenderContext:
 
 
 def render_shape(
-    painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
+    *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
 ) -> None:
     if shape.mask is None and len(shape.points) == 0:
         return
@@ -308,7 +311,7 @@ def _build_shape_points_paths(
     points = shape.points
     if shape.shape_type in ["rectangle", "mask"]:
         assert len(points) in [1, 2]
-        if len(points) == 2:
+        if len(points) == RECTANGLE_POINT_COUNT:
             paths.line.addRect(
                 QtCore.QRectF(
                     QtCore.QPointF(*(points[0] * scale)),
@@ -322,7 +325,7 @@ def _build_shape_points_paths(
                 )
     elif shape.shape_type == "oriented_rectangle":
         assert len(points) in [1, 2, 4]
-        if len(points) == 4:
+        if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
             paths.line.moveTo(QtCore.QPointF(*(points[0] * scale)))
             for i in range(len(points)):
                 paths.line.lineTo(QtCore.QPointF(*(points[i] * scale)))
@@ -340,7 +343,7 @@ def _build_shape_points_paths(
             _build_shape_oriented_rectangle_arrow_path(
                 path=paths.orientation_arrow, shape=shape, scale=scale
             )
-        elif len(points) == 2:
+        elif len(points) == CIRCLE_POINT_COUNT:
             paths.line.moveTo(QtCore.QPointF(*(points[0] * scale)))
             paths.line.lineTo(QtCore.QPointF(*(points[1] * scale)))
             for i in range(2):
@@ -349,7 +352,7 @@ def _build_shape_points_paths(
                 )
     elif shape.shape_type == "circle":
         assert len(points) in [1, 2]
-        if len(points) == 2:
+        if len(points) == CIRCLE_POINT_COUNT:
             radius = float(np.linalg.norm((points[0] - points[1]) * scale))
             paths.line.addEllipse(QtCore.QPointF(*(points[0] * scale)), radius, radius)
         for i in range(len(points)):
@@ -423,16 +426,16 @@ def _build_image_path(*, shape: Shape) -> QtGui.QPainterPath:
     points = shape.points
     out = QtGui.QPainterPath()
     if shape.shape_type in ("rectangle", "mask"):
-        if len(points) == 2:
+        if len(points) == RECTANGLE_POINT_COUNT:
             out.addRect(
                 QtCore.QRectF(QtCore.QPointF(*points[0]), QtCore.QPointF(*points[1]))
             )
     elif shape.shape_type == "circle":
-        if len(points) == 2:
+        if len(points) == CIRCLE_POINT_COUNT:
             radius = float(np.linalg.norm(points[0] - points[1]))
             out.addEllipse(QtCore.QPointF(*points[0]), radius, radius)
     elif shape.shape_type == "oriented_rectangle":
-        if len(points) == 4:
+        if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
             out.moveTo(QtCore.QPointF(*points[0]))
             for p in points[1:]:
                 out.lineTo(QtCore.QPointF(*p))

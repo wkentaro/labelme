@@ -21,7 +21,7 @@ def rgba_img() -> PIL.Image.Image:
 
 
 def _make_dialog(
-    qtbot: QtBot, img: PIL.Image.Image
+    *, qtbot: QtBot, img: PIL.Image.Image
 ) -> tuple[BrightnessContrastDialog, list[NDArray[np.uint8]]]:
     captured: list[NDArray[np.uint8]] = []
     dialog = BrightnessContrastDialog(
@@ -32,7 +32,7 @@ def _make_dialog(
 
 
 def test_apply_preserves_rgba_at_identity(
-    qtbot: QtBot, rgba_img: PIL.Image.Image
+    *, qtbot: QtBot, rgba_img: PIL.Image.Image
 ) -> None:
     dialog, captured = _make_dialog(qtbot=qtbot, img=rgba_img)
 
@@ -43,7 +43,7 @@ def test_apply_preserves_rgba_at_identity(
 
 
 def test_slider_change_preserves_alpha_while_brightening(
-    qtbot: QtBot, rgba_img: PIL.Image.Image
+    *, qtbot: QtBot, rgba_img: PIL.Image.Image
 ) -> None:
     dialog, captured = _make_dialog(qtbot=qtbot, img=rgba_img)
 
@@ -56,7 +56,7 @@ def test_slider_change_preserves_alpha_while_brightening(
     assert not np.array_equal(emitted[..., :3], src[..., :3])
 
 
-def test_apply_outputs_rgb_without_alpha_channel(qtbot: QtBot) -> None:
+def test_apply_outputs_rgb_without_alpha_channel(*, qtbot: QtBot) -> None:
     rgb_img = PIL.Image.new("RGB", (4, 3), color=(100, 150, 200))
     dialog, captured = _make_dialog(qtbot=qtbot, img=rgb_img)
 

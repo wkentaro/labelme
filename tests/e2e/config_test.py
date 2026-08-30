@@ -18,6 +18,7 @@ from .conftest import MainWinFactory
     ],
 )
 def test_MainWindow_config(
+    *,
     main_win: MainWinFactory,
     with_config_file: bool,
     qtbot: QtBot,
@@ -51,6 +52,7 @@ def test_MainWindow_config(
 
 @pytest.mark.gui
 def test_MainWindow_config_load_error_falls_back(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,

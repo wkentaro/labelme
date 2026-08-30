@@ -22,9 +22,10 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
-def _set_flag_checked(win: MainWindow, name: str) -> None:
+def _set_flag_checked(*, win: MainWindow, name: str) -> None:
     flag_list = win._docks.flag_list
-    flag_list.blockSignals(True)  # avoid mark_dirty; we test only the flag refresh
+    # blockSignals avoids mark_dirty; we test only the flag refresh.
+    flag_list.blockSignals(True)  # noqa: FBT003 -- Qt setter takes the flag positionally
     try:
         for i in range(flag_list.count()):
             item = flag_list.item(i)
@@ -34,10 +35,10 @@ def _set_flag_checked(win: MainWindow, name: str) -> None:
                 return
         raise AssertionError(f"flag {name!r} not found in the dock")
     finally:
-        flag_list.blockSignals(False)
+        flag_list.blockSignals(False)  # noqa: FBT003 -- Qt setter takes the flag positionally
 
 
-def _open_settings_dialog(win: MainWindow) -> SettingsDialog:
+def _open_settings_dialog(*, win: MainWindow) -> SettingsDialog:
     win._open_settings()
     dialog = win._settings_dialog
     assert dialog is not None
@@ -45,7 +46,7 @@ def _open_settings_dialog(win: MainWindow) -> SettingsDialog:
 
 
 @pytest.fixture
-def editable_config_file(tmp_path: Path) -> Path:
+def editable_config_file(*, tmp_path: Path) -> Path:
     config_file = tmp_path / "labelmerc.yaml"
     config_file.write_text("auto_save: true\n")
     return config_file
@@ -53,6 +54,7 @@ def editable_config_file(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def settings_with_label_history(
+    *,
     main_win: MainWinFactory,
     editable_config_file: Path,
 ) -> tuple[MainWindow, SettingsDialog]:
@@ -63,6 +65,7 @@ def settings_with_label_history(
 
 @pytest.mark.gui
 def test_startup_syncs_first_ai_model_without_rewriting_config(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     editable_config_file: Path,
@@ -81,6 +84,7 @@ def test_startup_syncs_first_ai_model_without_rewriting_config(
 
 @pytest.mark.gui
 def test_startup_applies_existing_shape_suppression_override(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     editable_config_file: Path,
@@ -99,7 +103,7 @@ def test_startup_applies_existing_shape_suppression_override(
 
 @pytest.mark.gui
 def test_settings_dialog_opens_when_editable(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
 
@@ -113,7 +117,7 @@ def test_settings_dialog_opens_when_editable(
 
 @pytest.mark.gui
 def test_setting_change_persists_and_applies(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
 
@@ -133,8 +137,8 @@ def test_setting_change_persists_and_applies(
     assert win._config["labels"] == ["cat", "dog"]
     assert win._label_dialog is label_dialog_before  # updated in place, not rebuilt
     unique_label_list = win._docks.unique_label_list
-    assert unique_label_list.find_label_item("cat") is not None
-    assert unique_label_list.find_label_item("dog") is not None
+    assert unique_label_list.find_label_item(label="cat") is not None
+    assert unique_label_list.find_label_item(label="dog") is not None
 
     persisted = safe_load(editable_config_file.read_text())
     assert persisted["display_label_popup"] is False
@@ -144,10 +148,11 @@ def test_setting_change_persists_and_applies(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("use_widget_color_dialog")
 def test_shape_color_picker_previews_and_persists_only_on_accept(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
-    use_widget_color_dialog: None,
     editable_config_file: Path,
     data_path: Path,
     pause: bool,
@@ -223,7 +228,7 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
 
 @pytest.mark.gui
 def test_show_labels_toggle_applies_to_canvas(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     canvas = win._canvas_widgets.canvas
@@ -244,6 +249,7 @@ def test_show_labels_toggle_applies_to_canvas(
 
 @pytest.mark.gui
 def test_existing_shape_suppression_toggle_applies_to_canvas(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     editable_config_file: Path,
@@ -272,6 +278,7 @@ def test_existing_shape_suppression_toggle_applies_to_canvas(
 
 @pytest.mark.gui
 def test_label_edit_preserves_label_history(
+    *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
     qtbot: QtBot,
     pause: bool,
@@ -294,7 +301,7 @@ def test_label_edit_preserves_label_history(
 
 @pytest.mark.gui
 def test_flags_setting_refreshes_flag_dock_live(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
 
@@ -310,7 +317,7 @@ def test_flags_setting_refreshes_flag_dock_live(
     assert win._read_flag_dock_states() == {"occluded": False, "truncated": False}
     assert not win._is_changed  # a settings-driven refresh must not dirty the image
 
-    _set_flag_checked(win, "occluded")
+    _set_flag_checked(win=win, name="occluded")
     flags_editor.setPlainText("occluded\ntruncated\nblurry")
     flags_editor.commit()
 
@@ -323,6 +330,7 @@ def test_flags_setting_refreshes_flag_dock_live(
 
 @pytest.mark.gui
 def test_clearing_labels_is_rejected_when_validate_label_is_exact(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     editable_config_file: Path,
@@ -336,7 +344,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: warned.append(args[2]),
+        lambda *args, **_kwargs: warned.append(args[2]),
     )
 
     dialog = _open_settings_dialog(win=win)
@@ -368,6 +376,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
 
 @pytest.mark.gui
 def test_setting_controls_revert_when_write_fails(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
@@ -382,7 +391,7 @@ def test_setting_controls_revert_when_write_fails(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "warning",
-        lambda *args, **kwargs: warned.append(args[2]),
+        lambda *args, **_kwargs: warned.append(args[2]),
     )
 
     dialog = _open_settings_dialog(win=win)
@@ -400,7 +409,7 @@ def test_setting_controls_revert_when_write_fails(
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
     # a read-only directory does not block writes.
-    def _refuse_write(config_file: Path, content: str) -> None:
+    def _refuse_write(*, config_file: Path, **_kwargs: object) -> None:
         raise PermissionError(f"injected write failure: {config_file}")
 
     monkeypatch.setattr(_writer, "_atomic_write", _refuse_write)
@@ -425,6 +434,7 @@ def test_setting_controls_revert_when_write_fails(
 
 @pytest.mark.gui
 def test_settings_dialog_is_deleted_when_opening_text_editor(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     editable_config_file: Path,
@@ -436,7 +446,7 @@ def test_settings_dialog_is_deleted_when_opening_text_editor(
 
     deleted: list[bool] = []
     dialog.destroyed.connect(lambda: deleted.append(True))
-    monkeypatch.setattr("labelme._app.subprocess.Popen", lambda *args, **kwargs: None)
+    monkeypatch.setattr("labelme._app.subprocess.Popen", lambda *_args, **_kwargs: None)
 
     win._open_config_file()
 
@@ -448,7 +458,7 @@ def test_settings_dialog_is_deleted_when_opening_text_editor(
 
 @pytest.mark.gui
 def test_settings_disabled_with_cli_overrides(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(
         config_file=editable_config_file, config_overrides={"labels": ["bird"]}
@@ -463,7 +473,7 @@ def test_settings_disabled_with_cli_overrides(
 
 @pytest.mark.gui
 def test_keep_prev_dialog_toggle_checks_menu_action(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     assert not win._actions.toggle_keep_prev_mode.isChecked()
@@ -496,6 +506,7 @@ def test_keep_prev_dialog_toggle_checks_menu_action(
     ],
 )
 def test_menu_toggle_persists_and_syncs_settings_dialog(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     editable_config_file: Path,
@@ -526,7 +537,7 @@ def test_menu_toggle_persists_and_syncs_settings_dialog(
 
 @pytest.mark.gui
 def test_fill_drawing_dialog_toggle_applies_to_canvas(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     canvas = win._canvas_widgets.canvas
@@ -548,7 +559,7 @@ def test_fill_drawing_dialog_toggle_applies_to_canvas(
 
 @pytest.mark.gui
 def test_fill_drawing_menu_toggle_applies_with_cli_overrides(
-    main_win: MainWinFactory, qtbot: QtBot, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, pause: bool
 ) -> None:
     win = main_win(config_overrides={"canvas": {"fill_drawing": True}})
     canvas = win._canvas_widgets.canvas
@@ -564,6 +575,7 @@ def test_fill_drawing_menu_toggle_applies_with_cli_overrides(
 
 @pytest.mark.gui
 def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
+    *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
     qtbot: QtBot,
     editable_config_file: Path,
@@ -594,6 +606,7 @@ def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
 
 @pytest.mark.gui
 def test_show_label_text_field_dialog_toggle_rebuilds_label_dialog(
+    *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
     qtbot: QtBot,
     editable_config_file: Path,
@@ -617,6 +630,7 @@ def test_show_label_text_field_dialog_toggle_rebuilds_label_dialog(
 
 @pytest.mark.gui
 def test_label_completion_dialog_change_rebuilds_label_dialog(
+    *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
     qtbot: QtBot,
     editable_config_file: Path,
@@ -645,7 +659,7 @@ def test_label_completion_dialog_change_rebuilds_label_dialog(
 
 @pytest.mark.gui
 def test_ai_default_dialog_change_syncs_dock_combo(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     assert win._config["ai"]["default"] == "Sam2 (balanced)"
@@ -670,7 +684,7 @@ def test_ai_default_dialog_change_syncs_dock_combo(
 
 @pytest.mark.gui
 def test_ai_model_choices_follow_point_prompt_mode(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     win._switch_canvas_mode(edit=False, create_mode="ai_points_to_shape")
@@ -712,7 +726,7 @@ def test_ai_model_choices_follow_point_prompt_mode(
 
 @pytest.mark.gui
 def test_ai_dock_change_persists_and_syncs_settings_dialog(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     dialog = _open_settings_dialog(win=win)
@@ -735,7 +749,7 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
 
 @pytest.mark.gui
 def test_polygon_detail_popover_and_settings_stay_in_sync(
-    main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
     dialog = _open_settings_dialog(win=win)

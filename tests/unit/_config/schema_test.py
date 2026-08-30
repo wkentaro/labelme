@@ -17,7 +17,7 @@ def default_config() -> dict:
     return load_config(config_file=None, config_overrides={})
 
 
-def _resolve(config: dict, key_path: tuple[str, ...]) -> object:
+def _resolve(*, config: dict, key_path: tuple[str, ...]) -> object:
     node: object = config
     for key in key_path:
         assert isinstance(node, dict), key_path
@@ -26,7 +26,7 @@ def _resolve(config: dict, key_path: tuple[str, ...]) -> object:
     return node
 
 
-def _ids(settings: tuple[Setting, ...]) -> list[str]:
+def _ids(settings: tuple[Setting, ...], /) -> list[str]:
     return [".".join(setting.key_path) for setting in settings]
 
 
@@ -38,7 +38,7 @@ _INT_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "int")
 
 @pytest.mark.parametrize("setting", SETTINGS, ids=_ids(SETTINGS))
 def test_key_path_resolves_in_default_config(
-    setting: Setting, default_config: dict
+    *, setting: Setting, default_config: dict
 ) -> None:
     # raises if the key_path does not exist in default_config.yaml
     _resolve(config=default_config, key_path=setting.key_path)
@@ -55,7 +55,7 @@ def test_every_group_is_used() -> None:
 
 
 @pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(_ENUM_SETTINGS))
-def test_enum_default_is_a_choice(setting: Setting, default_config: dict) -> None:
+def test_enum_default_is_a_choice(*, setting: Setting, default_config: dict) -> None:
     assert setting.choices is not None
     assert len(setting.choices) >= 1
     default = _resolve(config=default_config, key_path=setting.key_path)
@@ -63,7 +63,7 @@ def test_enum_default_is_a_choice(setting: Setting, default_config: dict) -> Non
 
 
 @pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(_ENUM_SETTINGS))
-def test_enum_choice_labels_match_choices(setting: Setting) -> None:
+def test_enum_choice_labels_match_choices(*, setting: Setting) -> None:
     assert setting.choices is not None
     if setting.choice_labels is not None:
         assert len(setting.choice_labels) == len(setting.choices)
@@ -79,13 +79,13 @@ def test_ai_choice_labels_match_shared_model_names() -> None:
 
 
 @pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(_BOOL_SETTINGS))
-def test_bool_default_is_bool(setting: Setting, default_config: dict) -> None:
+def test_bool_default_is_bool(*, setting: Setting, default_config: dict) -> None:
     default = _resolve(config=default_config, key_path=setting.key_path)
     assert isinstance(default, bool), setting.key_path
 
 
 @pytest.mark.parametrize("setting", _COLOR_SETTINGS, ids=_ids(_COLOR_SETTINGS))
-def test_color_default_is_rgb(setting: Setting, default_config: dict) -> None:
+def test_color_default_is_rgb(*, setting: Setting, default_config: dict) -> None:
     default = _resolve(config=default_config, key_path=setting.key_path)
     assert (
         isinstance(default, list)
@@ -96,7 +96,7 @@ def test_color_default_is_rgb(setting: Setting, default_config: dict) -> None:
 
 @pytest.mark.parametrize("setting", _INT_SETTINGS, ids=_ids(_INT_SETTINGS))
 def test_int_default_matches_editor_range(
-    setting: Setting, default_config: dict
+    *, setting: Setting, default_config: dict
 ) -> None:
     assert (setting.minimum is None) == (setting.maximum is None)
     default = _resolve(config=default_config, key_path=setting.key_path)

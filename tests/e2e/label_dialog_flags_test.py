@@ -26,7 +26,7 @@ _CLOSE_POLYGON_CLICK: Final = _VERTICES[0]
 _draw_triangle = partial(draw_triangle, vertices=_VERTICES)
 
 
-def _check_flag(label_dialog: LabelDialog, name: str) -> None:
+def _check_flag(*, label_dialog: LabelDialog, name: str) -> None:
     for cb in label_dialog.findChildren(QCheckBox):
         if cb.text() == name:
             cb.setChecked(True)
@@ -35,6 +35,7 @@ def _check_flag(label_dialog: LabelDialog, name: str) -> None:
 
 
 def _enter_label(
+    *,
     qtbot: QtBot,
     label_dialog: LabelDialog,
     name: str,
@@ -57,6 +58,7 @@ def _enter_label(
     ],
 )
 def test_label_flags_applied_to_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -99,6 +101,7 @@ def test_label_flags_applied_to_shape(
 
 @pytest.mark.gui
 def test_enabled_flags_shown_in_label_list(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -141,6 +144,7 @@ def test_enabled_flags_shown_in_label_list(
 
 @pytest.mark.gui
 def test_flags_survive_retyping_the_label(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -175,7 +179,7 @@ def test_flags_survive_retyping_the_label(
     item = next(
         it for it in label_list if (s := it.shape()) is not None and s.label == "cat"
     )
-    label_list.select_item(item)
+    label_list.select_item(item=item)
     schedule_on_dialog(
         label_dialog=label_dialog,
         action=partial(
@@ -197,6 +201,7 @@ def test_flags_survive_retyping_the_label(
 
 @pytest.mark.gui
 def test_flags_survive_save_reload_roundtrip(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

@@ -28,7 +28,7 @@ from labelme._utils.qt import project_point_on_perpendicular_line
         ((0.0, -5.0), -math.pi / 2),
     ],
 )
-def test_direction_angle(end: tuple[float, float], expected: float) -> None:
+def test_direction_angle(*, end: tuple[float, float], expected: float) -> None:
     assert direction_angle(start=(0.0, 0.0), end=end) == pytest.approx(expected)
 
 
@@ -41,7 +41,7 @@ def test_direction_angle(end: tuple[float, float], expected: float) -> None:
     ],
 )
 def test_project_point_on_perpendicular_line(
-    point: QPointF, expected: tuple[float, float]
+    *, point: QPointF, expected: tuple[float, float]
 ) -> None:
     projected = project_point_on_perpendicular_line(
         point=point, line_start=QPointF(0.0, 0.0), line_end=QPointF(10.0, 0.0)
@@ -66,7 +66,9 @@ def test_project_point_on_perpendicular_line_zero_length_returns_point() -> None
         (QPointF(4.0, 7.0), (4.0, 0.0)),
     ],
 )
-def test_project_point_on_line(point: QPointF, expected: tuple[float, float]) -> None:
+def test_project_point_on_line(
+    *, point: QPointF, expected: tuple[float, float]
+) -> None:
     projected = project_point_on_line(
         point=point, line_start=QPointF(0.0, 0.0), line_end=QPointF(10.0, 0.0)
     )
@@ -123,19 +125,22 @@ def test_label_validator_rejects_single_char() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_new_icon_returns_qicon(qtbot: QtBot) -> None:
+@pytest.mark.usefixtures("qtbot")
+def test_new_icon_returns_qicon() -> None:
     icon = new_icon("icon-256")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
 
 
-def test_new_icon_with_explicit_png_suffix(qtbot: QtBot) -> None:
+@pytest.mark.usefixtures("qtbot")
+def test_new_icon_with_explicit_png_suffix() -> None:
     icon = new_icon("icon-256.png")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
 
 
-def test_new_icon_with_path_that_includes_subdir(qtbot: QtBot) -> None:
+@pytest.mark.usefixtures("qtbot")
+def test_new_icon_with_path_that_includes_subdir() -> None:
     icon = new_icon("phosphor/info.svg")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
@@ -146,7 +151,7 @@ def test_new_icon_with_path_that_includes_subdir(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _set_window_text(app: QtWidgets.QApplication, color: QtGui.QColor) -> None:
+def _set_window_text(app: QtWidgets.QApplication, /, *, color: QtGui.QColor) -> None:
     palette = app.palette()
     palette.setColor(
         QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.WindowText, color
@@ -155,11 +160,12 @@ def _set_window_text(app: QtWidgets.QApplication, color: QtGui.QColor) -> None:
 
 
 def test_tinted_svg_engine_renders_window_text_color(
+    *,
     qapp: QtWidgets.QApplication,
 ) -> None:
     original = qapp.palette()
     try:
-        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
         svg = (
             b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
             b'<rect width="4" height="4" fill="currentColor"/></svg>'
@@ -174,6 +180,7 @@ def test_tinted_svg_engine_renders_window_text_color(
 
 
 def test_tinted_svg_engine_renders_highlighted_text_color_when_selected(
+    *,
     qapp: QtWidgets.QApplication,
 ) -> None:
     original = qapp.palette()
@@ -199,27 +206,28 @@ def test_tinted_svg_engine_renders_highlighted_text_color_when_selected(
 
 
 def test_new_icon_tints_monochrome_icon_to_palette(
+    *,
     qapp: QtWidgets.QApplication,
 ) -> None:
     original = qapp.palette()
     try:
         icon = new_icon("phosphor/polygon.svg")  # authored with fill="currentColor"
-        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
         red = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, QtGui.QColor(0, 0, 255))
+        _set_window_text(qapp, color=QtGui.QColor(0, 0, 255))
         blue = icon.pixmap(QtCore.QSize(24, 24)).toImage()
         assert red != blue
     finally:
         qapp.setPalette(original)
 
 
-def test_new_icon_keeps_accent_icon_fixed(qapp: QtWidgets.QApplication) -> None:
+def test_new_icon_keeps_accent_icon_fixed(*, qapp: QtWidgets.QApplication) -> None:
     original = qapp.palette()
     try:
         icon = new_icon("phosphor/floppy-disk.svg")  # baked accent color, not tinted
-        _set_window_text(qapp, QtGui.QColor(255, 0, 0))
+        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
         a = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, QtGui.QColor(0, 255, 0))
+        _set_window_text(qapp, color=QtGui.QColor(0, 255, 0))
         b = icon.pixmap(QtCore.QSize(24, 24)).toImage()
         assert a == b
     finally:
@@ -231,70 +239,70 @@ def test_new_icon_keeps_accent_icon_fixed(qapp: QtWidgets.QApplication) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_new_action_returns_qaction(qtbot: QtBot) -> None:
+def test_new_action_returns_qaction(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="Open")
     assert isinstance(action, QtGui.QAction)
 
 
-def test_new_action_text(qtbot: QtBot) -> None:
+def test_new_action_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="Save")
     assert action.text() == "Save"
 
 
-def test_new_action_enabled_by_default(qtbot: QtBot) -> None:
+def test_new_action_enabled_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X")
     assert action.isEnabled()
 
 
-def test_new_action_disabled(qtbot: QtBot) -> None:
+def test_new_action_disabled(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", enabled=False)
     assert not action.isEnabled()
 
 
-def test_new_action_not_checkable_by_default(qtbot: QtBot) -> None:
+def test_new_action_not_checkable_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X")
     assert not action.isCheckable()
 
 
-def test_new_action_checkable(qtbot: QtBot) -> None:
+def test_new_action_checkable(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", checkable=True)
     assert action.isCheckable()
 
 
-def test_new_action_not_checked_by_default(qtbot: QtBot) -> None:
+def test_new_action_not_checked_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", checkable=True)
     assert not action.isChecked()
 
 
-def test_new_action_checked(qtbot: QtBot) -> None:
+def test_new_action_checked(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", checkable=True, checked=True)
     assert action.isChecked()
 
 
-def test_new_action_shortcut_string(qtbot: QtBot) -> None:
+def test_new_action_shortcut_string(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", shortcut="Ctrl+S")
     assert action.shortcut().toString() == "Ctrl+S"
 
 
-def test_new_action_shortcut_list(qtbot: QtBot) -> None:
+def test_new_action_shortcut_list(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", shortcut=["Ctrl+S", "Ctrl+W"])
@@ -303,7 +311,7 @@ def test_new_action_shortcut_list(qtbot: QtBot) -> None:
     assert "Ctrl+W" in keys
 
 
-def test_new_action_shortcut_tuple(qtbot: QtBot) -> None:
+def test_new_action_shortcut_tuple(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", shortcut=("Ctrl+S", "Ctrl+W"))
@@ -312,7 +320,7 @@ def test_new_action_shortcut_tuple(qtbot: QtBot) -> None:
     assert "Ctrl+W" in keys
 
 
-def test_new_action_tip(qtbot: QtBot) -> None:
+def test_new_action_tip(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(parent, text="X", tip="My tip")
@@ -320,7 +328,7 @@ def test_new_action_tip(qtbot: QtBot) -> None:
     assert action.statusTip() == "My tip"
 
 
-def test_new_action_no_tip_by_default(qtbot: QtBot) -> None:
+def test_new_action_no_tip_by_default(*, qtbot: QtBot) -> None:
     # Qt 6 behavior: toolTip() falls back to the action text when no tip is set;
     # statusTip() returns empty string.
     parent = QtWidgets.QWidget()
@@ -330,7 +338,7 @@ def test_new_action_no_tip_by_default(qtbot: QtBot) -> None:
     assert action.statusTip() == ""
 
 
-def test_new_action_with_icon_sets_icon_text(qtbot: QtBot) -> None:
+def test_new_action_with_icon_sets_icon_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     # Use an icon file that actually exists so Qt loads it as non-null.
@@ -343,7 +351,7 @@ def test_new_action_with_icon_sets_icon_text(qtbot: QtBot) -> None:
     assert not action.icon().isNull()
 
 
-def test_new_action_slot(qtbot: QtBot) -> None:
+def test_new_action_slot(*, qtbot: QtBot) -> None:
     calls: list[bool] = []
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
@@ -357,56 +365,56 @@ def test_new_action_slot(qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_add_actions_adds_qaction_to_menu(qtbot: QtBot) -> None:
+def test_add_actions_adds_qaction_to_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
     action = QtGui.QAction("Cut", parent)
-    add_actions(menu, [action])
+    add_actions(widget=menu, actions=[action])
     assert action in menu.actions()
 
 
-def test_add_actions_none_adds_separator_to_menu(qtbot: QtBot) -> None:
+def test_add_actions_none_adds_separator_to_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
     action = QtGui.QAction("Cut", parent)
-    add_actions(menu, [action, None])
+    add_actions(widget=menu, actions=[action, None])
     separators = [a for a in menu.actions() if a.isSeparator()]
     assert len(separators) == 1
 
 
-def test_add_actions_submenu_to_menu(qtbot: QtBot) -> None:
+def test_add_actions_submenu_to_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
     submenu = QtWidgets.QMenu("Sub", parent)
-    add_actions(menu, [submenu])
+    add_actions(widget=menu, actions=[submenu])
     # QMenu added as submenu appears in actions list
     titles = [a.text() for a in menu.actions()]
     assert "Sub" in titles
 
 
-def test_add_actions_adds_qaction_to_toolbar(qtbot: QtBot) -> None:
+def test_add_actions_adds_qaction_to_toolbar(*, qtbot: QtBot) -> None:
     toolbar = QtWidgets.QToolBar()
     qtbot.addWidget(toolbar)
     action = QtGui.QAction("Copy", toolbar)
-    add_actions(toolbar, [action])
+    add_actions(widget=toolbar, actions=[action])
     assert action in toolbar.actions()
 
 
-def test_add_actions_none_adds_separator_to_toolbar(qtbot: QtBot) -> None:
+def test_add_actions_none_adds_separator_to_toolbar(*, qtbot: QtBot) -> None:
     toolbar = QtWidgets.QToolBar()
     qtbot.addWidget(toolbar)
     action = QtGui.QAction("Copy", toolbar)
-    add_actions(toolbar, [action, None])
+    add_actions(widget=toolbar, actions=[action, None])
     separators = [a for a in toolbar.actions() if a.isSeparator()]
     assert len(separators) == 1
 
 
-def test_add_actions_empty_sequence(qtbot: QtBot) -> None:
+def test_add_actions_empty_sequence(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
-    add_actions(menu, [])
+    add_actions(widget=menu, actions=[])
     assert menu.actions() == []

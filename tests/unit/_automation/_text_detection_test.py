@@ -10,7 +10,7 @@ from labelme._automation._text_detection import nms_bboxes
 
 
 class _FakeOsamSession:
-    def __init__(self, response: osam.types.GenerateResponse) -> None:
+    def __init__(self, *, response: osam.types.GenerateResponse) -> None:
         self.model_name = "stub"
         self._response = response
 
@@ -29,9 +29,10 @@ def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
 
 def _get_bboxes(
     response: osam.types.GenerateResponse,
+    /,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
     return get_bboxes_from_texts(
-        session=_FakeOsamSession(response),  # ty: ignore[invalid-argument-type]
+        session=_FakeOsamSession(response=response),  # ty: ignore[invalid-argument-type]
         image=np.zeros((4, 4, 3), dtype=np.uint8),
         image_id="img",
         texts=["cat"],
@@ -131,6 +132,7 @@ def test_nms_bboxes_returns_empty_indices_for_no_boxes() -> None:
 
 
 def test_nms_bboxes_scatters_scores_into_one_hot_class_matrix(
+    *,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     captured: dict[str, np.ndarray] = {}
@@ -139,9 +141,7 @@ def test_nms_bboxes_scatters_scores_into_one_hot_class_matrix(
         *,
         boxes: np.ndarray,
         scores: np.ndarray,
-        iou_threshold: float,
-        score_threshold: float,
-        max_num_detections: int,
+        **_kwargs: object,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         captured["scores"] = scores
         keep = np.array([0], dtype=np.int64)

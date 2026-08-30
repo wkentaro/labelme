@@ -37,7 +37,7 @@ _TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 _SHAPE_INDEX: Final[int] = 0
 
 
-def _find_edge_midpoint_clear_of_vertices(canvas: Canvas, shape: Shape) -> QPointF:
+def _find_edge_midpoint_clear_of_vertices(*, canvas: Canvas, shape: Shape) -> QPointF:
     # Hovering prefers a vertex over an edge within epsilon/scale of it, so the
     # middle of a short edge stops being hoverable once a smaller screen scales
     # the image down. Take the edge midpoint standing farthest from any vertex.
@@ -66,6 +66,7 @@ def _find_edge_midpoint_clear_of_vertices(canvas: Canvas, shape: Shape) -> QPoin
 
 
 def _hover_and_drag(
+    *,
     qtbot: QtBot,
     canvas: Canvas,
     start_image_pos: QPointF,
@@ -85,6 +86,7 @@ def _hover_and_drag(
 
 
 def _cancel_label(
+    *,
     qtbot: QtBot,
     label_dialog: LabelDialog,
 ) -> None:
@@ -94,7 +96,7 @@ def _cancel_label(
     )
 
 
-def _wait_for_shape(qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
+def _wait_for_shape(*, qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
     result: list[Shape] = []
 
     def created() -> None:
@@ -109,6 +111,7 @@ def _wait_for_shape(qtbot: QtBot, canvas: Canvas, label: str) -> Shape:
 
 
 def _click_to_remove_point(
+    *,
     qtbot: QtBot,
     canvas: Canvas,
     vertex: QPointF,
@@ -126,6 +129,7 @@ def _click_to_remove_point(
 
 
 def _save_and_check(
+    *,
     win: MainWindow,
     tmp_path: Path,
 ) -> None:
@@ -136,6 +140,7 @@ def _save_and_check(
 
 @pytest.mark.gui
 def test_move_shape_by_drag(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -164,6 +169,7 @@ def test_move_shape_by_drag(
 
 @pytest.mark.gui
 def test_move_vertex_by_drag(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -201,6 +207,7 @@ def test_move_vertex_by_drag(
     ],
 )
 def test_move_shape_by_arrow_key(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -227,6 +234,7 @@ def test_move_shape_by_arrow_key(
 
 @pytest.mark.gui
 def test_select_all_shapes_from_canvas(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -247,6 +255,7 @@ def test_select_all_shapes_from_canvas(
 
 @pytest.mark.gui
 def test_add_point_on_edge(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -275,7 +284,7 @@ def test_add_point_on_edge(
     shape = next(s for s in canvas.shapes if s.label == label)
     num_points_before = len(shape.points)
 
-    annotated_win._switch_canvas_mode(edit=True)
+    annotated_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     p0, p1 = shape.points[0], shape.points[1]
@@ -301,6 +310,7 @@ def test_add_point_on_edge(
 
 @pytest.mark.gui
 def test_add_point_via_context_menu_action(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -328,6 +338,7 @@ def test_add_point_via_context_menu_action(
 
 @pytest.mark.gui
 def test_remove_point_from_shape(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -352,6 +363,7 @@ def test_remove_point_from_shape(
 @pytest.mark.gui
 @pytest.mark.parametrize("remove_index", [1, 4])
 def test_remove_point_does_not_drag_adjacent(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -392,6 +404,7 @@ def test_remove_point_does_not_drag_adjacent(
 
 @pytest.mark.gui
 def test_draw_actions_disable_only_active_mode(
+    *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,
@@ -408,7 +421,7 @@ def test_draw_actions_disable_only_active_mode(
         else:
             assert draw_action.isEnabled()
 
-    annotated_win._switch_canvas_mode(edit=True)
+    annotated_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
     assert canvas.mode == _CanvasMode.EDIT
 
@@ -420,6 +433,7 @@ def test_draw_actions_disable_only_active_mode(
 
 @pytest.mark.gui
 def test_cancel_drawing_with_escape(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     pause: bool,
@@ -447,6 +461,7 @@ def test_cancel_drawing_with_escape(
 
 @pytest.mark.gui
 def test_undo_last_point_while_drawing(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -495,6 +510,7 @@ def test_undo_last_point_while_drawing(
 
 @pytest.mark.gui
 def test_finalize_polygon_with_enter(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -527,6 +543,7 @@ def test_finalize_polygon_with_enter(
 
 @pytest.mark.gui
 def test_undo_shape_creation(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     tmp_path: Path,
@@ -607,6 +624,7 @@ def test_undo_shape_creation(
     ],
 )
 def test_select_nonpolygon_shape(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     tmp_path: Path,
@@ -632,7 +650,7 @@ def test_select_nonpolygon_shape(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert shape.shape_type == create_mode
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     click_pos = _shape_bounds(shape=shape).center() + QPointF(*select_offset)
@@ -650,6 +668,7 @@ def test_select_nonpolygon_shape(
 
 @pytest.mark.gui
 def test_cancel_label_reopens_shape(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     pause: bool,
@@ -705,6 +724,7 @@ def test_cancel_label_reopens_shape(
     ],
 )
 def test_remove_point_blocked_at_minimum(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     tmp_path: Path,
@@ -731,7 +751,7 @@ def test_remove_point_blocked_at_minimum(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label=label)
     assert len(shape.points) == expected_points
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     _click_to_remove_point(
@@ -746,7 +766,7 @@ def test_remove_point_blocked_at_minimum(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-def _click_to_select(qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> None:
+def _click_to_select(*, qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> None:
     pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=pos)
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
@@ -755,6 +775,7 @@ def _click_to_select(qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> None:
 
 @pytest.mark.gui
 def test_select_point_shape_by_click(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     pause: bool,
@@ -769,7 +790,7 @@ def test_select_point_shape_by_click(
     shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label="pt")
     assert shape.shape_type == "point"
 
-    raw_win._switch_canvas_mode(edit=True)
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
 
     _click_to_select(
@@ -785,6 +806,7 @@ def test_select_point_shape_by_click(
 
 @pytest.mark.gui
 def test_right_click_on_shape_opens_context_menu(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
@@ -799,12 +821,12 @@ def test_right_click_on_shape_opens_context_menu(
     monkeypatch.setattr(
         canvas.context_menus.without_selection,
         "exec",
-        lambda *args, **kwargs: menu_opened.append(0) or None,
+        lambda *_args, **_kwargs: menu_opened.append(0) or None,
     )
     monkeypatch.setattr(
         canvas.context_menus.with_selection,
         "exec",
-        lambda *args, **kwargs: menu_opened.append(1) or None,
+        lambda *_args, **_kwargs: menu_opened.append(1) or None,
     )
 
     bounds_center = _shape_bounds(shape=canvas.shapes[_SHAPE_INDEX]).center()
@@ -821,6 +843,7 @@ def test_right_click_on_shape_opens_context_menu(
 
 @pytest.mark.gui
 def test_select_mask_shape_by_click(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

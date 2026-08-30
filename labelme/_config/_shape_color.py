@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+from typing import Final
 from typing import cast
 
 from loguru import logger
 
+RGB_CHANNEL_COUNT: Final = 3
+_CHANNEL_VALUE_MAX: Final = 255
 
-def _is_rgb(value: object) -> bool:
+
+def _is_rgb(value: object, /) -> bool:
     return (
         isinstance(value, list)
-        and len(value) == 3
+        and len(value) == RGB_CHANNEL_COUNT
         and all(
             isinstance(channel, int)
             and not isinstance(channel, bool)
-            and 0 <= channel <= 255
+            and 0 <= channel <= _CHANNEL_VALUE_MAX
             for channel in value
         )
     )

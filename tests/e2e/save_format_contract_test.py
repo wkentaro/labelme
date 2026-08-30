@@ -31,6 +31,7 @@ _DEFAULT_TRIANGLE: Final[tuple[tuple[float, float], ...]] = (
 @pytest.mark.gui
 @pytest.mark.parametrize("with_image_data", [True, False])
 def test_save_image_data_field_matches_config(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -70,6 +71,7 @@ def test_save_image_data_field_matches_config(
 
 @pytest.mark.gui
 def test_save_falls_back_to_an_absolute_image_path_across_drives(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -125,6 +127,7 @@ def test_save_falls_back_to_an_absolute_image_path_across_drives(
 
 @pytest.mark.gui
 def test_round_trip_polygon_preserves_points(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     raw_win: MainWindow,
@@ -169,6 +172,7 @@ def test_round_trip_polygon_preserves_points(
 
 @pytest.mark.gui
 def test_round_trip_mask_shape_via_fixture(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -248,6 +252,7 @@ def test_round_trip_mask_shape_via_fixture(
 
 @pytest.mark.gui
 def test_open_json_with_missing_image_shows_error_and_recovers(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     data_path: Path,
@@ -268,9 +273,9 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
         json.dump(json_data, f)
 
     QTimer.singleShot(0, lambda: dismiss_active_modal(qtbot=qtbot))
-    raw_win._load_file(str(missing_image_json))
+    raw_win._load_file(image_or_label_path=str(missing_image_json))
 
-    raw_win._load_file(str(data_path / _RAW_FILE_NAME))
+    raw_win._load_file(image_or_label_path=str(data_path / _RAW_FILE_NAME))
     qtbot.waitUntil(lambda: raw_win._annotation is not None, timeout=5_000)
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
@@ -278,6 +283,7 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
 
 @pytest.mark.gui
 def test_title_returns_to_clean_after_save(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -299,7 +305,7 @@ def test_title_returns_to_clean_after_save(
 
     label_path = tmp_path / "2011_000003.json"
     monkeypatch.setattr(win, "prompt_save_file_path", lambda: str(label_path))
-    win._save_label_file()
+    win._save_label_file(save_as=False)
 
     assert label_path.exists()
     assert not win.windowTitle().endswith("*")

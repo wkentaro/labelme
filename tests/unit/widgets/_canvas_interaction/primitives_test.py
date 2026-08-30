@@ -5,7 +5,6 @@ from typing import Final
 import numpy as np
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QMenu
 
 from labelme._shape import Shape
@@ -23,11 +22,11 @@ _SCALE: Final[float] = 1.0
 _POINT_SIZE: Final[int] = 8
 
 
-def _point(x: float, y: float) -> np.ndarray:
+def _point(x: float, y: float, /) -> np.ndarray:
     return np.array([x, y], dtype=np.float64)
 
 
-def _polygon(points: list[tuple[float, float]], *, visible: bool = True) -> Shape:
+def _polygon(points: list[tuple[float, float]], /, *, visible: bool) -> Shape:
     return Shape(
         shape_type="polygon",
         points=np.array(points, dtype=np.float64),
@@ -42,7 +41,7 @@ def _polygon(points: list[tuple[float, float]], *, visible: bool = True) -> Shap
 
 
 def test_hit_target_frozen() -> None:
-    shape = _polygon([(0, 0), (10, 0), (10, 10)])
+    shape = _polygon([(0, 0), (10, 0), (10, 10)], visible=True)
     target = HitTarget(kind=HitKind.BODY, shape=shape, index=None)
     with pytest.raises((AttributeError, TypeError)):
         target.kind = HitKind.VERTEX  # ty: ignore[invalid-assignment]
@@ -84,7 +83,7 @@ def test_invisible_shapes_are_excluded() -> None:
 
 
 def test_visible_shape_body_hit() -> None:
-    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
+    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[shape],
         point=_point(25.0, 25.0),
@@ -105,7 +104,7 @@ def test_visible_shape_body_hit() -> None:
 
 def test_vertex_match_beats_body() -> None:
     # Shape with vertex at (10, 10); hover exactly on vertex -> VERTEX, not BODY.
-    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
+    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[shape],
         point=_point(10.0, 10.0),
@@ -124,8 +123,8 @@ def test_vertex_on_last_candidate_beats_body_on_first_candidate() -> None:
     # Two shapes: first (in list order) has a body at (25, 25) and its vertex
     # far away; second (examined first in reverse order) has a vertex at (10, 10).
     # Hover at (10, 10): the VERTEX on the second (topmost) shape must win.
-    body_shape = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)])
-    vertex_shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
+    body_shape = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+    vertex_shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     # shapes=[body_shape, vertex_shape]: reverse order tries vertex_shape first.
     result = find_hover_target(
         shapes=[body_shape, vertex_shape],
@@ -144,8 +143,8 @@ def test_category_precedence_vertex_over_body_across_shapes() -> None:
     # Shape A (listed first, lower paint order): has body at center, vertex far.
     # Shape B (listed second, higher paint order, examined first): vertex at (10,10).
     # Hover at (10,10): vertex category dominates even though shape A is "first".
-    big = _polygon([(0, 0), (200, 0), (200, 200), (0, 200)])
-    small = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
+    big = _polygon([(0, 0), (200, 0), (200, 200), (0, 200)], visible=True)
+    small = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[big, small],
         point=_point(10.0, 10.0),
@@ -166,7 +165,7 @@ def test_category_precedence_vertex_over_body_across_shapes() -> None:
 
 def test_edge_hit_on_polygon() -> None:
     # polygon: midpoint of top edge (10,10)-(90,10) is (50,10).
-    shape = _polygon([(10, 10), (90, 10), (90, 50), (10, 50)])
+    shape = _polygon([(10, 10), (90, 10), (90, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[shape],
         point=_point(50.0, 10.0),
@@ -217,8 +216,8 @@ def test_priority_shape_is_checked_first() -> None:
     # The other shape also has vertex at (10,10).
     # Without priority, reverse order tries shape_b first (it is last in list).
     # With priority=shape_a, shape_a is tried first.
-    shape_a = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
-    shape_b = _polygon([(10, 10), (80, 10), (80, 80), (10, 80)])
+    shape_a = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    shape_b = _polygon([(10, 10), (80, 10), (80, 80), (10, 80)], visible=True)
     result = find_hover_target(
         shapes=[shape_b, shape_a],
         point=_point(10.0, 10.0),
@@ -234,7 +233,7 @@ def test_priority_shape_is_checked_first() -> None:
 
 def test_priority_shape_not_in_shapes_is_still_checked() -> None:
     # priority_shape need not be a member of shapes.
-    orphan = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
+    orphan = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[],
         point=_point(10.0, 10.0),
@@ -250,7 +249,7 @@ def test_priority_shape_not_in_shapes_is_still_checked() -> None:
 
 def test_priority_shape_not_duplicated_in_candidates() -> None:
     # priority_shape appears in shapes; it must not be examined twice.
-    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)])
+    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     # Only one match expected: VERTEX at index 0.
     result = find_hover_target(
         shapes=[shape],
@@ -274,8 +273,8 @@ def test_priority_shape_not_duplicated_in_candidates() -> None:
 def test_reverse_paint_order_topmost_body_wins() -> None:
     # Two overlapping body-only shapes. The second in the list (top paint layer)
     # should be returned as the body hit.
-    shape_a = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)])
-    shape_b = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)])
+    shape_a = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+    shape_b = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
     result = find_hover_target(
         shapes=[shape_a, shape_b],
         point=_point(50.0, 50.0),
@@ -352,7 +351,9 @@ def test_is_within_pick_threshold_larger_scale_smaller_image_radius() -> None:
         (CursorRole.MOVE, Qt.CursorShape.ClosedHandCursor),
     ],
 )
-def test_cursor_shape_for_all_roles(role: CursorRole, expected: Qt.CursorShape) -> None:
+def test_cursor_shape_for_all_roles(
+    *, role: CursorRole, expected: Qt.CursorShape
+) -> None:
     assert cursor_shape_for(role) == expected
 
 
@@ -362,9 +363,8 @@ def test_cursor_shape_for_all_roles(role: CursorRole, expected: Qt.CursorShape) 
 
 
 @pytest.mark.gui
-def test_context_menu_pair_menu_for_no_selection(
-    qapp: QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_context_menu_pair_menu_for_no_selection() -> None:
     without = QMenu()
     with_ = QMenu()
     pair = ContextMenuPair(without_selection=without, with_selection=with_)
@@ -372,9 +372,8 @@ def test_context_menu_pair_menu_for_no_selection(
 
 
 @pytest.mark.gui
-def test_context_menu_pair_menu_for_with_selection(
-    qapp: QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_context_menu_pair_menu_for_with_selection() -> None:
     without = QMenu()
     with_ = QMenu()
     pair = ContextMenuPair(without_selection=without, with_selection=with_)
@@ -382,9 +381,8 @@ def test_context_menu_pair_menu_for_with_selection(
 
 
 @pytest.mark.gui
-def test_context_menu_pair_stores_menus_as_named_attributes(
-    qapp: QApplication,
-) -> None:
+@pytest.mark.usefixtures("qapp")
+def test_context_menu_pair_stores_menus_as_named_attributes() -> None:
     without = QMenu()
     with_ = QMenu()
     pair = ContextMenuPair(without_selection=without, with_selection=with_)

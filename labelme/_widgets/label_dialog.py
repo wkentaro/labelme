@@ -20,14 +20,14 @@ _FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
 class LabelQLineEdit(QtWidgets.QLineEdit):
     """QLineEdit that forwards Up/Down key events to a paired list widget."""
 
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(self, *, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
         self.list_widget: QtWidgets.QListWidget | None = None
 
-    def set_list_widget(self, list_widget: QtWidgets.QListWidget) -> None:
+    def set_list_widget(self, *, list_widget: QtWidgets.QListWidget) -> None:
         self.list_widget = list_widget
 
-    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+    def keyPressEvent(self, event: QtGui.QKeyEvent, /) -> None:
         key = event.key()
         if key in (QtCore.Qt.Key.Key_Up, QtCore.Qt.Key.Key_Down):
             if self.list_widget is not None:
@@ -41,6 +41,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def __init__(
         self,
+        *,
         text: str = _PLACEHOLDER_TEXT,
         parent: QtWidgets.QWidget | None = None,
         labels: list[str] | None = None,
@@ -110,7 +111,7 @@ class LabelDialog(QtWidgets.QDialog):
         # Set up completer bound to label_list's model
         completer = self._make_completer(completion=completion)
         self.edit.setCompleter(completer)
-        self.edit.set_list_widget(self.label_list)
+        self.edit.set_list_widget(list_widget=self.label_list)
 
         # Button box
         button_box = QtWidgets.QDialogButtonBox(
@@ -170,7 +171,7 @@ class LabelDialog(QtWidgets.QDialog):
     def label_history(self) -> list[str]:
         return self._label_history[:]
 
-    def _make_completer(self, completion: str) -> QtWidgets.QCompleter:
+    def _make_completer(self, *, completion: str) -> QtWidgets.QCompleter:
         if completion == "startswith":
             completer = QtWidgets.QCompleter(self.label_list.model())
             completer.setCompletionMode(
@@ -193,13 +194,14 @@ class LabelDialog(QtWidgets.QDialog):
     def _on_label_selected(
         self,
         current: QtWidgets.QListWidgetItem | None,
-        previous: QtWidgets.QListWidgetItem | None,
+        _previous: QtWidgets.QListWidgetItem | None,
+        /,
     ) -> None:
         if current is None:
             return
         self.edit.setText(current.text())
 
-    def _on_item_double_clicked(self, item: QtWidgets.QListWidgetItem) -> None:
+    def _on_item_double_clicked(self, item: QtWidgets.QListWidgetItem, /) -> None:
         self.label_list.setCurrentItem(item)
         self._on_ok_clicked()
 
@@ -218,7 +220,7 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.setParent(None)
                 widget.deleteLater()
 
-    def _update_flags(self, text: str) -> None:
+    def _update_flags(self, text: str, /) -> None:
         self._flag_states.update(self._collect_flags())
         flags: dict[str, bool] = {}
         for pattern, flag_keys in self._flags_spec.items():
@@ -228,7 +230,7 @@ class LabelDialog(QtWidgets.QDialog):
                 flags[key] = self._flag_states.get(key, False)
         self._set_flag_checkboxes(flags=flags)
 
-    def add_label_history(self, label: str) -> None:
+    def add_label_history(self, *, label: str) -> None:
         if label not in self._label_history:
             self._label_history.append(label)
 
@@ -237,7 +239,7 @@ class LabelDialog(QtWidgets.QDialog):
             if self._sort_labels:
                 self.label_list.sortItems()
 
-    def set_predefined_labels(self, labels: list[str]) -> None:
+    def set_predefined_labels(self, *, labels: list[str]) -> None:
         history_extras = [h for h in self._label_history if h not in labels]
         all_labels = list(dict.fromkeys(labels)) + history_extras
 
@@ -250,6 +252,7 @@ class LabelDialog(QtWidgets.QDialog):
 
     def popup(
         self,
+        *,
         text: str | None = None,
         move: bool = True,
         position: QtCore.QPoint | None = None,
@@ -312,7 +315,7 @@ class LabelDialog(QtWidgets.QDialog):
 
         return None, None, None, None
 
-    def _set_flag_checkboxes(self, flags: dict[str, bool]) -> None:
+    def _set_flag_checkboxes(self, *, flags: dict[str, bool]) -> None:
         self._clear_flag_checkboxes()
         for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
@@ -340,14 +343,14 @@ class LabelDialog(QtWidgets.QDialog):
         if self._fit_to_content["column"]:
             self.label_list.setMinimumWidth(self.label_list.sizeHintForColumn(0) + 2)
 
-    def _move_within_screen(self, target: QtCore.QPoint) -> None:
+    def _move_within_screen(self, target: QtCore.QPoint, /) -> None:
         self.adjustSize()
         # setGeometry() anchors the client area, unlike move() which anchors the
         # window frame: the content corner lands at target, not the title bar's.
         self.setGeometry(QtCore.QRect(target, self.size()))
         self._clamp_within_screen(target)
 
-    def _clamp_within_screen(self, target: QtCore.QPoint) -> None:
+    def _clamp_within_screen(self, target: QtCore.QPoint, /) -> None:
         screen = (
             QtGui.QGuiApplication.screenAt(target)
             or QtGui.QGuiApplication.primaryScreen()

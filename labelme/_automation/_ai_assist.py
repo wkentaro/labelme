@@ -33,6 +33,7 @@ class AiAssistSession:
 
     def __init__(
         self,
+        *,
         model_name: str = "sam2:latest",
         output_format: AiOutputFormat = "polygon",
         polygon_detail: int = 80,
@@ -136,6 +137,7 @@ def _is_point_inside_detection(
 
 def _detections_from_annotations(
     annotations: list[osam.types.Annotation],
+    /,
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")

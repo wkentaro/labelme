@@ -21,6 +21,7 @@ from .conftest import submit_label_dialog
 
 
 def _draw_polygon(
+    *,
     qtbot: QtBot,
     win: MainWindow,
     canvas: Canvas,
@@ -48,6 +49,7 @@ def _draw_polygon(
 
 @pytest.mark.gui
 def test_draw_shape_appears_in_label_list(
+    *,
     qtbot: QtBot,
     raw_win: MainWindow,
     pause: bool,
@@ -69,6 +71,7 @@ def test_draw_shape_appears_in_label_list(
 
 @pytest.mark.gui
 def test_click_label_list_entry_selects_canvas_shape(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -87,7 +90,7 @@ def test_click_label_list_entry_selects_canvas_shape(
     expected_shape = first_item.shape()
     assert expected_shape is not None
 
-    label_list.select_item(first_item)
+    label_list.select_item(item=first_item)
     qtbot.waitUntil(lambda: expected_shape in canvas.selected_shapes)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -95,6 +98,7 @@ def test_click_label_list_entry_selects_canvas_shape(
 
 @pytest.mark.gui
 def test_click_canvas_shape_selects_label_list_entry(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -118,6 +122,7 @@ def test_click_canvas_shape_selects_label_list_entry(
 
 @pytest.mark.gui
 def test_rename_via_label_dialog_updates_shape_and_list(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
@@ -153,6 +158,7 @@ def test_rename_via_label_dialog_updates_shape_and_list(
 
 @pytest.mark.gui
 def test_delete_shape_removes_label_list_entry(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
@@ -167,7 +173,7 @@ def test_delete_shape_removes_label_list_entry(
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_selected_shapes()
     qtbot.waitUntil(lambda: len(label_list) == count_before - 1)
     assert len(canvas.shapes) == count_before - 1
@@ -177,6 +183,7 @@ def test_delete_shape_removes_label_list_entry(
 
 @pytest.fixture()
 def annotated_with_labels(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -193,6 +200,7 @@ def annotated_with_labels(
 
 @pytest.mark.gui
 def test_edit_label_cancel_keeps_labels(
+    *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
     pause: bool,
@@ -223,6 +231,7 @@ def test_edit_label_cancel_keeps_labels(
     indirect=True,
 )
 def test_edit_label_invalid_label_keeps_labels_and_shows_error(
+    *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
@@ -238,7 +247,7 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
     monkeypatch.setattr(
         QMessageBox,
         "critical",
-        lambda *args, **kwargs: error_shown.append(True)
+        lambda *_args, **_kwargs: error_shown.append(True)
         or QMessageBox.StandardButton.Ok,
     )
 
@@ -261,6 +270,7 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
 
 @pytest.mark.gui
 def test_edit_label_multi_shape_mismatch_disables_text_field(
+    *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
     pause: bool,
@@ -278,8 +288,8 @@ def test_edit_label_multi_shape_mismatch_disables_text_field(
     )
 
     label_list.clearSelection()
-    label_list.select_item(label_list[0])
-    label_list.select_item(label_list[3])
+    label_list.select_item(item=label_list[0])
+    label_list.select_item(item=label_list[3])
 
     edit_disabled_during_popup: list[bool] = []
 
@@ -299,6 +309,7 @@ def test_edit_label_multi_shape_mismatch_disables_text_field(
 
 @pytest.mark.gui
 def test_open_different_file_repopulates_label_list(
+    *,
     qtbot: QtBot,
     main_win: MainWinFactory,
     data_path: Path,

@@ -14,6 +14,7 @@ from .conftest import show_window_and_wait_for_imagedata
 
 @pytest.mark.gui
 def test_image_navigation_while_selecting_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

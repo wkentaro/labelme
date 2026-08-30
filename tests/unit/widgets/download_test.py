@@ -21,6 +21,7 @@ _MODEL_NAME: Final = "efficientsam:10m"
 
 @pytest.fixture()
 def isolated_model_type(
+    *,
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> type[osam.types.Model]:
@@ -39,11 +40,12 @@ def isolated_model_type(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("close_failed_download_dialog")
 def test_download_ai_model_returns_true_when_pull_succeeds(
+    *,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
     isolated_model_type: type[osam.types.Model],
-    close_failed_download_dialog: None,
 ) -> None:
     expected_paths = [Path(blob.path) for blob in isolated_model_type._blobs.values()]
     TEST_MODEL_DATA: Final = b"test model"
@@ -79,20 +81,18 @@ def test_download_ai_model_returns_true_when_pull_succeeds(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("close_failed_download_dialog")
 def test_download_ai_model_returns_false_when_pull_fails(
+    *,
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
-    close_failed_download_dialog: None,
 ) -> None:
     model_type = osam.apis.get_model_type_by_name(_MODEL_NAME)
 
-    def fail_pull(
-        cls: type[osam.types.Model],
-        progress: Callable[[str, int, int | None], None] | None = None,
-    ) -> None:
+    def fail_pull(_cls: type[osam.types.Model], **_kwargs: object) -> None:
         raise RuntimeError("download failed")
 
-    monkeypatch.setattr(model_type, "get_size", classmethod(lambda cls: None))
+    monkeypatch.setattr(model_type, "get_size", classmethod(lambda _cls: None))
     monkeypatch.setattr(model_type, "pull", classmethod(fail_pull))
 
     parent = QWidget()
@@ -103,10 +103,11 @@ def test_download_ai_model_returns_false_when_pull_fails(
 
 @pytest.mark.gui
 @pytest.mark.network
+@pytest.mark.usefixtures("close_failed_download_dialog")
 def test_download_ai_model_from_network(
+    *,
     qtbot: QtBot,
     isolated_model_type: type[osam.types.Model],
-    close_failed_download_dialog: None,
 ) -> None:
     expected_paths = [Path(blob.path) for blob in isolated_model_type._blobs.values()]
 
@@ -135,5 +136,5 @@ def test_download_ai_model_from_network(
         (1099511627776, "1.0 TB"),
     ],
 )
-def test_format_bytes(n: int, expected: str) -> None:
+def test_format_bytes(*, n: int, expected: str) -> None:
     assert _format_bytes(n) == expected

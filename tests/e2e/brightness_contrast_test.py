@@ -13,6 +13,7 @@ from ..conftest import close_or_pause
 
 @pytest.mark.gui
 def test_brightness_contrast_dialog(
+    *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,

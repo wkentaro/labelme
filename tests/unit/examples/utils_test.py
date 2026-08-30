@@ -15,7 +15,9 @@ from examples import utils
 _SOURCE_MODES: Final = ["RGB", "RGBA", "LA", "L", "P"]
 
 
-def _mask_shape(points: list[list[float]], mask: NDArray[np.bool_]) -> dict[str, Any]:
+def _mask_shape(
+    *, points: list[list[float]], mask: NDArray[np.bool_]
+) -> dict[str, Any]:
     return dict(
         label="car",
         points=points,
@@ -31,7 +33,9 @@ def _mask_shape(points: list[list[float]], mask: NDArray[np.bool_]) -> dict[str,
 def test_shapes_to_label_mask_paints_bbox_pixels() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[2.0, 1.0], [6.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[1:4, 2:7] = True
     assert np.array_equal(cls > 0, painted)
@@ -40,14 +44,18 @@ def test_shapes_to_label_mask_paints_bbox_pixels() -> None:
 def test_shapes_to_label_mask_clips_bbox_off_left_edge() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[-6.0, 1.0], [-2.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     assert not (cls > 0).any()
 
 
 def test_shapes_to_label_mask_clips_bbox_over_right_edge() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[17.0, 1.0], [21.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[1:4, 17:20] = True
     assert np.array_equal(cls > 0, painted)
@@ -58,7 +66,9 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     patch[1, 2] = True  # -> canvas (0, 0)
     patch[4, 4] = True  # -> canvas (3, 2)
     shape = _mask_shape(points=[[-2.0, -1.0], [2.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[0, 0] = True
     painted[3, 2] = True
@@ -74,11 +84,13 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     ids=["different-fractions", "ties-to-even"],
 )
 def test_shapes_to_label_mask_rounds_origin_without_cropping_mask(
-    points: list[list[float]], expected_origin: tuple[int, int]
+    *, points: list[list[float]], expected_origin: tuple[int, int]
 ) -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=points, mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     x, y = expected_origin
     painted[y : y + patch.shape[0], x : x + patch.shape[1]] = True
@@ -88,13 +100,15 @@ def test_shapes_to_label_mask_rounds_origin_without_cropping_mask(
 def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[2.0, 1.0], [4.0, 3.0]], mask=patch)
-    cls, _ = utils.shapes_to_label((20, 20), [shape], {"car": 1})
+    cls, _ = utils.shapes_to_label(
+        img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
+    )
     painted = np.zeros((20, 20), dtype=bool)
     painted[1:4, 2:5] = True
     assert np.array_equal(cls > 0, painted)
 
 
-def _encode_png(img_pil: PIL.Image.Image) -> bytes:
+def _encode_png(img_pil: PIL.Image.Image, /) -> bytes:
     buf = io.BytesIO()
     img_pil.save(buf, format="PNG")
     return buf.getvalue()
@@ -116,7 +130,7 @@ def _make_source_rgb() -> PIL.Image.Image:
 
 @pytest.mark.parametrize("mode", _SOURCE_MODES)
 def test_decode_img_data_as_rgb_returns_rgb_for_every_source_mode(
-    mode: str, source_rgb: PIL.Image.Image
+    *, mode: str, source_rgb: PIL.Image.Image
 ) -> None:
     arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert(mode)))
     assert arr.dtype == np.uint8
@@ -125,7 +139,7 @@ def test_decode_img_data_as_rgb_returns_rgb_for_every_source_mode(
 
 @pytest.mark.parametrize("mode", _SOURCE_MODES)
 def test_decode_img_data_as_rgb_output_is_jpeg_writable(
-    mode: str, source_rgb: PIL.Image.Image
+    *, mode: str, source_rgb: PIL.Image.Image
 ) -> None:
     # The reported crash: the VOC converters write the decoded array as JPEG,
     # which cannot represent an alpha channel.
@@ -134,6 +148,7 @@ def test_decode_img_data_as_rgb_output_is_jpeg_writable(
 
 
 def test_decode_img_data_as_rgb_resolves_palette_colors(
+    *,
     source_rgb: PIL.Image.Image,
 ) -> None:
     arr = utils.decode_img_data_as_rgb(_encode_png(source_rgb.convert("P")))
@@ -141,6 +156,7 @@ def test_decode_img_data_as_rgb_resolves_palette_colors(
 
 
 def test_decode_img_data_as_rgb_discards_alpha_without_compositing(
+    *,
     source_rgb: PIL.Image.Image,
 ) -> None:
     rgba = source_rgb.convert("RGBA")

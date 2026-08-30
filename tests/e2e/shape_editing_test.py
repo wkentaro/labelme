@@ -22,12 +22,12 @@ from .conftest import show_window_and_wait_for_imagedata
 
 
 def _open_and_select_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
-    shape_index: int = 0,
-    config_overrides: dict[str, bool] | None = None,
-    output_dir: str | None = None,
+    config_overrides: dict[str, bool] | None,
+    output_dir: str | None,
 ) -> tuple[MainWindow, Canvas]:
     win = main_win(
         file_or_dir=str(data_path / "annotated/2011_000003.json"),
@@ -39,29 +39,35 @@ def _open_and_select_shape(
     canvas = win._canvas_widgets.canvas
     assert len(canvas.shapes) == 5
 
-    select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     return win, canvas
 
 
 def _delete_selected_shape(
+    *,
     win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
 ) -> None:
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *args, **kwargs: True)
+    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_selected_shapes()
     qtbot.wait(50)
 
 
 @pytest.mark.gui
 def test_select_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
 ) -> None:
     win, canvas = _open_and_select_shape(
-        main_win=main_win, qtbot=qtbot, data_path=data_path
+        main_win=main_win,
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=None,
+        output_dir=None,
     )
 
     assert canvas.selected_shapes[0].label == "person"
@@ -71,6 +77,7 @@ def test_select_shape(
 
 @pytest.mark.gui
 def test_copy_paste_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -95,7 +102,7 @@ def test_copy_paste_shape(
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == original_label
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -103,6 +110,7 @@ def test_copy_paste_shape(
 
 @pytest.mark.gui
 def test_duplicate_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -124,7 +132,7 @@ def test_duplicate_shape(
 
     assert len(canvas.shapes) == num_shapes_before + 1
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -132,6 +140,7 @@ def test_duplicate_shape(
 
 @pytest.mark.gui
 def test_delete_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -151,7 +160,7 @@ def test_delete_shape(
 
     assert len(canvas.shapes) == 4
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -159,6 +168,7 @@ def test_delete_shape(
 
 @pytest.mark.gui
 def test_delete_undo_shape(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -182,7 +192,7 @@ def test_delete_undo_shape(
     assert len(canvas.shapes) == 5
     assert canvas.shapes[0].label == "person"
 
-    win._save_label_file()
+    win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -190,6 +200,7 @@ def test_delete_undo_shape(
 
 @pytest.mark.gui
 def test_right_drag_copy_here_duplicates_shape(
+    *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
@@ -210,7 +221,7 @@ def test_right_drag_copy_here_duplicates_shape(
     # and return it truthy so the canvas treats the release as handled.
     copy_here_action = canvas.context_menus.with_selection.actions()[0]
 
-    def trigger_copy_here(*args: object, **kwargs: object) -> object:
+    def trigger_copy_here(*_args: object, **_kwargs: object) -> object:
         copy_here_action.trigger()
         return copy_here_action
 

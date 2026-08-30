@@ -24,7 +24,7 @@ _CLOSE_POLYGON_CLICK: Final = _VERTICES[0]
 _draw_triangle = partial(draw_triangle, vertices=_VERTICES)
 
 
-def _label_list_texts(label_list: QtWidgets.QListWidget) -> list[str]:
+def _label_list_texts(*, label_list: QtWidgets.QListWidget) -> list[str]:
     texts: list[str] = []
     for i in range(label_list.count()):
         item = label_list.item(i)
@@ -35,6 +35,7 @@ def _label_list_texts(label_list: QtWidgets.QListWidget) -> list[str]:
 
 @pytest.mark.gui
 def test_blank_input_keeps_dialog_open(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -69,6 +70,7 @@ def test_blank_input_keeps_dialog_open(
 
 @pytest.mark.gui
 def test_validate_label_exact_rejects_unknown_label(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -86,7 +88,7 @@ def test_validate_label_exact_rejects_unknown_label(
 
     error_shown: list[bool] = []
 
-    def _record_critical(*args: object, **kwargs: object) -> int:
+    def _record_critical(*_args: object, **_kwargs: object) -> int:
         error_shown.append(True)
         return QMessageBox.StandardButton.Ok
 
@@ -110,6 +112,7 @@ def test_validate_label_exact_rejects_unknown_label(
 
 @pytest.mark.gui
 def test_arrow_keys_in_label_edit_navigate_label_list(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -150,6 +153,7 @@ def test_arrow_keys_in_label_edit_navigate_label_list(
 
 @pytest.mark.gui
 def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -186,6 +190,7 @@ def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
 
 @pytest.mark.gui
 def test_label_completer_autocompletes_typed_prefix(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -226,6 +231,7 @@ def test_label_completer_autocompletes_typed_prefix(
 
 @pytest.mark.gui
 def test_trailing_whitespace_label_is_stripped(
+    *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,

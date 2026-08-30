@@ -29,8 +29,13 @@ from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
+_POINT_COORDINATE_COUNT: Final = 2
+_SINGLE_CHANNEL_NDIM: Final = 2
+_MULTI_CHANNEL_NDIM: Final = 3
+_RGB_CHANNEL_COUNT: Final = 3
 
-def _validate_flags(flags: object) -> dict[str, bool]:
+
+def _validate_flags(*, flags: object) -> dict[str, bool]:
     if flags is None:
         return {}
     if not isinstance(flags, dict):
@@ -86,11 +91,11 @@ def _validate_shape_semantics(
         return
     if mask is None:
         raise ValueError("mask is required for shape_type='mask'")
-    if mask.ndim != 2:
+    if mask.ndim != _SINGLE_CHANNEL_NDIM:
         raise ValueError(f"mask must decode to a 2D image, got shape {mask.shape}")
 
 
-def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
+def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
     SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
@@ -115,7 +120,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
         raise ValueError(f"points must be non-empty: {shape_json_obj}")
     if not all(
         isinstance(point, list)
-        and len(point) == 2
+        and len(point) == _POINT_COORDINATE_COUNT
         and all(
             isinstance(xy, int | float) and not isinstance(xy, bool) for xy in point
         )
@@ -178,7 +183,7 @@ def _load_shape_json_obj(shape_json_obj: dict) -> ShapeDict:
     return loaded
 
 
-def _dump_shape_to_json_obj(shape: ShapeDict) -> dict[str, Any]:
+def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
     json_obj: dict[str, Any] = dict(shape["other_data"])
     json_obj.update(
         label=shape["label"],
@@ -228,11 +233,11 @@ _RESERVED_TOP_LEVEL_KEYS: Final[tuple[str, ...]] = (
 )
 
 
-def is_label_file_path(filename: str) -> bool:
+def is_label_file_path(*, filename: str) -> bool:
     return Path(filename).suffix.lower() == LABEL_FILE_SUFFIX
 
 
-def read_image_file(filename: str) -> bytes:
+def read_image_file(*, filename: str) -> bytes:
     try:
         return _read_image_file(filename=filename)
     except OSError:
@@ -241,11 +246,11 @@ def read_image_file(filename: str) -> bytes:
         raise OSError(f"failed to read image {filename!r}: {e}") from e
 
 
-def _read_image_file(filename: str) -> bytes:
+def _read_image_file(*, filename: str) -> bytes:
     t_start = time.time()
-    image_pil = _imread(filename=filename)
+    image_pil = _imread(filename)
 
-    oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
+    oriented: PIL.Image.Image = _utils.apply_exif_orientation(image_pil)
     ext = Path(filename).suffix.lower()
     if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
         with open(filename, "rb") as f:
@@ -286,7 +291,7 @@ def _check_image_dimensions(
         isinstance(expected_width, bool) or not isinstance(expected_width, int)
     ):
         raise TypeError(f"imageWidth must be int: {expected_width}")
-    actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
+    actual_w, actual_h = _utils.img_data_to_pil(image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
             f"imageHeight mismatch: declared={expected_height}, actual={actual_h}"
@@ -297,7 +302,7 @@ def _check_image_dimensions(
         )
 
 
-def read_label_file(filename: str) -> Annotation:
+def read_label_file(*, filename: str) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
@@ -343,9 +348,9 @@ def read_label_file(filename: str) -> Annotation:
 
 
 def write_label_file(
+    *,
     filename: str,
     annotation: Annotation,
-    *,
     image_height: int | None,
     image_width: int | None,
     save_image_data: bool,
@@ -363,7 +368,9 @@ def write_label_file(
         payload: dict[str, Any] = {
             "version": __version__,
             "flags": dict(annotation.flags) if annotation.flags else {},
-            "shapes": [_dump_shape_to_json_obj(shape) for shape in annotation.shapes],
+            "shapes": [
+                _dump_shape_to_json_obj(shape=shape) for shape in annotation.shapes
+            ],
             "imagePath": annotation.image_path,
             "imageData": image_data_b64,
             "imageHeight": image_height,
@@ -399,7 +406,7 @@ def write_label_file(
 _DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
 
-def _imread(filename: str) -> PIL.Image.Image:
+def _imread(filename: str, /) -> PIL.Image.Image:
     ext: str = Path(filename).suffix.lower()
     try:
         image_pil = PIL.Image.open(filename)
@@ -412,15 +419,18 @@ def _imread(filename: str) -> PIL.Image.Image:
         raise
 
 
-def _imread_tiff(filename: str) -> PIL.Image.Image:
+def _imread_tiff(filename: str, /) -> PIL.Image.Image:
     img_arr: NDArray = tifffile.imread(filename)
 
-    if img_arr.ndim == 2:
+    if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
         img_arr_normalized = _normalize_to_uint8(img_arr)
-    elif img_arr.ndim == 3:
-        if img_arr.shape[2] >= 3:
+    elif img_arr.ndim == _MULTI_CHANNEL_NDIM:
+        if img_arr.shape[2] >= _RGB_CHANNEL_COUNT:
             img_arr_normalized = np.stack(
-                [_normalize_to_uint8(img_arr[:, :, i]) for i in range(3)],
+                [
+                    _normalize_to_uint8(img_arr[:, :, i])
+                    for i in range(_RGB_CHANNEL_COUNT)
+                ],
                 axis=2,
             )
         else:
@@ -431,7 +441,7 @@ def _imread_tiff(filename: str) -> PIL.Image.Image:
     return PIL.Image.fromarray(img_arr_normalized)
 
 
-def _normalize_to_uint8(arr: NDArray) -> NDArray[np.uint8]:
+def _normalize_to_uint8(arr: NDArray, /) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
     finite = arr[np.isfinite(arr)]
     if finite.size == 0:

@@ -9,7 +9,7 @@ from labelme._widgets.unique_label_qlist_widget import UniqueLabelQListWidget
 
 
 @pytest.fixture()
-def widget(qtbot: QtBot) -> UniqueLabelQListWidget:
+def widget(*, qtbot: QtBot) -> UniqueLabelQListWidget:
     widget = UniqueLabelQListWidget()
     qtbot.addWidget(widget)
     widget.resize(200, 200)
@@ -18,7 +18,7 @@ def widget(qtbot: QtBot) -> UniqueLabelQListWidget:
 
 
 @pytest.fixture()
-def selected_widget(widget: UniqueLabelQListWidget) -> UniqueLabelQListWidget:
+def selected_widget(*, widget: UniqueLabelQListWidget) -> UniqueLabelQListWidget:
     widget.add_label_item(label="cat", color=(255, 0, 0))
     widget.setCurrentRow(0)
     assert widget.selectedItems()
@@ -26,6 +26,7 @@ def selected_widget(widget: UniqueLabelQListWidget) -> UniqueLabelQListWidget:
 
 
 def test_add_label_item_is_findable_and_rendered(
+    *,
     widget: UniqueLabelQListWidget,
 ) -> None:
     widget.add_label_item(label="cat", color=(255, 0, 0))
@@ -42,6 +43,7 @@ def test_add_label_item_is_findable_and_rendered(
 
 
 def test_add_label_item_rejects_duplicate_label(
+    *,
     widget: UniqueLabelQListWidget,
 ) -> None:
     widget.add_label_item(label="cat", color=(255, 0, 0))
@@ -53,6 +55,7 @@ def test_add_label_item_rejects_duplicate_label(
 
 
 def test_find_label_item_returns_none_for_unknown_label(
+    *,
     widget: UniqueLabelQListWidget,
 ) -> None:
     widget.add_label_item(label="cat", color=(255, 0, 0))
@@ -61,7 +64,7 @@ def test_find_label_item_returns_none_for_unknown_label(
 
 
 def test_escape_key_clears_selection(
-    qtbot: QtBot, selected_widget: UniqueLabelQListWidget
+    *, qtbot: QtBot, selected_widget: UniqueLabelQListWidget
 ) -> None:
     qtbot.keyClick(selected_widget, Qt.Key.Key_Escape)
 
@@ -69,7 +72,7 @@ def test_escape_key_clears_selection(
 
 
 def test_press_on_empty_area_clears_selection(
-    qtbot: QtBot, selected_widget: UniqueLabelQListWidget
+    *, qtbot: QtBot, selected_widget: UniqueLabelQListWidget
 ) -> None:
     empty_pos = selected_widget.viewport().rect().bottomRight()
     assert not selected_widget.indexAt(empty_pos).isValid()
