@@ -113,7 +113,6 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setCompleter(completer)
         self.edit.set_list_widget(list_widget=self.label_list)
 
-        # Button box
         button_box = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.StandardButton.Ok
             | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
@@ -234,10 +233,11 @@ class LabelDialog(QtWidgets.QDialog):
         if label not in self._label_history:
             self._label_history.append(label)
 
-        if not self.label_list.findItems(label, QtCore.Qt.MatchFlag.MatchExactly):
-            self.label_list.addItem(label)
-            if self._sort_labels:
-                self.label_list.sortItems()
+        if self.label_list.findItems(label, QtCore.Qt.MatchFlag.MatchExactly):
+            return
+        self.label_list.addItem(label)
+        if self._sort_labels:
+            self.label_list.sortItems()
 
     def set_predefined_labels(self, *, labels: list[str]) -> None:
         history_extras = [h for h in self._label_history if h not in labels]
@@ -280,10 +280,10 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self.edit_group_id.setText(str(group_id))
 
-        if flags is not None:
-            self._set_flag_checkboxes(flags=flags)
-        else:
+        if flags is None:
             self._update_flags(self.edit.text())
+        else:
+            self._set_flag_checkboxes(flags=flags)
 
         matches = self.label_list.findItems(
             self.edit.text(), QtCore.Qt.MatchFlag.MatchFixedString

@@ -1557,10 +1557,11 @@ class MainWindow(QtWidgets.QMainWindow):
             " }"
         )
         for mode, action in self._actions.draw:
-            if mode in _AI_CREATE_MODES:
-                for widget in action.associatedObjects():
-                    if isinstance(widget, QtWidgets.QToolButton):
-                        widget.setStyleSheet(style)
+            if mode not in _AI_CREATE_MODES:
+                continue
+            for widget in action.associatedObjects():
+                if isinstance(widget, QtWidgets.QToolButton):
+                    widget.setStyleSheet(style)
 
     def show_label_list_menu(self, point: QtCore.QPoint, /) -> None:
         self._label_list_menu_origin = self._docks.label_list.mapToGlobal(point)
@@ -3141,13 +3142,13 @@ def _shapes_from_dicts(
         )
 
         default_flags: dict[str, bool] = {}
-        if not isinstance(shape.label, str):
-            logger.warning("shape.label is not str: {}", shape.label)
-        else:
+        if isinstance(shape.label, str):
             for pattern, keys in compiled_label_flags.items():
                 if pattern.match(shape.label):
                     for key in keys:
                         default_flags[key] = False
+        else:
+            logger.warning("shape.label is not str: {}", shape.label)
         shape.flags = default_flags
         shape.flags.update(shape_dict["flags"])
         shape.other_data = shape_dict["other_data"]

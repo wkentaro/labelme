@@ -147,12 +147,13 @@ def main_win(
         assert exc_info.value.code == 0
 
         for widget in app.topLevelWidgets():
-            if isinstance(widget, MainWindow) and widget not in existing:
-                created.append(widget)
-                qtbot.addWidget(widget)
-                if size is not None:
-                    widget.resize(size)
-                return widget
+            if not isinstance(widget, MainWindow) or widget in existing:
+                continue
+            created.append(widget)
+            qtbot.addWidget(widget)
+            if size is not None:
+                widget.resize(size)
+            return widget
 
         raise RuntimeError("main() did not create a MainWindow")
 

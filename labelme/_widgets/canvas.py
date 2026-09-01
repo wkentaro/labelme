@@ -2152,11 +2152,12 @@ def _compute_intersection_edges_image(
     t_exit = 1.0
     exit_axis = "x"
     for axis, numerator, denominator in boundary_pairs:
-        if denominator > 0.0:
-            t = numerator / denominator
-            if t < t_exit:
-                t_exit = t
-                exit_axis = axis
+        if denominator <= 0.0:
+            continue
+        t = numerator / denominator
+        if t < t_exit:
+            t_exit = t
+            exit_axis = axis
 
     if t_exit > 0.0:
         return QPointF(start_x + t_exit * delta_x, start_y + t_exit * delta_y)
