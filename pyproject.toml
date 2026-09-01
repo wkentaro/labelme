@@ -65,7 +65,7 @@ dev = [
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
-  "gruff>=0.0.4",
+  "gruff>=0.0.5",
 ]
 
 [project.scripts]
@@ -96,7 +96,7 @@ markers = [
 ]
 
 [tool.gruff.lint]
-select = ["GR001", "GR002", "GR003", "GR004", "GR005", "GR006"]
+select = ["GR"]
 
 [tool.ruff.lint]
 select = [
