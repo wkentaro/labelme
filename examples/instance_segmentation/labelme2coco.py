@@ -198,26 +198,28 @@ def main() -> None:
                 )
             )
 
-        if not args.noviz:
-            viz = img
-            if masks:
-                labels, captions, masks = zip(
-                    *[
-                        (class_name_to_id[cnm], cnm, msk)
-                        for (cnm, gid), msk in masks.items()
-                        if cnm in class_name_to_id
-                    ]
-                )
-                viz = imgviz.instances2rgb(
-                    image=img,
-                    labels=labels,
-                    masks=masks,
-                    captions=captions,
-                    font_size=15,
-                    line_width=2,
-                )
-            out_viz_file = output_dir / "Visualization" / f"{base}.jpg"
-            imgviz.io.imsave(out_viz_file, viz)
+        if args.noviz:
+            continue
+
+        viz = img
+        if masks:
+            labels, captions, masks = zip(
+                *[
+                    (class_name_to_id[cnm], cnm, msk)
+                    for (cnm, gid), msk in masks.items()
+                    if cnm in class_name_to_id
+                ]
+            )
+            viz = imgviz.instances2rgb(
+                image=img,
+                labels=labels,
+                masks=masks,
+                captions=captions,
+                font_size=15,
+                line_width=2,
+            )
+        out_viz_file = output_dir / "Visualization" / f"{base}.jpg"
+        imgviz.io.imsave(out_viz_file, viz)
 
     with open(out_ann_file, "w") as f:
         json.dump(data, f)

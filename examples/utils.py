@@ -49,11 +49,11 @@ def load_label_file(filename: str, /) -> LabeledImage:
     with open(filename, encoding="utf-8") as f:
         data = json.load(f)
 
-    if data.get("imageData") is not None:
-        image_data = base64.b64decode(data["imageData"])
-    else:
+    if data.get("imageData") is None:
         image_path = PureWindowsPath(data["imagePath"]).as_posix()
         image_data = (Path(filename).parent / image_path).read_bytes()
+    else:
+        image_data = base64.b64decode(data["imageData"])
 
     shapes = [
         {

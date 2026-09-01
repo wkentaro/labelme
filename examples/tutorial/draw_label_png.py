@@ -26,19 +26,18 @@ def main() -> None:
     parser.add_argument("--image", help="image file", default=None)
     args = parser.parse_args()
 
-    if args.labels is not None:
-        if Path(args.labels).exists():
-            with open(args.labels) as f:
-                label_names = [label.strip() for label in f]
-        else:
-            label_names = args.labels.split(",")
-    else:
+    if args.labels is None:
         label_names = None
-
-    if args.image is not None:
-        image = imgviz.io.imread(args.image)
+    elif Path(args.labels).exists():
+        with open(args.labels) as f:
+            label_names = [label.strip() for label in f]
     else:
+        label_names = args.labels.split(",")
+
+    if args.image is None:
         image = None
+    else:
+        image = imgviz.io.imread(args.image)
 
     label = imgviz.io.imread(args.label_png)
     label = label.astype(np.int32)

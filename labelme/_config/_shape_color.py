@@ -55,27 +55,27 @@ def validate_shape_color(*, config: object) -> None:
         uniform = cast(dict[str, object], uniform)
         if "color" in uniform:
             _validate_rgb(path="shape_color.uniform.color", value=uniform["color"])
-    if "by_label" in config:
-        by_label = config["by_label"]
-        if by_label is None:
-            by_label = {}
-        if not isinstance(by_label, dict):
-            raise ValueError("shape_color.by_label must be a mapping")
-        by_label = cast(dict[str, object], by_label)
-        if "fallback" in by_label:
-            _validate_rgb(
-                path="shape_color.by_label.fallback", value=by_label["fallback"]
+    if "by_label" not in config:
+        return
+    by_label = config["by_label"]
+    if by_label is None:
+        by_label = {}
+    if not isinstance(by_label, dict):
+        raise ValueError("shape_color.by_label must be a mapping")
+    by_label = cast(dict[str, object], by_label)
+    if "fallback" in by_label:
+        _validate_rgb(path="shape_color.by_label.fallback", value=by_label["fallback"])
+    if "colors" not in by_label or by_label["colors"] is None:
+        return
+    colors = by_label["colors"]
+    if not isinstance(colors, dict):
+        raise ValueError("shape_color.by_label.colors must be a mapping")
+    for label, color in colors.items():
+        if not isinstance(label, str) or not label:
+            raise ValueError(
+                "shape_color.by_label.colors keys must be non-empty strings"
             )
-        if "colors" in by_label and by_label["colors"] is not None:
-            colors = by_label["colors"]
-            if not isinstance(colors, dict):
-                raise ValueError("shape_color.by_label.colors must be a mapping")
-            for label, color in colors.items():
-                if not isinstance(label, str) or not label:
-                    raise ValueError(
-                        "shape_color.by_label.colors keys must be non-empty strings"
-                    )
-                _validate_rgb(path=f"shape_color.by_label.colors.{label}", value=color)
+        _validate_rgb(path=f"shape_color.by_label.colors.{label}", value=color)
 
 
 def migrate_shape_color(*, config: dict) -> None:

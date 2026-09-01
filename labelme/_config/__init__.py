@@ -68,16 +68,15 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
         )
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
-    if key == "labels" and value is not None:
-        if not isinstance(value, list):
-            raise ValueError(
-                f"Config key 'labels' must be a list, "
-                f"but got {type(value).__name__}: {value!r}"
-            )
-        if len(value) != len(set(value)):
-            raise ValueError(
-                f"Duplicates are detected for config key 'labels': {value}"
-            )
+    if key != "labels" or value is None:
+        return
+    if not isinstance(value, list):
+        raise ValueError(
+            f"Config key 'labels' must be a list, "
+            f"but got {type(value).__name__}: {value!r}"
+        )
+    if len(value) != len(set(value)):
+        raise ValueError(f"Duplicates are detected for config key 'labels': {value}")
 
 
 def _migrate_config_from_file(*, config_from_yaml: dict) -> None:
@@ -163,15 +162,16 @@ def _migrate_config_from_file(*, config_from_yaml: dict) -> None:
         crosshair = {}
     ai_polygon = crosshair.pop("ai_polygon", None)
     ai_mask = crosshair.pop("ai_mask", None)
-    if ai_polygon is not None or ai_mask is not None:
-        logger.info(
-            "Migrating old config: canvas.crosshair.ai_polygon={} or "
-            "canvas.crosshair.ai_mask={} -> canvas.crosshair.ai_points_to_shape",
-            ai_polygon,
-            ai_mask,
-        )
-        if "ai_points_to_shape" not in crosshair:
-            crosshair["ai_points_to_shape"] = bool(ai_polygon) or bool(ai_mask)
+    if ai_polygon is None and ai_mask is None:
+        return
+    logger.info(
+        "Migrating old config: canvas.crosshair.ai_polygon={} or "
+        "canvas.crosshair.ai_mask={} -> canvas.crosshair.ai_points_to_shape",
+        ai_polygon,
+        ai_mask,
+    )
+    if "ai_points_to_shape" not in crosshair:
+        crosshair["ai_points_to_shape"] = bool(ai_polygon) or bool(ai_mask)
 
 
 def get_user_config_file(*, create_if_missing: bool = True) -> str:

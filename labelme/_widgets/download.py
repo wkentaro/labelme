@@ -113,14 +113,14 @@ def download_ai_model(*, model_name: str, parent: QWidget) -> bool:
         label = (
             f"Downloading {model_name} ({file_index + 1}/{file_count})\n\n{filename}\n"
         )
-        if bytes_total != _DownloadThread.UNKNOWN_SIZE:
-            dialog.setRange(0, bytes_total)
-            dialog.setValue(bytes_so_far)
-            label += f"{_format_bytes(bytes_so_far)} / {_format_bytes(bytes_total)}"
-        else:
+        if bytes_total == _DownloadThread.UNKNOWN_SIZE:
             dialog.setRange(0, 0)
             if bytes_so_far > 0:
                 label += _format_bytes(bytes_so_far)
+        else:
+            dialog.setRange(0, bytes_total)
+            dialog.setValue(bytes_so_far)
+            label += f"{_format_bytes(bytes_so_far)} / {_format_bytes(bytes_total)}"
         dialog.setLabelText(label)
 
     def _on_succeeded() -> None:

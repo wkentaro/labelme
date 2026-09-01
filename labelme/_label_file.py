@@ -307,12 +307,12 @@ def read_label_file(*, filename: str) -> Annotation:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
         image_path = PureWindowsPath(raw["imagePath"]).as_posix()
-        if raw["imageData"] is not None:
-            image_data = base64.b64decode(raw["imageData"])
-        else:
+        if raw["imageData"] is None:
             image_data = read_image_file(
                 filename=str(Path(filename).parent / image_path)
             )
+        else:
+            image_data = base64.b64decode(raw["imageData"])
         _check_image_dimensions(
             image_data=image_data,
             expected_height=raw.get("imageHeight"),

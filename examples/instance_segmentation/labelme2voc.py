@@ -122,22 +122,26 @@ def main() -> None:
             )
             imgviz.io.imsave(out_clsv_file, clsv)
 
-        if not args.noobject:
-            # instance label
-            imgviz.io.lblsave(out_insp_file, ins.astype(np.uint8))
-            if not args.nonpy:
-                np.save(out_ins_file, ins)
-            if not args.noviz:
-                instance_ids = np.unique(ins)
-                instance_names = [str(i) for i in range(max(instance_ids) + 1)]
-                insv = imgviz.label2rgb(
-                    ins,
-                    imgviz.rgb2gray(img),
-                    label_names=instance_names,
-                    font_size=15,
-                    loc="rb",
-                )
-                imgviz.io.imsave(out_insv_file, insv)
+        if args.noobject:
+            continue
+
+        # instance label
+        imgviz.io.lblsave(out_insp_file, ins.astype(np.uint8))
+        if not args.nonpy:
+            np.save(out_ins_file, ins)
+        if args.noviz:
+            continue
+
+        instance_ids = np.unique(ins)
+        instance_names = [str(i) for i in range(max(instance_ids) + 1)]
+        insv = imgviz.label2rgb(
+            ins,
+            imgviz.rgb2gray(img),
+            label_names=instance_names,
+            font_size=15,
+            loc="rb",
+        )
+        imgviz.io.imsave(out_insv_file, insv)
 
 
 if __name__ == "__main__":
