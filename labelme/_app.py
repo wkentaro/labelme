@@ -1031,7 +1031,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._default_state = self.saveState()
         #
-        # XXX: Could be completely declarative.
         # Restore the window geometry and dock layout (separate from the user
         # Config; this Qt store holds only window state).
         self._window_state = QtCore.QSettings("labelme", "labelme")
