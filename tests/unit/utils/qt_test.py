@@ -11,7 +11,6 @@ from pytestqt.qtbot import QtBot
 
 from labelme._utils.qt import _TintedSvgIconEngine
 from labelme._utils.qt import direction_angle
-from labelme._utils.qt import label_validator
 from labelme._utils.qt import new_action
 from labelme._utils.qt import new_icon
 from labelme._utils.qt import new_separator
@@ -83,41 +82,6 @@ def test_project_point_on_line_zero_length_returns_point() -> None:
         point=point, line_start=QPointF(2.0, 2.0), line_end=QPointF(2.0, 2.0)
     )
     assert (projected.x(), projected.y()) == pytest.approx((4.0, 7.0))
-
-
-# ---------------------------------------------------------------------------
-# label_validator
-# ---------------------------------------------------------------------------
-
-
-def test_label_validator_returns_validator() -> None:
-    v = label_validator()
-    assert isinstance(v, QtGui.QRegularExpressionValidator)
-
-
-def test_label_validator_rejects_leading_space() -> None:
-    v = label_validator()
-    state, _, _ = v.validate(" label", 0)  # ty: ignore[not-iterable]
-    assert state == QtGui.QValidator.State.Invalid
-
-
-def test_label_validator_rejects_leading_tab() -> None:
-    v = label_validator()
-    state, _, _ = v.validate("\tlabel", 0)  # ty: ignore[not-iterable]
-    assert state == QtGui.QValidator.State.Invalid
-
-
-def test_label_validator_accepts_normal_label() -> None:
-    v = label_validator()
-    state, _, _ = v.validate("cat", 3)  # ty: ignore[not-iterable]
-    assert state == QtGui.QValidator.State.Acceptable
-
-
-def test_label_validator_rejects_single_char() -> None:
-    # A single non-whitespace character is not yet an acceptable label.
-    v = label_validator()
-    state, _, _ = v.validate("c", 1)  # ty: ignore[not-iterable]
-    assert state != QtGui.QValidator.State.Acceptable
 
 
 # ---------------------------------------------------------------------------

@@ -7,7 +7,6 @@ from .image import img_qt_to_arr
 from .image import img_qt_to_rgb_arr
 from .qt import apply_color_theme
 from .qt import direction_angle
-from .qt import label_validator
 from .qt import new_action
 from .qt import new_icon
 from .qt import new_separator
@@ -26,7 +25,6 @@ __all__ = [
     "img_data_to_pil",
     "img_qt_to_arr",
     "img_qt_to_rgb_arr",
-    "label_validator",
     "new_action",
     "new_icon",
     "new_separator",
