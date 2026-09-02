@@ -1412,16 +1412,21 @@ def test_extend_open_path_commits_cursor_and_previews_from_it(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "modifiers",
+    [
+        Qt.KeyboardModifier.ControlModifier,
+        Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier,
+    ],
+    ids=["control", "control-shift"],
+)
 def test_extend_linestrip_with_control_click_finishes_at_cursor(
-    *, canvas: Canvas
+    *, canvas: Canvas, modifiers: Qt.KeyboardModifier
 ) -> None:
     current = _start_open_path(canvas=canvas, mode="linestrip", cursor=QPointF(50, 30))
 
     canvas._extend_current_shape(
-        current=current,
-        event=_left_press(
-            pos=QPointF(50, 30), modifiers=Qt.KeyboardModifier.ControlModifier
-        ),
+        current=current, event=_left_press(pos=QPointF(50, 30), modifiers=modifiers)
     )
 
     assert canvas._current is None
