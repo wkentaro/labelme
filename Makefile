@@ -2,7 +2,7 @@ ifneq ($(OS),Windows_NT)
 	SHELL := bash
 endif
 
-.PHONY: help setup format lint test coverage update_translate check_translate
+.PHONY: help setup format lint test coverage update_translate check_translate release
 .DEFAULT_GOAL := help
 
 PYTEST_ARGS ?= --numprocesses=auto
@@ -46,3 +46,16 @@ check_translate:  # Fail if the translation catalogs are stale or incomplete (CI
 
 coverage:  # Run tests with coverage
 	$(MAKE) test PYTEST_ARGS="--cov=labelme --cov-report=term-missing"
+
+release:  # Prepare a release: make release VERSION=X.Y.Z
+	@test -n "$(VERSION)" || { \
+		echo "usage: make release VERSION=X.Y.Z" >&2; \
+		echo "recent releases:" >&2; \
+		git tag --sort=-v:refname | head -5 | sed "s/^/  /" >&2; \
+		exit 1; \
+	}
+	$(call exec,uv run towncrier build --yes --version $(VERSION))
+	@printf "\n\033[1;32mNext steps\033[0m\n"
+	@echo "  git commit -am \"chore: prep $(VERSION) release\""
+	@echo "  git tag v$(VERSION)"
+	@echo "  git push origin main v$(VERSION)"
