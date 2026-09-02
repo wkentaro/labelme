@@ -247,7 +247,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_center = np.zeros(2)
         self._rotation_initial_angle = 0.0
         self._rotation_original_points = np.empty((0, 2))
-        self.scale: float = 1.0
+        self._scale: float = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
@@ -378,6 +378,18 @@ class Canvas(QtWidgets.QWidget):
             highlight=highlight,
             rotation_highlight=rotation_highlight,
         )
+
+    @property
+    def scale(self) -> float:
+        return self._scale
+
+    @scale.setter
+    def scale(self, value: float, /) -> None:
+        self._scale = value
+        # Callers read the scroll range right after assigning, so resize
+        # synchronously instead of waiting for a layout pass.
+        self.adjustSize()
+        self.update()
 
     @property
     def is_drawing(self) -> bool:
