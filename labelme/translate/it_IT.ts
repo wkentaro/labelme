@@ -444,40 +444,8 @@ forme</translation>
         <translation>Zoom &amp;avanti</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Aumenta il livello di zoom</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>Zoom &amp;indietro</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Diminuisci il livello di zoom</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>Dimensione &amp;originale</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Zoom alla dimensione originale</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>&amp;Adatta alla finestra</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Lo zoom segue la dimensione della finestra</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>Adatta &amp;larghezza</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Lo zoom segue la larghezza della finestra</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -494,6 +462,38 @@ forme</translation>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modifica l&apos;etichetta della forma selezionata</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>&amp;Adatta alla finestra</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Mantiene visibile l&apos;intera immagine quando la finestra viene ridimensionata</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>Adatta &amp;larghezza</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Allinea la larghezza dell&apos;immagine alla finestra quando viene ridimensionata</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Mostra l&apos;immagine più grande</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Mostra l&apos;immagine più piccola</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Dimensioni reali</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Mostra l&apos;immagine al 100%</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

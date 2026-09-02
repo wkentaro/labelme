@@ -438,40 +438,8 @@ Shapes</source>
         <translation>بزرگ‌نمایی(&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>افزایش سطح زوم</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>کوچک‌نمایی(&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>کاهش سطح زوم</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>اندازه اصلی(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>زوم به اندازه اصلی</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>تناسب با پنجره(&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>زوم متناسب با اندازه پنجره</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>تناسب با عرض(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>زوم متناسب با عرض پنجره</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>تغییر برچسب شکل انتخاب شده</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>تناسب با پنجره(&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>نمایان نگه داشتن کل تصویر هنگام تغییر اندازهٔ پنجره</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>تناسب با عرض(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>تطبیق عرض تصویر با پنجره هنگام تغییر اندازهٔ آن</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>نمایش تصویر در اندازهٔ بزرگ‌تر</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>نمایش تصویر در اندازهٔ کوچک‌تر</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>اندازهٔ &amp;واقعی</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>نمایش تصویر در ۱۰۰٪</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

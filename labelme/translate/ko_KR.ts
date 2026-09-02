@@ -438,40 +438,8 @@ Shapes</source>
         <translation>확대(&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>확대 수준 증가</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>축소(&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>확대 수준 감소</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>원본 크기(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>원본 크기로 확대/축소</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>창에 맞추기(&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>확대/축소가 창 크기에 맞춤</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>너비에 맞추기(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>확대/축소가 창 너비에 맞춤</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>선택한 도형의 레이블 수정</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>창에 맞추기(&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>창 크기가 바뀌어도 이미지 전체가 보이도록 유지</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>너비에 맞추기(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>창 크기가 바뀔 때 이미지 너비를 창에 맞춤</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>이미지를 더 크게 표시</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>이미지를 더 작게 표시</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>실제 크기(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>이미지를 100%로 표시</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

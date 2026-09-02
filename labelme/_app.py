@@ -609,20 +609,20 @@ class MainWindow(QtWidgets.QMainWindow):
             checked=self._config["keep_prev_scale"],
         )
         fit_window = action(
-            text=self.tr("&Fit Window"),
+            text=self.tr("Fit to &Window"),
             slot=self.set_fit_window_mode,
             shortcut=shortcuts["fit_window"],
             icon="phosphor/frame-corners.svg",
-            tip=self.tr("Zoom follows window size"),
+            tip=self.tr("Keep the whole image visible when the window is resized"),
             checkable=True,
             enabled=False,
         )
         fit_width = action(
-            text=self.tr("Fit &Width"),
+            text=self.tr("Fit to Wi&dth"),
             slot=self.set_fit_width_mode,
             shortcut=shortcuts["fit_width"],
             icon="frame-arrows-horizontal.svg",
-            tip=self.tr("Zoom follows window width"),
+            tip=self.tr("Match the image width to the window when it is resized"),
             checkable=True,
             enabled=False,
         )
@@ -639,7 +639,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda _: self._add_zoom(increment=1.1, pos=None),
             shortcut=shortcuts["zoom_in"],
             icon="phosphor/magnifying-glass-plus.svg",
-            tip=self.tr("Increase zoom level"),
+            tip=self.tr("Make the image appear larger"),
             enabled=False,
         )
         zoom_out = action(
@@ -647,15 +647,15 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda _: self._add_zoom(increment=0.9, pos=None),
             shortcut=shortcuts["zoom_out"],
             icon="phosphor/magnifying-glass-minus.svg",
-            tip=self.tr("Decrease zoom level"),
+            tip=self.tr("Make the image appear smaller"),
             enabled=False,
         )
         zoom_org = action(
-            text=self.tr("&Original size"),
+            text=self.tr("&Actual Size"),
             slot=self._set_zoom_to_original,
             shortcut=shortcuts["zoom_to_original"],
             icon="phosphor/image-square.svg",
-            tip=self.tr("Zoom to original size"),
+            tip=self.tr("Show the image at 100%"),
             enabled=False,
         )
         reset_layout = action(

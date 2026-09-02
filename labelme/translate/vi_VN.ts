@@ -438,40 +438,8 @@ Shapes</source>
         <translation>Phóng to(&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Tăng mức thu phóng</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>Thu nhỏ(&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Giảm mức thu phóng</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>Kích thước Gốc(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Thu phóng về kích thước gốc</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>Vừa Cửa sổ(&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Thu phóng theo kích thước cửa sổ</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>Vừa Chiều rộng(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Thu phóng theo chiều rộng cửa sổ</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>Vừa Cửa sổ(&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Giữ toàn bộ ảnh luôn hiển thị khi thay đổi kích thước cửa sổ</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>Vừa Chiều rộng(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Khớp chiều rộng của ảnh với cửa sổ khi thay đổi kích thước</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Hiển thị ảnh lớn hơn</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Hiển thị ảnh nhỏ hơn</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>Kích thước &amp;thật</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Hiển thị ảnh ở mức 100%</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

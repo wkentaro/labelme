@@ -438,40 +438,8 @@ Shapes</source>
         <translation>&amp;Aproximar</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Aumentar nível de zoom</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Afastar</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Diminuir nível de zoom</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>Tamanho &amp;Original</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Zoom para o tamanho original</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>Ajustar à &amp;Janela</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>O zoom segue o tamanho da janela</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>Ajustar à &amp;Largura</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>O zoom segue a largura da janela</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modificar o rótulo da forma selecionada</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>Ajustar à &amp;Janela</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Manter a imagem inteira visível quando a janela for redimensionada</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>Ajustar à &amp;Largura</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Igualar a largura da imagem à janela quando ela for redimensionada</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Mostrar a imagem maior</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Mostrar a imagem menor</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>Tamanho &amp;real</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Mostrar a imagem em 100%</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

@@ -438,40 +438,8 @@ Shapes</source>
         <translation>放大(&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>提高缩放级别</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>缩小(&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>降低缩放级别</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>原始尺寸(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>缩放至原始尺寸</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>适合窗口(&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>随窗口大小自动缩放</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>适合宽度(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>随窗口宽度自动缩放</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>修改所选形状的标签</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>适合窗口(&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>调整窗口大小时保持整幅图像可见</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>适合宽度(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>调整窗口大小时使图像宽度与窗口一致</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>以更大的尺寸显示图像</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>以更小的尺寸显示图像</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>实际大小(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>以 100% 显示图像</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

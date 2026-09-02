@@ -441,40 +441,8 @@ Shapes</source>
         <translation>&amp;Yakınlaştır</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Yakınlaştırma düzeyini artır</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Uzaklaştır</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Yakınlaştırma düzeyini azalt</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>&amp;Orijinal Boyut</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Orijinal boyuta getir</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>Pencereye &amp;Sığdır</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Yakınlaştırma pencere boyutunu izler</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>&amp;Genişliğe Sığdır</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Yakınlaştırma pencere genişliğini izler</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -491,6 +459,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Seçili şeklin etiketini değiştir</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>Pencereye &amp;Sığdır</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Pencere yeniden boyutlandırıldığında görüntünün tamamını görünür tut</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>&amp;Genişliğe Sığdır</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Pencere yeniden boyutlandırıldığında görüntü genişliğini pencereye eşitle</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Görüntüyü daha büyük göster</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Görüntüyü daha küçük göster</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Gerçek Boyut</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Görüntüyü %100 boyutunda göster</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>
