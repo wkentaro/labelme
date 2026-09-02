@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.3.0 - 2026-09-02
+
+### Changed
+
+- Renamed the View-menu actions Original Size, Fit Window, and Fit Width to Actual Size, Fit to Window, and Fit to Width, and reworded the zoom tooltips to describe the effect on the displayed image; shortcuts and behavior are unchanged ([#2580](https://github.com/wkentaro/labelme/pull/2580))
+- Renamed the "Copy Shapes" and "Paste Shapes" actions to "Copy to Clipboard" and "Paste from Clipboard", and regrouped the Edit menu and canvas context menu so Undo, clipboard, and shape-editing actions sit in separate sections ([#2582](https://github.com/wkentaro/labelme/pull/2582))
+- Reworded the Save As tooltip to "Save the labels under a new file name" so it no longer reads like the Save tooltip; label, shortcut, icon, and behavior are unchanged ([#2584](https://github.com/wkentaro/labelme/pull/2584))
+- The Brightness/Contrast dialog applies adjustments with lookup tables while preserving prior rendering and transparency, and shows each slider value as a percentage ([#2585](https://github.com/wkentaro/labelme/pull/2585))
+- Shape labels shown on the canvas now include their group ID, matching the Shape List ([#2589](https://github.com/wkentaro/labelme/pull/2589))
+- The dock listing the current Image's Shapes is now titled Shape List. ([#2593](https://github.com/wkentaro/labelme/pull/2593))
+
+
 ## 7.2.0 - 2026-08-27
 
 ### Added
