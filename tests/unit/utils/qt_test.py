@@ -10,11 +10,11 @@ from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
 from labelme._utils.qt import _TintedSvgIconEngine
-from labelme._utils.qt import add_actions
 from labelme._utils.qt import direction_angle
 from labelme._utils.qt import label_validator
 from labelme._utils.qt import new_action
 from labelme._utils.qt import new_icon
+from labelme._utils.qt import new_separator
 from labelme._utils.qt import project_point_on_line
 from labelme._utils.qt import project_point_on_perpendicular_line
 
@@ -361,60 +361,26 @@ def test_new_action_slot(*, qtbot: QtBot) -> None:
 
 
 # ---------------------------------------------------------------------------
-# add_actions
+# new_separator
 # ---------------------------------------------------------------------------
 
 
-def test_add_actions_adds_qaction_to_menu(*, qtbot: QtBot) -> None:
+def test_new_separator_renders_as_menu_separator(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
-    action = QtGui.QAction("Cut", parent)
-    add_actions(widget=menu, actions=[action])
-    assert action in menu.actions()
+    menu.addActions([QtGui.QAction("Cut", parent), new_separator(parent)])
+    assert [a.isSeparator() for a in menu.actions()] == [False, True]
 
 
-def test_add_actions_none_adds_separator_to_menu(*, qtbot: QtBot) -> None:
+def test_new_separator_survives_menu_clear(*, qtbot: QtBot) -> None:
+    # Menus rebuilt at runtime keep their separator objects, so a separator must
+    # belong to the caller rather than to the menu that clear() empties.
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
+    separator = new_separator(parent)
     menu = QtWidgets.QMenu(parent)
-    action = QtGui.QAction("Cut", parent)
-    add_actions(widget=menu, actions=[action, None])
-    separators = [a for a in menu.actions() if a.isSeparator()]
-    assert len(separators) == 1
-
-
-def test_add_actions_submenu_to_menu(*, qtbot: QtBot) -> None:
-    parent = QtWidgets.QWidget()
-    qtbot.addWidget(parent)
-    menu = QtWidgets.QMenu(parent)
-    submenu = QtWidgets.QMenu("Sub", parent)
-    add_actions(widget=menu, actions=[submenu])
-    # QMenu added as submenu appears in actions list
-    titles = [a.text() for a in menu.actions()]
-    assert "Sub" in titles
-
-
-def test_add_actions_adds_qaction_to_toolbar(*, qtbot: QtBot) -> None:
-    toolbar = QtWidgets.QToolBar()
-    qtbot.addWidget(toolbar)
-    action = QtGui.QAction("Copy", toolbar)
-    add_actions(widget=toolbar, actions=[action])
-    assert action in toolbar.actions()
-
-
-def test_add_actions_none_adds_separator_to_toolbar(*, qtbot: QtBot) -> None:
-    toolbar = QtWidgets.QToolBar()
-    qtbot.addWidget(toolbar)
-    action = QtGui.QAction("Copy", toolbar)
-    add_actions(widget=toolbar, actions=[action, None])
-    separators = [a for a in toolbar.actions() if a.isSeparator()]
-    assert len(separators) == 1
-
-
-def test_add_actions_empty_sequence(*, qtbot: QtBot) -> None:
-    parent = QtWidgets.QWidget()
-    qtbot.addWidget(parent)
-    menu = QtWidgets.QMenu(parent)
-    add_actions(widget=menu, actions=[])
-    assert menu.actions() == []
+    menu.addAction(separator)
+    menu.clear()
+    menu.addAction(separator)
+    assert [a.isSeparator() for a in menu.actions()] == [True]

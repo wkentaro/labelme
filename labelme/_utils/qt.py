@@ -128,45 +128,33 @@ def new_action(
     *,
     text: str = "",
     slot: Callable[..., object] | None = None,
-    shortcut: str | list[str] | tuple[str, ...] | None = None,
+    shortcut: str | Sequence[str] | None = None,
     icon: str | None = None,
     tip: str | None = None,
     checkable: bool = False,
     enabled: bool = True,
     checked: bool = False,
 ) -> QtGui.QAction:
-    action = QtGui.QAction(text, parent)
-    if icon is not None:
-        action.setIcon(new_icon(icon))
-        action.setIconText(text.replace(" ", "\n"))
-    if shortcut is not None:
-        if isinstance(shortcut, list | tuple):
-            action.setShortcuts([QtGui.QKeySequence(s) for s in shortcut])
-        else:
-            action.setShortcut(QtGui.QKeySequence(shortcut))
-    if tip is not None:
-        action.setToolTip(tip)
-        action.setStatusTip(tip)
+    action = QtGui.QAction(new_icon(icon) if icon else QtGui.QIcon(), text, parent)
+    keys = [shortcut] if isinstance(shortcut, str) else shortcut or ()
+    action.setShortcuts([QtGui.QKeySequence(key) for key in keys])
+    action.setToolTip(tip or "")
+    action.setStatusTip(tip or "")
     action.setCheckable(checkable)
-    action.setEnabled(enabled)
     action.setChecked(checked)
-    if slot is not None:
+    action.setEnabled(enabled)
+    if icon:
+        # Tool buttons show the icon text; stacking words keeps them narrow.
+        action.setIconText(text.replace(" ", "\n"))
+    if slot:
         action.triggered.connect(slot)
     return action
 
 
-def add_actions(
-    *,
-    widget: QtWidgets.QMenu | QtWidgets.QToolBar,
-    actions: Sequence[QtGui.QAction | QtWidgets.QMenu | None],
-) -> None:
-    for action in actions:
-        if action is None:
-            widget.addSeparator()
-        elif isinstance(action, QtWidgets.QMenu):
-            widget.addMenu(action)  # ty: ignore[unresolved-attribute]
-        else:
-            widget.addAction(action)
+def new_separator(parent: QtWidgets.QWidget, /) -> QtGui.QAction:
+    separator = QtGui.QAction(parent)
+    separator.setSeparator(True)
+    return separator
 
 
 def label_validator() -> QtGui.QRegularExpressionValidator:
