@@ -188,8 +188,8 @@
         <translation>Marcadores</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Lista de anotaciones</translation>
+        <source>Shape List</source>
+        <translation>Lista de formas</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

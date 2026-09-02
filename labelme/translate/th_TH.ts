@@ -188,8 +188,8 @@
         <translation>แฟล็ก</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>รายการแอนโนเทชัน</translation>
+        <source>Shape List</source>
+        <translation>รายการรูปร่าง</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

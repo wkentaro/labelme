@@ -473,8 +473,8 @@ Shapes</source>
         <translation>Прапори</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Список анотацій</translation>
+        <source>Shape List</source>
+        <translation>Список фігур</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

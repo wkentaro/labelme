@@ -188,8 +188,8 @@
         <translation>Bayraklar</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Açıklama Listesi</translation>
+        <source>Shape List</source>
+        <translation>Şekil Listesi</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

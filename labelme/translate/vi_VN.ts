@@ -188,8 +188,8 @@
         <translation>Cờ</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Danh sách Chú thích</translation>
+        <source>Shape List</source>
+        <translation>Danh sách Hình dạng</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

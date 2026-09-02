@@ -188,8 +188,8 @@
         <translation>플래그</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>주석 목록</translation>
+        <source>Shape List</source>
+        <translation>도형 목록</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
