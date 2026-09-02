@@ -29,10 +29,7 @@ from ._utils.shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 
-_POINT_COORDINATE_COUNT: Final = 2
 _SINGLE_CHANNEL_NDIM: Final = 2
-_MULTI_CHANNEL_NDIM: Final = 3
-_RGB_CHANNEL_COUNT: Final = 3
 
 
 def _validate_flags(*, flags: object) -> dict[str, bool]:
@@ -96,6 +93,7 @@ def _validate_shape_semantics(
 
 
 def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
+    POINT_COORDINATE_COUNT: Final = 2
     SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
@@ -120,7 +118,7 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         raise ValueError(f"points must be non-empty: {shape_json_obj}")
     if not all(
         isinstance(point, list)
-        and len(point) == _POINT_COORDINATE_COUNT
+        and len(point) == POINT_COORDINATE_COUNT
         and all(
             isinstance(xy, int | float) and not isinstance(xy, bool) for xy in point
         )
@@ -403,14 +401,13 @@ def write_label_file(
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
 
 
-_DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
-
-
 def _imread(filename: str, /) -> PIL.Image.Image:
+    DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
+
     ext: str = Path(filename).suffix.lower()
     try:
         image_pil = PIL.Image.open(filename)
-        if image_pil.mode not in _DISPLAYABLE_MODES:
+        if image_pil.mode not in DISPLAYABLE_MODES:
             raise PIL.UnidentifiedImageError
         return image_pil
     except PIL.UnidentifiedImageError:
@@ -420,16 +417,19 @@ def _imread(filename: str, /) -> PIL.Image.Image:
 
 
 def _imread_tiff(filename: str, /) -> PIL.Image.Image:
+    MULTI_CHANNEL_NDIM: Final = 3
+    RGB_CHANNEL_COUNT: Final = 3
+
     img_arr: NDArray = tifffile.imread(filename)
 
     if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
         img_arr_normalized = _normalize_to_uint8(img_arr)
-    elif img_arr.ndim == _MULTI_CHANNEL_NDIM:
-        if img_arr.shape[2] >= _RGB_CHANNEL_COUNT:
+    elif img_arr.ndim == MULTI_CHANNEL_NDIM:
+        if img_arr.shape[2] >= RGB_CHANNEL_COUNT:
             img_arr_normalized = np.stack(
                 [
                     _normalize_to_uint8(img_arr[:, :, i])
-                    for i in range(_RGB_CHANNEL_COUNT)
+                    for i in range(RGB_CHANNEL_COUNT)
                 ],
                 axis=2,
             )

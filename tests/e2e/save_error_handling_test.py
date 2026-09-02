@@ -11,8 +11,6 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
-_RAW_FILE_NAME: Final[str] = "raw/2011_000003.jpg"
-
 
 @pytest.mark.gui
 def test_save_labels_reports_filesystem_failure_without_crashing(
@@ -24,8 +22,10 @@ def test_save_labels_reports_filesystem_failure_without_crashing(
     monkeypatch: pytest.MonkeyPatch,
     pause: bool,
 ) -> None:
+    RAW_FILE_NAME: Final[str] = "raw/2011_000003.jpg"
+
     win = main_win(
-        file_or_dir=str(data_path / _RAW_FILE_NAME),
+        file_or_dir=str(data_path / RAW_FILE_NAME),
         output_dir=str(tmp_path),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)

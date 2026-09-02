@@ -10,16 +10,15 @@ from pytestqt.qtbot import QtBot
 
 from labelme._widgets.tool_bar import ToolBar
 
-# Qt automatically adds an internal extension/overflow button to every QToolBar.
-# Filter it out when counting user-added buttons.
-_EXT_BUTTON_NAME: Final = "qt_toolbar_ext_button"
-
 
 def _user_buttons(toolbar: ToolBar, /) -> list[QtWidgets.QToolButton]:
+    # Qt adds an internal overflow button; exclude it from user button counts.
+    EXT_BUTTON_NAME: Final = "qt_toolbar_ext_button"
+
     return [
         b
         for b in toolbar.findChildren(QtWidgets.QToolButton)
-        if b.objectName() != _EXT_BUTTON_NAME
+        if b.objectName() != EXT_BUTTON_NAME
     ]
 
 

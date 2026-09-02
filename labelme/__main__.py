@@ -27,7 +27,13 @@ from ._label_file import is_label_file_path
 from ._utils import apply_color_theme
 from ._utils import new_icon
 
-_LOGGER_LEVELS: Final = ("debug", "info", "warning", "error", "critical")
+_LOGGER_LEVELS: Final = (  # noqa: GR011 -- parametrized by tests
+    "debug",
+    "info",
+    "warning",
+    "error",
+    "critical",
+)
 
 
 class _LoggerIO(io.StringIO):

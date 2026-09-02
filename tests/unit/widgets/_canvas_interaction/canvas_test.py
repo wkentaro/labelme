@@ -16,9 +16,6 @@ from labelme._shape import Shape
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _DraftShape
 
-# Default epsilon in Canvas (screen-pixel hit radius).
-_EPSILON: Final[float] = 10.0
-
 # Pixmap dimensions used across all tests.
 _W: Final[int] = 200
 _H: Final[int] = 100
@@ -483,6 +480,9 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
     qtbot: QtBot,
     scale: float,
 ) -> None:
+    # Default screen-pixel hit radius.
+    EPSILON: Final[float] = 10.0
+
     # A hover that is 12 SCREEN pixels from the vertex is outside epsilon=10
     # and must NOT register as a vertex hit (_hovered_vertex stays None).
     canvas = Canvas()
@@ -504,7 +504,7 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
 
     assert canvas._hovered_vertex is None, (
         f"scale={scale}: expected no vertex hit at 12 screen px from vertex "
-        f"(image_offset={image_offset_px:.2f}px, epsilon={_EPSILON})"
+        f"(image_offset={image_offset_px:.2f}px, epsilon={EPSILON})"
     )
     _clear_cursor_override(canvas=canvas)
 

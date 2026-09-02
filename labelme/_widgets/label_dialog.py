@@ -10,11 +10,6 @@ from .._label_flags import compile_label_flags
 from .._utils import label_validator
 
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
-_GROUP_ID_PLACEHOLDER: Final[str] = "Group ID"
-_DESCRIPTION_PLACEHOLDER: Final[str] = "Description"
-
-_LABEL_LIST_HEIGHT: Final[int] = 150
-_FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
 
 
 class LabelQLineEdit(QtWidgets.QLineEdit):
@@ -52,6 +47,10 @@ class LabelDialog(QtWidgets.QDialog):
         flags: dict[str, list[str]] | None = None,
         label_history: list[str] | None = None,
     ) -> None:
+        GROUP_ID_PLACEHOLDER: Final[str] = "Group ID"
+        DESCRIPTION_PLACEHOLDER: Final[str] = "Description"
+        LABEL_LIST_HEIGHT: Final[int] = 150
+
         super().__init__(parent)
 
         self._sort_labels = sort_labels
@@ -77,17 +76,17 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setValidator(label_validator())
 
         self.edit_group_id = QtWidgets.QLineEdit()
-        self.edit_group_id.setPlaceholderText(_GROUP_ID_PLACEHOLDER)
+        self.edit_group_id.setPlaceholderText(GROUP_ID_PLACEHOLDER)
         self.edit_group_id.setValidator(
             QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[0-9]*"))
         )
 
         self.edit_description = QtWidgets.QTextEdit()
-        self.edit_description.setPlaceholderText(_DESCRIPTION_PLACEHOLDER)
+        self.edit_description.setPlaceholderText(DESCRIPTION_PLACEHOLDER)
         self.edit_description.setFixedHeight(50)
 
         self.label_list = QtWidgets.QListWidget()
-        self.label_list.setFixedHeight(_LABEL_LIST_HEIGHT)
+        self.label_list.setFixedHeight(LABEL_LIST_HEIGHT)
 
         # Configure label list
         if sort_labels:
@@ -316,6 +315,8 @@ class LabelDialog(QtWidgets.QDialog):
         return None, None, None, None
 
     def _set_flag_checkboxes(self, *, flags: dict[str, bool]) -> None:
+        FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
+
         self._clear_flag_checkboxes()
         for key, checked in flags.items():
             checkbox = QtWidgets.QCheckBox(key)
@@ -330,7 +331,7 @@ class LabelDialog(QtWidgets.QDialog):
             checkbox.show()
 
         content_height = self._flags_container.sizeHint().height()
-        self._flags_scroll.setFixedHeight(min(content_height, _FLAGS_SCROLL_MAX_HEIGHT))
+        self._flags_scroll.setFixedHeight(min(content_height, FLAGS_SCROLL_MAX_HEIGHT))
 
     def _collect_flags(self) -> dict[str, bool]:
         return {key: cb.isChecked() for key, cb in self._flag_checkboxes.items()}

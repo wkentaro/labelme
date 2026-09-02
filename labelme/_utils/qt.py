@@ -14,16 +14,15 @@ from PySide6 import QtSvg
 from PySide6 import QtWidgets
 
 _ICONS_DIR: Final = os.path.join(os.path.dirname(os.path.dirname(__file__)), "icons")
-_DEFAULT_ICON_SUFFIX: Final = ".png"
-_SCHEME_BY_THEME: Final = {
-    "system": QtCore.Qt.ColorScheme.Unknown,
-    "light": QtCore.Qt.ColorScheme.Light,
-    "dark": QtCore.Qt.ColorScheme.Dark,
-}
 
 
 def apply_color_theme(*, theme: str) -> None:
-    scheme = _SCHEME_BY_THEME.get(theme, QtCore.Qt.ColorScheme.Unknown)
+    SCHEME_BY_THEME: Final = {
+        "system": QtCore.Qt.ColorScheme.Unknown,
+        "light": QtCore.Qt.ColorScheme.Light,
+        "dark": QtCore.Qt.ColorScheme.Dark,
+    }
+    scheme = SCHEME_BY_THEME.get(theme, QtCore.Qt.ColorScheme.Unknown)
     QtGui.QGuiApplication.styleHints().setColorScheme(scheme)
 
 
@@ -111,8 +110,10 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
 
 
 def new_icon(name: str, /) -> QtGui.QIcon:
+    DEFAULT_ICON_SUFFIX: Final = ".png"
+
     if not os.path.splitext(name)[1]:
-        name = name + _DEFAULT_ICON_SUFFIX
+        name = name + DEFAULT_ICON_SUFFIX
     path = os.path.join(_ICONS_DIR, name)
     if path.endswith(".svg"):
         with open(path, "rb") as f:
