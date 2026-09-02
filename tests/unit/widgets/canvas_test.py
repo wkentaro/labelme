@@ -18,6 +18,7 @@ from pytestqt.qtbot import QtBot
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._widgets.canvas import _CREATE_MODE_TO_SHAPE_TYPE
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _compute_intersection_edges_image
 from labelme._widgets.canvas import _draft_to_shape
@@ -1365,6 +1366,162 @@ def test_extend_after_mode_switch_grows_partial_at_last_cursor(
         assert canvas._current.points[0] != canvas._current.points[1]
     else:
         assert canvas._current.points == (QPointF(10, 10), QPointF(50, 30))
+
+
+def _left_press(*, pos: QPointF, modifiers: Qt.KeyboardModifier) -> QtGui.QMouseEvent:
+    return QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonPress,
+        pos,
+        pos,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        modifiers,
+    )
+
+
+def _start_open_path(*, canvas: Canvas, mode: str, cursor: QPointF) -> _DraftShape:
+    canvas.create_mode = mode
+    shape_type = _CREATE_MODE_TO_SHAPE_TYPE[canvas.create_mode]
+    canvas._current = _DraftShape(
+        shape_type=shape_type, points=(QPointF(10, 10),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type=shape_type, points=(QPointF(10, 10), cursor), point_labels=(1, 1)
+    )
+    return canvas._current
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_extend_open_path_commits_cursor_and_previews_from_it(
+    *, canvas: Canvas, mode: str
+) -> None:
+    current = _start_open_path(canvas=canvas, mode=mode, cursor=QPointF(50, 30))
+
+    canvas._extend_current_shape(
+        current=current,
+        event=_left_press(
+            pos=QPointF(50, 30), modifiers=Qt.KeyboardModifier.NoModifier
+        ),
+    )
+
+    assert canvas.shapes == []
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(10, 10), QPointF(50, 30))
+    assert canvas._line.points[0] == QPointF(50, 30)
+
+
+@pytest.mark.gui
+def test_extend_linestrip_with_control_click_finishes_at_cursor(
+    *, canvas: Canvas
+) -> None:
+    current = _start_open_path(canvas=canvas, mode="linestrip", cursor=QPointF(50, 30))
+
+    canvas._extend_current_shape(
+        current=current,
+        event=_left_press(
+            pos=QPointF(50, 30), modifiers=Qt.KeyboardModifier.ControlModifier
+        ),
+    )
+
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    assert canvas.shapes[0].shape_type == "linestrip"
+    np.testing.assert_array_equal(canvas.shapes[0].points, [[10, 10], [50, 30]])
+
+
+@pytest.mark.gui
+def test_extend_ai_points_carries_negative_preview_label_into_draft(
+    *, canvas: Canvas
+) -> None:
+    current = _start_open_path(
+        canvas=canvas, mode="ai_points_to_shape", cursor=QPointF(50, 30)
+    )
+    # Shift during the move marks the cursor end as a background point.
+    canvas._line = dataclasses.replace(canvas._line, point_labels=(1, 0))
+
+    canvas._extend_current_shape(
+        current=current,
+        event=_left_press(
+            pos=QPointF(50, 30), modifiers=Qt.KeyboardModifier.NoModifier
+        ),
+    )
+
+    assert canvas.shapes == []
+    assert canvas._current is not None
+    assert canvas._current.point_labels == (1, 0)
+    assert canvas._line.point_labels == (0, 0)
+
+
+@pytest.mark.gui
+def test_extend_polygon_on_first_vertex_closes_it(*, canvas: Canvas) -> None:
+    canvas.create_mode = "polygon"
+    points = (QPointF(10, 10), QPointF(50, 30), QPointF(30, 60))
+    canvas._current = _DraftShape(
+        shape_type="polygon", points=points, point_labels=(1, 1, 1)
+    )
+    canvas._line = _DraftShape(
+        shape_type="polygon", points=(points[-1], points[0]), point_labels=(1, 1)
+    )
+
+    canvas._extend_current_shape(
+        current=canvas._current,
+        event=_left_press(pos=points[0], modifiers=Qt.KeyboardModifier.NoModifier),
+    )
+
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    assert canvas.shapes[0].closed
+    np.testing.assert_array_equal(
+        canvas.shapes[0].points, [[10, 10], [50, 30], [30, 60]]
+    )
+
+
+@pytest.mark.gui
+def test_undo_last_line_then_click_without_moving_recloses_polygon(
+    *, canvas: Canvas
+) -> None:
+    canvas.create_mode = "polygon"
+    canvas.shapes.append(
+        Shape(
+            shape_type="polygon",
+            points=np.array([[10, 10], [50, 30], [30, 60]], dtype=np.float64),
+            closed=True,
+        )
+    )
+
+    canvas.undo_last_line()
+    assert canvas._current is not None
+    # The reopened preview runs back to the first vertex, so a click there
+    # closes the polygon again.
+    canvas._extend_current_shape(
+        current=canvas._current,
+        event=_left_press(
+            pos=QPointF(10, 10), modifiers=Qt.KeyboardModifier.NoModifier
+        ),
+    )
+
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    np.testing.assert_array_equal(
+        canvas.shapes[0].points, [[10, 10], [50, 30], [30, 60]]
+    )
+
+
+@pytest.mark.gui
+def test_extend_polygon_with_control_click_keeps_drawing(*, canvas: Canvas) -> None:
+    current = _start_open_path(canvas=canvas, mode="polygon", cursor=QPointF(50, 30))
+
+    canvas._extend_current_shape(
+        current=current,
+        event=_left_press(
+            pos=QPointF(50, 30), modifiers=Qt.KeyboardModifier.ControlModifier
+        ),
+    )
+
+    assert canvas.shapes == []
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(10, 10), QPointF(50, 30))
 
 
 @pytest.mark.parametrize(
