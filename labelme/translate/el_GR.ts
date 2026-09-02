@@ -472,8 +472,8 @@ Shapes</source>
         <translation>Σημάνσεις</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Λίστα σχολίων</translation>
+        <source>Shape List</source>
+        <translation>Λίστα σχημάτων</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

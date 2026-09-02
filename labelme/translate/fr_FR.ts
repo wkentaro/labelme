@@ -188,8 +188,8 @@
         <translation>Drapeaux</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Liste des annotations</translation>
+        <source>Shape List</source>
+        <translation>Liste des formes</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

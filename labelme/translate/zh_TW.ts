@@ -188,8 +188,8 @@
         <translation>標記</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>批註列表</translation>
+        <source>Shape List</source>
+        <translation>圖形列表</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

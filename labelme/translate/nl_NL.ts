@@ -188,8 +188,8 @@
         <translation>Vlaggen</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Annotatielijst</translation>
+        <source>Shape List</source>
+        <translation>Vormenlijst</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

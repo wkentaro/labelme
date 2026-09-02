@@ -1171,7 +1171,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_list.item_double_clicked.connect(self._edit_label)
         label_list.item_changed.connect(self._on_label_item_changed)
         label_list.item_dropped.connect(self._on_label_order_changed)
-        shape = QtWidgets.QDockWidget(self.tr("Annotation List"), self)
+        shape = QtWidgets.QDockWidget(self.tr("Shape List"), self)
         shape.setObjectName("Labels")
         shape.setWidget(label_list)
 

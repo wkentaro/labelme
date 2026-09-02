@@ -188,8 +188,8 @@
         <translation>フラグ</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>アノテーション一覧</translation>
+        <source>Shape List</source>
+        <translation>図形一覧</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

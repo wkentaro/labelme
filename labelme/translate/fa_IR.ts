@@ -188,8 +188,8 @@
         <translation>پرچم‌ها</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>فهرست حاشیه‌نویسی‌ها</translation>
+        <source>Shape List</source>
+        <translation>فهرست شکل‌ها</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>

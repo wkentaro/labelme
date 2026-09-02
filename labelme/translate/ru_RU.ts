@@ -188,8 +188,8 @@
         <translation>Флаги</translation>
     </message>
     <message>
-        <source>Annotation List</source>
-        <translation>Список разметки</translation>
+        <source>Shape List</source>
+        <translation>Список фигур</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
