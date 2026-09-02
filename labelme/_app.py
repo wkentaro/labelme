@@ -2411,23 +2411,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
 
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent, /) -> None:
-        extensions = _list_supported_image_extensions()
-        if a0.mimeData().hasUrls():
-            items = [i.toLocalFile() for i in a0.mimeData().urls()]
-            if any([i.lower().endswith(extensions) for i in items]):
-                a0.accept()
-        else:
-            a0.ignore()
+        # Accepting only drags that carry a loadable image keeps the cursor
+        # from promising a drop that would change nothing.
+        a0.setAccepted(bool(_extract_dropped_image_paths(mime=a0.mimeData())))
 
     def dropEvent(self, a0: QtGui.QDropEvent, /) -> None:
         if not self._can_continue():
             a0.ignore()
             return
-        # QUrl separates with forward slashes even on Windows, while the file
-        # list holds the separator of the platform, so an unnormalized drop
-        # would list an image the directory scan already listed a second time.
-        items = [os.path.normpath(i.toLocalFile()) for i in a0.mimeData().urls()]
-        self.import_dropped_image_files(image_files=items)
+        self.import_dropped_image_files(
+            image_files=_extract_dropped_image_paths(mime=a0.mimeData())
+        )
 
     # User Dialogs #
 
@@ -3302,6 +3296,15 @@ def _list_supported_image_extensions() -> tuple[str, ...]:
         f".{fmt.toStdString().lower()}"
         for fmt in QtGui.QImageReader.supportedImageFormats()
     )
+
+
+def _extract_dropped_image_paths(*, mime: QtCore.QMimeData) -> list[str]:
+    extensions = _list_supported_image_extensions()
+    # QUrl separates with forward slashes even on Windows, while the file
+    # list holds the separator of the platform, so an unnormalized drop
+    # would list an image the directory scan already listed a second time.
+    local_paths = (os.path.normpath(url.toLocalFile()) for url in mime.urls())
+    return [path for path in local_paths if path.lower().endswith(extensions)]
 
 
 def _scan_image_files(*, root_dir: str) -> list[str]:
