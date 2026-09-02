@@ -78,6 +78,8 @@ def _shape(*, shape_type: ShapeType, points: list[list[float]]) -> Shape:
     ("shape_type", "points", "expected"),
     [
         ("rectangle", [[10, 10], [50, 30]], (10.0, 10.0, 40.0, 20.0)),
+        # Corners in either order describe the same rectangle.
+        ("rectangle", [[50, 30], [10, 10]], (10.0, 10.0, 40.0, 20.0)),
         ("mask", [[10, 10], [50, 30]], (10.0, 10.0, 40.0, 20.0)),
         # radius = ||(3, 4)|| = 5, so the box is the point (0, 0) inflated by 5.
         ("circle", [[0, 0], [3, 4]], (-5.0, -5.0, 10.0, 10.0)),
@@ -181,6 +183,31 @@ def test_point_shape_label_is_drawn() -> None:
         )
         > 0
     )
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize(
+    # The probe is a screen pixel on the zoomed outline, away from any vertex
+    # marker, so the test also fails when the outline is not drawn at all.
+    ("shape_type", "points", "outline_probe"),
+    [
+        ("rectangle", [[20, 30], [70, 60]], (90, 60)),
+        ("mask", [[20, 30], [70, 60]], (90, 60)),
+        # radius = ||(15, 20)|| = 25
+        ("circle", [[50, 50], [65, 70]], (100, 50)),
+    ],
+)
+def test_two_point_shape_scales_like_its_points(
+    *, shape_type: ShapeType, points: list[list[float]], outline_probe: tuple[int, int]
+) -> None:
+    # Vertex markers are sized in screen pixels, so they match in both renders
+    # and the equality isolates the outline.
+    shape = _shape(shape_type=shape_type, points=points)
+    prescaled = _shape(shape_type=shape_type, points=(np.array(points) * 2).tolist())
+    rendered = _render(shape=shape, show_label=False, scale=2.0)
+    assert rendered.pixelColor(*outline_probe) != QtGui.QColor(255, 255, 255)
+    assert rendered == _render(shape=prescaled, show_label=False, scale=1.0)
 
 
 def _mask_shape() -> Shape:

@@ -316,13 +316,7 @@ def _build_shape_points_paths(
     points = shape.points
     if shape.shape_type in ["rectangle", "mask"]:
         assert len(points) in [1, 2]
-        if len(points) == RECTANGLE_POINT_COUNT:
-            paths.line.addRect(
-                QtCore.QRectF(
-                    QtCore.QPointF(*(points[0] * scale)),
-                    QtCore.QPointF(*(points[1] * scale)),
-                )
-            )
+        paths.line.addPath(_build_two_point_shape_path(shape=shape, scale=scale))
         if shape.shape_type == "rectangle":
             for i in range(len(points)):
                 _build_shape_point_path(
@@ -357,9 +351,7 @@ def _build_shape_points_paths(
                 )
     elif shape.shape_type == "circle":
         assert len(points) in [1, 2]
-        if len(points) == CIRCLE_POINT_COUNT:
-            radius = float(np.linalg.norm((points[0] - points[1]) * scale))
-            paths.line.addEllipse(QtCore.QPointF(*(points[0] * scale)), radius, radius)
+        paths.line.addPath(_build_two_point_shape_path(shape=shape, scale=scale))
         for i in range(len(points)):
             _build_shape_point_path(
                 path=paths.vertices, shape=shape, context=context, vertex_index=i
@@ -430,15 +422,8 @@ def bounds(*, shape: Shape) -> QtCore.QRectF:
 def _build_image_path(*, shape: Shape) -> QtGui.QPainterPath:
     points = shape.points
     out = QtGui.QPainterPath()
-    if shape.shape_type in ("rectangle", "mask"):
-        if len(points) == RECTANGLE_POINT_COUNT:
-            out.addRect(
-                QtCore.QRectF(QtCore.QPointF(*points[0]), QtCore.QPointF(*points[1]))
-            )
-    elif shape.shape_type == "circle":
-        if len(points) == CIRCLE_POINT_COUNT:
-            radius = float(np.linalg.norm(points[0] - points[1]))
-            out.addEllipse(QtCore.QPointF(*points[0]), radius, radius)
+    if shape.shape_type in ("rectangle", "mask", "circle"):
+        out.addPath(_build_two_point_shape_path(shape=shape, scale=1.0))
     elif shape.shape_type == "oriented_rectangle":
         if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
             out.moveTo(QtCore.QPointF(*points[0]))
@@ -451,3 +436,30 @@ def _build_image_path(*, shape: Shape) -> QtGui.QPainterPath:
             for p in points[1:]:
                 out.lineTo(QtCore.QPointF(*p))
     return out
+
+
+def _build_rect_between(
+    *, corner: npt.NDArray[np.float64], opposite: npt.NDArray[np.float64]
+) -> QtCore.QRectF:
+    x0, y0 = corner
+    x1, y1 = opposite
+    return QtCore.QRectF(x0, y0, x1 - x0, y1 - y0)
+
+
+def _build_two_point_shape_path(*, shape: Shape, scale: float) -> QtGui.QPainterPath:
+    # A rectangle, a Mask Shape's bounding box, and a circle are each fully
+    # described by two points, so one image-space rect covers all three.
+    path = QtGui.QPainterPath()
+    if shape.shape_type == "circle" and len(shape.points) == CIRCLE_POINT_COUNT:
+        center, rim = shape.points
+        radius = float(np.linalg.norm(rim - center))
+        path.addEllipse(
+            _build_rect_between(corner=center - radius, opposite=center + radius)
+        )
+    elif (
+        shape.shape_type in ("rectangle", "mask")
+        and len(shape.points) == RECTANGLE_POINT_COUNT
+    ):
+        corner, opposite = shape.points
+        path.addRect(_build_rect_between(corner=corner, opposite=opposite))
+    return QtGui.QTransform.fromScale(scale, scale).map(path)
