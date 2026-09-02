@@ -354,22 +354,6 @@
         <translation>Criar uma cópia das formas selecionadas</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Copiar Formas</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Copiar formas selecionados para a área de transferência</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Colar Formas</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Colar formas copiadas</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Desfazer último ponto</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modificar o rótulo da forma selecionada</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Copiar para a Área de Transferência</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Colocar as formas selecionadas na área de transferência</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Colar da Área de Transferência</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Inserir nesta imagem as formas da área de transferência</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

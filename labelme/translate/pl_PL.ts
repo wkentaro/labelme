@@ -354,22 +354,6 @@
         <translation>Utwórz duplikat zaznaczonych kształtów</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Kopiuj kształty</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Kopiuj zaznaczone kształty do schowka</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Wklej kształty</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Wklej skopiowane kształty</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Cofnij ostatni punkt</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Zmień etykietę zaznaczonego kształtu</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Kopiuj do schowka</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Umieść zaznaczone kształty w schowku</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Wklej ze schowka</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Wstaw kształty ze schowka do tego obrazu</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

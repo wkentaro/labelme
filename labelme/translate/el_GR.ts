@@ -282,28 +282,24 @@
         <translation>Τροποποιήστε την ετικέτα του επιλεγμένου σχήματος</translation>
     </message>
     <message>
+        <source>Copy to Clipboard</source>
+        <translation>Αντιγραφή στο πρόχειρο</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Τοποθέτηση των επιλεγμένων σχημάτων στο πρόχειρο</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Επικόλληση από το πρόχειρο</translation>
+    </message>
+    <message>
         <source>Duplicate Shapes</source>
         <translation>Διπλότυπα σχήματα</translation>
     </message>
     <message>
         <source>Create a duplicate of the selected shapes</source>
         <translation>Δημιουργήστε ένα αντίγραφο των επιλεγμένων σχημάτων</translation>
-    </message>
-    <message>
-        <source>Copy Shapes</source>
-        <translation>Αντιγραφή σχημάτων</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Αντιγραφή επιλεγμένων σχημάτων στο πρόχειρο</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Επικόλληση σχημάτων</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Επικόλληση αντιγραμμένων σχημάτων</translation>
     </message>
     <message>
         <source>Undo last point</source>
@@ -622,6 +618,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Εισαγωγή των σχημάτων του προχείρου σε αυτήν την εικόνα</translation>
     </message>
     <message>
         <source>Rectangle</source>

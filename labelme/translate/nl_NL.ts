@@ -354,22 +354,6 @@
         <translation>Maak een duplicaat van de geselecteerde vormen</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Vormen Kopiëren</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Geselecteerde vormen naar klembord kopiëren</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Vormen Plakken</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Gekopieerde vormen plakken</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Laatste punt ongedaan maken</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Label van geselecteerde vorm wijzigen</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Naar Klembord Kopiëren</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Geselecteerde vormen op het klembord plaatsen</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Vanaf Klembord Plakken</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Vormen van het klembord in deze afbeelding invoegen</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

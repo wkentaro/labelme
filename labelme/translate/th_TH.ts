@@ -354,22 +354,6 @@
         <translation>สร้างสำเนารูปร่างที่เลือก</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>คัดลอกรูปร่าง</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>คัดลอกรูปร่างที่เลือกไปคลิปบอร์ด</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>วางรูปร่าง</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>วางรูปร่างที่คัดลอก</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>ยกเลิกจุดล่าสุด</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>แก้ไขเลเบลของรูปร่างที่เลือก</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>คัดลอกไปคลิปบอร์ด</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>วางรูปร่างที่เลือกไว้ในคลิปบอร์ด</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>วางจากคลิปบอร์ด</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

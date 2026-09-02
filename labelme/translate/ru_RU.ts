@@ -344,22 +344,6 @@
         <translation>Создать копию выбранных фигур</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Копировать фигуры</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Копировать выбранные фигуры в буфер обмена</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Вставить фигуры</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Вставить скопированные фигуры</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Отменить последнюю точку</translation>
     </message>
@@ -441,6 +425,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Изменить метку выбранной фигуры</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Копировать в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Поместить выбранные фигуры в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Вставить из буфера обмена</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Вставить фигуры из буфера обмена в это изображение</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

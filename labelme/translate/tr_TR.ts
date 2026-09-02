@@ -354,22 +354,6 @@
         <translation>Seçili şekillerin bir kopyasını oluştur</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Şekilleri Kopyala</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Seçili şekilleri panoya kopyala</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Şekilleri Yapıştır</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Kopyalanmış şekilleri yapıştır</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Son noktayı geri al</translation>
     </message>
@@ -459,6 +443,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Seçili şeklin etiketini değiştir</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Panoya Kopyala</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Seçili şekilleri panoya koy</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Panodan Yapıştır</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Panodaki şekilleri bu görüntüye ekle</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

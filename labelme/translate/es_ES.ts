@@ -354,22 +354,6 @@
         <translation>Crear un duplicado de las formas seleccionadas</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Copiar formas</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Copiar formas seleccionadas al portapapeles</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Pegar formas</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Pegar formas copiadas</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Deshacer último punto</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modificar la etiqueta de la forma seleccionada</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Copiar al portapapeles</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Colocar las formas seleccionadas en el portapapeles</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Pegar desde el portapapeles</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Insertar en esta imagen las formas del portapapeles</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

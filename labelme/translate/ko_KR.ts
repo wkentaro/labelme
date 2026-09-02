@@ -354,22 +354,6 @@
         <translation>선택한 도형의 복사본 생성</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>도형 복사</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>선택한 도형을 클립보드에 복사</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>도형 붙여넣기</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>복사한 도형 붙여넣기</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>마지막 점 실행 취소</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>선택한 도형의 레이블 수정</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>클립보드에 복사</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>선택한 도형을 클립보드에 담기</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>클립보드에서 붙여넣기</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>클립보드의 도형을 이 이미지에 삽입</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
