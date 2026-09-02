@@ -23,7 +23,6 @@ _RESIZE_W: Final[int] = 1100
 _RESIZE_H: Final[int] = 800
 _MOVE_X: Final[int] = 50
 _MOVE_Y: Final[int] = 50
-_TOLERANCE_PX: Final[int] = 10
 
 
 @pytest.mark.gui
@@ -33,6 +32,8 @@ def test_window_geometry_persists_across_sessions(
     qtbot: QtBot,
     pause: bool,
 ) -> None:
+    TOLERANCE_PX: Final[int] = 10
+
     win1 = main_win(size=None)
     win1.show()
     qtbot.wait(100)
@@ -54,10 +55,10 @@ def test_window_geometry_persists_across_sessions(
     restored_size = win2.size()
     restored_pos = win2.pos()
 
-    assert abs(restored_size.width() - saved_size.width()) <= _TOLERANCE_PX
-    assert abs(restored_size.height() - saved_size.height()) <= _TOLERANCE_PX
-    assert abs(restored_pos.x() - saved_pos.x()) <= _TOLERANCE_PX
-    assert abs(restored_pos.y() - saved_pos.y()) <= _TOLERANCE_PX
+    assert abs(restored_size.width() - saved_size.width()) <= TOLERANCE_PX
+    assert abs(restored_size.height() - saved_size.height()) <= TOLERANCE_PX
+    assert abs(restored_pos.x() - saved_pos.x()) <= TOLERANCE_PX
+    assert abs(restored_pos.y() - saved_pos.y()) <= TOLERANCE_PX
 
     close_or_pause(qtbot=qtbot, widget=win2, pause=pause)
 

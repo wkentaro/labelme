@@ -65,7 +65,7 @@ dev = [
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
-  "gruff>=0.0.5",
+  "gruff>=0.0.6",
 ]
 
 [project.scripts]

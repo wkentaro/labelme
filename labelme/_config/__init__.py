@@ -17,8 +17,6 @@ __all__ = ["get_user_config_file", "load_config", "set_overrides"]
 
 here = Path(__file__).resolve().parent
 
-_MASK_POLYGONIZATION_DETAIL_MAX: Final = 100
-
 
 def _update_dict(
     *,
@@ -56,11 +54,13 @@ def _update_dict(
 
 
 def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
+    MASK_POLYGONIZATION_DETAIL_MAX: Final = 100
+
     key = key_path[-1]
     if key_path == ("mask_polygonization", "detail") and (
         isinstance(value, bool)
         or not isinstance(value, int)
-        or not 0 <= value <= _MASK_POLYGONIZATION_DETAIL_MAX
+        or not 0 <= value <= MASK_POLYGONIZATION_DETAIL_MAX
     ):
         raise ValueError(
             "mask_polygonization.detail must be an integer between 0 and 100, "

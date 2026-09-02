@@ -33,7 +33,6 @@ from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 from .conftest import submit_label_dialog
 
-_TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 _SHAPE_INDEX: Final[int] = 0
 
 
@@ -133,7 +132,9 @@ def _save_and_check(
     win: MainWindow,
     tmp_path: Path,
 ) -> None:
-    label_path = str(tmp_path / Path(_TEST_FILE_NAME).name)
+    TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
+
+    label_path = str(tmp_path / Path(TEST_FILE_NAME).name)
     win.save_labels(label_path=label_path)
     assert_labelfile_sanity(label_path)
 

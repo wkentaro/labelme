@@ -14,17 +14,6 @@ import PIL.ImageOps
 from numpy.typing import NDArray
 from PySide6 import QtGui
 
-# Values of the EXIF Orientation tag, which encodes the transform needed to
-# display the stored pixels the right way up.
-_EXIF_ORIENTATION_NORMAL: Final = 1
-_EXIF_ORIENTATION_MIRROR_LEFT_TO_RIGHT: Final = 2
-_EXIF_ORIENTATION_ROTATE_180: Final = 3
-_EXIF_ORIENTATION_MIRROR_TOP_TO_BOTTOM: Final = 4
-_EXIF_ORIENTATION_MIRROR_TOP_TO_LEFT: Final = 5
-_EXIF_ORIENTATION_ROTATE_270: Final = 6
-_EXIF_ORIENTATION_MIRROR_TOP_TO_RIGHT: Final = 7
-_EXIF_ORIENTATION_ROTATE_90: Final = 8
-
 
 def img_data_to_pil(img_data: bytes, /) -> PIL.Image.Image:
     return PIL.Image.open(io.BytesIO(img_data))
@@ -81,6 +70,17 @@ def img_qt_to_rgb_arr(img_qt: QtGui.QImage, /) -> NDArray[np.uint8]:
 
 
 def apply_exif_orientation(image: PIL.Image.Image, /) -> PIL.Image.Image:
+    # Values of the EXIF Orientation tag, which encodes the transform needed to
+    # display the stored pixels the right way up.
+    EXIF_ORIENTATION_NORMAL: Final = 1
+    EXIF_ORIENTATION_MIRROR_LEFT_TO_RIGHT: Final = 2
+    EXIF_ORIENTATION_ROTATE_180: Final = 3
+    EXIF_ORIENTATION_MIRROR_TOP_TO_BOTTOM: Final = 4
+    EXIF_ORIENTATION_MIRROR_TOP_TO_LEFT: Final = 5
+    EXIF_ORIENTATION_ROTATE_270: Final = 6
+    EXIF_ORIENTATION_MIRROR_TOP_TO_RIGHT: Final = 7
+    EXIF_ORIENTATION_ROTATE_90: Final = 8
+
     try:
         exif = image._getexif()  # ty: ignore[unresolved-attribute]
     except AttributeError:
@@ -93,21 +93,21 @@ def apply_exif_orientation(image: PIL.Image.Image, /) -> PIL.Image.Image:
 
     orientation = exif.get("Orientation", None)
 
-    if orientation == _EXIF_ORIENTATION_NORMAL:
+    if orientation == EXIF_ORIENTATION_NORMAL:
         return image
-    elif orientation == _EXIF_ORIENTATION_MIRROR_LEFT_TO_RIGHT:
+    elif orientation == EXIF_ORIENTATION_MIRROR_LEFT_TO_RIGHT:
         return PIL.ImageOps.mirror(image)
-    elif orientation == _EXIF_ORIENTATION_ROTATE_180:
+    elif orientation == EXIF_ORIENTATION_ROTATE_180:
         return image.transpose(PIL.Image.ROTATE_180)
-    elif orientation == _EXIF_ORIENTATION_MIRROR_TOP_TO_BOTTOM:
+    elif orientation == EXIF_ORIENTATION_MIRROR_TOP_TO_BOTTOM:
         return PIL.ImageOps.flip(image)
-    elif orientation == _EXIF_ORIENTATION_MIRROR_TOP_TO_LEFT:
+    elif orientation == EXIF_ORIENTATION_MIRROR_TOP_TO_LEFT:
         return PIL.ImageOps.mirror(image.transpose(PIL.Image.ROTATE_270))
-    elif orientation == _EXIF_ORIENTATION_ROTATE_270:
+    elif orientation == EXIF_ORIENTATION_ROTATE_270:
         return image.transpose(PIL.Image.ROTATE_270)
-    elif orientation == _EXIF_ORIENTATION_MIRROR_TOP_TO_RIGHT:
+    elif orientation == EXIF_ORIENTATION_MIRROR_TOP_TO_RIGHT:
         return PIL.ImageOps.mirror(image.transpose(PIL.Image.ROTATE_90))
-    elif orientation == _EXIF_ORIENTATION_ROTATE_90:
+    elif orientation == EXIF_ORIENTATION_ROTATE_90:
         return image.transpose(PIL.Image.ROTATE_90)
     else:
         return image

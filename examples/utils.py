@@ -31,13 +31,6 @@ import PIL.Image
 import PIL.ImageDraw
 from numpy.typing import NDArray
 
-# Point counts each shape type's geometry is defined by.
-_CIRCLE_POINT_COUNT: Final = 2
-_LINE_POINT_COUNT: Final = 2
-_RECTANGLE_POINT_COUNT: Final = 2
-_ORIENTED_RECTANGLE_POINT_COUNT: Final = 4
-_MIN_POLYGON_POINT_COUNT: Final = 3
-
 
 @dataclasses.dataclass(frozen=True)
 class LabeledImage:
@@ -95,18 +88,25 @@ def shape_to_mask(
     line_width: int = 10,
     point_size: int = 5,
 ) -> NDArray[np.bool_]:
+    # Point counts each shape type's geometry is defined by.
+    CIRCLE_POINT_COUNT: Final = 2
+    LINE_POINT_COUNT: Final = 2
+    RECTANGLE_POINT_COUNT: Final = 2
+    ORIENTED_RECTANGLE_POINT_COUNT: Final = 4
+    MIN_POLYGON_POINT_COUNT: Final = 3
+
     mask = PIL.Image.fromarray(np.zeros(img_shape[:2], dtype=np.uint8))
     draw = PIL.ImageDraw.Draw(mask)
     xy = [tuple(point) for point in points]
     if shape_type == "circle":
-        assert len(xy) == _CIRCLE_POINT_COUNT, (
+        assert len(xy) == CIRCLE_POINT_COUNT, (
             "Shape of shape_type=circle must have 2 points"
         )
         (cx, cy), (px, py) = xy
         d = math.sqrt((cx - px) ** 2 + (cy - py) ** 2)
         draw.ellipse(((cx - d, cy - d), (cx + d, cy + d)), outline=1, fill=1)
     elif shape_type == "rectangle":
-        assert len(xy) == _RECTANGLE_POINT_COUNT, (
+        assert len(xy) == RECTANGLE_POINT_COUNT, (
             "Shape of shape_type=rectangle must have 2 points"
         )
         (x0, y0), (x1, y1) = xy
@@ -116,7 +116,7 @@ def shape_to_mask(
             fill=1,
         )
     elif shape_type == "line":
-        assert len(xy) == _LINE_POINT_COUNT, (
+        assert len(xy) == LINE_POINT_COUNT, (
             "Shape of shape_type=line must have 2 points"
         )
         draw.line(xy=xy, fill=1, width=line_width)  # ty: ignore[invalid-argument-type]
@@ -129,12 +129,12 @@ def shape_to_mask(
         r = point_size
         draw.ellipse(((cx - r, cy - r), (cx + r, cy + r)), outline=1, fill=1)
     elif shape_type == "oriented_rectangle":
-        assert len(xy) == _ORIENTED_RECTANGLE_POINT_COUNT, (
+        assert len(xy) == ORIENTED_RECTANGLE_POINT_COUNT, (
             "Shape of shape_type=oriented_rectangle must have 4 points"
         )
         draw.polygon(xy=xy, outline=1, fill=1)  # ty: ignore[invalid-argument-type]
     elif shape_type in [None, "polygon"]:
-        assert len(xy) >= _MIN_POLYGON_POINT_COUNT, (
+        assert len(xy) >= MIN_POLYGON_POINT_COUNT, (
             "Polygon must have points more than 2"
         )
         draw.polygon(xy=xy, outline=1, fill=1)  # ty: ignore[invalid-argument-type]

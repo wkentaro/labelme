@@ -44,12 +44,6 @@ from ._shape_render import is_hit_by_point
 from ._shape_render import render_shape
 from .download import download_ai_model
 
-# The latest backup mirrors the current state, so an undo needs a prior one too.
-_MIN_SHAPE_BACKUPS_FOR_UNDO: Final = 2
-# The cursor supplies the closing point, so a fill preview needs one point
-# fewer than the polygon it previews.
-_MIN_POINTS_FOR_FILL_PREVIEW: Final = 2
-
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
 
@@ -141,18 +135,6 @@ _CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
     "ai_points_to_shape": "points",
     "ai_box_to_shape": "rectangle",
 }
-
-
-# Modes whose seed point cannot be reinterpreted as the start of another mode.
-# `point` finalizes on click so never has a partial shape; AI modes carry
-# per-point positive/negative labels. Every other mode in _CreateMode shares a
-# 1-click anchor and is seed-compatible by default — new modes participate
-# unless explicitly listed here.
-_SEED_INCOMPATIBLE_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
-    "point",
-    "ai_points_to_shape",
-    "ai_box_to_shape",
-)
 
 
 class _CanvasMode(enum.Enum):
@@ -424,12 +406,20 @@ class Canvas(QtWidgets.QWidget):
     def _reconcile_partial_shape_on_mode_switch(
         self, *, old_mode: _CreateMode, new_mode: _CreateMode
     ) -> None:
+        # Point mode finalizes on click, while AI modes carry per-point labels;
+        # their seed points cannot start another shape type.
+        SEED_INCOMPATIBLE_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
+            "point",
+            "ai_points_to_shape",
+            "ai_box_to_shape",
+        )
+
         if self._current is None:
             return
         if not (
             len(self._current.points) == 1
-            and old_mode not in _SEED_INCOMPATIBLE_CREATE_MODES
-            and new_mode not in _SEED_INCOMPATIBLE_CREATE_MODES
+            and old_mode not in SEED_INCOMPATIBLE_CREATE_MODES
+            and new_mode not in SEED_INCOMPATIBLE_CREATE_MODES
         ):
             self._cancel_current_shape()
             return
@@ -513,7 +503,10 @@ class Canvas(QtWidgets.QWidget):
 
     @property
     def can_restore_shape(self) -> bool:
-        return len(self.shape_backups) >= _MIN_SHAPE_BACKUPS_FOR_UNDO
+        # The latest backup mirrors the current state, so undo needs a prior one too.
+        MIN_SHAPE_BACKUPS_FOR_UNDO: Final = 2
+
+        return len(self.shape_backups) >= MIN_SHAPE_BACKUPS_FOR_UNDO
 
     def restore_last_shape(self) -> None:
         # Undo coordinates with app.py::undo_shape_edit, app.py::load_shapes,
@@ -1702,8 +1695,11 @@ class Canvas(QtWidgets.QWidget):
         return []
 
     def _build_polygon_preview(self, *, current: _DraftShape) -> Shape:
+        # The cursor closes the shape, so previewing a fill needs one fewer point.
+        MIN_POINTS_FOR_FILL_PREVIEW: Final = 2
+
         preview = current
-        if self._fill_drawing and len(preview.points) >= _MIN_POINTS_FOR_FILL_PREVIEW:
+        if self._fill_drawing and len(preview.points) >= MIN_POINTS_FOR_FILL_PREVIEW:
             preview = preview.add_point(self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 

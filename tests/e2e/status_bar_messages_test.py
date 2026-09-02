@@ -14,8 +14,6 @@ from .conftest import MainWinFactory
 from .conftest import dismiss_active_modal
 from .conftest import show_window_and_wait_for_imagedata
 
-_STATUS_MESSAGE_TIMEOUT_MS: Final[int] = 5000
-
 
 def _wait_for_status_message_containing(
     *,
@@ -23,6 +21,8 @@ def _wait_for_status_message_containing(
     win: MainWindow,
     substring: str,
 ) -> list[str]:
+    STATUS_MESSAGE_TIMEOUT_MS: Final[int] = 5000
+
     captured: list[str] = []
     status_bar = win.statusBar()
     assert status_bar is not None
@@ -33,7 +33,7 @@ def _wait_for_status_message_containing(
             captured.append(msg)
         assert any(substring in m for m in captured)
 
-    qtbot.waitUntil(_check, timeout=_STATUS_MESSAGE_TIMEOUT_MS)
+    qtbot.waitUntil(_check, timeout=STATUS_MESSAGE_TIMEOUT_MS)
     return captured
 
 

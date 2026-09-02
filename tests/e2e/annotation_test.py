@@ -20,9 +20,6 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
-# Smallest available model (~40MB) to keep download and inference fast
-_AI_MODEL: Final = "efficientsam:10m"
-
 
 @pytest.mark.gui
 def test_labeling_ai_lands_preserves_generated_group(
@@ -312,6 +309,9 @@ def test_annotate_shape_types(
     expected_num_points: int | None,
     ai_output_format: AiOutputFormat | None,
 ) -> None:
+    # Smallest available model (~40MB) to keep download and inference fast.
+    AI_MODEL: Final = "efficientsam:10m"
+
     expected_shape_type = ai_output_format if ai_output_format else create_mode
 
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -326,7 +326,7 @@ def test_annotate_shape_types(
 
     label = "test_shape"
     canvas = win._canvas_widgets.canvas
-    canvas.set_ai_model_name(model_name=_AI_MODEL)
+    canvas.set_ai_model_name(model_name=AI_MODEL)
     if ai_output_format is not None:
         canvas.set_ai_output_format(ai_output_format)
 

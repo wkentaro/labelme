@@ -33,10 +33,8 @@ pytestmark = pytest.mark.pixel_snapshot
 # which the main_win fixture invokes for every test.
 _RENDER_WIDTH: Final[int] = 600
 _RENDER_HEIGHT: Final[int] = 450
-_RENDER_SCALE: Final[float] = 1.0
 _BACKGROUND_COLOR: Final[QColor] = QColor(232, 232, 232)
 _PAINT_SETTLE_MS: Final[int] = 100
-_MODE_SWITCH_SETTLE_MS: Final[int] = 50
 
 _TRIANGLE_FRACTIONS: Final[tuple[tuple[float, float], ...]] = (
     (0.2, 0.2),
@@ -46,8 +44,10 @@ _TRIANGLE_FRACTIONS: Final[tuple[tuple[float, float], ...]] = (
 
 
 def _pin_canvas_for_snapshot(*, qtbot: QtBot, canvas: Canvas) -> None:
+    RENDER_SCALE: Final[float] = 1.0
+
     canvas.setFixedSize(_RENDER_WIDTH, _RENDER_HEIGHT)
-    canvas.scale = _RENDER_SCALE
+    canvas.scale = RENDER_SCALE
     canvas.update()
     qtbot.wait(_PAINT_SETTLE_MS)
 
@@ -206,13 +206,15 @@ def test_snapshot_polygon_mid_draw(
     update_snapshots: bool,
     pause: bool,
 ) -> None:
+    MODE_SWITCH_SETTLE_MS: Final[int] = 50
+
     canvas = raw_win._canvas_widgets.canvas
     pixmap = canvas.pixmap
     assert pixmap is not None
     _pin_canvas_for_snapshot(qtbot=qtbot, canvas=canvas)
 
     raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
-    qtbot.wait(_MODE_SWITCH_SETTLE_MS)
+    qtbot.wait(MODE_SWITCH_SETTLE_MS)
 
     for xy in _TRIANGLE_FRACTIONS[:2]:
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
@@ -234,7 +236,7 @@ def test_snapshot_polygon_mid_draw(
 
     # Cancel the in-progress shape; without this close_or_pause triggers a dialog.
     qtbot.keyPress(canvas, Qt.Key.Key_Escape)
-    qtbot.wait(_MODE_SWITCH_SETTLE_MS)
+    qtbot.wait(MODE_SWITCH_SETTLE_MS)
     assert canvas._current is None
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

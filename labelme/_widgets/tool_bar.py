@@ -6,12 +6,6 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
-_OBJECT_NAME_SUFFIX: Final = "ToolBar"
-_FONT_SCALE_FACTOR: Final = 0.8
-_VERTICAL_SEPARATOR_STYLE: Final = (
-    "QToolBar::separator { height: 1px; background: palette(mid); margin: 2px 4px; }"
-)
-
 
 class ToolBar(QtWidgets.QToolBar):
     def __init__(
@@ -23,8 +17,15 @@ class ToolBar(QtWidgets.QToolBar):
         button_style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
         font_base: QtGui.QFont | None = None,
     ) -> None:
+        OBJECT_NAME_SUFFIX: Final = "ToolBar"
+        FONT_SCALE_FACTOR: Final = 0.8
+        VERTICAL_SEPARATOR_STYLE: Final = (
+            "QToolBar::separator { height: 1px; background: palette(mid); "
+            "margin: 2px 4px; }"
+        )
+
         super().__init__(title)
-        self.setObjectName(title + _OBJECT_NAME_SUFFIX)
+        self.setObjectName(title + OBJECT_NAME_SUFFIX)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setMovable(False)
         self.setFloatable(False)
@@ -38,11 +39,11 @@ class ToolBar(QtWidgets.QToolBar):
 
         if font_base is not None:
             scaled_font = QtGui.QFont(font_base)
-            scaled_font.setPointSizeF(font_base.pointSizeF() * _FONT_SCALE_FACTOR)
+            scaled_font.setPointSizeF(font_base.pointSizeF() * FONT_SCALE_FACTOR)
             self.setFont(scaled_font)
 
         if orientation == Qt.Orientation.Vertical:
-            self.setStyleSheet(_VERTICAL_SEPARATOR_STYLE)
+            self.setStyleSheet(VERTICAL_SEPARATOR_STYLE)
 
         for action in actions:
             self.addAction(action)

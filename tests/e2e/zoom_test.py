@@ -20,7 +20,6 @@ from .conftest import MainWinFactory
 from .conftest import image_to_widget_pos
 from .conftest import show_window_and_wait_for_imagedata
 
-_TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
 _VIEWPORT_ZOOM: Final[int] = 300
 
 
@@ -31,8 +30,10 @@ def _win(
     qtbot: QtBot,
     data_path: Path,
 ) -> MainWindow:
+    TEST_FILE_NAME: Final[str] = "annotated/2011_000003.json"
+
     win = main_win(
-        file_or_dir=str(data_path / _TEST_FILE_NAME),
+        file_or_dir=str(data_path / TEST_FILE_NAME),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win

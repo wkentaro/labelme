@@ -6,17 +6,18 @@ from typing import cast
 from loguru import logger
 
 RGB_CHANNEL_COUNT: Final = 3
-_CHANNEL_VALUE_MAX: Final = 255
 
 
 def _is_rgb(value: object, /) -> bool:
+    CHANNEL_VALUE_MAX: Final = 255
+
     return (
         isinstance(value, list)
         and len(value) == RGB_CHANNEL_COUNT
         and all(
             isinstance(channel, int)
             and not isinstance(channel, bool)
-            and 0 <= channel <= _CHANNEL_VALUE_MAX
+            and 0 <= channel <= CHANNEL_VALUE_MAX
             for channel in value
         )
     )
