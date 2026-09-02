@@ -14,6 +14,7 @@ from labelme._widgets.canvas import Canvas
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import click_canvas_fraction
+from .conftest import draw_triangle
 from .conftest import schedule_on_dialog
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
@@ -269,7 +270,7 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
 
 
 @pytest.mark.gui
-def test_edit_label_multi_shape_mismatch_disables_text_field(
+def test_cancel_mixed_label_edit_keeps_next_shape_prefill_blank(
     *,
     qtbot: QtBot,
     annotated_with_labels: MainWindow,
@@ -301,8 +302,74 @@ def test_edit_label_multi_shape_mismatch_disables_text_field(
     label_list.item_double_clicked.emit(label_list[0])
     qtbot.waitUntil(lambda: not label_dialog.isVisible(), timeout=3000)
 
+    next_prefill: list[str] = []
+
+    def capture_prefill_then_cancel() -> None:
+        next_prefill.append(label_dialog.edit.text())
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
+
+    schedule_on_dialog(label_dialog=label_dialog, action=capture_prefill_then_cancel)
+    draw_triangle(
+        qtbot=qtbot,
+        win=win,
+        vertices=((0.2, 0.2), (0.5, 0.2), (0.5, 0.5)),
+    )
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
+    qtbot.waitUntil(lambda: bool(next_prefill), timeout=3000)
+
     assert [s.label for s in canvas.shapes] == original_labels
     assert edit_disabled_during_popup == [True]
+    assert next_prefill == [""]
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "annotated_with_labels",
+    [{"validate_label": "exact", "labels": ["dog"]}],
+    indirect=True,
+)
+def test_edit_label_multi_shape_mismatch_skips_label_validation(
+    *,
+    qtbot: QtBot,
+    annotated_with_labels: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    # With the label locked there is nothing to validate; accepting the dialog
+    # must apply the shared fields instead of rejecting the blank label.
+    win = annotated_with_labels
+    canvas = win._canvas_widgets.canvas
+    label_list = win._docks.label_list
+    label_dialog = win._label_dialog
+    original_labels = [s.label for s in canvas.shapes]
+    assert original_labels[0] != original_labels[3]
+
+    error_shown: list[bool] = []
+    monkeypatch.setattr(
+        QMessageBox,
+        "critical",
+        lambda *_args, **_kwargs: error_shown.append(True)
+        or QMessageBox.StandardButton.Ok,
+    )
+
+    label_list.clearSelection()
+    label_list.select_item(item=label_list[0])
+    label_list.select_item(item=label_list[3])
+
+    def set_group_id_then_accept() -> None:
+        qtbot.keyClicks(label_dialog.edit_group_id, "7")
+        qtbot.keyClick(label_dialog.edit_group_id, Qt.Key.Key_Enter)
+
+    schedule_on_dialog(label_dialog=label_dialog, action=set_group_id_then_accept)
+    label_list.item_double_clicked.emit(label_list[0])
+    qtbot.waitUntil(lambda: not label_dialog.isVisible(), timeout=3000)
+
+    assert not error_shown
+    assert [s.label for s in canvas.shapes] == original_labels
+    assert canvas.shapes[0].group_id == 7
+    assert canvas.shapes[3].group_id == 7
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

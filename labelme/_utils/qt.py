@@ -158,12 +158,6 @@ def new_separator(parent: QtWidgets.QWidget, /) -> QtGui.QAction:
     return separator
 
 
-def label_validator() -> QtGui.QRegularExpressionValidator:
-    # Accepts strings of 2+ chars not starting with space or tab.
-    # Single non-whitespace char is Intermediate (handled by regex partial match).
-    return QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[^ \t].+"))
-
-
 def direction_angle(*, start: npt.ArrayLike, end: npt.ArrayLike) -> float:
     s = np.asarray(start, dtype=float)
     e = np.asarray(end, dtype=float)

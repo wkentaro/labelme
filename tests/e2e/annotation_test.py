@@ -14,6 +14,7 @@ from pytestqt.qtbot import QtBot
 from labelme._app import MainWindow
 from labelme._automation._types import AiOutputFormat
 from labelme._shape import Shape
+from labelme._widgets import LabelDialogEntry
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
@@ -37,7 +38,9 @@ def test_labeling_ai_lands_preserves_generated_group(
     monkeypatch.setattr(
         win._label_dialog,
         "popup",
-        lambda *_args, **_kwargs: ("land", {}, None, ""),
+        lambda *_args, **_kwargs: LabelDialogEntry(
+            label="land", flags={}, group_id=None, description=""
+        ),
     )
 
     win._on_new_shape()
