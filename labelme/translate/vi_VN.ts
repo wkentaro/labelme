@@ -258,10 +258,6 @@
         <translation>Lưu thành(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Lưu nhãn vào tệp khác</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>Xóa(&amp;D)</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Lưu nhãn với tên tệp mới</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

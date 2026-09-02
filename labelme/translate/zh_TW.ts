@@ -258,10 +258,6 @@
         <translation>另存為(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>保存標籤到不同的文件</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>刪除(&amp;D)</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>編輯標籤(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>以新的檔案名稱儲存標籤</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

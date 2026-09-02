@@ -263,10 +263,6 @@
         <translation>名前を付けて保存(&amp;A)</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>ラベルを別のファイルに保存</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>ファイルを
 削除(&amp;D)</translation>
@@ -449,6 +445,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ラベルを編集(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>ラベルを新しいファイル名で保存</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

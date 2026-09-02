@@ -258,10 +258,6 @@
         <translation>다른 이름으로 저장(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>레이블을 다른 파일로 저장</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>삭제(&amp;D)</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>레이블 편집(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>레이블을 새 파일 이름으로 저장</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

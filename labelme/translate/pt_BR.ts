@@ -258,10 +258,6 @@
         <translation>Salvar &amp;Como</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Salvar rótulos em um arquivo diferente</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Excluir Arquivo</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Editar Rótulo</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Salvar os rótulos com um novo nome de arquivo</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

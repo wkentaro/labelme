@@ -260,10 +260,6 @@
         <translation>Salva &amp;come</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Salva le etichette in un file diverso</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Elimina file</translation>
     </message>
@@ -442,6 +438,10 @@ forme</translation>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Modifica etichetta</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Salva le etichette con un nuovo nome di file</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

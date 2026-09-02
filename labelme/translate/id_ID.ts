@@ -253,10 +253,6 @@
         <translation>&amp;Simpan Sebagai</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Simpan label ke file yang berbeda</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>Hapus File (&amp;D)</translation>
     </message>
@@ -411,6 +407,10 @@
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Edit Label</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Simpan label dengan nama file baru</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

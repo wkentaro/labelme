@@ -258,10 +258,6 @@
         <translation>&amp;Farklı Kaydet</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Etiketleri başka bir dosyaya kaydet</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>Dosyayı &amp;Sil</translation>
     </message>
@@ -439,6 +435,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Etiketi &amp;Düzenle</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Etiketleri yeni bir dosya adıyla kaydet</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

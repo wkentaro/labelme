@@ -258,10 +258,6 @@
         <translation>Guardar &amp;como</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Guardar etiquetas en un archivo diferente</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Eliminar</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Editar etiqueta</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Guardar las etiquetas con un nuevo nombre de archivo</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

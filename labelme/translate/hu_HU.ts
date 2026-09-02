@@ -260,10 +260,6 @@
         <translation>Mentés &amp;másként</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Címkék mentése másik fájlba</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Fájl törlése</translation>
     </message>
@@ -462,6 +458,10 @@ Shapes</source>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Címkék mentése új fájlnéven</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>

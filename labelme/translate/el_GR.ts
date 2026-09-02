@@ -197,10 +197,6 @@
         <translation>Αποθήκευση &amp;Ως</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Αποθήκευση ετικετών σε διαφορετικό αρχείο</translation>
-    </message>
-    <message>
         <source>Save &amp;Automatically</source>
         <translation>Αποθήκευση &amp;αυτόματα</translation>
     </message>
@@ -618,6 +614,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Αποθήκευση των ετικετών με νέο όνομα αρχείου</translation>
     </message>
     <message>
         <source>Insert the clipboard shapes into this image</source>
