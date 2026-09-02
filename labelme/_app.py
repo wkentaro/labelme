@@ -1309,7 +1309,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def mark_dirty(self) -> None:
-        # Autosave does not clear the undo stack; keep the undo action available.
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
 
         if self._actions.save_auto.isChecked():
@@ -2566,7 +2565,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # but keep the image on the canvas.
         self._docks.label_list.clear()
         # Drop the pre-delete backups first so undo cannot resurrect the
-        # annotations of the file we just removed; load_shapes then re-seeds the
+        # annotations of the file we just removed; the reload below re-seeds the
         # stack with the empty state, keeping "top mirrors current" intact.
         self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
