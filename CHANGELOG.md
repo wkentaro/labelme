@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shape labels shown on the canvas now include their group ID, matching the Shape List ([#2589](https://github.com/wkentaro/labelme/pull/2589))
 - The dock listing the current Image's Shapes is now titled Shape List. ([#2593](https://github.com/wkentaro/labelme/pull/2593))
 
-
 ## 7.2.0 - 2026-08-27
 
 ### Added

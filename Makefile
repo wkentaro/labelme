@@ -55,6 +55,7 @@ release:  # Prepare a release: make release VERSION=X.Y.Z
 		exit 1; \
 	}
 	$(call exec,uv run towncrier build --yes --version $(VERSION))
+	$(call exec,uv run mdformat CHANGELOG.md)
 	@printf "\n\033[1;32mNext steps\033[0m\n"
 	@echo "  git commit -am \"chore: prep $(VERSION) release\""
 	@echo "  git tag v$(VERSION)"
