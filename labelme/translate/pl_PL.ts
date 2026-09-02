@@ -258,10 +258,6 @@
         <translation>Zapisz &amp;jako</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Zapisz etykiety do innego pliku</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Usuń plik</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Edytuj etykietę</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Zapisz etykiety pod nową nazwą pliku</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

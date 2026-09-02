@@ -248,10 +248,6 @@
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Сохранить метки в другой файл</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>Удалить файл (&amp;D)</translation>
     </message>
@@ -421,6 +417,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Редактировать метку</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Сохранить метки под новым именем файла</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

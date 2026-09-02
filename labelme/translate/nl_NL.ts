@@ -258,10 +258,6 @@
         <translation>Opslaan &amp;als</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Labels opslaan naar ander bestand</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>Bestand &amp;verwijderen</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Label &amp;bewerken</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Labels opslaan onder een nieuwe bestandsnaam</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

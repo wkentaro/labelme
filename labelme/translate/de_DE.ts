@@ -260,10 +260,6 @@
         <translation>Speichern &amp;unter</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Labels in anderer Datei speichern</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Datei löschen</translation>
     </message>
@@ -462,6 +458,10 @@ Formen</translation>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Labels unter einem neuen Dateinamen speichern</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>

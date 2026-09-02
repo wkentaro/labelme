@@ -258,10 +258,6 @@
         <translation>บันทึกเป็น (&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>บันทึกเลเบลไปยังไฟล์อื่น</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>ลบไฟล์ (&amp;D)</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>แก้ไขเลเบล (&amp;E)</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>บันทึกเลเบลด้วยชื่อไฟล์ใหม่</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

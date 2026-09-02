@@ -362,7 +362,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save labels to a different file"),
+            tip=self.tr("Save the labels under a new file name"),
             enabled=False,
         )
         save_auto = action(

@@ -258,10 +258,6 @@
         <translation>ذخیره با نام دیگر(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>ذخیره برچسب‌ها در فایل دیگر</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>حذف(&amp;D)</translation>
     </message>
@@ -436,6 +432,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ویرایش برچسب(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>ذخیره برچسب‌ها با نام فایل جدید</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>

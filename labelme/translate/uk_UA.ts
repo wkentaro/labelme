@@ -197,10 +197,6 @@
         <translation>&amp;Зберегти як</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Зберегти мітки в інший файл</translation>
-    </message>
-    <message>
         <source>Save &amp;Automatically</source>
         <translation>&amp;Автоматично зберегти</translation>
     </message>
@@ -619,6 +615,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Зберегти мітки під новою назвою файлу</translation>
     </message>
     <message>
         <source>Insert the clipboard shapes into this image</source>

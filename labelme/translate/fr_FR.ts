@@ -260,10 +260,6 @@
         <translation>Enregistrer &amp;sous</translation>
     </message>
     <message>
-        <source>Save labels to a different file</source>
-        <translation>Enregistrer les étiquettes dans un autre fichier</translation>
-    </message>
-    <message>
         <source>&amp;Delete File</source>
         <translation>&amp;Supprimer le fichier</translation>
     </message>
@@ -442,6 +438,10 @@ les formes</translation>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Modifier l&apos;étiquette</translation>
+    </message>
+    <message>
+        <source>Save the labels under a new file name</source>
+        <translation>Enregistrer les étiquettes sous un nouveau nom de fichier</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
