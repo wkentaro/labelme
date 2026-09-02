@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import typing
+from typing import ClassVar
 from typing import Final
 from typing import Literal
 
@@ -19,8 +20,6 @@ from .._shape import Shape
 from .._shape import get_rotation_handle
 from .._shape import nearest_edge_index
 from .._shape import oriented_rectangle_arrow_points
-
-PEN_WIDTH: Final[int] = 2
 
 
 @dataclasses.dataclass(frozen=True)
@@ -80,6 +79,9 @@ class ShapeRenderContext:
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
     line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
+    # Outline stroke width in screen pixels, shared by every pen this module
+    # draws with so the label offset clears the stroke.
+    pen_width: ClassVar[int] = 2
 
 
 def render_shape(
@@ -91,7 +93,7 @@ def render_shape(
     palette = context.palette
     color = palette.select_line if context.selected else palette.line
     pen = QtGui.QPen(color)
-    pen.setWidth(PEN_WIDTH)
+    pen.setWidth(context.pen_width)
     pen.setStyle(context.line_style)
     painter.setPen(pen)
 
@@ -121,7 +123,7 @@ def _paint_shape_label(
         text += f" ({shape.group_id})"
     painter.setPen(QtGui.QPen(context.palette.line))
     painter.drawText(
-        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - PEN_WIDTH),
+        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - context.pen_width),
         text,
     )
 
@@ -202,14 +204,14 @@ def _paint_shape_points(
         painter.fillPath(paths.line, fill)
     if paths.orientation_arrow.length() > 0:
         arrow_pen = QtGui.QPen(palette.vertex_fill)
-        arrow_pen.setWidth(PEN_WIDTH)
+        arrow_pen.setWidth(context.pen_width)
         painter.setPen(arrow_pen)
         painter.drawPath(paths.orientation_arrow)
 
     if paths.negative_vertices.length() > 0:
         neg_color = QtGui.QColor(255, 0, 0, 255)
         neg_pen = QtGui.QPen(neg_color)
-        neg_pen.setWidth(PEN_WIDTH)
+        neg_pen.setWidth(context.pen_width)
         painter.setPen(neg_pen)
         painter.drawPath(paths.negative_vertices)
         painter.fillPath(paths.negative_vertices, neg_color)
