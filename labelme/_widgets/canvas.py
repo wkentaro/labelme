@@ -1961,7 +1961,6 @@ class Canvas(QtWidgets.QWidget):
         return shapes
 
     def undo_last_line(self) -> None:
-        assert self.shapes
         if self.create_mode in _AI_CREATE_MODES:
             # Remove all unlabeled shapes at the tail (added by AI in one shot)
             while self.shapes and self.shapes[-1].label is None:
