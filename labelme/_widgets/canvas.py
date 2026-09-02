@@ -1073,45 +1073,45 @@ class Canvas(QtWidgets.QWidget):
         self, *, current: _DraftShape, event: QtGui.QMouseEvent
     ) -> None:
         mode = self.create_mode
-        modifiers = event.modifiers()
-        if mode == "polygon":
-            current = current.add_point(self._line.points[1], autoclose=True)
-            self._current = current
-            self._line = dataclasses.replace(
-                self._line, points=(current.points[-1],) + self._line.points[1:]
-            )
-            if current.closed:
-                self._finalize()
+        if mode in ("polygon", "linestrip", "ai_points_to_shape"):
+            self._commit_preview_vertex(current=current, event=event)
         elif mode == "oriented_rectangle":
             if len(current.points) == ORIENTED_RECTANGLE_POINT_COUNT:
                 self._finalize()
             else:
                 assert len(current.points) == 1
                 self._lock_oriented_rectangle_first_edge(current=current)
-        elif mode in ("rectangle", "circle", "line", "ai_box_to_shape"):
+        else:
+            assert mode in ("rectangle", "circle", "line", "ai_box_to_shape")
             assert len(current.points) == 1
             self._current = dataclasses.replace(current, points=self._line.points)
             self._finalize()
-        elif mode == "linestrip":
-            current = current.add_point(self._line.points[1])
-            self._current = current
-            self._line = dataclasses.replace(
-                self._line, points=(current.points[-1],) + self._line.points[1:]
-            )
-            if modifiers == Qt.KeyboardModifier.ControlModifier:
-                self._finalize()
-        elif mode == "ai_points_to_shape":
-            current = current.add_point(
-                self._line.points[1], label=self._line.point_labels[1]
-            )
-            self._current = current
-            self._line = dataclasses.replace(
-                self._line,
-                points=(current.points[-1],) + self._line.points[1:],
-                point_labels=(current.point_labels[-1],) + self._line.point_labels[1:],
-            )
-            if modifiers & Qt.KeyboardModifier.ControlModifier:
-                self._finalize()
+
+    def _commit_preview_vertex(
+        self, *, current: _DraftShape, event: QtGui.QMouseEvent
+    ) -> None:
+        # The preview segment runs from the last committed vertex to the cursor.
+        # A click promotes its cursor end into the draft, and the next preview
+        # segment collapses onto that vertex until the cursor moves again.
+        vertex = self._line.points[1]
+        label = self._line.point_labels[1]
+        current = current.add_point(
+            vertex, label=label, autoclose=self.create_mode == "polygon"
+        )
+        self._current = current
+        if current.closed or self._is_final_open_path_click(event=event):
+            self._finalize()
+            return
+        self._line = dataclasses.replace(
+            self._line, points=(vertex, vertex), point_labels=(label, label)
+        )
+
+    def _is_final_open_path_click(self, *, event: QtGui.QMouseEvent) -> bool:
+        # A polygon ends by returning to its first vertex; the modes with no
+        # natural end let Ctrl mark the last click instead.
+        if self.create_mode == "polygon":
+            return False
+        return bool(event.modifiers() & Qt.KeyboardModifier.ControlModifier)
 
     def _lock_oriented_rectangle_first_edge(self, *, current: _DraftShape) -> None:
         first_corner = self._line.points[0]
@@ -1968,6 +1968,10 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line,
                 points=(self._current.points[-1], self._current.points[0]),
+                point_labels=(
+                    self._current.point_labels[-1],
+                    self._current.point_labels[0],
+                ),
             )
         elif self.create_mode in (
             "rectangle",
