@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from collections.abc import Collection
 
 import pytest
 from PySide6 import QtCore
@@ -8,6 +9,8 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets.label_dialog import LabelDialog
+from labelme._widgets.label_dialog import LabelDialogEntry
+from labelme._widgets.label_dialog import LabelDialogField
 from labelme._widgets.label_dialog import LabelQLineEdit
 
 # Black-box characterization of LabelDialog: behavior is exercised only through
@@ -31,8 +34,8 @@ def _run_popup(
     flags: dict[str, bool] | None,
     group_id: int | None,
     description: str | None,
-    flags_disabled: bool,
-) -> tuple[str, dict[str, bool], int | None, str] | tuple[None, None, None, None]:
+    locked: Collection[LabelDialogField],
+) -> LabelDialogEntry | None:
     code = (
         QtWidgets.QDialog.DialogCode.Accepted
         if accept
@@ -53,7 +56,7 @@ def _run_popup(
         flags=flags,
         group_id=group_id,
         description=description,
-        flags_disabled=flags_disabled,
+        locked=locked,
     )
 
 
@@ -295,11 +298,28 @@ def test_set_predefined_labels_keeps_completer_bound(*, qtbot: QtBot) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_editing_finished_strips_whitespace(*, qtbot: QtBot) -> None:
+def test_leading_whitespace_is_undone_while_typing(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    dialog.edit.setText("  hello  ")
-    dialog.edit.editingFinished.emit()
+    dialog.edit.setText("  hello")
     assert dialog.edit.text() == "hello"
+    dialog.edit.setText("\thello")
+    assert dialog.edit.text() == "hello"
+
+
+def test_accepted_label_is_stripped(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog())
+    entry = _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="hello  ",
+        at_show=None,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+    )
+    assert entry is not None
+    assert entry.label == "hello"
 
 
 def test_selecting_label_sets_edit_text(*, qtbot: QtBot) -> None:
@@ -330,6 +350,15 @@ def test_ok_with_text_accepts(*, qtbot: QtBot) -> None:
     assert dialog.result() == QtWidgets.QDialog.DialogCode.Accepted
 
 
+def test_ok_is_disabled_until_a_label_is_typed(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog())
+    assert not _ok_button(dialog).isEnabled()
+    dialog.edit.setText("car")
+    assert _ok_button(dialog).isEnabled()
+    dialog.edit.setText("   ")
+    assert not _ok_button(dialog).isEnabled()
+
+
 def test_ok_with_empty_text_does_not_accept(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
     dialog.edit.setText("")
@@ -344,12 +373,86 @@ def test_ok_with_whitespace_text_does_not_accept(*, qtbot: QtBot) -> None:
     assert dialog.result() != QtWidgets.QDialog.DialogCode.Accepted
 
 
-def test_ok_accepts_when_edit_disabled_even_if_empty(*, qtbot: QtBot) -> None:
+def test_ok_accepts_empty_label_when_label_is_locked(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
+    dialog.label_list.setCurrentRow(0)
+    seen: dict[str, object] = {}
+
+    def inspect(d: LabelDialog) -> None:
+        seen.update(
+            text=d.edit.text(),
+            edit_enabled=d.edit.isEnabled(),
+            list_enabled=d.label_list.isEnabled(),
+            list_current=d.label_list.currentItem(),
+            ok_enabled=_ok_button(d).isEnabled(),
+        )
+
+    entry = _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="cat",
+        at_show=inspect,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=("label",),
+    )
+    assert seen == {
+        "text": "",
+        "edit_enabled": False,
+        "list_enabled": False,
+        "list_current": None,
+        "ok_enabled": True,
+    }
+    assert entry is not None
+    assert entry.label == ""
+
+
+def test_locked_fields_are_blank_and_disabled_for_one_popup(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    dialog.edit.setText("")
-    dialog.edit.setEnabled(False)
-    _ok_button(dialog).click()
-    assert dialog.result() == QtWidgets.QDialog.DialogCode.Accepted
+    seen: dict[str, object] = {}
+
+    def inspect(d: LabelDialog) -> None:
+        seen.update(
+            gid=d.edit_group_id.text(),
+            gid_enabled=d.edit_group_id.isEnabled(),
+            desc=d.edit_description.toPlainText(),
+            desc_enabled=d.edit_description.isEnabled(),
+        )
+
+    _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="cat",
+        at_show=inspect,
+        flags=None,
+        group_id=4,
+        description="mixed",
+        locked=("group_id", "description"),
+    )
+    assert seen == {
+        "gid": "",
+        "gid_enabled": False,
+        "desc": "",
+        "desc_enabled": False,
+    }
+
+    _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="cat",
+        at_show=inspect,
+        flags=None,
+        group_id=4,
+        description="shared",
+        locked=(),
+    )
+    assert seen == {
+        "gid": "4",
+        "gid_enabled": True,
+        "desc": "shared",
+        "desc_enabled": True,
+    }
 
 
 def test_double_click_label_accepts(*, qtbot: QtBot) -> None:
@@ -447,7 +550,7 @@ def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
         dialog=LabelDialog(flags={".*": ["occluded"], "^cat$": ["occluded", "urgent"]}),
     )
 
-    _, flags, _, _ = _run_popup(
+    entry = _run_popup(
         dialog=dialog,
         accept=True,
         text="cat",
@@ -455,9 +558,10 @@ def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
-    assert flags == {"occluded": True, "urgent": False}
+    assert entry is not None
+    assert entry.flags == {"occluded": True, "urgent": False}
 
 
 # ---------------------------------------------------------------------------
@@ -465,9 +569,61 @@ def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
 # ---------------------------------------------------------------------------
 
 
+def test_accepted_label_with_trailing_whitespace_keeps_its_flags(
+    *, qtbot: QtBot
+) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"^cat$": ["indoor"]}))
+
+    def check_then_add_trailing_space(d: LabelDialog) -> None:
+        _checkbox(dialog=d, name="indoor").setChecked(True)
+        d.edit.setText("cat ")
+
+    entry = _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="cat",
+        at_show=check_then_add_trailing_space,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+    )
+    assert entry == LabelDialogEntry(
+        label="cat", flags={"indoor": True}, group_id=None, description=""
+    )
+
+
+def test_popup_with_leading_whitespace_label_matches_flags_and_list(
+    *, qtbot: QtBot
+) -> None:
+    seen: dict[str, object] = {}
+    dialog = _add_dialog(
+        qtbot, dialog=LabelDialog(labels=["cat"], flags={"^cat$": ["indoor"]})
+    )
+    entry = _run_popup(
+        dialog=dialog,
+        accept=True,
+        text=" cat",
+        at_show=lambda d: seen.update(
+            text=d.edit.text(),
+            current=d.label_list.currentItem().text()
+            if d.label_list.currentItem()
+            else None,
+        ),
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+    )
+    assert seen == {"text": "cat", "current": "cat"}
+    assert entry == LabelDialogEntry(
+        label="cat", flags={"indoor": False}, group_id=None, description=""
+    )
+
+
 def test_popup_returns_typed_values_on_accept(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
-    text, flags, group_id, description = _run_popup(
+    entry = _run_popup(
         dialog=dialog,
         accept=True,
         text="cat",
@@ -475,17 +631,16 @@ def test_popup_returns_typed_values_on_accept(*, qtbot: QtBot) -> None:
         description="a pet",
         at_show=None,
         flags=None,
-        flags_disabled=False,
+        locked=(),
     )
-    assert text == "cat"
-    assert group_id == 3
-    assert description == "a pet"
-    assert flags == {}
+    assert entry == LabelDialogEntry(
+        label="cat", flags={}, group_id=3, description="a pet"
+    )
 
 
 def test_popup_preserves_html_like_description(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    _, _, _, description = _run_popup(
+    entry = _run_popup(
         dialog=dialog,
         accept=True,
         text="cat",
@@ -493,14 +648,15 @@ def test_popup_preserves_html_like_description(*, qtbot: QtBot) -> None:
         at_show=None,
         flags=None,
         group_id=None,
-        flags_disabled=False,
+        locked=(),
     )
-    assert description == "<b>bold</b>"
+    assert entry is not None
+    assert entry.description == "<b>bold</b>"
 
 
-def test_popup_returns_all_none_on_reject(*, qtbot: QtBot) -> None:
+def test_popup_returns_none_on_reject(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    result = _run_popup(
+    entry = _run_popup(
         dialog=dialog,
         accept=False,
         text="cat",
@@ -508,15 +664,15 @@ def test_popup_returns_all_none_on_reject(*, qtbot: QtBot) -> None:
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
-    assert result == (None, None, None, None)
+    assert entry is None
 
 
 def test_popup_group_id_none_yields_empty_then_none(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    _, _, group_id, _ = _run_popup(
+    entry = _run_popup(
         dialog=dialog,
         accept=True,
         text="x",
@@ -524,15 +680,16 @@ def test_popup_group_id_none_yields_empty_then_none(*, qtbot: QtBot) -> None:
         at_show=lambda d: seen.update(gid=d.edit_group_id.text()),
         flags=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["gid"] == ""
-    assert group_id is None
+    assert entry is not None
+    assert entry.group_id is None
 
 
 def test_popup_group_id_zero_is_preserved(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    _, _, group_id, _ = _run_popup(
+    entry = _run_popup(
         dialog=dialog,
         accept=True,
         text="x",
@@ -540,9 +697,10 @@ def test_popup_group_id_zero_is_preserved(*, qtbot: QtBot) -> None:
         at_show=None,
         flags=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
-    assert group_id == 0
+    assert entry is not None
+    assert entry.group_id == 0
 
 
 def test_popup_sets_group_id_text_at_show(*, qtbot: QtBot) -> None:
@@ -556,32 +714,80 @@ def test_popup_sets_group_id_text_at_show(*, qtbot: QtBot) -> None:
         at_show=lambda d: seen.update(gid=d.edit_group_id.text()),
         flags=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["gid"] == "7"
 
 
-def test_popup_text_none_preserves_existing_edit_text(*, qtbot: QtBot) -> None:
-    seen: dict[str, str] = {}
-    dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    dialog.edit.setText("preexisting")
+def _accept_label(*, dialog: LabelDialog, label: str) -> None:
     _run_popup(
         dialog=dialog,
         accept=True,
-        text=None,
+        text=label,
+        at_show=None,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+    )
+
+
+def _get_shown_text(*, dialog: LabelDialog, accept: bool, text: str | None) -> str:
+    seen: dict[str, str] = {}
+    _run_popup(
+        dialog=dialog,
+        accept=accept,
+        text=text,
         at_show=lambda d: seen.update(t=d.edit.text()),
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
-    assert seen["t"] == "preexisting"
+    return seen["t"]
 
 
-def test_popup_text_none_selects_existing_edit_text(*, qtbot: QtBot) -> None:
+def test_popup_text_none_starts_from_last_accepted_label(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog())
+    assert _get_shown_text(dialog=dialog, accept=True, text=None) == ""
+    _accept_label(dialog=dialog, label="first")
+    assert _get_shown_text(dialog=dialog, accept=True, text=None) == "first"
+
+
+def test_cancel_leaves_last_accepted_label_untouched(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog())
+    _accept_label(dialog=dialog, label="first")
+    assert _get_shown_text(dialog=dialog, accept=False, text="typed") == "typed"
+    assert _get_shown_text(dialog=dialog, accept=True, text=None) == "first"
+
+
+def test_accepted_locked_label_leaves_next_prefill_blank(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog())
+    _accept_label(dialog=dialog, label="first")
+    _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="mixed",
+        at_show=None,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=("label",),
+    )
+    assert _get_shown_text(dialog=dialog, accept=True, text=None) == ""
+
+
+def test_remember_label_sets_next_prefill(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog())
+    _accept_label(dialog=dialog, label="first")
+    dialog.remember_label(label="edited")
+    assert _get_shown_text(dialog=dialog, accept=True, text=None) == "edited"
+
+
+def test_popup_text_none_selects_prefilled_text(*, qtbot: QtBot) -> None:
     seen: dict[str, str] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    dialog.edit.setText("preexisting")
+    _accept_label(dialog=dialog, label="preexisting")
     _run_popup(
         dialog=dialog,
         accept=True,
@@ -590,7 +796,7 @@ def test_popup_text_none_selects_existing_edit_text(*, qtbot: QtBot) -> None:
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["sel"] == "preexisting"
 
@@ -610,7 +816,7 @@ def test_popup_highlights_matching_label_at_show(*, qtbot: QtBot) -> None:
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["cur"] == "dog"
 
@@ -630,7 +836,7 @@ def test_popup_highlights_matching_label_case_insensitively(*, qtbot: QtBot) -> 
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["cur"] == "Cat"
 
@@ -646,13 +852,13 @@ def test_popup_sets_description_at_show(*, qtbot: QtBot) -> None:
         at_show=lambda d: seen.update(desc=d.edit_description.toPlainText()),
         flags=None,
         group_id=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["desc"] == "hello world"
 
 
-def test_popup_flags_disabled_disables_checkboxes(*, qtbot: QtBot) -> None:
-    seen: dict[str, list[bool]] = {}
+def test_popup_locked_flags_hides_checkboxes(*, qtbot: QtBot) -> None:
+    seen: dict[str, int] = {}
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(flags={"^cat": ["indoor", "outdoor"]})
     )
@@ -661,15 +867,12 @@ def test_popup_flags_disabled_disables_checkboxes(*, qtbot: QtBot) -> None:
         accept=True,
         text="cat",
         flags={"indoor": True},
-        flags_disabled=True,
-        at_show=lambda d: seen.update(
-            enabled=[cb.isEnabled() for cb in _checkboxes(d)]
-        ),
+        locked=("flags",),
+        at_show=lambda d: seen.update(count=len(_checkboxes(d))),
         group_id=None,
         description=None,
     )
-    assert seen["enabled"]
-    assert not any(seen["enabled"])
+    assert seen["count"] == 0
 
 
 def test_popup_flags_enabled_by_default(*, qtbot: QtBot) -> None:
@@ -687,19 +890,19 @@ def test_popup_flags_enabled_by_default(*, qtbot: QtBot) -> None:
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["enabled"]
     assert all(seen["enabled"])
 
 
-def test_flags_disabled_resets_between_popups(*, qtbot: QtBot) -> None:
+def test_locked_flags_reset_between_popups(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={"^cat": ["indoor"]}))
     _run_popup(
         dialog=dialog,
         accept=True,
         text="cat",
-        flags_disabled=True,
+        locked=("flags",),
         at_show=None,
         flags=None,
         group_id=None,
@@ -717,7 +920,7 @@ def test_flags_disabled_resets_between_popups(*, qtbot: QtBot) -> None:
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["enabled"]
     assert all(seen["enabled"])
@@ -737,7 +940,7 @@ def test_flag_checked_state_does_not_leak_into_next_new_shape_popup(
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     _run_popup(
         dialog=dialog,
@@ -749,7 +952,7 @@ def test_flag_checked_state_does_not_leak_into_next_new_shape_popup(
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["checked"] is False
 
@@ -768,7 +971,7 @@ def test_edited_shape_flags_do_not_leak_into_next_new_shape_popup(
         at_show=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     _run_popup(
         dialog=dialog,
@@ -780,17 +983,17 @@ def test_edited_shape_flags_do_not_leak_into_next_new_shape_popup(
         flags=None,
         group_id=None,
         description=None,
-        flags_disabled=False,
+        locked=(),
     )
     assert seen["checked"] is False
 
 
-def test_flags_disabled_survives_text_edit_rebuild(*, qtbot: QtBot) -> None:
-    seen: dict[str, list[bool]] = {}
+def test_locked_flags_stay_hidden_after_label_edit(*, qtbot: QtBot) -> None:
+    seen: dict[str, int] = {}
 
     def edit_then_inspect(d: LabelDialog) -> None:
         d.edit.setText("cattle")
-        seen.update(enabled=[cb.isEnabled() for cb in _checkboxes(d)])
+        seen.update(count=len(_checkboxes(d)))
 
     dialog = _add_dialog(
         qtbot, dialog=LabelDialog(flags={"^cat": ["indoor", "outdoor"]})
@@ -799,11 +1002,10 @@ def test_flags_disabled_survives_text_edit_rebuild(*, qtbot: QtBot) -> None:
         dialog=dialog,
         accept=True,
         text="cat",
-        flags_disabled=True,
+        locked=("flags",),
         at_show=edit_then_inspect,
         flags=None,
         group_id=None,
         description=None,
     )
-    assert seen["enabled"]
-    assert not any(seen["enabled"])
+    assert seen["count"] == 0

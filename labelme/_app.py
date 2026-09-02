@@ -53,6 +53,8 @@ from ._widgets import AiTextToAnnotationWidget
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
 from ._widgets import LabelDialog
+from ._widgets import LabelDialogEntry
+from ._widgets import LabelDialogField
 from ._widgets import LabelListWidget
 from ._widgets import LabelListWidgetItem
 from ._widgets import Palette
@@ -1577,29 +1579,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
         shapes = [cast(Shape, item.shape()) for item in items]
         first_shape = shapes[0]
-
-        if len(items) == 1:
-            edit_text = True
-            edit_flags = True
-            edit_group_id = True
-            edit_description = True
-        else:
-            edit_text = all(shape.label == first_shape.label for shape in shapes[1:])
-            edit_flags = all(shape.flags == first_shape.flags for shape in shapes[1:])
-            edit_group_id = all(
-                shape.group_id == first_shape.group_id for shape in shapes[1:]
+        # A field whose value differs across the selection has no single value
+        # to show, so it is locked in the dialog and left untouched on accept.
+        locked = {
+            field
+            for field in typing.get_args(LabelDialogField)
+            if any(
+                getattr(shape, field) != getattr(first_shape, field)
+                for shape in shapes[1:]
             )
-            edit_description = all(
-                shape.description == first_shape.description for shape in shapes[1:]
-            )
-
-        if not edit_text:
-            self._label_dialog.edit.setDisabled(True)
-            self._label_dialog.label_list.setDisabled(True)
-        if not edit_group_id:
-            self._label_dialog.edit_group_id.setDisabled(True)
-        if not edit_description:
-            self._label_dialog.edit_description.setDisabled(True)
+        }
 
         canvas_menu_origin = self._canvas_widgets.canvas.context_menu_origin
         menu_origin = (
@@ -1607,35 +1596,26 @@ class MainWindow(QtWidgets.QMainWindow):
             if canvas_menu_origin is not None
             else self._label_list_menu_origin
         )
-
-        text, flags, group_id, description = self._label_dialog.popup(
-            text=first_shape.label if edit_text else "",
+        entry = self._label_dialog.popup(
+            text=first_shape.label,
+            flags=first_shape.flags,
+            group_id=first_shape.group_id,
+            description=first_shape.description,
+            locked=locked,
             position=menu_origin,
-            flags=first_shape.flags if edit_flags else None,
-            group_id=first_shape.group_id if edit_group_id else None,
-            description=first_shape.description if edit_description else None,
-            flags_disabled=not edit_flags,
         )
-
-        if not edit_text:
-            self._label_dialog.edit.setDisabled(False)
-            self._label_dialog.label_list.setDisabled(False)
-        if not edit_group_id:
-            self._label_dialog.edit_group_id.setDisabled(False)
-        if not edit_description:
-            self._label_dialog.edit_description.setDisabled(False)
-
-        if text is None:
-            assert flags is None
-            assert group_id is None
-            assert description is None
+        if entry is None:
+            # The next new-shape dialog starts from the label that was on show.
+            self._label_dialog.remember_label(
+                label="" if "label" in locked else first_shape.label or ""
+            )
             return
 
-        if not self.validate_label(label=text):
+        if "label" not in locked and not self.validate_label(label=entry.label):
             self.show_error_message(
                 title=self.tr("Invalid label"),
                 message=self.tr("Invalid label '{}' with validation type '{}'").format(
-                    text, self._config["validate_label"]
+                    entry.label, self._config["validate_label"]
                 ),
             )
             return
@@ -1644,15 +1624,9 @@ class MainWindow(QtWidgets.QMainWindow):
         for item in items:
             shape = item.shape()
             assert shape is not None
-
-            if edit_text:
-                shape.label = text
-            if edit_flags:
-                shape.flags = flags
-            if edit_group_id:
-                shape.group_id = group_id
-            if edit_description:
-                shape.description = description
+            for field in typing.get_args(LabelDialogField):
+                if field not in locked:
+                    setattr(shape, field, getattr(entry, field))
 
             assert shape.label is not None
             fill_rgb = self._get_rgb_by_label(
@@ -1905,42 +1879,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_new_shape(self) -> None:
         items = self._docks.unique_label_list.selectedItems()
-        text = None
-        if items:
-            text = items[0].data(Qt.ItemDataRole.UserRole)
-        flags = {}
-        group_id = None
-        description = ""
+        text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
         if self._config["display_label_popup"] or not text:
-            previous_text = self._label_dialog.edit.text()
-            text, flags, group_id, description = self._label_dialog.popup(text=text)
-            if not text:
-                self._label_dialog.edit.setText(previous_text)
+            entry = self._label_dialog.popup(text=text)
+        else:
+            entry = LabelDialogEntry(
+                label=text, flags={}, group_id=None, description=""
+            )
 
-        if text and not self.validate_label(label=text):
+        if entry is not None and not self.validate_label(label=entry.label):
             self.show_error_message(
                 title=self.tr("Invalid label"),
                 message=self.tr("Invalid label '{}' with validation type '{}'").format(
-                    text, self._config["validate_label"]
+                    entry.label, self._config["validate_label"]
                 ),
             )
-            text = ""
-        if text:
-            self._docks.label_list.clearSelection()
-            assert isinstance(flags, dict)
-            shapes = self._canvas_widgets.canvas.set_last_label(text=text, flags=flags)
-            for shape in shapes:
-                if group_id is not None or shape.group_id is None:
-                    shape.group_id = group_id
-                shape.description = description
-                self.add_label(shape=shape)
-            self._actions.edit_mode.setEnabled(True)
-            self._actions.undo_last_point.setEnabled(False)
-            self._actions.undo.setEnabled(True)
-            self.mark_dirty()
-        else:
+            entry = None
+        if entry is None:
             self._canvas_widgets.canvas.undo_last_line()
             self._canvas_widgets.canvas.shape_backups.pop()
+            return
+
+        self._docks.label_list.clearSelection()
+        shapes = self._canvas_widgets.canvas.set_last_label(
+            text=entry.label, flags=entry.flags
+        )
+        for shape in shapes:
+            if entry.group_id is not None or shape.group_id is None:
+                shape.group_id = entry.group_id
+            shape.description = entry.description
+            self.add_label(shape=shape)
+        self._actions.edit_mode.setEnabled(True)
+        self._actions.undo_last_point.setEnabled(False)
+        self._actions.undo.setEnabled(True)
+        self.mark_dirty()
 
     def _on_inference_produced_no_shapes(self) -> None:
         self.show_status_message(
