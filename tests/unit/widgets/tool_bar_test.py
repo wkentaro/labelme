@@ -28,18 +28,24 @@ def _make_action(text: str, /) -> QtGui.QAction:
     return QtGui.QAction(text)
 
 
+def _make_separator() -> QtGui.QAction:
+    separator = QtGui.QAction()
+    separator.setSeparator(True)
+    return separator
+
+
 @pytest.fixture()
-def actions() -> list[QtGui.QAction | None]:
+def actions() -> list[QtGui.QAction]:
     return [
         _make_action("Alpha"),
         _make_action("Beta"),
-        None,
+        _make_separator(),
         _make_action("Gamma"),
     ]
 
 
 @pytest.fixture()
-def toolbar_h(*, qtbot: QtBot, actions: list[QtGui.QAction | None]) -> ToolBar:
+def toolbar_h(*, qtbot: QtBot, actions: list[QtGui.QAction]) -> ToolBar:
     tb = ToolBar(
         title="Test",
         actions=actions,
@@ -50,7 +56,7 @@ def toolbar_h(*, qtbot: QtBot, actions: list[QtGui.QAction | None]) -> ToolBar:
 
 
 @pytest.fixture()
-def toolbar_v(*, qtbot: QtBot, actions: list[QtGui.QAction | None]) -> ToolBar:
+def toolbar_v(*, qtbot: QtBot, actions: list[QtGui.QAction]) -> ToolBar:
     tb = ToolBar(
         title="Test",
         actions=actions,
@@ -156,7 +162,7 @@ def test_toolbar_tool_buttons_have_default_action(*, toolbar_h: ToolBar) -> None
 # --- separator ---
 
 
-def test_toolbar_none_action_inserts_separator(*, toolbar_h: ToolBar) -> None:
+def test_toolbar_separator_action_inserts_separator(*, toolbar_h: ToolBar) -> None:
     separators = [a for a in toolbar_h.actions() if a.isSeparator()]
     assert len(separators) == 1
 

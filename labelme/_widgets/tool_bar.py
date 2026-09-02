@@ -6,8 +6,6 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
-from .._utils import add_actions
-
 _OBJECT_NAME_SUFFIX: Final = "ToolBar"
 _FONT_SCALE_FACTOR: Final = 0.8
 _VERTICAL_SEPARATOR_STYLE: Final = (
@@ -20,7 +18,7 @@ class ToolBar(QtWidgets.QToolBar):
         self,
         *,
         title: str,
-        actions: list[QtGui.QAction | None],
+        actions: list[QtGui.QAction],
         orientation: Qt.Orientation = Qt.Orientation.Horizontal,
         button_style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
         font_base: QtGui.QFont | None = None,
@@ -46,13 +44,14 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Orientation.Vertical:
             self.setStyleSheet(_VERTICAL_SEPARATOR_STYLE)
 
-        add_actions(widget=self, actions=actions)
+        for action in actions:
+            self.addAction(action)
 
         if orientation == Qt.Orientation.Vertical:
             self._equalize_button_widths()
 
     def addAction(self, action: QtGui.QAction, /) -> None:  # ty: ignore[invalid-method-override]
-        if isinstance(action, QtWidgets.QWidgetAction):
+        if isinstance(action, QtWidgets.QWidgetAction) or action.isSeparator():
             super().addAction(action)
             return
 
