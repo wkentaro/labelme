@@ -349,22 +349,6 @@
         <translation>Buat duplikat dari bentuk terpilih</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Salin Bentuk</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Salin bentuk terpilih ke clipboard</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Tempel Bentuk</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Tempel bentuk yang disalin</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Urungkan titik terakhir</translation>
     </message>
@@ -431,6 +415,22 @@
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Ubah label bentuk yang dipilih</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Salin ke Clipboard</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Letakkan bentuk terpilih di clipboard</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Tempel dari Clipboard</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

@@ -128,9 +128,9 @@ class _Actions(NamedTuple):
     toggle_keep_prev_brightness_contrast: QtGui.QAction
     delete: QtGui.QAction
     edit: QtGui.QAction
-    duplicate: QtGui.QAction
     copy: QtGui.QAction
     paste: QtGui.QAction
+    duplicate: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
     add_point_to_edge: QtGui.QAction
@@ -165,7 +165,7 @@ class _Actions(NamedTuple):
     zoom: tuple[ZoomWidget | QtGui.QAction, ...]
     on_load_active: tuple[QtGui.QAction, ...]
     on_shapes_present: tuple[QtGui.QAction, ...]
-    context_menu: tuple[QtGui.QAction, ...]
+    context_menu: tuple[QtGui.QAction | None, ...]
     edit_menu: tuple[QtGui.QAction | None, ...]
 
 
@@ -441,6 +441,24 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Modify the label of the selected shape"),
             enabled=False,
         )
+        copy = action(
+            text=self.tr("Copy to Clipboard"),
+            slot=lambda: self._shape_clipboard.store(
+                shapes=self._canvas_widgets.canvas.selected_shapes
+            ),
+            shortcut=shortcuts["copy_shape"],
+            icon="copy_clipboard",
+            tip=self.tr("Place the selected shapes on the clipboard"),
+            enabled=False,
+        )
+        paste = action(
+            text=self.tr("Paste from Clipboard"),
+            slot=lambda: self._insert_shapes(self._shape_clipboard.paste()),
+            shortcut=shortcuts["paste_shape"],
+            icon="paste",
+            tip=self.tr("Insert the clipboard shapes into this image"),
+            enabled=False,
+        )
         duplicate = action(
             text=self.tr("Duplicate Shapes"),
             slot=lambda: self._insert_shapes(
@@ -449,24 +467,6 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["duplicate_shape"],
             icon="phosphor/copy.svg",
             tip=self.tr("Create a duplicate of the selected shapes"),
-            enabled=False,
-        )
-        copy = action(
-            text=self.tr("Copy Shapes"),
-            slot=lambda: self._shape_clipboard.store(
-                shapes=self._canvas_widgets.canvas.selected_shapes
-            ),
-            shortcut=shortcuts["copy_shape"],
-            icon="copy_clipboard",
-            tip=self.tr("Copy selected shapes to clipboard"),
-            enabled=False,
-        )
-        paste = action(
-            text=self.tr("Paste Shapes"),
-            slot=lambda: self._insert_shapes(self._shape_clipboard.paste()),
-            shortcut=shortcuts["paste_shape"],
-            icon="paste",
-            tip=self.tr("Paste copied shapes"),
             enabled=False,
         )
         undo_last_point = action(
@@ -751,29 +751,31 @@ class MainWindow(QtWidgets.QMainWindow):
             brightness_contrast,
         )
         on_shapes_present = (save_as, hide_all, show_all, toggle_all)
+        # Both menus follow the platform Edit-menu convention: history first,
+        # then the clipboard group, then the actions that alter a shape.
+        history = (undo, undo_last_point)
+        clipboard = (copy, paste, duplicate)
         context_menu = (
             *[draw_action for _, draw_action in draw],
             edit_mode,
+            None,
+            *history,
+            None,
+            *clipboard,
+            None,
             edit,
-            duplicate,
-            copy,
-            paste,
             delete,
-            undo,
-            undo_last_point,
             add_point_to_edge,
             remove_point,
         )
         edit_menu = (
+            None,
+            *history,
+            None,
+            *clipboard,
+            None,
             edit,
-            duplicate,
-            copy,
-            paste,
             delete,
-            None,
-            undo,
-            undo_last_point,
-            None,
             remove_point,
             None,
             keep_prev_action,
@@ -792,9 +794,9 @@ class MainWindow(QtWidgets.QMainWindow):
             toggle_keep_prev_brightness_contrast=toggle_keep_prev_brightness_contrast,
             delete=delete,
             edit=edit,
-            duplicate=duplicate,
             copy=copy,
             paste=paste,
+            duplicate=duplicate,
             undo_last_point=undo_last_point,
             undo=undo,
             remove_point=remove_point,

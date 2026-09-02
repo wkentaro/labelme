@@ -354,22 +354,6 @@
         <translation>为所选形状创建副本</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>复制形状</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>将所选形状复制至剪贴板</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>粘贴形状</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>粘贴已复制的形状</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>撤销上一个顶点</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>修改所选形状的标签</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>复制到剪贴板</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>将所选形状放入剪贴板</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>从剪贴板粘贴</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>将剪贴板中的形状插入此图像</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

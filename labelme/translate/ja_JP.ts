@@ -363,22 +363,6 @@
         <translation>選択した図形の複製を作成</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>図形をコピー</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>選択した図形をクリップボードにコピー</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>図形を貼り付け</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>コピーした図形を貼り付け</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>最後の頂点を取り消し</translation>
     </message>
@@ -469,6 +453,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>選択した図形のラベルを変更</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>クリップボードにコピー</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>選択した図形をクリップボードに置く</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>クリップボードから貼り付け</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>クリップボードの図形をこの画像に挿入</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

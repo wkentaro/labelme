@@ -282,28 +282,24 @@
         <translation>Змінити мітку вибраної фігури</translation>
     </message>
     <message>
+        <source>Copy to Clipboard</source>
+        <translation>Копіювати в буфер обміну</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Помістити вибрані фігури в буфер обміну</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Вставити з буфера обміну</translation>
+    </message>
+    <message>
         <source>Duplicate Shapes</source>
         <translation>Дублювати фігури</translation>
     </message>
     <message>
         <source>Create a duplicate of the selected shapes</source>
         <translation>Створити дублікат вибраних фігур</translation>
-    </message>
-    <message>
-        <source>Copy Shapes</source>
-        <translation>Копіювати фігури</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Копіювати вибрані фігури в буфер обміну</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Вставити фігури</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Вставити скопійовані фігури</translation>
     </message>
     <message>
         <source>Undo last point</source>
@@ -623,6 +619,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Вставити фігури з буфера обміну в це зображення</translation>
     </message>
     <message>
         <source>Rectangle</source>

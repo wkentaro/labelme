@@ -354,22 +354,6 @@
         <translation>為選中的圖形創建副本</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>複製圖形</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>複製選中圖形到剪貼板</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>粘貼圖形</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>粘貼已複製的圖形</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>撤銷最後的控制點</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>修改選中圖形的標籤</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>複製到剪貼板</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>將選中圖形放入剪貼板</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>從剪貼板粘貼</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>將剪貼板中的圖形插入此圖片</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

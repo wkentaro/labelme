@@ -360,22 +360,6 @@
         <translation>Duplikat der ausgewählten Formen erstellen</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Formen kopieren</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Ausgewählte Formen in Zwischenablage kopieren</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Formen einfügen</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Kopierte Formen einfügen</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Letzten Punkt rückgängig machen</translation>
     </message>
@@ -478,6 +462,22 @@ Formen</translation>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>In Zwischenablage kopieren</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Ausgewählte Formen in die Zwischenablage legen</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Aus Zwischenablage einfügen</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Formen aus der Zwischenablage in dieses Bild einfügen</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

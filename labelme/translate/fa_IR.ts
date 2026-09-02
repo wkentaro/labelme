@@ -354,22 +354,6 @@
         <translation>ایجاد کپی از شکل‌های انتخاب شده</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>کپی شکل</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>کپی شکل‌های انتخاب شده به کلیپ‌بورد</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>چسباندن شکل</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>چسباندن شکل‌های کپی شده</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>بازگشت آخرین نقطه</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>تغییر برچسب شکل انتخاب شده</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>کپی به کلیپ‌بورد</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>قرار دادن شکل‌های انتخاب شده در کلیپ‌بورد</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>چسباندن از کلیپ‌بورد</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

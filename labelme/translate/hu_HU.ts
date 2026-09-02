@@ -360,22 +360,6 @@
         <translation>A kijelölt alakzatok másolatának létrehozása</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Alakzatok másolása</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Kijelölt alakzatok másolása a vágólapra</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Alakzatok beillesztése</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Másolt alakzatok beillesztése</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Utolsó pont visszavonása</translation>
     </message>
@@ -478,6 +462,22 @@ Shapes</source>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Másolás a vágólapra</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>A kijelölt alakzatok vágólapra helyezése</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Beillesztés a vágólapról</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>A vágólap alakzatainak beszúrása ebbe a képbe</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

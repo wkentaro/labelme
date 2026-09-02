@@ -354,22 +354,6 @@
         <translation>Tạo bản sao của các hình dạng đã chọn</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Sao chép Hình dạng</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Sao chép các hình dạng đã chọn vào clipboard</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Dán Hình dạng</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Dán các hình dạng đã sao chép</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Hoàn tác điểm cuối cùng</translation>
     </message>
@@ -456,6 +440,22 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Sao chép vào Clipboard</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Đưa các hình dạng đã chọn vào clipboard</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Dán từ Clipboard</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Chèn các hình dạng trong clipboard vào ảnh này</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

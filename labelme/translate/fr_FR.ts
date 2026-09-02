@@ -356,22 +356,6 @@
         <translation>Créer un doublon des formes sélectionnées</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Copier les formes</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Copier les formes sélectionnées dans le presse-papiers</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Coller les formes</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Coller les formes copiées</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Annuler le dernier point</translation>
     </message>
@@ -462,6 +446,22 @@ les formes</translation>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modifier l&apos;étiquette de la forme sélectionnée</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Copier dans le presse-papiers</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Placer les formes sélectionnées dans le presse-papiers</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Coller depuis le presse-papiers</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Insérer dans cette image les formes du presse-papiers</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

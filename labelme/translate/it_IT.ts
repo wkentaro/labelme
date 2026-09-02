@@ -356,22 +356,6 @@
         <translation>Crea un duplicato dele forme selezionate</translation>
     </message>
     <message>
-        <source>Copy Shapes</source>
-        <translation>Copia forme</translation>
-    </message>
-    <message>
-        <source>Copy selected shapes to clipboard</source>
-        <translation>Copia le forme selezionate negli appunti</translation>
-    </message>
-    <message>
-        <source>Paste Shapes</source>
-        <translation>Incolla forme</translation>
-    </message>
-    <message>
-        <source>Paste copied shapes</source>
-        <translation>Incolla le forme copiate</translation>
-    </message>
-    <message>
         <source>Undo last point</source>
         <translation>Annulla ultimo punto</translation>
     </message>
@@ -462,6 +446,22 @@ forme</translation>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modifica l&apos;etichetta della forma selezionata</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Copia negli appunti</translation>
+    </message>
+    <message>
+        <source>Place the selected shapes on the clipboard</source>
+        <translation>Metti le forme selezionate negli appunti</translation>
+    </message>
+    <message>
+        <source>Paste from Clipboard</source>
+        <translation>Incolla dagli appunti</translation>
+    </message>
+    <message>
+        <source>Insert the clipboard shapes into this image</source>
+        <translation>Inserisci in questa immagine le forme degli appunti</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
