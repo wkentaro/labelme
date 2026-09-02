@@ -2260,13 +2260,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.setEnabled(True)
         # Zoom changes the live scroll positions, so resolve the intended
         # viewport first.
-        target_viewport = self._viewport_states.get(self._image_path)
-        if (
-            target_viewport is None
-            and self._config["keep_prev_scale"]
-            and self._prev_image_path is not None
-        ):
+        # "Keep Previous Scale" means the zoom follows the viewer, not the
+        # image: the previous image's viewport wins over one stored for this
+        # image, otherwise every image visited once snaps back to its own
+        # remembered zoom on Prev/Next and the setting has no effect.
+        target_viewport = None
+        if self._config["keep_prev_scale"] and self._prev_image_path is not None:
             target_viewport = self._viewport_states.get(self._prev_image_path)
+        if target_viewport is None:
+            target_viewport = self._viewport_states.get(self._image_path)
         # set zoom values
         is_initial_load = not self._viewport_states
         if target_viewport is not None:
