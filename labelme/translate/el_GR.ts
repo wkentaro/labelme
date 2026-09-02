@@ -379,22 +379,6 @@
         <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
-        <source>&amp;Fit Window</source>
-        <translation>&amp;Προσαρμογή παραθύρου</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Το ζουμ ακολουθεί το μέγεθος παραθύρου</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>Προσαρμογή στο &amp; πλάτος</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Η μεγέθυνση ακολουθεί το πλάτος του παραθύρου</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>αντίθεση φωτεινότητας</translation>
     </message>
@@ -407,24 +391,8 @@
         <translation>&amp; Μεγέθυνση</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Αύξηση επιπέδου ζουμ</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Σμίκρυνση</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Μείωση επιπέδου ζουμ</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>&amp; Αρχικό μέγεθος</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Μεγέθυνση στο αρχικό μέγεθος</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -690,6 +658,38 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>&amp;Προσαρμογή παραθύρου</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Διατήρηση ολόκληρης της εικόνας ορατής όταν αλλάζει το μέγεθος του παραθύρου</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>Προσαρμογή στο &amp; πλάτος</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Ταίριασμα του πλάτους της εικόνας με το παράθυρο όταν αλλάζει το μέγεθός του</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Εμφάνιση της εικόνας μεγαλύτερης</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Εμφάνιση της εικόνας μικρότερης</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Πραγματικό μέγεθος</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Εμφάνιση της εικόνας στο 100%</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>

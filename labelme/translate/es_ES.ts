@@ -438,40 +438,8 @@ Shapes</source>
         <translation>&amp;Acercar</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Aumentar nivel de zoom</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Alejar</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Disminuir nivel de zoom</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>Tamaño &amp;original</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Zoom al tamaño original</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>Ajustar a &amp;ventana</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>El zoom sigue el tamaño de la ventana</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>Ajustar a &amp;ancho</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>El zoom sigue el ancho de la ventana</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modificar la etiqueta de la forma seleccionada</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>Ajustar a &amp;ventana</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Mantener toda la imagen visible al cambiar el tamaño de la ventana</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>Ajustar a &amp;ancho</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Igualar el ancho de la imagen al de la ventana al cambiar su tamaño</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Mostrar la imagen más grande</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Mostrar la imagen más pequeña</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>Tamaño &amp;real</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Mostrar la imagen al 100 %</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

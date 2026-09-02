@@ -423,40 +423,8 @@ Shapes</source>
         <translation>Увеличить (&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Увеличить уровень масштаба</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>Уменьшить (&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Уменьшить уровень масштаба</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>&amp;Исходный размер</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Вернуть исходный размер</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>По размеру окна</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Масштаб подстраивается под размер окна</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>По &amp;ширине</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Масштаб подстраивается под ширину окна</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -473,6 +441,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Изменить метку выбранной фигуры</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>По размеру окна</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Всё изображение остаётся видимым при изменении размера окна</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>По &amp;ширине</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Ширина изображения подстраивается под окно при изменении его размера</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Показать изображение крупнее</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Показать изображение мельче</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Реальный размер</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Показать изображение в масштабе 100%</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

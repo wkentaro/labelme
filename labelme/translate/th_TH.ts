@@ -438,40 +438,8 @@ Shapes</source>
         <translation>ซูมเข้า (&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>เพิ่มระดับซูม</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>ซูมออก (&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>ลดระดับซูม</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>ขนาดจริง (&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>ซูมเป็นขนาดจริง</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>พอดีหน้าต่าง (&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>ซูมตามขนาดหน้าต่าง</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>พอดีความกว้าง (&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>ซูมตามความกว้างหน้าต่าง</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>แก้ไขเลเบลของรูปร่างที่เลือก</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>พอดีหน้าต่าง (&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>แสดงภาพทั้งภาพให้เห็นตลอดเมื่อปรับขนาดหน้าต่าง</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>พอดีความกว้าง (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>ปรับความกว้างของภาพให้เท่ากับหน้าต่างเมื่อปรับขนาดหน้าต่าง</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>แสดงภาพให้ใหญ่ขึ้น</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>แสดงภาพให้เล็กลง</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>ขนาด&amp;จริง</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>แสดงภาพที่ 100%</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

@@ -438,40 +438,8 @@ Shapes</source>
         <translation>Powiększ (&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Zwiększ powiększenie</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>Pomniejsz (&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Zmniejsz powiększenie</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>Oryginalny rozmiar (&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Powiększ do oryginalnego rozmiaru</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>Dopasuj do okna (&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Powiększenie dopasowane do rozmiaru okna</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>Dopasuj szerokość (&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Powiększenie dopasowane do szerokości okna</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -488,6 +456,38 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>Zmień etykietę zaznaczonego kształtu</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>Dopasuj do okna (&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Cały obraz pozostaje widoczny przy zmianie rozmiaru okna</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>Dopasuj szerokość (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Szerokość obrazu dopasowuje się do okna przy zmianie jego rozmiaru</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Wyświetl obraz w większym rozmiarze</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Wyświetl obraz w mniejszym rozmiarze</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Rzeczywisty rozmiar</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Wyświetl obraz w skali 100%</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

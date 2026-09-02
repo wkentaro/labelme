@@ -448,40 +448,8 @@ Shapes</source>
         <translation>&amp;Nagyítás</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Nagyítási szint növelése</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Kicsinyítés</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Nagyítási szint csökkentése</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>&amp;Eredeti méret</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Nagyítás eredeti méretre</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>&amp;Ablakhoz igazítás</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>A nagyítás követi az ablak méretét</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>&amp;Szélességhez igazítás</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>A nagyítás követi az ablak szélességét</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -510,6 +478,38 @@ Shapes</source>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>&amp;Ablakhoz igazítás</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>A teljes kép látható marad az ablak átméretezésekor</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>&amp;Szélességhez igazítás</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>A kép szélessége az ablakhoz igazodik annak átméretezésekor</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>A kép nagyobb megjelenítése</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>A kép kisebb megjelenítése</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Tényleges méret</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>A kép megjelenítése 100%-on</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>

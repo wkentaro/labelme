@@ -379,22 +379,6 @@
         <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
-        <source>&amp;Fit Window</source>
-        <translation>&amp;Припасувати вікно</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Масштаб відповідає розміру вікна</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>За &amp;шириною</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Масштаб відповідає ширині вікна</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>&amp;Яскравість Контраст</translation>
     </message>
@@ -407,24 +391,8 @@
         <translation>&amp;Збільшити</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Збільшити масштаб</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Зменшити</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Зменшити масштаб</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>&amp;Оригінальний розмір</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Збільшити до оригінального розміру</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -691,6 +659,38 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>Намалюйте обмежувальну рамку для сегментації об&apos;єкта.</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>&amp;Припасувати вікно</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Усе зображення залишається видимим під час зміни розміру вікна</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>За &amp;шириною</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Ширина зображення підлаштовується під вікно під час зміни його розміру</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Показати зображення більшим</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Показати зображення меншим</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Реальний розмір</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Показати зображення в масштабі 100%</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>

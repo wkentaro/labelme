@@ -450,41 +450,8 @@ Shapes</source>
         <translation>拡大(&amp;I)</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>拡大率を上げる</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>縮小(&amp;Z)</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>拡大率を下げる</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>原寸大(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>原寸大で表示</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>ウィンドウに
-合わせる(&amp;F)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>ウィンドウサイズに合わせてズーム</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>幅に合わせる(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>ウィンドウ幅に合わせてズーム</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -502,6 +469,39 @@ Shapes</source>
     <message>
         <source>Modify the label of the selected shape</source>
         <translation>選択した図形のラベルを変更</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>ウィンドウに
+合わせる(&amp;W)</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>ウィンドウのサイズ変更時も画像全体を表示し続ける</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>幅に合わせる(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>ウィンドウのサイズ変更時に画像の幅をウィンドウに揃える</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>画像を大きく表示する</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>画像を小さく表示する</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>実際のサイズ(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>画像を100%で表示する</translation>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>

@@ -448,40 +448,8 @@ Formen</translation>
         <translation>&amp;Vergrößern</translation>
     </message>
     <message>
-        <source>Increase zoom level</source>
-        <translation>Zoomstufe erhöhen</translation>
-    </message>
-    <message>
         <source>&amp;Zoom Out</source>
         <translation>&amp;Verkleinern</translation>
-    </message>
-    <message>
-        <source>Decrease zoom level</source>
-        <translation>Zoomstufe verringern</translation>
-    </message>
-    <message>
-        <source>&amp;Original size</source>
-        <translation>&amp;Originalgröße</translation>
-    </message>
-    <message>
-        <source>Zoom to original size</source>
-        <translation>Auf Originalgröße zoomen</translation>
-    </message>
-    <message>
-        <source>&amp;Fit Window</source>
-        <translation>&amp;An Fenster anpassen</translation>
-    </message>
-    <message>
-        <source>Zoom follows window size</source>
-        <translation>Zoom folgt der Fenstergröße</translation>
-    </message>
-    <message>
-        <source>Fit &amp;Width</source>
-        <translation>&amp;An Breite anpassen</translation>
-    </message>
-    <message>
-        <source>Zoom follows window width</source>
-        <translation>Zoom folgt der Fensterbreite</translation>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
@@ -510,6 +478,38 @@ Formen</translation>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+    </message>
+    <message>
+        <source>Fit to &amp;Window</source>
+        <translation>&amp;An Fenster anpassen</translation>
+    </message>
+    <message>
+        <source>Keep the whole image visible when the window is resized</source>
+        <translation>Das ganze Bild sichtbar halten, wenn die Fenstergröße geändert wird</translation>
+    </message>
+    <message>
+        <source>Fit to Wi&amp;dth</source>
+        <translation>&amp;An Breite anpassen</translation>
+    </message>
+    <message>
+        <source>Match the image width to the window when it is resized</source>
+        <translation>Die Bildbreite an das Fenster angleichen, wenn dessen Größe geändert wird</translation>
+    </message>
+    <message>
+        <source>Make the image appear larger</source>
+        <translation>Das Bild größer anzeigen</translation>
+    </message>
+    <message>
+        <source>Make the image appear smaller</source>
+        <translation>Das Bild kleiner anzeigen</translation>
+    </message>
+    <message>
+        <source>&amp;Actual Size</source>
+        <translation>&amp;Originalgröße</translation>
+    </message>
+    <message>
+        <source>Show the image at 100%</source>
+        <translation>Das Bild bei 100 % anzeigen</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
