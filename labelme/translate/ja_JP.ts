@@ -328,10 +328,6 @@
         <translation>点の描画を開始</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>折れ線の描画を開始。Ctrl+左クリックで完了。</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>図形を
 編集</translation>
@@ -469,6 +465,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>クリップボードの図形をこの画像に挿入</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>クリックで折れ線の点を置き、Ctrl+クリックで最後の点を置きます。</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

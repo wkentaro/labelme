@@ -322,10 +322,6 @@
         <translation>เริ่มวาดจุด</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>เริ่มวาดเส้นต่อเนื่อง Ctrl+คลิกซ้ายเพื่อจบ</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>แก้ไขรูปร่าง</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>คลิกเพื่อวางจุดของเส้นต่อเนื่อง Ctrl+คลิกเพื่อวางจุดสุดท้าย</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

@@ -312,10 +312,6 @@
         <translation>Начать рисовать точки</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Начать рисовать ломаную. Ctrl+ЛКМ завершает.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Редактировать фигуры</translation>
     </message>
@@ -441,6 +437,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставить фигуры из буфера обмена в это изображение</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Щёлкайте, чтобы ставить точки ломаной; Ctrl+щелчок ставит последнюю.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

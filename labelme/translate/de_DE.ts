@@ -328,10 +328,6 @@
         <translation>Mit dem Zeichnen von Punkten beginnen</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Mit dem Zeichnen einer Linienfolge beginnen. Strg+Linksklick beendet die Erstellung.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Formen bearbeiten</translation>
     </message>
@@ -478,6 +474,10 @@ Formen</translation>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Formen aus der Zwischenablage in dieses Bild einfügen</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Klicken, um Punkte der Linienfolge zu setzen; Strg+Klick setzt den letzten.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

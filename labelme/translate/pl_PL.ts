@@ -322,10 +322,6 @@
         <translation>Rozpocznij rysowanie punktów</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Rozpocznij rysowanie polilinii. Ctrl+Klik lewy kończy tworzenie.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Edytuj kształty</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Wstaw kształty ze schowka do tego obrazu</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Kliknij, aby umieścić punkty polilinii; Ctrl+kliknięcie umieszcza ostatni.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

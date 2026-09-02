@@ -351,10 +351,6 @@
         <translation>Почніть малювати точки</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Почніть малювати лінію. Ctrl+Лівий клік завершує створення.</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Наступне зображення</translation>
     </message>
@@ -643,6 +639,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>LineStrip</source>
         <translation>LineStrip</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Клацайте, щоб ставити точки лінії; Ctrl+клацання ставить останню.</translation>
     </message>
     <message>
         <source>AI-Points</source>

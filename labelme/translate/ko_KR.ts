@@ -322,10 +322,6 @@
         <translation>점 그리기 시작</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>연속선 그리기 시작. Ctrl+좌클릭으로 완료.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>도형 편집</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>클립보드의 도형을 이 이미지에 삽입</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>클릭하여 연속선의 점을 놓고, Ctrl+클릭으로 마지막 점을 놓습니다.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

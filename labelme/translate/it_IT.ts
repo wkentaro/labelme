@@ -324,10 +324,6 @@
         <translation>Inizia a disegnare punti</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Inizia a disegnare una polilinea. Ctrl+Clic sinistro termina la creazione.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Modifica forme</translation>
     </message>
@@ -462,6 +458,10 @@ forme</translation>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Inserisci in questa immagine le forme degli appunti</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Fai clic per posizionare i punti della polilinea; Ctrl+clic posiziona l&apos;ultimo.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

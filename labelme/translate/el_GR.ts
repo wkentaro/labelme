@@ -351,10 +351,6 @@
         <translation>Έναρξη σχεδίασης σημείων</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Ξεκινήστε να σχεδιάζετε linestrip. Ctrl+LeftClick τελειώνει τη δημιουργία.</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Επόμενη εικόνα</translation>
     </message>
@@ -642,6 +638,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>LineStrip</source>
         <translation>LineStrip</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Κάντε κλικ για να τοποθετήσετε σημεία του linestrip· Ctrl+κλικ τοποθετεί το τελευταίο.</translation>
     </message>
     <message>
         <source>AI-Points</source>

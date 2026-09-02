@@ -322,10 +322,6 @@
         <translation>開始繪製控制點</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>開始繪製折線。Ctrl+單擊左鍵結束繪製。</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>編輯圖形</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>將剪貼板中的圖形插入此圖片</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>單擊放置折線的點；Ctrl+單擊放置最後一個點。</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
