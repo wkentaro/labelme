@@ -250,23 +250,26 @@ def test_label_anchor_tracks_scale() -> None:
     )
 
 
-def _hit(*, shape: Shape, point: tuple[float, float]) -> bool:
+def _hit(*, shape: Shape, point: tuple[float, float], scale: float) -> bool:
     return is_hit_by_point(
         shape=shape,
         point=np.array(point, dtype=np.float64),
-        scale=1.0,
+        scale=scale,
         point_size=8,
         epsilon=5.0,
     )
 
 
-def test_line_is_hit_near_its_segment() -> None:
+@pytest.mark.parametrize("scale", [0.5, 1.0, 2.0])
+def test_line_is_hit_near_its_segment(*, scale: float) -> None:
     shape = Shape(
         shape_type="line",
         points=np.array([[0, 0], [100, 0]], dtype=np.float64),
     )
-    assert _hit(shape=shape, point=(50, 2)) is True
-    assert _hit(shape=shape, point=(50, 20)) is False
+    # The pick radius is 5 screen pixels, so probes at 4 and 6 screen pixels
+    # straddle it; they are converted to image space for the zoom under test.
+    assert _hit(shape=shape, point=(50, 4 / scale), scale=scale) is True
+    assert _hit(shape=shape, point=(50, 6 / scale), scale=scale) is False
 
 
 def test_linestrip_hit_ignores_phantom_closing_edge() -> None:
@@ -275,10 +278,30 @@ def test_linestrip_hit_ignores_phantom_closing_edge() -> None:
         points=np.array([[0, 0], [100, 0], [100, 100]], dtype=np.float64),
     )
     # Near a real segment (the bottom edge) is a hit.
-    assert _hit(shape=shape, point=(50, 2)) is True
+    assert _hit(shape=shape, point=(50, 2), scale=1.0) is True
     # The diagonal from the last point back to the first is never drawn, so a
     # click on it must not register as a hit.
-    assert _hit(shape=shape, point=(50, 50)) is False
+    assert _hit(shape=shape, point=(50, 50), scale=1.0) is False
+
+
+def test_rectangle_body_hit_reaches_its_corners() -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([[0, 0], [100, 100]], dtype=np.float64),
+    )
+    # (5, 5) is inside the rectangle but outside its inscribed ellipse.
+    assert _hit(shape=shape, point=(5, 5), scale=1.0) is True
+
+
+def test_circle_body_hit_is_round_not_its_bounding_box() -> None:
+    shape = Shape(
+        shape_type="circle",
+        points=np.array([[50, 50], [65, 70]], dtype=np.float64),
+    )
+    assert _hit(shape=shape, point=(50, 50), scale=1.0) is True
+    # (28, 28) is inside the bounding box but 31 units from the center, past
+    # the radius of 25.
+    assert _hit(shape=shape, point=(28, 28), scale=1.0) is False
 
 
 def test_points_shape_is_never_body_hit() -> None:
@@ -286,22 +309,24 @@ def test_points_shape_is_never_body_hit() -> None:
         shape_type="points",
         points=np.array([[10, 10], [20, 20]], dtype=np.float64),
     )
-    assert _hit(shape=shape, point=(10, 10)) is False
+    assert _hit(shape=shape, point=(10, 10), scale=1.0) is False
 
 
-def test_point_shape_hit_within_radius() -> None:
+@pytest.mark.parametrize("scale", [0.5, 1.0, 2.0])
+def test_point_shape_hit_within_radius(*, scale: float) -> None:
     shape = Shape(
         shape_type="point",
         points=np.array([[10, 10]], dtype=np.float64),
     )
-    # point_size / 2 == 4, so a point 2px away hits and one 10px away misses.
-    assert _hit(shape=shape, point=(10, 12)) is True
-    assert _hit(shape=shape, point=(10, 20)) is False
+    # The point marker's hit radius is 4 screen pixels, so probes at 3 and 5
+    # screen pixels straddle it at every zoom.
+    assert _hit(shape=shape, point=(10, 10 + 3 / scale), scale=scale) is True
+    assert _hit(shape=shape, point=(10, 10 + 5 / scale), scale=scale) is False
 
 
 def test_empty_point_shape_is_not_hit() -> None:
     shape = Shape(shape_type="point")
-    assert _hit(shape=shape, point=(0, 0)) is False
+    assert _hit(shape=shape, point=(0, 0), scale=1.0) is False
 
 
 def test_mask_shape_hit_reads_the_translated_pixel() -> None:
@@ -313,15 +338,15 @@ def test_mask_shape_hit_reads_the_translated_pixel() -> None:
         mask=mask,
     )
     # The mask origin is the bbox top-left (10, 10), so mask[2, 3] is at (13, 12).
-    assert _hit(shape=shape, point=(13, 12)) is True
+    assert _hit(shape=shape, point=(13, 12), scale=1.0) is True
     # Inside the bbox but where the mask is False.
-    assert _hit(shape=shape, point=(11, 11)) is False
+    assert _hit(shape=shape, point=(11, 11), scale=1.0) is False
     # Outside the mask array bounds is guarded to a miss.
-    assert _hit(shape=shape, point=(5, 5)) is False
-    assert _hit(shape=shape, point=(100, 100)) is False
+    assert _hit(shape=shape, point=(5, 5), scale=1.0) is False
+    assert _hit(shape=shape, point=(100, 100), scale=1.0) is False
 
 
 def test_polygon_hit_uses_path_containment() -> None:
     shape = _unit_square_polygon()
-    assert _hit(shape=shape, point=(5, 5)) is True
-    assert _hit(shape=shape, point=(50, 50)) is False
+    assert _hit(shape=shape, point=(5, 5), scale=1.0) is True
+    assert _hit(shape=shape, point=(50, 50), scale=1.0) is False

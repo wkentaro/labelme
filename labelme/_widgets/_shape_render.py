@@ -400,7 +400,7 @@ def is_hit_by_point(
 ) -> bool:
     if shape.shape_type in ("line", "linestrip"):
         return (
-            nearest_edge_index(shape=shape, point=point, scale=scale, epsilon=epsilon)
+            nearest_edge_index(shape=shape, point=point, image_epsilon=epsilon / scale)
             is not None
         )
     if shape.shape_type == "points":
@@ -408,7 +408,7 @@ def is_hit_by_point(
     if shape.shape_type == "point":
         if len(shape.points) == 0:
             return False
-        return bool(np.linalg.norm((point - shape.points[0]) * scale) <= point_size / 2)
+        return bool(np.linalg.norm(point - shape.points[0]) <= point_size / 2 / scale)
     if shape.mask is not None:
         raw_y = int(round(float(point[1]) - float(shape.points[0][1])))
         raw_x = int(round(float(point[0]) - float(shape.points[0][0])))

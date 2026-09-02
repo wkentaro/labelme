@@ -143,9 +143,7 @@ def test_nearest_vertex_index_returns_none_for_mask() -> None:
 
     for corner in shape.points:
         assert (
-            _shape.nearest_vertex_index(
-                shape=shape, point=corner, scale=1.0, epsilon=10.0
-            )
+            _shape.nearest_vertex_index(shape=shape, point=corner, image_epsilon=10.0)
             is None
         )
 
@@ -161,7 +159,7 @@ def test_nearest_vertex_index_returns_none_for_point() -> None:
 
     assert (
         _shape.nearest_vertex_index(
-            shape=shape, point=shape.points[0], scale=1.0, epsilon=10.0
+            shape=shape, point=shape.points[0], image_epsilon=10.0
         )
         is None
     )
@@ -403,7 +401,7 @@ def test_nearest_edge_index_matches_edge_under_point(
     shape = _make_square_polygon()
 
     index = _shape.nearest_edge_index(
-        shape=shape, point=np.array(point), scale=1.0, epsilon=1.0
+        shape=shape, point=np.array(point), image_epsilon=1.0
     )
 
     assert index == expected_edge
@@ -421,7 +419,7 @@ def test_nearest_edge_index_handles_zero_length_segment() -> None:
     )
 
     index = _shape.nearest_edge_index(
-        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=1.0
+        shape=shape, point=np.array([5.0, 0.0]), image_epsilon=1.0
     )
 
     assert index == 2
@@ -431,7 +429,7 @@ def test_nearest_edge_index_returns_none_when_far() -> None:
     shape = _make_square_polygon()
 
     index = _shape.nearest_edge_index(
-        shape=shape, point=np.array([5.0, 100.0]), scale=1.0, epsilon=1.0
+        shape=shape, point=np.array([5.0, 100.0]), image_epsilon=1.0
     )
 
     assert index is None
@@ -441,7 +439,7 @@ def test_nearest_edge_index_returns_none_for_empty_shape() -> None:
     shape = Shape(shape_type="polygon")
 
     index = _shape.nearest_edge_index(
-        shape=shape, point=np.array([0.0, 0.0]), scale=1.0, epsilon=10.0
+        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
     )
 
     assert index is None
@@ -454,7 +452,7 @@ def test_nearest_edge_index_ignores_phantom_closing_edge_for_linestrip() -> None
     shape = _make_open_linestrip()
 
     index = _shape.nearest_edge_index(
-        shape=shape, point=np.array([5.0, 5.0]), scale=1.0, epsilon=2.0
+        shape=shape, point=np.array([5.0, 5.0]), image_epsilon=2.0
     )
 
     assert index is None
@@ -464,7 +462,7 @@ def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
     shape = _make_open_linestrip()
 
     index = _shape.nearest_edge_index(
-        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=1.0
+        shape=shape, point=np.array([5.0, 0.0]), image_epsilon=1.0
     )
 
     assert index == 1
@@ -472,12 +470,12 @@ def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
 
 def test_nearest_vertex_index_returns_nearest_within_epsilon() -> None:
     shape = _make_square_polygon()
-    # vertex 1 is at (10.0, 0.0); probe 0.4 units away, within epsilon=1.0
+    # vertex 1 is at (10.0, 0.0); probe 0.4 units away, inside the 1.0 threshold
     vertex_1 = shape.points[1]
     point_within_epsilon = vertex_1 + np.array([0.4, 0.0])
 
     index = _shape.nearest_vertex_index(
-        shape=shape, point=point_within_epsilon, scale=1.0, epsilon=1.0
+        shape=shape, point=point_within_epsilon, image_epsilon=1.0
     )
 
     assert index == 1
@@ -487,7 +485,7 @@ def test_nearest_vertex_index_returns_none_when_far() -> None:
     shape = _make_square_polygon()
 
     index = _shape.nearest_vertex_index(
-        shape=shape, point=np.array([5.0, 5.0]), scale=1.0, epsilon=1.0
+        shape=shape, point=np.array([5.0, 5.0]), image_epsilon=1.0
     )
 
     assert index is None
@@ -497,7 +495,7 @@ def test_nearest_vertex_index_returns_none_for_empty_shape() -> None:
     shape = Shape(shape_type="polygon")
 
     index = _shape.nearest_vertex_index(
-        shape=shape, point=np.array([0.0, 0.0]), scale=1.0, epsilon=10.0
+        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
     )
 
     assert index is None
@@ -540,7 +538,7 @@ def test_nearest_rotation_point_index_returns_handle_within_epsilon() -> None:
     point = np.array([10.3, 2.0])
 
     index = _shape.nearest_rotation_point_index(
-        shape=shape, point=point, scale=1.0, epsilon=1.0
+        shape=shape, point=point, image_epsilon=1.0
     )
 
     assert index == 2
@@ -550,7 +548,7 @@ def test_nearest_rotation_point_index_returns_none_when_far() -> None:
     shape = _make_axis_aligned_oriented_rectangle()
 
     index = _shape.nearest_rotation_point_index(
-        shape=shape, point=np.array([20.0, 20.0]), scale=1.0, epsilon=1.0
+        shape=shape, point=np.array([20.0, 20.0]), image_epsilon=1.0
     )
 
     assert index is None
@@ -560,7 +558,7 @@ def test_nearest_rotation_point_index_returns_none_for_non_oriented_rectangle() 
     shape = _make_square_polygon()
 
     index = _shape.nearest_rotation_point_index(
-        shape=shape, point=np.array([5.0, 0.0]), scale=1.0, epsilon=10.0
+        shape=shape, point=np.array([5.0, 0.0]), image_epsilon=10.0
     )
 
     assert index is None
@@ -570,7 +568,7 @@ def test_nearest_rotation_point_index_returns_none_for_empty_shape() -> None:
     shape = Shape(shape_type="oriented_rectangle")
 
     index = _shape.nearest_rotation_point_index(
-        shape=shape, point=np.array([0.0, 0.0]), scale=1.0, epsilon=10.0
+        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
     )
 
     assert index is None
