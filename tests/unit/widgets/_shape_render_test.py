@@ -137,6 +137,19 @@ def test_show_labels_draws_text_above_shape() -> None:
 
 @pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize("group_id", [0, 3])
+def test_show_labels_draws_group_id(*, group_id: int) -> None:
+    grouped = _polygon(label="person")
+    grouped.group_id = group_id
+    expected = _polygon(label=f"person ({group_id})")
+
+    assert _render(shape=grouped, show_label=True, scale=1.0) == _render(
+        shape=expected, show_label=True, scale=1.0
+    )
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
 def test_empty_label_draws_no_text() -> None:
     for label in (None, ""):
         shape = _polygon(label=label)

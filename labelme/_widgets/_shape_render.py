@@ -116,10 +116,13 @@ def _paint_shape_label(
     # Anchor at the points' top-left so the text stays close to the shape and
     # tracks zoom/pan; lift it by the pen width to clear the outline stroke.
     top_left = shape.points.min(axis=0) * context.scale
+    text = shape.label
+    if shape.group_id is not None:
+        text += f" ({shape.group_id})"
     painter.setPen(QtGui.QPen(context.palette.line))
     painter.drawText(
         QtCore.QPointF(float(top_left[0]), float(top_left[1]) - PEN_WIDTH),
-        shape.label,
+        text,
     )
 
 
