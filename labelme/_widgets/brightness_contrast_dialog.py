@@ -23,7 +23,6 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle(self.tr("Brightness/Contrast"))
-        self.setModal(True)
         self._publish = callback
 
         # Alpha rides along as an untouched band; every other mode collapses
