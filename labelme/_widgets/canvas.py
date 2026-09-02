@@ -509,14 +509,12 @@ class Canvas(QtWidgets.QWidget):
         return len(self.shape_backups) >= MIN_SHAPE_BACKUPS_FOR_UNDO
 
     def restore_last_shape(self) -> None:
-        # Undo coordinates with app.py::undo_shape_edit, app.py::load_shapes,
-        # and Canvas::load_shapes; this method only adjusts the backup stack.
         if not self.can_restore_shape:
             return
         self.shape_backups.pop()  # discard current state
 
-        # load_shapes (called downstream by the application) will re-push
-        # this entry as the new current state.
+        # Peeking would leave this entry on the stack, and the reload that
+        # follows would record it a second time, making the next undo a no-op.
         self.shapes = self.shape_backups.pop()
         self.selected_shapes.clear()
         self.update()
