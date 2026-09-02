@@ -322,10 +322,6 @@
         <translation>شروع رسم نقطه</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>شروع رسم خط چندتکه‌ای. Ctrl+کلیک چپ برای پایان.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>ویرایش شکل</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>برای قرار دادن نقاط خط چندتکه‌ای کلیک کنید؛ Ctrl+کلیک نقطه آخر را قرار می‌دهد.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

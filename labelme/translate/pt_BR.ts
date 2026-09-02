@@ -322,10 +322,6 @@
         <translation>Começar a desenhar pontos</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Começar a desenhar linha contínua. Ctrl+Clique esquerdo finaliza a criação.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Editar Formas</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Inserir nesta imagem as formas da área de transferência</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Clique para posicionar pontos da linha contínua; Ctrl+clique posiciona o último.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

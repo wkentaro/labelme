@@ -322,10 +322,6 @@
         <translation>Empezar a dibujar puntos</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Empezar a dibujar línea continua. Ctrl+Clic izquierdo finaliza la creación.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Editar formas</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Insertar en esta imagen las formas del portapapeles</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Haga clic para colocar puntos de la línea continua; Ctrl+clic coloca el último.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

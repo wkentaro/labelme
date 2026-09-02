@@ -565,7 +565,9 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
             icon="phosphor/line-segments.svg",
-            tip=self.tr("Start drawing linestrip. Ctrl+LeftClick ends creation."),
+            tip=self.tr(
+                "Click to place linestrip points; Ctrl+click places the last one."
+            ),
             enabled=False,
         )
         create_ai_points_to_shape_mode = action(

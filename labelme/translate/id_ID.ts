@@ -317,10 +317,6 @@
         <translation>Mulai menggambar titik</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Mulai menggambar garis patah. Ctrl+Klik Kiri untuk mengakhiri.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Edit Bentuk</translation>
     </message>
@@ -431,6 +427,10 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Klik untuk menempatkan titik garis patah; Ctrl+klik menempatkan titik terakhir.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

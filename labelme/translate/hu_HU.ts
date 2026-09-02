@@ -328,10 +328,6 @@
         <translation>Pontok rajzolásának megkezdése</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Vonallánc rajzolásának megkezdése. Ctrl+Bal klikk befejezi a létrehozást.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Alakzatok szerkesztése</translation>
     </message>
@@ -478,6 +474,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>A vágólap alakzatainak beszúrása ebbe a képbe</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Kattintson a vonallánc pontjainak elhelyezéséhez; Ctrl+kattintás helyezi el az utolsót.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

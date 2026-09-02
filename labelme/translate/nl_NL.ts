@@ -322,10 +322,6 @@
         <translation>Begin met tekenen van punten</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Begin met tekenen van lijnstrook. Ctrl+Linkerklik beëindigt het maken.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Vormen Bewerken</translation>
     </message>
@@ -456,6 +452,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Vormen van het klembord in deze afbeelding invoegen</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Klik om punten van de lijnstrook te plaatsen; Ctrl+klik plaatst het laatste.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>

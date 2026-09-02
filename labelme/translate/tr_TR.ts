@@ -322,10 +322,6 @@
         <translation>Nokta çizmeye başla</translation>
     </message>
     <message>
-        <source>Start drawing linestrip. Ctrl+LeftClick ends creation.</source>
-        <translation>Çizgi şeridi çizmeye başla. Ctrl+Sol Tıklama oluşturmayı sonlandırır.</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Şekilleri Düzenle</translation>
     </message>
@@ -459,6 +455,10 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Panodaki şekilleri bu görüntüye ekle</translation>
+    </message>
+    <message>
+        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
+        <translation>Çizgi şeridinin noktalarını yerleştirmek için tıklayın; Ctrl+tıklama sonuncuyu yerleştirir.</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
