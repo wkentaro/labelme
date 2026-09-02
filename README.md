@@ -161,11 +161,15 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 ### Command Line Arguments
 
-- `--output` specifies the location that annotations will be written to. If the location ends with .json, a single annotation will be written to this file. Only one image can be annotated if a location is specified with .json. If the location does not end with .json, the program will assume it is a directory. Annotations will be stored in this directory with a name that corresponds to the image that the annotation was made on.
-- The first time you run labelme, it will create a config file at `~/.labelmerc`. Add only the settings you want to override. For all available options and their defaults, see [`default_config.yaml`](labelme/_config/default_config.yaml). If you would prefer to use a config file from another location, you can specify this file with the `--config` flag.
-- Without the `--no-sort-labels` flag, the program will list labels in alphabetical order. When the program is run with this flag, it will display labels in the order that they are provided.
-- Flags are assigned to an entire image. [Example](examples/classification)
-- Labels are assigned to a single polygon. [Example](examples/bbox_detection)
+Run `labelme --help` for the full list. The options people most often ask about:
+
+| Option | What it does |
+| --- | --- |
+| `--output DIR` | Directory that receives the annotation JSON files, one per image and named after it. Pass a directory, not a `.json` path; a file path is rejected. Without it, each annotation is saved next to its image. |
+| `--config PATH` | Read settings from `PATH` instead of `~/.labelmerc`. The default file is created on first launch; put only the keys you want to override in it and see [`default_config.yaml`](labelme/_config/default_config.yaml) for every key and its default. |
+| `--no-sort-labels` | Keep the label list in the order given by `--labels` instead of sorting it alphabetically. |
+
+Two kinds of annotation attach at different levels: a flag belongs to the whole image ([example](examples/classification)), a label belongs to one shape ([example](examples/bbox_detection)).
 
 ### FAQ
 
