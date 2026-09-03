@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.4.0 - 2026-09-03
+
+### Changed
+
+- Improved the Label dialog so blank labels cannot be submitted and shared fields can be edited across Shapes with different Labels when validate_label is exact ([#2587](https://github.com/wkentaro/labelme/pull/2587))
+- Reworded the LineStrip tooltip to "Click to place linestrip points; Ctrl+click places the last one"; label, shortcut, icon, and behavior are unchanged ([#2595](https://github.com/wkentaro/labelme/pull/2595))
+- Polygon, linestrip, and AI-Points clicks share one canvas handler; Ctrl+Shift+click now also places the last linestrip point, matching AI-Points ([#2596](https://github.com/wkentaro/labelme/pull/2596))
+
+### Fixed
+
+- Prevent a crash when resizing the window after closing an image in Fit to Window or Fit to Width mode. ([#2603](https://github.com/wkentaro/labelme/pull/2603))
+- Fixed **Keep Previous Scale** restoring stale per-Image viewports during navigation. ([#2604](https://github.com/wkentaro/labelme/pull/2604))
+
 ## 7.3.0 - 2026-09-02
 
 ### Changed
