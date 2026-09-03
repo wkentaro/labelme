@@ -2265,11 +2265,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Zoom changes the live scroll positions, so resolve the intended
         # viewport first.
         target_viewport = self._viewport_states.get(self._image_path)
-        if (
-            target_viewport is None
-            and self._config["keep_prev_scale"]
-            and self._prev_image_path is not None
-        ):
+        if self._config["keep_prev_scale"] and self._prev_image_path is not None:
             target_viewport = self._viewport_states.get(self._prev_image_path)
         # set zoom values
         is_initial_load = not self._viewport_states
