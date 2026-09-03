@@ -1480,6 +1480,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def reset_state(self) -> None:
         self._docks.label_list.clear()
         self._annotation = None
+        self._image = QtGui.QImage()
         self._image_path = None
         self._file_list_image_path = None
         self._label_file_path = None
