@@ -11,7 +11,6 @@ from pytestqt.qtbot import QtBot
 from labelme._widgets.label_dialog import LabelDialog
 from labelme._widgets.label_dialog import LabelDialogEntry
 from labelme._widgets.label_dialog import LabelDialogField
-from labelme._widgets.label_dialog import LabelQLineEdit
 
 # Black-box characterization of LabelDialog: behavior is exercised only through
 # the public surface (popup(), public methods, public widgets edit/
@@ -79,57 +78,51 @@ def _ok_button(dialog: LabelDialog, /) -> QtWidgets.QPushButton:
 
 
 # ---------------------------------------------------------------------------
-# LabelQLineEdit
+# Arrow keys in the label field
 # ---------------------------------------------------------------------------
 
 
-def test_set_list_widget_stores_reference(*, qtbot: QtBot) -> None:
-    edit = LabelQLineEdit()
-    qtbot.addWidget(edit)
-    list_widget = QtWidgets.QListWidget()
-    qtbot.addWidget(list_widget)
-    edit.set_list_widget(list_widget=list_widget)
-    assert edit.list_widget is list_widget
+def _show_dialog_with_labels(qtbot: QtBot, /, *, labels: list[str]) -> LabelDialog:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=labels, sort_labels=False))
+    dialog.show()
+    return dialog
 
 
-def test_key_down_forwarded_to_list_widget(*, qtbot: QtBot) -> None:
-    edit = LabelQLineEdit()
-    qtbot.addWidget(edit)
-    list_widget = QtWidgets.QListWidget()
-    qtbot.addWidget(list_widget)
-    list_widget.addItems(["a", "b", "c"])
-    list_widget.setCurrentRow(0)
-    edit.set_list_widget(list_widget=list_widget)
-    edit.show()
-    qtbot.keyClick(edit, QtCore.Qt.Key.Key_Down)
-    assert list_widget.currentRow() == 1
+def test_key_down_in_edit_moves_list_selection(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b", "c"])
+    dialog.label_list.setCurrentRow(0)
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
+    assert dialog.label_list.currentRow() == 1
+    assert dialog.edit.text() == "b"
 
 
-def test_key_up_forwarded_to_list_widget(*, qtbot: QtBot) -> None:
-    edit = LabelQLineEdit()
-    qtbot.addWidget(edit)
-    list_widget = QtWidgets.QListWidget()
-    qtbot.addWidget(list_widget)
-    list_widget.addItems(["a", "b", "c"])
-    list_widget.setCurrentRow(2)
-    edit.set_list_widget(list_widget=list_widget)
-    edit.show()
-    qtbot.keyClick(edit, QtCore.Qt.Key.Key_Up)
-    assert list_widget.currentRow() == 1
+def test_key_up_in_edit_moves_list_selection(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b", "c"])
+    dialog.label_list.setCurrentRow(2)
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Up)
+    assert dialog.label_list.currentRow() == 1
+    assert dialog.edit.text() == "b"
 
 
-def test_other_keys_edit_text_not_forwarded(*, qtbot: QtBot) -> None:
-    edit = LabelQLineEdit()
-    qtbot.addWidget(edit)
-    list_widget = QtWidgets.QListWidget()
-    qtbot.addWidget(list_widget)
-    list_widget.addItems(["a", "b", "c"])
-    list_widget.setCurrentRow(0)
-    edit.set_list_widget(list_widget=list_widget)
-    edit.show()
-    qtbot.keyClicks(edit, "x")
-    assert edit.text() == "x"
-    assert list_widget.currentRow() == 0
+def test_arrow_keys_stop_at_list_ends(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b"])
+    dialog.label_list.setCurrentRow(-1)
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
+    assert dialog.label_list.currentRow() == 0
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Up)
+    assert dialog.label_list.currentRow() == 0
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
+    assert dialog.label_list.currentRow() == 1
+
+
+def test_other_keys_edit_text_not_list(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b", "c"])
+    dialog.label_list.setCurrentRow(0)
+    dialog.edit.clear()
+    qtbot.keyClicks(dialog.edit, "x")
+    assert dialog.edit.text() == "x"
+    assert dialog.label_list.currentRow() == 0
 
 
 # ---------------------------------------------------------------------------
@@ -139,7 +132,6 @@ def test_other_keys_edit_text_not_forwarded(*, qtbot: QtBot) -> None:
 
 def test_default_widgets_exist(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog())
-    assert isinstance(dialog.edit, LabelQLineEdit)
     assert isinstance(dialog.edit_group_id, QtWidgets.QLineEdit)
     assert isinstance(dialog.edit_description, QtWidgets.QTextEdit)
     assert isinstance(dialog.label_list, QtWidgets.QListWidget)
@@ -839,6 +831,25 @@ def test_popup_highlights_matching_label_case_insensitively(*, qtbot: QtBot) -> 
         locked=(),
     )
     assert seen["cur"] == "Cat"
+
+
+def test_popup_clears_stale_highlight_when_nothing_matches(*, qtbot: QtBot) -> None:
+    seen: dict[str, object] = {}
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog"]))
+    dialog.label_list.setCurrentRow(0)
+    _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="bird",
+        at_show=lambda d: seen.update(
+            row=d.label_list.currentRow(), text=d.edit.text()
+        ),
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+    )
+    assert seen == {"row": -1, "text": "bird"}
 
 
 def test_popup_sets_description_at_show(*, qtbot: QtBot) -> None:

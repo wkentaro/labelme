@@ -25,25 +25,6 @@ class LabelDialogEntry:
 _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
 
 
-class LabelQLineEdit(QtWidgets.QLineEdit):
-    """QLineEdit that forwards Up/Down key events to a paired list widget."""
-
-    def __init__(self, *, parent: QtWidgets.QWidget | None = None) -> None:
-        super().__init__(parent)
-        self.list_widget: QtWidgets.QListWidget | None = None
-
-    def set_list_widget(self, *, list_widget: QtWidgets.QListWidget) -> None:
-        self.list_widget = list_widget
-
-    def keyPressEvent(self, event: QtGui.QKeyEvent, /) -> None:
-        key = event.key()
-        if key in (QtCore.Qt.Key.Key_Up, QtCore.Qt.Key.Key_Down):
-            if self.list_widget is not None:
-                QtWidgets.QApplication.sendEvent(self.list_widget, event)
-            return
-        super().keyPressEvent(event)
-
-
 class LabelDialog(QtWidgets.QDialog):
     """Dialog for entering label, group id, description, and flags."""
 
@@ -88,7 +69,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._fit_to_content = fit_to_content
 
         # Build widgets
-        self.edit = LabelQLineEdit()
+        self.edit = QtWidgets.QLineEdit()
         self.edit.setPlaceholderText(text)
 
         self.edit_group_id = QtWidgets.QLineEdit()
@@ -126,7 +107,9 @@ class LabelDialog(QtWidgets.QDialog):
         # Set up completer bound to label_list's model
         completer = self._make_completer(completion=completion)
         self.edit.setCompleter(completer)
-        self.edit.set_list_widget(list_widget=self.label_list)
+        # Up/Down are taken before the line edit sees them so the arrow keys walk
+        # the label list while every other key keeps editing the text.
+        self.edit.installEventFilter(self)
 
         button_box = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.StandardButton.Ok
@@ -221,6 +204,20 @@ class LabelDialog(QtWidgets.QDialog):
             "label" in self._locked or bool(self.edit.text().strip())
         )
 
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
+        if watched is self.edit and event.type() == QtCore.QEvent.Type.KeyPress:
+            assert isinstance(event, QtGui.QKeyEvent)
+            step = {QtCore.Qt.Key.Key_Up: -1, QtCore.Qt.Key.Key_Down: 1}.get(
+                QtCore.Qt.Key(event.key())
+            )
+            if step is not None:
+                row = self.label_list.currentRow() + step
+                self.label_list.setCurrentRow(
+                    min(max(row, 0), self.label_list.count() - 1)
+                )
+                return True
+        return super().eventFilter(watched, event)
+
     def _on_label_selected(
         self,
         current: QtWidgets.QListWidgetItem | None,
@@ -280,6 +277,18 @@ class LabelDialog(QtWidgets.QDialog):
     def remember_label(self, *, label: str) -> None:
         self._last_label = label
 
+    def _find_label_row(self, text: str, /) -> int:
+        # Match through the model so the highlight folds case the way Qt's own
+        # text matching does; Python's folding differs on the sharp s, say.
+        model = self.label_list.model()
+        hits = model.match(
+            model.index(0, 0),
+            QtCore.Qt.ItemDataRole.DisplayRole,
+            text,
+            flags=QtCore.Qt.MatchFlag.MatchFixedString,
+        )
+        return hits[0].row() if hits else -1
+
     def popup(
         self,
         *,
@@ -306,7 +315,6 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.setEnabled(name not in self._locked)
         if "label" in self._locked:
             text = ""
-            self.label_list.setCurrentRow(-1)
         elif text is None:
             text = self._last_label
         if "group_id" in self._locked:
@@ -328,9 +336,7 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self._set_flag_checkboxes(flags=flags)
 
-        matches = self.label_list.findItems(text, QtCore.Qt.MatchFlag.MatchFixedString)
-        if matches:
-            self.label_list.setCurrentItem(matches[0])
+        self.label_list.setCurrentRow(self._find_label_row(text))
 
         self._fit_label_list_to_content()
         self._refresh_ok_button()

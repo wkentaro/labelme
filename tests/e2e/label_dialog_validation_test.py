@@ -130,7 +130,7 @@ def test_arrow_keys_in_label_edit_navigate_label_list(
 
     def _press_down_capture_then_cancel() -> None:
         # Sorted labels: cat, dog, person. Pin selection to row 0 so Down
-        # forwarded from the line edit advances to row 1.
+        # pressed in the line edit advances the list to row 1.
         label_dialog.label_list.setCurrentRow(0)
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Down)
         qtbot.wait(50)
@@ -207,9 +207,9 @@ def test_label_completer_autocompletes_typed_prefix(
     completion: list[str] = []
 
     def _type_p_capture_completion_then_cancel() -> None:
-        # LabelQLineEdit.keyPressEvent forwards Up/Down to the list widget
-        # and routes everything else to QLineEdit, so typing 'p' must drive
-        # the QCompleter to suggest the only "p"-prefixed label.
+        # Only Up/Down are diverted to the label list; every other key reaches
+        # the line edit, so typing 'p' must drive the QCompleter to suggest the
+        # only "p"-prefixed label.
         label_dialog.edit.clear()
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_P)
         qtbot.wait(50)
