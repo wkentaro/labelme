@@ -636,6 +636,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>アノテーションを保存しますか？</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>{} 個の図形を削除しますか？「元に戻す」で復元できます。</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - ディレクトリを開く</translation>
     </message>
@@ -736,10 +740,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>このラベルファイルを完全に削除しますか？この操作は元に戻せません。</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>{} 個の図形を完全に削除しますか？この操作は元に戻せません。</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

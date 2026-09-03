@@ -622,6 +622,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Annotaties opslaan?</translation>
     </message>
     <message>
+        <source>Delete {} shapes? You can restore them with Undo.</source>
+        <translation>{} vormen verwijderen? U kunt ze herstellen met Ongedaan Maken.</translation>
+    </message>
+    <message>
         <source>%s - Open Directory</source>
         <translation>%s - Map Openen</translation>
     </message>
@@ -722,10 +726,6 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Permanently delete this label file? This action cannot be undone.</source>
         <translation>Dit labelbestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
-    </message>
-    <message>
-        <source>Permanently delete {} shapes? This action cannot be undone.</source>
-        <translation>{} vormen permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
