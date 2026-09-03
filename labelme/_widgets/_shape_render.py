@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import typing
-from typing import ClassVar
 from typing import Final
 from typing import Literal
 
@@ -79,9 +78,11 @@ class ShapeRenderContext:
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
     line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
-    # Outline stroke width in screen pixels, shared by every pen this module
-    # draws with so the label offset clears the stroke.
-    pen_width: ClassVar[int] = 2
+
+
+# Shapes are stroked in widget space, so the outline keeps this many screen
+# pixels at every zoom level.
+_OUTLINE_WIDTH: Final[float] = 2.0
 
 
 def render_shape(
@@ -92,10 +93,7 @@ def render_shape(
 
     palette = context.palette
     color = palette.select_line if context.selected else palette.line
-    pen = QtGui.QPen(color)
-    pen.setWidth(context.pen_width)
-    pen.setStyle(context.line_style)
-    painter.setPen(pen)
+    painter.setPen(QtGui.QPen(color, _OUTLINE_WIDTH, context.line_style))
 
     if shape.shape_type == "mask" and shape.mask is not None:
         _paint_shape_mask(painter=painter, shape=shape, context=context)
@@ -116,14 +114,14 @@ def _paint_shape_label(
     if not shape.label or len(shape.points) == 0:
         return
     # Anchor at the points' top-left so the text stays close to the shape and
-    # tracks zoom/pan; lift it by the pen width to clear the outline stroke.
+    # tracks zoom/pan; lift it by the outline width to clear the stroke.
     top_left = shape.points.min(axis=0) * context.scale
     text = shape.label
     if shape.group_id is not None:
         text += f" ({shape.group_id})"
     painter.setPen(QtGui.QPen(context.palette.line))
     painter.drawText(
-        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - context.pen_width),
+        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - _OUTLINE_WIDTH),
         text,
     )
 
@@ -149,17 +147,19 @@ def _paint_shape_mask(
     )
     painter.drawImage(target_rect, qimage)
 
-    path = QtGui.QPainterPath()
     # Pad so a region touching the mask border still has a background ring to
     # close its contour against; the resulting offset is removed below.
     PAD: Final[int] = 1
-    contours = skimage.measure.find_contours(np.pad(shape.mask, pad_width=PAD))
-    for contour in contours:
-        contour = contour - PAD + [origin[1], origin[0]]
-        path.moveTo(QtCore.QPointF(contour[0, 1], contour[0, 0]) * context.scale)
-        for point in contour[1:]:
-            path.lineTo(QtCore.QPointF(point[1], point[0]) * context.scale)
-    painter.drawPath(path)
+    outline = QtGui.QPainterPath()
+    for contour in skimage.measure.find_contours(np.pad(shape.mask, pad_width=PAD)):
+        # Contours come as (row, col) and stay in image space here so the whole
+        # outline can be scaled in one step below.
+        points_xy = contour[:, ::-1] - PAD + origin
+        outline.addPolygon(
+            QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in points_xy])
+        )
+    to_widget = QtGui.QTransform.fromScale(context.scale, context.scale)
+    painter.drawPath(to_widget.map(outline))
 
 
 @dataclasses.dataclass(frozen=True)
@@ -203,16 +203,12 @@ def _paint_shape_points(
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
     if paths.orientation_arrow.length() > 0:
-        arrow_pen = QtGui.QPen(palette.vertex_fill)
-        arrow_pen.setWidth(context.pen_width)
-        painter.setPen(arrow_pen)
+        painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
         painter.drawPath(paths.orientation_arrow)
 
     if paths.negative_vertices.length() > 0:
         neg_color = QtGui.QColor(255, 0, 0, 255)
-        neg_pen = QtGui.QPen(neg_color)
-        neg_pen.setWidth(context.pen_width)
-        painter.setPen(neg_pen)
+        painter.setPen(QtGui.QPen(neg_color, _OUTLINE_WIDTH))
         painter.drawPath(paths.negative_vertices)
         painter.fillPath(paths.negative_vertices, neg_color)
 
