@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import typing
+from typing import ClassVar
 from typing import Final
 from typing import Literal
 
@@ -19,8 +20,6 @@ from .._shape import Shape
 from .._shape import get_rotation_handle
 from .._shape import nearest_edge_index
 from .._shape import oriented_rectangle_arrow_points
-
-PEN_WIDTH: Final[int] = 2
 
 
 @dataclasses.dataclass(frozen=True)
@@ -80,6 +79,9 @@ class ShapeRenderContext:
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
     line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
+    # Outline stroke width in screen pixels, shared by every pen this module
+    # draws with so the label offset clears the stroke.
+    pen_width: ClassVar[int] = 2
 
 
 def render_shape(
@@ -91,7 +93,7 @@ def render_shape(
     palette = context.palette
     color = palette.select_line if context.selected else palette.line
     pen = QtGui.QPen(color)
-    pen.setWidth(PEN_WIDTH)
+    pen.setWidth(context.pen_width)
     pen.setStyle(context.line_style)
     painter.setPen(pen)
 
@@ -121,7 +123,7 @@ def _paint_shape_label(
         text += f" ({shape.group_id})"
     painter.setPen(QtGui.QPen(context.palette.line))
     painter.drawText(
-        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - PEN_WIDTH),
+        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - context.pen_width),
         text,
     )
 
@@ -202,14 +204,14 @@ def _paint_shape_points(
         painter.fillPath(paths.line, fill)
     if paths.orientation_arrow.length() > 0:
         arrow_pen = QtGui.QPen(palette.vertex_fill)
-        arrow_pen.setWidth(PEN_WIDTH)
+        arrow_pen.setWidth(context.pen_width)
         painter.setPen(arrow_pen)
         painter.drawPath(paths.orientation_arrow)
 
     if paths.negative_vertices.length() > 0:
         neg_color = QtGui.QColor(255, 0, 0, 255)
         neg_pen = QtGui.QPen(neg_color)
-        neg_pen.setWidth(PEN_WIDTH)
+        neg_pen.setWidth(context.pen_width)
         painter.setPen(neg_pen)
         painter.drawPath(paths.negative_vertices)
         painter.fillPath(paths.negative_vertices, neg_color)
@@ -314,13 +316,7 @@ def _build_shape_points_paths(
     points = shape.points
     if shape.shape_type in ["rectangle", "mask"]:
         assert len(points) in [1, 2]
-        if len(points) == RECTANGLE_POINT_COUNT:
-            paths.line.addRect(
-                QtCore.QRectF(
-                    QtCore.QPointF(*(points[0] * scale)),
-                    QtCore.QPointF(*(points[1] * scale)),
-                )
-            )
+        paths.line.addPath(_build_two_point_shape_path(shape=shape, scale=scale))
         if shape.shape_type == "rectangle":
             for i in range(len(points)):
                 _build_shape_point_path(
@@ -355,9 +351,7 @@ def _build_shape_points_paths(
                 )
     elif shape.shape_type == "circle":
         assert len(points) in [1, 2]
-        if len(points) == CIRCLE_POINT_COUNT:
-            radius = float(np.linalg.norm((points[0] - points[1]) * scale))
-            paths.line.addEllipse(QtCore.QPointF(*(points[0] * scale)), radius, radius)
+        paths.line.addPath(_build_two_point_shape_path(shape=shape, scale=scale))
         for i in range(len(points)):
             _build_shape_point_path(
                 path=paths.vertices, shape=shape, context=context, vertex_index=i
@@ -398,7 +392,7 @@ def is_hit_by_point(
 ) -> bool:
     if shape.shape_type in ("line", "linestrip"):
         return (
-            nearest_edge_index(shape=shape, point=point, scale=scale, epsilon=epsilon)
+            nearest_edge_index(shape=shape, point=point, image_epsilon=epsilon / scale)
             is not None
         )
     if shape.shape_type == "points":
@@ -406,7 +400,7 @@ def is_hit_by_point(
     if shape.shape_type == "point":
         if len(shape.points) == 0:
             return False
-        return bool(np.linalg.norm((point - shape.points[0]) * scale) <= point_size / 2)
+        return bool(np.linalg.norm(point - shape.points[0]) <= point_size / 2 / scale)
     if shape.mask is not None:
         raw_y = int(round(float(point[1]) - float(shape.points[0][1])))
         raw_x = int(round(float(point[0]) - float(shape.points[0][0])))
@@ -428,15 +422,8 @@ def bounds(*, shape: Shape) -> QtCore.QRectF:
 def _build_image_path(*, shape: Shape) -> QtGui.QPainterPath:
     points = shape.points
     out = QtGui.QPainterPath()
-    if shape.shape_type in ("rectangle", "mask"):
-        if len(points) == RECTANGLE_POINT_COUNT:
-            out.addRect(
-                QtCore.QRectF(QtCore.QPointF(*points[0]), QtCore.QPointF(*points[1]))
-            )
-    elif shape.shape_type == "circle":
-        if len(points) == CIRCLE_POINT_COUNT:
-            radius = float(np.linalg.norm(points[0] - points[1]))
-            out.addEllipse(QtCore.QPointF(*points[0]), radius, radius)
+    if shape.shape_type in ("rectangle", "mask", "circle"):
+        out.addPath(_build_two_point_shape_path(shape=shape, scale=1.0))
     elif shape.shape_type == "oriented_rectangle":
         if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
             out.moveTo(QtCore.QPointF(*points[0]))
@@ -449,3 +436,30 @@ def _build_image_path(*, shape: Shape) -> QtGui.QPainterPath:
             for p in points[1:]:
                 out.lineTo(QtCore.QPointF(*p))
     return out
+
+
+def _build_rect_between(
+    *, corner: npt.NDArray[np.float64], opposite: npt.NDArray[np.float64]
+) -> QtCore.QRectF:
+    x0, y0 = corner
+    x1, y1 = opposite
+    return QtCore.QRectF(x0, y0, x1 - x0, y1 - y0)
+
+
+def _build_two_point_shape_path(*, shape: Shape, scale: float) -> QtGui.QPainterPath:
+    # A rectangle, a Mask Shape's bounding box, and a circle are each fully
+    # described by two points, so one image-space rect covers all three.
+    path = QtGui.QPainterPath()
+    if shape.shape_type == "circle" and len(shape.points) == CIRCLE_POINT_COUNT:
+        center, rim = shape.points
+        radius = float(np.linalg.norm(rim - center))
+        path.addEllipse(
+            _build_rect_between(corner=center - radius, opposite=center + radius)
+        )
+    elif (
+        shape.shape_type in ("rectangle", "mask")
+        and len(shape.points) == RECTANGLE_POINT_COUNT
+    ):
+        corner, opposite = shape.points
+        path.addRect(_build_rect_between(corner=corner, opposite=opposite))
+    return QtGui.QTransform.fromScale(scale, scale).map(path)

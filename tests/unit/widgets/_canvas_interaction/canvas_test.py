@@ -405,11 +405,9 @@ def test_right_release_with_selection_copy_executes_menus_1(
 # ---------------------------------------------------------------------------
 # Vertex hover-highlight + snapping parity across zoom (scale) levels
 #
-# Proximity formula (from _shape.nearest_vertex_index):
-#   screen_distance = euclidean_distance(image_point, vertex) * scale
-#   hit iff screen_distance <= epsilon          (epsilon default = 10.0)
-#
-# Equivalently: image_distance <= epsilon / scale
+# The vertex hit radius is a fixed number of screen pixels (default 10) at
+# every zoom, so an offset of N screen pixels is N divided by the zoom factor
+# in image pixels.
 #
 # The polygon below has a vertex at image-center (100, 50) and the other
 # vertices at the image periphery.  Test points are displaced along X only

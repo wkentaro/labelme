@@ -44,10 +44,14 @@ def find_hover_target(
         priority_shape=priority_shape,
     )
 
+    # Proximity is measured in image space, so the screen-pixel threshold is
+    # converted here rather than scaling every shape's points.
+    image_epsilon = epsilon / scale
+
     # Pass 1: vertex proximity
     for shape in candidates:
         idx = nearest_vertex_index(
-            shape=shape, point=point, scale=scale, epsilon=epsilon
+            shape=shape, point=point, image_epsilon=image_epsilon
         )
         if idx is not None:
             return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
@@ -55,7 +59,7 @@ def find_hover_target(
     # Pass 2: rotation handle proximity
     for shape in candidates:
         idx = nearest_rotation_point_index(
-            shape=shape, point=point, scale=scale, epsilon=epsilon
+            shape=shape, point=point, image_epsilon=image_epsilon
         )
         if idx is not None:
             return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
@@ -64,7 +68,7 @@ def find_hover_target(
     for shape in candidates:
         if not shape.can_add_point():
             continue
-        idx = nearest_edge_index(shape=shape, point=point, scale=scale, epsilon=epsilon)
+        idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 

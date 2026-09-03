@@ -123,51 +123,46 @@ def nearest_vertex_index(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-    scale: float,
-    epsilon: float,
+    image_epsilon: float,
 ) -> int | None:
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
-    distances = np.linalg.norm((shape.points - point) * scale, axis=1)
-    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
+    distances = np.linalg.norm(shape.points - point, axis=1)
+    return _nearest_index_within_epsilon(distances=distances, epsilon=image_epsilon)
 
 
 def nearest_edge_index(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-    scale: float,
-    epsilon: float,
+    image_epsilon: float,
 ) -> int | None:
     if len(shape.points) == 0:
         return None
-    scaled_point = point * scale
-    scaled_points = shape.points * scale
-    starts = np.roll(scaled_points, 1, axis=0)
-    segments = scaled_points - starts
+    starts = np.roll(shape.points, 1, axis=0)
+    segments = shape.points - starts
     length_squared = (segments * segments).sum(axis=1)
     t = np.clip(
-        ((scaled_point - starts) * segments).sum(axis=1)
+        ((point - starts) * segments).sum(axis=1)
         / np.where(length_squared == 0, 1.0, length_squared),
         0.0,
         1.0,
     )
     projections = starts + t[:, None] * segments
-    distances = np.linalg.norm(scaled_point - projections, axis=1)
+    distances = np.linalg.norm(point - projections, axis=1)
     if shape.shape_type == "linestrip":
         # A linestrip is an open polyline: the wrap-around segment np.roll builds
         # at index 0 (last point back to the first) is never rendered, so it must
         # not be a hit target.
         distances[0] = np.inf
-    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
+    return _nearest_index_within_epsilon(distances=distances, epsilon=image_epsilon)
 
 
 def nearest_rotation_point_index(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-    scale: float,
-    epsilon: float,
+    image_epsilon: float,
 ) -> int | None:
     if (
         shape.shape_type != "oriented_rectangle"
@@ -175,8 +170,8 @@ def nearest_rotation_point_index(
     ):
         return None
     handles = (shape.points + np.roll(shape.points, 1, axis=0)) / 2
-    distances = np.linalg.norm((handles - point) * scale, axis=1)
-    return _nearest_index_within_epsilon(distances=distances, epsilon=epsilon)
+    distances = np.linalg.norm(handles - point, axis=1)
+    return _nearest_index_within_epsilon(distances=distances, epsilon=image_epsilon)
 
 
 def get_rotation_handle(*, shape: Shape, index: int) -> npt.NDArray[np.float64]:
