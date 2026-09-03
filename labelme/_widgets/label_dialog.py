@@ -315,7 +315,6 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.setEnabled(name not in self._locked)
         if "label" in self._locked:
             text = ""
-            self.label_list.setCurrentRow(-1)
         elif text is None:
             text = self._last_label
         if "group_id" in self._locked:
@@ -337,9 +336,7 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self._set_flag_checkboxes(flags=flags)
 
-        row = self._find_label_row(text)
-        if row >= 0:
-            self.label_list.setCurrentRow(row)
+        self.label_list.setCurrentRow(self._find_label_row(text))
 
         self._fit_label_list_to_content()
         self._refresh_ok_button()
