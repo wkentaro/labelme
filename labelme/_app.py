@@ -191,6 +191,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_opened_dir: str | None
     _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
+    _status_mouse_pos: QtCore.QPointF | None
     _docks: _DockWidgets
     _actions: _Actions
     _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
@@ -237,6 +238,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._prev_opened_dir = None
         self._label_list_menu_origin: QtCore.QPoint | None = None
+        self._status_mouse_pos = None
         self._docks = self._setup_dock_widgets()
 
         self.setAcceptDrops(True)
@@ -1509,9 +1511,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(not drawing)
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
-        self._canvas_widgets.canvas.set_editing(value=edit)
-        if create_mode is not None:
-            self._canvas_widgets.canvas.create_mode = create_mode
+        self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
+        self._refresh_status_stats()
         if edit:
             for _, draw_action in self._actions.draw:
                 draw_action.setEnabled(True)
@@ -3061,9 +3062,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
+        self._status_mouse_pos = QtCore.QPointF(mouse_pos)
+        self._refresh_status_stats()
+
+    def _refresh_status_stats(self) -> None:
         stats: list[str] = []
         stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
-        stats.append(f"x={mouse_pos.x():6.1f}, y={mouse_pos.y():6.1f}")
+        if self._status_mouse_pos is not None:
+            stats.append(
+                f"x={self._status_mouse_pos.x():6.1f}, "
+                f"y={self._status_mouse_pos.y():6.1f}"
+            )
         self._status_bar.stats.setText(" | ".join(stats))
 
 
