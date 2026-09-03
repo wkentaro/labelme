@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.4.1 - 2026-09-03
+
+### Fixed
+
+- Synchronized the status bar with shape creation and editing modes immediately. ([#2521](https://github.com/wkentaro/labelme/pull/2521))
+- Fixed the label dialog appearing unnamed to assistive technology; it and its Label, Group ID, and Description editors now expose localized names ([#2522](https://github.com/wkentaro/labelme/pull/2522))
+- Fixed the shape-deletion confirmation claiming the deletion could not be undone when Undo restores the shape, its Shape List row, and the saved shape count ([#2535](https://github.com/wkentaro/labelme/pull/2535))
+- Clear the label dialog's stale list highlight when the current label is not in the list. ([#2606](https://github.com/wkentaro/labelme/pull/2606))
+
 ## 7.4.0 - 2026-09-03
 
 ### Changed
