@@ -213,16 +213,17 @@ def _wait_for_viewport(
     qtbot: QtBot,
     win: MainWindow,
     scroll_values: dict[Qt.Orientation, int],
+    zoom_value: float,
 ) -> None:
     scroll_bars = win._canvas_widgets.scroll_bars
     qtbot.waitUntil(
-        lambda: win._canvas_widgets.zoom_widget.value() == _VIEWPORT_ZOOM
+        lambda: win._canvas_widgets.zoom_widget.value() == zoom_value
         and all(
             scroll_bars[orientation].value() == expected
             for orientation, expected in scroll_values.items()
         )
     )
-    assert win._canvas_widgets.zoom_widget.value() == _VIEWPORT_ZOOM
+    assert win._canvas_widgets.zoom_widget.value() == zoom_value
     for orientation, expected in scroll_values.items():
         assert scroll_bars[orientation].value() == expected
 
@@ -251,7 +252,7 @@ def _make_scrolled_win(
 
 @pytest.mark.gui
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
-def test_navigation_restores_each_image_viewport(
+def test_navigation_chooses_viewport_by_keep_previous_scale(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -266,6 +267,7 @@ def test_navigation_restores_each_image_viewport(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
+    win._set_zoom_to_original()
     win._set_zoom(value=_VIEWPORT_ZOOM, pos=None)
     scroll_bars = win._canvas_widgets.scroll_bars
     first_scroll_values = _set_scroll_bars_to_fraction(
@@ -287,6 +289,7 @@ def test_navigation_restores_each_image_viewport(
             qtbot=qtbot,
             win=win,
             scroll_values=first_scroll_values,
+            zoom_value=_VIEWPORT_ZOOM,
         )
         assert canvas.get_view_offset() == first_view_offset
     else:
@@ -300,7 +303,8 @@ def test_navigation_restores_each_image_viewport(
             assert bar.value() == bar.minimum()
         assert canvas.get_view_offset().isNull()
 
-    win._set_zoom(value=250, pos=None)
+    win.set_fit_window_mode(True)
+    win._set_zoom(value=350, pos=None)
     second_scroll_values = _set_scroll_bars_to_fraction(
         qtbot=qtbot,
         win=win,
@@ -308,17 +312,28 @@ def test_navigation_restores_each_image_viewport(
         denominator=3,
     )
     canvas.pan_view(step=QPointF(-31, -19))
+    second_view_offset = canvas.get_view_offset()
     assert second_scroll_values != first_scroll_values
-    assert canvas.get_view_offset() != first_view_offset
+    assert second_view_offset != first_view_offset
 
     win._open_prev_image()
     qtbot.waitUntil(lambda: win._image_path == first_image_path)
+    expected_zoom = 350 if keep_prev_scale else _VIEWPORT_ZOOM
+    expected_zoom_mode = (
+        _ZoomMode.FIT_WINDOW if keep_prev_scale else _ZoomMode.MANUAL_ZOOM
+    )
+    expected_scroll_values = (
+        second_scroll_values if keep_prev_scale else first_scroll_values
+    )
+    expected_view_offset = second_view_offset if keep_prev_scale else first_view_offset
     _wait_for_viewport(
         qtbot=qtbot,
         win=win,
-        scroll_values=first_scroll_values,
+        scroll_values=expected_scroll_values,
+        zoom_value=expected_zoom,
     )
-    assert canvas.get_view_offset() == first_view_offset
+    assert win._zoom_mode == expected_zoom_mode
+    assert canvas.get_view_offset() == expected_view_offset
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -369,7 +384,7 @@ def test_navigation_restores_viewport_after_layout_settles(
         assert image.save(str(tmp_path / name))
     win = main_win(
         file_or_dir=str(tmp_path),
-        config_overrides={"keep_prev_scale": True},
+        config_overrides={"keep_prev_scale": False},
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
@@ -426,6 +441,7 @@ def test_open_file_keeps_previous_viewport(
         qtbot=qtbot,
         win=win,
         scroll_values=expected_scroll_values,
+        zoom_value=_VIEWPORT_ZOOM,
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -449,6 +465,7 @@ def test_file_search_keeps_previous_viewport(
         qtbot=qtbot,
         win=win,
         scroll_values=expected_scroll_values,
+        zoom_value=_VIEWPORT_ZOOM,
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -474,6 +491,7 @@ def test_close_and_open_restores_viewport(
         qtbot=qtbot,
         win=win,
         scroll_values=expected_scroll_values,
+        zoom_value=_VIEWPORT_ZOOM,
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
