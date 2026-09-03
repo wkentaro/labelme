@@ -47,6 +47,22 @@ def canvas(*, qtbot: QtBot) -> Canvas:
 
 
 @pytest.mark.gui
+def test_setting_scale_resizes_canvas(*, canvas: Canvas) -> None:
+    canvas.scale = 2.0
+    assert canvas.size() == QSize(2 * _WIDTH, 2 * _HEIGHT)
+
+
+@pytest.mark.gui
+def test_setting_unchanged_scale_still_resizes_canvas(*, canvas: Canvas) -> None:
+    # A new image changes the size hint while the zoom stays put; assigning
+    # the same scale is how the canvas is told to take the new size.
+    canvas.scale = 1.0
+    canvas.pixmap = QtGui.QPixmap(2 * _WIDTH, 2 * _HEIGHT)
+    canvas.scale = 1.0
+    assert canvas.size() == QSize(2 * _WIDTH, 2 * _HEIGHT)
+
+
+@pytest.mark.gui
 def test_propose_ai_shapes_passes_rgb_image_to_model(
     *,
     canvas: Canvas,

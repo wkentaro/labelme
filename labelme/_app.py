@@ -290,7 +290,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
 
-        self._canvas_widgets.zoom_widget.valueChanged.connect(self._paint_canvas)
+        self._canvas_widgets.zoom_widget.valueChanged.connect(
+            self._apply_zoom_to_canvas
+        )
 
         self.populate_mode_actions()
 
@@ -2010,7 +2012,8 @@ class MainWindow(QtWidgets.QMainWindow):
         viewport_pos = canvas.mapTo(viewport, pos)
 
         self._sync_zoom_mode_actions()
-        self._canvas_widgets.zoom_widget.setValue(value)  # triggers self._paint_canvas
+        # Setting the value fires valueChanged, which rescales the canvas.
+        self._canvas_widgets.zoom_widget.setValue(value)
 
         target = canvas.transform_image_point_to_widget(
             image_pos, area=canvas.sizeHint()
@@ -2277,7 +2280,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._adjust_scale()
         # The zoom value can be unchanged across images, so update geometry
         # explicitly before restoring positions against the new scroll range.
-        self._paint_canvas()
+        self._apply_zoom_to_canvas()
         if target_viewport is not None:
             for orientation, value in target_viewport.scroll_values.items():
                 self.set_scroll_value(orientation=orientation, value=value)
@@ -2303,23 +2306,16 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def resizeEvent(self, a0: QtGui.QResizeEvent, /) -> None:
-        if (
-            self._canvas_widgets.canvas
-            and not self._image.isNull()
-            and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
-        ):
-            self._adjust_scale()
         super().resizeEvent(a0)
-
-    def _paint_canvas(self) -> None:
-        if self._image.isNull():
-            logger.warning("image is null, cannot paint canvas")
+        if self._image.isNull() or self._zoom_mode == _ZoomMode.MANUAL_ZOOM:
             return
-        self._canvas_widgets.canvas.scale = (
-            0.01 * self._canvas_widgets.zoom_widget.value()
-        )
-        self._canvas_widgets.canvas.adjustSize()
-        self._canvas_widgets.canvas.update()
+        self._adjust_scale()
+
+    def _apply_zoom_to_canvas(self) -> None:
+        if self._image.isNull():
+            logger.warning("image is null, cannot apply zoom")
+            return
+        self._canvas_widgets.canvas.scale = self._canvas_widgets.zoom_widget.scale
 
     def _adjust_scale(self) -> None:
         if self._zoom_mode == _ZoomMode.FIT_WINDOW:

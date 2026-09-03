@@ -32,3 +32,8 @@ def test_zoom_widget_clamps_to_range(*, widget: ZoomWidget) -> None:
     assert widget.value() == ZoomWidget.PERCENT_MAX
     widget.setValue(0)
     assert widget.value() == 1.0
+
+
+def test_zoom_widget_scale_is_percent_as_factor(*, widget: ZoomWidget) -> None:
+    widget.setValue(150)
+    assert widget.scale == pytest.approx(1.5)

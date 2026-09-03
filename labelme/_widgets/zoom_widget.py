@@ -27,3 +27,8 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         sample = f"{self.PERCENT_MAX:.{self.PERCENT_DECIMALS}f}{self.PERCENT_SUFFIX}"
         min_width = self.fontMetrics().horizontalAdvance(sample)
         self.setMinimumWidth(min_width)
+
+    @property
+    def scale(self) -> float:
+        # The spin box shows a percentage; the canvas draws with a factor.
+        return 0.01 * self.value()

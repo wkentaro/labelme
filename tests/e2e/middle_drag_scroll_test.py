@@ -26,8 +26,8 @@ def _diagonal_drag_endpoints(*, canvas: Canvas) -> tuple[QPoint, QPoint]:
 
 def _zoom_until_overflow(*, canvas: Canvas) -> None:
     # Mutates canvas.scale directly to bypass the public zoom path because
-    # this fixture only needs to force overflow; if the zoom pipeline gains
-    # additional side effects relevant to a test, route through that instead.
+    # this fixture only needs to force overflow; if the main window's zoom
+    # pipeline gains side effects relevant to a test, route through that instead.
     viewport = canvas._scroll_viewport()
     assert viewport is not None
     while not (
@@ -35,8 +35,6 @@ def _zoom_until_overflow(*, canvas: Canvas) -> None:
         or canvas.pixmap.height() * canvas.scale > viewport.height()
     ):
         canvas.scale *= 1.5
-        canvas.adjustSize()
-        canvas.update()
 
 
 @pytest.mark.gui
@@ -87,8 +85,6 @@ def test_middle_drag_no_pan_when_image_fits_viewport(
         )
         * 0.5
     )
-    canvas.adjustSize()
-    canvas.update()
 
     start, end = _diagonal_drag_endpoints(canvas=canvas)
 
