@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -15,16 +16,23 @@ from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "set_fit_mode",
+    [MainWindow.set_fit_window_mode, MainWindow.set_fit_width_mode],
+)
 def test_close_file(
     *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,
+    set_fit_mode: Callable[[MainWindow], None],
 ) -> None:
     assert annotated_win._annotation is not None
     assert annotated_win._canvas_widgets.canvas.isEnabled()
 
+    set_fit_mode(annotated_win)
     annotated_win.close_file()
+    annotated_win.resize(annotated_win.width() + 50, annotated_win.height() + 50)
     qtbot.wait(50)
 
     assert not annotated_win._canvas_widgets.canvas.isEnabled()
