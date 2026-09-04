@@ -70,7 +70,7 @@ def test_select_shape(
         output_dir=None,
     )
 
-    assert canvas.selected_shapes[0].label == "person"
+    assert canvas.selected_shapes[0].label == "amber_kite"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -190,7 +190,7 @@ def test_delete_undo_shape(
     win.undo_shape_edit()
     qtbot.wait(50)
     assert len(canvas.shapes) == 5
-    assert canvas.shapes[0].label == "person"
+    assert canvas.shapes[0].label == "amber_kite"
 
     win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))

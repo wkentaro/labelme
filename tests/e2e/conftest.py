@@ -41,9 +41,11 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:  # noqa: GR
             item.add_marker(skip)
 
 
-@pytest.fixture(scope="session")
-def session_home(*, tmp_path_factory: pytest.TempPathFactory) -> Path:
-    return tmp_path_factory.mktemp("home")
+@pytest.fixture()
+def session_home(*, tmp_path: Path) -> Path:
+    home = tmp_path / "home"
+    home.mkdir()
+    return home
 
 
 def image_to_widget_pos(*, canvas: Canvas, image_pos: QPointF) -> QPoint:

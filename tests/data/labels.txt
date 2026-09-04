@@ -1,0 +1,12 @@
+__ignore__
+_background_
+amber_arch
+amber_kite
+blue_block
+blue_marker
+blue_trapezoid
+green_diamond
+green_hexagon
+orange_pentagon
+purple_diamond
+red_triangle
