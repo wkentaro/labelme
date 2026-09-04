@@ -1,18 +1,4 @@
 #!/usr/bin/env python
-"""Self-contained helpers for reading the labelme JSON annotation format.
-
-labelme is an application, not a Python library: the supported way to consume
-its output is to read the JSON format yourself, the way a PyTorch ``Dataset``
-reads whatever format its data lives in. This module is the worked reference for
-doing that. It depends only on the standard library, numpy, and PIL, never on
-``labelme``, so it keeps working regardless of how labelme's internals evolve.
-
-It deliberately re-implements the rasterization helpers (``shape_to_mask``,
-``shapes_to_label``, ``img_data_to_arr``) rather than importing them: this copy
-and labelme's internal copy have different owners and lifecycles. Copy this file
-next to your own scripts and adapt it.
-"""
-
 from __future__ import annotations
 
 import base64
@@ -38,30 +24,35 @@ class LabeledImage:
     shapes: list[dict[str, Any]]
 
 
+def _image_bytes_from_record(record: dict[str, Any], /, *, json_dir: Path) -> bytes:
+    embedded = record.get("imageData")
+    if embedded is not None:
+        return base64.b64decode(embedded)
+    # imagePath may carry Windows-style separators even when read on a
+    # different OS than the one that produced the annotation.
+    relative_path = PureWindowsPath(record["imagePath"]).as_posix()
+    return (json_dir / relative_path).read_bytes()
+
+
+def _shape_from_record(shape: dict[str, Any], /) -> dict[str, Any]:
+    raw_mask = shape.get("mask")
+    return {
+        "label": shape["label"],
+        "points": shape["points"],
+        "shape_type": shape.get("shape_type") or "polygon",
+        "group_id": shape.get("group_id"),
+        "flags": shape.get("flags") or {},
+        "mask": None if raw_mask is None else img_b64_to_arr(raw_mask).astype(bool),
+    }
+
+
 def load_label_file(filename: str, /) -> LabeledImage:
-    with open(filename, encoding="utf-8") as f:
-        data = json.load(f)
-
-    if data.get("imageData") is None:
-        image_path = PureWindowsPath(data["imagePath"]).as_posix()
-        image_data = (Path(filename).parent / image_path).read_bytes()
-    else:
-        image_data = base64.b64decode(data["imageData"])
-
-    shapes = [
-        {
-            "label": shape["label"],
-            "points": shape["points"],
-            "shape_type": shape.get("shape_type") or "polygon",
-            "group_id": shape.get("group_id"),
-            "flags": shape.get("flags") or {},
-            "mask": None
-            if shape.get("mask") is None
-            else img_b64_to_arr(shape["mask"]).astype(bool),
-        }
-        for shape in data["shapes"]
-    ]
-    return LabeledImage(image_data=image_data, shapes=shapes)
+    json_path = Path(filename)
+    record = json.loads(json_path.read_text(encoding="utf-8"))
+    return LabeledImage(
+        image_data=_image_bytes_from_record(record, json_dir=json_path.parent),
+        shapes=[_shape_from_record(shape) for shape in record["shapes"]],
+    )
 
 
 def img_data_to_arr(img_data: bytes, /) -> NDArray[np.uint8]:

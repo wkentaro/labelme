@@ -7,9 +7,77 @@ from pathlib import Path
 
 import imgviz
 import numpy as np
+from numpy.typing import NDArray
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
+
+
+def _create_output_directories(
+    output_dir: Path,
+    /,
+    *,
+    include_npy: bool,
+    include_visualizations: bool,
+    include_objects: bool,
+) -> None:
+    output_dir.mkdir(parents=True)
+    (output_dir / "JPEGImages").mkdir()
+    (output_dir / "SegmentationClass").mkdir()
+    if include_npy:
+        (output_dir / "SegmentationClassNpy").mkdir()
+    if include_visualizations:
+        (output_dir / "SegmentationClassVisualization").mkdir()
+    if not include_objects:
+        return
+    (output_dir / "SegmentationObject").mkdir()
+    if include_npy:
+        (output_dir / "SegmentationObjectNpy").mkdir()
+    if include_visualizations:
+        (output_dir / "SegmentationObjectVisualization").mkdir()
+
+
+def _save_label_layer(
+    *,
+    output_dir: Path,
+    layer: str,
+    base: str,
+    label: NDArray[np.int32],
+    gray_img: NDArray[np.uint8],
+    label_names: list[str],
+    include_npy: bool,
+    include_visualization: bool,
+) -> None:
+    imgviz.io.lblsave(output_dir / layer / f"{base}.png", label.astype(np.uint8))
+    if include_npy:
+        np.save(output_dir / f"{layer}Npy" / f"{base}.npy", label)
+    if include_visualization:
+        viz = imgviz.label2rgb(
+            label, gray_img, label_names=label_names, font_size=15, loc="rb"
+        )
+        imgviz.io.imsave(output_dir / f"{layer}Visualization" / f"{base}.jpg", viz)
+
+
+def _load_class_names(labels_arg: str, /) -> tuple[list[str], dict[str, int]]:
+    if Path(labels_arg).exists():
+        with open(labels_arg) as f:
+            labels = [label.strip() for label in f if label]
+    else:
+        labels = [label.strip() for label in labels_arg.split(",")]
+
+    class_names: list[str] = []
+    class_name_to_id: dict[str, int] = {}
+    for i, label in enumerate(labels):
+        class_id = i - 1  # starts with -1
+        class_name = label.strip()
+        class_name_to_id[class_name] = class_id
+        if class_id == -1:
+            assert class_name == "__ignore__"
+            continue
+        elif class_id == 0:
+            assert class_name == "_background_"
+        class_names.append(class_name)
+    return class_names, class_name_to_id
 
 
 def main() -> None:
@@ -36,39 +104,18 @@ def main() -> None:
     if output_dir.exists():
         print("Output directory already exists:", output_dir)
         sys.exit(1)
-    output_dir.mkdir(parents=True)
-    (output_dir / "JPEGImages").mkdir(parents=True)
-    (output_dir / "SegmentationClass").mkdir(parents=True)
-    if not args.nonpy:
-        (output_dir / "SegmentationClassNpy").mkdir(parents=True)
-    if not args.noviz:
-        (output_dir / "SegmentationClassVisualization").mkdir(parents=True)
-    if not args.noobject:
-        (output_dir / "SegmentationObject").mkdir(parents=True)
-        if not args.nonpy:
-            (output_dir / "SegmentationObjectNpy").mkdir(parents=True)
-        if not args.noviz:
-            (output_dir / "SegmentationObjectVisualization").mkdir(parents=True)
+    include_npy = not args.nonpy
+    include_visualizations = not args.noviz
+    include_objects = not args.noobject
+    _create_output_directories(
+        output_dir,
+        include_npy=include_npy,
+        include_visualizations=include_visualizations,
+        include_objects=include_objects,
+    )
     print("Creating dataset:", output_dir)
 
-    if Path(args.labels).exists():
-        with open(args.labels) as f:
-            labels = [label.strip() for label in f if label]
-    else:
-        labels = [label.strip() for label in args.labels.split(",")]
-
-    class_names: list[str] = []
-    class_name_to_id = {}
-    for i, label in enumerate(labels):
-        class_id = i - 1  # starts with -1
-        class_name = label.strip()
-        class_name_to_id[class_name] = class_id
-        if class_id == -1:
-            assert class_name == "__ignore__"
-            continue
-        elif class_id == 0:
-            assert class_name == "_background_"
-        class_names.append(class_name)
+    class_names, class_name_to_id = _load_class_names(args.labels)
     print("class_names:", class_names)
     out_class_names_file = output_dir / "class_names.txt"
     with open(out_class_names_file, "w") as f:
@@ -79,27 +126,10 @@ def main() -> None:
         print("Generating dataset from:", path)
 
         label_file = utils.load_label_file(str(path))
-
         base = path.stem
-        out_img_file = output_dir / "JPEGImages" / f"{base}.jpg"
-        out_clsp_file = output_dir / "SegmentationClass" / f"{base}.png"
-        if not args.nonpy:
-            out_cls_file = output_dir / "SegmentationClassNpy" / f"{base}.npy"
-        if not args.noviz:
-            out_clsv_file = (
-                output_dir / "SegmentationClassVisualization" / f"{base}.jpg"
-            )
-        if not args.noobject:
-            out_insp_file = output_dir / "SegmentationObject" / f"{base}.png"
-            if not args.nonpy:
-                out_ins_file = output_dir / "SegmentationObjectNpy" / f"{base}.npy"
-            if not args.noviz:
-                out_insv_file = (
-                    output_dir / "SegmentationObjectVisualization" / f"{base}.jpg"
-                )
 
         img = utils.decode_img_data_as_rgb(label_file.image_data)
-        imgviz.io.imsave(out_img_file, img)
+        imgviz.io.imsave(output_dir / "JPEGImages" / f"{base}.jpg", img)
 
         cls, ins = utils.shapes_to_label(
             img_shape=img.shape,
@@ -107,41 +137,34 @@ def main() -> None:
             label_name_to_value=class_name_to_id,
         )
         ins[cls == -1] = 0  # ignore it.
+        gray_img = imgviz.rgb2gray(img)
 
-        # class label
-        imgviz.io.lblsave(out_clsp_file, cls.astype(np.uint8))
-        if not args.nonpy:
-            np.save(out_cls_file, cls)
-        if not args.noviz:
-            clsv = imgviz.label2rgb(
-                cls,
-                imgviz.rgb2gray(img),
-                label_names=class_names,
-                font_size=15,
-                loc="rb",
-            )
-            imgviz.io.imsave(out_clsv_file, clsv)
+        _save_label_layer(
+            output_dir=output_dir,
+            layer="SegmentationClass",
+            base=base,
+            label=cls,
+            gray_img=gray_img,
+            label_names=class_names,
+            include_npy=include_npy,
+            include_visualization=include_visualizations,
+        )
 
-        if args.noobject:
-            continue
-
-        # instance label
-        imgviz.io.lblsave(out_insp_file, ins.astype(np.uint8))
-        if not args.nonpy:
-            np.save(out_ins_file, ins)
-        if args.noviz:
+        if not include_objects:
             continue
 
         instance_ids = np.unique(ins)
         instance_names = [str(i) for i in range(max(instance_ids) + 1)]
-        insv = imgviz.label2rgb(
-            ins,
-            imgviz.rgb2gray(img),
+        _save_label_layer(
+            output_dir=output_dir,
+            layer="SegmentationObject",
+            base=base,
+            label=ins,
+            gray_img=gray_img,
             label_names=instance_names,
-            font_size=15,
-            loc="rb",
+            include_npy=include_npy,
+            include_visualization=include_visualizations,
         )
-        imgviz.io.imsave(out_insv_file, insv)
 
 
 if __name__ == "__main__":

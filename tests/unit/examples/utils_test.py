@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import base64
 import io
+import json
+from pathlib import Path
 from typing import Any
 from typing import Final
 
@@ -163,3 +166,54 @@ def test_decode_img_data_as_rgb_discards_alpha_without_compositing(
     rgba.putalpha(PIL.Image.new("L", rgba.size, 0))
     arr = utils.decode_img_data_as_rgb(_encode_png(rgba))
     np.testing.assert_array_equal(arr, np.asarray(source_rgb))
+
+
+def _write_annotation(directory: Path, /, *, record: dict[str, Any]) -> Path:
+    record.setdefault("shapes", [])
+    path = directory / "ann.json"
+    path.write_text(json.dumps(record))
+    return path
+
+
+def test_load_label_file_embedded_image_data_wins_over_missing_path(
+    *, tmp_path: Path
+) -> None:
+    png_bytes = _encode_png(PIL.Image.new("RGB", (2, 2)))
+    ann_path = _write_annotation(
+        tmp_path,
+        record={
+            "imageData": base64.b64encode(png_bytes).decode("ascii"),
+            # Points at a file that was never created: reading it would
+            # raise, so the embedded bytes must be used instead of falling
+            # through to this.
+            "imagePath": "does-not-exist.png",
+        },
+    )
+    label_file = utils.load_label_file(str(ann_path))
+    assert label_file.image_data == png_bytes
+
+
+def test_load_label_file_resolves_referenced_image_relative_to_json_dir(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    annotated_dir = tmp_path / "annotated"
+    (annotated_dir / "images").mkdir(parents=True)
+    png_bytes = _encode_png(PIL.Image.new("RGB", (2, 2)))
+    (annotated_dir / "images" / "0001.png").write_bytes(png_bytes)
+    ann_path = _write_annotation(
+        annotated_dir,
+        record={
+            "imageData": None,
+            # Windows-style separator, as labelme itself writes on Windows.
+            "imagePath": "images\\0001.png",
+        },
+    )
+
+    # A cwd unrelated to the annotation proves resolution follows the JSON
+    # file's own directory rather than the process's working directory.
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+
+    label_file = utils.load_label_file(str(ann_path))
+    assert label_file.image_data == png_bytes
