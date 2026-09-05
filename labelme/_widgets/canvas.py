@@ -204,6 +204,7 @@ class Canvas(QtWidgets.QWidget):
     _ai_assist_session: _automation.AiAssistSession
     _ai_suppress_existing_shape_matches: bool
     _ai_existing_shape_highlights: list[Shape]
+    _ai_points_preview: _automation.AiAssistProposal | None
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -232,6 +233,9 @@ class Canvas(QtWidgets.QWidget):
         )
         super().__init__(*args, **kwargs)
 
+        self._ai_preview_timer = QtCore.QTimer(self)
+        self._ai_preview_timer.setSingleShot(True)
+        self._ai_preview_timer.timeout.connect(self._refresh_ai_points_preview)
         self._cursor = CursorRole.DEFAULT
         self.reset_state()
 
@@ -277,6 +281,7 @@ class Canvas(QtWidgets.QWidget):
 
     def set_allow_out_of_bounds_points(self, *, value: bool) -> None:
         self._allow_out_of_bounds_points = value
+        self._schedule_ai_points_preview()
 
     def pan_view(self, *, step: QPointF, constrain_to_center: bool = True) -> None:
         viewport = self._scroll_viewport()
@@ -460,7 +465,8 @@ class Canvas(QtWidgets.QWidget):
         if self._ai_assist_session.model_name == model_name:
             return
         self._ai_assist_session.model_name = model_name
-        self._clear_ai_existing_shape_highlights()
+        self._set_ai_existing_shape_highlights(shapes=[])
+        self._schedule_ai_points_preview()
 
     def set_ai_output_format(
         self, output_format: _automation.AiOutputFormat, /
@@ -468,19 +474,22 @@ class Canvas(QtWidgets.QWidget):
         if self._ai_assist_session.output_format == output_format:
             return
         self._ai_assist_session.output_format = output_format
-        self._clear_ai_existing_shape_highlights()
+        self._set_ai_existing_shape_highlights(shapes=[])
+        self._schedule_ai_points_preview()
 
     def set_ai_polygon_detail(self, *, detail: int) -> None:
         if self._ai_assist_session.polygon_detail == detail:
             return
         self._ai_assist_session.polygon_detail = detail
-        self._clear_ai_existing_shape_highlights()
+        self._set_ai_existing_shape_highlights(shapes=[])
+        self._schedule_ai_points_preview()
 
     def set_ai_existing_shape_suppression(self, *, enabled: bool) -> None:
         if self._ai_suppress_existing_shape_matches == enabled:
             return
         self._ai_suppress_existing_shape_matches = enabled
-        self._clear_ai_existing_shape_highlights()
+        self._set_ai_existing_shape_highlights(shapes=[])
+        self._schedule_ai_points_preview()
 
     def _propose_ai_shapes(
         self,
@@ -518,6 +527,7 @@ class Canvas(QtWidgets.QWidget):
 
     def backup_shapes(self) -> None:
         self.shape_backups.append([s.copy() for s in self.shapes])
+        self._schedule_ai_points_preview()
 
     @property
     def can_restore_shape(self) -> bool:
@@ -534,6 +544,7 @@ class Canvas(QtWidgets.QWidget):
         # Peeking would leave this entry on the stack, and the reload that
         # follows would record it a second time, making the next undo a no-op.
         self.shapes = self.shape_backups.pop()
+        self._schedule_ai_points_preview()
         self.selected_shapes.clear()
         self.update()
 
@@ -801,6 +812,7 @@ class Canvas(QtWidgets.QWidget):
                 points=(current.points[-1], pos),
                 point_labels=(current.point_labels[-1], 0 if is_shift_pressed else 1),
             )
+            self._schedule_ai_points_preview()
         elif mode in ("rectangle", "ai_box_to_shape"):
             if is_shift_pressed:
                 pos = _snap_cursor_pos_for_square(
@@ -1126,6 +1138,7 @@ class Canvas(QtWidgets.QWidget):
         self._line = dataclasses.replace(
             self._line, points=(vertex, vertex), point_labels=(label, label)
         )
+        self._schedule_ai_points_preview()
 
     def _is_final_open_path_click(self, *, event: QtGui.QMouseEvent) -> bool:
         # A polygon ends by returning to its first vertex; the modes with no
@@ -1193,7 +1206,7 @@ class Canvas(QtWidgets.QWidget):
             ),
         )
         self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
-        self.update()
+        self._schedule_ai_points_preview()
 
     def _press_left_while_editing(
         self, *, pos: QPointF, event: QtGui.QMouseEvent
@@ -1691,7 +1704,12 @@ class Canvas(QtWidgets.QWidget):
             rotation_highlight=None,
             line_style=Qt.PenStyle.DashLine,
         )
-        for shape in self._ai_existing_shape_highlights:
+        highlights = (
+            self._ai_points_preview.matching_existing_shapes
+            if self._ai_points_preview is not None
+            else self._ai_existing_shape_highlights
+        )
+        for shape in highlights:
             render_shape(painter=painter, shape=shape, context=context)
 
     def _render_draft(
@@ -1711,8 +1729,8 @@ class Canvas(QtWidgets.QWidget):
             return []
         if self.create_mode == "polygon":
             return [self._build_polygon_preview(current=self._current)]
-        if self.create_mode == "ai_points_to_shape":
-            return self._build_ai_points_preview(current=self._current)
+        if self.create_mode == "ai_points_to_shape" and self._ai_points_preview:
+            return self._ai_points_preview.new_shapes
         return []
 
     def _build_polygon_preview(self, *, current: _DraftShape) -> Shape:
@@ -1724,30 +1742,41 @@ class Canvas(QtWidgets.QWidget):
             preview = preview.add_point(self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
-    def _build_ai_points_preview(self, *, current: _DraftShape) -> list[Shape]:
+    def _schedule_ai_points_preview(self) -> None:
+        self._ai_points_preview = None
+        self._ai_preview_timer.stop()
+        if (
+            self.isVisible()
+            and self._current is not None
+            and self.create_mode == "ai_points_to_shape"
+        ):
+            # Coalesce input changes in the event loop, outside the active painter.
+            self._ai_preview_timer.start(0)
+        self.update()
+
+    def _refresh_ai_points_preview(self) -> None:
+        current = self._current
+        if current is None or self.create_mode != "ai_points_to_shape":
+            return
         if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
-            return []
+            return
         preview = current.add_point(
             self._line.points[1],
             label=self._line.point_labels[1],
         )
         try:
-            proposal = self._propose_ai_shapes(
+            self._ai_points_preview = self._propose_ai_shapes(
                 prompt_kind="points",
                 points=preview.points,
                 point_labels=preview.point_labels,
             )
         except Exception as e:
-            # This runs inside paintEvent on every repaint, so a persistently
-            # failing model would report on every frame. Report once; a later
-            # success re-arms the report.
+            # Repeated failed prompts report once; a success re-arms the report.
             if not self._ai_inference_failed:
                 self._report_inference_failure(error=e)
-            self._set_ai_existing_shape_highlights(shapes=[])
-            return []
-        self._ai_inference_failed = False
-        self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
-        return proposal.new_shapes
+        else:
+            self._ai_inference_failed = False
+        self.update()
 
     def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
         origin = self._compute_image_origin_offset(area=None)
@@ -1829,6 +1858,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _reset_after_shape_creation(self) -> None:
         self._current = None
+        self._schedule_ai_points_preview()
         # new_shape's handler blocks on the modal label dialog, so paint the
         # committed shape synchronously first. Some modes, including point and
         # AI-Box, can finalize without a matching preview on screen.
@@ -1838,6 +1868,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _cancel_current_shape(self) -> None:
         self._current = None
+        self._schedule_ai_points_preview()
         self._set_ai_existing_shape_highlights(shapes=[])
         self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
         self.update()
@@ -2028,12 +2059,13 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, points=(current.points[-1],) + self._line.points[1:]
             )
-            self.update()
+            self._schedule_ai_points_preview()
         else:
             self._cancel_current_shape()
 
     def _reset_interaction_state(self) -> None:
         self._current = None
+        self._schedule_ai_points_preview()
         self.hovered_shape = None
         self._hovered_vertex = None
         self._hovered_edge = None
@@ -2051,7 +2083,7 @@ class Canvas(QtWidgets.QWidget):
         self._set_ai_existing_shape_highlights(shapes=[])
         if clear_shapes:
             self.shapes = []
-        self.update()
+        self._schedule_ai_points_preview()
 
     def load_shapes(self, *, shapes: list[Shape], replace: bool = True) -> None:
         self.shapes = list(shapes) if replace else self.shapes + list(shapes)
@@ -2083,6 +2115,8 @@ class Canvas(QtWidgets.QWidget):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def reset_state(self) -> None:
+        self._ai_preview_timer.stop()
+        self._ai_points_preview = None
         self._release_cursor()
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None

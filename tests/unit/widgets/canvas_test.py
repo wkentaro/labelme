@@ -1124,9 +1124,7 @@ def test_points_preview_hides_failed_and_empty_predictions(
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    # The points preview re-runs inference on every repaint, so a persistently
-    # failing model must report once, not once per frame. A later success
-    # re-arms the report so a fresh failure surfaces again.
+    # Repeated failed prompts report once; a successful prompt re-arms errors.
     behavior = {"fail": True}
 
     def _maybe_raise(**_: object) -> AiAssistProposal:
@@ -1141,7 +1139,7 @@ def test_points_preview_hides_failed_and_empty_predictions(
         points=(QPointF(0, 0), QPointF(5, 5)),
         point_labels=(1, 1),
     )
-    current = _DraftShape(
+    canvas._current = _DraftShape(
         shape_type="rectangle",
         points=(QPointF(0, 0),),
         point_labels=(1,),
@@ -1149,14 +1147,22 @@ def test_points_preview_hides_failed_and_empty_predictions(
     failed: list[str] = []
     canvas.inference_failed.connect(failed.append)
 
-    assert canvas._build_ai_points_preview(current=current) == []
-    assert canvas._build_ai_points_preview(current=current) == []
+    canvas._schedule_ai_points_preview()
+    canvas._refresh_ai_points_preview()
+    assert canvas._build_preview_shapes() == []
+    canvas._schedule_ai_points_preview()
+    canvas._refresh_ai_points_preview()
+    assert canvas._build_preview_shapes() == []
     assert failed == ["RuntimeError: boom"]
 
     behavior["fail"] = False
-    assert canvas._build_ai_points_preview(current=current) == []
+    canvas._schedule_ai_points_preview()
+    canvas._refresh_ai_points_preview()
+    assert canvas._build_preview_shapes() == []
     behavior["fail"] = True
-    assert canvas._build_ai_points_preview(current=current) == []
+    canvas._schedule_ai_points_preview()
+    canvas._refresh_ai_points_preview()
+    assert canvas._build_preview_shapes() == []
     assert failed == ["RuntimeError: boom", "RuntimeError: boom"]
 
 
@@ -1196,6 +1202,7 @@ def test_ai_points_preview_renders_every_proposed_shape(
         points=(QPointF(5, 5), QPointF(6, 6)),
         point_labels=(1, 1),
     )
+    canvas._refresh_ai_points_preview()
     image = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_ARGB32)
     image.fill(Qt.GlobalColor.black)
     painter = QtGui.QPainter(image)
@@ -2233,3 +2240,109 @@ def test_end_move_in_place_copies_points(*, canvas: Canvas) -> None:
 
     assert np.array_equal(shape.points, clone.points)
     assert not np.shares_memory(shape.points, clone.points)
+
+
+@pytest.mark.gui
+def test_ai_preview_follows_input_without_inference_during_paint(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    prompts: list[list[list[float]]] = []
+    proposal = AiAssistProposal(
+        new_shapes=[
+            Shape(
+                shape_type="polygon",
+                points=np.array([[10, 10], [30, 10], [30, 30]]),
+                closed=True,
+            )
+        ],
+        matching_existing_shapes=[],
+    )
+
+    def propose_shapes(*, points: np.ndarray, **_: object) -> AiAssistProposal:
+        assert not canvas._painter.isActive()
+        prompts.append(points.tolist())
+        return proposal
+
+    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
+    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    canvas.set_editing(value=False, create_mode="ai_points_to_shape")
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.waitUntil(lambda: len(prompts) == 1)
+    assert prompts[-1] == [[10, 10], [10, 10]]
+    assert canvas._build_preview_shapes() == proposal.new_shapes
+
+    for _ in range(3):
+        canvas.grab()
+        canvas.update()
+        QtCore.QCoreApplication.processEvents()
+    canvas.scale = 2
+    canvas.grab()
+    QtCore.QCoreApplication.processEvents()
+    assert len(prompts) == 1
+
+    qtbot.mouseMove(canvas, QtCore.QPoint(40, 40))
+    qtbot.waitUntil(lambda: len(prompts) == 2)
+    assert prompts[-1] == [[10, 10], [20, 20]]
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+    qtbot.waitUntil(lambda: len(prompts) == 3)
+    assert prompts[-1] == [[10, 10], [20, 20], [20, 20]]
+    canvas.undo_last_point()
+    qtbot.waitUntil(lambda: len(prompts) == 4)
+    assert prompts[-1] == [[10, 10], [20, 20]]
+
+    # Cancel before queued work runs: no proposal may revive the discarded draft.
+    canvas.set_ai_polygon_detail(detail=50)
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    QtCore.QCoreApplication.processEvents()
+    canvas.grab()
+    assert len(prompts) == 4
+    assert canvas._build_preview_shapes() == []
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "change", ["model", "format", "detail", "suppression", "bounds", "image"]
+)
+def test_ai_preview_refreshes_when_proposal_inputs_change(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    change: str,
+) -> None:
+    requests: list[dict[str, object]] = []
+
+    def propose_shapes(**kwargs: object) -> AiAssistProposal:
+        requests.append(kwargs)
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
+    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    canvas.set_editing(value=False, create_mode="ai_points_to_shape")
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.waitUntil(lambda: len(requests) == 1)
+
+    if change == "model":
+        canvas.set_ai_model_name(model_name="sam:vit_b")
+    elif change == "format":
+        canvas.set_ai_output_format("mask")
+    elif change == "detail":
+        canvas.set_ai_polygon_detail(detail=50)
+    elif change == "suppression":
+        canvas.set_ai_existing_shape_suppression(enabled=True)
+    elif change == "bounds":
+        canvas.set_allow_out_of_bounds_points(value=True)
+    else:
+        pixmap = QtGui.QPixmap(20, 20)
+        pixmap.fill(Qt.GlobalColor.white)
+        canvas.load_pixmap(pixmap=pixmap, clear_shapes=False)
+    qtbot.waitUntil(lambda: len(requests) == 2)
+    if change == "bounds":
+        assert requests[-1]["image_size"] is None
+    if change == "image":
+        assert requests[-1]["image_size"] == (20, 20)
+    canvas.grab()
+    assert len(requests) == 2
