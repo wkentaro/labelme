@@ -1,11 +1,113 @@
+from __future__ import annotations
+
+import json
 import time
+from typing import Final
 
 import numpy as np
 import osam
 from loguru import logger
 from numpy.typing import NDArray
 
+from .._shape import Shape
+from ._geometry import shape_to_xyxy_bbox
 from ._osam_session import OsamSession
+from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
+from ._shape_builders import Detection
+from ._shape_builders import assign_available_group_ids
+from ._shape_builders import shapes_from_detections
+from ._suppression import suppress_detections_greedy
+from ._types import AiOutputFormat
+
+
+class MaskOutputUnavailableError(ValueError):
+    pass
+
+
+def propose_shapes_from_texts(
+    *,
+    session: OsamSession,
+    image: np.ndarray,
+    image_id: str,
+    texts: list[str],
+    shape_type: AiOutputFormat,
+    existing_shapes: list[Shape],
+    iou_threshold: float,
+    score_threshold: float,
+    image_size: tuple[int, int] | None,
+    polygon_detail: int,
+) -> list[Shape]:
+    boxes, scores, labels, masks = get_bboxes_from_texts(
+        session=session, image=image, image_id=image_id, texts=texts
+    )
+    if masks is None and len(boxes) > 0 and shape_type in MASK_REQUIRED_SHAPE_TYPES:
+        raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
+
+    # Existing Shapes outrank model scores so overlapping predictions disappear
+    # without returning the existing Shapes as new proposals.
+    SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
+    for shape in existing_shapes:
+        if shape.shape_type != shape_type or shape.label not in texts:
+            continue
+        shape_bbox = shape_to_xyxy_bbox(shape=shape)
+        if shape_bbox is None:
+            continue
+        boxes = np.r_[boxes, [shape_bbox]]
+        scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
+        labels = np.r_[labels, [texts.index(shape.label)]]
+
+    boxes, scores, labels, indices = nms_bboxes(
+        boxes=boxes,
+        scores=scores,
+        labels=labels,
+        iou_threshold=iou_threshold,
+        score_threshold=score_threshold,
+        max_num_detections=100,
+    )
+
+    is_new = scores != SCORE_FOR_EXISTING_SHAPE
+    boxes = boxes[is_new]
+    scores = scores[is_new]
+    labels = labels[is_new]
+    indices = indices[is_new]
+
+    if masks is None:
+        masks = [None] * len(boxes)
+    else:
+        masks = [masks[i] for i in indices]
+    del indices
+
+    detections: list[Detection] = []
+    for box, score, label, mask in zip(boxes, scores, labels, masks):
+        text = texts[label]
+        detections.append(
+            Detection(
+                bbox=(
+                    float(box[0]),
+                    float(box[1]),
+                    float(box[2]),
+                    float(box[3]),
+                ),
+                mask=mask,
+                label=text,
+                description=json.dumps(dict(score=score.item(), text=text)),
+            )
+        )
+    detections = suppress_detections_greedy(
+        detections=detections,
+        iou_threshold=iou_threshold,
+    )
+    shapes = shapes_from_detections(
+        detections=detections,
+        shape_type=shape_type,
+        image_size=image_size,
+        polygon_detail=polygon_detail,
+    )
+    assign_available_group_ids(
+        shapes=shapes,
+        existing_shapes=existing_shapes,
+    )
+    return shapes
 
 
 def get_bboxes_from_texts(

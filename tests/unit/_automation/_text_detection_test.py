@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+import json
+from contextlib import nullcontext
+
 import numpy as np
 import osam
 import pytest
 from numpy.typing import NDArray
 
+from labelme._automation._text_detection import MaskOutputUnavailableError
 from labelme._automation._text_detection import get_bboxes_from_texts
 from labelme._automation._text_detection import nms_bboxes
+from labelme._automation._text_detection import propose_shapes_from_texts
+from labelme._shape import Shape
 
 
 class _FakeOsamSession:
@@ -172,3 +178,83 @@ def test_nms_bboxes_scatters_scores_into_one_hot_class_matrix(
     )
     np.testing.assert_array_equal(indices, np.array([0], dtype=np.int64))
     assert len(out_boxes) == 1
+
+
+def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> None:
+    masks = [np.ones((4, 4), dtype=bool) for _ in range(3)]
+    masks[1][0, 0] = False
+    response = osam.types.GenerateResponse(
+        model="stub",
+        annotations=[
+            osam.types.Annotation(
+                text="cat",
+                score=score,
+                bounding_box=osam.types.BoundingBox(xmin=x, ymin=0, xmax=x + 3, ymax=3),
+                mask=mask,
+            )
+            for x, score, mask in zip([0, 10, 20], [0.2, 0.9, 0.8], masks)
+        ],
+    )
+    existing = Shape(
+        label="cat",
+        shape_type="mask",
+        points=np.array([[20, 0], [23, 3]]),
+        mask=masks[2],
+        group_id=7,
+    )
+
+    shapes = propose_shapes_from_texts(
+        session=_FakeOsamSession(response=response),  # ty: ignore[invalid-argument-type]
+        image=np.zeros((30, 30, 3), dtype=np.uint8),
+        image_id="img",
+        texts=["cat"],
+        shape_type="mask",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(30, 30),
+        polygon_detail=80,
+    )
+
+    (shape,) = shapes
+    assert shape.label == "cat"
+    assert shape.shape_type == "mask"
+    np.testing.assert_array_equal(shape.points, [[10, 0], [13, 3]])
+    np.testing.assert_array_equal(shape.mask, masks[1])
+    assert shape.description is not None
+    assert json.loads(shape.description)["score"] == pytest.approx(0.9)
+    assert existing.group_id == 7
+    np.testing.assert_array_equal(existing.points, [[20, 0], [23, 3]])
+
+
+@pytest.mark.parametrize("has_detections", [False, True])
+def test_text_proposal_requires_masks_only_for_nonempty_mask_output(
+    *, has_detections: bool
+) -> None:
+    session = _FakeOsamSession(
+        response=osam.types.GenerateResponse(
+            model="stub",
+            annotations=[_make_annotation(with_mask=False)] if has_detections else [],
+        )
+    )
+    expectation = (
+        pytest.raises(MaskOutputUnavailableError, match="requires model masks")
+        if has_detections
+        else nullcontext()
+    )
+    with expectation:
+        assert (
+            propose_shapes_from_texts(
+                session=session,  # ty: ignore[invalid-argument-type]
+                image=np.zeros((4, 4, 3), dtype=np.uint8),
+                image_id="img",
+                texts=["cat"],
+                shape_type="mask",
+                existing_shapes=[],
+                iou_threshold=0.5,
+                score_threshold=0.5,
+                image_size=(4, 4),
+                polygon_detail=80,
+            )
+            == []
+        )

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import enum
 import functools
-import json
 import math
 import os
 import platform
@@ -1380,22 +1379,23 @@ class MainWindow(QtWidgets.QMainWindow):
             self._text_osam_session = _automation.OsamSession(model_name=model_name)
 
         try:
-            boxes, scores, labels, masks = _automation.get_bboxes_from_texts(
+            shapes = _automation.propose_shapes_from_texts(
                 session=self._text_osam_session,
                 image=_utils.img_qt_to_rgb_arr(self._image),
                 image_id=str(hash(self._image_path)),
                 texts=texts,
+                shape_type=shape_type,
+                existing_shapes=self._canvas_widgets.canvas.shapes,
+                iou_threshold=self._ai_text.get_iou_threshold(),
+                score_threshold=self._ai_text.get_score_threshold(),
+                image_size=(
+                    None
+                    if self._config["canvas"]["allow_out_of_bounds_points"]
+                    else (self._image.width(), self._image.height())
+                ),
+                polygon_detail=self._config["mask_polygonization"]["detail"],
             )
-        except Exception as e:
-            logger.opt(exception=e).error("AI text inference failed")
-            self._on_inference_failed(f"{type(e).__name__}: {e}")
-            return
-
-        if (
-            masks is None
-            and len(boxes) > 0
-            and shape_type in _automation.MASK_REQUIRED_SHAPE_TYPES
-        ):
+        except _automation.MaskOutputUnavailableError:
             QtWidgets.QMessageBox.warning(
                 self,
                 self.tr("Mask Output Unavailable"),
@@ -1408,73 +1408,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 % (self._ai_text.get_model_display_name(), shape_type),
             )
             return
-
-        SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
-        for shape in self._canvas_widgets.canvas.shapes:
-            if shape.shape_type != shape_type or shape.label not in texts:
-                continue
-            shape_bbox = _automation.shape_to_xyxy_bbox(shape=shape)
-            if shape_bbox is None:
-                continue
-            boxes = np.r_[boxes, [shape_bbox]]
-            scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
-            labels = np.r_[labels, [texts.index(shape.label)]]
-
-        boxes, scores, labels, indices = _automation.nms_bboxes(
-            boxes=boxes,
-            scores=scores,
-            labels=labels,
-            iou_threshold=self._ai_text.get_iou_threshold(),
-            score_threshold=self._ai_text.get_score_threshold(),
-            max_num_detections=100,
-        )
-
-        is_new = scores != SCORE_FOR_EXISTING_SHAPE
-        boxes = boxes[is_new]
-        scores = scores[is_new]
-        labels = labels[is_new]
-        indices = indices[is_new]
-
-        if masks is None:
-            masks = [None] * len(boxes)
-        else:
-            masks = [masks[i] for i in indices]
-        del indices
-
-        detections: list[_automation.Detection] = []
-        for box, score, label, mask in zip(boxes, scores, labels, masks):
-            text: str = texts[label]
-            detections.append(
-                _automation.Detection(
-                    bbox=(
-                        float(box[0]),
-                        float(box[1]),
-                        float(box[2]),
-                        float(box[3]),
-                    ),
-                    mask=mask,
-                    label=text,
-                    description=json.dumps(dict(score=score.item(), text=text)),
-                )
-            )
-        detections = _automation.suppress_detections_greedy(
-            detections=detections,
-            iou_threshold=self._ai_text.get_iou_threshold(),
-        )
-        shapes: list[Shape] = _automation.shapes_from_detections(
-            detections=detections,
-            shape_type=shape_type,
-            image_size=(
-                None
-                if self._config["canvas"]["allow_out_of_bounds_points"]
-                else (self._image.width(), self._image.height())
-            ),
-            polygon_detail=self._config["mask_polygonization"]["detail"],
-        )
-        _automation.assign_available_group_ids(
-            shapes=shapes,
-            existing_shapes=self._canvas_widgets.canvas.shapes,
-        )
+        except Exception as e:
+            logger.opt(exception=e).error("AI text inference failed")
+            self._on_inference_failed(f"{type(e).__name__}: {e}")
+            return
 
         self._load_shapes(shapes, replace=False)
         self.mark_dirty()
