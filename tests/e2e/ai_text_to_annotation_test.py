@@ -332,24 +332,36 @@ def test_score_threshold_filters_detections(
 
 
 @pytest.mark.gui
-def test_text_prompt_inference_error_surfaces_without_crashing(
+@pytest.mark.parametrize("failure_stage", ["inference", "postprocessing"])
+def test_text_prompt_error_preserves_annotation(
     *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
     pause: bool,
+    failure_stage: str,
 ) -> None:
-    # A model error during text-to-annotation inference must not crash the app:
-    # it surfaces as a non-fatal status message and the window stays alive.
-    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    win = main_win(file_or_dir=str(data_path / "annotated/2011_000003.jpg"))
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     canvas = win._canvas_widgets.canvas
+    previous_shapes = canvas.shapes[:]
+    assert previous_shapes
 
     def _raise(**_: object) -> osam.types.GenerateResponse:
         raise RuntimeError("boom")
 
-    _install_mock_session(win=win, monkeypatch=monkeypatch, response_fn=_raise)
+    _install_mock_session(
+        win=win,
+        monkeypatch=monkeypatch,
+        response_fn=(
+            _raise
+            if failure_stage == "inference"
+            else functools.partial(_make_person_response, with_masks=False)
+        ),
+    )
+    if failure_stage == "postprocessing":
+        monkeypatch.setattr("labelme._automation._text_detection.nms_bboxes", _raise)
     _run_text_prompt(
         win=win,
         qtbot=qtbot,
@@ -359,7 +371,7 @@ def test_text_prompt_inference_error_surfaces_without_crashing(
     )
 
     assert win.isVisible()
-    assert canvas.shapes == []
+    assert canvas.shapes == previous_shapes
     assert "AI inference failed" in win.statusBar().currentMessage()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
