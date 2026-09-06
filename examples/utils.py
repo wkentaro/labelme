@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""Keep these helpers independent so example users can copy and adapt them on
+their own schedule, separate from the application maintainers. Dependencies
+stay limited to the standard library, NumPy, and Pillow to avoid requiring
+the application or its GUI stack.
+"""
+
 from __future__ import annotations
 
 import base64
@@ -24,7 +30,7 @@ class LabeledImage:
     shapes: list[dict[str, Any]]
 
 
-def _image_bytes_from_record(record: dict[str, Any], /, *, json_dir: Path) -> bytes:
+def _read_image_bytes(record: dict[str, Any], /, *, json_dir: Path) -> bytes:
     embedded = record.get("imageData")
     if embedded is not None:
         return base64.b64decode(embedded)
@@ -34,7 +40,7 @@ def _image_bytes_from_record(record: dict[str, Any], /, *, json_dir: Path) -> by
     return (json_dir / relative_path).read_bytes()
 
 
-def _shape_from_record(shape: dict[str, Any], /) -> dict[str, Any]:
+def _build_shape(shape: dict[str, Any], /) -> dict[str, Any]:
     raw_mask = shape.get("mask")
     return {
         "label": shape["label"],
@@ -50,8 +56,8 @@ def load_label_file(filename: str, /) -> LabeledImage:
     json_path = Path(filename)
     record = json.loads(json_path.read_text(encoding="utf-8"))
     return LabeledImage(
-        image_data=_image_bytes_from_record(record, json_dir=json_path.parent),
-        shapes=[_shape_from_record(shape) for shape in record["shapes"]],
+        image_data=_read_image_bytes(record, json_dir=json_path.parent),
+        shapes=[_build_shape(shape) for shape in record["shapes"]],
     )
 
 

@@ -14,14 +14,21 @@ from typing import Final
 import imgviz
 import numpy as np
 
+try:
+    import pycocotools.mask  # type: ignore
+except ImportError:
+    print("Please install pycocotools:\n\n    pip install pycocotools\n")
+    sys.exit(1)
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
-def _polygon_vertex_count_for_circle(radius: float, /) -> int:
+def _count_polygon_vertices_for_circle(radius: float, /) -> int:
     CIRCLE_APPROXIMATION_TOLERANCE_PX: Final = 1.0
     CIRCLE_MIN_VERTEX_COUNT: Final = 12
 
+    # Doubling reduces the chord-to-arc deviation until it is within one pixel.
     vertex_count = CIRCLE_MIN_VERTEX_COUNT
     while radius * (1.0 - math.cos(math.pi / vertex_count)) > (
         CIRCLE_APPROXIMATION_TOLERANCE_PX
@@ -38,7 +45,7 @@ def _circle_to_polygon_segmentation(
     if radius == 0.0:
         raise ValueError("Degenerate circle: center and edge are the same point.")
 
-    vertex_count = _polygon_vertex_count_for_circle(radius)
+    vertex_count = _count_polygon_vertices_for_circle(radius)
     angles = np.linspace(0.0, 2.0 * math.pi, num=vertex_count, endpoint=False)
     vertices = np.column_stack(
         (cx + radius * np.cos(angles), cy + radius * np.sin(angles))
@@ -47,14 +54,6 @@ def _circle_to_polygon_segmentation(
 
 
 def main() -> None:
-    # Imported lazily so importing this module for its polygon geometry (as
-    # the unit tests do) never requires the optional pycocotools dependency.
-    try:
-        import pycocotools.mask  # type: ignore  # noqa: PLC0415
-    except ImportError:
-        print("Please install pycocotools:\n\n    pip install pycocotools\n")
-        sys.exit(1)
-
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )

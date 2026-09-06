@@ -1,15 +1,14 @@
 from __future__ import annotations
 
+import importlib
 import math
 from typing import Final
 
 import numpy as np
 import pytest
 
-# Importing the module must not require pycocotools: that dependency is only
-# pulled in inside main(), specifically so geometry helpers like this one
-# stay testable without it installed.
-from examples.instance_segmentation import labelme2coco
+pytest.importorskip("pycocotools.mask")
+labelme2coco = importlib.import_module("examples.instance_segmentation.labelme2coco")
 
 _CIRCLE_MIN_VERTEX_COUNT: Final = 12
 
