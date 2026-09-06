@@ -42,7 +42,7 @@ jobs:
         shell: bash
         if: matrix.os != 'windows-latest'
         run: |
-          uv pip install cython && uv pip install pycocotools
+          uv pip install cython pycocotools
       # Pixel snapshots skip themselves off Linux (tests/e2e/conftest.py), so
       # one plain invocation runs the right set everywhere.
       - name: Test
