@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from typing import Final
 
+import numpy as np
 import PIL.Image
 import pytest
 
@@ -41,7 +42,7 @@ def _write_annotation(directory: Path, /) -> None:
 def _run(
     *extra_args: str, input_dir: Path, output_dir: Path, labels_file: Path
 ) -> None:
-    script = _REPO_ROOT / "examples" / "semantic_segmentation" / "labelme2voc.py"
+    script = _REPO_ROOT / "examples" / "instance_segmentation" / "labelme2voc.py"
     subprocess.run(
         [
             sys.executable,
@@ -72,22 +73,66 @@ def _labels_file(*, tmp_path: Path) -> Path:
     return path
 
 
-def test_labelme2voc_default_writes_visualization_outputs(
-    *, annotated_dir: Path, labels_file: Path, tmp_path: Path
+@pytest.mark.parametrize("noobject", [False, True])
+@pytest.mark.parametrize("nonpy", [False, True])
+@pytest.mark.parametrize("noviz", [False, True])
+def test_labelme2voc_writes_only_requested_outputs(
+    *,
+    annotated_dir: Path,
+    labels_file: Path,
+    tmp_path: Path,
+    noobject: bool,
+    nonpy: bool,
+    noviz: bool,
 ) -> None:
     output_dir = tmp_path / "dataset"
-    _run(input_dir=annotated_dir, output_dir=output_dir, labels_file=labels_file)
+    flags = []
+    if noobject:
+        flags.append("--noobject")
+    if nonpy:
+        flags.append("--nonpy")
+    if noviz:
+        flags.append("--noviz")
+    _run(
+        *flags, input_dir=annotated_dir, output_dir=output_dir, labels_file=labels_file
+    )
 
-    assert (output_dir / "SegmentationClass" / "0001.png").is_file()
-    assert (output_dir / "SegmentationClassNpy" / "0001.npy").is_file()
-    assert (output_dir / "SegmentationClassVisualization" / "0001.jpg").is_file()
-    assert (output_dir / "SegmentationObject" / "0001.png").is_file()
-    assert (output_dir / "SegmentationObjectVisualization" / "0001.jpg").is_file()
+    expected = {"class_names.txt", "JPEGImages/0001.jpg", "SegmentationClass/0001.png"}
+    if not nonpy:
+        expected.add("SegmentationClassNpy/0001.npy")
+    if not noviz:
+        expected.add("SegmentationClassVisualization/0001.jpg")
+    if not noobject:
+        expected.add("SegmentationObject/0001.png")
+        if not nonpy:
+            expected.add("SegmentationObjectNpy/0001.npy")
+        if not noviz:
+            expected.add("SegmentationObjectVisualization/0001.jpg")
+    assert {
+        path.relative_to(output_dir).as_posix()
+        for path in output_dir.rglob("*")
+        if path.is_file()
+    } == expected
+    assert {path.name for path in output_dir.iterdir() if path.is_dir()} == {
+        path.split("/")[0] for path in expected if "/" in path
+    }
 
 
-def test_labelme2voc_noviz_omits_visualization_outputs_only(
+def test_labelme2voc_merges_grouped_shapes_and_keeps_ungrouped_shapes_separate(
     *, annotated_dir: Path, labels_file: Path, tmp_path: Path
 ) -> None:
+    annotation = annotated_dir / "0001.json"
+    record = json.loads(annotation.read_text())
+    record["shapes"] = [
+        dict(label="cat", points=points, group_id=group_id, shape_type="rectangle")
+        for points, group_id in [
+            ([[1, 1], [2, 2]], 7),
+            ([[5, 5], [6, 6]], 7),
+            ([[5, 1], [6, 2]], None),
+            ([[1, 5], [2, 6]], None),
+        ]
+    ]
+    annotation.write_text(json.dumps(record))
     output_dir = tmp_path / "dataset"
     _run(
         "--noviz",
@@ -96,9 +141,16 @@ def test_labelme2voc_noviz_omits_visualization_outputs_only(
         labels_file=labels_file,
     )
 
-    assert not (output_dir / "SegmentationClassVisualization").exists()
-    assert not (output_dir / "SegmentationObjectVisualization").exists()
-    # The visualization flag must not affect the other output groups.
-    assert (output_dir / "SegmentationClass" / "0001.png").is_file()
-    assert (output_dir / "SegmentationClassNpy" / "0001.npy").is_file()
-    assert (output_dir / "SegmentationObject" / "0001.png").is_file()
+    expected = np.zeros((8, 8), dtype=np.uint8)
+    expected[1:3, 1:3] = 1
+    expected[5:7, 5:7] = 1
+    expected[1:3, 5:7] = 2
+    expected[5:7, 1:3] = 3
+    np.testing.assert_array_equal(
+        np.load(output_dir / "SegmentationObjectNpy/0001.npy"), expected
+    )
+    with PIL.Image.open(output_dir / "SegmentationObject/0001.png") as image:
+        np.testing.assert_array_equal(np.asarray(image), expected)
+    np.testing.assert_array_equal(
+        np.load(output_dir / "SegmentationClassNpy/0001.npy"), expected > 0
+    )
