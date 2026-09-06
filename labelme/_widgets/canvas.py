@@ -2258,7 +2258,14 @@ def _compute_shapes_bounds(*, shapes: list[Shape]) -> QRectF:
     assert shapes
     bounds = _shape_bounds(shape=shapes[0])
     for shape in shapes[1:]:
-        bounds = bounds.united(_shape_bounds(shape=shape))
+        rect = _shape_bounds(shape=shape)
+        # Qt's rectangle union discards null rects, excluding point shapes.
+        bounds.setCoords(
+            min(bounds.left(), rect.left()),
+            min(bounds.top(), rect.top()),
+            max(bounds.right(), rect.right()),
+            max(bounds.bottom(), rect.bottom()),
+        )
     return bounds
 
 

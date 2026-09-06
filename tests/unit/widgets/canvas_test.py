@@ -21,6 +21,7 @@ from labelme._shape import ShapeType
 from labelme._widgets.canvas import _CREATE_MODE_TO_SHAPE_TYPE
 from labelme._widgets.canvas import Canvas
 from labelme._widgets.canvas import _compute_intersection_edges_image
+from labelme._widgets.canvas import _compute_shapes_bounds
 from labelme._widgets.canvas import _draft_to_shape
 from labelme._widgets.canvas import _DraftShape
 from labelme._widgets.canvas import _is_degenerate_draft
@@ -226,6 +227,49 @@ def test_reproject_oriented_rectangle_skips_clip_when_out_of_bounds_allowed() ->
     assert new_corners[0].y() + new_corners[2].y() == pytest.approx(
         new_corners[1].y() + new_corners[3].y()
     )
+
+
+@pytest.mark.parametrize("point_first", [True, False])
+@pytest.mark.parametrize(
+    ("position", "expected"),
+    [
+        ((10, 10), QtCore.QRectF(10, 10, 60, 60)),
+        ((90, 90), QtCore.QRectF(50, 50, 40, 40)),
+    ],
+)
+def test_compute_shapes_bounds_includes_point(
+    *, point_first: bool, position: tuple[int, int], expected: QtCore.QRectF
+) -> None:
+    point = Shape(shape_type="point", points=np.array([position], dtype=np.float64))
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(50, 50), (70, 70)], dtype=np.float64),
+        closed=True,
+    )
+    shapes = [point, rectangle] if point_first else [rectangle, point]
+
+    assert _compute_shapes_bounds(shapes=shapes) == expected
+
+
+@pytest.mark.gui
+def test_drag_shapes_keeps_point_in_group_inside_image(*, canvas: Canvas) -> None:
+    point = Shape(shape_type="point", points=np.array([(10, 10)], dtype=np.float64))
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(50, 20), (70, 40)], dtype=np.float64),
+        closed=True,
+    )
+    shapes = [point, rectangle]
+    canvas._prev_point = QPointF(60, 30)
+    canvas._record_drag_anchor(shapes=shapes, click=canvas._prev_point)
+
+    moved = canvas._drag_shapes(
+        shapes=shapes, cursor=QPointF(0, 30), constrain_cursor=True
+    )
+
+    assert moved is True
+    np.testing.assert_allclose(point.points, [(0, 10)])
+    np.testing.assert_allclose(rectangle.points, [(40, 20), (60, 40)])
 
 
 @pytest.mark.gui
