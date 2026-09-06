@@ -204,6 +204,8 @@ class Canvas(QtWidgets.QWidget):
     _ai_assist_session: _automation.AiAssistSession
     _ai_suppress_existing_shape_matches: bool
     _ai_existing_shape_highlights: list[Shape]
+    _ai_points_preview: list[Shape]
+    _ai_points_preview_key: tuple[object, ...] | None
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -232,6 +234,9 @@ class Canvas(QtWidgets.QWidget):
         )
         super().__init__(*args, **kwargs)
 
+        self._ai_preview_timer = QtCore.QTimer(self)
+        self._ai_preview_timer.setSingleShot(True)
+        self._ai_preview_timer.timeout.connect(self._refresh_ai_points_preview)
         self._cursor = CursorRole.DEFAULT
         self.reset_state()
 
@@ -277,6 +282,7 @@ class Canvas(QtWidgets.QWidget):
 
     def set_allow_out_of_bounds_points(self, *, value: bool) -> None:
         self._allow_out_of_bounds_points = value
+        self.update()
 
     def pan_view(self, *, step: QPointF, constrain_to_center: bool = True) -> None:
         viewport = self._scroll_viewport()
@@ -1707,12 +1713,15 @@ class Canvas(QtWidgets.QWidget):
         render_shape(painter=painter, shape=shape, context=context)
 
     def _build_preview_shapes(self) -> list[Shape]:
+        if self.create_mode == "ai_points_to_shape":
+            # Defer inference until painting ends; unchanged inputs stop the loop.
+            self._ai_preview_timer.start(0)
         if self._current is None:
             return []
         if self.create_mode == "polygon":
             return [self._build_polygon_preview(current=self._current)]
         if self.create_mode == "ai_points_to_shape":
-            return self._build_ai_points_preview(current=self._current)
+            return self._ai_points_preview
         return []
 
     def _build_polygon_preview(self, *, current: _DraftShape) -> Shape:
@@ -1724,9 +1733,31 @@ class Canvas(QtWidgets.QWidget):
             preview = preview.add_point(self._line.points[1], autoclose=True)
         return _draft_to_shape(preview)
 
-    def _build_ai_points_preview(self, *, current: _DraftShape) -> list[Shape]:
+    def _refresh_ai_points_preview(self) -> None:
+        current = self._current
+        if current is None or self.create_mode != "ai_points_to_shape":
+            self._ai_points_preview = []
+            self._ai_points_preview_key = None
+            return
+        key = (
+            current,
+            self._line,
+            self._ai_assist_session.model_name,
+            self._ai_assist_session.output_format,
+            self._ai_assist_session.polygon_detail,
+            self._ai_suppress_existing_shape_matches,
+            self._allow_out_of_bounds_points,
+            self._pixmap_hash,
+            tuple(self.shapes),
+        )
+        if key == self._ai_points_preview_key:
+            return
+        self._ai_points_preview_key = key
         if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
-            return []
+            self._ai_points_preview = []
+            self._set_ai_existing_shape_highlights(shapes=[])
+            self.update()
+            return
         preview = current.add_point(
             self._line.points[1],
             label=self._line.point_labels[1],
@@ -1738,16 +1769,18 @@ class Canvas(QtWidgets.QWidget):
                 point_labels=preview.point_labels,
             )
         except Exception as e:
-            # This runs inside paintEvent on every repaint, so a persistently
-            # failing model would report on every frame. Report once; a later
-            # success re-arms the report.
+            self._ai_points_preview = []
+            self._set_ai_existing_shape_highlights(shapes=[])
+            # Repeated failed prompts report once; a success re-arms the report.
             if not self._ai_inference_failed:
                 self._report_inference_failure(error=e)
-            self._set_ai_existing_shape_highlights(shapes=[])
-            return []
-        self._ai_inference_failed = False
-        self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
-        return proposal.new_shapes
+        else:
+            self._ai_inference_failed = False
+            self._ai_points_preview = proposal.new_shapes
+            self._set_ai_existing_shape_highlights(
+                shapes=proposal.matching_existing_shapes
+            )
+        self.update()
 
     def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
         origin = self._compute_image_origin_offset(area=None)
@@ -2083,6 +2116,9 @@ class Canvas(QtWidgets.QWidget):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def reset_state(self) -> None:
+        self._ai_preview_timer.stop()
+        self._ai_points_preview = []
+        self._ai_points_preview_key = None
         self._release_cursor()
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
