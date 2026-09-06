@@ -7,10 +7,9 @@ reads whatever format its data lives in. This module is the worked reference for
 doing that. It depends only on the standard library, numpy, and PIL, never on
 ``labelme``, so it keeps working regardless of how labelme's internals evolve.
 
-It deliberately re-implements the rasterization helpers (``shape_to_mask``,
-``shapes_to_label``, ``img_data_to_arr``) rather than importing them: this copy
-and labelme's internal copy have different owners and lifecycles. Copy this file
-next to your own scripts and adapt it.
+It deliberately re-implements the rasterization helpers rather than importing
+them: this copy and labelme's internal copy have different owners and
+lifecycles. Copy this file next to your own scripts and adapt it.
 """
 
 from __future__ import annotations
@@ -39,12 +38,14 @@ class LabeledImage:
 
 
 def load_label_file(filename: str, /) -> LabeledImage:
-    with open(filename, encoding="utf-8") as f:
-        data = json.load(f)
+    json_path = Path(filename)
+    data = json.loads(json_path.read_text(encoding="utf-8"))
 
     if data.get("imageData") is None:
+        # imagePath may carry Windows-style separators even when read on a
+        # different OS than the one that produced the annotation.
         image_path = PureWindowsPath(data["imagePath"]).as_posix()
-        image_data = (Path(filename).parent / image_path).read_bytes()
+        image_data = (json_path.parent / image_path).read_bytes()
     else:
         image_data = base64.b64decode(data["imageData"])
 

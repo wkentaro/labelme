@@ -24,33 +24,33 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
+def _count_polygon_vertices_for_circle(radius: float, /) -> int:
+    CIRCLE_APPROXIMATION_TOLERANCE_PX: Final = 1.0
+    CIRCLE_MIN_VERTEX_COUNT: Final = 12
+
+    # Doubling reduces the chord-to-arc deviation until it is within one pixel.
+    vertex_count = CIRCLE_MIN_VERTEX_COUNT
+    while radius * (1.0 - math.cos(math.pi / vertex_count)) > (
+        CIRCLE_APPROXIMATION_TOLERANCE_PX
+    ):
+        vertex_count *= 2
+    return vertex_count
+
+
 def _circle_to_polygon_segmentation(
     *, center: tuple[float, float], edge: tuple[float, float]
 ) -> list[float]:
-    CHORD_TOLERANCE_PX: Final = 1.0
-    MIN_VERTICES: Final = 12
-
     cx, cy = center
-    ex, ey = edge
-    radius = math.hypot(ex - cx, ey - cy)
+    radius = math.dist(center, edge)
     if radius == 0.0:
         raise ValueError("Degenerate circle: center and edge are the same point.")
 
-    # Pick a vertex count so the chord-to-arc deviation stays within 1 pixel:
-    # solving r * (1 - cos(pi / n)) <= tol for n yields n >= pi / acos(1 - tol/r).
-    # When r <= tol the formula domain breaks, so clamp to the minimum.
-    if radius <= CHORD_TOLERANCE_PX:
-        n_vertices = MIN_VERTICES
-    else:
-        n_vertices = max(
-            MIN_VERTICES,
-            int(math.pi / math.acos(1.0 - CHORD_TOLERANCE_PX / radius)),
-        )
-    angles = (2.0 * math.pi / n_vertices) * np.arange(n_vertices)
-    coords = np.empty((n_vertices, 2), dtype=float)
-    coords[:, 0] = cx + radius * np.cos(angles)
-    coords[:, 1] = cy + radius * np.sin(angles)
-    return coords.flatten().tolist()
+    vertex_count = _count_polygon_vertices_for_circle(radius)
+    angles = np.linspace(0.0, 2.0 * math.pi, num=vertex_count, endpoint=False)
+    vertices = np.column_stack(
+        (cx + radius * np.cos(angles), cy + radius * np.sin(angles))
+    )
+    return vertices.ravel().tolist()
 
 
 def main() -> None:
