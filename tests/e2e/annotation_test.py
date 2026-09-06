@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Final
+from unittest.mock import Mock
 
 import pytest
 from PySide6.QtCore import QPoint
@@ -47,6 +48,40 @@ def test_labeling_ai_lands_preserves_generated_group(
 
     assert [shape.label for shape in shapes] == ["land", "land"]
     assert [shape.group_id for shape in shapes] == [1, 1]
+
+    win.mark_clean()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_empty_predefined_label_still_opens_popup(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    win = main_win(config_overrides={"auto_save": False, "display_label_popup": False})
+    canvas = win._canvas_widgets.canvas
+    shape = Shape()
+    canvas.load_shapes(shapes=[shape])
+    canvas.backup_shapes()
+    empty_item = Mock()
+    empty_item.data.return_value = ""
+    monkeypatch.setattr(
+        win._docks.unique_label_list, "selectedItems", lambda: [empty_item]
+    )
+    popup = Mock(
+        return_value=LabelDialogEntry(
+            label="valid", flags={}, group_id=None, description=""
+        )
+    )
+    monkeypatch.setattr(win._label_dialog, "popup", popup)
+
+    win._on_new_shape()
+
+    popup.assert_called_once_with(text="")
+    assert shape.label == "valid"
 
     win.mark_clean()
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

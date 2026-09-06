@@ -30,6 +30,16 @@ from ._utils.shape import ShapeDict
 PIL.Image.MAX_IMAGE_PIXELS = None
 
 _SINGLE_CHANNEL_NDIM: Final = 2
+_SERIALIZED_SHAPE_KEYS: Final = set(ShapeDict.__required_keys__) - {"other_data"}
+
+
+def _read_optional_text(*, record: dict, key: str) -> str:
+    value = record.get(key)
+    if value is None:
+        return ""
+    if not isinstance(value, str):
+        raise TypeError(f"{key} must be str: {value}")
+    return value
 
 
 def _validate_flags(*, flags: object) -> dict[str, bool]:
@@ -94,15 +104,6 @@ def _validate_shape_semantics(
 
 def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
     POINT_COORDINATE_COUNT: Final = 2
-    SHAPE_KEYS: Final[set[str]] = {
-        "label",
-        "points",
-        "group_id",
-        "shape_type",
-        "flags",
-        "description",
-        "mask",
-    }
 
     if "label" not in shape_json_obj:
         raise ValueError(f"label is required: {shape_json_obj}")
@@ -135,11 +136,7 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
 
     flags = _validate_flags(flags=shape_json_obj.get("flags"))
 
-    description: str = ""
-    if shape_json_obj.get("description") is not None:
-        if not isinstance(shape_json_obj["description"], str):
-            raise TypeError(f"description must be str: {shape_json_obj['description']}")
-        description = shape_json_obj["description"]
+    description = _read_optional_text(record=shape_json_obj, key="description")
 
     group_id: int | None = None
     if shape_json_obj.get("group_id") is not None:
@@ -162,7 +159,11 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
 
     _validate_shape_semantics(shape_type=shape_type, points=points, mask=mask)
 
-    other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
+    other_data = {
+        key: value
+        for key, value in shape_json_obj.items()
+        if key not in _SERIALIZED_SHAPE_KEYS
+    }
 
     loaded: ShapeDict = ShapeDict(
         label=label,
@@ -174,25 +175,25 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         mask=mask,
         other_data=other_data,
     )
-    if set(loaded.keys()) != SHAPE_KEYS | {"other_data"}:
-        raise RuntimeError(
-            f"unexpected keys: {set(loaded.keys())} != {SHAPE_KEYS | {'other_data'}}"
-        )
+    expected_keys = _SERIALIZED_SHAPE_KEYS | {"other_data"}
+    if set(loaded) != expected_keys:
+        raise RuntimeError(f"unexpected keys: {set(loaded)} != {expected_keys}")
     return loaded
 
 
 def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
-    json_obj: dict[str, Any] = dict(shape["other_data"])
+    json_obj = dict(shape["other_data"])
     json_obj.update(
         label=shape["label"],
         points=[list(point) for point in shape["points"]],
         group_id=shape["group_id"],
-        description=shape["description"],
+        description=shape["description"] or "",
         shape_type=shape["shape_type"],
         flags=shape["flags"],
-        mask=None
-        if shape["mask"] is None
-        else _utils.img_arr_to_b64(shape["mask"].astype(np.uint8)),
+    )
+    mask = shape["mask"]
+    json_obj["mask"] = (
+        None if mask is None else _utils.img_arr_to_b64(mask.astype(np.uint8))
     )
     return json_obj
 

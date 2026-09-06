@@ -90,20 +90,6 @@ def test_project_point_on_line_zero_length_returns_point() -> None:
 
 
 @pytest.mark.usefixtures("qtbot")
-def test_new_icon_returns_qicon() -> None:
-    icon = new_icon("icon-256")
-    assert isinstance(icon, QtGui.QIcon)
-    assert not icon.isNull()
-
-
-@pytest.mark.usefixtures("qtbot")
-def test_new_icon_with_explicit_png_suffix() -> None:
-    icon = new_icon("icon-256.png")
-    assert isinstance(icon, QtGui.QIcon)
-    assert not icon.isNull()
-
-
-@pytest.mark.usefixtures("qtbot")
 def test_new_icon_with_path_that_includes_subdir() -> None:
     icon = new_icon("phosphor/info.svg")
     assert isinstance(icon, QtGui.QIcon)
@@ -306,7 +292,7 @@ def test_new_action_with_icon_sets_icon_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     # Use an icon file that actually exists so Qt loads it as non-null.
-    action = new_action(parent, text="Save File", icon="ai-box.svg")
+    action = new_action(parent, text="Save File", icon="phosphor/sparkle.svg")
     # multi-word labels are presented so words are not shown on a single unbroken line
     icon_text = action.iconText()
     assert icon_text != "Save File"  # must not be the original single-line text

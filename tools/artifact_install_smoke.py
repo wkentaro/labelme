@@ -12,6 +12,7 @@ from PySide6 import QtWidgets
 import labelme
 from labelme import __appname__
 from labelme import _locale
+from labelme.__main__ import _set_application_icon
 from labelme._app import MainWindow
 
 
@@ -24,24 +25,23 @@ def _check_source_isolation(*, source_root: Path, package_path: Path) -> None:
 
 
 def _check_packaged_resources() -> None:
-    # Packaging mistakes drop whole directories, so one file per resource kind
-    # proves the artifact carried it. Both are loaded rather than stat'ed: a
-    # truncated icon or catalog exists yet fails to load, and Qt reports that
-    # by returning null or False, never by raising. QImage rather than QPixmap
-    # so this runs before there is a QApplication.
-    icon_path = Path(labelme.__file__).parent / "icons" / "icon-256.png"
+    # Loading the image catches truncated resources that a file existence check
+    # would accept. QImage works before there is a QApplication.
+    icon_path = Path(labelme.__file__).parent / "icons" / "phosphor" / "info.svg"
     if QtGui.QImage(str(icon_path)).isNull():
         raise RuntimeError(f"packaged icon failed to load: {icon_path}")
 
     locales = _locale.available_translation_locales()
     if not locales:
         raise RuntimeError("packaged artifact ships no translation catalogs")
-    if not QtCore.QTranslator().load(locales[0], str(_locale.TRANSLATE_DIR)):
-        raise RuntimeError(f"packaged {locales[0]} translation failed to load")
+    for locale in locales:
+        if not QtCore.QTranslator().load(locale, str(_locale.TRANSLATE_DIR)):
+            raise RuntimeError(f"packaged {locale} translation failed to load")
 
 
 def _check_application_starts() -> None:
     app = QtWidgets.QApplication([])
+    _set_application_icon(app)
     try:
         # Constructing the window loads the default config, icons, and dock layout
         # from the installed package, which is the startup coverage this smoke
@@ -59,6 +59,8 @@ def _check_application_starts() -> None:
                 f"the application window title is {window.windowTitle()!r}, "
                 f"expected {__appname__!r}"
             )
+        if window.windowIcon().isNull():
+            raise RuntimeError("the application window has no icon")
         if not window.findChildren(QtGui.QAction):
             raise RuntimeError("the application window has no wired-up actions")
         window.close()

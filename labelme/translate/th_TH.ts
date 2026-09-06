@@ -298,198 +298,28 @@
         <translation>ออก (&amp;Q)</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>ปิดแอป</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>เปิด (&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>เปิดรูปหรือไฟล์เลเบล</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>เปิดโฟลเดอร์</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>รูปถัดไป (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>เปิดรูปถัดไป (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>รูปก่อนหน้า (&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>เปิดรูปก่อนหน้า (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>บันทึก (&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>บันทึกเลเบลลงไฟล์</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>บันทึกเป็น (&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>ลบไฟล์ (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>ลบไฟล์เลเบลปัจจุบัน</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>เปลี่ยนโฟลเดอร์ผลลัพธ์ (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>เปลี่ยนโฟลเดอร์สำหรับโหลด/บันทึกแอนโนเทชัน</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>บันทึกอัตโนมัติ (&amp;A)</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>บันทึกอัตโนมัติ</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>บันทึกพร้อมข้อมูลรูป</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>บันทึกข้อมูลรูปในไฟล์เลเบล</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>ปิด (&amp;C)</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>ปิดไฟล์ปัจจุบัน</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>คงแอนโนเทชันก่อนหน้า</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>เริ่มวาดหลายเหลี่ยม</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>เริ่มวาดสี่เหลี่ยม</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>เริ่มวาดวงกลม</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>เริ่มวาดเส้น</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>เริ่มวาดจุด</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>แก้ไขรูปร่าง</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>ย้ายและแก้ไขรูปร่างที่เลือก</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>ลบรูปร่าง</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>ลบรูปร่างที่เลือก</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>ทำซ้ำรูปร่าง</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>สร้างสำเนารูปร่างที่เลือก</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>ยกเลิกจุดล่าสุด</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>ลบจุดที่เลือก</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>ลบจุดที่เลือกออกจากหลายเหลี่ยม</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>ยกเลิก</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>ยกเลิกการเพิ่มและแก้ไขรูปร่างล่าสุด</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>ซ่อนรูปร่าง (&amp;H)</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>ซ่อนรูปร่างทั้งหมด</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>แสดงรูปร่าง (&amp;S)</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>แสดงรูปร่างทั้งหมด</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>สลับรูปร่าง (&amp;S)</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>สลับรูปร่างทั้งหมด</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>บทแนะนำ (&amp;T)</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>แสดงหน้าบทแนะนำ</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -500,88 +330,36 @@ Shapes</source>
         <translation>ซูมเข้า (&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>ซูมออก (&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>ความสว่าง คอนทราสต์ (&amp;B)</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>ปรับความสว่างและคอนทราสต์</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>แก้ไขเลเบล (&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>บันทึกเลเบลด้วยชื่อไฟล์ใหม่</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>แก้ไขเลเบลของรูปร่างที่เลือก</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>คัดลอกไปคลิปบอร์ด</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>วางรูปร่างที่เลือกไว้ในคลิปบอร์ด</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>วางจากคลิปบอร์ด</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>คลิกเพื่อวางจุดของเส้นต่อเนื่อง Ctrl+คลิกเพื่อวางจุดสุดท้าย</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>พอดีหน้าต่าง (&amp;W)</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>แสดงภาพทั้งภาพให้เห็นตลอดเมื่อปรับขนาดหน้าต่าง</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>พอดีความกว้าง (&amp;D)</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>ปรับความกว้างของภาพให้เท่ากับหน้าต่างเมื่อปรับขนาดหน้าต่าง</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>แสดงภาพให้ใหญ่ขึ้น</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>แสดงภาพให้เล็กลง</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>ขนาด&amp;จริง</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>แสดงภาพที่ 100%</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>เติมสีหลายเหลี่ยมที่วาด</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>เติมสีหลายเหลี่ยมขณะวาด</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -604,10 +382,6 @@ Shapes</source>
         <translation>ช่วยเหลือ (&amp;H)</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s เริ่มทำงานแล้ว</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>
@@ -628,64 +402,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>เกิดข้อผิดพลาดในการบันทึกข้อมูลเลเบล</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>การอนุมานของ AI ล้มเหลว: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>ไม่มีไฟล์: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>กำลังโหลด %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>โหลด %s แล้ว</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>ไฟล์รูปและเลเบล (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - เลือกรูปหรือไฟล์เลเบล</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - บันทึก/โหลดแอนโนเทชันในโฟลเดอร์</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s แอนโนเทชันจะถูกบันทึก/โหลดใน %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - เลือกไฟล์</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>ไฟล์เลเบล (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>เลือกไฟล์</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>คำเตือน</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -704,16 +426,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>บันทึกแอนโนเทชันไปที่ &quot;{}&quot; ก่อนปิดหรือไม่?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>บันทึกแอนโนเทชันหรือไม่?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>ลบรูปร่าง {} รายการ? คุณสามารถกู้คืนได้ด้วยคำสั่งยกเลิก</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - เปิดโฟลเดอร์</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -722,10 +436,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>รูปภาพมีขนาดใหญ่เกินกว่าจะเปิดได้: {width}x{height} พิกเซลต้องใช้ประมาณ {required} MB แต่ขีดจำกัดการถอดรหัสคือ {limit} MB โปรดแบ่งรูปภาพเป็นไทล์ (เช่น ด้วย gdal_retile.py) หรือเปิดสำเนาที่เล็กลง</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>สลับโหมด &quot;คงแอนโนเทชันก่อนหน้า&quot;</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -772,16 +482,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ Ctrl+LeftClick เพื่อจบการสร้าง</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -802,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>เพิ่มจุดบนขอบ</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>แทรกจุดใหม่บนขอบของรูปหลายเหลี่ยมที่เคอร์เซอร์ชี้อยู่</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>คงระดับซูมก่อนหน้า (&amp;K)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>ลบไฟล์เลเบลนี้อย่างถาวร? การกระทำนี้ไม่สามารถยกเลิกได้</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>รูปแบบที่อนุญาต: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>ไม่สามารถเปิดไฟล์ป้ายกำกับที่เลือก: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>ไม่สามารถเปิดไฟล์ภาพที่เลือก: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -834,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>สี่เหลี่ยมมีทิศทาง</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>เริ่มวาดสี่เหลี่ยมมีทิศทาง</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>การอนุมานของ AI ไม่ได้สร้างคำอธิบายประกอบใหม่</translation>
     </message>
@@ -846,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>รูปร่างไม่มีพื้นที่ จึงไม่มีการสร้างใดๆ</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>การตั้งค่า…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>แก้ไขการตั้งค่า</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>ข้อผิดพลาดการตั้งค่า</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s พร้อมแล้ว</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s ถึง %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — เลือกโฟลเดอร์รูปภาพ</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — เลือกรูปภาพหรือคำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — เลือกโฟลเดอร์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>คัดลอกมาที่นี่ (&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>ลบไฟล์ป้ายกำกับ (&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>ซ่อนรูปร่าง (&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>รูปภาพและคำอธิบายประกอบ (&amp;I) (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>ย้ายมาที่นี่ (&amp;M)</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>เปิด (&amp;O)</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>รูปภาพก่อนหน้า (&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>บันทึก (&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>แสดงรูปร่าง (&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>สลับการแสดงรูปร่าง (&amp;T)</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>&apos;{}&apos; ไม่เป็นไปตามนโยบายป้ายกำกับ &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>เพิ่มสำเนาของรูปร่างที่เลือก</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>เพิ่มจุดยอดบนขอบที่ตัวชี้วางอยู่</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>ปรับความสว่างและความเปรียบต่างของรูปภาพ</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>เปลี่ยนโฟลเดอร์ผลลัพธ์ (&amp;H)</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>ไม่สามารถเปิดไฟล์ได้</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>นำรูปร่างไปใช้ในภาพถัดไป</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>เปลี่ยนป้ายกำกับของรูปร่างที่เลือก</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>เลือกโฟลเดอร์อื่นสำหรับโหลดและบันทึกคำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>คลิกจุดบนวัตถุ แล้วใช้ Ctrl+click เพื่อจบรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>คลิกเพื่อเพิ่มจุดของเส้นต่อเนื่อง แล้วใช้ Ctrl+click เพื่อเพิ่มจุดสุดท้าย</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>ปิดแอปพลิเคชัน</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>ปิดไฟล์ปัจจุบัน</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>ยืนยันการลบ</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>คัดลอกรูปร่างที่เลือกไปยังคลิปบอร์ด</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>ไม่สามารถถอดรหัสรูปภาพที่:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>ไม่สามารถลบไฟล์คำอธิบายประกอบ:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>ไม่สามารถอ่านข้อมูลคำอธิบายประกอบจาก:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>ไม่สามารถบันทึกคำอธิบายประกอบได้</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>ลดระดับการซูม</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>ลบไม่สำเร็จ</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>ลบจุดยอดที่เลือก</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>ลบจุดยอดที่เลือกออกจากรูปหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>วาดกรอบรอบวัตถุเพื่อแยกส่วนวัตถุ</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>วาดวงกลม</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>วาดรูปหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>วาดสี่เหลี่ยมผืนผ้า</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>วาดสี่เหลี่ยมผืนผ้าที่หมุนได้</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>วาดเส้นตรง</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>ฝังไบต์ของรูปภาพต้นฉบับในไฟล์ป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>ป้อนป้ายกำกับอย่างน้อยหนึ่งรายการก่อนเรียกใช้ AI</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>โหลด %s ไม่สำเร็จ</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>กลับสถานะการแสดงของทุกรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>ไปยังรูปภาพถัดไป (กด Ctrl+Shift ค้างไว้เพื่อนำป้ายกำกับไปด้วย)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>ไปยังรูปภาพก่อนหน้า (กด Ctrl+Shift ค้างไว้เพื่อนำป้ายกำกับไปด้วย)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>ซ่อนรูปร่างทั้งหมดบนผืนผ้าใบ</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>เพิ่มระดับการซูม</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>ป้ายกำกับไม่ได้รับอนุญาต</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>โหลดแล้วและพร้อมใช้งาน: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>ทำเครื่องหมายจุดเดียว</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>เปิดโฟลเดอร์ (&amp;F)</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>เปิดโฟลเดอร์รูปภาพ</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>เปิดรูปภาพหรือไฟล์ป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>เปิดไม่สำเร็จ</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>เปิดกล่องโต้ตอบการตั้งค่า</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>เปิดบทสอนในเบราว์เซอร์</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>วางรูปร่างจากคลิปบอร์ดลงในรูปภาพนี้</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>ลบไฟล์ป้ายกำกับปัจจุบันอย่างถาวร</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>แสดงตัวอย่างรูปหลายเหลี่ยมแบบเติมสีขณะวาด</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>กำลังอ่าน %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>นำจุดที่วางล่าสุดออก</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>นำรูปร่างที่เลือกออก</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>รีเซ็ตการซูมเป็น 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>คืนค่าเค้าโครงแผงและแถบเครื่องมือเริ่มต้น</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>ใช้รูปร่างจากรูปภาพก่อนหน้าอีกครั้ง</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>เลิกทำการเปลี่ยนแปลงรูปร่างครั้งล่าสุด</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>บันทึกเป็น (&amp;A)</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>บันทึกอัตโนมัติ (&amp;M)</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>บันทึกพร้อมข้อมูลรูปภาพ (&amp;I)</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>บันทึกคำอธิบายประกอบเป็น</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>บันทึกการเปลี่ยนแปลงคำอธิบายประกอบหรือไม่?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>บันทึกคำอธิบายประกอบด้วยชื่อไฟล์ใหม่</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>ปรับขนาดรูปภาพให้พอดีกับหน้าต่างเสมอ</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>ปรับขนาดรูปภาพให้ตรงกับความกว้างหน้าต่าง</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>การตั้งค่า (&amp;T)…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>การตั้งค่าในเซสชันนี้ถูกล็อกให้ใช้ไฟล์ --config</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>แสดงรูปร่างทั้งหมดบนผืนผ้าใบ</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>ไฟล์ที่รองรับ: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>สลับไปแก้ไขรูปร่างที่มีอยู่</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>ไม่มีเส้นทางนี้:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>เลิกทำ</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>เลิกทำจุดสุดท้าย</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>เขียนคำอธิบายประกอบลงดิสก์หลังการเปลี่ยนแปลงทุกครั้ง</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>เขียนคำอธิบายประกอบปัจจุบันลงดิสก์</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>ซูมออก (&amp;O)</translation>
     </message>
 </context>
 <context>

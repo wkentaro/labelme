@@ -23,3 +23,6 @@ class ShapeClipboard(QtCore.QObject):
 
     def paste(self) -> list[Shape]:
         return [shape.copy() for shape in self._buffer]
+
+    def has_shapes(self) -> bool:
+        return bool(self._buffer)

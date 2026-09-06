@@ -137,6 +137,63 @@ def _run_text_prompt(
 
 
 @pytest.mark.gui
+def test_text_prompt_normalizes_labels_before_inference(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    _install_mock_session(
+        win=win,
+        monkeypatch=monkeypatch,
+        response_fn=_make_multi_label_response,
+    )
+
+    _run_text_prompt(
+        win=win,
+        qtbot=qtbot,
+        text=" person, , sofa ",
+        create_mode="rectangle",
+        score_threshold=0.1,
+    )
+
+    assert {shape.label for shape in win._canvas_widgets.canvas.shapes} == {
+        "person",
+        "sofa",
+    }
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_empty_text_prompt_stops_before_model_lookup(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    win._ai_text._text_input.setText(" , ")
+    monkeypatch.setattr(
+        "osam.apis.get_model_type_by_name",
+        lambda _name: pytest.fail("empty prompts must not look up a model"),
+    )
+
+    win._submit_ai_prompt(False)  # noqa: FBT003 -- Qt clicked flag is positional
+
+    assert "Enter at least one label" in win.statusBar().currentMessage()
+    assert win._canvas_widgets.canvas.shapes == []
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize(
     ("create_mode", "expected_shape_type", "text", "response_fn", "expected_labels"),
     [

@@ -156,6 +156,35 @@ def test_zoom_fit_window(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("fit_width", [False, True])
+def test_initial_fit_uses_visible_viewport(
+    *, qtbot: QtBot, tmp_path: Path, fit_width: bool
+) -> None:
+    image_path = tmp_path / "image.png"
+    image = QtGui.QImage(500, 375, QtGui.QImage.Format.Format_RGB32)
+    image.fill(0)
+    assert image.save(str(image_path))
+    win = MainWindow(file_or_dir=str(image_path))
+    qtbot.addWidget(win)
+    win.resize(1234, 768)
+    if fit_width:
+        win.set_fit_width_mode(True)
+
+    with qtbot.waitExposed(win):
+        win.show()
+
+    viewport = win._canvas_widgets.scroll_area.viewport()
+    zoom = win._canvas_widgets.zoom_widget
+    if fit_width:
+        assert abs(image.width() * zoom.scale - viewport.width()) < 1
+    else:
+        expected = min(
+            viewport.width() / image.width(), viewport.height() / image.height()
+        )
+        assert zoom.value() == round(expected * 100, zoom.decimals())
+
+
+@pytest.mark.gui
 def test_zoom_fit_width(
     *,
     qtbot: QtBot,
@@ -716,6 +745,61 @@ def test_canvas_wheel_event_dispatches_signal(
             f"{signal_attr} expected exactly one non-zero emission, got {non_zero!r}"
         )
         assert non_zero[0] == (angle_delta.y(), expected_orientation)
+
+    close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("angle_delta_y", [120, -120, 1], ids=["in", "out", "sub_step"])
+def test_zoom_request_emits_raw_delta_and_exact_position(
+    *,
+    qtbot: QtBot,
+    _win: MainWindow,
+    pause: bool,
+    angle_delta_y: int,
+) -> None:
+    # zoom_request must carry the wheel event's signed vertical delta exactly
+    # (not normalized to +/-1 steps) and the exact floating cursor position
+    # (not rounded to a widget pixel), so the caller can zoom around it precisely.
+    canvas = _win._canvas_widgets.canvas
+    captured: list[tuple[int, QPointF]] = []
+    canvas.zoom_request.connect(lambda delta, pos: captured.append((delta, pos)))
+    position = QPointF(canvas.width() / 2 + 0.37, canvas.height() / 2 - 0.61)
+
+    canvas.wheelEvent(
+        _make_wheel_event(
+            pos=position,
+            angle_delta=QPoint(0, angle_delta_y),
+            modifiers=Qt.KeyboardModifier.ControlModifier,
+            phase=Qt.ScrollPhase.NoScrollPhase,
+        )
+    )
+
+    assert captured == [(angle_delta_y, position)]
+
+    close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_zoom_request_not_emitted_for_non_exact_control_modifier(
+    *,
+    qtbot: QtBot,
+    _win: MainWindow,
+    pause: bool,
+) -> None:
+    # Ctrl+Shift is not the exact Control chord the zoom shortcut requires.
+    canvas = _win._canvas_widgets.canvas
+
+    with qtbot.assertNotEmitted(canvas.zoom_request):
+        canvas.wheelEvent(
+            _make_wheel_event(
+                pos=QPointF(canvas.width() / 2, canvas.height() / 2),
+                angle_delta=QPoint(0, 120),
+                modifiers=Qt.KeyboardModifier.ControlModifier
+                | Qt.KeyboardModifier.ShiftModifier,
+                phase=Qt.ScrollPhase.NoScrollPhase,
+            )
+        )
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 

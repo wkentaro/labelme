@@ -22,16 +22,13 @@ class LabelDialogEntry:
     description: str
 
 
-_PLACEHOLDER_TEXT: Final[str] = "Name this shape"
-
-
 class LabelDialog(QtWidgets.QDialog):
     """Dialog for entering label, group id, description, and flags."""
 
     def __init__(
         self,
         *,
-        text: str = _PLACEHOLDER_TEXT,
+        text: str | None = None,
         parent: QtWidgets.QWidget | None = None,
         labels: list[str] | None = None,
         sort_labels: bool = True,
@@ -69,7 +66,7 @@ class LabelDialog(QtWidgets.QDialog):
 
         # Build widgets
         self.edit = QtWidgets.QLineEdit()
-        self.edit.setPlaceholderText(text)
+        self.edit.setPlaceholderText(self.tr("Label") if text is None else text)
         self.edit.setAccessibleName(self.tr("Label"))
 
         group_id_name = self.tr("Group ID")

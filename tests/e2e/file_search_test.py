@@ -51,7 +51,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
         label="cat",
         vertices=((0.2, 0.2), (0.6, 0.2), (0.6, 0.6)),
     )
-    assert win.windowTitle().endswith("*")
+    assert win.windowTitle().startswith("●")
 
     active_image_path = win._image_path
     active_annotation = win._annotation
@@ -89,7 +89,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     assert [
         id(shape) for shape in win._canvas_widgets.canvas.shapes
     ] == active_shape_ids
-    assert win.windowTitle().endswith("*")
+    assert win.windowTitle().startswith("●")
     assert scan_calls == [str(image_dir)]
     assert continue_checks == []
     assert load_calls == []
@@ -116,7 +116,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     assert [
         id(shape) for shape in win._canvas_widgets.canvas.shapes
     ] == active_shape_ids
-    assert win.windowTitle().endswith("*")
+    assert win.windowTitle().startswith("●")
     assert scan_calls == [str(image_dir)]
     assert continue_checks == []
     assert load_calls == []

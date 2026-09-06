@@ -270,78 +270,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>Αποθήκευση</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>Αποθήκευση ετικετών σε αρχείο</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Αποθήκευση &amp;Ως</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Αποθήκευση &amp;αυτόματα</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>Αυτόματη αποθήκευση</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>Αποθήκευση με δεδομένα εικόνας</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Αποθήκευση δεδομένων εικόνας σε αρχείο ετικέτας</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Αλλαγή Οδηγίας Εξόδου</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Αλλαγή του πού φορτώνονται/αποθηκεύονται οι σχολιασμοί</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>Ανοιγμα</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Άνοιγμα αρχείου εικόνας ή ετικέτας</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Άνοιγμα Dir</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>Κλείσιμο</translation>
-    </message>
-    <message>
-        <source>Close current file</source>
-        <translation>Κλείσιμο τρέχοντος αρχείου</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp; Διαγραφή αρχείου</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Διαγραφή τρέχοντος αρχείου ετικέτας</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>Διατήρηση προηγούμενου σχολιασμού</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Εναλλαγή λειτουργίας &quot;Διατήρηση προηγούμενου σχολιασμού&quot;</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -352,24 +282,12 @@
         <translation>Διαγραφή σχημάτων</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>Διαγραφή των επιλεγμένων σχημάτων</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label</source>
         <translation>Επεξεργασία ετικέτας</translation>
     </message>
     <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>Τροποποιήστε την ετικέτα του επιλεγμένου σχήματος</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>Αντιγραφή στο πρόχειρο</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>Τοποθέτηση των επιλεγμένων σχημάτων στο πρόχειρο</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
@@ -380,93 +298,20 @@
         <translation>Διπλότυπα σχήματα</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>Δημιουργήστε ένα αντίγραφο των επιλεγμένων σχημάτων</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Τελευταίο σημείο</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>Αναίρεση τελευταίου σημείου έλξης</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Αναίρεση</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>Αναίρεση τελευταίας προσθήκης και επεξεργασίας σχήματος</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Κατάργηση επιλεγμένου σημείου</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Αφαίρεση επιλεγμένου σημείου από πολύγωνο</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>Ξεκινήστε να σχεδιάζετε πολύγωνα</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Επεξεργασία σχημάτων</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>Μετακίνηση και επεξεργασία των επιλεγμένων σχημάτων</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>Ξεκινήστε να σχεδιάζετε ορθογώνια</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>Έναρξη σχεδίασης κύκλων</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>Έναρξη σχεδίασης γραμμών</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>Έναρξη σχεδίασης σημείων</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
         <translation>Επόμενη εικόνα</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Ανοίξτε το επόμενο (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Προηγούμενη εικόνα</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>αντίθεση φωτεινότητας</translation>
     </message>
     <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>Ρύθμιση της φωτεινότητας και της αντίθεσης</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp; Μεγέθυνση</translation>
-    </message>
-    <message>
-        <source>&amp;Zoom Out</source>
-        <translation>&amp;Σμίκρυνση</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -477,39 +322,6 @@
         <translation>Γεμίστε το πολύγωνο σχεδίασης</translation>
     </message>
     <message>
-        <source>Fill polygon while drawing</source>
-        <translation>Γεμίστε πολύγωνο ενώ σχεδιάζετε</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Απόκρυψη
-Σχήματα</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>Όλα τα σχήματα</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Προβολή σχημάτων</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>Όλα τα σχήματα</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Εναλλαγή
-Σχήματα</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>Εναλλαγή όλων των σχημάτων</translation>
-    </message>
-    <message>
         <source>Zoom</source>
         <translation>Εστίαση</translation>
     </message>
@@ -518,16 +330,8 @@ Shapes</source>
         <translation>Τερματισμός</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>Έξοδος από την εφαρμογή</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp; Εκμάθηση</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>Εμφάνιση σελίδας εκμάθησης</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -544,10 +348,6 @@ Shapes</source>
     <message>
         <source>&amp;Help</source>
         <translation>Βοήθεια</translation>
-    </message>
-    <message>
-        <source>%s started.</source>
-        <translation>%s ξεκίνησε.</translation>
     </message>
     <message>
         <source>Flags</source>
@@ -602,64 +402,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Μη έγκυρη ετικέτα &apos;{}&apos; με τύπο επικύρωσης &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Σφάλμα κατά την αποθήκευση δεδομένων ετικέτας</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Δεν υπάρχει τέτοιο αρχείο: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>Φόρτωση %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>Φορτώθηκε %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Αρχεία εικόνας και ετικέτας (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Επιλέξτε αρχείο εικόνας ή ετικέτας</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Αποθήκευση/Φόρτωση σχολιασμών στον κατάλογο</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Οι σχολιασμοί θα αποθηκεύονται/φορτώνονται στο %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Επιλογή αρχείου</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Αρχεία ετικετών (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Επιλογή αρχείου</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Προσοχή</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -678,16 +426,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Να αποθηκευτούν οι σχολιασμοί στο &quot;{}&quot; πριν το κλείσιμο;</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Αποθήκευση σχολιασμών;</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Διαγραφή {} σχημάτων; Μπορείτε να τα επαναφέρετε με την Αναίρεση.</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Άνοιγμα καταλόγου</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -700,14 +440,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Αποθήκευση των ετικετών με νέο όνομα αρχείου</translation>
-    </message>
-    <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>Εισαγωγή των σχημάτων του προχείρου σε αυτήν την εικόνα</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -730,56 +462,24 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Κάντε κλικ για να τοποθετήσετε σημεία του linestrip· Ctrl+κλικ τοποθετεί το τελευταίο.</translation>
-    </message>
-    <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Κάντε κλικ σε σημεία για κατάτμηση αντικειμένου. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
     </message>
     <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>&amp;Προσαρμογή παραθύρου</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>Διατήρηση ολόκληρης της εικόνας ορατής όταν αλλάζει το μέγεθος του παραθύρου</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>Προσαρμογή στο &amp; πλάτος</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ταίριασμα του πλάτους της εικόνας με το παράθυρο όταν αλλάζει το μέγεθός του</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>Εμφάνιση της εικόνας μεγαλύτερης</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>Εμφάνιση της εικόνας μικρότερης</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>&amp;Πραγματικό μέγεθος</translation>
-    </message>
-    <message>
-        <source>Show the image at 100%</source>
-        <translation>Εμφάνιση της εικόνας στο 100%</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -804,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Προσθήκη σημείου στην ακμή</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>Εισαγωγή νέου σημείου στην επιλεγμένη ακμή πολυγώνου</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>&amp;Διατήρηση προηγούμενου ζουμ</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή αυτού του αρχείου ετικετών; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>Επιτρεπόμενες μορφές: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Δεν ήταν δυνατό το άνοιγμα του επιλεγμένου αρχείου ετικετών: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>Δεν ήταν δυνατό το άνοιγμα του επιλεγμένου αρχείου εικόνας: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -836,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Προσανατολισμένο Ορθογώνιο</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>Ξεκινήστε να σχεδιάζετε προσανατολισμένα ορθογώνια</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>Η συμπερασματική επεξεργασία ΤΝ δεν δημιούργησε νέο σχολιασμό.</translation>
     </message>
@@ -848,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Το σχήμα δεν είχε εμβαδό· δεν δημιουργήθηκε τίποτα.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>Ρυθμίσεις…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>Επεξεργασία ρυθμίσεων</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>Το %s είναι έτοιμο.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s έως %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — Επιλογή φακέλου εικόνων</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — Επιλογή εικόνας ή σχολιασμού</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — Επιλογή φακέλου σχολιασμών</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>&amp;Αντιγραφή εδώ</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>&amp;Διαγραφή αρχείου ετικετών</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Απόκρυψη &amp;σχημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>&amp;Εικόνες και σχολιασμοί (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>&amp;Μετακίνηση εδώ</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>Ά&amp;νοιγμα</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Προηγούμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>Απο&amp;θήκευση</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Εμ&amp;φάνιση σχημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Εναλλα&amp;γή ορατότητας σχημάτων</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>Το &apos;{}&apos; δεν συμμορφώνεται με την πολιτική ετικετών &apos;{}&apos;.</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>Προσθήκη αντιγράφου των επιλεγμένων σχημάτων</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>Προσθήκη κορυφής στην ακμή κάτω από τον δείκτη</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>Προσαρμογή φωτεινότητας και αντίθεσης της εικόνας</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>Αλλα&amp;γή φακέλου εξόδου</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>Αδυναμία ανοίγματος αρχείου</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>Μεταφορά σχημάτων στην επόμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>Αλλαγή ετικέτας του επιλεγμένου σχήματος</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>Επιλογή διαφορετικού φακέλου για φόρτωση και αποθήκευση σχολιασμών</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>Κάντε κλικ σε σημεία του αντικειμένου· το Ctrl+click ολοκληρώνει το σχήμα.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>Κάντε κλικ για προσθήκη σημείων στην τεθλασμένη· το Ctrl+click προσθέτει το τελευταίο σημείο.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>Κλείσιμο εφαρμογής</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>Κλείσιμο τρέχοντος αρχείου</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>Επιβεβαίωση διαγραφής</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>Αντιγραφή των επιλεγμένων σχημάτων στο πρόχειρο</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>Αδυναμία αποκωδικοποίησης της εικόνας στη διαδρομή:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>Αδυναμία διαγραφής του αρχείου σχολιασμού:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>Αδυναμία ανάγνωσης δεδομένων σχολιασμού από:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>Αδυναμία αποθήκευσης των σχολιασμών</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>Μείωση μεγέθυνσης</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>Η διαγραφή απέτυχε</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>Διαγραφή επιλεγμένης κορυφής</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>Διαγραφή της επιλεγμένης κορυφής από το πολύγωνο</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>Να διαγραφεί οριστικά αυτό το αρχείο σχολιασμού;</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>Σχεδιάστε ένα πλαίσιο γύρω από το αντικείμενο για να το τμηματοποιήσετε.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>Σχεδίαση κύκλου</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>Σχεδίαση πολυγώνου</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>Σχεδίαση ορθογωνίου</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>Σχεδίαση περιστρεφόμενου ορθογωνίου</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>Σχεδίαση ευθείας γραμμής</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>Ενσωμάτωση των byte της αρχικής εικόνας στο αρχείο ετικετών</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>Εισαγάγετε τουλάχιστον μία ετικέτα πριν εκτελέσετε το AI.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>Αποτυχία φόρτωσης του %s</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>Αντιστροφή ορατότητας κάθε σχήματος</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Μετάβαση στην επόμενη εικόνα (κρατήστε πατημένο το Ctrl+Shift για μεταφορά ετικετών)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Μετάβαση στην προηγούμενη εικόνα (κρατήστε πατημένο το Ctrl+Shift για μεταφορά ετικετών)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>Απόκρυψη όλων των σχημάτων στον καμβά</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>Αύξηση μεγέθυνσης</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>Μη επιτρεπτή ετικέτα</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>Φορτώθηκε και είναι έτοιμο: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>Επισήμανση ενός σημείου</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>Άνοιγμα &amp;φακέλου</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Άνοιγμα φακέλου εικόνων</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>Άνοιγμα εικόνας ή αρχείου ετικετών</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>Το άνοιγμα απέτυχε</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>Άνοιγμα διαλόγου ρυθμίσεων</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>Άνοιγμα οδηγού σε πρόγραμμα περιήγησης</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>Επικόλληση σχημάτων από το πρόχειρο σε αυτήν την εικόνα</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>Οριστική διαγραφή του τρέχοντος αρχείου ετικετών</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>Προεπισκόπηση γεμισμένου πολυγώνου κατά τη σχεδίαση</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>Ανάγνωση του %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>Αφαίρεση του σημείου που τοποθετήθηκε τελευταίο</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>Αφαίρεση των επιλεγμένων σχημάτων</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>Επαναφορά μεγέθυνσης στο 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>Επαναφορά της προεπιλεγμένης διάταξης πινάκων και γραμμών εργαλείων</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>Επαναχρησιμοποίηση σχημάτων από την προηγούμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>Αναίρεση της τελευταίας αλλαγής σχήματος</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>Αποθήκευση &amp;ως</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>Α&amp;υτόματη αποθήκευση</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>Αποθήκευση με δεδομένα &amp;εικόνας</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>Αποθήκευση σχολιασμών ως</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>Να αποθηκευτούν οι αλλαγές στους σχολιασμούς;</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>Αποθήκευση των σχολιασμών με νέο όνομα αρχείου</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>Κλιμάκωση της εικόνας ώστε να χωρά πάντα στο παράθυρο</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>Κλιμάκωση της εικόνας στο πλάτος του παραθύρου</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>&amp;Ρυθμίσεις…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>Οι ρυθμίσεις είναι κλειδωμένες στο αρχείο --config για αυτήν τη συνεδρία</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>Εμφάνιση όλων των σχημάτων στον καμβά</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>Υποστηριζόμενα αρχεία: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>Μετάβαση στην επεξεργασία υπαρχόντων σχημάτων</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>Η διαδρομή δεν υπάρχει:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Αναίρεση</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Αναίρεση τελευταίου σημείου</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>Εγγραφή σχολιασμών στον δίσκο μετά από κάθε αλλαγή</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>Εγγραφή των τρεχόντων σχολιασμών στον δίσκο</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>&amp;Σμίκρυνση</translation>
     </message>
 </context>
 <context>

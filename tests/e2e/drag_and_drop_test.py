@@ -37,7 +37,7 @@ def _drag_enter_accepted(*, win: MainWindow, mime: QMimeData) -> bool:
     return event.isAccepted()
 
 
-def _send_drop(*, win: MainWindow, mime: QMimeData) -> None:
+def _send_drop(*, win: MainWindow, mime: QMimeData) -> bool:
     event = QDropEvent(
         QPointF(0, 0),
         Qt.DropAction.CopyAction,
@@ -46,6 +46,7 @@ def _send_drop(*, win: MainWindow, mime: QMimeData) -> None:
         Qt.KeyboardModifier.NoModifier,
     )
     QApplication.sendEvent(win, event)
+    return event.isAccepted()
 
 
 @pytest.mark.gui
@@ -65,7 +66,7 @@ def test_drop_image_files_loads_them(
 
     mime = _make_drop_mime(paths=[first_image, second_image])
     assert _drag_enter_accepted(win=win, mime=mime)
-    _send_drop(win=win, mime=mime)
+    assert _send_drop(win=win, mime=mime)
 
     def check_image_list_populated() -> None:
         assert len(win.image_list) == 2
@@ -95,7 +96,7 @@ def test_dropped_image_files_respect_active_search_filter(
     mime = _make_drop_mime(paths=[matching_image, hidden_image])
 
     assert _drag_enter_accepted(win=win, mime=mime)
-    _send_drop(win=win, mime=mime)
+    assert _send_drop(win=win, mime=mime)
 
     assert win.image_list == [str(matching_image)]
     assert matching_image.name in win.windowTitle()
@@ -128,7 +129,7 @@ def test_opening_annotation_file_clears_loaded_directory_images(
 
     mime = _make_drop_mime(paths=[image_path])
     assert _drag_enter_accepted(win=win, mime=mime)
-    _send_drop(win=win, mime=mime)
+    assert _send_drop(win=win, mime=mime)
 
     assert win.image_list == [str(image_path)]
     assert image_path.name in win.windowTitle()
@@ -158,5 +159,27 @@ def test_drag_enter_rejects_non_image_and_keeps_state(
 
     assert raw_win.windowTitle() == original_title
     assert list(raw_win.image_list) == original_image_list
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_drop_refused_by_unsaved_change_gate_preserves_session(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    raw_win: MainWindow,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    original_title = raw_win.windowTitle()
+    original_image_list = list(raw_win.image_list)
+    monkeypatch.setattr(raw_win, "_can_continue", lambda: False)
+
+    mime = _make_drop_mime(paths=[data_path / "raw/2011_000006.jpg"])
+
+    assert not _send_drop(win=raw_win, mime=mime)
+    assert raw_win.windowTitle() == original_title
+    assert raw_win.image_list == original_image_list
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

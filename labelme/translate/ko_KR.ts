@@ -298,198 +298,28 @@
         <translation>종료(&amp;Q)</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>애플리케이션 종료</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>열기(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>이미지 또는 레이블 파일 열기</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>폴더 열기</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>다음 이미지(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>다음 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>이전 이미지(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>이전 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>저장(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>레이블을 파일로 저장</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>다른 이름으로 저장(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>삭제(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>현재 레이블 파일 삭제</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>출력 폴더 변경(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>주석을 로드/저장할 위치 변경</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>자동 저장(&amp;A)</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>자동 저장</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>이미지 데이터와 함께 저장</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>레이블 파일에 이미지 데이터 저장</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>닫기(&amp;C)</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>현재 파일 닫기</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>이전 주석 유지</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>다각형 그리기 시작</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>사각형 그리기 시작</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>원 그리기 시작</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>선 그리기 시작</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>점 그리기 시작</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>도형 편집</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>선택한 도형 이동 및 편집</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>도형 삭제</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>선택한 도형 삭제</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>도형 복제</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>선택한 도형의 복사본 생성</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>마지막 점 실행 취소</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>마지막으로 그린 점 실행 취소</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>선택한 점 제거</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>다각형에서 선택한 점 제거</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>실행 취소</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>도형의 마지막 추가 및 편집 실행 취소</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>도형 숨기기(&amp;H)</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>모든 도형 숨기기</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>도형 표시(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>모든 도형 표시</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>도형 토글(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>모든 도형 토글</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>튜토리얼(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>튜토리얼 페이지 표시</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -500,88 +330,36 @@ Shapes</source>
         <translation>확대(&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>축소(&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>밝기 대비(&amp;B)</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>밝기 및 대비 조정</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>레이블 편집(&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>레이블을 새 파일 이름으로 저장</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>선택한 도형의 레이블 수정</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>클립보드에 복사</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>선택한 도형을 클립보드에 담기</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>클립보드에서 붙여넣기</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>클립보드의 도형을 이 이미지에 삽입</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>클릭하여 연속선의 점을 놓고, Ctrl+클릭으로 마지막 점을 놓습니다.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>창에 맞추기(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>창 크기가 바뀌어도 이미지 전체가 보이도록 유지</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>너비에 맞추기(&amp;D)</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>창 크기가 바뀔 때 이미지 너비를 창에 맞춤</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>이미지를 더 크게 표시</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>이미지를 더 작게 표시</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>실제 크기(&amp;A)</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>이미지를 100%로 표시</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>그리기 다각형 채우기</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>그리는 동안 다각형 채우기</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -604,10 +382,6 @@ Shapes</source>
         <translation>도움말(&amp;H)</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s가 시작되었습니다.</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>
@@ -628,64 +402,12 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>레이블 데이터 저장 오류</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>AI 추론 실패: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>파일 열기 오류</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>파일이 없습니다: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>%s 로드 중...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>%s 로드됨</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>이미지 및 레이블 파일 (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - 이미지 또는 레이블 파일 선택</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 폴더에 주석 저장/로드</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 주석이 %s에 저장/로드됩니다</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - 파일 선택</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>레이블 파일 (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>파일 선택</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>주의</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -704,16 +426,8 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>닫기 전에 주석을 &quot;{}&quot;에 저장하시겠습니까?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>주석을 저장하시겠습니까?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>{}개의 도형을 삭제하시겠습니까? 실행 취소로 복원할 수 있습니다.</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - 폴더 열기</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -722,10 +436,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>이미지가 너무 커서 열 수 없습니다: {width}x{height} 픽셀에는 약 {required} MB가 필요하지만 디코드 제한은 {limit} MB입니다. 이미지를 타일로 분할하거나(예: gdal_retile.py) 더 작은 사본을 여세요.</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>&quot;이전 주석 유지&quot; 모드 토글</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -772,16 +482,8 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>클릭으로 객체를 세그먼트. Ctrl+LeftClick으로 생성 완료.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>바운딩 박스를 그려서 객체를 세그먼트.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -802,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>모서리에 점 추가</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>마우스가 가리키는 다각형 모서리에 새 점 삽입</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>이전 줌 유지(&amp;K)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>이 레이블 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>지원 형식: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>선택한 레이블 파일을 열 수 없습니다: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>선택한 이미지 파일을 열 수 없습니다: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -834,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>방향 있는 사각형</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>방향 있는 사각형 그리기 시작</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>AI 추론에서 새 주석이 생성되지 않았습니다.</translation>
     </message>
@@ -846,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>도형에 면적이 없어 생성되지 않았습니다.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>설정…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>설정 편집</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>이 세션의 설정은 --config로 관리됩니다</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>구성 오류</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s 준비 완료.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s에서 %s까지</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — 이미지 폴더 선택</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — 이미지 또는 주석 선택</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — 주석 폴더 선택</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>여기에 복사(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>레이블 파일 삭제(&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>도형 숨기기(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>이미지 및 주석(&amp;I) (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>여기로 이동(&amp;M)</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>열기(&amp;O)</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>이전 이미지(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>저장(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>도형 표시(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>도형 표시 전환(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>&apos;{}&apos;은(는) &apos;{}&apos; 레이블 정책에 맞지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>선택한 도형의 복사본 추가</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>포인터가 가리키는 변에 꼭짓점 추가</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>이미지 밝기와 대비 조정</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>출력 폴더 변경(&amp;H)</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>파일을 열 수 없음</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>도형 이어받기</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>선택한 도형의 레이블 변경</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>주석을 불러오고 저장할 다른 폴더 선택</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>객체 위의 점을 클릭하세요. Ctrl+click으로 도형을 완성합니다.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>클릭하여 꺾은선의 점을 추가하세요. Ctrl+click으로 마지막 점을 추가합니다.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>애플리케이션 종료</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>현재 파일 닫기</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>삭제 확인</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>선택한 도형을 클립보드에 복사</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>다음 위치의 이미지를 디코딩할 수 없습니다:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>주석 파일을 삭제할 수 없습니다:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>다음 위치에서 주석 데이터를 읽을 수 없습니다:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>주석을 저장할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>확대 비율 줄이기</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>삭제 실패</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>선택한 꼭짓점 삭제</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>다각형에서 선택한 꼭짓점 삭제</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>이 주석 파일을 영구적으로 삭제하시겠습니까?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>객체를 분할하려면 객체 주위에 상자를 그리세요.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>원 그리기</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>다각형 그리기</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>직사각형 그리기</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>회전 가능한 직사각형 그리기</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>직선 그리기</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>레이블 파일에 원본 이미지 바이트 포함</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>AI를 실행하기 전에 레이블을 하나 이상 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>%s 불러오기 실패</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>모든 도형의 표시 상태 반전</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>다음 이미지로 이동(레이블을 이어받으려면 Ctrl+Shift를 누른 상태로 이동)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>이전 이미지로 이동(레이블을 이어받으려면 Ctrl+Shift를 누른 상태로 이동)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>캔버스의 모든 도형 숨기기</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>확대 비율 늘리기</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>허용되지 않는 레이블</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>불러오기 및 준비 완료: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>점 하나 표시</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>폴더 열기(&amp;F)</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>이미지 폴더 열기</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>이미지 또는 레이블 파일 열기</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>열기 실패</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>설정 대화 상자 열기</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>브라우저에서 튜토리얼 열기</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>클립보드의 도형을 이 이미지에 붙여넣기</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>현재 레이블 파일 영구 삭제</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>그리는 동안 채워진 다각형 미리 보기</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>%s 읽는 중…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>마지막으로 배치한 점 제거</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>선택한 도형 제거</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>확대 비율을 100%로 초기화</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>패널 및 도구 모음 배치를 기본값으로 복원</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>이전 이미지의 도형 재사용</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>마지막 도형 변경 실행 취소</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>다른 이름으로 저장(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>자동 저장(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>이미지 데이터와 함께 저장(&amp;I)</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>다른 이름으로 주석 저장</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>주석 변경 사항을 저장하시겠습니까?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>새 파일 이름으로 주석 저장</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>이미지가 항상 창에 맞도록 크기 조정</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>이미지 크기를 창 너비에 맞춤</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>설정(&amp;T)…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>이 세션의 설정은 --config 파일로 고정되어 있습니다</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>캔버스의 모든 도형 표시</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>지원하는 파일: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>기존 도형 편집으로 전환</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>경로가 존재하지 않습니다:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>실행 취소</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>마지막 점 실행 취소</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>변경할 때마다 주석을 디스크에 저장</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>현재 주석을 디스크에 저장</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>축소(&amp;O)</translation>
     </message>
 </context>
 <context>

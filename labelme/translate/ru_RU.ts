@@ -298,183 +298,28 @@
         <translation>&amp;Выход</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>Выйти из приложения</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Открыть изображение или файл разметки</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Открыть папку</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Следующее изображение (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Открыть следующее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>Предыдущее изображение (&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>Сохранить метки в файл</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Сохранить как</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Удалить файл (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Удалить текущий файл меток</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Изменить папку вывода (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Изменить место загрузки/сохранения аннотаций</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Сохранять &amp;автоматически</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>Сохранять автоматически</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>Сохранять вместе с данными изображения</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Сохранять данные изображения в файле разметки</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>&amp;Закрыть</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>Закрыть текущий файл</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>Сохранять предыдущую разметку</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>Начать рисовать полигоны</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>Начать рисовать прямоугольники</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>Начать рисовать окружности</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>Начать рисовать линии</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>Начать рисовать точки</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Редактировать фигуры</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>Перемещать и редактировать выбранные фигуры</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>Удалить фигуры</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>Удалить выбранные фигуры</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>Дублировать фигуры</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>Создать копию выбранных фигур</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Отменить последнюю точку</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>Отменить последнюю нарисованную точку</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Удалить выбранную точку</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Удалить выбранную точку из полигона</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>Отменить последнее добавление и редактирование фигуры</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Скрыть фигуры (&amp;H)</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>Скрыть все фигуры</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Показать фигуры (&amp;S)</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>Показать все фигуры</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Переключить фигуры</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>Переключить все фигуры</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp;Руководство</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>Показать страницу руководства</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -485,88 +330,36 @@ Shapes</source>
         <translation>Увеличить (&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>Уменьшить (&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>&amp;Яркость/Контраст</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>Настроить яркость и контраст</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Редактировать метку</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Сохранить метки под новым именем файла</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>Изменить метку выбранной фигуры</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>Копировать в буфер обмена</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>Поместить выбранные фигуры в буфер обмена</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>Вставить из буфера обмена</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>Вставить фигуры из буфера обмена в это изображение</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Щёлкайте, чтобы ставить точки ломаной; Ctrl+щелчок ставит последнюю.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>По размеру окна</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>Всё изображение остаётся видимым при изменении размера окна</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>По &amp;ширине</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ширина изображения подстраивается под окно при изменении его размера</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>Показать изображение крупнее</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>Показать изображение мельче</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>&amp;Реальный размер</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>Показать изображение в масштабе 100%</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>Заполнить нарисованный полигон</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>Заполнять полигон во время рисования</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -589,10 +382,6 @@ Shapes</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s запущен.</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вывод маски недоступен</translation>
     </message>
@@ -613,64 +402,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Неверная метка &apos;{}&apos; с типом проверки &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Ошибка при сохранении данных разметки</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>Инференс ИИ не удался: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>Ошибка при открытии файла</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Файл не найден: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>Загрузка %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>%s загружен</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Файлы изображения и меток (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s — выберите файл изображения или меток</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s — сохранять/загружать разметку в папке</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s. Разметка будет сохраняться/загружаться в %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s — выбрать файл</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Файлы меток (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Выбрать файл</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Внимание</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -689,16 +426,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Сохранить аннотации в &quot;{}&quot; перед закрытием?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Сохранить аннотации?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Удалить {} фигур? Вы можете восстановить их с помощью команды «Отменить».</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s — открыть папку</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -707,10 +436,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>Изображение слишком велико для открытия: {width}x{height} пикселей требует около {required} МБ, но лимит декодирования составляет {limit} МБ. Разбейте изображение на плитки (например, с помощью gdal_retile.py) или откройте уменьшенную копию.</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Переключить режим &quot;сохранять предыдущую разметку&quot;</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -727,24 +452,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Reset Layout</source>
         <translation>Сбросить компоновку</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>Сохранить (&amp;S)
-</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Открыть
-</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Отменить
-</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -775,16 +482,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Нажмите точки для сегментации объекта. Ctrl+LeftClick завершает создание.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -805,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Добавить точку на ребро</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>Вставить новую точку на ребре полигона под курсором</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>Сохранять предыдущий масштаб</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Безвозвратно удалить этот файл меток? Это действие нельзя отменить.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>Допустимые форматы: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Не удалось открыть выбранный файл меток: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>Не удалось открыть выбранный файл изображения: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -837,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Ориентированный прямоугольник</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>Начать рисовать ориентированные прямоугольники</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>Инференс ИИ не создал новой аннотации.</translation>
     </message>
@@ -849,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Фигура не имеет площади; ничего не создано.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>Настройки…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>Редактировать настройки</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>Настройки управляются через --config для этого сеанса</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Ошибка конфигурации</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s готов.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s — %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — Выберите папку с изображениями</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — Выберите изображение или разметку</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — Выберите папку разметки</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>&amp;Копировать сюда</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>&amp;Удалить файл меток</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Скрыть фигуры</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>&amp;Изображения и разметка (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>&amp;Переместить сюда</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Открыть</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Предыдущее изображение</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Сохранить</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>По&amp;казать фигуры</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Пере&amp;ключить видимость фигур</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>«{}» не соответствует правилу меток «{}».</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>Добавить копию выбранных фигур</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>Добавить вершину на ребре под указателем</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>Настроить яркость и контрастность изображения</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>Из&amp;менить папку вывода</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>Не удаётся открыть файл</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>Переносить фигуры далее</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>Изменить метку выбранной фигуры</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>Выбрать другую папку для загрузки и сохранения разметки</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>Нажимайте на точки объекта; Ctrl+click завершает фигуру.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>Нажимайте для добавления точек ломаной; Ctrl+click добавляет последнюю точку.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>Закрыть приложение</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>Закрыть текущий файл</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>Подтверждение удаления</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>Копировать выбранные фигуры в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>Не удалось декодировать изображение по пути:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>Не удалось удалить файл разметки:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>Не удалось прочитать данные разметки из:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>Не удалось сохранить разметку</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>Уменьшить масштаб</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>Не удалось удалить</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>Удалить выбранную вершину</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>Удалить выбранную вершину из многоугольника</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>Безвозвратно удалить этот файл разметки?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>Нарисуйте рамку вокруг объекта, чтобы сегментировать его.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>Нарисовать окружность</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>Нарисовать многоугольник</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>Нарисовать прямоугольник</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>Нарисовать поворачиваемый прямоугольник</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>Нарисовать прямую линию</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>Встроить байты исходного изображения в файл меток</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>Введите хотя бы одну метку перед запуском AI.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>Не удалось загрузить %s</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>Инвертировать видимость каждой фигуры</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Перейти к следующему изображению (удерживайте Ctrl+Shift для переноса меток)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Перейти к предыдущему изображению (удерживайте Ctrl+Shift для переноса меток)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>Скрыть все фигуры на холсте</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>Увеличить масштаб</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>Недопустимая метка</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>Загружено и готово: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>Отметить одну точку</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>Открыть &amp;папку</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Открыть папку с изображениями</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>Открыть изображение или файл меток</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>Не удалось открыть</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>Открыть диалог настроек</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>Открыть руководство в браузере</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>Вставить фигуры из буфера обмена в это изображение</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>Безвозвратно удалить текущий файл меток</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>Показывать заливку многоугольника при рисовании</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>Чтение %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>Удалить последнюю поставленную точку</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>Удалить выбранные фигуры</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>Вернуть масштаб 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>Восстановить стандартное расположение панелей и панелей инструментов</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>Повторно использовать фигуры с предыдущего изображения</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>Отменить последнее изменение фигуры</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>Сохранить &amp;как</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>Сохранять авто&amp;матически</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>Сохранить с данными &amp;изображения</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>Сохранить разметку как</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>Сохранить изменения разметки?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>Сохранить разметку под новым именем файла</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>Масштабировать изображение, чтобы оно всегда помещалось в окно</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>Масштабировать изображение по ширине окна</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>Нас&amp;тройки…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>В этом сеансе настройки зафиксированы файлом --config</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>Показать все фигуры на холсте</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>Поддерживаемые файлы: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>Переключиться на редактирование существующих фигур</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>Путь не существует:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Отменить</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Отменить последнюю точку</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>Записывать разметку на диск после каждого изменения</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>Записать текущую разметку на диск</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>&amp;Уменьшить</translation>
     </message>
 </context>
 <context>

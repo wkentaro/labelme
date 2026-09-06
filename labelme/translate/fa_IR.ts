@@ -298,198 +298,28 @@
         <translation>خروج(&amp;Q)</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>خروج از برنامه</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>باز کردن(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>باز کردن فایل تصویر یا برچسب</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>باز کردن پوشه</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>تصویر بعدی(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>باز کردن بعدی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>تصویر قبلی(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>باز کردن قبلی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>ذخیره(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>ذخیره برچسب‌ها در فایل</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>ذخیره با نام دیگر(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>حذف(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>حذف فایل برچسب فعلی</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>تغییر مسیر خروجی(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>تغییر محل بارگذاری/ذخیره حاشیه‌نویسی‌ها</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>ذخیره خودکار(&amp;A)</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>ذخیره خودکار</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>ذخیره با داده تصویر</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>ذخیره داده تصویر در فایل برچسب</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>بستن(&amp;C)</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>بستن فایل فعلی</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>نگه داشتن حاشیه‌نویسی قبلی</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>شروع رسم چندضلعی</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>شروع رسم مستطیل</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>شروع رسم دایره</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>شروع رسم خط</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>شروع رسم نقطه</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>ویرایش شکل</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>جابجایی و ویرایش شکل‌های انتخاب شده</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>حذف شکل</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>حذف شکل‌های انتخاب شده</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>تکثیر شکل</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>ایجاد کپی از شکل‌های انتخاب شده</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>بازگشت آخرین نقطه</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>بازگشت آخرین نقطه رسم شده</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>حذف نقطه انتخاب شده</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>حذف نقطه انتخاب شده از چندضلعی</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>بازگشت</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>مخفی کردن شکل(&amp;H)</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>مخفی کردن همه شکل‌ها</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>نمایش شکل(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>نمایش همه شکل‌ها</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>تغییر وضعیت شکل(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>تغییر وضعیت همه شکل‌ها</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>آموزش(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>نمایش صفحه آموزش</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -500,88 +330,36 @@ Shapes</source>
         <translation>بزرگ‌نمایی(&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>کوچک‌نمایی(&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>روشنایی و کنتراست(&amp;B)</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>تنظیم روشنایی و کنتراست</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ویرایش برچسب(&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>ذخیره برچسب‌ها با نام فایل جدید</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>تغییر برچسب شکل انتخاب شده</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>کپی به کلیپ‌بورد</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>قرار دادن شکل‌های انتخاب شده در کلیپ‌بورد</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>چسباندن از کلیپ‌بورد</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>برای قرار دادن نقاط خط چندتکه‌ای کلیک کنید؛ Ctrl+کلیک نقطه آخر را قرار می‌دهد.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>تناسب با پنجره(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>نمایان نگه داشتن کل تصویر هنگام تغییر اندازهٔ پنجره</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>تناسب با عرض(&amp;D)</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>تطبیق عرض تصویر با پنجره هنگام تغییر اندازهٔ آن</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>نمایش تصویر در اندازهٔ بزرگ‌تر</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>نمایش تصویر در اندازهٔ کوچک‌تر</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>اندازهٔ &amp;واقعی</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>نمایش تصویر در ۱۰۰٪</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>پر کردن چندضلعی رسم شده</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>پر کردن چندضلعی هنگام رسم</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -604,10 +382,6 @@ Shapes</source>
         <translation>راهنما(&amp;H)</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s راه‌اندازی شد.</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>خروجی ماسک در دسترس نیست</translation>
     </message>
@@ -628,64 +402,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>برچسب نامعتبر &apos;{}&apos; با نوع اعتبارسنجی &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>خطا در ذخیره داده برچسب</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>خطا در باز کردن فایل</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>چنین فایلی وجود ندارد: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>در حال بارگذاری %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>بارگذاری شد %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>فایل‌های تصویر و برچسب (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - انتخاب فایل تصویر یا برچسب</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - ذخیره/بارگذاری حاشیه‌نویسی‌ها در پوشه</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . حاشیه‌نویسی‌ها در %s ذخیره/بارگذاری خواهند شد</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - انتخاب فایل</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>فایل‌های برچسب (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>انتخاب فایل</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>توجه</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -704,16 +426,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>قبل از بستن، حاشیه‌نویسی‌ها را در &quot;{}&quot; ذخیره کنید؟</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>ذخیره حاشیه‌نویسی‌ها؟</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>حذف {} شکل؟ می‌توانید آن‌ها را با بازگشت بازیابی کنید.</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - باز کردن پوشه</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -722,10 +436,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>تصویر برای باز شدن بیش از حد بزرگ است: {width}x{height} پیکسل به حدود {required} مگابایت نیاز دارد، اما محدودیت رمزگشایی {limit} مگابایت است. تصویر را به کاشی‌ها تقسیم کنید (برای مثال با gdal_retile.py) یا نسخه کوچک‌تری را باز کنید.</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>تغییر وضعیت حالت &quot;نگه داشتن حاشیه‌نویسی قبلی&quot;</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -772,16 +482,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -802,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>افزودن نقطه به لبه</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>درج یک نقطه جدید در لبه پلیگانی که اشاره‌گر روی آن است</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>نگه داشتن بزرگ‌نمایی قبلی(&amp;K)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>حذف دائمی این فایل برچسب؟ این عمل قابل بازگشت نیست.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>قالب‌های مجاز: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>پرونده برچسب انتخاب‌شده باز نشد: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>پرونده تصویر انتخاب‌شده باز نشد: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -834,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>مستطیل جهت‌دار</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>شروع رسم مستطیل جهت‌دار</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>استنتاج هوش مصنوعی حاشیه‌نویسی جدیدی تولید نکرد.</translation>
     </message>
@@ -846,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>شکل فاقد مساحت بود؛ چیزی ایجاد نشد.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>تنظیمات…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>ویرایش تنظیمات</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s آماده است.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s تا %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — انتخاب پوشهٔ تصاویر</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — انتخاب تصویر یا حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — انتخاب پوشهٔ حاشیه‌نویسی‌ها</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>&amp;کپی به اینجا</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>&amp;حذف فایل برچسب</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;پنهان کردن شکل‌ها</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>&amp;تصاویر و حاشیه‌نویسی‌ها (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>&amp;انتقال به اینجا</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;باز کردن</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>تصویر &amp;قبلی</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;ذخیره</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;نمایش شکل‌ها</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;تغییر وضعیت نمایش شکل‌ها</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>«{}» با سیاست برچسب‌گذاری «{}» مطابقت ندارد.</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>افزودن یک کپی از شکل‌های انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>افزودن رأس روی لبهٔ زیر نشانگر</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>تنظیم روشنایی و کنتراست تصویر</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>ت&amp;غییر پوشهٔ خروجی</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>فایل باز نمی‌شود</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>انتقال شکل‌ها به تصویر بعدی</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>تغییر برچسب شکل انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>انتخاب پوشه‌ای دیگر برای بارگذاری و ذخیرهٔ حاشیه‌نویسی‌ها</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>روی نقاط شیء کلیک کنید؛ Ctrl+click شکل را تکمیل می‌کند.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>برای افزودن نقاط خط شکسته کلیک کنید؛ Ctrl+click نقطهٔ پایانی را اضافه می‌کند.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>بستن برنامه</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>بستن فایل کنونی</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>تأیید حذف</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>کپی شکل‌های انتخاب‌شده در کلیپ‌بورد</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>رمزگشایی تصویر در این مسیر ممکن نشد:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>حذف فایل حاشیه‌نویسی ممکن نشد:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>خواندن داده‌های حاشیه‌نویسی از این مسیر ممکن نشد:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>ذخیرهٔ حاشیه‌نویسی‌ها ممکن نشد</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>کاهش بزرگ‌نمایی</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>حذف ناموفق بود</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>حذف رأس انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>حذف رأس انتخاب‌شده از چندضلعی</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>برای بخش‌بندی شیء، کادری دور آن بکشید.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>رسم دایره</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>رسم چندضلعی</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>رسم مستطیل</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>رسم مستطیل چرخش‌پذیر</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>رسم خط راست</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>جاسازی بایت‌های تصویر اصلی در فایل برچسب</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>پیش از اجرای AI، دست‌کم یک برچسب وارد کنید.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>بارگذاری %s ناموفق بود</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>معکوس کردن وضعیت نمایش هر شکل</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>رفتن به تصویر بعدی (برای انتقال برچسب‌ها Ctrl+Shift را نگه دارید)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>رفتن به تصویر قبلی (برای انتقال برچسب‌ها Ctrl+Shift را نگه دارید)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>پنهان کردن همهٔ شکل‌ها روی بوم</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>افزایش بزرگ‌نمایی</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>برچسب مجاز نیست</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>بارگذاری شد و آماده است: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>علامت‌گذاری یک نقطه</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>باز کردن &amp;پوشه</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>باز کردن پوشهٔ تصاویر</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>باز کردن تصویر یا فایل برچسب</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>باز کردن ناموفق بود</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>باز کردن پنجرهٔ تنظیمات</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>باز کردن آموزش در مرورگر</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>چسباندن شکل‌های کلیپ‌بورد در این تصویر</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>حذف دائمی فایل برچسب کنونی</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>پیش‌نمایش چندضلعی توپر هنگام رسم</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>در حال خواندن %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>حذف آخرین نقطهٔ قرار داده‌شده</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>حذف شکل‌های انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>بازنشانی بزرگ‌نمایی به 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>بازیابی چیدمان پیش‌فرض پنل‌ها و نوارهای ابزار</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>استفادهٔ دوباره از شکل‌های تصویر قبلی</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>واگرد آخرین تغییر شکل</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>ذخیره &amp;با نام</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>ذخیرهٔ &amp;خودکار</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>ذخیره با داده‌های &amp;تصویر</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>ذخیرهٔ حاشیه‌نویسی‌ها با نام</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>تغییرات حاشیه‌نویسی‌ها ذخیره شوند؟</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>ذخیرهٔ حاشیه‌نویسی‌ها با نام فایل جدید</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>تغییر مقیاس تصویر برای جا گرفتن همیشگی در پنجره</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>تغییر مقیاس تصویر متناسب با عرض پنجره</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>&amp;تنظیمات…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>تنظیمات این نشست به فایل --config محدود شده‌اند</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>نمایش همهٔ شکل‌ها روی بوم</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>فایل‌های پشتیبانی‌شده: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>رفتن به حالت ویرایش شکل‌های موجود</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>مسیر وجود ندارد:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>واگرد</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>واگرد آخرین نقطه</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>نوشتن حاشیه‌نویسی‌ها روی دیسک پس از هر تغییر</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>نوشتن حاشیه‌نویسی‌های کنونی روی دیسک</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>&amp;کوچک‌نمایی</translation>
     </message>
 </context>
 <context>

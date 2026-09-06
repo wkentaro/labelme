@@ -155,6 +155,7 @@ def test_accessible_names_use_installed_translation(
         assert translated != source
         assert widget.accessibleName() == translated
     assert dialog.windowTitle() == dialog.accessibleName()
+    assert dialog.edit.placeholderText() == dialog.edit.accessibleName()
     assert (
         dialog.edit_group_id.placeholderText() == dialog.edit_group_id.accessibleName()
     )

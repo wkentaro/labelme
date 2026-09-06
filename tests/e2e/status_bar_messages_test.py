@@ -72,6 +72,22 @@ def test_mode_status_preserves_pointer_coordinates_across_transition(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
+@pytest.mark.gui
+def test_temporary_message_keeps_mode_and_stats_visible(
+    *, raw_win: MainWindow, qtbot: QtBot, pause: bool
+) -> None:
+    raw_win.show()
+    qtbot.waitExposed(raw_win)
+
+    raw_win.show_status_message("Temporary message", delay=5000)
+    qtbot.wait(50)
+
+    assert raw_win.statusBar().currentMessage() == "Temporary message"
+    assert raw_win._status_bar.message.isVisible()
+    assert raw_win._status_bar.stats.isVisible()
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
 def _wait_for_status_message_containing(
     *,
     qtbot: QtBot,

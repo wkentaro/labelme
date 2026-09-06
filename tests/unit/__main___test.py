@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+import multiprocessing
 import os
 import sys
 import types
@@ -13,13 +15,30 @@ import pytest
 from loguru import logger
 from PySide6 import QtCore
 
+from labelme import _locale
 from labelme.__main__ import _LOGGER_LEVELS
+from labelme.__main__ import _get_label_flags_override
+from labelme.__main__ import _load_translator
 from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
 from labelme.__main__ import _resolve_config_source
 from labelme.__main__ import _route_qt_logging_to_loguru
 from labelme.__main__ import _setup_loguru
 from labelme.__main__ import main
+
+
+def test_main_dispatches_frozen_multiprocessing_before_parsing(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[None] = []
+    monkeypatch.setattr(multiprocessing, "freeze_support", lambda: calls.append(None))
+    monkeypatch.setattr(sys, "argv", ["labelme", "--version"])
+
+    with pytest.raises(SystemExit) as exc:
+        main()
+
+    assert exc.value.code == 0
+    assert calls == [None]
 
 
 def test_help_uses_console_script_name(
@@ -104,6 +123,40 @@ def test_canonical_flag_does_not_warn(
         with pytest.raises(SystemExit) as exc:
             main()
     assert exc.value.code == 0
+
+
+def test_get_label_flags_override_parses_inline_yaml() -> None:
+    args = argparse.Namespace(label_flags="{cat: [occluded]}")
+
+    assert _get_label_flags_override(args) == {"label_flags": {"cat": ["occluded"]}}
+
+
+def test_get_label_flags_override_reads_utf8_file(*, tmp_path: Path) -> None:
+    path = tmp_path / "labels.yaml"
+    path.write_text("猫: [隠れ]\n", encoding="utf-8")
+
+    assert _get_label_flags_override(argparse.Namespace(label_flags=str(path))) == {
+        "label_flags": {"猫": ["隠れ"]}
+    }
+
+
+def test_get_label_flags_override_omits_absent_option() -> None:
+    assert _get_label_flags_override(argparse.Namespace()) == {}
+
+
+def test_get_label_flags_override_falls_back_after_path_probe_error(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    value = "{cat: [occluded]}"
+
+    def raise_os_error(_path: Path) -> bool:
+        raise OSError("file name too long")
+
+    monkeypatch.setattr(Path, "is_file", raise_os_error)
+
+    assert _get_label_flags_override(argparse.Namespace(label_flags=value)) == {
+        "label_flags": {"cat": ["occluded"]}
+    }
 
 
 @pytest.mark.parametrize(
@@ -372,3 +425,21 @@ def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
         ("WARNING", "Populating font family alias mentioned outside qt.qpa.fonts"),
         ("ERROR", "genuine failure"),
     ]
+
+
+@pytest.mark.parametrize("language", [None, "en_US", "ja_JP", "xx_ZZ"])
+def test_load_translator_selects_saved_or_system_language(
+    *, language: str | None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(QtCore.QLocale, "system", lambda: QtCore.QLocale("ja_JP"))
+    expected = QtCore.QTranslator()
+    assert expected.load("ja_JP", str(_locale.TRANSLATE_DIR))
+
+    actual = _load_translator(language=language)
+    translated = actual.translate("SettingsDialog", "Language")
+
+    if language == "en_US":
+        assert translated == ""
+    else:
+        assert translated
+        assert translated == expected.translate("SettingsDialog", "Language")

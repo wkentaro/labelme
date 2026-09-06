@@ -94,6 +94,38 @@ def test_auto_save_on_shape_move(
 
 
 @pytest.mark.gui
+def test_auto_save_reuses_custom_label_file_path(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    source = data_path / _TEST_FILE_NAME
+    custom_label = tmp_path / "custom-name.json"
+    custom_label.write_bytes(source.read_bytes())
+    image_name = json.loads(custom_label.read_text())["imagePath"]
+    (tmp_path / image_name).write_bytes(source.with_suffix(".jpg").read_bytes())
+    image_derived_label = tmp_path / f"{Path(image_name).stem}.json"
+
+    win = main_win(
+        file_or_dir=custom_label,
+        config_overrides=dict(auto_save=True),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    before = custom_label.read_bytes()
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Right)
+
+    assert custom_label.read_bytes() != before
+    assert not image_derived_label.exists()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -125,7 +157,7 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
 
     assert win._is_changed
     assert win._actions.save.isEnabled()
-    assert win.windowTitle().endswith("*")
+    assert win.windowTitle().startswith("●")
     assert not label_file.exists()
 
     win._actions.save_auto.setChecked(True)
@@ -142,7 +174,7 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     assert "auto-saved" in saved_labels
     assert not win._is_changed
     assert not win._actions.save.isEnabled()
-    assert not win.windowTitle().endswith("*")
+    assert not win.windowTitle().startswith("●")
     # The window is still in polygon create mode: a successful auto-save must
     # clear only the dirty indicators, not re-enable the draw actions.
     assert not dict(win._actions.draw)["polygon"].isEnabled()
@@ -209,6 +241,7 @@ def test_auto_save_on_undo_of_first_shape(
     )
 
     assert _raw_auto_save_win._actions.undo.isEnabled()
+    assert _raw_auto_save_win._actions.delete_file.isEnabled()
     with label_file.open() as f:
         assert len(json.load(f)["shapes"]) == 1
 
@@ -235,7 +268,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
 ) -> None:
     label_file = tmp_path / f"{Path(_RAW_FILE_NAME).stem}.json"
     assert not label_file.exists()
-    assert not _raw_auto_save_win.windowTitle().endswith("*")
+    assert not _raw_auto_save_win.windowTitle().startswith("●")
 
     errors_shown: list[tuple[str, str]] = []
 
@@ -262,9 +295,9 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     )
 
     assert len(errors_shown) == 1
-    assert errors_shown[0][0] == _raw_auto_save_win.tr("Error saving label data")
+    assert errors_shown[0][0] == _raw_auto_save_win.tr("Could not save the annotations")
     assert "read-only output directory" in errors_shown[0][1]
-    assert _raw_auto_save_win.windowTitle().endswith("*")
+    assert _raw_auto_save_win.windowTitle().startswith("●")
     assert _raw_auto_save_win._actions.save.isEnabled()
     assert _raw_auto_save_win._actions.save_auto.isChecked()
 
@@ -302,7 +335,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     assert len(saved_shapes) == 1
     assert saved_shapes[0]["label"] == "cat"
     assert saved_shapes[0]["points"] == canvas.shapes[0].points.tolist()
-    assert not _raw_auto_save_win.windowTitle().endswith("*")
+    assert not _raw_auto_save_win.windowTitle().startswith("●")
     assert not _raw_auto_save_win._actions.save.isEnabled()
 
     monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)

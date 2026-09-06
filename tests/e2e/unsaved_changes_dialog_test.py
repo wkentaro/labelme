@@ -22,7 +22,7 @@ _draw_and_commit_polygon = partial(draw_and_commit_polygon, vertices=_VERTICES)
 
 
 def _is_dirty(*, win: MainWindow) -> bool:
-    return win.windowTitle().endswith("*")
+    return win.windowTitle().startswith("●")
 
 
 def _intercept_question(

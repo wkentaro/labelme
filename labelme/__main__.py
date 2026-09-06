@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import io
+import multiprocessing
 import os
 import sys
 import traceback
@@ -34,6 +35,22 @@ _LOGGER_LEVELS: Final = (  # noqa: GR011 -- parametrized by tests
     "error",
     "critical",
 )
+
+
+def _set_application_icon(app: QtWidgets.QApplication, /) -> None:
+    app.setWindowIcon(new_icon("phosphor/app.png"))
+
+
+def _load_translator(*, language: str | None) -> QtCore.QTranslator:
+    # Stale locale codes follow the system setting, just like the language picker.
+    if not _locale.is_valid_language(language):
+        language = None
+    translator = QtCore.QTranslator()
+    translator.load(
+        language or QtCore.QLocale.system().name(),
+        str(_locale.TRANSLATE_DIR),
+    )
+    return translator
 
 
 class _LoggerIO(io.StringIO):
@@ -188,10 +205,33 @@ class _DeprecatedAlias(argparse.Action):
 
 
 def _parse_list_arg(value: str, /) -> list[str]:
-    if os.path.isfile(value):
-        with open(value, encoding="utf-8") as f:
-            return [line.strip() for line in f if line.strip()]
-    return [line.strip() for line in value.split(",") if line.strip()]
+    path = Path(value)
+    try:
+        is_file = path.is_file()
+    except OSError:
+        is_file = False
+
+    entries = (
+        path.read_text(encoding="utf-8").splitlines() if is_file else value.split(",")
+    )
+    return [entry for entry in map(str.strip, entries) if entry]
+
+
+def _get_label_flags_override(args: argparse.Namespace, /) -> dict[str, object]:
+    if not hasattr(args, "label_flags"):
+        return {}
+
+    value = args.label_flags
+    path = Path(value)
+    try:
+        is_file = path.is_file()
+    except OSError:
+        is_file = False
+
+    if is_file:
+        value = path.read_text(encoding="utf-8")
+
+    return {"label_flags": _yaml.safe_load(value)}
 
 
 def _resolve_config_source(
@@ -221,6 +261,7 @@ def _resolve_config_source(
 
 
 def main() -> None:
+    multiprocessing.freeze_support()
     parser = argparse.ArgumentParser(prog="labelme")
     parser.add_argument("--version", "-V", action="store_true", help="show version")
     parser.add_argument(
@@ -281,8 +322,8 @@ def main() -> None:
         "--labelflags",  # deprecated
         dest="label_flags",
         action=_DeprecatedAlias,
-        help=r"yaml string of label specific flags OR file containing json "
-        r"string of label specific flags (ex. {person-\d+: [male, tall], "
+        help=r"YAML mapping from label patterns to shape flags, given inline or "
+        r"read from a UTF-8 file (for example: {person-\d+: [male, tall], "
         r"dog-\d+: [black, brown, white], .*: [occluded]})",  # NOQA
         default=argparse.SUPPRESS,
     )
@@ -330,14 +371,8 @@ def main() -> None:
     if hasattr(args, "labels"):
         args.labels = _parse_list_arg(args.labels)
 
-    if hasattr(args, "label_flags"):
-        if os.path.isfile(args.label_flags):
-            with open(args.label_flags, encoding="utf-8") as f:
-                args.label_flags = _yaml.safe_load(f)
-        else:
-            args.label_flags = _yaml.safe_load(args.label_flags)
-
     config_from_args = args.__dict__
+    config_from_args.update(_get_label_flags_override(args))
     config_from_args.pop("version")
     reset_config = config_from_args.pop("reset_config")
     file_or_dir = config_from_args.pop("path")
@@ -361,10 +396,8 @@ def main() -> None:
             )
         output_dir = output
 
-    # Read the language and color theme before QApplication exists so the
-    # translator and palette are set before any widget is built. MainWindow
-    # re-reads the same config; both reads are pure (load_config never writes), so
-    # the duplicate parse is harmless.
+    # Load appearance preferences before constructing widgets so their initial
+    # text and palette match the saved settings.
     try:
         loaded_config = _config.load_config(
             config_file=config_file, config_overrides=config_overrides
@@ -375,20 +408,12 @@ def main() -> None:
         logger.debug("Could not read config: {}", e)
         language = None
         color_theme = "system"
-    # A stale or hand-edited language code with no bundled translation follows the
-    # system locale, matching the Settings dialog.
-    if not _locale.is_valid_language(language):
-        language = None
-    translator = QtCore.QTranslator()
-    translator.load(
-        language or QtCore.QLocale.system().name(),
-        str(_locale.TRANSLATE_DIR),
-    )
+    translator = _load_translator(language=language)
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
     apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(new_icon("icon-256.png"))
+    _set_application_icon(app)
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,

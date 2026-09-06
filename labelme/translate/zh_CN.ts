@@ -298,204 +298,28 @@
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>退出应用程序</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>打开(&amp;O)
-</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>打开图像或标签文件</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>打开目录</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>下一张图像(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打开下一张图像（按住 Ctl+Shift 复制标签）</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>上一张图像(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打开上一张图像（按住 Ctl+Shift 复制标签）</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>保存(&amp;S)
-</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>将标签保存到文件</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>另存为(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>删除文件(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>删除当前标签文件</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>更改输出目录(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>更改标注的加载和保存位置</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>自动保存(&amp;A)</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>自动保存</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>保存图像数据</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>在标签文件中保存图像数据</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>关闭(&amp;C)</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>关闭当前文件</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>保留上一张标注</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>开始绘制多边形</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>开始绘制矩形</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>开始绘制圆形</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>开始绘制线段</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>开始绘制点</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>编辑形状</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>移动和编辑选中的形状</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>删除形状</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>删除选中的形状</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>复制形状</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>创建选中形状的副本</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>撤销上一个点</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>撤销上一个绘制的点</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>移除选中的点</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>从多边形中移除选中的点</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>撤销
-</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>撤销上一次添加或编辑形状的操作</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>隐藏(&amp;H)
-形状</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>隐藏所有形状</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>显示(&amp;S)
-形状</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>显示所有形状</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>切换(&amp;T)
-形状显示</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>切换所有形状的显示状态</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>教程(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>显示教程页面</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -506,88 +330,36 @@ Shapes</source>
         <translation>放大(&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>缩小(&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>亮度与对比度(&amp;B)</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>调整亮度和对比度</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>编辑标签(&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>以新的文件名保存标签</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>修改选中形状的标签</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>复制到剪贴板</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>将所选形状放入剪贴板</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>从剪贴板粘贴</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>将剪贴板中的形状插入此图像</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>单击放置折线的点；Ctrl+单击放置最后一个点。</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>适合窗口(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>调整窗口大小时保持整幅图像可见</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>适合宽度(&amp;D)</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>调整窗口大小时使图像宽度与窗口一致</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>以更大的尺寸显示图像</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>以更小的尺寸显示图像</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>实际大小(&amp;A)</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>以 100% 显示图像</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>填充正在绘制的多边形</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>绘制时填充多边形</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -610,10 +382,6 @@ Shapes</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s 已启动。</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>掩膜输出不可用</translation>
     </message>
@@ -634,64 +402,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>标签“{}”不符合“{}”验证类型</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>保存标签数据时出错</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>AI 推理失败：%s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>打开文件时出错</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>文件不存在：&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>正在加载 %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>已加载 %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>图像 &amp; 标签文件 (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - 选择图像或标签文件</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 在目录中保存或加载标注</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s。标注将在 %s 中保存或加载</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - 选择文件</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>标签文件 (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>选择文件</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>注意</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -710,16 +426,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>关闭前将标注保存到“{}”？</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>保存标注？</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>删除 {} 个形状？可以使用「撤销」恢复。</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - 打开目录</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -728,10 +436,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>图像过大,无法打开: {width}x{height} 像素约需 {required} MB,但解码上限为 {limit} MB。请将图像切分为图块(例如使用 gdal_retile.py),或打开较小的副本。</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>切换“保留上一次的标注”模式</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -778,16 +482,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>单击添加点以分割对象；按住 Ctrl 并单击结束创建。</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>绘制边界框以分割对象。</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -808,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>在边上添加点</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>在悬停的多边形边上插入新顶点</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>保留上一次的缩放(&amp;K)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>永久删除该标签文件？此操作无法撤销。</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>支持的格式: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>无法打开所选标签文件: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>无法打开所选图像文件: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -840,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>有向矩形</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>开始绘制有向矩形</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>AI 推理未生成新标注。</translation>
     </message>
@@ -852,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>形状面积为零，未创建。</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>设置…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>编辑设置</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>本次会话的设置通过 --config 管理</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>配置错误</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s 已就绪。</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s 到 %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — 选择图像文件夹</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — 选择图像或标注</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — 选择标注文件夹</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>复制到此处(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>删除标签文件(&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>隐藏形状(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>图像和标注(&amp;I) (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>移动到此处(&amp;M)</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>打开(&amp;O)</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>上一张图像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>显示形状(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>切换形状可见性(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>“{}”不符合“{}”标签策略。</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>添加所选形状的副本</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>在光标悬停的边上添加顶点</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>调整图像亮度和对比度</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>更改输出文件夹(&amp;H)</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>无法打开文件</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>沿用形状</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>更改所选形状的标签</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>选择其他文件夹来加载和保存标注</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>点击对象上的点；Ctrl+click 完成形状。</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>点击以添加折线点；Ctrl+click 添加最后一个点。</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>关闭应用程序</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>关闭当前文件</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>确认删除</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>将所选形状复制到剪贴板</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>无法解码以下位置的图像：
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>无法删除标注文件：
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>无法从以下位置读取标注数据：
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>无法保存标注</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>降低缩放级别</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>删除失败</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>删除所选顶点</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>从多边形中删除所选顶点</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>永久删除此标注文件？</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>在对象周围画框以分割对象。</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>绘制圆形</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>绘制多边形</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>绘制矩形</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>绘制可旋转矩形</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>绘制直线</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>将源图像字节数据嵌入标签文件</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>运行 AI 前，请输入至少一个标签。</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>加载 %s 失败</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>反转每个形状的可见性</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>转到下一张图像（按住 Ctrl+Shift 可沿用标签）</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>转到上一张图像（按住 Ctrl+Shift 可沿用标签）</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>隐藏画布上的所有形状</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>提高缩放级别</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>不允许使用此标签</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>已加载并就绪：%s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>标记单个点</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>打开文件夹(&amp;F)</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>打开图像文件夹</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>打开图像或标签文件</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>打开失败</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>打开设置对话框</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>在浏览器中打开教程</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>将剪贴板中的形状粘贴到此图像</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>永久删除当前标签文件</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>绘制时预览填充的多边形</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>正在读取 %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>移除最后放置的点</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>移除所选形状</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>将缩放重置为 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>恢复默认的面板和工具栏布局</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>复用上一张图像的形状</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>撤销上一次形状更改</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>另存为(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>自动保存(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>保存时包含图像数据(&amp;I)</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>将标注另存为</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>保存对标注的更改？</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>使用新文件名保存标注</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>缩放图像以始终适应窗口</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>将图像缩放至窗口宽度</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>设置(&amp;T)…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>本次会话的设置已锁定为 --config 文件中的设置</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>显示画布上的所有形状</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>支持的文件：{patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>切换到编辑现有形状</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>路径不存在：
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>撤销</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>撤销最后一个点</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>每次更改后将标注写入磁盘</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>将当前标注写入磁盘</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>缩小(&amp;O)</translation>
     </message>
 </context>
 <context>

@@ -298,198 +298,28 @@
         <translation>&amp;Zakończ</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>Zamknij aplikację</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Otwórz</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Otwórz obraz lub plik etykiet</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Otwórz folder</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Następny obraz</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Otwórz następny (Ctrl+Shift — kopiuj etykiety)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Poprzedni obraz</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Otwórz poprzedni (Ctrl+Shift — kopiuj etykiety)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Zapisz</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>Zapisz etykiety do pliku</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Zapisz &amp;jako</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Usuń plik</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Usuń bieżący plik etykiet</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Zmień folder wynikowy</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Zmień miejsce wczytywania/zapisywania adnotacji</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Zapisuj &amp;automatycznie</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>Zapisuj automatycznie</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>Zapisz z danymi obrazu</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Zapisz dane obrazu w pliku etykiet</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>&amp;Zamknij</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>Zamknij bieżący plik</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>Zachowaj poprzednią adnotację</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>Rozpocznij rysowanie wielokątów</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>Rozpocznij rysowanie prostokątów</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>Rozpocznij rysowanie okręgów</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>Rozpocznij rysowanie linii</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>Rozpocznij rysowanie punktów</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Edytuj kształty</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>Przesuń i edytuj zaznaczone kształty</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>Usuń kształty</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>Usuń zaznaczone kształty</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>Duplikuj kształty</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>Utwórz duplikat zaznaczonych kształtów</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Cofnij ostatni punkt</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>Cofnij ostatnio narysowany punkt</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Usuń zaznaczony punkt</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Usuń zaznaczony punkt z wielokąta</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Cofnij</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>Cofnij ostatnie dodanie i edycję kształtu</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Ukryj kształty</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>Ukryj wszystkie kształty</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Pokaż kształty</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>Pokaż wszystkie kształty</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Przełącz &amp;kształty</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>Przełącz widoczność wszystkich kształtów</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp;Samouczek</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>Pokaż stronę samouczka</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -500,88 +330,36 @@ Shapes</source>
         <translation>Powiększ (&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>Pomniejsz (&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>Jasność i kontrast (&amp;B)</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>Dostosuj jasność i kontrast</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Edytuj etykietę</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Zapisz etykiety pod nową nazwą pliku</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>Zmień etykietę zaznaczonego kształtu</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>Kopiuj do schowka</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>Umieść zaznaczone kształty w schowku</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>Wklej ze schowka</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>Wstaw kształty ze schowka do tego obrazu</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Kliknij, aby umieścić punkty polilinii; Ctrl+kliknięcie umieszcza ostatni.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Dopasuj do okna (&amp;W)</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>Cały obraz pozostaje widoczny przy zmianie rozmiaru okna</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>Dopasuj szerokość (&amp;D)</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Szerokość obrazu dopasowuje się do okna przy zmianie jego rozmiaru</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>Wyświetl obraz w większym rozmiarze</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>Wyświetl obraz w mniejszym rozmiarze</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>&amp;Rzeczywisty rozmiar</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>Wyświetl obraz w skali 100%</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>Wypełnij rysowany wielokąt</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>Wypełniaj wielokąt podczas rysowania</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -604,10 +382,6 @@ Shapes</source>
         <translation>&amp;Pomoc</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s uruchomiono.</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>Wyjście maski niedostępne</translation>
     </message>
@@ -628,64 +402,12 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Nieprawidłowa etykieta &apos;{}&apos; dla typu walidacji &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Błąd zapisu etykiet</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>Wnioskowanie AI nie powiodło się: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>Błąd otwarcia pliku</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Brak pliku: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>Wczytywanie %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>Wczytano %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Pliki obrazów i etykiet (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s — Wybierz plik obrazu lub etykiet</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s — Zapisz/wczytaj adnotacje w folderze</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s. Adnotacje będą zapisywane/wczytywane w %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s — Wybierz plik</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Pliki etykiet (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Wybierz plik</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Uwaga</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -704,16 +426,8 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Zapisać adnotacje do &quot;{}&quot; przed zamknięciem?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Zapisać adnotacje?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Usunąć {} kształtów? Możesz je przywrócić poleceniem Cofnij.</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s — Otwórz folder</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -722,10 +436,6 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>Obraz jest zbyt duży, aby go otworzyć: {width}x{height} pikseli wymaga około {required} MB, ale limit dekodowania wynosi {limit} MB. Podziel obraz na kafelki (na przykład za pomocą gdal_retile.py) lub otwórz mniejszą kopię.</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Przełącz tryb „zachowaj poprzednią adnotację”</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -772,16 +482,8 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Kliknij punkty, aby segmentować obiekt. Ctrl+LeftClick kończy tworzenie.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Narysuj ramkę ograniczającą, aby segmentować obiekt.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -802,28 +504,8 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Dodaj punkt do krawędzi</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>Wstaw nowy punkt na wskazywanej krawędzi wielokąta</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>Zachowaj poprzedni zoom (&amp;K)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Trwale usunąć ten plik etykiet? Tej operacji nie można cofnąć.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>Dozwolone formaty: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Nie można otworzyć wybranego pliku etykiet: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>Nie można otworzyć wybranego pliku obrazu: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -834,10 +516,6 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Prostokąt Zorientowany</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>Rozpocznij rysowanie prostokątów zorientowanych</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>Wnioskowanie AI nie utworzyło nowej adnotacji.</translation>
     </message>
@@ -846,20 +524,384 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Kształt nie ma obszaru; nic nie zostało utworzone.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>Ustawienia…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>Edytuj ustawienia</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Błąd konfiguracji</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s jest gotowy.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s do %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — Wybierz folder obrazów</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — Wybierz obraz lub adnotację</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — Wybierz folder adnotacji</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>&amp;Kopiuj tutaj</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>&amp;Usuń plik etykiet</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>U&amp;kryj kształty</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>&amp;Obrazy i adnotacje (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>&amp;Przenieś tutaj</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Otwórz</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Poprzedni obraz</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Zapisz</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Po&amp;każ kształty</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Przełącz &amp;widoczność kształtów</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>„{}” nie spełnia zasad etykietowania „{}”.</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>Dodaj kopię zaznaczonych kształtów</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>Dodaj wierzchołek na krawędzi pod kursorem</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>Dostosuj jasność i kontrast obrazu</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>Z&amp;mień folder wyjściowy</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>Nie można otworzyć pliku</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>Przenoś kształty dalej</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>Zmień etykietę zaznaczonego kształtu</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>Wybierz inny folder do wczytywania i zapisywania adnotacji</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>Klikaj punkty na obiekcie; Ctrl+click kończy kształt.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>Klikaj, aby dodawać punkty łamanej; Ctrl+click dodaje ostatni punkt.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>Zamknij aplikację</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>Zamknij bieżący plik</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>Potwierdź usunięcie</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>Kopiuj zaznaczone kształty do schowka</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>Nie udało się zdekodować obrazu w:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>Nie udało się usunąć pliku adnotacji:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>Nie udało się odczytać danych adnotacji z:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>Nie udało się zapisać adnotacji</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>Zmniejsz powiększenie</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>Usuwanie nie powiodło się</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>Usuń zaznaczony wierzchołek</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>Usuń zaznaczony wierzchołek z wielokąta</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>Trwale usunąć ten plik adnotacji?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>Narysuj ramkę wokół obiektu, aby go poddać segmentacji.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>Narysuj okrąg</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>Narysuj wielokąt</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>Narysuj prostokąt</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>Narysuj obracany prostokąt</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>Narysuj linię prostą</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>Osadź bajty obrazu źródłowego w pliku etykiet</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>Przed uruchomieniem AI wprowadź co najmniej jedną etykietę.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>Nie udało się wczytać %s</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>Odwróć widoczność każdego kształtu</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Przejdź do następnego obrazu (przytrzymaj Ctrl+Shift, aby przenieść etykiety)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Przejdź do poprzedniego obrazu (przytrzymaj Ctrl+Shift, aby przenieść etykiety)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>Ukryj wszystkie kształty na płótnie</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>Zwiększ powiększenie</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>Niedozwolona etykieta</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>Wczytano, gotowe: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>Zaznacz pojedynczy punkt</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>Otwórz &amp;folder</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Otwórz folder obrazów</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>Otwórz obraz lub plik etykiet</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>Otwieranie nie powiodło się</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>Otwórz okno ustawień</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>Otwórz samouczek w przeglądarce</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>Wklej kształty ze schowka do tego obrazu</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>Trwale usuń bieżący plik etykiet</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>Wyświetlaj podgląd wypełnionego wielokąta podczas rysowania</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>Odczytywanie %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>Usuń ostatnio umieszczony punkt</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>Usuń zaznaczone kształty</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>Przywróć powiększenie do 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>Przywróć domyślny układ paneli i pasków narzędzi</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>Użyj ponownie kształtów z poprzedniego obrazu</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>Cofnij ostatnią zmianę kształtu</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>Zapisz &amp;jako</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>Zapisuj &amp;automatycznie</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>Zapisz z danymi &amp;obrazu</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>Zapisz adnotacje jako</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>Zapisać zmiany w adnotacjach?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>Zapisz adnotacje pod nową nazwą pliku</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>Skaluj obraz tak, aby zawsze mieścił się w oknie</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>Skaluj obraz do szerokości okna</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>Us&amp;tawienia…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>W tej sesji ustawienia są zablokowane przez plik --config</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>Pokaż wszystkie kształty na płótnie</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>Obsługiwane pliki: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>Przełącz na edycję istniejących kształtów</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>Ścieżka nie istnieje:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Cofnij</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Cofnij ostatni punkt</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>Zapisuj adnotacje na dysku po każdej zmianie</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>Zapisz bieżące adnotacje na dysku</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>P&amp;omniejsz</translation>
     </message>
 </context>
 <context>

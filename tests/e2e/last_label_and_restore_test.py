@@ -187,7 +187,7 @@ def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
     win._actions.open_next_img.trigger()
     qtbot.waitUntil(lambda: len(canvas.shapes) == 1, timeout=_SHAPE_TIMEOUT_MS)
 
-    # Keep Previous Annotation carried the shape onto the next image, but
+    # The carried shape starts the next image's baseline, so
     # nothing has been edited on this image yet: Undo must stay disabled so
     # a stray trigger cannot silently discard the carried-forward shape.
     assert [shape.label for shape in canvas.shapes] == ["carried"]

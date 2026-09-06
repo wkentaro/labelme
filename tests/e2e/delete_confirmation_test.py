@@ -103,12 +103,11 @@ def test_shape_deletion_warning_matches_working_undo(
     ANNOTATED_FILE_NAME: Final[str] = "annotated/2011_000003.json"
     SHAPE_TIMEOUT_MS: Final[int] = 5_000
 
-    # Auto-save is what makes the saved shape count observable without driving
-    # a save action, and the untranslated source language is what makes the
-    # warning assertions below independent of the developer's system locale.
+    # Auto-save makes the saved shape count observable without driving a save
+    # action.
     win = main_win(
         file_or_dir=str(data_path / ANNOTATED_FILE_NAME),
-        config_overrides=dict(auto_save=True, language="en_US"),
+        config_overrides=dict(auto_save=True),
         output_dir=str(tmp_path),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)

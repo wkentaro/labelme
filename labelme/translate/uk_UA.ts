@@ -270,78 +270,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Зберегти</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>Зберегти мітки у файл</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Зберегти як</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Автоматично зберегти</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>Зберегти автоматично</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>Зберегти з даними зображення</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Зберегти дані зображення у файлі мітки</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Змінити каталог виводу</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Змінити місце завантаження/збереження анотацій</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Відкрити</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Відкрити файл зображення або мітки</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Відкрити каталог</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Закрити</translation>
-    </message>
-    <message>
-        <source>Close current file</source>
-        <translation>Закрити поточний файл</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Видалити файл</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Видалити поточний файл мітки</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>Зберегти попередню анотацію</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Увімкнути режим «зберегти попередню анотацію»</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -352,24 +282,12 @@
         <translation>Видалити фігури</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>Видалити вибрані фігури</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Редагувати мітку</translation>
     </message>
     <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>Змінити мітку вибраної фігури</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>Копіювати в буфер обміну</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>Помістити вибрані фігури в буфер обміну</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
@@ -380,93 +298,20 @@
         <translation>Дублювати фігури</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>Створити дублікат вибраних фігур</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Скасувати останній пункт</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>Скасувати останню намальовану точку</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Скасувати</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>Скасувати останнє додавання та редагування фігури</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Видалити вибрану точку</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Видалити вибрану точку з багатокутника</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>Почніть малювати багатокутники</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Редагувати фігури</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>Перемістити і відредагувати вибрані фігури</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>Почніть малювати прямокутники</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>Почніть малювати кола</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>Почніть малювати лінії</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>Почніть малювати точки</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Наступне зображення</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Відкрити далі (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Попереднє зображення</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>&amp;Яскравість Контраст</translation>
     </message>
     <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>Відрегулювати яскравість і контраст</translation>
-    </message>
-    <message>
         <source>Zoom &amp;In</source>
         <translation>&amp;Збільшити</translation>
-    </message>
-    <message>
-        <source>&amp;Zoom Out</source>
-        <translation>&amp;Зменшити</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -477,40 +322,6 @@
         <translation>Заливка багатокутника при малюванні</translation>
     </message>
     <message>
-        <source>Fill polygon while drawing</source>
-        <translation>Заповнювати багатокутник під час малювання</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Приховати
-фігури</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>Приховати всі фігури</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Показати
-фігури</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>Показати всі фігури</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Переключити
-фігури</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>Переключити всі фігури</translation>
-    </message>
-    <message>
         <source>Zoom</source>
         <translation>Збільшити</translation>
     </message>
@@ -519,16 +330,8 @@ Shapes</source>
         <translation>&amp;Вийти</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>Вийти з програми</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp;Посібник</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>Показати сторінку підручника</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -545,10 +348,6 @@ Shapes</source>
     <message>
         <source>&amp;Help</source>
         <translation>&amp;Довідка</translation>
-    </message>
-    <message>
-        <source>%s started.</source>
-        <translation>%s розпочато.</translation>
     </message>
     <message>
         <source>Flags</source>
@@ -603,64 +402,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Недійсна мітка &quot;{}&quot; з типом перевірки &quot;{}&quot;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Помилка збереження даних мітки</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>Інференс ШІ не вдався: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>Помилка відкриття файлу</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Такого файлу немає: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>Завантаження %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>Завантажено %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Файли зображень і міток (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Виберіть файл зображення або мітки</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Зберегти/завантажити анотації в каталозі</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Анотації будуть збережені/завантажені в %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Виберіть файл</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Файли міток (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Виберіть файл</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Увага</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -679,16 +426,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Зберегти анотації до &quot;{}&quot; перед закриттям?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Зберегти анотації?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Видалити {} фігур? Ви можете відновити їх за допомогою команди «Скасувати».</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Відкрити каталог</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -701,14 +440,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Зберегти мітки під новою назвою файлу</translation>
-    </message>
-    <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>Вставити фігури з буфера обміну в це зображення</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -731,56 +462,24 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Клацайте, щоб ставити точки лінії; Ctrl+клацання ставить останню.</translation>
-    </message>
-    <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Натисніть точки для сегментації об&apos;єкта. Ctrl+LeftClick завершує створення.</translation>
     </message>
     <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Намалюйте обмежувальну рамку для сегментації об&apos;єкта.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>&amp;Припасувати вікно</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>Усе зображення залишається видимим під час зміни розміру вікна</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>За &amp;шириною</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ширина зображення підлаштовується під вікно під час зміни його розміру</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>Показати зображення більшим</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>Показати зображення меншим</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>&amp;Реальний розмір</translation>
-    </message>
-    <message>
-        <source>Show the image at 100%</source>
-        <translation>Показати зображення в масштабі 100%</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -805,28 +504,8 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Додати точку на ребро</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>Вставити нову точку на ребрі полігона під курсором</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>&amp;Зберегти попередній масштаб</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Остаточно видалити цей файл мітки? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>Дозволені формати: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Не вдалося відкрити вибраний файл міток: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>Не вдалося відкрити вибраний файл зображення: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -837,10 +516,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Орієнтований прямокутник</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>Почніть малювати орієнтовані прямокутники</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>Інференс ШІ не створив нової анотації.</translation>
     </message>
@@ -849,20 +524,384 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Фігура не має площі; нічого не створено.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>Параметри…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>Редагувати параметри</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>Параметри керуються через --config для цього сеансу</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Помилка конфігурації</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s готовий.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s — %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — Виберіть теку із зображеннями</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — Виберіть зображення або розмітку</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — Виберіть теку розмітки</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>&amp;Копіювати сюди</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>&amp;Видалити файл міток</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Приховати фігури</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>&amp;Зображення та розмітка (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>&amp;Перемістити сюди</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Відкрити</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Попереднє зображення</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Зберегти</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>По&amp;казати фігури</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Перемкнути &amp;видимість фігур</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>«{}» не відповідає правилу міток «{}».</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>Додати копію вибраних фігур</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>Додати вершину на ребрі під вказівником</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>Налаштувати яскравість і контрастність зображення</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>З&amp;мінити теку виведення</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>Не вдається відкрити файл</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>Переносити фігури далі</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>Змінити мітку вибраної фігури</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>Вибрати іншу теку для завантаження та збереження розмітки</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>Клацайте точки на об’єкті; Ctrl+click завершує фігуру.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>Клацайте, щоб додавати точки ламаної; Ctrl+click додає останню точку.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>Закрити застосунок</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>Закрити поточний файл</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>Підтвердження видалення</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>Копіювати вибрані фігури до буфера обміну</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>Не вдалося декодувати зображення за шляхом:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>Не вдалося видалити файл розмітки:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>Не вдалося прочитати дані розмітки з:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>Не вдалося зберегти розмітку</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>Зменшити масштаб</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>Не вдалося видалити</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>Видалити вибрану вершину</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>Видалити вибрану вершину з багатокутника</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>Видалити цей файл розмітки назавжди?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>Намалюйте рамку навколо об’єкта, щоб сегментувати його.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>Намалювати коло</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>Намалювати багатокутник</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>Намалювати прямокутник</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>Намалювати прямокутник із можливістю обертання</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>Намалювати пряму лінію</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>Вбудувати байти вихідного зображення у файл міток</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>Введіть принаймні одну мітку перед запуском AI.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>Не вдалося завантажити %s</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>Інвертувати видимість кожної фігури</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Перейти до наступного зображення (утримуйте Ctrl+Shift для перенесення міток)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Перейти до попереднього зображення (утримуйте Ctrl+Shift для перенесення міток)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>Приховати всі фігури на полотні</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>Збільшити масштаб</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>Недозволена мітка</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>Завантажено й готово: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>Позначити одну точку</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>Відкрити &amp;теку</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Відкрити теку із зображеннями</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>Відкрити зображення або файл міток</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>Не вдалося відкрити</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>Відкрити діалог налаштувань</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>Відкрити посібник у браузері</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>Вставити фігури з буфера обміну в це зображення</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>Назавжди видалити поточний файл міток</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>Показувати попередній вигляд заповненого багатокутника під час малювання</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>Читання %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>Видалити останню поставлену точку</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>Видалити вибрані фігури</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>Повернути масштаб до 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>Відновити типове розташування панелей і панелей інструментів</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>Повторно використати фігури з попереднього зображення</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>Скасувати останню зміну фігури</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>Зберегти &amp;як</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>Зберігати авто&amp;матично</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>Зберегти з даними &amp;зображення</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>Зберегти розмітку як</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>Зберегти зміни розмітки?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>Зберегти розмітку під новою назвою файлу</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>Масштабувати зображення, щоб воно завжди вміщувалося у вікні</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>Масштабувати зображення за шириною вікна</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>Налаш&amp;тування…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>У цьому сеансі налаштування зафіксовані файлом --config</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>Показати всі фігури на полотні</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>Підтримувані файли: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>Перейти до редагування наявних фігур</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>Шлях не існує:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Скасувати останню точку</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>Записувати розмітку на диск після кожної зміни</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>Записати поточну розмітку на диск</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>З&amp;меншити</translation>
     </message>
 </context>
 <context>

@@ -301,13 +301,13 @@ def test_title_returns_to_clean_after_save(
     draw_and_commit_polygon(
         qtbot=qtbot, win=win, label="cat", vertices=_DEFAULT_TRIANGLE
     )
-    assert win.windowTitle().endswith("*")
+    assert win.windowTitle().startswith("●")
 
     label_path = tmp_path / "2011_000003.json"
     monkeypatch.setattr(win, "prompt_save_file_path", lambda: str(label_path))
     win._save_label_file(save_as=False)
 
     assert label_path.exists()
-    assert not win.windowTitle().endswith("*")
+    assert not win.windowTitle().startswith("●")
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

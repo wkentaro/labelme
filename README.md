@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="labelme/icons/icon-256.png" width="200" height="200"><br/>labelme
+  <img src="labelme/icons/phosphor/app.png" width="200" height="200"><br/>labelme
 </h1>
 
 <h4 align="center">
@@ -199,8 +199,8 @@ pyinstaller labelme/labelme/__main__.py \
   --add-data=$(OSAM_PATH)/_models/yoloworld/clip/bpe_simple_vocab_16e6.txt.gz:osam/_models/yoloworld/clip \
   --add-data=$(LABELME_PATH)/_config/default_config.yaml:labelme/_config \
   --add-data=$(LABELME_PATH)/icons/*:labelme/icons \
-  --add-data=$(LABELME_PATH)/translate/*:translate \
-  --icon=$(LABELME_PATH)/icons/icon-256.png \
+  --add-data=$(LABELME_PATH)/translate/*:labelme/translate \
+  --icon=$(LABELME_PATH)/icons/phosphor/app.png \
   --onedir
 ```
 

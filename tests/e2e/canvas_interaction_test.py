@@ -455,6 +455,7 @@ def test_cancel_drawing_with_escape(
 
     assert canvas._current is None
     assert not raw_win._actions.undo.isEnabled()
+    assert not raw_win._actions.delete.isEnabled()
     assert not raw_win._is_changed
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

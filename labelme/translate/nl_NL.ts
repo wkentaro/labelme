@@ -298,198 +298,28 @@
         <translation>&amp;Afsluiten</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>Applicatie afsluiten</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Openen</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Afbeelding of labelbestand openen</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Map Openen</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Volgende &amp;Afbeelding</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Volgende openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>Vorige &amp;Afbeelding</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Opslaan</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>Labels opslaan naar bestand</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Opslaan &amp;als</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Bestand &amp;verwijderen</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Huidig labelbestand verwijderen</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Uitvoermap &amp;wijzigen</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Wijzig waar annotaties worden geladen/opgeslagen</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatisch opslaan</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>Automatisch opslaan</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>Opslaan met Afbeeldingsgegevens</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Afbeeldingsgegevens opslaan in labelbestand</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>&amp;Sluiten</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>Huidig bestand sluiten</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>Vorige Annotatie Behouden</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>Begin met tekenen van polygonen</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>Begin met tekenen van rechthoeken</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>Begin met tekenen van cirkels</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>Begin met tekenen van lijnen</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>Begin met tekenen van punten</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Vormen Bewerken</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>Verplaats en bewerk de geselecteerde vormen</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>Vormen Verwijderen</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>Geselecteerde vormen verwijderen</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>Vormen Dupliceren</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>Maak een duplicaat van de geselecteerde vormen</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Laatste punt ongedaan maken</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>Laatste getekende punt ongedaan maken</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Geselecteerd Punt Verwijderen</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Geselecteerd punt uit polygoon verwijderen</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Ongedaan Maken</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Vormen &amp;verbergen</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>Alle vormen verbergen</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Vormen &amp;tonen</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>Alle vormen tonen</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Vormen &amp;omschakelen</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>Alle vormen omschakelen</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp;Tutorial</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>Tutorialpagina tonen</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -500,88 +330,36 @@ Shapes</source>
         <translation>&amp;Inzoomen</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>&amp;Uitzoomen</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>Helderheid en &amp;contrast</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>Helderheid en contrast aanpassen</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Label &amp;bewerken</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Labels opslaan onder een nieuwe bestandsnaam</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>Label van geselecteerde vorm wijzigen</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>Naar Klembord Kopiëren</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>Geselecteerde vormen op het klembord plaatsen</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>Vanaf Klembord Plakken</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>Vormen van het klembord in deze afbeelding invoegen</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Klik om punten van de lijnstrook te plaatsen; Ctrl+klik plaatst het laatste.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Aanpassen aan &amp;venster</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>De hele afbeelding zichtbaar houden wanneer het venster van grootte verandert</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>Aanpassen aan &amp;breedte</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>De breedte van de afbeelding gelijk houden aan het venster wanneer het van grootte verandert</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>De afbeelding groter weergeven</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>De afbeelding kleiner weergeven</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>&amp;Werkelijke grootte</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>De afbeelding op 100% weergeven</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>Polygoon Vullen bij Tekenen</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>Polygoon vullen tijdens tekenen</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -604,10 +382,6 @@ Shapes</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s gestart.</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskeruitvoer niet beschikbaar</translation>
     </message>
@@ -628,64 +402,12 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Ongeldig label &apos;{}&apos; met validatietype &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Fout bij opslaan van labelgegevens</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>AI-inferentie mislukt: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>Fout bij openen van bestand</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Bestand niet gevonden: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>Laden van %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>Geladen %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Afbeelding- en labelbestanden (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Kies Afbeelding- of labelbestand</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotaties Opslaan/Laden in Map</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Kies Bestand</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Labelbestanden (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Kies Bestand</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Let op</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -704,16 +426,8 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Annotaties opslaan naar &quot;{}&quot; voordat u sluit?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Annotaties opslaan?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>{} vormen verwijderen? U kunt ze herstellen met Ongedaan Maken.</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Map Openen</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -722,10 +436,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>De afbeelding is te groot om te openen: {width}x{height} pixels heeft ongeveer {required} MB nodig, maar de decodeerlimiet is {limit} MB. Splits de afbeelding in tegels (bijvoorbeeld met gdal_retile.py) of open een kleinere kopie.</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Modus &quot;vorige annotatie behouden&quot; omschakelen</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -772,16 +482,8 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik op punten om object te segmenteren. Ctrl+LeftClick beëindigt het maken.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -802,28 +504,8 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Punt aan rand toevoegen</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>Nieuw punt invoegen op de aangewezen polygoonrand</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>Vorige Zoom &amp;behouden</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Dit labelbestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>Toegestane formaten: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Het geselecteerde labelbestand kon niet worden geopend: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>Het geselecteerde afbeeldingsbestand kon niet worden geopend: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -834,10 +516,6 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Georiënteerde Rechthoek</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>Begin met tekenen van georiënteerde rechthoeken</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>AI-inferentie heeft geen nieuwe annotatie geproduceerd.</translation>
     </message>
@@ -846,20 +524,384 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Vorm heeft geen oppervlak; niets aangemaakt.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>Instellingen…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>Instellingen bewerken</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Configuratiefout</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s is klaar.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s tot %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — Selecteer een afbeeldingsmap</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — Selecteer een afbeelding of annotatie</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — Selecteer de annotatiemap</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>Hierheen &amp;kopiëren</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>Labelbestand &amp;verwijderen</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Vormen ver&amp;bergen</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>&amp;Afbeeldingen en annotaties (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>Hierheen ver&amp;plaatsen</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Openen</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Vorige afbeelding</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>Op&amp;slaan</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Vormen &amp;tonen</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Zichtbaarheid van vormen &amp;omschakelen</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>&apos;{}&apos; voldoet niet aan het labelbeleid &apos;{}&apos;.</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>Een kopie van de geselecteerde vormen toevoegen</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>Een hoekpunt toevoegen aan de rand onder de aanwijzer</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>De helderheid en het contrast van de afbeelding aanpassen</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>Uitvoermap &amp;wijzigen</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>Kan bestand niet openen</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>Vormen meenemen</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>Het label van de geselecteerde vorm wijzigen</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>Een andere map kiezen om annotaties te laden en op te slaan</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>Klik op punten op het object; Ctrl+click voltooit de vorm.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>Klik om punten aan de polylijn toe te voegen; Ctrl+click voegt het laatste punt toe.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>De toepassing sluiten</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>Het huidige bestand sluiten</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>Verwijderen bevestigen</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>De geselecteerde vormen naar het klembord kopiëren</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>Kan de afbeelding niet decoderen op:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>Kan het annotatiebestand niet verwijderen:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>Kan geen annotatiegegevens lezen uit:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>Kan de annotaties niet opslaan</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>Het zoomniveau verlagen</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>Verwijderen mislukt</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>Geselecteerd hoekpunt verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>Het geselecteerde hoekpunt uit de veelhoek verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>Dit annotatiebestand definitief verwijderen?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>Teken een kader rond het object om het te segmenteren.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>Een cirkel tekenen</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>Een veelhoek tekenen</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>Een rechthoek tekenen</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>Een draaibare rechthoek tekenen</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>Een rechte lijn tekenen</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>De bytes van de bronafbeelding insluiten in het labelbestand</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>Voer ten minste één label in voordat u AI uitvoert.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>Laden van %s mislukt</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>De zichtbaarheid van elke vorm omkeren</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Naar de volgende afbeelding gaan (houd Ctrl+Shift ingedrukt om labels mee te nemen)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Naar de vorige afbeelding gaan (houd Ctrl+Shift ingedrukt om labels mee te nemen)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>Alle vormen op het canvas verbergen</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>Het zoomniveau verhogen</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>Label niet toegestaan</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>Geladen en klaar: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>Een enkel punt markeren</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>&amp;Map openen</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Een map met afbeeldingen openen</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>Een afbeelding of labelbestand openen</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>Openen mislukt</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>Het instellingenvenster openen</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>De handleiding in een browser openen</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>Vormen van het klembord in deze afbeelding plakken</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>Het huidige labelbestand definitief verwijderen</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>Tijdens het tekenen een gevulde veelhoek als voorbeeld tonen</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>%s lezen…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>Het laatst geplaatste punt verwijderen</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>De geselecteerde vormen verwijderen</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>De zoom terugzetten op 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>De standaardindeling van panelen en werkbalken herstellen</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>Vormen uit de vorige afbeelding hergebruiken</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>De laatste wijziging aan een vorm ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>Opslaan &amp;als</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>Auto&amp;matisch opslaan</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>Opslaan met &amp;afbeeldingsgegevens</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>Annotaties opslaan als</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>Wijzigingen aan de annotaties opslaan?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>De annotaties opslaan onder een nieuwe bestandsnaam</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>De afbeelding schalen zodat deze altijd in het venster past</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>De afbeelding schalen naar de vensterbreedte</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>Ins&amp;tellingen…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>De instellingen zijn voor deze sessie vastgelegd door het --config-bestand</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>Alle vormen op het canvas tonen</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>Ondersteunde bestanden: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>Overschakelen naar het bewerken van bestaande vormen</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>Het pad bestaat niet:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Laatste punt ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>Annotaties na elke wijziging naar schijf schrijven</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>De huidige annotaties naar schijf schrijven</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>&amp;Uitzoomen</translation>
     </message>
 </context>
 <context>

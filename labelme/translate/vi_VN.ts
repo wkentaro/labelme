@@ -298,198 +298,28 @@
         <translation>Thoát(&amp;Q)</translation>
     </message>
     <message>
-        <source>Quit application</source>
-        <translation>Thoát ứng dụng</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>Mở(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Mở tệp hình ảnh hoặc nhãn</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Mở Thư mục</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Hình ảnh Tiếp theo(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Mở tiếp theo (giữ Ctl+Shift để sao chép nhãn)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>Hình ảnh Trước(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Mở trước đó (giữ Ctl+Shift để sao chép nhãn)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>Lưu(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save labels to file</source>
-        <translation>Lưu nhãn vào tệp</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Lưu thành(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Xóa(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Xóa tệp nhãn hiện tại</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Thay đổi Thư mục Đầu ra(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Thay đổi nơi chú thích được tải/lưu</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Tự động lưu (&amp;A)</translation>
-    </message>
-    <message>
-        <source>Save automatically</source>
-        <translation>Tự động lưu</translation>
-    </message>
-    <message>
-        <source>Save With Image Data</source>
-        <translation>Lưu với Dữ liệu Hình ảnh</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Lưu dữ liệu hình ảnh trong tệp nhãn</translation>
     </message>
     <message>
         <source>&amp;Close</source>
         <translation>Đóng(&amp;C)</translation>
     </message>
     <message>
-        <source>Close current file</source>
-        <translation>Đóng tệp hiện tại</translation>
-    </message>
-    <message>
-        <source>Keep Previous Annotation</source>
-        <translation>Giữ Chú thích Trước đó</translation>
-    </message>
-    <message>
-        <source>Start drawing polygons</source>
-        <translation>Bắt đầu vẽ đa giác</translation>
-    </message>
-    <message>
-        <source>Start drawing rectangles</source>
-        <translation>Bắt đầu vẽ hình chữ nhật</translation>
-    </message>
-    <message>
-        <source>Start drawing circles</source>
-        <translation>Bắt đầu vẽ hình tròn</translation>
-    </message>
-    <message>
-        <source>Start drawing lines</source>
-        <translation>Bắt đầu vẽ đường thẳng</translation>
-    </message>
-    <message>
-        <source>Start drawing points</source>
-        <translation>Bắt đầu vẽ điểm</translation>
-    </message>
-    <message>
         <source>Edit Shapes</source>
         <translation>Chỉnh sửa Hình dạng</translation>
-    </message>
-    <message>
-        <source>Move and edit the selected shapes</source>
-        <translation>Di chuyển và chỉnh sửa các hình dạng đã chọn</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
         <translation>Xóa Hình dạng</translation>
     </message>
     <message>
-        <source>Delete the selected shapes</source>
-        <translation>Xóa các hình dạng đã chọn</translation>
-    </message>
-    <message>
         <source>Duplicate Shapes</source>
         <translation>Nhân đôi Hình dạng</translation>
     </message>
     <message>
-        <source>Create a duplicate of the selected shapes</source>
-        <translation>Tạo bản sao của các hình dạng đã chọn</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Hoàn tác điểm cuối cùng</translation>
-    </message>
-    <message>
-        <source>Undo last drawn point</source>
-        <translation>Hoàn tác điểm vẽ cuối cùng</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Xóa Điểm đã Chọn</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Xóa điểm đã chọn khỏi đa giác</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Hoàn tác</translation>
-    </message>
-    <message>
-        <source>Undo last add and edit of shape</source>
-        <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Ẩn Hình dạng(&amp;H)</translation>
-    </message>
-    <message>
-        <source>Hide all shapes</source>
-        <translation>Ẩn tất cả hình dạng</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Hiển thị Hình dạng(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Show all shapes</source>
-        <translation>Hiển thị tất cả hình dạng</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Bật/tắt Hình dạng(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Toggle all shapes</source>
-        <translation>Bật/tắt tất cả hình dạng</translation>
-    </message>
-    <message>
         <source>&amp;Tutorial</source>
         <translation>Hướng dẫn(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Show tutorial page</source>
-        <translation>Hiển thị trang hướng dẫn</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -500,88 +330,36 @@ Shapes</source>
         <translation>Phóng to(&amp;I)</translation>
     </message>
     <message>
-        <source>&amp;Zoom Out</source>
-        <translation>Thu nhỏ(&amp;Z)</translation>
-    </message>
-    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>Độ sáng Độ tương phản(&amp;B)</translation>
-    </message>
-    <message>
-        <source>Adjust brightness and contrast</source>
-        <translation>Điều chỉnh độ sáng và độ tương phản</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Lưu nhãn với tên tệp mới</translation>
-    </message>
-    <message>
-        <source>Modify the label of the selected shape</source>
-        <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
-    </message>
-    <message>
         <source>Copy to Clipboard</source>
         <translation>Sao chép vào Clipboard</translation>
-    </message>
-    <message>
-        <source>Place the selected shapes on the clipboard</source>
-        <translation>Đưa các hình dạng đã chọn vào clipboard</translation>
     </message>
     <message>
         <source>Paste from Clipboard</source>
         <translation>Dán từ Clipboard</translation>
     </message>
     <message>
-        <source>Insert the clipboard shapes into this image</source>
-        <translation>Chèn các hình dạng trong clipboard vào ảnh này</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Nhấn để đặt các điểm của đường gấp khúc; Ctrl+nhấn đặt điểm cuối cùng.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Vừa Cửa sổ(&amp;W)</translation>
-    </message>
-    <message>
-        <source>Keep the whole image visible when the window is resized</source>
-        <translation>Giữ toàn bộ ảnh luôn hiển thị khi thay đổi kích thước cửa sổ</translation>
     </message>
     <message>
         <source>Fit to Wi&amp;dth</source>
         <translation>Vừa Chiều rộng(&amp;D)</translation>
     </message>
     <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Khớp chiều rộng của ảnh với cửa sổ khi thay đổi kích thước</translation>
-    </message>
-    <message>
-        <source>Make the image appear larger</source>
-        <translation>Hiển thị ảnh lớn hơn</translation>
-    </message>
-    <message>
-        <source>Make the image appear smaller</source>
-        <translation>Hiển thị ảnh nhỏ hơn</translation>
-    </message>
-    <message>
         <source>&amp;Actual Size</source>
         <translation>Kích thước &amp;thật</translation>
     </message>
     <message>
-        <source>Show the image at 100%</source>
-        <translation>Hiển thị ảnh ở mức 100%</translation>
-    </message>
-    <message>
         <source>Fill Drawing Polygon</source>
         <translation>Tô Đa giác Vẽ</translation>
-    </message>
-    <message>
-        <source>Fill polygon while drawing</source>
-        <translation>Tô đa giác khi vẽ</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -604,10 +382,6 @@ Shapes</source>
         <translation>Trợ giúp(&amp;H)</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s đã khởi động.</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>Không có đầu ra mặt nạ</translation>
     </message>
@@ -628,64 +402,12 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Lỗi khi lưu dữ liệu nhãn</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>AI inference failed: %s</source>
         <translation>Suy luận AI thất bại: %s</translation>
     </message>
     <message>
-        <source>Error opening file</source>
-        <translation>Lỗi khi mở tệp</translation>
-    </message>
-    <message>
-        <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>Không có tệp như vậy: &lt;b&gt;%s&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Loading %s...</source>
-        <translation>Đang tải %s...</translation>
-    </message>
-    <message>
-        <source>Loaded %s</source>
-        <translation>Đã tải %s</translation>
-    </message>
-    <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Tệp Hình ảnh &amp; Nhãn (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Chọn tệp Hình ảnh hoặc Nhãn</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Lưu/Tải Chú thích trong Thư mục</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Chú thích sẽ được lưu/tải trong %s</translation>
-    </message>
-    <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Chọn Tệp</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Tệp nhãn (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Chọn Tệp</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Chú ý</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -704,16 +426,8 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Lưu chú thích vào &quot;{}&quot; trước khi đóng?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Lưu chú thích?</translation>
-    </message>
-    <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Xóa {} hình dạng? Bạn có thể khôi phục chúng bằng Hoàn tác.</translation>
-    </message>
-    <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Mở Thư mục</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -722,10 +436,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>Hình ảnh quá lớn để mở: {width}x{height} pixel cần khoảng {required} MB, nhưng giới hạn giải mã là {limit} MB. Hãy chia hình ảnh thành các ô (ví dụ với gdal_retile.py) hoặc mở một bản sao nhỏ hơn.</translation>
-    </message>
-    <message>
-        <source>Toggle &quot;keep previous annotation&quot; mode</source>
-        <translation>Bật/tắt chế độ &quot;giữ chú thích trước đó&quot;</translation>
     </message>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
@@ -772,16 +482,8 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Nhấp điểm để phân đoạn đối tượng. Ctrl+LeftClick kết thúc tạo.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -802,28 +504,8 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Thêm điểm vào cạnh</translation>
     </message>
     <message>
-        <source>Insert a new point at the hovered polygon edge</source>
-        <translation>Chèn điểm mới vào cạnh đa giác đang trỏ tới</translation>
-    </message>
-    <message>
         <source>&amp;Keep Previous Zoom</source>
         <translation>Giữ &amp;Mức Phóng to Trước đó</translation>
-    </message>
-    <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn tệp nhãn này? Hành động này không thể hoàn tác.</translation>
-    </message>
-    <message>
-        <source>Allowed formats: {formats}</source>
-        <translation>Định dạng cho phép: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Không thể mở tệp nhãn đã chọn: {path}</translation>
-    </message>
-    <message>
-        <source>The selected image file could not be opened: {path}</source>
-        <translation>Không thể mở tệp ảnh đã chọn: {path}</translation>
     </message>
     <message>
         <source>Failed to load: {path}</source>
@@ -834,10 +516,6 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Hình chữ nhật có hướng</translation>
     </message>
     <message>
-        <source>Start drawing oriented rectangles</source>
-        <translation>Bắt đầu vẽ hình chữ nhật có hướng</translation>
-    </message>
-    <message>
         <source>AI inference produced no new annotation.</source>
         <translation>Suy luận AI không tạo ra chú thích mới nào.</translation>
     </message>
@@ -846,20 +524,384 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Hình không có diện tích; không có gì được tạo.</translation>
     </message>
     <message>
-        <source>Settings…</source>
-        <translation>Cài đặt…</translation>
-    </message>
-    <message>
-        <source>Edit settings</source>
-        <translation>Chỉnh sửa cài đặt</translation>
-    </message>
-    <message>
-        <source>Settings are managed via --config for this session</source>
-        <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
+    </message>
+    <message>
+        <source>%s is ready.</source>
+        <translation>%s đã sẵn sàng.</translation>
+    </message>
+    <message>
+        <source>%s to %s</source>
+        <translation>%s đến %s</translation>
+    </message>
+    <message>
+        <source>%s — Select an image folder</source>
+        <translation>%s — Chọn thư mục ảnh</translation>
+    </message>
+    <message>
+        <source>%s — Select an image or annotation</source>
+        <translation>%s — Chọn ảnh hoặc chú thích</translation>
+    </message>
+    <message>
+        <source>%s — Select the annotation folder</source>
+        <translation>%s — Chọn thư mục chú thích</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Here</source>
+        <translation>&amp;Sao chép vào đây</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Label File</source>
+        <translation>&amp;Xóa tệp nhãn</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Ẩ&amp;n các hình</translation>
+    </message>
+    <message>
+        <source>&amp;Images and annotations (%s)</source>
+        <translation>Ả&amp;nh và chú thích (%s)</translation>
+    </message>
+    <message>
+        <source>&amp;Move Here</source>
+        <translation>&amp;Di chuyển vào đây</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Mở</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Ảnh &amp;trước</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Lưu</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Hiện các hình</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Đảo trạng thái hiển thị hình</translation>
+    </message>
+    <message>
+        <source>&apos;{}&apos; does not match the &apos;{}&apos; label policy.</source>
+        <translation>&apos;{}&apos; không tuân theo chính sách nhãn &apos;{}&apos;.</translation>
+    </message>
+    <message>
+        <source>Add a copy of the selected shapes</source>
+        <translation>Thêm bản sao của các hình đã chọn</translation>
+    </message>
+    <message>
+        <source>Add a vertex on the hovered edge</source>
+        <translation>Thêm đỉnh trên cạnh dưới con trỏ</translation>
+    </message>
+    <message>
+        <source>Adjust the image brightness and contrast</source>
+        <translation>Điều chỉnh độ sáng và độ tương phản của ảnh</translation>
+    </message>
+    <message>
+        <source>C&amp;hange Output Folder</source>
+        <translation>T&amp;hay đổi thư mục đầu ra</translation>
+    </message>
+    <message>
+        <source>Cannot open file</source>
+        <translation>Không thể mở tệp</translation>
+    </message>
+    <message>
+        <source>Carry Shapes Forward</source>
+        <translation>Chuyển hình sang ảnh tiếp theo</translation>
+    </message>
+    <message>
+        <source>Change the label of the selected shape</source>
+        <translation>Đổi nhãn của hình đã chọn</translation>
+    </message>
+    <message>
+        <source>Choose a different folder for loading and saving annotations</source>
+        <translation>Chọn thư mục khác để tải và lưu chú thích</translation>
+    </message>
+    <message>
+        <source>Click points on the object; Ctrl+click finishes the shape.</source>
+        <translation>Nhấp vào các điểm trên đối tượng; Ctrl+click để hoàn tất hình.</translation>
+    </message>
+    <message>
+        <source>Click to add linestrip points; Ctrl+click adds the final point.</source>
+        <translation>Nhấp để thêm điểm cho đường gấp khúc; Ctrl+click để thêm điểm cuối.</translation>
+    </message>
+    <message>
+        <source>Close the application</source>
+        <translation>Đóng ứng dụng</translation>
+    </message>
+    <message>
+        <source>Close the current file</source>
+        <translation>Đóng tệp hiện tại</translation>
+    </message>
+    <message>
+        <source>Confirm Deletion</source>
+        <translation>Xác nhận xóa</translation>
+    </message>
+    <message>
+        <source>Copy the selected shapes to the clipboard</source>
+        <translation>Sao chép các hình đã chọn vào bộ nhớ tạm</translation>
+    </message>
+    <message>
+        <source>Could not decode the image at:
+{path}</source>
+        <translation>Không thể giải mã ảnh tại:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not delete annotation file:
+{path}
+
+{error}</source>
+        <translation>Không thể xóa tệp chú thích:
+{path}
+
+{error}</translation>
+    </message>
+    <message>
+        <source>Could not read annotation data from:
+{path}</source>
+        <translation>Không thể đọc dữ liệu chú thích từ:
+{path}</translation>
+    </message>
+    <message>
+        <source>Could not save the annotations</source>
+        <translation>Không thể lưu chú thích</translation>
+    </message>
+    <message>
+        <source>Decrease the zoom level</source>
+        <translation>Giảm mức thu phóng</translation>
+    </message>
+    <message>
+        <source>Delete failed</source>
+        <translation>Xóa không thành công</translation>
+    </message>
+    <message>
+        <source>Delete selected vertex</source>
+        <translation>Xóa đỉnh đã chọn</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon</source>
+        <translation>Xóa đỉnh đã chọn khỏi đa giác</translation>
+    </message>
+    <message>
+        <source>Delete this annotation file permanently?</source>
+        <translation>Xóa vĩnh viễn tệp chú thích này?</translation>
+    </message>
+    <message>
+        <source>Draw a box around the object to segment it.</source>
+        <translation>Vẽ khung quanh đối tượng để phân đoạn đối tượng đó.</translation>
+    </message>
+    <message>
+        <source>Draw a circle shape</source>
+        <translation>Vẽ hình tròn</translation>
+    </message>
+    <message>
+        <source>Draw a polygon shape</source>
+        <translation>Vẽ đa giác</translation>
+    </message>
+    <message>
+        <source>Draw a rectangle shape</source>
+        <translation>Vẽ hình chữ nhật</translation>
+    </message>
+    <message>
+        <source>Draw a rotatable rectangle</source>
+        <translation>Vẽ hình chữ nhật có thể xoay</translation>
+    </message>
+    <message>
+        <source>Draw a straight line</source>
+        <translation>Vẽ đường thẳng</translation>
+    </message>
+    <message>
+        <source>Embed the source image bytes in the label file</source>
+        <translation>Nhúng các byte của ảnh nguồn vào tệp nhãn</translation>
+    </message>
+    <message>
+        <source>Enter at least one label before running AI.</source>
+        <translation>Nhập ít nhất một nhãn trước khi chạy AI.</translation>
+    </message>
+    <message>
+        <source>Failed to load %s</source>
+        <translation>Không thể tải %s</translation>
+    </message>
+    <message>
+        <source>Flip visibility for every shape</source>
+        <translation>Đảo trạng thái hiển thị của từng hình</translation>
+    </message>
+    <message>
+        <source>Go to the next image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Đến ảnh tiếp theo (giữ Ctrl+Shift để chuyển nhãn sang)</translation>
+    </message>
+    <message>
+        <source>Go to the previous image (hold Ctrl+Shift to carry over labels)</source>
+        <translation>Đến ảnh trước (giữ Ctrl+Shift để chuyển nhãn sang)</translation>
+    </message>
+    <message>
+        <source>Hide every shape on the canvas</source>
+        <translation>Ẩn tất cả hình trên vùng vẽ</translation>
+    </message>
+    <message>
+        <source>Increase the zoom level</source>
+        <translation>Tăng mức thu phóng</translation>
+    </message>
+    <message>
+        <source>Label not allowed</source>
+        <translation>Nhãn không được phép</translation>
+    </message>
+    <message>
+        <source>Loaded and ready: %s</source>
+        <translation>Đã tải và sẵn sàng: %s</translation>
+    </message>
+    <message>
+        <source>Mark a single point</source>
+        <translation>Đánh dấu một điểm</translation>
+    </message>
+    <message>
+        <source>Open &amp;Folder</source>
+        <translation>Mở &amp;thư mục</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Mở thư mục ảnh</translation>
+    </message>
+    <message>
+        <source>Open an image or a label file</source>
+        <translation>Mở ảnh hoặc tệp nhãn</translation>
+    </message>
+    <message>
+        <source>Open failed</source>
+        <translation>Mở không thành công</translation>
+    </message>
+    <message>
+        <source>Open the settings dialog</source>
+        <translation>Mở hộp thoại cài đặt</translation>
+    </message>
+    <message>
+        <source>Open the tutorial in a browser</source>
+        <translation>Mở hướng dẫn trong trình duyệt</translation>
+    </message>
+    <message>
+        <source>Paste shapes from the clipboard into this image</source>
+        <translation>Dán hình từ bộ nhớ tạm vào ảnh này</translation>
+    </message>
+    <message>
+        <source>Permanently remove the current label file</source>
+        <translation>Xóa vĩnh viễn tệp nhãn hiện tại</translation>
+    </message>
+    <message>
+        <source>Preview a filled polygon while drawing</source>
+        <translation>Xem trước đa giác được tô màu trong khi vẽ</translation>
+    </message>
+    <message>
+        <source>Reading %s…</source>
+        <translation>Đang đọc %s…</translation>
+    </message>
+    <message>
+        <source>Remove the most recently placed point</source>
+        <translation>Xóa điểm vừa đặt gần nhất</translation>
+    </message>
+    <message>
+        <source>Remove the selected shapes</source>
+        <translation>Xóa các hình đã chọn</translation>
+    </message>
+    <message>
+        <source>Reset the zoom to 100%</source>
+        <translation>Đặt lại mức thu phóng về 100%</translation>
+    </message>
+    <message>
+        <source>Restore the default panel and toolbar layout</source>
+        <translation>Khôi phục bố cục mặc định của các bảng và thanh công cụ</translation>
+    </message>
+    <message>
+        <source>Reuse shapes from the previous image</source>
+        <translation>Dùng lại các hình từ ảnh trước</translation>
+    </message>
+    <message>
+        <source>Revert the last shape change</source>
+        <translation>Hoàn tác thay đổi hình gần nhất</translation>
+    </message>
+    <message>
+        <source>Save &amp;As</source>
+        <translation>Lưu &amp;thành</translation>
+    </message>
+    <message>
+        <source>Save Auto&amp;matically</source>
+        <translation>Lưu tự độ&amp;ng</translation>
+    </message>
+    <message>
+        <source>Save With &amp;Image Data</source>
+        <translation>Lưu kèm dữ liệu ả&amp;nh</translation>
+    </message>
+    <message>
+        <source>Save annotations as</source>
+        <translation>Lưu chú thích thành</translation>
+    </message>
+    <message>
+        <source>Save changes to the annotations?</source>
+        <translation>Lưu thay đổi của chú thích?</translation>
+    </message>
+    <message>
+        <source>Save the annotations under a new file name</source>
+        <translation>Lưu chú thích bằng tên tệp mới</translation>
+    </message>
+    <message>
+        <source>Scale the image to always fit the window</source>
+        <translation>Co giãn ảnh để luôn vừa cửa sổ</translation>
+    </message>
+    <message>
+        <source>Scale the image to match the window width</source>
+        <translation>Co giãn ảnh theo chiều rộng cửa sổ</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings…</source>
+        <translation>&amp;Cài đặt…</translation>
+    </message>
+    <message>
+        <source>Settings are locked to the --config file for this session</source>
+        <translation>Cài đặt bị khóa theo tệp --config trong phiên này</translation>
+    </message>
+    <message>
+        <source>Show every shape on the canvas</source>
+        <translation>Hiện tất cả hình trên vùng vẽ</translation>
+    </message>
+    <message>
+        <source>Supported files: {patterns}</source>
+        <translation>Tệp được hỗ trợ: {patterns}</translation>
+    </message>
+    <message>
+        <source>Switch to editing existing shapes</source>
+        <translation>Chuyển sang chỉnh sửa các hình hiện có</translation>
+    </message>
+    <message>
+        <source>The path does not exist:
+%s</source>
+        <translation>Đường dẫn không tồn tại:
+%s</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Hoàn tác</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Hoàn tác điểm cuối</translation>
+    </message>
+    <message>
+        <source>Write annotations to disk after every change</source>
+        <translation>Ghi chú thích vào đĩa sau mỗi thay đổi</translation>
+    </message>
+    <message>
+        <source>Write the current annotations to disk</source>
+        <translation>Ghi chú thích hiện tại vào đĩa</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>Thu &amp;nhỏ</translation>
     </message>
 </context>
 <context>

@@ -197,3 +197,59 @@ def test_open_file_dialog_normalizes_the_reported_path(
     assert current_item.text() == str(target)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_cancel_save_as_preserves_the_session(
+    *,
+    qtbot: QtBot,
+    loaded_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    loaded_win._actions.save_auto.setChecked(False)
+    loaded_win.mark_dirty()
+    image_before = loaded_win._image
+    annotation_before = loaded_win._annotation
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog,
+        "getSaveFileName",
+        lambda *_args, **_kwargs: ("", ""),
+    )
+
+    loaded_win._save_label_file(save_as=True)
+
+    assert loaded_win._image is image_before
+    assert loaded_win._annotation is annotation_before
+    assert loaded_win._label_file_path is None
+    assert loaded_win._is_changed
+
+    loaded_win.mark_clean()
+    close_or_pause(qtbot=qtbot, widget=loaded_win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("selected_name", "expected_name"),
+    [
+        ("labels", "labels.json"),
+        ("labels.v1", "labels.v1.json"),
+        ("labels.json", "labels.json"),
+        ("labels.JSON", "labels.JSON"),
+    ],
+)
+def test_save_as_uses_a_recognized_label_suffix(
+    *,
+    loaded_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    selected_name: str,
+    expected_name: str,
+) -> None:
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog,
+        "getSaveFileName",
+        lambda *_args, **_kwargs: (str(tmp_path / selected_name), ""),
+    )
+
+    assert loaded_win.prompt_save_file_path() == str(tmp_path / expected_name)

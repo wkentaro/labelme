@@ -76,14 +76,14 @@ def test_is_valid_label(
     "image_path, file_index, file_count, dirty, expected",
     [
         (None, None, 0, False, __appname__),
-        ("img.png", None, 0, False, f"{__appname__} - img.png"),
-        ("img.png", 1, 5, False, f"{__appname__} - img.png [2/5]"),
-        ("img.png", 0, 5, False, f"{__appname__} - img.png [1/5]"),
-        ("img.png", 0, 0, False, f"{__appname__} - img.png"),
-        ("img.png", None, 5, False, f"{__appname__} - img.png"),
-        ("img.png", 1, 5, True, f"{__appname__} - img.png [2/5]*"),
-        (None, None, 0, True, f"{__appname__}*"),
-        ("img.png", None, 0, True, f"{__appname__} - img.png*"),
+        ("img.png", None, 0, False, f"img.png — {__appname__}"),
+        ("img.png", 1, 5, False, f"img.png (2 of 5) — {__appname__}"),
+        ("img.png", 0, 5, False, f"img.png (1 of 5) — {__appname__}"),
+        ("img.png", 0, 0, False, f"img.png — {__appname__}"),
+        ("img.png", None, 5, False, f"img.png — {__appname__}"),
+        ("img.png", 1, 5, True, f"● img.png (2 of 5) — {__appname__}"),
+        (None, None, 0, True, f"● {__appname__}"),
+        ("img.png", None, 0, True, f"● img.png — {__appname__}"),
     ],
     ids=[
         "appname-only",
@@ -114,6 +114,37 @@ def test_format_window_title(
         )
         == expected
     )
+
+
+@pytest.mark.parametrize(
+    "current, single_step, delta, expected",
+    [
+        (0.0, 10.0, 1, -1.0),
+        (0.0, 10.0, -1, 1.0),
+        (50.0, 10.0, 3, 47.0),
+        (50.0, 10.0, -3, 53.0),
+        (0.0, 10.0, 0, 0.0),
+        (0.0, 0.0, 5, 0.0),
+    ],
+    ids=[
+        "one-delta-unit-reverses-a-tenth-of-a-step",
+        "opposite-delta-sign-reverses-direction",
+        "multiple-delta-units-scale-linearly",
+        "negative-delta-units-scale-linearly",
+        "zero-delta-is-a-no-op",
+        "zero-single-step-is-a-no-op",
+    ],
+)
+def test_natural_scroll_target(
+    *,
+    current: float,
+    single_step: float,
+    delta: int,
+    expected: float,
+) -> None:
+    assert _app._natural_scroll_target(
+        current=current, single_step=single_step, delta=delta
+    ) == pytest.approx(expected)
 
 
 def _make_png_bytes(
@@ -504,4 +535,44 @@ def test_resolve_stored_image_path_falls_back_across_real_windows_drives() -> No
             image_path=r"D:\imgs\img.png", label_dir=Path(r"C:\labels")
         )
         == r"D:\imgs\img.png"
+    )
+
+
+def test_scan_image_files_recurses_with_deterministic_natural_fallback(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    nested = tmp_path / "nested"
+    nested.mkdir()
+    image_10 = nested / "image10.PNG"
+    image_2 = nested / "image2.png"
+    image_10.touch()
+    image_2.touch()
+    (nested / "notes.txt").touch()
+
+    monkeypatch.setattr(_app, "_list_supported_image_extensions", lambda: (".png",))
+
+    def raise_os_error(_paths: list[str]) -> list[str]:
+        raise OSError("locale unavailable")
+
+    monkeypatch.setattr(_app.natsort, "os_sorted", raise_os_error)
+
+    assert _app._scan_image_files(root_dir=str(tmp_path)) == [
+        str(image_2),
+        str(image_10),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("pattern", "expected"),
+    [
+        ("", ["cat.png", "dog.jpg"]),
+        (r"\.png$", ["cat.png"]),
+        ("[", ["cat.png", "dog.jpg"]),
+    ],
+    ids=["empty", "match", "invalid"],
+)
+def test_filter_image_paths(*, pattern: str, expected: list[str]) -> None:
+    assert (
+        _app._filter_image_paths(image_paths=["cat.png", "dog.jpg"], pattern=pattern)
+        == expected
     )

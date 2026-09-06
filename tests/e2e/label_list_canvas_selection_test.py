@@ -375,6 +375,116 @@ def test_edit_label_multi_shape_mismatch_skips_label_validation(
 
 
 @pytest.mark.gui
+def test_description_round_trips_from_new_shape_dialog(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    image_path = data_path / "raw/2011_000003.jpg"
+    win = main_win(
+        file_or_dir=str(image_path),
+        config_overrides={"auto_save": False},
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    dialog = win._label_dialog
+
+    def submit_shape() -> None:
+        dialog.edit.setText("cat")
+        dialog.edit_description.setPlainText("seen near the gate")
+        qtbot.keyClick(dialog.edit, Qt.Key.Key_Enter)
+
+    draw_triangle(
+        qtbot=qtbot,
+        win=win,
+        vertices=((0.2, 0.2), (0.5, 0.2), (0.5, 0.5)),
+    )
+    schedule_on_dialog(label_dialog=dialog, action=submit_shape)
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 1)
+    assert canvas.shapes[0].description == "seen near the gate"
+
+    label_path = tmp_path / "2011_000003.json"
+    assert win.save_labels(label_path=str(label_path))
+    win.mark_clean()
+
+    reopened = main_win(file_or_dir=str(label_path))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=reopened)
+    assert [shape.description for shape in reopened._canvas_widgets.canvas.shapes] == [
+        "seen near the gate"
+    ]
+
+    close_or_pause(qtbot=qtbot, widget=reopened, pause=pause)
+    close_or_pause(qtbot=qtbot, widget=win, pause=False)
+
+
+@pytest.mark.gui
+def test_multi_shape_description_edit_handles_shared_and_mixed_values(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        config_overrides={"auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    dialog = win._label_dialog
+    label_list = win._docks.label_list
+    shapes = win._canvas_widgets.canvas.shapes[:2]
+
+    for shape in shapes:
+        shape.description = "shared note"
+    label_list.clearSelection()
+    label_list.select_item(item=label_list[0])
+    label_list.select_item(item=label_list[1])
+    shared_state: list[tuple[str, bool]] = []
+
+    def replace_shared_description() -> None:
+        shared_state.append(
+            (dialog.edit_description.toPlainText(), dialog.edit_description.isEnabled())
+        )
+        dialog.edit_description.setPlainText("updated together")
+        qtbot.keyClick(dialog.edit_group_id, Qt.Key.Key_Enter)
+
+    schedule_on_dialog(label_dialog=dialog, action=replace_shared_description)
+    label_list.item_double_clicked.emit(label_list[0])
+    qtbot.waitUntil(lambda: not dialog.isVisible())
+
+    assert shared_state == [("shared note", True)]
+    assert [shape.description for shape in shapes] == [
+        "updated together",
+        "updated together",
+    ]
+
+    shapes[0].description = "first note"
+    shapes[1].description = "second note"
+    mixed_state: list[tuple[str, bool]] = []
+
+    def accept_mixed_description() -> None:
+        mixed_state.append(
+            (dialog.edit_description.toPlainText(), dialog.edit_description.isEnabled())
+        )
+        qtbot.keyClick(dialog.edit_group_id, Qt.Key.Key_Enter)
+
+    schedule_on_dialog(label_dialog=dialog, action=accept_mixed_description)
+    label_list.item_double_clicked.emit(label_list[0])
+    qtbot.waitUntil(lambda: not dialog.isVisible())
+
+    assert mixed_state == [("", False)]
+    assert [shape.description for shape in shapes] == ["first note", "second note"]
+
+    win.mark_clean()
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_open_different_file_repopulates_label_list(
     *,
     qtbot: QtBot,

@@ -55,6 +55,8 @@ def test_MainWindow_open_json(
         win = main_win(file_or_dir=json_file)
         show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
         assert "[" not in win.windowTitle()
+        assert win.image_list == []
+        assert not win._docks.file_dock.isEnabled()
 
         close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -86,7 +88,7 @@ def test_MainWindow_open_dir(
 
     assert win._image_path
     assert Path(win._image_path).name == first_image_name
-    assert "[1/3]" in win.windowTitle()
+    assert "(1 of 3)" in win.windowTitle()
 
     annotation_before = win._annotation
     win._load_from_file_or_dir(file_or_dir=directory)
@@ -120,6 +122,19 @@ def test_MainWindow_open_dir(
         item: QtWidgets.QListWidgetItem | None = win._docks.file_list.item(index)
         assert item
         assert item.checkState() == expected_check_state
+
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+    assert not dict(win._actions.draw)["polygon"].isEnabled()
+    win._open_next_image()
+    qtbot.waitUntil(lambda: Path(win._image_path or "").name == second_image_name)
+    assert win._canvas_widgets.canvas.mode.name == "EDIT"
+    assert all(action.isEnabled() for _, action in win._actions.draw)
+
+    win._load_from_file_or_dir(
+        file_or_dir=str(data_path / "annotated/2011_000003.json")
+    )
+    assert not win._actions.open_next_img.isEnabled()
+    assert not win._actions.open_prev_img.isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -395,7 +410,7 @@ def test_failed_navigation_restores_selected_source_item(
     assert current_item is not None
     assert current_item.text() == str(current_image)
     assert win._docks.file_list.currentRow() == 0
-    assert "[1/2]" in win.windowTitle()
+    assert "(1 of 2)" in win.windowTitle()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -425,18 +440,18 @@ def test_direct_image_open_preserves_source_selection(
     assert current_item is not None
     assert current_item.text() == str(direct_image)
     assert win._docks.file_list.currentRow() == 1
-    assert "[2/2]" in win.windowTitle()
+    assert "(2 of 2)" in win.windowTitle()
     assert win._image_path != str(direct_image)
 
     win._docks.file_search.setText(r"02-direct\.jpg$")
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
     assert current_item.text() == str(direct_image)
-    assert "[1/1]" in win.windowTitle()
+    assert "(1 of 1)" in win.windowTitle()
 
     win._docks.file_search.clear()
     assert win._docks.file_list.currentRow() == 1
-    assert "[2/2]" in win.windowTitle()
+    assert "(2 of 2)" in win.windowTitle()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -499,8 +514,8 @@ def test_failed_navigation_refreshes_title_after_saving(
 
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._docks.file_list.currentRow() == 0
-    assert "[1/2]" in win.windowTitle()
-    assert not win.windowTitle().endswith("*")
+    assert "(1 of 2)" in win.windowTitle()
+    assert not win.windowTitle().startswith("●")
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -543,6 +558,7 @@ def test_prompt_output_dir_rejects_corrupt_annotation(
 
     win.mark_dirty()
     assert candidate_annotation.read_text() == "{"
+    win.mark_clean()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -582,6 +598,24 @@ def test_prompt_output_dir_loads_candidate_before_committing(
     assert current_item is not None
     assert current_item.checkState() == Qt.CheckState.Checked
 
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_loading_an_image_without_shapes_disables_shape_actions(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(file_or_dir=data_path / "annotated/2011_000003.json")
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert all(action.isEnabled() for action in win._actions.on_shapes_present)
+
+    assert win._load_file(image_or_label_path=str(data_path / "raw/2011_000006.jpg"))
+
+    assert all(not action.isEnabled() for action in win._actions.on_shapes_present)
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
