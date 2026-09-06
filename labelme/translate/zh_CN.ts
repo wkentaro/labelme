@@ -82,7 +82,7 @@
     <name>Canvas</name>
     <message>
         <source>Click &amp; drag to move point</source>
-        <translation>按住鼠标拖动以移动顶点</translation>
+        <translation>点击 &amp; 拖动以移动点</translation>
     </message>
     <message>
         <source>Click &amp; drag to move shape</source>
@@ -227,7 +227,7 @@
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
-        <translation>标记</translation>
+        <translation>标志</translation>
     </message>
     <message>
         <source>Shape List</source>
@@ -235,7 +235,7 @@
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>选择标签以开始标注；按 &apos;Esc&apos; 取消选择。</translation>
+        <translation>选择标签以开始为其添加标注。按“Esc”取消选择。</translation>
     </message>
     <message>
         <source>Label List</source>
@@ -255,12 +255,13 @@
     </message>
     <message>
         <source>Quit application</source>
-        <translation>退出应用</translation>
+        <translation>退出应用程序</translation>
     </message>
     <message>
         <source>&amp;Open
 </source>
-        <translation>打开(&amp;O)</translation>
+        <translation>打开(&amp;O)
+</translation>
     </message>
     <message>
         <source>Open image or label file</source>
@@ -276,7 +277,7 @@
     </message>
     <message>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打开下一张（按住 Ctrl+Shift 可复制标签）</translation>
+        <translation>打开下一张图像（按住 Ctl+Shift 复制标签）</translation>
     </message>
     <message>
         <source>&amp;Prev Image</source>
@@ -284,16 +285,17 @@
     </message>
     <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打开上一张（按住 Ctrl+Shift 可复制标签）</translation>
+        <translation>打开上一张图像（按住 Ctl+Shift 复制标签）</translation>
     </message>
     <message>
         <source>&amp;Save
 </source>
-        <translation>保存(&amp;S)</translation>
+        <translation>保存(&amp;S)
+</translation>
     </message>
     <message>
         <source>Save labels to file</source>
-        <translation>保存标签至文件</translation>
+        <translation>将标签保存到文件</translation>
     </message>
     <message>
         <source>&amp;Save As</source>
@@ -305,7 +307,7 @@
     </message>
     <message>
         <source>Delete current label file</source>
-        <translation>删除当前的标签文件</translation>
+        <translation>删除当前标签文件</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -313,7 +315,7 @@
     </message>
     <message>
         <source>Change where annotations are loaded/saved</source>
-        <translation>更改标注的加载与保存位置</translation>
+        <translation>更改标注的加载和保存位置</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -325,11 +327,11 @@
     </message>
     <message>
         <source>Save With Image Data</source>
-        <translation>连同图像数据一并保存</translation>
+        <translation>保存图像数据</translation>
     </message>
     <message>
         <source>Save image data in label file</source>
-        <translation>将图像数据写入标签文件</translation>
+        <translation>在标签文件中保存图像数据</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -341,7 +343,7 @@
     </message>
     <message>
         <source>Keep Previous Annotation</source>
-        <translation>保留上一次的标注</translation>
+        <translation>保留上一张标注</translation>
     </message>
     <message>
         <source>Start drawing polygons</source>
@@ -357,7 +359,7 @@
     </message>
     <message>
         <source>Start drawing lines</source>
-        <translation>开始绘制直线</translation>
+        <translation>开始绘制线段</translation>
     </message>
     <message>
         <source>Start drawing points</source>
@@ -369,7 +371,7 @@
     </message>
     <message>
         <source>Move and edit the selected shapes</source>
-        <translation>移动并编辑所选形状</translation>
+        <translation>移动和编辑选中的形状</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
@@ -377,67 +379,71 @@
     </message>
     <message>
         <source>Delete the selected shapes</source>
-        <translation>删除所选形状</translation>
+        <translation>删除选中的形状</translation>
     </message>
     <message>
         <source>Duplicate Shapes</source>
-        <translation>创建形状副本</translation>
+        <translation>复制形状</translation>
     </message>
     <message>
         <source>Create a duplicate of the selected shapes</source>
-        <translation>为所选形状创建副本</translation>
+        <translation>创建选中形状的副本</translation>
     </message>
     <message>
         <source>Undo last point</source>
-        <translation>撤销上一个顶点</translation>
+        <translation>撤销上一个点</translation>
     </message>
     <message>
         <source>Undo last drawn point</source>
-        <translation>撤销上一次绘制的顶点</translation>
+        <translation>撤销上一个绘制的点</translation>
     </message>
     <message>
         <source>Remove Selected Point</source>
-        <translation>移除所选顶点</translation>
+        <translation>移除选中的点</translation>
     </message>
     <message>
         <source>Remove selected point from polygon</source>
-        <translation>从多边形中移除所选顶点</translation>
+        <translation>从多边形中移除选中的点</translation>
     </message>
     <message>
         <source>Undo
 </source>
-        <translation>撤销</translation>
+        <translation>撤销
+</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
-        <translation>撤销对形状的最近一次添加或编辑</translation>
+        <translation>撤销上一次添加或编辑形状的操作</translation>
     </message>
     <message>
         <source>&amp;Hide
 Shapes</source>
-        <translation>隐藏形状(&amp;H)</translation>
+        <translation>隐藏(&amp;H)
+形状</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
-        <translation>隐藏全部形状</translation>
+        <translation>隐藏所有形状</translation>
     </message>
     <message>
         <source>&amp;Show
 Shapes</source>
-        <translation>显示形状(&amp;S)</translation>
+        <translation>显示(&amp;S)
+形状</translation>
     </message>
     <message>
         <source>Show all shapes</source>
-        <translation>显示全部形状</translation>
+        <translation>显示所有形状</translation>
     </message>
     <message>
         <source>&amp;Toggle
 Shapes</source>
-        <translation>切换形状显示(&amp;S)</translation>
+        <translation>切换(&amp;T)
+形状显示</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
-        <translation>切换全部形状的显示状态</translation>
+        <translation>切换所有形状的显示状态</translation>
     </message>
     <message>
         <source>&amp;Tutorial</source>
@@ -445,7 +451,7 @@ Shapes</source>
     </message>
     <message>
         <source>Show tutorial page</source>
-        <translation>打开教程页面</translation>
+        <translation>显示教程页面</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -465,7 +471,7 @@ Shapes</source>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
-        <translation>调整亮度与对比度</translation>
+        <translation>调整亮度和对比度</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
@@ -477,7 +483,7 @@ Shapes</source>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
-        <translation>修改所选形状的标签</translation>
+        <translation>修改选中形状的标签</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
@@ -537,7 +543,7 @@ Shapes</source>
     </message>
     <message>
         <source>Fill polygon while drawing</source>
-        <translation>绘制过程中填充多边形</translation>
+        <translation>绘制时填充多边形</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -577,11 +583,11 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Invalid label</source>
-        <translation>标签无效</translation>
+        <translation>无效标签</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>标签 &apos;{}&apos; 无效（验证类型为 &apos;{}&apos;）</translation>
+        <translation>标签“{}”不符合“{}”验证类型</translation>
     </message>
     <message>
         <source>Error saving label data</source>
@@ -601,7 +607,7 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>文件未找到：&lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>文件不存在：&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Loading %s...</source>
@@ -613,7 +619,7 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Image &amp; Label files (%s)</source>
-        <translation>图像与标签文件 (%s)</translation>
+        <translation>图像 &amp; 标签文件 (%s)</translation>
     </message>
     <message>
         <source>%s - Choose Image or Label file</source>
@@ -621,11 +627,11 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 在目录中加载与保存标注</translation>
+        <translation>%s - 在目录中保存或加载标注</translation>
     </message>
     <message>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s。标注将在 %s 中加载与保存</translation>
+        <translation>%s。标注将在 %s 中保存或加载</translation>
     </message>
     <message>
         <source>%s - Choose File</source>
@@ -657,11 +663,11 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>关闭前是否将标注保存至 &quot;{}&quot;？</translation>
+        <translation>关闭前将标注保存到“{}”？</translation>
     </message>
     <message>
         <source>Save annotations?</source>
-        <translation>是否保存标注？</translation>
+        <translation>保存标注？</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
@@ -755,7 +761,7 @@ Please select a different model or use AI-Box mode.</source>
     </message>
     <message>
         <source>Add Point to Edge</source>
-        <translation>在边上添加顶点</translation>
+        <translation>在边上添加点</translation>
     </message>
     <message>
         <source>Insert a new point at the hovered polygon edge</source>
@@ -882,7 +888,7 @@ Please select a different model or use AI-Box mode.</source>
     </message>
     <message>
         <source>Save image data in label file</source>
-        <translation>将图像数据写入标签文件</translation>
+        <translation>在标签文件中保存图像数据</translation>
     </message>
     <message>
         <source>Embeds the image in the label JSON file.</source>
@@ -922,7 +928,7 @@ Please select a different model or use AI-Box mode.</source>
     </message>
     <message>
         <source>Keep previous annotation</source>
-        <translation>保留上一次的标注</translation>
+        <translation>保留上一张标注</translation>
     </message>
     <message>
         <source>Keep previous zoom</source>
@@ -934,7 +940,7 @@ Please select a different model or use AI-Box mode.</source>
     </message>
     <message>
         <source>Fill polygon while drawing</source>
-        <translation>绘制过程中填充多边形</translation>
+        <translation>绘制时填充多边形</translation>
     </message>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>

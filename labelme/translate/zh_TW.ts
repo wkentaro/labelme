@@ -82,7 +82,7 @@
     <name>Canvas</name>
     <message>
         <source>Click &amp; drag to move point</source>
-        <translation>點擊並拖拽以移動控制點</translation>
+        <translation>點按 &amp; 拖曳以移動點</translation>
     </message>
     <message>
         <source>Click &amp; drag to move shape</source>
@@ -227,109 +227,111 @@
     <name>MainWindow</name>
     <message>
         <source>Flags</source>
-        <translation>標記</translation>
+        <translation>旗標</translation>
     </message>
     <message>
         <source>Shape List</source>
-        <translation>圖形列表</translation>
+        <translation>形狀清單</translation>
     </message>
     <message>
         <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>選擇標籤類型並開始以其標註。按&apos;Esc&apos;取消選擇。</translation>
+        <translation>選取標籤以開始為其加上標註。按「Esc」取消選取。</translation>
     </message>
     <message>
         <source>Label List</source>
-        <translation>標籤列表</translation>
+        <translation>標籤清單</translation>
     </message>
     <message>
         <source>Search Filename</source>
-        <translation>按文件名檢索</translation>
+        <translation>搜尋檔案名稱</translation>
     </message>
     <message>
         <source>File List</source>
-        <translation>文件列表</translation>
+        <translation>檔案清單</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>退出(&amp;Q)</translation>
+        <translation>結束(&amp;Q)</translation>
     </message>
     <message>
         <source>Quit application</source>
-        <translation>退出應用</translation>
+        <translation>結束應用程式</translation>
     </message>
     <message>
         <source>&amp;Open
 </source>
-        <translation>打開(&amp;O)</translation>
+        <translation>開啟(&amp;O)
+</translation>
     </message>
     <message>
         <source>Open image or label file</source>
-        <translation>打開圖像或標籤文件</translation>
+        <translation>開啟影像或標籤檔案</translation>
     </message>
     <message>
         <source>Open Dir</source>
-        <translation>打開目錄</translation>
+        <translation>開啟資料夾</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
-        <translation>下一幅(&amp;N)</translation>
+        <translation>下一張影像(&amp;N)</translation>
     </message>
     <message>
         <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打開下一幅（按 Ctrl+Shift 複製標籤）</translation>
+        <translation>開啟下一張影像（按住 Ctl+Shift 複製標籤）</translation>
     </message>
     <message>
         <source>&amp;Prev Image</source>
-        <translation>上一幅(&amp;P)</translation>
+        <translation>上一張影像(&amp;P)</translation>
     </message>
     <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打開上一幅（按 Ctrl+Shift 複製標籤）</translation>
+        <translation>開啟上一張影像（按住 Ctl+Shift 複製標籤）</translation>
     </message>
     <message>
         <source>&amp;Save
 </source>
-        <translation>保存(&amp;S)</translation>
+        <translation>儲存(&amp;S)
+</translation>
     </message>
     <message>
         <source>Save labels to file</source>
-        <translation>保存標籤到文件</translation>
+        <translation>將標籤儲存至檔案</translation>
     </message>
     <message>
         <source>&amp;Save As</source>
-        <translation>另存為(&amp;S)</translation>
+        <translation>另存新檔(&amp;S)</translation>
     </message>
     <message>
         <source>&amp;Delete File</source>
-        <translation>刪除(&amp;D)</translation>
+        <translation>刪除檔案(&amp;D)</translation>
     </message>
     <message>
         <source>Delete current label file</source>
-        <translation>刪除當前標籤文件</translation>
+        <translation>刪除目前的標籤檔案</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
-        <translation>更改輸出路徑(&amp;C)</translation>
+        <translation>變更輸出資料夾(&amp;C)</translation>
     </message>
     <message>
         <source>Change where annotations are loaded/saved</source>
-        <translation>更改載入、保存標註的路徑</translation>
+        <translation>變更標註的載入與儲存位置</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
-        <translation>自動保存(&amp;A)</translation>
+        <translation>自動儲存(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
-        <translation>自動保存</translation>
+        <translation>自動儲存</translation>
     </message>
     <message>
         <source>Save With Image Data</source>
-        <translation>同時保存圖像數據</translation>
+        <translation>一併儲存影像資料</translation>
     </message>
     <message>
         <source>Save image data in label file</source>
-        <translation>將圖像數據保存到標籤文件中</translation>
+        <translation>將影像資料儲存在標籤檔案中</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -337,11 +339,11 @@
     </message>
     <message>
         <source>Close current file</source>
-        <translation>關閉當前文件</translation>
+        <translation>關閉目前的檔案</translation>
     </message>
     <message>
         <source>Keep Previous Annotation</source>
-        <translation>保留上一個標註</translation>
+        <translation>保留上一張標註</translation>
     </message>
     <message>
         <source>Start drawing polygons</source>
@@ -357,95 +359,99 @@
     </message>
     <message>
         <source>Start drawing lines</source>
-        <translation>開始繪製直線</translation>
+        <translation>開始繪製線段</translation>
     </message>
     <message>
         <source>Start drawing points</source>
-        <translation>開始繪製控制點</translation>
+        <translation>開始繪製點</translation>
     </message>
     <message>
         <source>Edit Shapes</source>
-        <translation>編輯圖形</translation>
+        <translation>編輯形狀</translation>
     </message>
     <message>
         <source>Move and edit the selected shapes</source>
-        <translation>移動、編輯選中的圖形</translation>
+        <translation>移動與編輯選取的形狀</translation>
     </message>
     <message>
         <source>Delete Shapes</source>
-        <translation>刪除圖形</translation>
+        <translation>刪除形狀</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
-        <translation>刪除選中的圖形</translation>
+        <translation>刪除選取的形狀</translation>
     </message>
     <message>
         <source>Duplicate Shapes</source>
-        <translation>複製圖形</translation>
+        <translation>複製形狀</translation>
     </message>
     <message>
         <source>Create a duplicate of the selected shapes</source>
-        <translation>為選中的圖形創建副本</translation>
+        <translation>建立選取形狀的複本</translation>
     </message>
     <message>
         <source>Undo last point</source>
-        <translation>撤銷最後的控制點</translation>
+        <translation>復原上一個點</translation>
     </message>
     <message>
         <source>Undo last drawn point</source>
-        <translation>撤銷最後一次繪製的控制點</translation>
+        <translation>復原上一個繪製的點</translation>
     </message>
     <message>
         <source>Remove Selected Point</source>
-        <translation>移除選中的控制點</translation>
+        <translation>移除選取的點</translation>
     </message>
     <message>
         <source>Remove selected point from polygon</source>
-        <translation>從多邊形中移除選中的控制點</translation>
+        <translation>從多邊形中移除選取的點</translation>
     </message>
     <message>
         <source>Undo
 </source>
-        <translation>撤銷</translation>
+        <translation>復原
+</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
-        <translation>撤銷最近一次添加和編輯</translation>
+        <translation>復原上一次新增或編輯形狀的操作</translation>
     </message>
     <message>
         <source>&amp;Hide
 Shapes</source>
-        <translation>隱藏圖形(&amp;H)</translation>
+        <translation>隱藏(&amp;H)
+形狀</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
-        <translation>隱藏所有圖形</translation>
+        <translation>隱藏所有形狀</translation>
     </message>
     <message>
         <source>&amp;Show
 Shapes</source>
-        <translation>顯示圖形(&amp;S)</translation>
+        <translation>顯示(&amp;S)
+形狀</translation>
     </message>
     <message>
         <source>Show all shapes</source>
-        <translation>顯示所有圖形</translation>
+        <translation>顯示所有形狀</translation>
     </message>
     <message>
         <source>&amp;Toggle
 Shapes</source>
-        <translation>開關圖形(&amp;S)</translation>
+        <translation>切換(&amp;T)
+形狀顯示</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
-        <translation>開關所有圖形</translation>
+        <translation>切換所有形狀的顯示狀態</translation>
     </message>
     <message>
         <source>&amp;Tutorial</source>
-        <translation>教程[&amp;T]</translation>
+        <translation>教學(&amp;T)</translation>
     </message>
     <message>
         <source>Show tutorial page</source>
-        <translation>顯示教程網頁</translation>
+        <translation>顯示教學頁面</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -461,11 +467,11 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;Brightness Contrast</source>
-        <translation>亮度 對比度(&amp;B)</translation>
+        <translation>亮度與對比(&amp;B)</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
-        <translation>調節亮度和對比度</translation>
+        <translation>調整亮度與對比</translation>
     </message>
     <message>
         <source>&amp;Edit Label</source>
@@ -477,7 +483,7 @@ Shapes</source>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
-        <translation>修改選中圖形的標籤</translation>
+        <translation>修改選取形狀的標籤</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
@@ -533,11 +539,11 @@ Shapes</source>
     </message>
     <message>
         <source>Fill Drawing Polygon</source>
-        <translation>填充所繪多邊形</translation>
+        <translation>填滿正在繪製的多邊形</translation>
     </message>
     <message>
         <source>Fill polygon while drawing</source>
-        <translation>繪製時填充多邊形</translation>
+        <translation>繪製時填滿多邊形</translation>
     </message>
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
@@ -545,7 +551,7 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>文件(&amp;F)</translation>
+        <translation>檔案(&amp;F)</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
@@ -553,15 +559,15 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>視圖(&amp;V)</translation>
+        <translation>檢視(&amp;V)</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>幫助(&amp;H)</translation>
+        <translation>說明(&amp;H)</translation>
     </message>
     <message>
         <source>%s started.</source>
-        <translation>%s 已啟動</translation>
+        <translation>%s 已啟動。</translation>
     </message>
     <message>
         <source>Mask Output Unavailable</source>
@@ -581,11 +587,11 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
-        <translation>無效的標籤&apos;{}&apos;，驗證類型&apos;{}&apos;</translation>
+        <translation>標籤「{}」不符合「{}」驗證類型</translation>
     </message>
     <message>
         <source>Error saving label data</source>
-        <translation>保存標籤發生錯誤</translation>
+        <translation>儲存標籤資料時發生錯誤</translation>
     </message>
     <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
@@ -597,11 +603,11 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Error opening file</source>
-        <translation>打開文件發生錯誤</translation>
+        <translation>開啟檔案時發生錯誤</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
-        <translation>文件不存在: &lt;b&gt;%s&lt;/b&gt;</translation>
+        <translation>檔案不存在：&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Loading %s...</source>
@@ -613,31 +619,31 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Image &amp; Label files (%s)</source>
-        <translation>圖像和標籤文件(%s)</translation>
+        <translation>影像 &amp; 標籤檔案 (%s)</translation>
     </message>
     <message>
         <source>%s - Choose Image or Label file</source>
-        <translation>%s - 選擇圖像或標籤文件</translation>
+        <translation>%s - 選擇影像或標籤檔案</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 保存和載入批註的路徑</translation>
+        <translation>%s - 在資料夾中儲存或載入標註</translation>
     </message>
     <message>
         <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 批註會被載入和保存在 %s</translation>
+        <translation>%s。標註將在 %s 中儲存或載入</translation>
     </message>
     <message>
         <source>%s - Choose File</source>
-        <translation>%s - 選擇文件</translation>
+        <translation>%s - 選擇檔案</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
-        <translation>標籤文件(*%s)</translation>
+        <translation>標籤檔案 (*%s)</translation>
     </message>
     <message>
         <source>Choose File</source>
-        <translation>選擇文件</translation>
+        <translation>選擇檔案</translation>
     </message>
     <message>
         <source>Attention</source>
@@ -657,11 +663,11 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>關閉前保存批註到&quot;{}&quot;嗎?</translation>
+        <translation>關閉前將標註儲存至「{}」？</translation>
     </message>
     <message>
         <source>Save annotations?</source>
-        <translation>保存批註嗎?</translation>
+        <translation>儲存標註？</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
@@ -669,7 +675,7 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>%s - Open Directory</source>
-        <translation>%s - 打開目錄</translation>
+        <translation>%s - 開啟資料夾</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -878,11 +884,11 @@ Please select a different model or use AI-Box mode.</source>
     </message>
     <message>
         <source>Save automatically</source>
-        <translation>自動保存</translation>
+        <translation>自動儲存</translation>
     </message>
     <message>
         <source>Save image data in label file</source>
-        <translation>將圖像數據保存到標籤文件中</translation>
+        <translation>將影像資料儲存在標籤檔案中</translation>
     </message>
     <message>
         <source>Embeds the image in the label JSON file.</source>
@@ -934,7 +940,7 @@ Please select a different model or use AI-Box mode.</source>
     </message>
     <message>
         <source>Fill polygon while drawing</source>
-        <translation>繪製時填充多邊形</translation>
+        <translation>繪製時填滿多邊形</translation>
     </message>
     <message>
         <source>Let shape points extend beyond the image, e.g. for partially visible objects.</source>
