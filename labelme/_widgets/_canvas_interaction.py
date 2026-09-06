@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 import enum
-from typing import Final
+from collections.abc import Callable
+from collections.abc import Sequence
 
 import numpy as np
 import numpy.typing as npt
@@ -14,6 +15,28 @@ from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
 from ._shape_render import is_hit_by_point
+
+
+class CursorRole(enum.Enum):
+    DEFAULT = "default"
+    DRAW = "draw"
+    HANDLE = "handle"
+    GRAB = "grab"
+    MOVE = "move"
+
+
+def cursor_shape_for(role: CursorRole, /) -> Qt.CursorShape:
+    match role:
+        case CursorRole.DEFAULT:
+            return Qt.CursorShape.ArrowCursor
+        case CursorRole.DRAW:
+            return Qt.CursorShape.CrossCursor
+        case CursorRole.HANDLE:
+            return Qt.CursorShape.PointingHandCursor
+        case CursorRole.GRAB:
+            return Qt.CursorShape.OpenHandCursor
+        case CursorRole.MOVE:
+            return Qt.CursorShape.ClosedHandCursor
 
 
 class HitKind(enum.Enum):
@@ -30,80 +53,6 @@ class HitTarget:
     index: int | None
 
 
-def find_hover_target(
-    *,
-    shapes: list[Shape],
-    point: npt.NDArray[np.float64],
-    scale: float,
-    epsilon: float,
-    point_size: int,
-    priority_shape: Shape | None,
-) -> HitTarget | None:
-    candidates = _build_candidates(
-        shapes=shapes,
-        priority_shape=priority_shape,
-    )
-
-    # Proximity is measured in image space, so the screen-pixel threshold is
-    # converted here rather than scaling every shape's points.
-    image_epsilon = epsilon / scale
-
-    # Pass 1: vertex proximity
-    for shape in candidates:
-        idx = nearest_vertex_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
-
-    # Pass 2: rotation handle proximity
-    for shape in candidates:
-        idx = nearest_rotation_point_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
-
-    # Pass 3: edge proximity (only shapes that support adding a point)
-    for shape in candidates:
-        if not shape.can_add_point():
-            continue
-        idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
-        if idx is not None:
-            return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
-
-    # Pass 4: body hit
-    for shape in candidates:
-        hit = is_hit_by_point(
-            shape=shape,
-            point=point,
-            scale=scale,
-            point_size=point_size,
-            epsilon=epsilon,
-        )
-        if hit:
-            return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
-
-    return None
-
-
-def _build_candidates(
-    *,
-    shapes: list[Shape],
-    priority_shape: Shape | None,
-) -> list[Shape]:
-    candidates: list[Shape] = []
-    if priority_shape is not None and priority_shape.visible:
-        candidates.append(priority_shape)
-    for shape in reversed(shapes):
-        if not shape.visible:
-            continue
-        if shape is priority_shape:
-            continue
-        candidates.append(shape)
-    return candidates
-
-
 def is_within_pick_threshold(
     *,
     a: npt.NDArray[np.float64],
@@ -114,28 +63,123 @@ def is_within_pick_threshold(
     return bool(np.linalg.norm(a - b) < epsilon / scale)
 
 
-class CursorRole(enum.Enum):
-    DEFAULT = "default"
-    DRAW = "draw"
-    HANDLE = "handle"
-    GRAB = "grab"
-    MOVE = "move"
+def _candidates_in_hit_order(
+    *, shapes: list[Shape], priority_shape: Shape | None
+) -> list[Shape]:
+    # The most recently interacted-with shape is tried before everything
+    # else; the rest follow in reverse paint order (topmost drawn first) so
+    # a hit resolves to whatever the user sees on top.
+    ordered: list[Shape] = []
+    if priority_shape is not None and priority_shape.visible:
+        ordered.append(priority_shape)
+    ordered.extend(
+        shape
+        for shape in reversed(shapes)
+        if shape.visible and shape is not priority_shape
+    )
+    return ordered
 
 
-_CURSOR_SHAPE_MAP: Final[dict[CursorRole, Qt.CursorShape]] = {
-    CursorRole.DEFAULT: Qt.CursorShape.ArrowCursor,
-    CursorRole.DRAW: Qt.CursorShape.CrossCursor,
-    CursorRole.HANDLE: Qt.CursorShape.PointingHandCursor,
-    CursorRole.GRAB: Qt.CursorShape.OpenHandCursor,
-    CursorRole.MOVE: Qt.CursorShape.ClosedHandCursor,
-}
-assert set(_CURSOR_SHAPE_MAP) == set(CursorRole), (
-    f"_CURSOR_SHAPE_MAP missing roles: {set(CursorRole) - set(_CURSOR_SHAPE_MAP)}"
-)
+def _match_vertex(
+    *, candidates: Sequence[Shape], point: npt.NDArray[np.float64], image_epsilon: float
+) -> HitTarget | None:
+    for shape in candidates:
+        index = nearest_vertex_index(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        )
+        if index is not None:
+            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=index)
+    return None
 
 
-def cursor_shape_for(role: CursorRole, /) -> Qt.CursorShape:
-    return _CURSOR_SHAPE_MAP[role]
+def _match_rotation_handle(
+    *, candidates: Sequence[Shape], point: npt.NDArray[np.float64], image_epsilon: float
+) -> HitTarget | None:
+    for shape in candidates:
+        index = nearest_rotation_point_index(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        )
+        if index is not None:
+            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=index)
+    return None
+
+
+def _match_edge(
+    *, candidates: Sequence[Shape], point: npt.NDArray[np.float64], image_epsilon: float
+) -> HitTarget | None:
+    for shape in candidates:
+        # Only polygon/linestrip shapes accept an inserted vertex, so only
+        # they are worth testing for an edge hit.
+        if not shape.can_add_point():
+            continue
+        index = nearest_edge_index(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        )
+        if index is not None:
+            return HitTarget(kind=HitKind.EDGE, shape=shape, index=index)
+    return None
+
+
+def _match_body(
+    *,
+    candidates: Sequence[Shape],
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+    epsilon: float,
+) -> HitTarget | None:
+    for shape in candidates:
+        if is_hit_by_point(
+            shape=shape,
+            point=point,
+            scale=scale,
+            point_size=point_size,
+            epsilon=epsilon,
+        ):
+            return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+    return None
+
+
+def find_hover_target(
+    *,
+    shapes: list[Shape],
+    point: npt.NDArray[np.float64],
+    scale: float,
+    epsilon: float,
+    point_size: int,
+    priority_shape: Shape | None,
+) -> HitTarget | None:
+    candidates = _candidates_in_hit_order(shapes=shapes, priority_shape=priority_shape)
+    # Proximity is measured in image space, so the screen-pixel threshold is
+    # converted once here rather than scaling every shape's points.
+    image_epsilon = epsilon / scale
+
+    # Categories are resolved in this fixed order across *all* candidates
+    # before falling through to the next one, so e.g. a vertex on a
+    # lower-paint-order shape still beats a body hit on a topmost shape.
+    passes: tuple[Callable[[], HitTarget | None], ...] = (
+        lambda: _match_vertex(
+            candidates=candidates, point=point, image_epsilon=image_epsilon
+        ),
+        lambda: _match_rotation_handle(
+            candidates=candidates, point=point, image_epsilon=image_epsilon
+        ),
+        lambda: _match_edge(
+            candidates=candidates, point=point, image_epsilon=image_epsilon
+        ),
+        lambda: _match_body(
+            candidates=candidates,
+            point=point,
+            scale=scale,
+            point_size=point_size,
+            epsilon=epsilon,
+        ),
+    )
+    for resolve in passes:
+        target = resolve()
+        if target is not None:
+            return target
+    return None
 
 
 @dataclasses.dataclass
@@ -144,6 +188,4 @@ class ContextMenuPair:
     with_selection: QMenu
 
     def menu_for(self, *, has_selection: bool) -> QMenu:
-        if has_selection:
-            return self.with_selection
-        return self.without_selection
+        return self.with_selection if has_selection else self.without_selection
