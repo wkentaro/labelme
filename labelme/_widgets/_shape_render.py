@@ -102,27 +102,23 @@ def render_shape(
         _paint_shape_points(painter=painter, shape=shape, context=context)
 
     if context.show_label:
-        _paint_shape_label(painter=painter, shape=shape, context=context)
+        _paint_label(painter=painter, shape=shape, context=context)
 
 
-def _paint_shape_label(
-    *,
-    painter: QtGui.QPainter,
-    shape: Shape,
-    context: ShapeRenderContext,
+def _paint_label(
+    *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
 ) -> None:
     if not shape.label or len(shape.points) == 0:
         return
-    # Anchor at the points' top-left so the text stays close to the shape and
-    # tracks zoom/pan; lift it by the outline width to clear the stroke.
-    top_left = shape.points.min(axis=0) * context.scale
-    text = shape.label
-    if shape.group_id is not None:
-        text += f" ({shape.group_id})"
+    text = (
+        shape.label if shape.group_id is None else f"{shape.label} ({shape.group_id})"
+    )
+    # Anchor at the points' top-left corner so the label stays close to the
+    # shape and tracks pan/zoom; lift it above the outline stroke.
+    anchor = shape.points.min(axis=0) * context.scale
     painter.setPen(QtGui.QPen(context.palette.line))
     painter.drawText(
-        QtCore.QPointF(float(top_left[0]), float(top_left[1]) - _OUTLINE_WIDTH),
-        text,
+        QtCore.QPointF(float(anchor[0]), float(anchor[1]) - _OUTLINE_WIDTH), text
     )
 
 
