@@ -361,7 +361,7 @@ def test_text_prompt_error_preserves_annotation(
         ),
     )
     if failure_stage == "postprocessing":
-        monkeypatch.setattr("labelme._automation.nms_bboxes", _raise)
+        monkeypatch.setattr("labelme._automation._text_detection.nms_bboxes", _raise)
     _run_text_prompt(
         win=win,
         qtbot=qtbot,
