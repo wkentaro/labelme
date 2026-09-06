@@ -35,6 +35,15 @@ def _polygon(points: list[tuple[float, float]], /, *, visible: bool) -> Shape:
     )
 
 
+def _oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
+    return Shape(
+        shape_type="oriented_rectangle",
+        points=np.array(points, dtype=np.float64),
+        closed=True,
+        visible=True,
+    )
+
+
 # ---------------------------------------------------------------------------
 # HitTarget
 # ---------------------------------------------------------------------------
@@ -156,6 +165,74 @@ def test_category_precedence_vertex_over_body_across_shapes() -> None:
     assert result is not None
     assert result.kind == HitKind.VERTEX
     assert result.shape is small
+
+
+# ---------------------------------------------------------------------------
+# find_hover_target — rotation-handle precedence: vertex > rotation > edge,
+# resolved globally by category rather than per candidate shape.
+# ---------------------------------------------------------------------------
+
+
+def test_rotation_handle_beats_edge_across_shapes() -> None:
+    # The oriented rectangle's rotation handle 1 sits at (20, 0); a polygon's
+    # edge passes through that same point. The polygon is examined first in
+    # candidate (reverse paint) order, so a per-shape (rather than global
+    # per-category) resolution would wrongly report its edge.
+    oriented_rect = _oriented_rectangle([(0, 0), (40, 0), (40, 10), (0, 10)])
+    polygon = _polygon([(-100, 0), (100, 0), (100, 50), (-100, 50)], visible=True)
+    result = find_hover_target(
+        shapes=[oriented_rect, polygon],
+        point=_point(20.0, 0.0),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        priority_shape=None,
+    )
+    assert result is not None
+    assert result.kind == HitKind.ROTATION_HANDLE
+    assert result.shape is oriented_rect
+    assert result.index == 1
+
+
+def test_rotation_handle_beats_body_across_shapes() -> None:
+    # (20, 0) is both the oriented rectangle's rotation handle 1 and well
+    # inside a larger polygon's interior; the polygon is examined first.
+    oriented_rect = _oriented_rectangle([(0, 0), (40, 0), (40, 10), (0, 10)])
+    big_body_shape = _polygon(
+        [(-50, -50), (200, -50), (200, 200), (-50, 200)], visible=True
+    )
+    result = find_hover_target(
+        shapes=[oriented_rect, big_body_shape],
+        point=_point(20.0, 0.0),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        priority_shape=None,
+    )
+    assert result is not None
+    assert result.kind == HitKind.ROTATION_HANDLE
+    assert result.shape is oriented_rect
+    assert result.index == 1
+
+
+def test_vertex_beats_rotation_handle_across_shapes() -> None:
+    # A polygon vertex coincides with a different shape's rotation handle at
+    # (20, 0); the oriented rectangle is examined first in candidate order,
+    # but the vertex category must still win globally.
+    oriented_rect = _oriented_rectangle([(0, 0), (40, 0), (40, 10), (0, 10)])
+    polygon_with_vertex = _polygon([(20, 0), (60, 0), (60, 30), (20, 30)], visible=True)
+    result = find_hover_target(
+        shapes=[polygon_with_vertex, oriented_rect],
+        point=_point(20.0, 0.0),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        priority_shape=None,
+    )
+    assert result is not None
+    assert result.kind == HitKind.VERTEX
+    assert result.shape is polygon_with_vertex
+    assert result.index == 0
 
 
 # ---------------------------------------------------------------------------
