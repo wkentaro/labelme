@@ -106,9 +106,7 @@ def test_fit_width_uses_full_width_when_quantized_image_fits_height(
     _win: MainWindow,
     pause: bool,
 ) -> None:
-    scroll_area = _win.centralWidget()
-    assert isinstance(scroll_area, QtWidgets.QScrollArea)
-    viewport_size = scroll_area.maximumViewportSize()
+    viewport_size = _win._canvas_widgets.scroll_area.maximumViewportSize()
     zoom_widget = _win._canvas_widgets.zoom_widget
     precision = 10 ** zoom_widget.decimals()
     image_width = viewport_size.width() + 1
