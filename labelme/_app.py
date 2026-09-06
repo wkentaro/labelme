@@ -2234,7 +2234,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # The zoom value can be unchanged across images, so update geometry
         # explicitly before restoring positions against the new scroll range.
         self._apply_zoom_to_canvas()
-        if target_viewport is not None and self._zoom_mode == _ZoomMode.MANUAL_ZOOM:
+        if target_viewport is not None:
             for orientation, value in target_viewport.scroll_values.items():
                 self.set_scroll_value(orientation=orientation, value=value)
             self._canvas_widgets.canvas.reset_view_offset()
