@@ -51,6 +51,7 @@ from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
+from ._widgets import EmptyStateWidget
 from ._widgets import LabelDialog
 from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
@@ -92,6 +93,9 @@ class _StatusBarWidgets(NamedTuple):
 
 class _CanvasWidgets(NamedTuple):
     canvas: Canvas
+    empty_state: EmptyStateWidget
+    scroll_area: QtWidgets.QScrollArea
+    surface: QtWidgets.QStackedWidget
     zoom_widget: ZoomWidget
     scroll_bars: dict[Qt.Orientation, QtWidgets.QScrollBar]
 
@@ -1153,10 +1157,21 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.selection_changed.connect(self._on_shape_selection_changed)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
 
-        self.setCentralWidget(scroll_area)
+        empty_state = EmptyStateWidget(
+            on_open_image=self._open_file_with_dialog,
+            on_open_directory=self._open_dir_with_dialog,
+        )
+        surface = QtWidgets.QStackedWidget()
+        surface.addWidget(empty_state)
+        surface.addWidget(scroll_area)
+        surface.setCurrentWidget(empty_state)
+        self.setCentralWidget(surface)
 
         return _CanvasWidgets(
             canvas=canvas,
+            empty_state=empty_state,
+            scroll_area=scroll_area,
+            surface=surface,
             zoom_widget=zoom_widget,
             scroll_bars=scroll_bars,
         )
@@ -1944,9 +1959,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if pos is None:
             pos = QtCore.QPointF(canvas.visibleRegion().boundingRect().center())
-        scroll_area = self.centralWidget()
-        assert isinstance(scroll_area, QtWidgets.QScrollArea)
-        viewport = scroll_area.viewport()
+        viewport = self._canvas_widgets.scroll_area.viewport()
         image_pos = canvas.transform_widget_point_to_image(pos)
         viewport_pos = canvas.mapTo(viewport, pos)
 
@@ -2186,6 +2199,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image = image
         t0 = time.time()
         self._canvas_widgets.canvas.load_pixmap(pixmap=QtGui.QPixmap.fromImage(image))
+        self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.scroll_area)
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         flags = {k: False for k in self._config["flags"] or []}
         # Record one baseline state. Loading carried-forward shapes separately
@@ -2263,7 +2277,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _fit_window_scale(self) -> float:
         FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0
-        viewport = self.centralWidget()
+        viewport = self._canvas_widgets.scroll_area
         pixmap = self._canvas_widgets.canvas.pixmap
         available_w = viewport.width() - FIT_WINDOW_SCROLLBAR_MARGIN
         available_h = viewport.height() - FIT_WINDOW_SCROLLBAR_MARGIN
@@ -2272,8 +2286,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return min(scale_by_width, scale_by_height)
 
     def _fit_width_scale(self) -> float:
-        scroll_area = self.centralWidget()
-        assert isinstance(scroll_area, QtWidgets.QScrollArea)
+        scroll_area = self._canvas_widgets.scroll_area
         viewport_size = scroll_area.maximumViewportSize()
         pixmap = self._canvas_widgets.canvas.pixmap
         precision = 10 ** self._canvas_widgets.zoom_widget.decimals()
@@ -2448,6 +2461,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._reset_label_file_actions()
         self.update_action_states(value=False)
         self._canvas_widgets.canvas.setEnabled(False)
+        self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.empty_state)
         self._docks.file_list.setFocus()
         self._actions.save_as.setEnabled(False)
 
