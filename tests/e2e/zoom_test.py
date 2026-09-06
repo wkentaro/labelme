@@ -39,6 +39,105 @@ def _win(
     return win
 
 
+def _wait_for_fitted_image(*, qtbot: QtBot, win: MainWindow) -> None:
+    def check() -> None:
+        canvas = win._canvas_widgets.canvas
+        viewport = win._canvas_widgets.scroll_area.viewport().size()
+        width = canvas.pixmap.width() * canvas.scale
+        height = canvas.pixmap.height() * canvas.scale
+        assert width <= viewport.width() + 1
+        if win._zoom_mode == _ZoomMode.FIT_WIDTH:
+            assert abs(width - viewport.width()) < 2
+        else:
+            assert height <= viewport.height() + 1
+            assert (
+                min(abs(width - viewport.width()), abs(height - viewport.height())) < 2
+            )
+
+    qtbot.waitUntil(check)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("open_at_startup", [True, False])
+def test_open_image_fits_settled_viewport(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, open_at_startup: bool
+) -> None:
+    path = str(data_path / "raw/2011_000003.jpg")
+    win = main_win(file_or_dir=path if open_at_startup else None, size=None)
+    qtbot.waitExposed(win)
+    if not open_at_startup:
+        win._load_from_file_or_dir(file_or_dir=path)
+    assert win._zoom_mode == _ZoomMode.FIT_WINDOW
+    _wait_for_fitted_image(qtbot=qtbot, win=win)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", list(_ZoomMode))
+def test_resize_preserves_zoom_mode(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, mode: _ZoomMode
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    qtbot.waitExposed(win)
+    win._switch_zoom_mode(mode)
+    canvas = win._canvas_widgets.canvas
+    if mode == _ZoomMode.MANUAL_ZOOM:
+        win._set_zoom(value=300, pos=None)
+        canvas.pan_view(step=QPointF(17, 23))
+    offset = canvas.get_view_offset()
+    scroll_area = win._canvas_widgets.scroll_area
+    old_size = scroll_area.size()
+    win.resize(win.width() + 150, win.height() + 100)
+    qtbot.waitUntil(lambda: scroll_area.size() != old_size)
+    if mode == _ZoomMode.MANUAL_ZOOM:
+        assert canvas.scale == 3
+        assert canvas.get_view_offset() == offset
+    else:
+        _wait_for_fitted_image(qtbot=qtbot, win=win)
+
+    old_size = scroll_area.size()
+    win.resizeDocks([win._docks.file_dock], [350], Qt.Orientation.Horizontal)
+    qtbot.waitUntil(lambda: scroll_area.size() != old_size)
+    assert win._zoom_mode == mode
+    if mode == _ZoomMode.MANUAL_ZOOM:
+        assert canvas.scale == 3
+        assert canvas.get_view_offset() == offset
+    else:
+        _wait_for_fitted_image(qtbot=qtbot, win=win)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", [_ZoomMode.FIT_WINDOW, _ZoomMode.FIT_WIDTH])
+@pytest.mark.parametrize("keep_prev_scale", [True, False])
+def test_navigation_recalculates_fit_mode(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    mode: _ZoomMode,
+    keep_prev_scale: bool,
+) -> None:
+    for name, width, height in [("landscape", 800, 400), ("portrait", 400, 800)]:
+        image = QtGui.QImage(width, height, QtGui.QImage.Format.Format_RGB32)
+        image.fill(0)
+        assert image.save(str(tmp_path / f"{name}.png"))
+    win = main_win(
+        file_or_dir=str(tmp_path),
+        config_overrides={"keep_prev_scale": keep_prev_scale},
+    )
+    qtbot.waitExposed(win)
+    win._switch_zoom_mode(mode)
+    win._open_next_image()
+    if keep_prev_scale:
+        assert win._zoom_mode == mode
+        _wait_for_fitted_image(qtbot=qtbot, win=win)
+    win._switch_zoom_mode(mode)
+    win.resize(win.width() + 150, win.height() + 100)
+    _wait_for_fitted_image(qtbot=qtbot, win=win)
+    win._open_prev_image()
+    assert win._zoom_mode == mode
+    _wait_for_fitted_image(qtbot=qtbot, win=win)
+
+
 @pytest.mark.gui
 def test_zoom_fit_window(
     *,
@@ -238,6 +337,7 @@ def _make_scrolled_win(
         config_overrides={"keep_prev_scale": True},
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._set_zoom_to_original()
     win._set_zoom(value=_VIEWPORT_ZOOM, pos=None)
     scroll_values = _set_scroll_bars_to_fraction(
         qtbot=qtbot,
@@ -301,7 +401,7 @@ def test_navigation_chooses_viewport_by_keep_previous_scale(
             assert bar.value() == bar.minimum()
         assert canvas.get_view_offset().isNull()
 
-    win.set_fit_window_mode(True)
+    win._set_zoom_to_original()
     win._set_zoom(value=350, pos=None)
     second_scroll_values = _set_scroll_bars_to_fraction(
         qtbot=qtbot,
@@ -317,9 +417,6 @@ def test_navigation_chooses_viewport_by_keep_previous_scale(
     win._open_prev_image()
     qtbot.waitUntil(lambda: win._image_path == first_image_path)
     expected_zoom = 350 if keep_prev_scale else _VIEWPORT_ZOOM
-    expected_zoom_mode = (
-        _ZoomMode.FIT_WINDOW if keep_prev_scale else _ZoomMode.MANUAL_ZOOM
-    )
     expected_scroll_values = (
         second_scroll_values if keep_prev_scale else first_scroll_values
     )
@@ -330,7 +427,7 @@ def test_navigation_chooses_viewport_by_keep_previous_scale(
         scroll_values=expected_scroll_values,
         zoom_value=expected_zoom,
     )
-    assert win._zoom_mode == expected_zoom_mode
+    assert win._zoom_mode == _ZoomMode.MANUAL_ZOOM
     assert canvas.get_view_offset() == expected_view_offset
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -354,6 +451,7 @@ def test_navigation_restores_view_offset_with_retained_brightness(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
+    win._set_zoom_to_original()
     canvas.pan_view(step=QPointF(17, 23))
     expected_view_offset = canvas.get_view_offset()
     first_image_path = win._image_path

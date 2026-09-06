@@ -298,6 +298,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.zoom_widget.valueChanged.connect(
             self._apply_zoom_to_canvas
         )
+        self._canvas_widgets.scroll_area.installEventFilter(self)
 
         self.populate_mode_actions()
 
@@ -2223,14 +2224,17 @@ class MainWindow(QtWidgets.QMainWindow):
         is_initial_load = not self._viewport_states
         if target_viewport is not None:
             self._zoom_mode = target_viewport.zoom_mode
-            self._set_zoom(value=target_viewport.zoom_value, pos=None)
+            if self._zoom_mode == _ZoomMode.MANUAL_ZOOM:
+                self._set_zoom(value=target_viewport.zoom_value, pos=None)
+            else:
+                self._adjust_scale()
         elif is_initial_load or not self._config["keep_prev_scale"]:
             self._zoom_mode = _ZoomMode.FIT_WINDOW
             self._adjust_scale()
         # The zoom value can be unchanged across images, so update geometry
         # explicitly before restoring positions against the new scroll range.
         self._apply_zoom_to_canvas()
-        if target_viewport is not None:
+        if target_viewport is not None and self._zoom_mode == _ZoomMode.MANUAL_ZOOM:
             for orientation, value in target_viewport.scroll_values.items():
                 self.set_scroll_value(orientation=orientation, value=value)
             self._canvas_widgets.canvas.reset_view_offset()
@@ -2254,11 +2258,17 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         return True
 
-    def resizeEvent(self, a0: QtGui.QResizeEvent, /) -> None:
-        super().resizeEvent(a0)
-        if self._image.isNull() or self._zoom_mode == _ZoomMode.MANUAL_ZOOM:
-            return
-        self._adjust_scale()
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
+        if (
+            watched is self._canvas_widgets.scroll_area
+            and event.type() == QtCore.QEvent.Type.Resize
+            and not self._image.isNull()
+            and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
+        ):
+            # The outer window resizes before its nested layout settles. Observe
+            # the scroll area, whose size is also independent of scrollbar changes.
+            self._adjust_scale()
+        return super().eventFilter(watched, event)
 
     def _apply_zoom_to_canvas(self) -> None:
         if self._image.isNull():
