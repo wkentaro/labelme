@@ -1,1 +1,140 @@
-../../../examples/instance_segmentation/data_annotated/2011_000003.json
+{
+  "version": "6.0.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "amber_kite",
+      "points": [
+        [
+          55.0,
+          65.0
+        ],
+        [
+          155.0,
+          45.0
+        ],
+        [
+          195.0,
+          125.0
+        ],
+        [
+          120.0,
+          185.0
+        ],
+        [
+          45.0,
+          125.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "blue_block",
+      "points": [
+        [
+          245.0,
+          45.0
+        ],
+        [
+          355.0,
+          135.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "green_hexagon",
+      "points": [
+        [
+          80.0,
+          225.0
+        ],
+        [
+          120.0,
+          195.0
+        ],
+        [
+          170.0,
+          215.0
+        ],
+        [
+          180.0,
+          275.0
+        ],
+        [
+          135.0,
+          305.0
+        ],
+        [
+          85.0,
+          285.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "red_triangle",
+      "points": [
+        [
+          270.0,
+          295.0
+        ],
+        [
+          325.0,
+          190.0
+        ],
+        [
+          385.0,
+          295.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "purple_diamond",
+      "points": [
+        [
+          430.0,
+          170.0
+        ],
+        [
+          480.0,
+          230.0
+        ],
+        [
+          430.0,
+          300.0
+        ],
+        [
+          380.0,
+          230.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "2011_000003.jpg",
+  "imageData": null,
+  "imageHeight": 338,
+  "imageWidth": 500
+}

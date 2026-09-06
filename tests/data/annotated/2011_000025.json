@@ -1,1 +1,70 @@
-../../../examples/instance_segmentation/data_annotated/2011_000025.json
+{
+  "version": "6.0.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "amber_arch",
+      "points": [
+        [
+          55.0,
+          300.0
+        ],
+        [
+          85.0,
+          95.0
+        ],
+        [
+          175.0,
+          45.0
+        ],
+        [
+          260.0,
+          105.0
+        ],
+        [
+          285.0,
+          300.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "blue_marker",
+      "points": [
+        [
+          330.0,
+          80.0
+        ],
+        [
+          440.0,
+          80.0
+        ],
+        [
+          460.0,
+          180.0
+        ],
+        [
+          385.0,
+          245.0
+        ],
+        [
+          315.0,
+          180.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "2011_000025.jpg",
+  "imageData": null,
+  "imageHeight": 375,
+  "imageWidth": 500
+}

@@ -1,1 +1,92 @@
-../../../examples/instance_segmentation/data_annotated/2011_000006.json
+{
+  "version": "6.0.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "orange_pentagon",
+      "points": [
+        [
+          60.0,
+          80.0
+        ],
+        [
+          145.0,
+          45.0
+        ],
+        [
+          210.0,
+          110.0
+        ],
+        [
+          170.0,
+          205.0
+        ],
+        [
+          75.0,
+          190.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "blue_trapezoid",
+      "points": [
+        [
+          280.0,
+          70.0
+        ],
+        [
+          425.0,
+          90.0
+        ],
+        [
+          390.0,
+          210.0
+        ],
+        [
+          300.0,
+          205.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "green_diamond",
+      "points": [
+        [
+          250.0,
+          235.0
+        ],
+        [
+          320.0,
+          290.0
+        ],
+        [
+          250.0,
+          345.0
+        ],
+        [
+          180.0,
+          290.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "2011_000006.jpg",
+  "imageData": null,
+  "imageHeight": 375,
+  "imageWidth": 500
+}

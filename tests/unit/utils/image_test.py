@@ -17,7 +17,7 @@ from .util import get_img_and_data
 def test_img_b64_to_arr() -> None:
     img, _ = get_img_and_data()
     assert img.dtype == np.uint8
-    assert img.shape == (907, 1210, 3)
+    assert img.shape == (240, 320, 3)
 
 
 def test_img_arr_to_b64() -> None:
