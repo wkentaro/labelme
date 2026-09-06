@@ -61,6 +61,27 @@ def test_migrate_removes_logger_level(*, tmp_path: Path) -> None:
     assert "logger_level" not in config
 
 
+@pytest.mark.parametrize("language", [None, "en_US", "ja_JP", "xx_ZZ"])
+@pytest.mark.parametrize("source", ["file", "override"])
+def test_load_config_preserves_language(
+    *, tmp_path: Path, language: str | None, source: str
+) -> None:
+    config_file = None
+    overrides = {"language": language}
+    if source == "file":
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text(json.dumps(overrides))
+        overrides = {}
+    config = _config.load_config(config_file=config_file, config_overrides=overrides)
+    assert config["language"] == language
+
+
+@pytest.mark.parametrize("language", [True, 1, [], {}])
+def test_load_config_rejects_non_string_language(*, language: object) -> None:
+    with pytest.raises(ValueError, match="Config key 'language' must be str or null"):
+        _config.load_config(config_file=None, config_overrides={"language": language})
+
+
 @pytest.mark.parametrize(
     "input_name, expected_name",
     [
@@ -84,15 +105,24 @@ def test_migrate_tolerates_non_string_ai_default(*, model_name: object) -> None:
     assert config["ai"]["default"] == model_name
 
 
-def test_load_config_keeps_other_keys_when_ai_default_is_not_a_string(
+def test_load_config_rejects_ai_default_that_is_not_a_string(
     *,
     tmp_path: Path,
 ) -> None:
     config_file = tmp_path / "config.yaml"
     config_file.write_text("labels:\n  - cat\n  - dog\nai:\n  default: true\n")
+    with pytest.raises(ValueError, match="Config key 'ai.default' must be str"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+def test_load_config_keeps_settings_with_unknown_ai_default(*, tmp_path: Path) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("auto_save: false\nai:\n  default: Unknown Model\n")
+
     config = _config.load_config(config_file=config_file, config_overrides={})
-    assert config["ai"]["default"] is True
-    assert config["labels"] == ["cat", "dog"]
+
+    assert config["auto_save"] is False
+    assert config["ai"]["default"] == "Unknown Model"
 
 
 @pytest.mark.parametrize("value", [-1, 101, True, "80"])
@@ -103,9 +133,86 @@ def test_load_config_rejects_invalid_polygon_detail(
     config_file.write_text(f"mask_polygonization:\n  detail: {json.dumps(value)}\n")
 
     with pytest.raises(
-        ValueError, match=r"mask_polygonization\.detail must be an integer"
+        ValueError, match=r"mask_polygonization\.detail.*(?:int|integer)"
     ):
         _config.load_config(config_file=config_file, config_overrides={})
+
+
+@pytest.mark.parametrize(
+    ("config_text", "key_name", "expected_type"),
+    [
+        ('auto_save: "false"\n', "auto_save", "bool"),
+        ('epsilon: "10.0"\n', "epsilon", "float"),
+        ("epsilon: true\n", "epsilon", "float"),
+        ('canvas:\n  num_backups: "10"\n', "canvas.num_backups", "int"),
+        ("file_search: true\n", "file_search", "str or null"),
+    ],
+)
+def test_load_config_rejects_wrong_scalar_type(
+    *, tmp_path: Path, config_text: str, key_name: str, expected_type: str
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(config_text)
+
+    with pytest.raises(
+        ValueError, match=f"Config key {key_name!r} must be {expected_type}"
+    ):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+@pytest.mark.parametrize("source", ["file", "override"])
+def test_load_config_normalizes_integer_epsilon(*, tmp_path: Path, source: str) -> None:
+    config_file = None
+    config_overrides = {}
+    if source == "file":
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("epsilon: 10\n")
+    else:
+        config_overrides = {"epsilon": 10}
+
+    config = _config.load_config(
+        config_file=config_file,
+        config_overrides=config_overrides,
+    )
+
+    assert config["epsilon"] == 10.0
+    assert isinstance(config["epsilon"], float)
+
+
+@pytest.mark.parametrize(
+    ("config_text", "key_name"),
+    [
+        ("label_completion: anywhere\n", "label_completion"),
+        ("color_theme: sepia\n", "color_theme"),
+        ("canvas:\n  double_click: save\n", "canvas.double_click"),
+    ],
+)
+def test_load_config_rejects_invalid_enum(
+    *, tmp_path: Path, config_text: str, key_name: str
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(config_text)
+
+    with pytest.raises(
+        ValueError, match=f"Unexpected value for config key {key_name!r}"
+    ):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+@pytest.mark.parametrize("num_backups", [-1, 0])
+def test_load_config_rejects_invalid_canvas_backup_count(*, num_backups: int) -> None:
+    with pytest.raises(ValueError, match="canvas.num_backups must be"):
+        _config.load_config(
+            config_file=None,
+            config_overrides={"canvas": {"num_backups": num_backups}},
+        )
+
+
+def test_load_config_accepts_disabled_canvas_double_click() -> None:
+    config = _config.load_config(
+        config_file=None, config_overrides={"canvas": {"double_click": None}}
+    )
+    assert config["canvas"]["double_click"] is None
 
 
 _POLYGON_TO_SHAPE_RENAMES: Final = {
@@ -310,7 +417,7 @@ def test_migrate_keep_prev_brightness_contrast(
         ),
         ({"shape_color": "random"}, "Unexpected value for config key 'shape_color'"),
         ({"labels": ["cat", "cat"]}, "Duplicates are detected for config key 'labels'"),
-        ({"labels": "cat"}, "Config key 'labels' must be a list, but got str"),
+        ({"labels": "cat"}, "Config key 'labels' must be list or null"),
         ({"not_a_real_key": True}, "Unexpected key in config: not_a_real_key"),
         (
             {"shortcuts": {"not_a_real_shortcut": "Ctrl+Z"}},
@@ -329,6 +436,72 @@ def test_migrate_keep_prev_brightness_contrast(
 def test_load_config_rejects_invalid_override(*, overrides: dict, message: str) -> None:
     with pytest.raises(ValueError, match=message):
         _config.load_config(config_file=None, config_overrides=overrides)
+
+
+@pytest.mark.parametrize("label", [None, False, 1, 1.0, [], {}])
+def test_load_config_rejects_non_string_label(*, label: object) -> None:
+    with pytest.raises(ValueError, match="Each label must be a string"):
+        _config.load_config(
+            config_file=None,
+            config_overrides={"labels": ["cat", label]},
+        )
+
+
+@pytest.mark.parametrize("flag", [None, False, 1, 1.0, [], {}])
+def test_load_config_rejects_non_string_flag(*, flag: object) -> None:
+    with pytest.raises(ValueError, match="Each flag must be a string"):
+        _config.load_config(
+            config_file=None,
+            config_overrides={"flags": ["occluded", flag]},
+        )
+
+
+@pytest.mark.parametrize(
+    "label_flags",
+    [
+        {1: ["occluded"]},
+        {"cat": "occluded"},
+        {"cat": ["occluded", 1]},
+    ],
+)
+def test_load_config_rejects_malformed_label_flags(*, label_flags: dict) -> None:
+    with pytest.raises(ValueError, match="label_flags must map"):
+        _config.load_config(
+            config_file=None,
+            config_overrides={"label_flags": label_flags},
+        )
+
+
+@pytest.mark.parametrize(
+    "color",
+    [[0, 0, 0], [0, 0, 0, 256], [0, 0, 0, True], "black"],
+)
+def test_load_config_rejects_invalid_shape_rgba(*, color: object) -> None:
+    with pytest.raises(ValueError, match="shape.line_color.*list"):
+        _config.load_config(
+            config_file=None,
+            config_overrides={"shape": {"line_color": color}},
+        )
+
+
+@pytest.mark.parametrize(
+    ("config_text", "labels"),
+    [
+        ("labels: null\n", None),
+        ("labels: []\n", []),
+        ('labels: [""]\n', [""]),
+    ],
+)
+def test_load_config_accepts_compatible_labels(
+    *, tmp_path: Path, config_text: str, labels: list[str] | None
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(config_text)
+    config = _config.load_config(
+        config_file=config_file,
+        config_overrides={},
+    )
+    assert config["labels"] == labels
 
 
 def test_load_config_requires_labels_when_validate_label_enabled() -> None:
@@ -542,3 +715,26 @@ def test_load_config_rejects_invalid_shape_color(
             config_file=None,
             config_overrides={"shape_color": shape_color},
         )
+
+
+@pytest.mark.parametrize(
+    ("key", "saved", "override"),
+    [
+        ("language", "ja_JP", None),
+        ("flags", ["occluded"], None),
+        ("label_flags", {"cat": ["occluded"]}, None),
+        ("label_flags", {"cat": ["occluded"]}, {"dog": ["hidden"]}),
+    ],
+)
+def test_load_config_overrides_nullable_values_using_default_types(
+    *, tmp_path: Path, key: str, saved: object, override: object
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(json.dumps({key: saved, "canvas": {"num_backups": 12}}))
+    config = _config.load_config(
+        config_file=config_file,
+        config_overrides={key: override, "canvas": {"double_click": None}},
+    )
+    assert config[key] == override
+    assert config["canvas"]["num_backups"] == 12
+    assert config["canvas"]["double_click"] is None

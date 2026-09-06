@@ -429,7 +429,8 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
             qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
         )
         navigation = dialog._page._navigation
-        long_title = "Продолжение работы между изображениями"
+        long_title = translator.translate("SettingsDialog", "Continue between images")
+        assert long_title and long_title != "Continue between images"
 
         assert navigation.item(3).text() == long_title
         assert navigation.item(3).toolTip() == long_title

@@ -51,18 +51,22 @@ def test_MainWindow_config(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "config_text",
+    ["auto_save: [unclosed\n", "ai:\n  default: true\n"],
+    ids=["malformed-yaml", "invalid-leaf-type"],
+)
 def test_MainWindow_config_load_error_falls_back(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
     pause: bool,
+    config_text: str,
 ) -> None:
-    # Malformed YAML makes load_config raise a non-ValueError (a yaml
-    # ParserError); the backstop must catch any such error and fall back to
-    # defaults instead of crashing the app before the window opens.
+    # Any invalid config must fall back before downstream widgets consume it.
     config_file = tmp_path / "labelmerc.yaml"
-    config_file.write_text("auto_save: [unclosed\n")
+    config_file.write_text(config_text)
 
     win = main_win(config_file=config_file)
 
