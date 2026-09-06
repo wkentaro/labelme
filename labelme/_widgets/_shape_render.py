@@ -96,7 +96,7 @@ def render_shape(
     painter.setPen(QtGui.QPen(color, _OUTLINE_WIDTH, context.line_style))
 
     if shape.shape_type == "mask" and shape.mask is not None:
-        _paint_shape_mask(painter=painter, shape=shape, context=context)
+        _paint_mask(painter=painter, shape=shape, context=context)
 
     if len(shape.points) > 0:
         _paint_shape_points(painter=painter, shape=shape, context=context)
@@ -122,40 +122,41 @@ def _paint_label(
     )
 
 
-def _paint_shape_mask(
-    *,
-    painter: QtGui.QPainter,
-    shape: Shape,
-    context: ShapeRenderContext,
+def _paint_mask(
+    *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
 ) -> None:
     assert shape.mask is not None
-    fill = context.palette.select_fill if context.selected else context.palette.fill
-    image_to_draw = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
-    image_to_draw[shape.mask] = fill.getRgb()
-    qimage = QtGui.QImage.fromData(_utils.img_arr_to_data(image_to_draw))
     origin = shape.points[0]
-    target_top_left = origin * context.scale
-    target_rect = QtCore.QRectF(
-        target_top_left[0],
-        target_top_left[1],
-        qimage.width() * context.scale,
-        qimage.height() * context.scale,
+    fill_color = (
+        context.palette.select_fill if context.selected else context.palette.fill
     )
-    painter.drawImage(target_rect, qimage)
 
-    # Pad so a region touching the mask border still has a background ring to
-    # close its contour against; the resulting offset is removed below.
+    rgba = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
+    rgba[shape.mask] = fill_color.getRgb()
+    bitmap = QtGui.QImage.fromData(_utils.img_arr_to_data(rgba))
+    top_left = origin * context.scale
+    painter.drawImage(
+        QtCore.QRectF(
+            top_left[0],
+            top_left[1],
+            bitmap.width() * context.scale,
+            bitmap.height() * context.scale,
+        ),
+        bitmap,
+    )
+
+    # Pad the mask so a True region touching its border still has a false
+    # ring to close a contour against; the pad offset is subtracted back out.
     PAD: Final[int] = 1
-    outline = QtGui.QPainterPath()
+    contour_path = QtGui.QPainterPath()
     for contour in skimage.measure.find_contours(np.pad(shape.mask, pad_width=PAD)):
-        # Contours come as (row, col) and stay in image space here so the whole
-        # outline can be scaled in one step below.
-        points_xy = contour[:, ::-1] - PAD + origin
-        outline.addPolygon(
-            QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in points_xy])
-        )
-    to_widget = QtGui.QTransform.fromScale(context.scale, context.scale)
-    painter.drawPath(to_widget.map(outline))
+        # skimage yields (row, col); flip to (x, y) and drop the pad, staying
+        # in image space so the whole contour can be scaled together below.
+        xy = contour[:, ::-1] - PAD + origin
+        contour_path.addPolygon(QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in xy]))
+    painter.drawPath(
+        QtGui.QTransform.fromScale(context.scale, context.scale).map(contour_path)
+    )
 
 
 @dataclasses.dataclass(frozen=True)
