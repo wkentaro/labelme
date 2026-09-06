@@ -35,6 +35,14 @@ jobs:
         with:
           packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
           version: 1.0
+      # The COCO exporter tests skip themselves without pycocotools, so it has
+      # to be present before pytest runs. The pip install survives the inexact
+      # sync that uv run performs.
+      - name: Install optional example dependencies
+        shell: bash
+        if: matrix.os != 'windows-latest'
+        run: |
+          uv pip install cython && uv pip install pycocotools
       # Pixel snapshots skip themselves off Linux (tests/e2e/conftest.py), so
       # one plain invocation runs the right set everywhere.
       - name: Test
@@ -64,7 +72,6 @@ jobs:
           (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
           uv pip install lxml  # for bbox_detection/labelme2voc.py
           (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-          uv pip install cython && uv pip install pycocotools  # for instance_segmentation/labelme2coco.py
           (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
   artifact-install-smoke:
     runs-on: ${{ matrix.os }}
