@@ -65,14 +65,17 @@ jobs:
           labelme --version
           # examples/ must stay self-contained: no labelme imports (#2231)
           ! grep -rnE "import labelme|from labelme" examples/
-          (cd examples/primitives && ../tutorial/export_json.py primitives.json && rm -rf primitives)
-          (cd examples/tutorial && rm -rf apc2016_obj3_json && ./export_json.py apc2016_obj3.json && python load_label_png.py && git checkout -- .)
-          (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-          (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-          (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+          example_tmp=$(mktemp -d)
+          trap 'rm -rf "$example_tmp"' EXIT
+          examples/tutorial/export_json.py tests/data/annotated_with_data/apc2016_obj3.json -o "$example_tmp/tutorial"
+          python examples/tutorial/load_label_png.py "$example_tmp/tutorial/label.png" "$example_tmp/tutorial/label_names.txt"
+          examples/semantic_segmentation/labelme2voc.py tests/data/annotated "$example_tmp/semantic" --labels tests/data/labels.txt
+          examples/instance_segmentation/labelme2voc.py tests/data/annotated "$example_tmp/instance" --labels tests/data/labels.txt
+          examples/video_annotation/labelme2voc.py tests/data/annotated "$example_tmp/video" --labels tests/data/labels.txt
           uv pip install lxml  # for bbox_detection/labelme2voc.py
-          (cd examples/bbox_detection && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
-          (cd examples/instance_segmentation && rm -rf data_dataset_coco && ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt && git checkout -- .)
+          examples/bbox_detection/labelme2voc.py tests/data/annotated "$example_tmp/bbox" --labels tests/data/labels.txt
+          grep -q '<object>' "$example_tmp/bbox/Annotations/2011_000003.xml"
+          examples/instance_segmentation/labelme2coco.py tests/data/annotated "$example_tmp/coco" --labels tests/data/labels.txt
   artifact-install-smoke:
     runs-on: ${{ matrix.os }}
     # Each leg does a cold build plus two isolated installs (PySide6,

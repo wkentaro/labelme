@@ -1,10 +1,10 @@
-# Classification Example
+# Image classification
 
-## Usage
+Image-level flags can represent classes or review states. Put one flag name per line
+in `flags.txt`, then open a directory containing your own images:
 
 ```bash
-labelme data_annotated --flags flags.txt
+labelme images/ --flags flags.txt
 ```
 
-<img src=".readme/annotation_cat.jpg" width="100%" />
-<img src=".readme/annotation_dog.jpg" width="100%" />
+The checked values are stored in the top-level `flags` object of each annotation.

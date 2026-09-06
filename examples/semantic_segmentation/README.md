@@ -1,34 +1,14 @@
-# Semantic Segmentation Example
+# Semantic-segmentation conversion
 
-## Annotation
-
-```bash
-labelme data_annotated --labels labels.txt --validate-label exact --config '{shape_color: {mode: auto, auto: {shift: -2}}}'
-```
-
-![](.readme/annotation.jpg)
-
-## Convert to VOC-format Dataset
+Annotate closed regions in a directory of your own images, then convert them:
 
 ```bash
-# It generates:
-#   - data_dataset_voc/JPEGImages
-#   - data_dataset_voc/SegmentationClass
-#   - data_dataset_voc/SegmentationClassNpy
-#   - data_dataset_voc/SegmentationClassVisualization
-./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt --noobject
+labelme images/ --labels labels.txt --validate-label exact
+./labelme2voc.py images/ dataset/ --labels labels.txt --noobject
 ```
 
-<img src="data_dataset_voc/JPEGImages/2011_000003.jpg" width="33%" /> <img src="data_dataset_voc/SegmentationClass/2011_000003.png" width="33%" /> <img src="data_dataset_voc/SegmentationClassVisualization/2011_000003.jpg" width="33%" />
+The converter writes class masks, NumPy arrays, copied images, and visualization
+images. Pass `--nonpy` to omit NumPy arrays or `--noviz` to omit visualizations.
 
-Fig 1. JPEG image (left), PNG label (center), JPEG label visualization (right)
-
-Note that the label file contains only very low label values (ex. `0, 4, 14`), and
-`255` indicates the `__ignore__` label value (`-1` in the npy file).\
-You can see the label PNG file by following.
-
-```bash
-../tutorial/draw_label_png.py data_dataset_voc/SegmentationClass/2011_000003.png
-```
-
-<img src=".readme/draw_label_png.jpg" width="33%" />
+Label PNG files use unsigned bytes. The ignore class is stored as `255` in PNG output
+and `-1` in NumPy output.

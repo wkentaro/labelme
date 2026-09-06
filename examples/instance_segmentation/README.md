@@ -1,47 +1,22 @@
-# Instance Segmentation Example
+# Instance-segmentation conversion
 
-## Annotation
+Annotate closed object regions in a directory of your own images:
 
 ```bash
-labelme data_annotated --labels labels.txt --validate-label exact --config '{shape_color: {mode: auto, auto: {shift: -2}}}'
-labelme data_annotated --labels labels.txt --label-flags '{.*: [occluded, truncated], person: [male]}'
+labelme images/ --labels labels.txt --validate-label exact
 ```
 
-![](.readme/annotation.jpg)
-
-## Convert to VOC-format Dataset
+Generate a VOC-style dataset:
 
 ```bash
-# It generates:
-#   - data_dataset_voc/JPEGImages
-#   - data_dataset_voc/SegmentationClass
-#   - data_dataset_voc/SegmentationClassNpy
-#   - data_dataset_voc/SegmentationClassVisualization
-#   - data_dataset_voc/SegmentationObject
-#   - data_dataset_voc/SegmentationObjectNpy
-#   - data_dataset_voc/SegmentationObjectVisualization
-./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt
+./labelme2voc.py images/ dataset-voc/ --labels labels.txt
 ```
 
-<img src="data_dataset_voc/JPEGImages/2011_000003.jpg" width="33%" /> <img src="data_dataset_voc/SegmentationClassVisualization/2011_000003.jpg" width="33%" /> <img src="data_dataset_voc/SegmentationObjectVisualization/2011_000003.jpg" width="33%" />\
-Fig 1. JPEG image (left), JPEG class label visualization (center), JPEG instance label visualization (right)
+The result includes class masks, instance masks, NumPy arrays, and optional preview
+images. To omit selected outputs, pass `--noobject`, `--nonpy`, or `--noviz`.
 
-Note that the label file contains only very low label values (ex. `0, 4, 14`), and
-`255` indicates the `__ignore__` label value (`-1` in the npy file).\
-You can see the label PNG file by following.
+Generate COCO JSON instead:
 
 ```bash
-../tutorial/draw_label_png.py data_dataset_voc/SegmentationClass/2011_000003.png   # left
-../tutorial/draw_label_png.py data_dataset_voc/SegmentationObject/2011_000003.png  # right
-```
-
-<img src=".readme/draw_label_png_class.jpg" width="33%" /> <img src=".readme/draw_label_png_object.jpg" width="33%" />
-
-## Convert to COCO-format Dataset
-
-```bash
-# It generates:
-#   - data_dataset_coco/JPEGImages
-#   - data_dataset_coco/annotations.json
-./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt
+uv run --with pycocotools ./labelme2coco.py images/ dataset-coco/ --labels labels.txt
 ```

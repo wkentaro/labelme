@@ -17,28 +17,28 @@ From the repository root, in a shell that stays alive for the whole session:
 
 ```bash
 RUN_DIR=$(mktemp -d)
-cp -R examples/primitives "$RUN_DIR/inputs"
-mkdir "$RUN_DIR/outputs" "$RUN_DIR/evidence"
+cp -R tests/data/annotated "$RUN_DIR/inputs"
+mkdir "$RUN_DIR/evidence"
 HOME="$RUN_DIR" uv run --no-sync labelme "$RUN_DIR/inputs" \
-  --output "$RUN_DIR/outputs" 2>"$RUN_DIR/stderr.log"
+  2>"$RUN_DIR/stderr.log"
 ```
 
 Variants:
 
-- Raw image, no annotations: copy only the `.jpg` into `inputs`.
-- Image sequence: copy from `examples/video_annotation/data_annotated`.
+- Raw image, no annotations: copy one file from `tests/data/raw` into `inputs`.
+- Image sequence: copy `tests/data/raw` to `inputs`.
 - Corrupt annotation: overwrite an `inputs/*.json` with `{ not json`.
 - Theme: append `--config "color_theme: dark"` (or `light`).
 - First-launch empty state: omit the path argument.
 
-Keep `RUN_DIR` until the report is delivered; `outputs/`, `stderr.log`, and
+Keep `RUN_DIR` until the report is delivered; `inputs/`, `stderr.log`, and
 `evidence/` are the durable record of the run.
 
 ## Exercise the app
 
 For each check: state the expected outcome first, act as a user would (pointer or
 keyboard, never programmatic widget calls), then verify both the visible result and
-the durable one — the saved JSON in `outputs/`, or the state after a clean restart.
+the durable one — the saved JSON in `inputs/`, or the state after a clean restart.
 Screenshot each checkpoint into `evidence/` with names like `02-undo-after-rect.png`.
 
 Core flows, in priority order. A quick check covers the first three; a full sweep

@@ -1,26 +1,11 @@
-# Video Annotation Example
+# Video-frame annotation
 
-## Annotation
-
-```bash
-labelme data_annotated --labels labels.txt --keep-prev --config '{shape_color: {mode: auto, auto: {shift: -2}}}'
-```
-
-<img src=".readme/00000100.jpg" width="49%" /> <img src=".readme/00000101.jpg" width="49%" />
-
-*Fig 1. Video annotation example. A frame (left), The next frame (right).*
-
-<img src=".readme/data_annotated.gif" width="98%" />
-
-*Fig 2. Visualization of video semantic segmentation.*
-
-## How to Convert a Video File to Images for Annotation?
+Extract a video into an ordered image directory with a tool of your choice, then open
+that directory in Labelme:
 
 ```bash
-pip install video-cli
-
-video-toimg your_video.mp4  # this creates your_video/ directory
-ls your_video/
-
-labelme your_video/
+labelme frames/ --labels labels.txt --keep-prev
 ```
+
+`--keep-prev` seeds an unannotated frame with shapes from the preceding frame. Review
+and adjust every carried shape before saving.

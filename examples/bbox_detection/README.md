@@ -1,23 +1,12 @@
-# Bounding Box Detection Example
+# Bounding-box conversion
 
-## Usage
-
-```bash
-labelme data_annotated --labels labels.txt
-```
-
-![](.readme/annotation.jpg)
-
-## Convert to VOC-format Dataset
+Create a directory of images, annotate each object with a rectangle, and keep the
+allowed class names in `labels.txt`:
 
 ```bash
-# It generates:
-#   - data_dataset_voc/JPEGImages
-#   - data_dataset_voc/Annotations
-#   - data_dataset_voc/AnnotationsVisualization
-./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt
+labelme images/ --labels labels.txt
+uv run --with lxml ./labelme2voc.py images/ dataset/ --labels labels.txt
 ```
 
-<img src="data_dataset_voc/JPEGImages/2011_000003.jpg" width="33%" /> <img src="data_dataset_voc/AnnotationsVisualization/2011_000003.jpg" width="33%" />
-
-<i>Fig1. JPEG image (left), Bounding box annotation visualization (right).</i>
+The converter writes JPEG copies, VOC XML annotations, and optional visualization
+images below `dataset/`.

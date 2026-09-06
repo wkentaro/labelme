@@ -1,63 +1,31 @@
-# Tutorial (Single Image Example)
+# Annotation-format tutorial
 
-## Annotation
-
-```bash
-labelme apc2016_obj3.jpg
-```
-
-![](.readme/annotation.jpg)
-
-## Visualization
-
-To view the json file quickly, you can use utility script:
+Start with any image you are allowed to use:
 
 ```bash
-./draw_json.py apc2016_obj3.json
+labelme sample.jpg
 ```
 
-<img src=".readme/draw_json.jpg" width="70%" />
-
-## Convert to Dataset
-
-To convert the json to set of image and label, you can run following:
+After saving `sample.json`, inspect or render it with the standalone example tools:
 
 ```bash
-./export_json.py apc2016_obj3.json
+./draw_json.py sample.json
+./export_json.py sample.json
 ```
 
-It generates standard files from the JSON file.
-
-- [img.png](apc2016_obj3/img.png): Image file.
-- [label.png](apc2016_obj3/label.png): uint8 label file.
-- [label_viz.png](apc2016_obj3/label_viz.png): Visualization of `label.png`.
-- [label_names.txt](apc2016_obj3/label_names.txt): Label names for values in `label.png`.
-
-## How to load label PNG file?
-
-Note that loading `label.png` is a bit difficult
-(`scipy.misc.imread`, `skimage.io.imread` may not work correctly),
-and please use `PIL.Image.open` to avoid unexpected behavior:
+The export command creates an image, an indexed label PNG, a label-name text file,
+and a visualization. Load the indexed PNG directly with Pillow:
 
 ```python
-# see load_label_png.py also.
->>> import numpy as np
->>> import PIL.Image
+import numpy as np
+from PIL import Image
 
->>> label_png = 'apc2016_obj3/label.png'
->>> lbl = np.asarray(PIL.Image.open(label_png))
->>> print(lbl.dtype)
-dtype('uint8')
->>> np.unique(lbl)
-array([0, 1, 2, 3], dtype=uint8)
->>> lbl.shape
-(907, 1210)
+labels = np.asarray(Image.open("sample/label.png"))
+print(labels.dtype, labels.shape, np.unique(labels))
 ```
 
-Also, you can see the label PNG file by:
+The helper accepts explicit paths for the PNG and label-name file:
 
 ```bash
-./draw_label_png.py apc2016_obj3/label.png
+python load_label_png.py sample/label.png sample/label_names.txt
 ```
-
-<img src=".readme/draw_label_png.jpg" width="35%" />
