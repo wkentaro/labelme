@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az AI-támogatott annotáció engedélyezéséhez</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>AI-támogatott annotációs modell</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>AI-támogatott annotáció kimeneti formátuma</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Kimeneti formátum</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Utasítás</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Szövegből annotáló modell</translation>
     </message>
 </context>
 <context>

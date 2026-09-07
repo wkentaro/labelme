@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути анотацію за допомогою ШІ</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Модель розмітки за допомогою AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Формат виведення розмітки за допомогою AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Модель</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Формат виведення</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Виберіть режим &apos;Polygon&apos;, &apos;Rectangle&apos; або &apos;AI-Points&apos;, щоб увімкнути</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Модель</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Запит</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Модель розмітки за текстом</translation>
     </message>
 </context>
 <context>

@@ -20,7 +20,7 @@ def test_combined_adjustment_preserves_clipped_brightness_pivot(
     )
     qtbot.addWidget(dialog)
 
-    dialog.slider_brightness.setValue(100)
+    dialog.slider_brightness.setValue(200)
     dialog.slider_contrast.setValue(0)
 
     expected = np.full((1, 2, 3), 128, dtype=np.uint8)

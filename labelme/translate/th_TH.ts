@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>โมเดลสร้างคำอธิบายประกอบด้วย AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>รูปแบบผลลัพธ์คำอธิบายประกอบที่สร้างด้วย AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>รูปแบบผลลัพธ์</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>เลือกโหมด &apos;Polygon&apos;, &apos;Rectangle&apos; หรือ &apos;AI-Points&apos; เพื่อเปิดใช้งาน</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>พรอมต์</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>โมเดลแปลงข้อความเป็นคำอธิบายประกอบ</translation>
     </message>
 </context>
 <context>

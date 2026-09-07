@@ -39,6 +39,13 @@ def _win(
     return win
 
 
+def test_zoom_control_exposes_accessible_name(*, _win: MainWindow) -> None:
+    interface = QtGui.QAccessible.queryAccessibleInterface(
+        _win._canvas_widgets.zoom_widget
+    )
+    assert interface.text(QtGui.QAccessible.Text.Name) == _win.tr("Zoom")
+
+
 def _wait_for_fitted_image(*, qtbot: QtBot, win: MainWindow) -> None:
     def check() -> None:
         canvas = win._canvas_widgets.canvas
@@ -455,7 +462,7 @@ def test_navigation_restores_view_offset_with_retained_brightness(
     expected_view_offset = canvas.get_view_offset()
     first_image_path = win._image_path
     assert first_image_path is not None
-    win._brightness_contrast_values[first_image_path] = (75, 50)
+    win._brightness_contrast_values[first_image_path] = (150, 100)
 
     win._open_next_image()
     qtbot.waitUntil(lambda: win._image_path != first_image_path)

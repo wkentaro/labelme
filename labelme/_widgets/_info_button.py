@@ -28,6 +28,7 @@ class InfoButton(QtWidgets.QToolButton):
         )
         self.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.setToolTip(tooltip)
+        self.setAccessibleName(tooltip)
 
     def enterEvent(self, a0: QtGui.QEnterEvent, /) -> None:
         super().enterEvent(a0)

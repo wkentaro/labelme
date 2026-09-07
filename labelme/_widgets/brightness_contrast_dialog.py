@@ -10,7 +10,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage
 
-_NEUTRAL: Final = 50
+_NEUTRAL: Final = 100
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
@@ -42,6 +42,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         )
         for row, (caption, slider) in enumerate(captioned):
             slider.setRange(0, 3 * _NEUTRAL)
+            slider.setSingleStep(2)
+            slider.setPageStep(20)
             slider.setValue(_NEUTRAL)
             readout = QtWidgets.QLabel(_as_percent(slider.value()))
             readout.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -49,7 +51,9 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
                 lambda value, readout=readout: readout.setText(_as_percent(value))
             )
             slider.valueChanged.connect(lambda _value: self.apply())
-            grid.addWidget(QtWidgets.QLabel(caption), row, 0)
+            label = QtWidgets.QLabel(caption)
+            label.setBuddy(slider)
+            grid.addWidget(label, row, 0)
             grid.addWidget(slider, row, 1)
             grid.addWidget(readout, row, 2)
 
@@ -93,4 +97,4 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
 
 
 def _as_percent(value: int, /) -> str:
-    return f"{value * 100 // _NEUTRAL}%"
+    return f"{value}%"

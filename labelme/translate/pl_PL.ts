@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Wybierz tryb &apos;AI-Points&apos; lub &apos;AI-Box&apos;, aby włączyć adnotację wspomaganą przez AI</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Model adnotacji wspomaganej przez AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Format wyjściowy adnotacji wspomaganej przez AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Format wyjściowy</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Wybierz tryb &apos;Polygon&apos;, &apos;Rectangle&apos; lub &apos;AI-Points&apos;, aby włączyć</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Polecenie</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Model tworzenia adnotacji z tekstu</translation>
     </message>
 </context>
 <context>

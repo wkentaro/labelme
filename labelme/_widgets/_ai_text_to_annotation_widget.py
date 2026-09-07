@@ -64,6 +64,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         text_input = QtWidgets.QLineEdit()
         text_input.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
+        text_input.setAccessibleName(self.tr("Prompt"))
         text_input.setFixedHeight(24)
         grid.addWidget(text_input, 0, 0)
         self._text_input = text_input
@@ -80,6 +81,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         settings_layout.setSpacing(4)
 
         self._model_combo = model_combo = QtWidgets.QComboBox()
+        # Windows needs an explicit name; Unix exposes the selected option instead.
+        model_combo.setAccessibleName(self.tr("Model"))
+        model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
         for model_id, model_display in self._available_models:
             model_combo.addItem(model_display, model_id)
         model_index = next(
@@ -107,9 +111,10 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
             label.setForegroundRole(QtGui.QPalette.ColorRole.PlaceholderText)
             return label
 
-        settings_layout.addWidget(make_threshold_label(self.tr("Score")))
-        #
+        score_label = make_threshold_label(self.tr("Score"))
         self._score_spinbox = score_spinbox = QtWidgets.QDoubleSpinBox()
+        score_label.setBuddy(score_spinbox)
+        settings_layout.addWidget(score_label)
         score_spinbox.setFont(small_font)
         score_spinbox.setFixedWidth(50)
         score_spinbox.setRange(0, 1)
@@ -117,9 +122,10 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         score_spinbox.setValue(self._default_score_threshold)
         settings_layout.addWidget(score_spinbox)
 
-        settings_layout.addWidget(make_threshold_label(self.tr("IoU")))
-        #
+        iou_label = make_threshold_label(self.tr("IoU"))
         self._iou_spinbox = iou_spinbox = QtWidgets.QDoubleSpinBox()
+        iou_label.setBuddy(iou_spinbox)
+        settings_layout.addWidget(iou_label)
         iou_spinbox.setFont(small_font)
         iou_spinbox.setFixedWidth(50)
         iou_spinbox.setRange(0, 1)

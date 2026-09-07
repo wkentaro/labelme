@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import sys
+
 import pytest
+from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import AiOutputFormat
@@ -50,6 +53,35 @@ def test_construction_exposes_default_without_firing_callbacks(
     assert widget.output_format == "polygon"
     assert models == []
     assert formats == []
+
+
+def test_model_and_output_controls_expose_accessible_purpose(
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+) -> None:
+    widget = _make_widget(
+        qtbot=qtbot,
+        models=models,
+        formats=formats,
+        default_model="EfficientSam (speed)",
+        details=None,
+    )
+
+    model = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
+    output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_combo)
+    model_name = (
+        widget.tr("Model") if sys.platform == "win32" else "EfficientSam (speed)"
+    )
+    output_name = widget.tr("Output format") if sys.platform == "win32" else "Polygon"
+    assert model.text(QtGui.QAccessible.Text.Name) == model_name
+    assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSam (speed)"
+    assert model.text(QtGui.QAccessible.Text.Description) == widget.tr(
+        "AI-assisted annotation model"
+    )
+    assert output.text(QtGui.QAccessible.Text.Name) == output_name
+    assert output.text(QtGui.QAccessible.Text.Value) == "Polygon"
+    assert output.text(QtGui.QAccessible.Text.Description) == widget.tr(
+        "AI-assisted annotation output format"
+    )
 
 
 def test_first_listed_default_resolves(

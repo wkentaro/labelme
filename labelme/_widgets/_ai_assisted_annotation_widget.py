@@ -119,11 +119,20 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body.setLayout(body_layout)
 
         self._model_combo = QtWidgets.QComboBox()
+        # Windows needs an explicit name; Unix exposes the selected option instead.
+        self._model_combo.setAccessibleName(self.tr("Model"))
+        self._model_combo.setAccessibleDescription(
+            self.tr("AI-assisted annotation model")
+        )
         for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
             self._model_combo.addItem(option.display_name, option.model_name)
         body_layout.addWidget(self._model_combo)
 
         self._output_format_combo = QtWidgets.QComboBox()
+        self._output_format_combo.setAccessibleName(self.tr("Output format"))
+        self._output_format_combo.setAccessibleDescription(
+            self.tr("AI-assisted annotation output format")
+        )
         self._output_format_combo.addItem("Polygon", "polygon")
         self._output_format_combo.addItem("Mask", "mask")
         self._output_format_combo.addItem("Rectangle", "rectangle")
