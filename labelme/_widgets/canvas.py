@@ -143,13 +143,13 @@ class _CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
-    _pixmap: QtGui.QPixmap
+    pixmap: QtGui.QPixmap
     _pixmap_hash: int | None
     _cursor: CursorRole
-    _shapes: list[Shape]
+    shapes: list[Shape]
     _shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
-    _selected_shapes: list[Shape]
+    selected_shapes: list[Shape]
     _selected_shapes_copy: list[Shape]
     _current: _DraftShape | None
     _hovered_shape: Shape | None
@@ -208,32 +208,8 @@ class Canvas(QtWidgets.QWidget):
     _ai_points_preview_key: tuple[object, ...] | None
 
     @property
-    def pixmap(self) -> QtGui.QPixmap:
-        return self._pixmap
-
-    @pixmap.setter
-    def pixmap(self, value: QtGui.QPixmap, /) -> None:
-        self._pixmap = value
-
-    @property
-    def shapes(self) -> list[Shape]:
-        return self._shapes
-
-    @shapes.setter
-    def shapes(self, value: list[Shape], /) -> None:
-        self._shapes = value
-
-    @property
     def shape_backups(self) -> collections.deque[list[Shape]]:
         return self._shape_backups
-
-    @property
-    def selected_shapes(self) -> list[Shape]:
-        return self._selected_shapes
-
-    @selected_shapes.setter
-    def selected_shapes(self, value: list[Shape], /) -> None:
-        self._selected_shapes = value
 
     @property
     def hovered_shape(self) -> Shape | None:
@@ -583,7 +559,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Peeking would leave this entry on the stack, and the reload that
         # follows would record it a second time, making the next undo a no-op.
-        self._shapes = self.shape_backups.pop()
+        self.shapes = self.shape_backups.pop()
         self.selected_shapes.clear()
         self.update()
 
@@ -1581,7 +1557,7 @@ class Canvas(QtWidgets.QWidget):
         if not self.selected_shapes:
             return []
         removed = list(self.selected_shapes)
-        self._shapes = [s for s in self.shapes if s not in self.selected_shapes]
+        self.shapes = [s for s in self.shapes if s not in self.selected_shapes]
         self.backup_shapes()
         self.selected_shapes.clear()
         self._set_ai_existing_shape_highlights(shapes=[])
@@ -1591,7 +1567,7 @@ class Canvas(QtWidgets.QWidget):
     def delete_shape(self, *, shape: Shape) -> None:
         if shape in self.selected_shapes:
             self.selected_shapes.remove(shape)
-        self._shapes = [s for s in self.shapes if s is not shape]
+        self.shapes = [s for s in self.shapes if s is not shape]
         self.backup_shapes()
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
@@ -2120,18 +2096,18 @@ class Canvas(QtWidgets.QWidget):
 
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         pixmap_arr = _utils.img_qt_to_arr(pixmap.toImage())
-        self._pixmap = pixmap
+        self.pixmap = pixmap
         self._pixmap_hash = hash(pixmap_arr.tobytes())
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
         self._ai_inference_failed = False
         self._set_ai_existing_shape_highlights(shapes=[])
         if clear_shapes:
-            self._shapes = []
+            self.shapes = []
         self.update()
 
     def load_shapes(self, *, shapes: list[Shape], replace: bool = True) -> None:
-        self._shapes = list(shapes) if replace else self.shapes + list(shapes)
+        self.shapes = list(shapes) if replace else self.shapes + list(shapes)
         self.backup_shapes()
         self._reset_interaction_state()
         self.update()
@@ -2164,12 +2140,12 @@ class Canvas(QtWidgets.QWidget):
         self._ai_points_preview = []
         self._ai_points_preview_key = None
         self._release_cursor()
-        self._pixmap = QtGui.QPixmap()
+        self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
-        self._shapes = []
+        self.shapes = []
         self._shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
-        self._selected_shapes = []
+        self.selected_shapes = []
         self._selected_shapes_copy = []
         self._current = None
         self._view_offset = QPointF()
