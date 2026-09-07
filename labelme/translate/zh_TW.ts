@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>選擇&apos;AI-Points&apos;或&apos;AI-Box&apos;模式以啟用AI輔助標註</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>AI 輔助標註模型</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>AI 輔助標註輸出格式</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>模型</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>輸出格式</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>選擇&apos;Polygon&apos;、&apos;Rectangle&apos;或&apos;AI-Points&apos;模式以啟用</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>模型</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>提示詞</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>文字轉標註模型</translation>
     </message>
 </context>
 <context>
@@ -1085,6 +1113,17 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>預定義影像標記</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>縮放</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>縮放百分比</translation>
     </message>
 </context>
 <context>

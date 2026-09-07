@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Anotasi yang berbasis AI</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Model anotasi berbantuan AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Format keluaran anotasi berbantuan AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Format keluaran</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Pilih mode &apos;Polygon&apos;, &apos;Rectangle&apos;, atau &apos;AI-Points&apos; untuk mengaktifkan</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Model teks ke anotasi</translation>
     </message>
 </context>
 <context>
@@ -1079,6 +1107,17 @@ Shapes</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Pembesaran</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>Persentase pembesaran</translation>
     </message>
 </context>
 <context>

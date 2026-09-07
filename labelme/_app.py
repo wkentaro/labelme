@@ -716,6 +716,7 @@ class MainWindow(QtWidgets.QMainWindow):
         zoom_box_layout = QtWidgets.QVBoxLayout()
         zoom_label = QtWidgets.QLabel(self.tr("Zoom"))
         zoom_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        zoom_label.setBuddy(self._canvas_widgets.zoom_widget)
         zoom_box_layout.addWidget(zoom_label)
         zoom_box_layout.addWidget(self._canvas_widgets.zoom_widget)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())

@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 지원 주석을 활성화</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>AI 지원 주석 모델</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>AI 지원 주석 출력 형식</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>출력 형식</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>&apos;Polygon&apos;, &apos;Rectangle&apos; 또는 &apos;AI-Points&apos; 모드를 선택하여 활성화</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>프롬프트</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>텍스트 기반 주석 모델</translation>
     </message>
 </context>
 <context>
@@ -1079,6 +1107,17 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>사전 정의된 이미지 플래그</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>확대 비율</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>확대 비율(백분율)</translation>
     </message>
 </context>
 <context>

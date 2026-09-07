@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>&apos;AI-Points&apos;または&apos;AI-Box&apos;モードを選択してAI支援アノテーションを有効化</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>AI支援アノテーションモデル</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>AI支援アノテーションの出力形式</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>出力形式</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>プロンプト</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>テキストからアノテーションを生成するモデル</translation>
     </message>
 </context>
 <context>
@@ -1093,6 +1121,17 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>定義済み画像フラグ</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>表示倍率</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>表示倍率（パーセント）</translation>
     </message>
 </context>
 <context>

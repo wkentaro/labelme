@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Μοντέλο σχολιασμού με υποβοήθηση AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Μορφή εξόδου σχολιασμού με υποβοήθηση AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Μορφή εξόδου</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Επιλέξτε τη λειτουργία &apos;Polygon&apos;, &apos;Rectangle&apos; ή &apos;AI-Points&apos; για ενεργοποίηση</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Προτροπή</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Μοντέλο σχολιασμού από κείμενο</translation>
     </message>
 </context>
 <context>
@@ -1081,6 +1109,17 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Μεγέθυνση</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>Ποσοστό μεγέθυνσης</translation>
     </message>
 </context>
 <context>

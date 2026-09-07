@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Wählen Sie den Modus &apos;AI-Points&apos; oder &apos;AI-Box&apos;, um die KI-gestützte Annotation zu aktivieren</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Modell für AI-gestützte Annotation</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Ausgabeformat für AI-gestützte Annotation</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Ausgabeformat</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -61,6 +77,18 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>&apos;Polygon&apos;-, &apos;Rectangle&apos;- oder &apos;AI-Points&apos;-Modus auswählen zum Aktivieren</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Modell für textbasierte Annotation</translation>
     </message>
 </context>
 <context>
@@ -1085,6 +1113,17 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
     <message>
         <source>Predefined image flags</source>
         <translation>Vordefinierte Bild-Flags</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>Zoom in Prozent</translation>
     </message>
 </context>
 <context>
